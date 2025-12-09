@@ -2,6 +2,7 @@
 ///
 /// Tests for the pure Dart HNSW implementation.
 /// Verifies correctness of insert, search, delete, and serialization.
+/// Uses String UUIDs as keys for cross-type entity identification.
 
 import 'dart:math';
 
@@ -42,42 +43,42 @@ void main() {
       final index = HnswIndex(dimensions: 3, seed: 42);
       final vector = [1.0, 2.0, 3.0];
 
-      index.insert(1, vector);
+      index.insert('uuid-1', vector);
 
       expect(index.size, 1);
       expect(index.isEmpty, false);
-      expect(index.contains(1), true);
-      expect(index.getVector(1), vector);
+      expect(index.contains('uuid-1'), true);
+      expect(index.getVector('uuid-1'), vector);
     });
 
     test('inserts multiple vectors', () {
       final index = HnswIndex(dimensions: 3, seed: 42);
 
-      index.insert(1, [1.0, 0.0, 0.0]);
-      index.insert(2, [0.0, 1.0, 0.0]);
-      index.insert(3, [0.0, 0.0, 1.0]);
+      index.insert('uuid-1', [1.0, 0.0, 0.0]);
+      index.insert('uuid-2', [0.0, 1.0, 0.0]);
+      index.insert('uuid-3', [0.0, 0.0, 1.0]);
 
       expect(index.size, 3);
-      expect(index.contains(1), true);
-      expect(index.contains(2), true);
-      expect(index.contains(3), true);
+      expect(index.contains('uuid-1'), true);
+      expect(index.contains('uuid-2'), true);
+      expect(index.contains('uuid-3'), true);
     });
 
     test('throws on wrong dimensions', () {
       final index = HnswIndex(dimensions: 3);
 
       expect(
-        () => index.insert(1, [1.0, 2.0]),
+        () => index.insert('uuid-1', [1.0, 2.0]),
         throwsArgumentError,
       );
     });
 
     test('throws on duplicate ID', () {
       final index = HnswIndex(dimensions: 3);
-      index.insert(1, [1.0, 2.0, 3.0]);
+      index.insert('uuid-1', [1.0, 2.0, 3.0]);
 
       expect(
-        () => index.insert(1, [4.0, 5.0, 6.0]),
+        () => index.insert('uuid-1', [4.0, 5.0, 6.0]),
         throwsArgumentError,
       );
     });
@@ -94,12 +95,12 @@ void main() {
     test('finds exact match', () {
       final index = HnswIndex(dimensions: 3, seed: 42);
       final vector = [1.0, 2.0, 3.0];
-      index.insert(1, vector);
+      index.insert('uuid-1', vector);
 
       final results = index.search(vector, k: 1);
 
       expect(results.length, 1);
-      expect(results[0].id, 1);
+      expect(results[0].id, 'uuid-1');
       expect(results[0].distance, closeTo(0.0, 0.0001));
     });
 
@@ -111,25 +112,25 @@ void main() {
       );
 
       // Create points at known distances from origin
-      index.insert(1, [1.0, 0.0]); // distance 1
-      index.insert(2, [2.0, 0.0]); // distance 2
-      index.insert(3, [3.0, 0.0]); // distance 3
-      index.insert(4, [0.5, 0.0]); // distance 0.5
+      index.insert('id-1', [1.0, 0.0]); // distance 1
+      index.insert('id-2', [2.0, 0.0]); // distance 2
+      index.insert('id-3', [3.0, 0.0]); // distance 3
+      index.insert('id-4', [0.5, 0.0]); // distance 0.5
 
       final results = index.search([0.0, 0.0], k: 4);
 
       expect(results.length, 4);
-      expect(results[0].id, 4); // closest
-      expect(results[1].id, 1);
-      expect(results[2].id, 2);
-      expect(results[3].id, 3); // furthest
+      expect(results[0].id, 'id-4'); // closest
+      expect(results[1].id, 'id-1');
+      expect(results[2].id, 'id-2');
+      expect(results[3].id, 'id-3'); // furthest
     });
 
     test('returns only k results when more exist', () {
       final index = HnswIndex(dimensions: 2, seed: 42);
 
       for (var i = 0; i < 100; i++) {
-        index.insert(i, [i.toDouble(), 0.0]);
+        index.insert('id-$i', [i.toDouble(), 0.0]);
       }
 
       final results = index.search([50.0, 0.0], k: 5);
@@ -139,7 +140,7 @@ void main() {
 
     test('throws on wrong query dimensions', () {
       final index = HnswIndex(dimensions: 3);
-      index.insert(1, [1.0, 2.0, 3.0]);
+      index.insert('uuid-1', [1.0, 2.0, 3.0]);
 
       expect(
         () => index.search([1.0, 2.0], k: 1),
@@ -158,7 +159,7 @@ void main() {
 
       // Normalized vector
       final v = [1 / sqrt(3), 1 / sqrt(3), 1 / sqrt(3)];
-      index.insert(1, v);
+      index.insert('uuid-1', v);
 
       final results = index.search(v, k: 1);
 
@@ -172,7 +173,7 @@ void main() {
         seed: 42,
       );
 
-      index.insert(1, [1.0, 0.0, 0.0]);
+      index.insert('uuid-1', [1.0, 0.0, 0.0]);
 
       final results = index.search([-1.0, 0.0, 0.0], k: 1);
 
@@ -187,9 +188,9 @@ void main() {
       );
 
       // Similar direction, different magnitudes
-      index.insert(1, [1.0, 1.0, 0.0]);
-      index.insert(2, [2.0, 2.0, 0.0]); // Same direction as 1
-      index.insert(3, [-1.0, -1.0, 0.0]); // Opposite to 1
+      index.insert('id-1', [1.0, 1.0, 0.0]);
+      index.insert('id-2', [2.0, 2.0, 0.0]); // Same direction as 1
+      index.insert('id-3', [-1.0, -1.0, 0.0]); // Opposite to 1
 
       final results = index.search([1.0, 1.0, 0.0], k: 3);
 
@@ -204,19 +205,19 @@ void main() {
 
     test('deletes existing vector', () {
       final index = HnswIndex(dimensions: 3, seed: 42);
-      index.insert(1, [1.0, 2.0, 3.0]);
+      index.insert('uuid-1', [1.0, 2.0, 3.0]);
 
-      final deleted = index.delete(1);
+      final deleted = index.delete('uuid-1');
 
       expect(deleted, true);
       expect(index.size, 0);
-      expect(index.contains(1), false);
+      expect(index.contains('uuid-1'), false);
     });
 
     test('returns false when deleting non-existent vector', () {
       final index = HnswIndex(dimensions: 3);
 
-      final deleted = index.delete(999);
+      final deleted = index.delete('non-existent-uuid');
 
       expect(deleted, false);
     });
@@ -228,16 +229,16 @@ void main() {
         seed: 42,
       );
 
-      index.insert(1, [1.0, 0.0]);
-      index.insert(2, [2.0, 0.0]);
-      index.insert(3, [3.0, 0.0]);
+      index.insert('id-1', [1.0, 0.0]);
+      index.insert('id-2', [2.0, 0.0]);
+      index.insert('id-3', [3.0, 0.0]);
 
-      index.delete(2);
+      index.delete('id-2');
 
       final results = index.search([0.0, 0.0], k: 3);
 
       expect(results.length, 2);
-      expect(results.map((r) => r.id), isNot(contains(2)));
+      expect(results.map((r) => r.id), isNot(contains('id-2')));
     });
 
     // ============ Serialization ============
@@ -260,9 +261,9 @@ void main() {
         seed: 42,
       );
 
-      index.insert(1, [1.0, 2.0, 3.0]);
-      index.insert(2, [4.0, 5.0, 6.0]);
-      index.insert(3, [7.0, 8.0, 9.0]);
+      index.insert('uuid-1', [1.0, 2.0, 3.0]);
+      index.insert('uuid-2', [4.0, 5.0, 6.0]);
+      index.insert('uuid-3', [7.0, 8.0, 9.0]);
 
       final bytes = index.toBytes();
       final restored = HnswIndex.fromBytes(bytes);
@@ -271,10 +272,10 @@ void main() {
       expect(restored.maxConnections, 8);
       expect(restored.metric, DistanceMetric.euclidean);
       expect(restored.size, 3);
-      expect(restored.contains(1), true);
-      expect(restored.contains(2), true);
-      expect(restored.contains(3), true);
-      expect(restored.getVector(1), [1.0, 2.0, 3.0]);
+      expect(restored.contains('uuid-1'), true);
+      expect(restored.contains('uuid-2'), true);
+      expect(restored.contains('uuid-3'), true);
+      expect(restored.getVector('uuid-1'), [1.0, 2.0, 3.0]);
     });
 
     test('search works on deserialized index', () {
@@ -284,9 +285,9 @@ void main() {
         seed: 42,
       );
 
-      index.insert(1, [1.0, 0.0]);
-      index.insert(2, [2.0, 0.0]);
-      index.insert(3, [3.0, 0.0]);
+      index.insert('id-1', [1.0, 0.0]);
+      index.insert('id-2', [2.0, 0.0]);
+      index.insert('id-3', [3.0, 0.0]);
 
       final bytes = index.toBytes();
       final restored = HnswIndex.fromBytes(bytes);
@@ -294,7 +295,7 @@ void main() {
       final results = restored.search([0.0, 0.0], k: 3);
 
       expect(results.length, 3);
-      expect(results[0].id, 1); // Closest to origin
+      expect(results[0].id, 'id-1'); // Closest to origin
     });
 
     // ============ Approximate Recall ============
@@ -311,22 +312,23 @@ void main() {
       );
 
       // Insert random vectors
-      final vectors = <int, List<double>>{};
+      final vectors = <String, List<double>>{};
       for (var i = 0; i < 500; i++) {
         final v = List.generate(32, (_) => random.nextDouble());
-        vectors[i] = v;
-        index.insert(i, v);
+        final id = 'id-$i';
+        vectors[id] = v;
+        index.insert(id, v);
       }
 
       // Pick a random query
-      const queryId = 250;
+      const queryId = 'id-250';
       final query = vectors[queryId]!;
 
       // Get HNSW results
       final hnswResults = index.search(query, k: 10, ef: 100);
 
       // Compute true nearest neighbors (brute force)
-      final scored = <MapEntry<int, double>>[];
+      final scored = <MapEntry<String, double>>[];
       for (final entry in vectors.entries) {
         var dist = 0.0;
         for (var i = 0; i < 32; i++) {
@@ -352,9 +354,9 @@ void main() {
     test('getStats returns correct information', () {
       final index = HnswIndex(dimensions: 3, seed: 42);
 
-      index.insert(1, [1.0, 0.0, 0.0]);
-      index.insert(2, [0.0, 1.0, 0.0]);
-      index.insert(3, [0.0, 0.0, 1.0]);
+      index.insert('uuid-1', [1.0, 0.0, 0.0]);
+      index.insert('uuid-2', [0.0, 1.0, 0.0]);
+      index.insert('uuid-3', [0.0, 0.0, 1.0]);
 
       final stats = index.getStats();
 
@@ -367,18 +369,18 @@ void main() {
 
     test('handles single vector index', () {
       final index = HnswIndex(dimensions: 3, seed: 42);
-      index.insert(1, [1.0, 2.0, 3.0]);
+      index.insert('uuid-1', [1.0, 2.0, 3.0]);
 
       final results = index.search([1.0, 2.0, 3.0], k: 10);
 
       expect(results.length, 1);
-      expect(results[0].id, 1);
+      expect(results[0].id, 'uuid-1');
     });
 
     test('handles zero vector', () {
       final index = HnswIndex(dimensions: 3, seed: 42);
-      index.insert(1, [0.0, 0.0, 0.0]);
-      index.insert(2, [1.0, 1.0, 1.0]);
+      index.insert('uuid-1', [0.0, 0.0, 0.0]);
+      index.insert('uuid-2', [1.0, 1.0, 1.0]);
 
       final results = index.search([1.0, 1.0, 1.0], k: 2);
 
@@ -391,7 +393,7 @@ void main() {
 
       for (var i = 0; i < 1000; i++) {
         final v = List.generate(16, (_) => random.nextDouble());
-        index.insert(i, v);
+        index.insert('id-$i', v);
       }
 
       expect(index.size, 1000);
@@ -400,6 +402,41 @@ void main() {
       final results = index.search(query, k: 10);
 
       expect(results.length, 10);
+    });
+
+    // ============ UUID-specific tests ============
+
+    test('handles realistic UUID format', () {
+      final index = HnswIndex(dimensions: 3, seed: 42);
+
+      // Real UUID v4 format
+      index.insert('550e8400-e29b-41d4-a716-446655440000', [1.0, 0.0, 0.0]);
+      index.insert('6ba7b810-9dad-11d1-80b4-00c04fd430c8', [0.0, 1.0, 0.0]);
+      index.insert('f47ac10b-58cc-4372-a567-0e02b2c3d479', [0.0, 0.0, 1.0]);
+
+      expect(index.size, 3);
+
+      final results = index.search([1.0, 0.0, 0.0], k: 3);
+      expect(results.length, 3);
+      expect(results[0].id, '550e8400-e29b-41d4-a716-446655440000');
+    });
+
+    test('serializes and deserializes UUIDs correctly', () {
+      final index = HnswIndex(dimensions: 3, seed: 42);
+
+      final uuid1 = '550e8400-e29b-41d4-a716-446655440000';
+      final uuid2 = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
+
+      index.insert(uuid1, [1.0, 2.0, 3.0]);
+      index.insert(uuid2, [4.0, 5.0, 6.0]);
+
+      final bytes = index.toBytes();
+      final restored = HnswIndex.fromBytes(bytes);
+
+      expect(restored.contains(uuid1), isTrue);
+      expect(restored.contains(uuid2), isTrue);
+      expect(restored.getVector(uuid1), [1.0, 2.0, 3.0]);
+      expect(restored.getVector(uuid2), [4.0, 5.0, 6.0]);
     });
   });
 }

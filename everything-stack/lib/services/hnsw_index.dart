@@ -9,6 +9,7 @@
 /// - O(log n) search complexity vs O(n) brute force
 /// - Works on ALL platforms including web (no FFI required)
 /// - Offline-capable vector search
+/// - Cross-type entity identification via String UUIDs
 ///
 /// ## Algorithm reference
 /// Based on: "Efficient and robust approximate nearest neighbor search
@@ -19,13 +20,13 @@
 /// ```dart
 /// final index = HnswIndex(dimensions: 384);
 ///
-/// // Insert vectors
-/// await index.insert(1, embedding1);
-/// await index.insert(2, embedding2);
+/// // Insert vectors with UUID keys
+/// await index.insert('uuid-123', embedding1);
+/// await index.insert('uuid-456', embedding2);
 ///
 /// // Search for k nearest neighbors
 /// final results = index.search(queryVector, k: 5);
-/// // Returns [(id: 2, distance: 0.1), (id: 1, distance: 0.3), ...]
+/// // Returns [(id: 'uuid-456', distance: 0.1), (id: 'uuid-123', distance: 0.3), ...]
 ///
 /// // Serialize for persistence
 /// final bytes = index.toBytes();
@@ -43,12 +44,13 @@
 /// - Memory: O(n * M) for connections + O(n * d) for vectors
 /// - Suitable for up to ~100k vectors in pure Dart
 
+import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
 /// Result of a nearest neighbor search
 class SearchResult {
-  final int id;
+  final String id;
   final double distance;
 
   SearchResult(this.id, this.distance);
@@ -68,23 +70,23 @@ enum DistanceMetric {
 
 /// A node in the HNSW graph
 class _HnswNode {
-  final int id;
+  final String id;
   final List<double> vector;
   final int maxLayer;
 
   /// Neighbors at each layer. Index 0 = bottom layer.
-  final List<Set<int>> neighbors;
+  final List<Set<String>> neighbors;
 
   _HnswNode({
     required this.id,
     required this.vector,
     required this.maxLayer,
-  }) : neighbors = List.generate(maxLayer + 1, (_) => <int>{});
+  }) : neighbors = List.generate(maxLayer + 1, (_) => <String>{});
 }
 
 /// Priority queue entry for search
 class _Candidate implements Comparable<_Candidate> {
-  final int id;
+  final String id;
   final double distance;
 
   _Candidate(this.id, this.distance);
@@ -116,11 +118,11 @@ class HnswIndex {
   /// Level generation multiplier (1/ln(M))
   final double _levelMult;
 
-  /// All nodes indexed by ID
-  final Map<int, _HnswNode> _nodes = {};
+  /// All nodes indexed by ID (String UUID)
+  final Map<String, _HnswNode> _nodes = {};
 
   /// Entry point node ID (node at highest layer)
-  int? _entryPointId;
+  String? _entryPointId;
 
   /// Current max layer in the index
   int _maxLevel = -1;
@@ -153,13 +155,13 @@ class HnswIndex {
   /// Whether the index is empty
   bool get isEmpty => _nodes.isEmpty;
 
-  /// Insert a vector with the given ID
+  /// Insert a vector with the given ID (UUID string)
   ///
-  /// [id] - Unique identifier for this vector
+  /// [id] - Unique identifier for this vector (typically entity UUID)
   /// [vector] - The vector to insert (must have [dimensions] elements)
   ///
   /// Throws [ArgumentError] if vector dimensions don't match
-  void insert(int id, List<double> vector) {
+  void insert(String id, List<double> vector) {
     if (vector.length != dimensions) {
       throw ArgumentError(
         'Vector has ${vector.length} dimensions, expected $dimensions',
@@ -275,7 +277,7 @@ class HnswIndex {
   ///
   /// Note: This marks the node as deleted but doesn't repair graph connections.
   /// For best results, rebuild the index periodically if many deletions occur.
-  bool delete(int id) {
+  bool delete(String id) {
     final node = _nodes.remove(id);
     if (node == null) return false;
 
@@ -303,10 +305,10 @@ class HnswIndex {
   }
 
   /// Check if a vector with the given ID exists
-  bool contains(int id) => _nodes.containsKey(id);
+  bool contains(String id) => _nodes.containsKey(id);
 
   /// Get the vector for a given ID
-  List<double>? getVector(int id) => _nodes[id]?.vector;
+  List<double>? getVector(String id) => _nodes[id]?.vector;
 
   /// Search a single layer using greedy algorithm
   ///
@@ -314,11 +316,11 @@ class HnswIndex {
   /// Returns candidates sorted by distance (closest first)
   List<_Candidate> _searchLayer(
     List<double> query,
-    int entryId,
+    String entryId,
     int ef,
     int layer,
   ) {
-    final visited = <int>{entryId};
+    final visited = <String>{entryId};
 
     // Results: the ef closest nodes found (we track furthest for pruning)
     // Using a list and sorting is simpler than managing heap invariants
@@ -475,19 +477,28 @@ class HnswIndex {
 
   /// Serialize the index to bytes for persistence
   ///
-  /// Format:
-  /// - Header: dimensions(4), maxConnections(4), metric(1), nodeCount(4), maxLevel(4), entryPointId(4)
-  /// - For each node: id(4), maxLayer(4), vector(dimensions*8), neighborCounts, neighborIds
+  /// Format (version 2 - String IDs):
+  /// - Header: version(1), dimensions(4), maxConnections(4), metric(1), nodeCount(4), maxLevel(4), entryPointIdLen(4), entryPointId(utf8)
+  /// - For each node: idLen(4), id(utf8), maxLayer(4), vector(dimensions*8), neighborCounts, neighborIds
   Uint8List toBytes() {
     // Calculate size
-    var size = 4 + 4 + 1 + 4 + 4 + 4; // Header
+    var size = 1 + 4 + 4 + 1 + 4 + 4 + 4; // Header (without entry point id)
+
+    // Entry point ID
+    final entryPointBytes = _entryPointId != null ? utf8.encode(_entryPointId!) : <int>[];
+    size += entryPointBytes.length;
 
     for (final node in _nodes.values) {
-      size += 4 + 4; // id, maxLayer
+      final idBytes = utf8.encode(node.id);
+      size += 4 + idBytes.length; // id length + id
+      size += 4; // maxLayer
       size += dimensions * 8; // vector (doubles)
       for (var l = 0; l <= node.maxLayer; l++) {
         size += 4; // neighbor count
-        size += node.neighbors[l].length * 4; // neighbor ids
+        for (final neighborId in node.neighbors[l]) {
+          final neighborBytes = utf8.encode(neighborId);
+          size += 4 + neighborBytes.length; // neighbor id length + id
+        }
       }
     }
 
@@ -495,6 +506,8 @@ class HnswIndex {
     var offset = 0;
 
     // Write header
+    buffer.setUint8(offset, 2); // Version 2 (String IDs)
+    offset += 1;
     buffer.setInt32(offset, dimensions, Endian.little);
     offset += 4;
     buffer.setInt32(offset, maxConnections, Endian.little);
@@ -505,13 +518,26 @@ class HnswIndex {
     offset += 4;
     buffer.setInt32(offset, _maxLevel, Endian.little);
     offset += 4;
-    buffer.setInt32(offset, _entryPointId ?? -1, Endian.little);
+
+    // Write entry point ID
+    buffer.setInt32(offset, entryPointBytes.length, Endian.little);
     offset += 4;
+    for (final byte in entryPointBytes) {
+      buffer.setUint8(offset, byte);
+      offset += 1;
+    }
 
     // Write nodes
     for (final node in _nodes.values) {
-      buffer.setInt32(offset, node.id, Endian.little);
+      // Write node ID
+      final idBytes = utf8.encode(node.id);
+      buffer.setInt32(offset, idBytes.length, Endian.little);
       offset += 4;
+      for (final byte in idBytes) {
+        buffer.setUint8(offset, byte);
+        offset += 1;
+      }
+
       buffer.setInt32(offset, node.maxLayer, Endian.little);
       offset += 4;
 
@@ -526,8 +552,13 @@ class HnswIndex {
         buffer.setInt32(offset, node.neighbors[l].length, Endian.little);
         offset += 4;
         for (final neighborId in node.neighbors[l]) {
-          buffer.setInt32(offset, neighborId, Endian.little);
+          final neighborBytes = utf8.encode(neighborId);
+          buffer.setInt32(offset, neighborBytes.length, Endian.little);
           offset += 4;
+          for (final byte in neighborBytes) {
+            buffer.setUint8(offset, byte);
+            offset += 1;
+          }
         }
       }
     }
@@ -548,6 +579,14 @@ class HnswIndex {
     final buffer = ByteData.sublistView(bytes);
     var offset = 0;
 
+    // Read version
+    final version = buffer.getUint8(offset);
+    offset += 1;
+
+    if (version != 2) {
+      throw ArgumentError('Unsupported index version: $version (expected 2)');
+    }
+
     // Read header
     final dimensions = buffer.getInt32(offset, Endian.little);
     offset += 4;
@@ -559,8 +598,16 @@ class HnswIndex {
     offset += 4;
     final maxLevel = buffer.getInt32(offset, Endian.little);
     offset += 4;
-    final entryPointId = buffer.getInt32(offset, Endian.little);
+
+    // Read entry point ID
+    final entryPointIdLen = buffer.getInt32(offset, Endian.little);
     offset += 4;
+    String? entryPointId;
+    if (entryPointIdLen > 0) {
+      final entryPointBytes = bytes.sublist(offset, offset + entryPointIdLen);
+      entryPointId = utf8.decode(entryPointBytes);
+      offset += entryPointIdLen;
+    }
 
     final index = HnswIndex(
       dimensions: dimensions,
@@ -571,12 +618,17 @@ class HnswIndex {
     );
 
     index._maxLevel = maxLevel;
-    index._entryPointId = entryPointId == -1 ? null : entryPointId;
+    index._entryPointId = entryPointId;
 
     // Read nodes
     for (var i = 0; i < nodeCount; i++) {
-      final id = buffer.getInt32(offset, Endian.little);
+      // Read node ID
+      final idLen = buffer.getInt32(offset, Endian.little);
       offset += 4;
+      final idBytes = bytes.sublist(offset, offset + idLen);
+      final id = utf8.decode(idBytes);
+      offset += idLen;
+
       final nodeMaxLayer = buffer.getInt32(offset, Endian.little);
       offset += 4;
 
@@ -598,8 +650,11 @@ class HnswIndex {
         final neighborCount = buffer.getInt32(offset, Endian.little);
         offset += 4;
         for (var n = 0; n < neighborCount; n++) {
-          final neighborId = buffer.getInt32(offset, Endian.little);
+          final neighborIdLen = buffer.getInt32(offset, Endian.little);
           offset += 4;
+          final neighborIdBytes = bytes.sublist(offset, offset + neighborIdLen);
+          final neighborId = utf8.decode(neighborIdBytes);
+          offset += neighborIdLen;
           node.neighbors[l].add(neighborId);
         }
       }
