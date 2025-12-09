@@ -47,9 +47,23 @@ const handleBash = (toolInput) => {
 	const cmd = toolInput.command || '';
 	log(`Bash command: ${cmd}`);
 
+	// Allow git rm --cached (untracking files, not deleting them)
+	// This is safe - it only removes files from git's index, not the filesystem
+	if (/git\s+rm\s+--cached/.test(cmd)) {
+		log('Allowing git rm --cached (safe untrack operation)');
+		return respond('allow', 'Auto-approved git untrack operation');
+	}
+
 	// Block dangerous delete commands on sensitive files
-	if (/rm |del /.test(cmd) && isBlockedFile(cmd)) {
-		return respond('deny', 'Blocked: Cannot delete sensitive files');
+	// Extract file paths from the command and check each one
+	if (/\brm\b|\bdel\b/.test(cmd)) {
+		// Check if any blocked file pattern matches in the command
+		for (const pattern of BLOCKED_FILES) {
+			if (pattern.test(cmd)) {
+				log(`Blocked: delete command targets sensitive file matching ${pattern}`);
+				return respond('deny', 'Blocked: Cannot delete sensitive files');
+			}
+		}
 	}
 
 	return respond('allow', 'Auto-approved bash command');
