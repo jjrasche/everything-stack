@@ -1,0 +1,47 @@
+name: everything_stack_template
+description: Everything Stack template - clone and customize for your project.
+version: 0.1.0
+
+# Update these when initializing your project:
+# name: your_project_name
+# description: Your project description
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.24.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Local database (offline-first)
+  isar: ^3.1.0
+  isar_flutter_libs: ^3.1.0
+  
+  # Cloud database (sync)
+  supabase_flutter: ^2.3.0
+  
+  # State management
+  flutter_riverpod: ^2.4.0
+  
+  # Utilities
+  uuid: ^4.2.0
+  path_provider: ^2.1.0
+  connectivity_plus: ^5.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  
+  # Code generation for Isar
+  isar_generator: ^3.1.0
+  build_runner: ^2.4.0
+  
+  # Linting
+  flutter_lints: ^3.0.0
+  
+  # Testing
+  mockito: ^5.4.0
+
+flutter:
+  uses-material-design: true

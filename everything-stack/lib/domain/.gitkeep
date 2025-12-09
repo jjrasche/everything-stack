@@ -1,0 +1,16 @@
+# Domain Entities
+
+Add your domain entities here. Example:
+
+```dart
+@Collection()
+class Tool extends BaseEntity with Embeddable, Ownable, Locatable {
+  String name;
+  String description;
+  
+  @override
+  String toEmbeddingInput() => '$name $description';
+}
+```
+
+Delete this file when you add your first entity.
