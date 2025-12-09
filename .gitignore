@@ -1,0 +1,4 @@
+# Claude Code local files
+.claude/hook-debug.log
+.claude/tool-use.log
+.claude/settings.local.json
