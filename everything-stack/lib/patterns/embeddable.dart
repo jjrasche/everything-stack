@@ -12,7 +12,7 @@
 /// 
 /// ## Schema addition
 /// ```dart
-/// List<double>? embedding; // 384 floats for all-MiniLM-L6-v2
+/// List<double>? embedding; // 384 floats for Gemini text-embedding-004
 /// ```
 /// 
 /// ## Usage
@@ -57,7 +57,7 @@ import '../services/embedding_service.dart';
 
 mixin Embeddable {
   /// Vector embedding for semantic search
-  /// 384 dimensions for all-MiniLM-L6-v2, adjust for other models
+  /// 384 dimensions for Gemini text-embedding-004
   List<double>? embedding;
   
   /// Override to define what text represents this entity semantically.
@@ -79,7 +79,7 @@ mixin Embeddable {
       embedding = null;
       return;
     }
-    embedding = await EmbeddingService.generate(text);
+    embedding = await EmbeddingService.instance.generate(text);
   }
   
   /// Check if embedding needs regeneration.

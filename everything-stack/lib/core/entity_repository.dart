@@ -78,7 +78,7 @@ abstract class EntityRepository<T extends BaseEntity> {
     double minSimilarity = 0.5,
   }) async {
     // Generate query embedding
-    final queryEmbedding = await EmbeddingService.generate(query);
+    final queryEmbedding = await EmbeddingService.instance.generate(query);
     
     // Get all entities with embeddings
     final candidates = await collection.where().findAll();
