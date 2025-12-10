@@ -1,158 +1,105 @@
-# CLAUDE.md
+# Claude Code Configuration
 
-## Before Anything
+## Project Type
+Everything Stack template - Dart/Flutter cross-platform application
 
-Read and understand:
-1. VISION.md - why this exists
-2. ARCHITECTURE.md - technical constraints and infrastructure requirements
+## Foundation Documents
+- Vision: `docs/templates/VISION_TEMPLATE.md` (complete before building)
+- Architecture: `docs/templates/ARCHITECTURE_TEMPLATE.md` (complete before building)
+- Patterns: `lib/patterns/` (read structured comments before using)
+- ASD Workflow: `docs/asd/WORKFLOW.md` (follow for all features)
 
-Then propose ROADMAP.md for human approval. Do not proceed until approved.
+## Project Initialization
 
-## Critical Rule
+When instructed to initialize this template for a new project:
 
-Infrastructure (CI/CD/deploy pipeline) must exist before feature development. Without it, the governance loop cannot run. The roadmap must begin with infrastructure setup.
+1. **Delete example code:**
+   - Remove `lib/example/` directory
+   - Remove `test/scenarios/example_scenarios.dart`
 
-## Workflow Per Phase
+2. **Update project identity:**
+   - Update `pubspec.yaml`: name, description, version
+   - Replace this README.md with project-specific content
+   - Update `.github/workflows/ci.yml` if project name changed
 
-### Step 1: Check Infrastructure
+3. **Preserve infrastructure:**
+   - Keep `lib/core/`, `lib/patterns/`, `lib/services/`
+   - Keep `test/harness/`
+   - Keep `docs/asd/`, `docs/testing/`
 
-Before starting any feature phase, verify:
-- [ ] Git remote configured?
-- [ ] CI pipeline exists and runs?
-- [ ] CD pipeline exists and deploys?
-- [ ] Credentials configured (.env)?
+4. **Create domain structure:**
+   - Add entities to `lib/domain/`
+   - Add scenarios to `test/scenarios/`
 
-If any are missing, infrastructure phase must complete first.
+## Development Workflow
 
-### Step 2: Draft Testable Scenarios
+Follow ASD workflow for all features:
 
-What you draft depends on the phase type:
+1. **Plan against foundation** - Read VISION.md and ARCHITECTURE.md before implementing
+2. **Write BDD scenario** - Gherkin format in `test/scenarios/`
+3. **Implement tests** - Parameterized tests using harness
+4. **Implement feature** - Until tests pass
+5. **Commit and push** - CI validates cross-platform
 
-| Phase Type | Draft Format |
-|------------|--------------|
-| Infrastructure | Checklist of what must exist |
-| Data Layer | Integration test descriptions |
-| UI | BDD Gherkin scenarios |
+## Pattern Usage
 
-Output: "Phase [name] scenarios:" followed by scenarios.
+Before using any pattern from `lib/patterns/`:
+1. Read the structured comment block at top of file
+2. Understand what it enables
+3. Understand testing approach
+4. Check integration notes
 
-**STOP. Wait for human to reply "approved."**
+Patterns are opt-in. Add `with PatternName` to entity only if needed.
 
-### Step 3: Implement
+## Testing Requirements
 
-Build until tests pass. Run tests locally.
+Testing follows a 4-layer approach. All layers run in CI. All must pass before merge.
 
-- Infrastructure phases: Manual verification that pipelines work
-- Data layer phases: `flutter test test/integration/`
-- UI phases: `flutter test test/e2e/`
+**Layer 1: Unit Tests (test/services/)**
+- Service interfaces, mocks, algorithms
+- Every service needs mock + real stub implementation
+- Run on Dart VM
 
-### Step 4: Commit
+**Layer 2: Integration Tests (test/integration/)**
+- Cross-service workflows
+- How services work together
+- Still use mocks, run on Dart VM
+- Only when unit tests don't cover the interaction
 
-Commit to feature branch: `phase-X-description`
+**Layer 3: BDD Scenarios (test/scenarios/)**
+- User-facing behavior only
+- Gherkin format (Given/When/Then)
+- Parameterized test data
+- Only for features with UI or user interactions
 
-Output: "Tests passing. Committed to branch [name]. Commit: [hash]"
+**Layer 4: Platform Verification (integration_test/)**
+- Platform-specific implementations on actual platforms
+- Android emulator, iOS simulator, Chrome browser, desktop
+- NOT BDD - technical validation only
+- Minimal tests - just prove the abstraction works
 
-**STOP. Wait for human to verify.**
+**Read:** `docs/testing/TESTING_APPROACH.md` (formerly BDD_APPROACH.md) for complete guidance and examples
 
-### Step 5: Human Verification
+## Permissions
 
-Human will verify based on phase type:
-- Infrastructure phases: Trigger deploy, confirm app loads
-- Data layer phases: Review CI results, confirm tests pass
-- UI phases: Test on device/browser, confirm behavior matches scenarios
+**Run without asking:**
+- Read operations (file viewing, grep, find)
+- Test commands (`flutter test`)
+- Build commands (`flutter build`)
+- Lint and format
+- Git commit, push, branch, PR creation
 
-Only proceed after human confirms.
+**Ask before:**
+- Deleting files outside `lib/domain/` and `test/scenarios/`
+- Modifying pattern files in `lib/patterns/`
+- Modifying base infrastructure in `lib/core/`
+- Changing CI/CD configuration
+- Adding new dependencies to pubspec.yaml
 
-## Mandatory Checkpoints
+## Architecture Constraints
 
-Three STOPs per phase. Do not proceed without explicit human approval:
-
-1. **After drafting scenarios** → STOP → Wait for "approved"
-2. **After tests pass** → STOP → Wait for human to verify
-3. **After human confirms** → Proceed to next phase
-
-If unclear, ask. Default is STOP.
-
-## Test Types
-
-Match test type to what exists:
-
-| What Exists | Test Type |
-|-------------|-----------|
-| Infrastructure only | Pipeline success is the test |
-| Data layer (entities, repositories) | Integration tests |
-| UI (screens, interactions) | E2E BDD scenarios |
-
-Do not write E2E UI scenarios for phases without UI. Do not pretend to test what doesn't exist.
-
-## CI/CD Pipeline (Explicit)
-
-**Tests run remotely on GitHub Actions, not locally.** The governance loop is:
-
-1. Push to feature branch
-2. GitHub Actions runs `flutter test` on Linux runner
-3. Tests must pass before merge to main
-4. Merge to main triggers deployment
-
-**Deployment targets:**
-- **Web**: Firebase Hosting
-- **iOS**: Firebase App Distribution (TestFlight later)
-- **Android**: Firebase App Distribution (Play Store later)
-
-The CI workflow (`.github/workflows/ci.yml`) must:
-- Trigger on push/PR to any branch
-- Run `flutter test`
-- Report results to PR
-
-The CD workflow (`.github/workflows/cd.yml`) must:
-- Trigger on merge to main
-- Build for web, iOS, Android
-- Deploy to Firebase
-
-## Code Standards
-
-- Dart/Flutter idioms
-- Single codebase, platform-specific code in thin adapters only
-- All entities extend BaseEntity
-- Use mixins for opt-in patterns
-- Repository pattern for all data access
-- Files as bytes, stream all files (not just large ones)
-
-## Commits
-
-- One logical change per commit
-- Format: `feat|fix|refactor|test|docs|infra: description`
-- Reference phase in commit body
-
-## When Stuck
-
-- Re-read ARCHITECTURE.md
-- Ask for clarification
-- Do not add dependencies without approval
-- Do not change architecture without approval
-
-## Infrastructure Dependencies
-
-Some phases require external setup that Claude cannot do:
-
-| Requirement | Who Does It | When Needed |
-|-------------|-------------|-------------|
-| GitHub repo creation | Human | Phase 0 |
-| Supabase project creation | Human | Phase 0 |
-| Firebase project creation | Human | Phase 0 |
-| API keys in .env | Human | Phase 0 |
-| App Store / Play Store setup | Human | Production |
-
-If a phase needs something Claude cannot create, output what's needed and STOP.
-
-
-## Development Order (NON-NEGOTIABLE)
-
-For ANY new code:
-1. Write test file FIRST
-2. Run tests - verify they FAIL (red)
-3. Write implementation
-4. Run tests - verify they PASS (green)
-5. Refactor if needed
-
-If you find yourself writing implementation before tests, STOP and correct course
+- All entities extend `BaseEntity`
+- All repositories extend `EntityRepository`
+- File storage uses bytes-in-database pattern (no filesystem)
+- Offline-first with Isar, sync via Supabase
+- Cross-platform code only - no platform-specific logic outside adapters
