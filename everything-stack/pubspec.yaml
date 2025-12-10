@@ -29,6 +29,7 @@ dependencies:
   path_provider: ^2.1.0
   connectivity_plus: ^5.0.0
   geolocator: ^10.1.0
+  rfc_6902: ^0.3.1
 
   # File input and storage
   image_picker: ^1.1.0

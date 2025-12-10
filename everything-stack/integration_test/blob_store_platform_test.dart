@@ -21,14 +21,13 @@ void main() {
   group('BlobStore Platform Implementation', () {
     late BlobStore blobStore;
 
-    // Platform detection
-    bool get isWeb => identical(0, 0.0) == false; // Simple web check
-    bool get isMobile =>
-        !isWeb; // Mock check - real implementation would check platform
+    // Platform detection helpers
+    bool isWeb() => identical(0, 0.0) == false; // Simple web check
+    bool isMobile() => !isWeb(); // Mock check - real implementation would check platform
 
     setUp(() {
       // Use appropriate implementation based on platform
-      if (isWeb) {
+      if (isWeb()) {
         // Would be: blobStore = IndexedDBBlobStore();
         // For now, use mock (real implementation not yet complete)
         blobStore = MockBlobStore();

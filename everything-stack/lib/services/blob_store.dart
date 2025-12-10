@@ -43,6 +43,7 @@
 
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 // ============ Abstract Interface ============
 
@@ -234,5 +235,197 @@ class IndexedDBBlobStore extends BlobStore {
   @override
   void dispose() {
     // Close IndexedDB connection
+  }
+}
+
+// ============ Supabase Storage Implementation ============
+
+/// Supabase Storage-based blob store for cloud sync.
+/// Stores blobs in Supabase Storage bucket, metadata in blob_metadata table.
+class SupabaseBlobStore extends BlobStore {
+  final String supabaseUrl;
+  final String supabaseAnonKey;
+  final String bucketName;
+
+  SupabaseClient? _client;
+  bool _isReady = false;
+
+  /// Local cache for contains/size checks
+  final Map<String, int> _metadataCache = {};
+
+  SupabaseBlobStore({
+    required this.supabaseUrl,
+    required this.supabaseAnonKey,
+    this.bucketName = 'blobs',
+  });
+
+  @override
+  Future<void> initialize() async {
+    if (_isReady) return;
+
+    _client = SupabaseClient(supabaseUrl, supabaseAnonKey);
+    _isReady = true;
+  }
+
+  @override
+  Future<void> save(String id, Uint8List bytes) async {
+    // Local save delegates to uploadRemote for this implementation
+    await uploadRemote(id, bytes);
+  }
+
+  @override
+  Future<Uint8List?> load(String id) async {
+    // Local load delegates to downloadRemote for this implementation
+    return await downloadRemote(id);
+  }
+
+  @override
+  Future<bool> delete(String id) async {
+    return await deleteRemote(id);
+  }
+
+  @override
+  Stream<Uint8List> streamRead(String id, {int chunkSize = 64 * 1024}) async* {
+    // For Supabase, we download the whole file then stream chunks
+    final bytes = await downloadRemote(id);
+    if (bytes == null) return;
+
+    for (int i = 0; i < bytes.length; i += chunkSize) {
+      final end = (i + chunkSize).clamp(0, bytes.length);
+      yield bytes.sublist(i, end);
+    }
+  }
+
+  @override
+  bool contains(String id) {
+    return _metadataCache.containsKey(id);
+  }
+
+  @override
+  int size(String id) {
+    return _metadataCache[id] ?? -1;
+  }
+
+  @override
+  void dispose() {
+    _client?.dispose();
+    _client = null;
+    _isReady = false;
+    _metadataCache.clear();
+  }
+
+  // ============ Remote operations for sync ============
+
+  /// Upload blob to Supabase Storage.
+  /// Returns true if upload succeeded.
+  Future<bool> uploadRemote(String id, Uint8List bytes) async {
+    if (!_isReady) await initialize();
+
+    try {
+      final storagePath = 'blobs/$id';
+
+      // Upload to storage
+      await _client!.storage.from(bucketName).uploadBinary(
+        storagePath,
+        bytes,
+        fileOptions: const FileOptions(upsert: true),
+      );
+
+      // Save metadata
+      await _client!.from('blob_metadata').upsert({
+        'uuid': id,
+        'storage_path': storagePath,
+        'size_bytes': bytes.length,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+
+      // Update local cache
+      _metadataCache[id] = bytes.length;
+
+      return true;
+    } catch (e) {
+      print('SupabaseBlobStore.uploadRemote error: $e');
+      return false;
+    }
+  }
+
+  /// Download blob from Supabase Storage.
+  /// Returns null if not found.
+  Future<Uint8List?> downloadRemote(String id) async {
+    if (!_isReady) await initialize();
+
+    try {
+      final storagePath = 'blobs/$id';
+
+      final bytes = await _client!.storage.from(bucketName).download(storagePath);
+
+      // Update cache
+      _metadataCache[id] = bytes.length;
+
+      return bytes;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Check if blob exists in Supabase Storage.
+  Future<bool> existsRemote(String id) async {
+    if (!_isReady) await initialize();
+
+    try {
+      final result = await _client!
+          .from('blob_metadata')
+          .select('uuid')
+          .eq('uuid', id)
+          .maybeSingle();
+
+      return result != null;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Delete blob from Supabase Storage and metadata table.
+  /// Returns true if deleted, false if not found or error.
+  Future<bool> deleteRemote(String id) async {
+    if (!_isReady) await initialize();
+
+    try {
+      final storagePath = 'blobs/$id';
+
+      // Delete from storage
+      await _client!.storage.from(bucketName).remove([storagePath]);
+
+      // Delete metadata
+      await _client!.from('blob_metadata').delete().eq('uuid', id);
+
+      // Update cache
+      _metadataCache.remove(id);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Get metadata for a blob from Supabase.
+  Future<Map<String, dynamic>?> getMetadata(String id) async {
+    if (!_isReady) await initialize();
+
+    try {
+      final result = await _client!
+          .from('blob_metadata')
+          .select()
+          .eq('uuid', id)
+          .maybeSingle();
+
+      if (result != null) {
+        _metadataCache[id] = result['size_bytes'] as int? ?? 0;
+      }
+
+      return result;
+    } catch (e) {
+      return null;
+    }
   }
 }

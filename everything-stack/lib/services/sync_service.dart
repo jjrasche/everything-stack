@@ -50,6 +50,7 @@
 /// Real implementation tested with actual Supabase instance.
 
 import 'dart:async';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 // ============ Enums and Data Types ============
 
@@ -235,60 +236,302 @@ class MockSyncService extends SyncService {
 
 // ============ Real Implementation ============
 
-/// Real Supabase sync service (stub)
+/// Real Supabase sync service.
+/// Syncs entities to Supabase PostgreSQL database.
+/// Uses last-write-wins conflict resolution via updated_at timestamp.
 class SupabaseSyncService extends SyncService {
-  // Will implement:
-  // - Supabase client connection
-  // - Push local changes to remote tables
-  // - Pull remote changes to local Isar
-  // - Blob uploads to Supabase Storage
-  // - Last-write-wins conflict detection
-  // - Offline-first queue management
+  final String supabaseUrl;
+  final String supabaseAnonKey;
+
+  SupabaseClient? _client;
+  bool _isReady = false;
+  bool _simulateOffline = false;
+
+  final Map<String, SyncStatus> _syncStatuses = {};
+  final _syncEventController = StreamController<SyncEvent>.broadcast();
+
+  /// Pending entities to sync (uuid → entity data)
+  final Map<String, Map<String, dynamic>> _pendingSync = {};
+
+  SupabaseSyncService({
+    required this.supabaseUrl,
+    required this.supabaseAnonKey,
+  });
 
   @override
-  bool get isReady => throw UnimplementedError(
-    'SupabaseSyncService requires supabase_flutter package setup',
-  );
+  bool get isReady => _isReady;
 
   @override
-  Stream<SyncEvent> get onSyncStatusChanged =>
-      throw UnimplementedError(
-        'SupabaseSyncService.onSyncStatusChanged not implemented',
-      );
+  Stream<SyncEvent> get onSyncStatusChanged => _syncEventController.stream;
+
+  /// Simulate offline mode for testing
+  void setSimulateOffline(bool offline) {
+    _simulateOffline = offline;
+  }
+
+  /// Helper to emit sync status change
+  void _emitStatus(String uuid, String type, SyncStatus status) {
+    _syncStatuses[uuid] = status;
+    _syncEventController.add(SyncEvent(
+      entityUuid: uuid,
+      entityType: type,
+      status: status,
+      timestamp: DateTime.now(),
+    ));
+  }
 
   @override
-  Future<int?> syncAll() => throw UnimplementedError(
-    'SupabaseSyncService.syncAll() - requires Supabase implementation',
-  );
+  Future<void> initialize() async {
+    if (_isReady) return;
+
+    _client = SupabaseClient(supabaseUrl, supabaseAnonKey);
+    _isReady = true;
+  }
 
   @override
-  Future<SyncStatus?> syncEntity(String uuid) => throw UnimplementedError(
-    'SupabaseSyncService.syncEntity() - requires Supabase implementation',
-  );
+  Future<int?> syncAll() async {
+    if (_simulateOffline) return null;
+    if (!_isReady) await initialize();
+
+    int synced = 0;
+    for (final uuid in _syncStatuses.keys.toList()) {
+      final status = _syncStatuses[uuid];
+      if (status == SyncStatus.local || status == SyncStatus.syncing) {
+        final result = await syncEntity(uuid);
+        if (result == SyncStatus.synced) synced++;
+      }
+    }
+    return synced;
+  }
 
   @override
-  Future<bool> syncBlobs() => throw UnimplementedError(
-    'SupabaseSyncService.syncBlobs() - requires Supabase implementation',
-  );
+  Future<SyncStatus?> syncEntity(String uuid) async {
+    if (_simulateOffline) return null;
+    if (!_isReady) await initialize();
+
+    final current = _syncStatuses[uuid] ?? SyncStatus.local;
+    if (current == SyncStatus.synced) return SyncStatus.synced;
+
+    _emitStatus(uuid, 'Entity', SyncStatus.syncing);
+
+    try {
+      // Check if entity has pending data to push
+      final pending = _pendingSync[uuid];
+      if (pending != null) {
+        await pushEntity(
+          uuid: uuid,
+          type: pending['type'] as String,
+          data: pending['data'] as Map<String, dynamic>,
+          updatedAt: pending['updatedAt'] as DateTime?,
+        );
+        _pendingSync.remove(uuid);
+      }
+
+      _emitStatus(uuid, 'Entity', SyncStatus.synced);
+      return SyncStatus.synced;
+    } catch (e) {
+      _emitStatus(uuid, 'Entity', SyncStatus.local);
+      return SyncStatus.local;
+    }
+  }
 
   @override
-  SyncStatus getSyncStatus(String uuid) => throw UnimplementedError(
-    'SupabaseSyncService.getSyncStatus() - requires Supabase implementation',
-  );
+  Future<bool> syncBlobs() async {
+    if (_simulateOffline) return false;
+    // Blob sync is handled by SupabaseBlobStore
+    return true;
+  }
 
   @override
-  Future<void> resolveConflict(String uuid, {required bool keepLocal}) =>
-      throw UnimplementedError(
-        'SupabaseSyncService.resolveConflict() - requires Supabase implementation',
-      );
+  SyncStatus getSyncStatus(String uuid) {
+    return _syncStatuses[uuid] ?? SyncStatus.local;
+  }
 
   @override
-  Future<void> initialize() => throw UnimplementedError(
-    'SupabaseSyncService.initialize() - requires Supabase implementation',
-  );
+  Future<void> resolveConflict(String uuid, {required bool keepLocal}) async {
+    if (!_isReady) await initialize();
+
+    final status = _syncStatuses[uuid];
+    if (status != SyncStatus.conflict) return;
+
+    if (keepLocal) {
+      // Force push local version
+      final pending = _pendingSync[uuid];
+      if (pending != null) {
+        await _forceUpsert(
+          uuid: uuid,
+          type: pending['type'] as String,
+          data: pending['data'] as Map<String, dynamic>,
+        );
+      }
+    }
+    // If not keepLocal, remote version is already current
+
+    _emitStatus(uuid, 'Entity', SyncStatus.synced);
+  }
 
   @override
   void dispose() {
-    // Cleanup
+    _syncEventController.close();
+    _client?.dispose();
+    _client = null;
+    _isReady = false;
+  }
+
+  // ============ Supabase-specific methods ============
+
+  /// Push entity to Supabase with last-write-wins conflict resolution.
+  /// Returns true if push succeeded.
+  Future<bool> pushEntity({
+    required String uuid,
+    required String type,
+    required Map<String, dynamic> data,
+    DateTime? updatedAt,
+  }) async {
+    if (!_isReady) await initialize();
+
+    final now = updatedAt ?? DateTime.now();
+
+    try {
+      // Check if entity exists and get its updated_at
+      final existing = await _client!
+          .from('entities')
+          .select('updated_at')
+          .eq('uuid', uuid)
+          .maybeSingle();
+
+      if (existing != null) {
+        // Entity exists - check if our version is newer
+        final remoteUpdatedAt = DateTime.parse(existing['updated_at'] as String);
+        if (now.isBefore(remoteUpdatedAt) || now.isAtSameMomentAs(remoteUpdatedAt)) {
+          // Remote is newer or same - don't overwrite
+          return true; // Still considered success
+        }
+
+        // Our version is newer - update
+        await _client!.from('entities').update({
+          'type': type,
+          'data': data,
+          'updated_at': now.toIso8601String(),
+        }).eq('uuid', uuid);
+      } else {
+        // Entity doesn't exist - insert
+        await _client!.from('entities').insert({
+          'uuid': uuid,
+          'type': type,
+          'data': data,
+          'created_at': now.toIso8601String(),
+          'updated_at': now.toIso8601String(),
+        });
+      }
+
+      _emitStatus(uuid, type, SyncStatus.synced);
+      return true;
+    } catch (e) {
+      // Log error for debugging
+      print('SupabaseSyncService.pushEntity error: $e');
+      _emitStatus(uuid, type, SyncStatus.local);
+      return false;
+    }
+  }
+
+  /// Force upsert without checking timestamps (for conflict resolution).
+  Future<void> _forceUpsert({
+    required String uuid,
+    required String type,
+    required Map<String, dynamic> data,
+  }) async {
+    final now = DateTime.now();
+
+    await _client!.from('entities').upsert({
+      'uuid': uuid,
+      'type': type,
+      'data': data,
+      'updated_at': now.toIso8601String(),
+    });
+  }
+
+  /// Fetch entity from Supabase by UUID.
+  /// Returns null if not found.
+  Future<Map<String, dynamic>?> fetchEntity(String uuid) async {
+    if (!_isReady) await initialize();
+
+    try {
+      final result = await _client!
+          .from('entities')
+          .select()
+          .eq('uuid', uuid)
+          .maybeSingle();
+
+      return result;
+    } catch (e) {
+      print('SupabaseSyncService.fetchEntity error: $e');
+      return null;
+    }
+  }
+
+  /// Fetch all entities modified since a given timestamp.
+  /// Useful for incremental sync.
+  Future<List<Map<String, dynamic>>> fetchEntitiesSince(DateTime since) async {
+    if (!_isReady) await initialize();
+
+    try {
+      final results = await _client!
+          .from('entities')
+          .select()
+          .gt('updated_at', since.toIso8601String())
+          .order('updated_at', ascending: true);
+
+      return List<Map<String, dynamic>>.from(results);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /// Fetch all entities of a specific type.
+  Future<List<Map<String, dynamic>>> fetchEntitiesByType(String type) async {
+    if (!_isReady) await initialize();
+
+    try {
+      final results = await _client!
+          .from('entities')
+          .select()
+          .eq('type', type)
+          .isFilter('deleted_at', null)
+          .order('updated_at', ascending: false);
+
+      return List<Map<String, dynamic>>.from(results);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /// Delete entity from Supabase.
+  /// Returns true if deleted, false if not found or error.
+  Future<bool> deleteRemote(String uuid) async {
+    if (!_isReady) await initialize();
+
+    try {
+      await _client!.from('entities').delete().eq('uuid', uuid);
+      _syncStatuses.remove(uuid);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Queue entity for sync (call syncEntity later to actually sync).
+  void queueForSync({
+    required String uuid,
+    required String type,
+    required Map<String, dynamic> data,
+    DateTime? updatedAt,
+  }) {
+    _pendingSync[uuid] = {
+      'type': type,
+      'data': data,
+      'updatedAt': updatedAt ?? DateTime.now(),
+    };
+    _syncStatuses[uuid] = SyncStatus.local;
   }
 }

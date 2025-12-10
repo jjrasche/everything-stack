@@ -8,6 +8,10 @@ build/
 
 # Isar
 *.g.dart
+*.isar
+*.isar-lck
+test_*.isar
+test_*.isar-lck
 
 # IDE
 .idea/

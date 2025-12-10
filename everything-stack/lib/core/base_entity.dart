@@ -51,6 +51,10 @@
 
 import 'package:isar/isar.dart';
 import 'package:uuid/uuid.dart';
+import '../services/sync_service.dart' show SyncStatus;
+
+// Re-export SyncStatus for convenience
+export '../services/sync_service.dart' show SyncStatus;
 
 /// UUID generator instance
 const _uuidGenerator = Uuid();
@@ -84,11 +88,4 @@ abstract class BaseEntity {
 
   /// Sync status: local, syncing, synced, conflict
   SyncStatus syncStatus = SyncStatus.local;
-}
-
-enum SyncStatus {
-  local, // Only exists locally
-  syncing, // Currently uploading
-  synced, // Matches remote
-  conflict, // Local and remote differ
 }
