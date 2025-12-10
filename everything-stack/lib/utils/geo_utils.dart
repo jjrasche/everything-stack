@@ -1,8 +1,9 @@
 /// Geospatial utilities shared across location-aware services and patterns.
 
-import 'dart:math';
+import 'package:geolocator/geolocator.dart' as geo;
 
-/// Calculate great-circle distance between two points using Haversine formula.
+/// Calculate great-circle distance between two geographic points.
+/// Uses geolocator's tested implementation internally.
 /// Returns distance in kilometers.
 double haversineDistance(
   double lat1,
@@ -10,21 +11,9 @@ double haversineDistance(
   double lat2,
   double lon2,
 ) {
-  const earthRadiusKm = 6371.0;
+  // Use geolocator's distanceBetween which returns meters
+  final distanceMeters = geo.Geolocator.distanceBetween(lat1, lon1, lat2, lon2);
 
-  final dLat = _toRadians(lat2 - lat1);
-  final dLon = _toRadians(lon2 - lon1);
-
-  final a = sin(dLat / 2) * sin(dLat / 2) +
-      cos(_toRadians(lat1)) *
-          cos(_toRadians(lat2)) *
-          sin(dLon / 2) *
-          sin(dLon / 2);
-
-  final c = 2 * atan2(sqrt(a), sqrt(1 - a));
-
-  return earthRadiusKm * c;
+  // Convert to kilometers for consistency with our API
+  return distanceMeters / 1000.0;
 }
-
-/// Convert degrees to radians
-double _toRadians(double degrees) => degrees * pi / 180;
