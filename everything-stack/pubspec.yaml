@@ -30,6 +30,12 @@ dependencies:
   connectivity_plus: ^5.0.0
   geolocator: ^10.1.0
 
+  # File input and storage
+  image_picker: ^1.1.0
+  record: ^5.1.0
+  file_picker: ^8.0.0
+  image: ^4.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
