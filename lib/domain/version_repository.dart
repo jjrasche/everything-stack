@@ -46,6 +46,7 @@ import 'package:isar/isar.dart';
 import 'package:rfc_6902/rfc_6902.dart';
 import 'entity_version.dart';
 import '../utils/json_diff.dart';
+import '../core/base_entity.dart';
 
 class VersionRepository {
   final Isar _isar;
@@ -227,5 +228,37 @@ class VersionRepository {
         }
       }
     });
+  }
+
+  // ============ Sync Methods ============
+
+  /// Find all unsynced versions (for sync service)
+  Future<List<EntityVersion>> findUnsynced() async {
+    return _isar.entityVersions
+        .filter()
+        .syncStatusEqualTo(SyncStatus.local)
+        .findAll();
+  }
+
+  /// Find unsynced versions for a specific entity
+  Future<List<EntityVersion>> findByEntityUuidUnsynced(String entityUuid) async {
+    return _isar.entityVersions
+        .filter()
+        .entityUuidEqualTo(entityUuid)
+        .syncStatusEqualTo(SyncStatus.local)
+        .findAll();
+  }
+
+  /// Mark version as synced (for sync service)
+  Future<void> markSynced(String uuid) async {
+    final version = await _isar.entityVersions
+        .filter()
+        .uuidEqualTo(uuid)
+        .findFirst();
+
+    if (version != null) {
+      version.syncStatus = SyncStatus.synced;
+      await _isar.writeTxn(() => _isar.entityVersions.put(version));
+    }
   }
 }

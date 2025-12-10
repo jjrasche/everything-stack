@@ -8,6 +8,9 @@
 /// - Embeddable: Semantic search across notes
 /// - Ownable: Multi-user with sharing
 /// - Edgeable: Link notes to each other or other entities
+/// - Versionable: Track change history
+/// - FileStorable: Attach images, PDFs, etc.
+/// - Locatable: Geo-tagged notes
 ///
 /// ## Usage
 /// ```dart
@@ -32,12 +35,15 @@ import '../patterns/embeddable.dart';
 import '../patterns/ownable.dart';
 import '../patterns/edgeable.dart';
 import '../patterns/versionable.dart';
+import '../patterns/file_storable.dart';
+import '../patterns/locatable.dart';
 
 part 'note.g.dart';
 
 @Collection()
 @JsonSerializable()
-class Note extends BaseEntity with Embeddable, Ownable, Edgeable, Versionable {
+class Note extends BaseEntity
+    with Embeddable, Ownable, Edgeable, Versionable, FileStorable, Locatable {
   // ============ Isar field overrides ============
   // Override uuid with @Index for O(1) findByUuid() lookups
   // (Isar doesn't inherit indexed fields from base classes)

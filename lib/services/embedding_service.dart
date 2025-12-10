@@ -129,15 +129,36 @@ abstract class EmbeddingService {
 class MockEmbeddingService extends EmbeddingService {
   @override
   Future<List<double>> generate(String text) async {
-    // Generate deterministic vector based on text content
-    final hash = _hashString(text);
-    final vector = List<double>.generate(
-      EmbeddingService.dimension,
-      (i) => _deterministicFloat(hash, i),
-    );
+    // Generate semantic vector based on word content
+    // Documents with shared words will have similar vectors
+    final words = _tokenize(text);
+
+    if (words.isEmpty) {
+      // Return zero vector for empty text
+      return List.filled(EmbeddingService.dimension, 0.0);
+    }
+
+    // Sum word vectors
+    final vector = List<double>.filled(EmbeddingService.dimension, 0.0);
+    for (final word in words) {
+      final wordHash = _hashString(word);
+      for (var i = 0; i < EmbeddingService.dimension; i++) {
+        vector[i] += _deterministicFloat(wordHash, i);
+      }
+    }
 
     // Normalize to unit length
     return _normalize(vector);
+  }
+
+  /// Tokenize text into lowercase words
+  List<String> _tokenize(String text) {
+    return text
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^\w\s]'), ' ') // Remove punctuation
+        .split(RegExp(r'\s+'))
+        .where((w) => w.isNotEmpty)
+        .toList();
   }
 
   /// Hash string to int using FNV-1a algorithm.

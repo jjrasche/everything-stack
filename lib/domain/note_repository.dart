@@ -26,14 +26,32 @@ import 'package:isar/isar.dart';
 import '../core/entity_repository.dart';
 import '../services/hnsw_index.dart';
 import '../services/embedding_service.dart';
+import '../services/blob_store.dart';
+import '../core/base_entity.dart';
 import 'note.dart';
+import 'entity_version.dart';
+import 'version_repository.dart';
+import 'edge_repository.dart';
 
 class NoteRepository extends EntityRepository<Note> {
+  final VersionRepository? _versionRepo;
+  final BlobStore? _blobStore;
+  EdgeRepository? _edgeRepo;
+
   NoteRepository(
     super.isar, {
     super.hnswIndex,
     super.embeddingService,
-  });
+    VersionRepository? versionRepo,
+    BlobStore? blobStore,
+  })  : _versionRepo = versionRepo,
+        _blobStore = blobStore,
+        super(versionRepository: versionRepo);
+
+  /// Set EdgeRepository after construction (avoids circular dependency)
+  void setEdgeRepository(EdgeRepository edgeRepo) {
+    _edgeRepo = edgeRepo;
+  }
 
   @override
   IsarCollection<Note> get collection => isar.notes;
@@ -136,5 +154,49 @@ class NoteRepository extends EntityRepository<Note> {
       tags.addAll(note.tags);
     }
     return tags.toList()..sort();
+  }
+
+  // ============ Pattern Integration Methods ============
+
+  /// Get version history for a note (Versionable pattern)
+  Future<List<EntityVersion>> getHistory(String uuid) async {
+    if (_versionRepo == null) {
+      throw StateError('VersionRepository not provided to NoteRepository');
+    }
+    return _versionRepo!.getHistory(uuid);
+  }
+
+  /// Get all notes linked from this note (Edgeable pattern)
+  /// Uses multi-hop traversal (depth=2) to find indirectly connected notes too.
+  Future<List<Note>> getLinkedNotes(String uuid) async {
+    if (_edgeRepo == null) {
+      throw StateError('EdgeRepository not set. Call setEdgeRepository() first');
+    }
+
+    // Use traverse for multi-hop discovery (up to 2 hops)
+    final reachableUuids = await _edgeRepo!.traverse(
+      startUuid: uuid,
+      depth: 2,
+      direction: 'outgoing',
+    );
+
+    // Load all reachable notes
+    final linkedNotes = <Note>[];
+    for (final targetUuid in reachableUuids.keys) {
+      final note = await findByUuid(targetUuid);
+      if (note != null) {
+        linkedNotes.add(note);
+      }
+    }
+
+    return linkedNotes;
+  }
+
+  /// Find all unsynced notes (for sync service)
+  Future<List<Note>> findUnsynced() async {
+    return collection
+        .filter()
+        .syncStatusEqualTo(SyncStatus.local)
+        .findAll();
   }
 }

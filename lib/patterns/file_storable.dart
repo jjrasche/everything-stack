@@ -69,34 +69,39 @@
 /// - BlobStore: Stores actual file bytes
 /// - FileService: Picks/processes files, updates metadata
 
+import 'package:isar/isar.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'file_storable.g.dart';
+
 /// File attachment metadata
+@embedded
 class FileMetadata {
   /// Unique identifier (UUID) for blob in BlobStore
-  final String uuid;
+  String uuid;
 
   /// Original filename with extension
-  final String filename;
+  String filename;
 
   /// MIME type (image/jpeg, audio/mp3, etc.)
-  final String mimeType;
+  String mimeType;
 
   /// File size in bytes
-  final int size;
+  int sizeBytes;
 
   /// Optional base64-encoded thumbnail for images
   /// Format: "data:image/jpeg;base64,abc123=="
-  final String? thumbnailBase64;
+  String? thumbnailBase64;
 
   /// When attachment was created
-  final DateTime createdAt;
+  DateTime createdAt = DateTime(1970);
 
   FileMetadata({
-    required this.uuid,
-    required this.filename,
-    required this.mimeType,
-    required this.size,
+    this.uuid = '',
+    this.filename = '',
+    this.mimeType = '',
+    this.sizeBytes = 0,
     this.thumbnailBase64,
-    required this.createdAt,
   });
 
   /// Check if this is an image file
@@ -117,12 +122,15 @@ class FileMetadata {
 
   @override
   String toString() =>
-      'FileMetadata($filename, $mimeType, ${size}b, created: $createdAt)';
+      'FileMetadata($filename, $mimeType, ${sizeBytes}b, created: $createdAt)';
 }
 
 /// Mixin for entities with file attachments
 mixin FileStorable {
   /// List of attached files
+  /// Note: Included in Isar schema, but excluded from JSON for versioning
+  /// (FileMetadata is @embedded for Isar but not JSON-serializable)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   List<FileMetadata> attachments = [];
 
   /// Add attachment to this entity
@@ -165,7 +173,7 @@ mixin FileStorable {
 
   /// Total size of all attachments in bytes
   int get totalAttachmentSize =>
-      attachments.fold<int>(0, (sum, m) => sum + m.size);
+      attachments.fold<int>(0, (sum, m) => sum + m.sizeBytes);
 
   /// Clear all attachments
   void clearAttachments() {

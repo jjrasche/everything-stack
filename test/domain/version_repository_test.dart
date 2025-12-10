@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:isar/isar.dart';
 import 'package:everything_stack_template/domain/entity_version.dart';
 import 'package:everything_stack_template/domain/version_repository.dart';
+import 'package:everything_stack_template/core/base_entity.dart';
 
 void main() {
   late Isar isar;
@@ -235,7 +236,10 @@ void main() {
           snapshotFrequency: 20,
         );
 
+        // Small delay to ensure V2 timestamp is recorded before capturing targetTime
+        await Future.delayed(const Duration(milliseconds: 10));
         final targetTime = DateTime.now();
+        await Future.delayed(const Duration(milliseconds: 10));
 
         await repo.recordChange(
           entityUuid: entityUuid,
@@ -353,6 +357,83 @@ void main() {
         expect(snapshots.length, 2);
         expect(snapshots[0].versionNumber, 21);
         expect(snapshots[1].versionNumber, 41);
+      });
+    });
+
+    group('sync methods', () {
+      test('findUnsynced returns only versions with local status', () async {
+        final entityUuid = 'note-123';
+
+        // Create version and mark as synced
+        await repo.recordChange(
+          entityUuid: entityUuid,
+          entityType: 'Note',
+          previousJson: null,
+          currentJson: {'title': 'First'},
+          snapshotFrequency: 20,
+        );
+        final versions = await repo.getHistory(entityUuid);
+        await repo.markSynced(versions[0].uuid);
+
+        // Create another version (unsynced)
+        await repo.recordChange(
+          entityUuid: entityUuid,
+          entityType: 'Note',
+          previousJson: {'title': 'First'},
+          currentJson: {'title': 'Second'},
+          snapshotFrequency: 20,
+        );
+
+        final unsynced = await repo.findUnsynced();
+        expect(unsynced, hasLength(1));
+        expect(unsynced[0].versionNumber, 2);
+      });
+
+      test('findByEntityUuidUnsynced returns unsynced versions for specific entity', () async {
+        final entity1 = 'note-1';
+        final entity2 = 'note-2';
+
+        // Create versions for entity1
+        await repo.recordChange(
+          entityUuid: entity1,
+          entityType: 'Note',
+          previousJson: null,
+          currentJson: {'title': 'Note 1'},
+          snapshotFrequency: 20,
+        );
+
+        // Create versions for entity2
+        await repo.recordChange(
+          entityUuid: entity2,
+          entityType: 'Note',
+          previousJson: null,
+          currentJson: {'title': 'Note 2'},
+          snapshotFrequency: 20,
+        );
+
+        final entity1Unsynced = await repo.findByEntityUuidUnsynced(entity1);
+        expect(entity1Unsynced, hasLength(1));
+        expect(entity1Unsynced[0].entityUuid, entity1);
+      });
+
+      test('markSynced updates syncStatus', () async {
+        final entityUuid = 'note-123';
+
+        await repo.recordChange(
+          entityUuid: entityUuid,
+          entityType: 'Note',
+          previousJson: null,
+          currentJson: {'title': 'Test'},
+          snapshotFrequency: 20,
+        );
+
+        final versions = await repo.getHistory(entityUuid);
+        expect(versions[0].syncStatus, SyncStatus.local);
+
+        await repo.markSynced(versions[0].uuid);
+
+        final updated = await repo.getHistory(entityUuid);
+        expect(updated[0].syncStatus, SyncStatus.synced);
       });
     });
   });
