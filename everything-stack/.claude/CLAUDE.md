@@ -53,11 +53,32 @@ Patterns are opt-in. Add `with PatternName` to entity only if needed.
 
 ## Testing Requirements
 
-- Every feature needs a BDD scenario
-- Scenarios live in `test/scenarios/`
-- Use parameterized tests from `test/harness/`
-- E2E tests validate scenarios
-- All platforms must pass before merge
+Testing follows a 4-layer approach. All layers run in CI. All must pass before merge.
+
+**Layer 1: Unit Tests (test/services/)**
+- Service interfaces, mocks, algorithms
+- Every service needs mock + real stub implementation
+- Run on Dart VM
+
+**Layer 2: Integration Tests (test/integration/)**
+- Cross-service workflows
+- How services work together
+- Still use mocks, run on Dart VM
+- Only when unit tests don't cover the interaction
+
+**Layer 3: BDD Scenarios (test/scenarios/)**
+- User-facing behavior only
+- Gherkin format (Given/When/Then)
+- Parameterized test data
+- Only for features with UI or user interactions
+
+**Layer 4: Platform Verification (integration_test/)**
+- Platform-specific implementations on actual platforms
+- Android emulator, iOS simulator, Chrome browser, desktop
+- NOT BDD - technical validation only
+- Minimal tests - just prove the abstraction works
+
+**Read:** `docs/testing/TESTING_APPROACH.md` (formerly BDD_APPROACH.md) for complete guidance and examples
 
 ## Permissions
 

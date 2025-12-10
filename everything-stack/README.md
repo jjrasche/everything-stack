@@ -62,3 +62,37 @@ This template embeds the Autonomous Software Development (ASD) paradigm. AI buil
 - Raspberry Pi / embedded Linux (IoT, kiosk)
 
 Same codebase. Same tests. Platform-specific code isolated to thin adaptation layers.
+
+## Testing
+
+Tests follow a 4-layer approach. All layers run in CI.
+
+**Unit Tests** - Service interfaces, mocks, algorithms
+```bash
+flutter test test/services/
+```
+
+**Integration Tests** - Cross-service workflows on Dart VM
+```bash
+flutter test test/integration/
+```
+
+**BDD Scenarios** - User-facing behavior (Gherkin format)
+```bash
+flutter test test/scenarios/
+```
+
+**Platform Verification** - Actual platform implementations
+```bash
+flutter test integration_test/ -d android   # Android emulator
+flutter test integration_test/ -d chrome    # Web browser
+flutter test integration_test/ -d macos     # Desktop
+```
+
+**Run all tests (CI):**
+```bash
+flutter test                    # Unit + integration + scenarios
+flutter test integration_test/  # Platform verification (actual devices)
+```
+
+See `docs/testing/TESTING_APPROACH.md` for complete testing philosophy and patterns.
