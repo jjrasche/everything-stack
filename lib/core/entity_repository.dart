@@ -37,6 +37,7 @@
 import 'package:isar/isar.dart';
 import 'base_entity.dart';
 import '../patterns/embeddable.dart';
+import '../patterns/versionable.dart';
 import '../services/embedding_service.dart';
 import '../services/hnsw_index.dart';
 
@@ -53,10 +54,16 @@ abstract class EntityRepository<T extends BaseEntity> {
   /// Defaults to global singleton if not provided.
   final EmbeddingService embeddingService;
 
+  /// Optional VersionRepository for tracking entity changes.
+  /// If provided and entity is Versionable, changes are automatically recorded.
+  /// If null, Versionable entities are still saved but changes not versioned.
+  final dynamic versionRepository;
+
   EntityRepository(
     this.isar, {
     this.hnswIndex,
     EmbeddingService? embeddingService,
+    this.versionRepository,
   }) : embeddingService = embeddingService ?? EmbeddingService.instance;
 
   /// Override in subclass to return typed collection
@@ -98,8 +105,14 @@ abstract class EntityRepository<T extends BaseEntity> {
 
   /// Save entity to database.
   /// For Embeddable entities: generates embedding and adds to HNSW index by uuid.
+  /// For Versionable entities: records change in VersionRepository if available.
   Future<Id> save(T entity) async {
     entity.touch();
+
+    // Record change for Versionable entities
+    if (entity is Versionable && versionRepository != null) {
+      await _recordVersionChange(entity as Versionable);
+    }
 
     // Generate embedding for Embeddable entities
     if (entity is Embeddable) {
@@ -119,7 +132,17 @@ abstract class EntityRepository<T extends BaseEntity> {
 
   /// Save multiple entities to database.
   /// For Embeddable entities: generates embeddings and adds to HNSW index.
+  /// For Versionable entities: records changes in VersionRepository if available.
   Future<void> saveAll(List<T> entities) async {
+    // Record changes for Versionable entities
+    if (versionRepository != null) {
+      for (final entity in entities) {
+        if (entity is Versionable) {
+          await _recordVersionChange(entity as Versionable);
+        }
+      }
+    }
+
     // Generate embeddings for all Embeddable entities
     for (final entity in entities) {
       entity.touch();
@@ -329,6 +352,33 @@ abstract class EntityRepository<T extends BaseEntity> {
       // In production, use proper logging
       print('Warning: Failed to add $uuid to HNSW index: $e');
     }
+  }
+
+  // ============ Versioning ============
+
+  /// Record a change to a Versionable entity.
+  /// Fetches previous state from database and calls versionRepository.recordChange().
+  Future<void> _recordVersionChange(Versionable entity) async {
+    if (versionRepository == null) return;
+
+    // Fetch previous state if entity exists in database
+    final previousEntity = await findByUuid((entity as BaseEntity).uuid);
+    final previousJson = (previousEntity is Versionable)
+        ? (previousEntity as dynamic).toJson() as Map<String, dynamic>?
+        : null;
+
+    // Get current state as JSON
+    final currentJson = (entity as dynamic).toJson() as Map<String, dynamic>;
+
+    // Record the change
+    await versionRepository.recordChange(
+      entityUuid: (entity as BaseEntity).uuid,
+      entityType: T.toString(),
+      previousJson: previousJson,
+      currentJson: currentJson,
+      userId: (entity as dynamic).lastModifiedBy as String?,
+      snapshotFrequency: entity.snapshotFrequency,
+    );
   }
 
   // ============ Sync Helpers ============

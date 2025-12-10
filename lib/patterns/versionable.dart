@@ -17,16 +17,33 @@
 /// String? lastModifiedBy;
 /// ```
 ///
-/// ## Usage
+/// ## JSON Serialization (REQUIRED)
+/// Versionable entities MUST implement toJson() and fromJson() methods.
+/// Use @JsonSerializable() annotation with json_serializable package.
+/// This enables delta computation and reconstruction from snapshots.
+///
 /// ```dart
+/// import 'package:json_annotation/json_annotation.dart';
+///
+/// part 'contract.g.dart';
+///
 /// @Collection()
+/// @JsonSerializable()
 /// class Contract extends BaseEntity with Versionable {
 ///   String terms;
 ///
-///   @override
-///   int get snapshotFrequency => 10; // Override default if needed
-/// }
+///   Map<String, dynamic> toJson() => _$ContractToJson(this);
+///   factory Contract.fromJson(Map<String, dynamic> json) => _$ContractFromJson(json);
 ///
+///   @override
+///   int get snapshotFrequency => 10;
+/// }
+/// ```
+///
+/// Then run: `dart run build_runner build`
+///
+/// ## Usage
+/// ```dart
 /// // EntityRepository automatically records changes
 /// contract.terms = newTerms;
 /// await contractRepo.save(contract); // Versioning happens automatically

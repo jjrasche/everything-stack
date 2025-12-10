@@ -30,6 +30,7 @@ dependencies:
   connectivity_plus: ^5.0.0
   geolocator: ^10.1.0
   rfc_6902: ^0.3.1
+  json_annotation: ^4.8.0
 
   # File input and storage
   image_picker: ^1.1.0
@@ -40,14 +41,15 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  
-  # Code generation for Isar
+
+  # Code generation for Isar and JSON serialization
   isar_generator: ^3.1.0
+  json_serializable: ^6.7.0
   build_runner: ^2.4.0
-  
+
   # Linting
   flutter_lints: ^3.0.0
-  
+
   # Testing
   mockito: ^5.4.0
 

@@ -59,11 +59,13 @@ class VersionRepository {
   /// - Periodic snapshots created every [snapshotFrequency] versions
   ///
   /// [snapshotFrequency] defaults to 20. Set to null to disable periodic snapshots.
+  /// [previousJson] can be null for new entities (creates initial snapshot).
+  /// [currentJson] should be entity.toJson() from a Versionable entity.
   Future<void> recordChange({
     required String entityUuid,
     required String entityType,
-    required Map<String, dynamic> oldState,
-    required Map<String, dynamic> newState,
+    required Map<String, dynamic>? previousJson,
+    required Map<String, dynamic> currentJson,
     String? userId,
     String? changeDescription,
     int? snapshotFrequency = 20,
@@ -77,9 +79,10 @@ class VersionRepository {
     final shouldSnapshot = isFirstVersion || isPeriodicSnapshot;
 
     // Compute delta and changed fields
-    final delta = JsonDiff.diff(oldState, newState);
+    final previousState = previousJson ?? {};
+    final delta = JsonDiff.diff(previousState, currentJson);
     final deltaJson = jsonEncode(delta);
-    final changedFields = JsonDiff.extractChangedFields(oldState, newState);
+    final changedFields = JsonDiff.extractChangedFields(previousState, currentJson);
 
     final version = EntityVersion(
       entityType: entityType,
@@ -89,7 +92,7 @@ class VersionRepository {
       deltaJson: deltaJson,
       changedFields: changedFields,
       isSnapshot: shouldSnapshot,
-      snapshotJson: shouldSnapshot ? jsonEncode(newState) : null,
+      snapshotJson: shouldSnapshot ? jsonEncode(currentJson) : null,
       userId: userId,
       changeDescription: changeDescription,
     );

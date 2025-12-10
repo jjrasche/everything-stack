@@ -25,14 +25,13 @@ void main() {
     group('recordChange', () {
       test('creates first version with snapshot', () async {
         final entityUuid = 'note-123';
-        final oldState = <String, dynamic>{};
-        final newState = {'title': 'First', 'body': 'Content'};
+        final currentJson = {'title': 'First', 'body': 'Content'};
 
         await repo.recordChange(
           entityUuid: entityUuid,
           entityType: 'Note',
-          oldState: oldState,
-          newState: newState,
+          previousJson: null,
+          currentJson: currentJson,
           userId: 'user-1',
           snapshotFrequency: 20,
         );
@@ -55,16 +54,16 @@ void main() {
         await repo.recordChange(
           entityUuid: entityUuid,
           entityType: 'Note',
-          oldState: {},
-          newState: v1,
+          previousJson: null,
+          currentJson: v1,
           snapshotFrequency: 20,
         );
 
         await repo.recordChange(
           entityUuid: entityUuid,
           entityType: 'Note',
-          oldState: v1,
-          newState: v2,
+          previousJson: v1,
+          currentJson: v2,
           userId: 'user-2',
           snapshotFrequency: 20,
         );
@@ -89,8 +88,8 @@ void main() {
           await repo.recordChange(
             entityUuid: entityUuid,
             entityType: 'Note',
-            oldState: state,
-            newState: newState,
+            previousJson: i == 1 ? null : state,
+            currentJson: newState,
             snapshotFrequency: 20,
           );
           state = newState;
@@ -113,8 +112,8 @@ void main() {
         await repo.recordChange(
           entityUuid: entityUuid,
           entityType: 'Note',
-          oldState: {},
-          newState: {'title': 'Test'},
+          previousJson: null,
+          currentJson: {'title': 'Test'},
           changeDescription: 'Initial creation',
           snapshotFrequency: 20,
         );
@@ -135,8 +134,8 @@ void main() {
           await repo.recordChange(
             entityUuid: entityUuid,
             entityType: 'Note',
-            oldState: state,
-            newState: newState,
+            previousJson: i == 1 ? null : state,
+            currentJson: newState,
             snapshotFrequency: 20,
           );
           state = newState;
@@ -173,8 +172,8 @@ void main() {
           await repo.recordChange(
             entityUuid: entityUuid,
             entityType: 'Note',
-            oldState: state,
-            newState: newState,
+            previousJson: i == 1 ? null : state,
+            currentJson: newState,
             snapshotFrequency: 20,
           );
           state = newState;
@@ -193,8 +192,8 @@ void main() {
         await repo.recordChange(
           entityUuid: entityUuid,
           entityType: 'Note',
-          oldState: {},
-          newState: {'title': 'First', 'body': 'Content'},
+          previousJson: null,
+          currentJson: {'title': 'First', 'body': 'Content'},
           snapshotFrequency: 20,
         );
 
@@ -205,8 +204,8 @@ void main() {
         await repo.recordChange(
           entityUuid: entityUuid,
           entityType: 'Note',
-          oldState: {'title': 'First', 'body': 'Content'},
-          newState: {'title': 'Updated', 'body': 'Content'},
+          previousJson: {'title': 'First', 'body': 'Content'},
+          currentJson: {'title': 'Updated', 'body': 'Content'},
           snapshotFrequency: 20,
         );
 
@@ -223,16 +222,16 @@ void main() {
         await repo.recordChange(
           entityUuid: entityUuid,
           entityType: 'Note',
-          oldState: {},
-          newState: {'title': 'V1'},
+          previousJson: null,
+          currentJson: {'title': 'V1'},
           snapshotFrequency: 20,
         );
 
         await repo.recordChange(
           entityUuid: entityUuid,
           entityType: 'Note',
-          oldState: {'title': 'V1'},
-          newState: {'title': 'V2'},
+          previousJson: {'title': 'V1'},
+          currentJson: {'title': 'V2'},
           snapshotFrequency: 20,
         );
 
@@ -241,8 +240,8 @@ void main() {
         await repo.recordChange(
           entityUuid: entityUuid,
           entityType: 'Note',
-          oldState: {'title': 'V2'},
-          newState: {'title': 'V3'},
+          previousJson: {'title': 'V2'},
+          currentJson: {'title': 'V3'},
           snapshotFrequency: 20,
         );
 
@@ -261,8 +260,8 @@ void main() {
         await repo.recordChange(
           entityUuid: entityUuid,
           entityType: 'Note',
-          oldState: {},
-          newState: {'title': 'First'},
+          previousJson: null,
+          currentJson: {'title': 'First'},
           snapshotFrequency: 20,
         );
 
@@ -280,8 +279,8 @@ void main() {
         await repo.recordChange(
           entityUuid: entityUuid,
           entityType: 'Note',
-          oldState: {},
-          newState: state,
+          previousJson: null,
+          currentJson: state,
           snapshotFrequency: 20,
         );
 
@@ -294,8 +293,8 @@ void main() {
           await repo.recordChange(
             entityUuid: entityUuid,
             entityType: 'Note',
-            oldState: state,
-            newState: newState,
+            previousJson: state,
+            currentJson: newState,
             snapshotFrequency: 20,
           );
           state = newState;
@@ -307,8 +306,8 @@ void main() {
         await repo.recordChange(
           entityUuid: entityUuid,
           entityType: 'Note',
-          oldState: state,
-          newState: {'title': 'V5'},
+          previousJson: state,
+          currentJson: {'title': 'V5'},
           snapshotFrequency: 20,
         );
 
@@ -331,8 +330,8 @@ void main() {
           await repo.recordChange(
             entityUuid: entityUuid,
             entityType: 'Note',
-            oldState: state,
-            newState: newState,
+            previousJson: i == 1 ? null : state,
+            currentJson: newState,
             snapshotFrequency: 20,
           );
           state = newState;

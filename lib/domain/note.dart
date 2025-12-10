@@ -26,15 +26,18 @@
 /// ```
 
 import 'package:isar/isar.dart';
+import 'package:json_annotation/json_annotation.dart';
 import '../core/base_entity.dart';
 import '../patterns/embeddable.dart';
 import '../patterns/ownable.dart';
 import '../patterns/edgeable.dart';
+import '../patterns/versionable.dart';
 
 part 'note.g.dart';
 
 @Collection()
-class Note extends BaseEntity with Embeddable, Ownable, Edgeable {
+@JsonSerializable()
+class Note extends BaseEntity with Embeddable, Ownable, Edgeable, Versionable {
   // ============ Isar field overrides ============
   // Override uuid with @Index for O(1) findByUuid() lookups
   // (Isar doesn't inherit indexed fields from base classes)
@@ -80,6 +83,11 @@ class Note extends BaseEntity with Embeddable, Ownable, Edgeable {
       uuid = super.uuid;
     }
   }
+
+  // ============ JSON Serialization ============
+
+  Map<String, dynamic> toJson() => _$NoteToJson(this);
+  factory Note.fromJson(Map<String, dynamic> json) => _$NoteFromJson(json);
 
   // ============ Embeddable ============
 
