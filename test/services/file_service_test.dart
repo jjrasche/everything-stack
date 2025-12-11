@@ -8,7 +8,6 @@
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:everything_stack_template/services/file_service.dart';
-import 'package:everything_stack_template/patterns/file_storable.dart';
 
 void main() {
   group('FileService interface', () {

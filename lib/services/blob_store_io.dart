@@ -23,11 +23,6 @@ class FileSystemBlobStore extends BlobStore {
     return File('${_blobDirectory.path}/$id.blob');
   }
 
-  /// Get index file for metadata (size, creation time, etc.)
-  Future<File> _getIndexFile() async {
-    return File('${_blobDirectory.path}/.index');
-  }
-
   @override
   Future<void> initialize() async {
     try {
@@ -93,15 +88,11 @@ class FileSystemBlobStore extends BlobStore {
       final raf = await file.open();
 
       try {
-        int bytesRead = 0;
-        final buffer = Uint8List(chunkSize);
-
         while (true) {
           final chunk = await raf.read(chunkSize);
           if (chunk.isEmpty) break;
 
           yield Uint8List.fromList(chunk);
-          bytesRead += chunk.length;
         }
       } finally {
         await raf.close();

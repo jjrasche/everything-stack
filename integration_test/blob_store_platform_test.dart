@@ -21,9 +21,8 @@ void main() {
   group('BlobStore Platform Implementation', () {
     late BlobStore blobStore;
 
-    // Platform detection helpers
+    // Platform detection helper
     bool isWeb() => identical(0, 0.0) == false; // Simple web check
-    bool isMobile() => !isWeb(); // Mock check - real implementation would check platform
 
     setUp(() {
       // Use appropriate implementation based on platform

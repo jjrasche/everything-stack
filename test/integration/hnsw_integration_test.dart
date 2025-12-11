@@ -214,7 +214,7 @@ void main() {
       final uuid1 = note1.uuid;
       final uuid2 = note2.uuid;
 
-      final id1 = await noteRepo.save(note1);
+      await noteRepo.save(note1);
       final id2 = await noteRepo.save(note2);
 
       await noteRepo.delete(id2);
@@ -234,7 +234,7 @@ void main() {
       ];
       final uuids = notes.map((n) => n.uuid).toList();
       await noteRepo.saveAll(notes);
-      final ids = notes.map((n) => n.id!).toList();
+      final ids = notes.map((n) => n.id).whereType<int>().toList();
 
       expect(hnswIndex.size, 3);
 

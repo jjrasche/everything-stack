@@ -24,9 +24,6 @@
 
 import 'package:isar/isar.dart';
 import '../core/entity_repository.dart';
-import '../services/hnsw_index.dart';
-import '../services/embedding_service.dart';
-import '../services/blob_store.dart';
 import '../core/base_entity.dart';
 import 'note.dart';
 import 'entity_version.dart';
@@ -35,7 +32,6 @@ import 'edge_repository.dart';
 
 class NoteRepository extends EntityRepository<Note> {
   final VersionRepository? _versionRepo;
-  final BlobStore? _blobStore;
   EdgeRepository? _edgeRepo;
 
   NoteRepository(
@@ -43,9 +39,7 @@ class NoteRepository extends EntityRepository<Note> {
     super.hnswIndex,
     super.embeddingService,
     VersionRepository? versionRepo,
-    BlobStore? blobStore,
   })  : _versionRepo = versionRepo,
-        _blobStore = blobStore,
         super(versionRepository: versionRepo);
 
   /// Set EdgeRepository after construction (avoids circular dependency)
@@ -193,6 +187,7 @@ class NoteRepository extends EntityRepository<Note> {
   }
 
   /// Find all unsynced notes (for sync service)
+  @override
   Future<List<Note>> findUnsynced() async {
     return collection
         .filter()

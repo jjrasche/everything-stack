@@ -97,7 +97,7 @@ class EdgeRepository {
     final edge = await _findEdge(sourceUuid, targetUuid, edgeType);
     if (edge == null) return false;
 
-    return isar.writeTxn(() => collection.delete(edge.id!));
+    return isar.writeTxn(() => collection.delete(edge.id));
   }
 
   // ============ Queries ============

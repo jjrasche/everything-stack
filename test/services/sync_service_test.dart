@@ -8,7 +8,6 @@
 /// - Per-entity sync status tracking
 /// - Last-write-wins conflict resolution
 
-import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:everything_stack_template/services/sync_service.dart';
 

@@ -204,7 +204,6 @@ class MockLocationService extends LocationService {
 class GeolocatorLocationService extends LocationService {
   late final StreamController<Position> _positionController;
   late StreamSubscription<geo.Position> _positionSubscription;
-  Position? _currentPosition;
 
   /// Map geolocator permission to our LocationPermission
   static LocationPermission _mapPermission(geo.LocationPermission perm) {
@@ -221,40 +220,13 @@ class GeolocatorLocationService extends LocationService {
     }
   }
 
-  /// Map our LocationAccuracy to geolocator LocationSettings
-  /// (Note: geolocator v10 doesn't support accuracy parameter on getCurrentPosition)
-  static geo.LocationSettings _mapAccuracyToSettings(LocationAccuracy accuracy) {
-    switch (accuracy) {
-      case LocationAccuracy.low:
-        return geo.AndroidSettings(
-          accuracy: geo.LocationAccuracy.low,
-          distanceFilter: 100,
-        );
-      case LocationAccuracy.medium:
-        return geo.AndroidSettings(
-          accuracy: geo.LocationAccuracy.medium,
-          distanceFilter: 50,
-        );
-      case LocationAccuracy.high:
-        return geo.AndroidSettings(
-          accuracy: geo.LocationAccuracy.high,
-          distanceFilter: 10,
-        );
-      case LocationAccuracy.finest:
-        return geo.AndroidSettings(
-          accuracy: geo.LocationAccuracy.best,
-          distanceFilter: 0,
-        );
-    }
-  }
-
   /// Convert geolocator Position to our Position
   static Position _convertPosition(geo.Position geoPos) {
     return Position(
       latitude: geoPos.latitude,
       longitude: geoPos.longitude,
       accuracy: geoPos.accuracy,
-      timestamp: DateTime.fromMillisecondsSinceEpoch(geoPos.timestamp?.millisecondsSinceEpoch ?? 0),
+      timestamp: geoPos.timestamp,
     );
   }
 
@@ -315,19 +287,10 @@ class GeolocatorLocationService extends LocationService {
         await requestPermission();
       }
 
-      // Get initial position (ignore errors - position may not be available immediately)
-      try {
-        final geoPos = await geo.Geolocator.getCurrentPosition();
-        _currentPosition = _convertPosition(geoPos);
-      } catch (e) {
-        // Ignore - position may not be immediately available
-      }
-
       // Listen to position updates
       _positionSubscription = geo.Geolocator.getPositionStream().listen(
         (geoPos) {
           final pos = _convertPosition(geoPos);
-          _currentPosition = pos;
           if (!_positionController.isClosed) {
             _positionController.add(pos);
           }

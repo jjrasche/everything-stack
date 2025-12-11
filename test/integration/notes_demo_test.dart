@@ -49,7 +49,6 @@ void main() {
       hnswIndex: hnswIndex,
       embeddingService: embeddingService,
       versionRepo: versionRepo,
-      blobStore: blobStore,
     );
     noteRepo.setEdgeRepository(edgeRepo);
   });
