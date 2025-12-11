@@ -26,6 +26,7 @@ void main() {
         sizeBytes: size,
         thumbnailBase64: thumbnailBase64,
       );
+      metadata.createdAt = now;
 
       expect(metadata.uuid, uuid);
       expect(metadata.filename, filename);
