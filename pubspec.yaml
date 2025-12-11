@@ -31,6 +31,7 @@ dependencies:
   geolocator: ^10.1.0
   rfc_6902: ^0.3.1
   json_annotation: ^4.8.0
+  http: ^1.1.0
 
   # File input and storage
   image_picker: ^1.1.0
