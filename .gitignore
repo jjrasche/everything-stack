@@ -47,13 +47,14 @@ download/
 **/android/**/GeneratedPluginRegistrant.*
 
 # Linux
-**/linux/**/GeneratedPluginRegistrant.*
+**/linux/flutter/generated_plugin_registrant.*
+**/linux/flutter/generated_plugins.cmake
 
 # macOS
 **/macos/**/GeneratedPluginRegistrant.*
 
 # Windows
-**/windows/**/GeneratedPluginRegistrant.*
+**/windows/flutter/generated_plugin_registrant.*
 **/windows/flutter/generated_plugins.cmake
 
 # iOS
@@ -95,6 +96,9 @@ coverage/
 
 # Dependencies
 pubspec.lock
+
+# Windows device files
+nul
 
 # Environments
 .env
