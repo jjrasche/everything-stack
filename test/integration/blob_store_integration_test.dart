@@ -1,9 +1,12 @@
 /// # BlobStore Integration Tests
 ///
 /// Tests how FileService, BlobStore, and FileStorable work together.
-/// Validates the complete flow: pick file → save to blob store → retrieve → stream.
+/// Validates the complete flow: pick file → auto-store to blob → retrieve → stream.
 ///
 /// Layer 2 testing: Cross-service workflows on Dart VM using mocks.
+///
+/// Key design: FileService takes BlobStore as dependency and auto-stores
+/// all file bytes. Callers receive metadata with UUID pointing to stored blob.
 
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
@@ -16,18 +19,16 @@ void main() {
     late MockFileService fileService;
     late MockBlobStore blobStore;
 
-    setUp(() {
-      fileService = MockFileService();
+    setUp(() async {
       blobStore = MockBlobStore();
+      await blobStore.initialize();
+      fileService = MockFileService(blobStore: blobStore);
+      await fileService.initialize();
     });
 
     group('Photo picking and storing', () {
-      test('pickPhoto returns metadata with UUID suitable for blob storage',
+      test('pickPhoto returns metadata with UUID pointing to stored blob',
           () async {
-        // Given: File service ready
-        await fileService.initialize();
-        await blobStore.initialize();
-
         // When: Pick a photo
         final metadata =
             await fileService.pickPhoto(source: PhotoSource.gallery);
@@ -39,131 +40,112 @@ void main() {
         expect(metadata.mimeType, 'image/jpeg');
         expect(metadata.sizeBytes, greaterThan(0));
         expect(metadata.thumbnailBase64, isNotNull);
+
+        // Then: Bytes are already stored in BlobStore
+        expect(blobStore.contains(metadata.uuid), isTrue);
+        expect(blobStore.size(metadata.uuid), metadata.sizeBytes);
       });
 
-      test(
-          'Complete workflow: pick photo → save to blob → verify contains → load → stream',
+      test('Complete workflow: pick photo → verify stored → load → stream',
           () async {
-        // Setup
-        await fileService.initialize();
-        await blobStore.initialize();
-
-        // When: Pick photo
+        // When: Pick photo (auto-stored by FileService)
         final metadata =
             await fileService.pickPhoto(source: PhotoSource.gallery);
         expect(metadata, isNotNull);
 
-        // Given: Generate some mock photo bytes
-        final photoBytes = Uint8List.fromList(
-          List<int>.filled(1024, 255), // Mock photo data
-        );
-
-        // When: Save to blob store
-        await blobStore.save(metadata!.uuid, photoBytes);
-
-        // Then: Blob is stored
-        expect(blobStore.contains(metadata.uuid), isTrue);
-        expect(blobStore.size(metadata.uuid), 1024);
+        // Then: Blob is already stored
+        expect(blobStore.contains(metadata!.uuid), isTrue);
+        expect(blobStore.size(metadata.uuid), metadata.sizeBytes);
 
         // When: Load from blob store
         final loaded = await blobStore.load(metadata.uuid);
 
-        // Then: Loaded bytes match original
+        // Then: Loaded bytes have correct size
         expect(loaded, isNotNull);
-        expect(loaded, equals(photoBytes));
+        expect(loaded!.length, metadata.sizeBytes);
       });
 
-      test('Can stream large photo from blob store with chunks', () async {
-        // Setup
-        await fileService.initialize();
-        await blobStore.initialize();
-
-        // Create mock large photo (100KB)
-        final photoBytes = Uint8List.fromList(
-          List<int>.filled(100 * 1024, 128),
-        );
-        const testUuid = 'photo-uuid-123';
-
-        // When: Save large photo
-        await blobStore.save(testUuid, photoBytes);
+      test('Can stream photo from blob store with chunks', () async {
+        // When: Pick photo (auto-stored)
+        final metadata =
+            await fileService.pickPhoto(source: PhotoSource.gallery);
+        expect(metadata, isNotNull);
 
         // When: Stream with small chunks
         final chunks = <Uint8List>[];
-        const chunkSize = 8 * 1024; // 8KB chunks
+        const chunkSize = 512; // Small chunks
         await for (final chunk
-            in blobStore.streamRead(testUuid, chunkSize: chunkSize)) {
+            in blobStore.streamRead(metadata!.uuid, chunkSize: chunkSize)) {
           chunks.add(chunk);
         }
 
-        // Then: Got multiple chunks
+        // Then: Got chunks
         expect(chunks, isNotEmpty);
-        expect(chunks.length,
-            greaterThan(1)); // 100KB with 8KB chunks = 12-13 chunks
 
-        // Then: Chunks reconstruct original
+        // Then: Chunks reconstruct to correct size
         final reconstructed = Uint8List.fromList(
           chunks.expand((c) => c).toList(),
         );
-        expect(reconstructed, equals(photoBytes));
+        expect(reconstructed.length, metadata.sizeBytes);
       });
     });
 
     group('Video picking and storing', () {
-      test('pickVideo → save → stream workflow', () async {
-        // Setup
-        await fileService.initialize();
-        await blobStore.initialize();
-
+      test('pickVideo auto-stores bytes and returns valid metadata', () async {
         // When: Pick video
         final metadata =
             await fileService.pickVideo(source: VideoSource.gallery);
         expect(metadata, isNotNull);
 
-        // Given: Mock video bytes
-        final videoBytes = Uint8List.fromList(
-          List<int>.filled(5000, 200),
-        );
+        // Then: Bytes are already stored
+        expect(blobStore.contains(metadata!.uuid), isTrue);
 
-        // When: Save to blob store
-        await blobStore.save(metadata!.uuid, videoBytes);
-
-        // When: Stream back
+        // When: Load back
         final loaded = await blobStore.load(metadata.uuid);
 
-        // Then: Bytes match
-        expect(loaded, equals(videoBytes));
+        // Then: Bytes have correct size
+        expect(loaded, isNotNull);
+        expect(loaded!.length, metadata.sizeBytes);
       });
     });
 
     group('Audio recording and storing', () {
-      test('recordAudio → save → verify workflow', () async {
-        // Setup
-        await fileService.initialize();
-        await blobStore.initialize();
-
-        // When: Record audio
-        final metadata = await fileService.recordAudio();
+      test('recordAudio with duration auto-stores bytes', () async {
+        // When: Record audio with specified duration
+        final metadata =
+            await fileService.recordAudio(duration: const Duration(seconds: 5));
         expect(metadata, isNotNull);
 
-        // Given: Audio should not have thumbnail
+        // Then: Audio should not have thumbnail
         expect(metadata!.thumbnailBase64, isNull);
 
-        // Given: Mock audio bytes
-        final audioBytes = Uint8List.fromList(
-          List<int>.filled(2000, 100),
-        );
-
-        // When: Save to blob store
-        await blobStore.save(metadata.uuid, audioBytes);
-
-        // Then: Stored correctly
+        // Then: Bytes are already stored
         expect(blobStore.contains(metadata.uuid), isTrue);
 
         // When: Load
         final loaded = await blobStore.load(metadata.uuid);
 
-        // Then: Bytes match
-        expect(loaded, equals(audioBytes));
+        // Then: Bytes have correct size
+        expect(loaded, isNotNull);
+        expect(loaded!.length, metadata.sizeBytes);
+      });
+
+      test('start/stop recording auto-stores bytes', () async {
+        // When: Start recording
+        final started = await fileService.startRecording();
+        expect(started, isTrue);
+        expect(fileService.recordingState, RecordingState.recording);
+
+        // Simulate some recording time
+        await Future.delayed(const Duration(milliseconds: 100));
+
+        // When: Stop recording
+        final metadata = await fileService.stopRecording();
+        expect(metadata, isNotNull);
+        expect(fileService.recordingState, RecordingState.idle);
+
+        // Then: Bytes are already stored
+        expect(blobStore.contains(metadata!.uuid), isTrue);
       });
     });
 
@@ -242,24 +224,18 @@ void main() {
 
     group('Error handling and edge cases', () {
       test('Cannot load non-existent blob', () async {
-        await blobStore.initialize();
-
         final result = await blobStore.load('non-existent-uuid');
 
         expect(result, isNull);
       });
 
       test('Cannot delete non-existent blob', () async {
-        await blobStore.initialize();
-
         final deleted = await blobStore.delete('non-existent-uuid');
 
         expect(deleted, isFalse);
       });
 
       test('Can delete and then verify not contains', () async {
-        await blobStore.initialize();
-
         final bytes = Uint8List.fromList([1, 2, 3, 4, 5]);
         const testUuid = 'temp-uuid';
 
@@ -275,9 +251,7 @@ void main() {
         expect(blobStore.contains(testUuid), isFalse);
       });
 
-      test('Cancelling photo pick returns null', () async {
-        await fileService.initialize();
-
+      test('Cancelling photo pick returns null, nothing stored', () async {
         // Trigger cancellation
         fileService.setCancelNextPick();
 
@@ -288,16 +262,10 @@ void main() {
       });
 
       test('File service dispose can be called', () async {
-        await fileService.initialize();
-
-        // dispose() is synchronous
-        fileService.dispose();
+        await fileService.dispose();
       });
 
       test('Blob store dispose can be called', () async {
-        await blobStore.initialize();
-
-        // dispose() is synchronous
         blobStore.dispose();
       });
     });
@@ -307,39 +275,29 @@ void main() {
     late MockFileService fileService;
     late MockBlobStore blobStore;
 
-    setUp(() {
-      fileService = MockFileService();
+    setUp(() async {
       blobStore = MockBlobStore();
+      await blobStore.initialize();
+      fileService = MockFileService(blobStore: blobStore);
+      await fileService.initialize();
     });
 
-    test('Complete user flow: create attachment, store, retrieve, delete',
+    test('Complete user flow: pick files, auto-stored, retrieve, delete',
         () async {
-      // Initialize services
-      await fileService.initialize();
-      await blobStore.initialize();
-
-      // User picks multiple files
+      // User picks multiple files (all auto-stored by FileService)
       final photo = await fileService.pickPhoto(source: PhotoSource.gallery);
       final video = await fileService.pickVideo(source: VideoSource.gallery);
-      final audio = await fileService.recordAudio();
+      final audio =
+          await fileService.recordAudio(duration: const Duration(seconds: 3));
 
       expect(photo, isNotNull);
       expect(video, isNotNull);
       expect(audio, isNotNull);
 
-      // Simulate storing in blob store (FileService would return bytes separately)
-      final mockPhotoBytes = Uint8List.fromList(List.filled(1024, 255));
-      final mockVideoBytes = Uint8List.fromList(List.filled(5000, 200));
-      final mockAudioBytes = Uint8List.fromList(List.filled(512, 100));
-
-      await blobStore.save(photo!.uuid, mockPhotoBytes);
-      await blobStore.save(video!.uuid, mockVideoBytes);
-      await blobStore.save(audio!.uuid, mockAudioBytes);
-
-      // Verify all stored
-      expect(blobStore.contains(photo.uuid), isTrue);
-      expect(blobStore.contains(video.uuid), isTrue);
-      expect(blobStore.contains(audio.uuid), isTrue);
+      // Verify all already stored (auto-stored by FileService)
+      expect(blobStore.contains(photo!.uuid), isTrue);
+      expect(blobStore.contains(video!.uuid), isTrue);
+      expect(blobStore.contains(audio!.uuid), isTrue);
 
       // Entity has metadata and references blobs
       final attachments = [photo, video, audio];
@@ -362,6 +320,20 @@ void main() {
       // Others remain
       expect(blobStore.contains(photo.uuid), isTrue);
       expect(blobStore.contains(video.uuid), isTrue);
+    });
+
+    test('Bytes retrieved from BlobStore match expected size', () async {
+      // Pick photo
+      final photo = await fileService.pickPhoto();
+      expect(photo, isNotNull);
+
+      // Load bytes
+      final bytes = await blobStore.load(photo!.uuid);
+      expect(bytes, isNotNull);
+      expect(bytes!.length, photo.sizeBytes);
+
+      // Size matches
+      expect(blobStore.size(photo.uuid), photo.sizeBytes);
     });
   });
 }

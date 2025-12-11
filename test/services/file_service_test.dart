@@ -1,12 +1,15 @@
 /// # FileService Tests
 ///
-/// Tests for file input and processing operations.
+/// Tests for file input, processing, and storage operations.
 /// - File picking (photo, video, audio, documents)
 /// - Image compression and thumbnail generation
 /// - MIME type detection
+/// - BlobStore integration (bytes auto-stored)
+/// - Audio recording with start/stop pattern
 
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:everything_stack_template/services/blob_store.dart';
 import 'package:everything_stack_template/services/file_service.dart';
 
 void main() {
@@ -16,16 +19,21 @@ void main() {
     });
 
     test('MockFileService is default instance', () {
-      FileService.instance = MockFileService();
+      final blobStore = MockBlobStore();
+      FileService.instance = MockFileService(blobStore: blobStore);
       expect(FileService.instance, isA<MockFileService>());
     });
   });
 
   group('MockFileService', () {
     late MockFileService service;
+    late MockBlobStore blobStore;
 
-    setUp(() {
-      service = MockFileService();
+    setUp(() async {
+      blobStore = MockBlobStore();
+      await blobStore.initialize();
+      service = MockFileService(blobStore: blobStore);
+      await service.initialize();
     });
 
     group('Photo picking', () {
@@ -58,6 +66,17 @@ void main() {
         expect(result!.thumbnailBase64, isNotNull);
         expect(result.thumbnailBase64, startsWith('data:image/'));
       });
+
+      test('pickPhoto stores bytes to BlobStore', () async {
+        final result = await service.pickPhoto(source: PhotoSource.gallery);
+
+        expect(result, isNotNull);
+        expect(blobStore.contains(result!.uuid), isTrue);
+
+        final storedBytes = await blobStore.load(result.uuid);
+        expect(storedBytes, isNotNull);
+        expect(storedBytes!.length, result.sizeBytes);
+      });
     });
 
     group('Video picking', () {
@@ -83,11 +102,23 @@ void main() {
 
         expect(result, isNull);
       });
+
+      test('pickVideo stores bytes to BlobStore', () async {
+        final result = await service.pickVideo(source: VideoSource.gallery);
+
+        expect(result, isNotNull);
+        expect(blobStore.contains(result!.uuid), isTrue);
+
+        final storedBytes = await blobStore.load(result.uuid);
+        expect(storedBytes, isNotNull);
+        expect(storedBytes!.length, result.sizeBytes);
+      });
     });
 
-    group('Audio recording', () {
-      test('recordAudio returns FileMetadata', () async {
-        final result = await service.recordAudio();
+    group('Audio recording with duration', () {
+      test('recordAudio with duration returns FileMetadata', () async {
+        final result =
+            await service.recordAudio(duration: const Duration(seconds: 5));
 
         expect(result, isNotNull);
         expect(result!.filename, contains('.m4a'));
@@ -97,15 +128,79 @@ void main() {
 
       test('recordAudio returns null when cancelled', () async {
         service.setCancelNextPick();
-        final result = await service.recordAudio();
+        final result =
+            await service.recordAudio(duration: const Duration(seconds: 1));
 
         expect(result, isNull);
       });
 
       test('recordAudio has no thumbnail', () async {
-        final result = await service.recordAudio();
+        final result =
+            await service.recordAudio(duration: const Duration(seconds: 1));
 
         expect(result!.thumbnailBase64, isNull);
+      });
+
+      test('recordAudio stores bytes to BlobStore', () async {
+        final result =
+            await service.recordAudio(duration: const Duration(seconds: 5));
+
+        expect(result, isNotNull);
+        expect(blobStore.contains(result!.uuid), isTrue);
+
+        final storedBytes = await blobStore.load(result.uuid);
+        expect(storedBytes, isNotNull);
+        expect(storedBytes!.length, result.sizeBytes);
+      });
+    });
+
+    group('Audio recording with start/stop', () {
+      test('startRecording returns true when idle', () async {
+        final started = await service.startRecording();
+        expect(started, isTrue);
+        expect(service.recordingState, RecordingState.recording);
+
+        // Clean up
+        await service.stopRecording();
+      });
+
+      test('startRecording returns false when already recording', () async {
+        await service.startRecording();
+        final secondStart = await service.startRecording();
+
+        expect(secondStart, isFalse);
+
+        // Clean up
+        await service.stopRecording();
+      });
+
+      test('stopRecording returns FileMetadata when recording', () async {
+        await service.startRecording();
+
+        // Small delay to simulate recording
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        final result = await service.stopRecording();
+
+        expect(result, isNotNull);
+        expect(result!.filename, contains('.m4a'));
+        expect(result.mimeType, 'audio/mp4');
+        expect(service.recordingState, RecordingState.idle);
+      });
+
+      test('stopRecording returns null when not recording', () async {
+        final result = await service.stopRecording();
+        expect(result, isNull);
+      });
+
+      test('stopRecording stores bytes to BlobStore', () async {
+        await service.startRecording();
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        final result = await service.stopRecording();
+
+        expect(result, isNotNull);
+        expect(blobStore.contains(result!.uuid), isTrue);
       });
     });
 
@@ -125,16 +220,27 @@ void main() {
         expect(result, isNull);
       });
 
-      test('pickFile can pick any file type', () async {
+      test('pickFile can pick specific file types', () async {
         final result = await service.pickFile(allowedTypes: ['pdf', 'doc']);
 
         expect(result, isNotNull);
+        expect(result!.filename, contains('.pdf'));
+      });
+
+      test('pickFile stores bytes to BlobStore', () async {
+        final result = await service.pickFile();
+
+        expect(result, isNotNull);
+        expect(blobStore.contains(result!.uuid), isTrue);
+
+        final storedBytes = await blobStore.load(result.uuid);
+        expect(storedBytes, isNotNull);
+        expect(storedBytes!.length, result.sizeBytes);
       });
     });
 
     group('Image compression', () {
       test('compress reduces image bytes', () async {
-        // Create mock image bytes (simple PNG header)
         final originalBytes = Uint8List.fromList([
           137, 80, 78, 71, 13, 10, 26, 10, // PNG header
           ...List<int>.filled(1000, 255), // Mock image data
@@ -143,7 +249,6 @@ void main() {
         final compressed = await service.compress(originalBytes, quality: 80);
 
         expect(compressed, isNotNull);
-        // Mock just returns proportionally smaller
         expect(compressed!.length, lessThanOrEqualTo(originalBytes.length));
       });
 
@@ -190,7 +295,6 @@ void main() {
         final thumb200 = await service.generateThumbnail(bytes, width: 200);
         final thumb100 = await service.generateThumbnail(bytes, width: 100);
 
-        // Both should return valid data URIs
         expect(thumb200, startsWith('data:image/'));
         expect(thumb100, startsWith('data:image/'));
       });
@@ -237,24 +341,73 @@ void main() {
 
     group('Lifecycle', () {
       test('initialize completes', () async {
-        await expectLater(service.initialize(), completion(isNull));
+        final newService = MockFileService(blobStore: MockBlobStore());
+        await expectLater(newService.initialize(), completes);
       });
 
       test('dispose completes', () async {
-        await expectLater(service.dispose(), completion(isNull));
+        await expectLater(service.dispose(), completes);
+      });
+
+      test('blobStore is accessible', () {
+        expect(service.blobStore, isNotNull);
+        expect(service.blobStore, same(blobStore));
       });
     });
   });
 
-  group('FileService real implementation', () {
-    // Real implementation would require:
-    // - Platform-specific file pickers (image_picker, record, file_picker)
-    // - Image processing (image package)
-    // - Device permissions
-    // These will be tested on actual devices
+  group('BlobStore integration', () {
+    late MockFileService service;
+    late MockBlobStore blobStore;
 
-    test('FileService has real implementation', () {
-      expect(FileService, isA<Type>());
+    setUp(() async {
+      blobStore = MockBlobStore();
+      await blobStore.initialize();
+      service = MockFileService(blobStore: blobStore);
+      await service.initialize();
+    });
+
+    test('multiple files are stored with unique UUIDs', () async {
+      final photo1 = await service.pickPhoto();
+      final photo2 = await service.pickPhoto();
+      final video = await service.pickVideo();
+
+      expect(photo1!.uuid, isNot(photo2!.uuid));
+      expect(photo2.uuid, isNot(video!.uuid));
+
+      expect(blobStore.contains(photo1.uuid), isTrue);
+      expect(blobStore.contains(photo2.uuid), isTrue);
+      expect(blobStore.contains(video.uuid), isTrue);
+    });
+
+    test('stored bytes can be retrieved and streamed', () async {
+      final photo = await service.pickPhoto();
+
+      // Load full bytes
+      final bytes = await blobStore.load(photo!.uuid);
+      expect(bytes, isNotNull);
+      expect(bytes!.length, photo.sizeBytes);
+
+      // Stream bytes
+      final chunks = <Uint8List>[];
+      await for (final chunk
+          in blobStore.streamRead(photo.uuid, chunkSize: 512)) {
+        chunks.add(chunk);
+      }
+
+      final reassembled = Uint8List.fromList(chunks.expand((c) => c).toList());
+      expect(reassembled.length, photo.sizeBytes);
+    });
+
+    test('deleting from BlobStore removes file bytes', () async {
+      final file = await service.pickFile();
+
+      expect(blobStore.contains(file!.uuid), isTrue);
+
+      await blobStore.delete(file.uuid);
+
+      expect(blobStore.contains(file.uuid), isFalse);
+      expect(await blobStore.load(file.uuid), isNull);
     });
   });
 }

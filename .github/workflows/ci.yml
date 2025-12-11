@@ -157,8 +157,7 @@ jobs:
           path: build/web
 
   # ============ Build - Android ============
-  # Note: May fail due to record_linux package incompatibility on Linux runners.
-  # Users configure native builds for their specific project.
+  # Builds Android APK with all permissions configured.
   build-android:
     name: Build Android
     runs-on: ubuntu-latest
@@ -213,7 +212,7 @@ jobs:
       # Note: For actual deployment, add code signing
 
   # ============ Build - macOS ============
-  # Note: May fail due to record package incompatibility. Users configure for their project.
+  # Builds macOS app with camera, microphone, and file access entitlements.
   build-macos:
     name: Build macOS
     runs-on: macos-latest
@@ -238,7 +237,7 @@ jobs:
         run: flutter build macos --release
 
   # ============ Build - Linux ============
-  # Note: May fail due to record_linux package incompatibility. Users configure for their project.
+  # Builds Linux desktop with pulseaudio and ffmpeg for audio recording.
   build-linux:
     name: Build Linux
     runs-on: ubuntu-latest
@@ -256,7 +255,7 @@ jobs:
       - name: Install Linux dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev pulseaudio-utils ffmpeg
       
       - name: Enable Linux
         run: flutter config --enable-linux-desktop

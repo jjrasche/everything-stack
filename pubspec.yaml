@@ -34,9 +34,12 @@ dependencies:
 
   # File input and storage
   image_picker: ^1.1.0
-  record: ^5.1.0
+  record: ^6.1.2
   file_picker: ^8.0.0
   image: ^4.1.0
+
+  # Web storage (IndexedDB)
+  idb_shim: ^2.4.0
 
 dev_dependencies:
   flutter_test:

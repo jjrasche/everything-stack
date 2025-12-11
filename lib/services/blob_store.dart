@@ -137,118 +137,20 @@ class MockBlobStore extends BlobStore {
 }
 
 // ============ Platform Implementations ============
-
-/// Filesystem-based blob store for mobile and desktop.
-/// Uses path_provider to get platform-specific directories.
-class FileSystemBlobStore extends BlobStore {
-  // Implementation placeholder - will be implemented with conditional imports
-  // Real implementation uses:
-  // - getTemporaryDirectory() for temporary files
-  // - getApplicationDocumentsDirectory() for persistent files
-  // - File I/O for saving/loading
-
-  @override
-  Future<void> save(String id, Uint8List bytes) async {
-    throw UnimplementedError(
-        'FileSystemBlobStore requires platform-specific implementation');
-  }
-
-  @override
-  Future<Uint8List?> load(String id) async {
-    throw UnimplementedError(
-        'FileSystemBlobStore requires platform-specific implementation');
-  }
-
-  @override
-  Future<bool> delete(String id) async {
-    throw UnimplementedError(
-        'FileSystemBlobStore requires platform-specific implementation');
-  }
-
-  @override
-  Stream<Uint8List> streamRead(String id, {int chunkSize = 64 * 1024}) {
-    throw UnimplementedError(
-        'FileSystemBlobStore requires platform-specific implementation');
-  }
-
-  @override
-  bool contains(String id) {
-    throw UnimplementedError(
-        'FileSystemBlobStore requires platform-specific implementation');
-  }
-
-  @override
-  int size(String id) {
-    throw UnimplementedError(
-        'FileSystemBlobStore requires platform-specific implementation');
-  }
-
-  @override
-  Future<void> initialize() async {
-    // Verify directories are writable
-  }
-
-  @override
-  void dispose() {
-    // Cleanup temporary files if needed
-  }
-}
-
-/// IndexedDB-based blob store for web.
-/// Uses browser's IndexedDB for persistent client-side storage.
-class IndexedDBBlobStore extends BlobStore {
-  // Implementation placeholder - will be implemented with js interop or package
-  // Real implementation uses:
-  // - indexed_db package or dart:indexed_db (if available)
-  // - Database transactions for save/load/delete
-  // - Object stores for blob data
-
-  @override
-  Future<void> save(String id, Uint8List bytes) async {
-    throw UnimplementedError(
-        'IndexedDBBlobStore requires web-specific implementation');
-  }
-
-  @override
-  Future<Uint8List?> load(String id) async {
-    throw UnimplementedError(
-        'IndexedDBBlobStore requires web-specific implementation');
-  }
-
-  @override
-  Future<bool> delete(String id) async {
-    throw UnimplementedError(
-        'IndexedDBBlobStore requires web-specific implementation');
-  }
-
-  @override
-  Stream<Uint8List> streamRead(String id, {int chunkSize = 64 * 1024}) {
-    throw UnimplementedError(
-        'IndexedDBBlobStore requires web-specific implementation');
-  }
-
-  @override
-  bool contains(String id) {
-    throw UnimplementedError(
-        'IndexedDBBlobStore requires web-specific implementation');
-  }
-
-  @override
-  int size(String id) {
-    throw UnimplementedError(
-        'IndexedDBBlobStore requires web-specific implementation');
-  }
-
-  @override
-  Future<void> initialize() async {
-    // Open IndexedDB database
-  }
-
-  @override
-  void dispose() {
-    // Close IndexedDB connection
-  }
-}
+//
+// Real implementations are in separate files for conditional imports:
+// - blob_store_io.dart: FileSystemBlobStore for mobile/desktop
+// - blob_store_web.dart: IndexedDBBlobStore for web
+//
+// Usage with conditional imports:
+// ```dart
+// import 'blob_store.dart';
+// import 'blob_store_io.dart' if (dart.library.html) 'blob_store_web.dart';
+//
+// void main() {
+//   BlobStore.instance = FileSystemBlobStore(); // or IndexedDBBlobStore on web
+// }
+// ```
 
 // ============ Supabase Storage Implementation ============
 

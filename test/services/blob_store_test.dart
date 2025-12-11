@@ -198,26 +198,7 @@ void main() {
     });
   });
 
-  group('FileSystemBlobStore', () {
-    // Real implementation tests would require:
-    // - Temporary directory setup
-    // - File I/O verification
-    // - Platform-specific path handling
-    // These will be tested on actual mobile/desktop platforms
-
-    test('FileSystemBlobStore is a BlobStore', () {
-      expect(FileSystemBlobStore, isA<Type>());
-    });
-  });
-
-  group('IndexedDBBlobStore', () {
-    // Real implementation tests would require:
-    // - IndexedDB setup in web environment
-    // - Browser APIs
-    // These will be tested on web platform
-
-    test('IndexedDBBlobStore is a BlobStore', () {
-      expect(IndexedDBBlobStore, isA<Type>());
-    });
-  });
+  // Platform-specific implementations (FileSystemBlobStore, IndexedDBBlobStore)
+  // are tested in integration_test/blob_store_platform_test.dart
+  // because they require platform-specific APIs (file system, IndexedDB).
 }
