@@ -7,11 +7,24 @@ build/
 *.iml
 
 # Isar
-*.g.dart
 *.isar
 *.isar-lck
 test_*.isar
 test_*.isar-lck
+
+# ObjectBox
+lib/objectbox-model.json
+lib/objectbox.g.dart
+lib/objectbox.dll
+lib/objectbox.lib
+download/
+
+# Generated code
+*.g.dart
+
+# Claude Code
+.claude/
+.claude/**/*
 
 # IDE
 .idea/
@@ -32,6 +45,16 @@ test_*.isar-lck
 **/android/gradlew.bat
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.*
+
+# Linux
+**/linux/**/GeneratedPluginRegistrant.*
+
+# macOS
+**/macos/**/GeneratedPluginRegistrant.*
+
+# Windows
+**/windows/**/GeneratedPluginRegistrant.*
+**/windows/flutter/generated_plugins.cmake
 
 # iOS
 **/ios/**/*.mode1v3
@@ -63,13 +86,15 @@ test_*.isar-lck
 **/ios/Runner/GeneratedPluginRegistrant.*
 
 # Web
-lib/generated_plugin_registrant.dart
 
 # Coverage
 coverage/
 
 # Test
 .test_coverage.dart
+
+# Dependencies
+pubspec.lock
 
 # Environments
 .env
