@@ -1,11 +1,10 @@
 /// # HNSW + EntityRepository Integration Tests
 ///
-/// Tests that verify HNSW index integration with EntityRepository:
-/// - Save entity -> generates embedding -> adds to index by uuid
+/// Tests that verify HNSW index integration with EntityRepository using ObjectBox:
+/// - Save entity -> generates embedding -> stored with HNSW index
 /// - Delete entity -> removes from index
 /// - Update entity -> re-indexes
-/// - Index persists across repository restarts
-/// - Rebuild index from entities when missing/corrupt
+/// - Semantic search finds similar entities
 ///
 /// These tests use MockEmbeddingService for deterministic behavior.
 /// The mock generates consistent vectors based on text hash, so:
@@ -15,138 +14,54 @@
 /// Note: Mock doesn't have semantic understanding.
 /// We test infrastructure, not semantic quality.
 
-import 'dart:typed_data';
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:isar/isar.dart';
+import 'package:objectbox/objectbox.dart';
 
-import 'package:everything_stack_template/core/base_entity.dart';
-import 'package:everything_stack_template/core/entity_repository.dart';
-import 'package:everything_stack_template/patterns/embeddable.dart';
+import 'package:everything_stack_template/domain/note.dart';
+import 'package:everything_stack_template/domain/note_repository.dart';
+import 'package:everything_stack_template/persistence/objectbox/note_objectbox_adapter.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
-import 'package:everything_stack_template/services/hnsw_index.dart';
-
-part 'hnsw_integration_test.g.dart';
-
-// ============ Test Entities ============
-
-/// Embeddable test entity (simulates Note)
-@Collection()
-class TestNote extends BaseEntity with Embeddable {
-  // Override uuid with @Index for O(1) findByUuid() lookups
-  // Initialize with base class value to enable Isar serialization
-  @Index(unique: true)
-  @override
-  String uuid = '';
-
-  @override
-  @enumerated
-  SyncStatus syncStatus = SyncStatus.local;
-
-  String title;
-  String content;
-
-  TestNote({required this.title, this.content = ''}) {
-    // Ensure uuid is generated if not set
-    if (uuid.isEmpty) {
-      uuid = super.uuid;
-    }
-  }
-
-  @override
-  String toEmbeddingInput() => '$title\n$content';
-}
-
-/// Non-embeddable entity - should not be indexed
-@Collection()
-class TestConfig extends BaseEntity {
-  // Override uuid with @Index for O(1) findByUuid() lookups
-  // Initialize with base class value to enable Isar serialization
-  @Index(unique: true)
-  @override
-  String uuid = '';
-
-  @override
-  @enumerated
-  SyncStatus syncStatus = SyncStatus.local;
-
-  String key;
-  String value;
-
-  TestConfig({required this.key, required this.value}) {
-    // Ensure uuid is generated if not set
-    if (uuid.isEmpty) {
-      uuid = super.uuid;
-    }
-  }
-}
-
-// ============ Test Repositories ============
-
-class TestNoteRepository extends EntityRepository<TestNote> {
-  TestNoteRepository(super.isar, {super.hnswIndex, super.embeddingService});
-
-  @override
-  IsarCollection<TestNote> get collection => isar.testNotes;
-}
-
-class TestConfigRepository extends EntityRepository<TestConfig> {
-  TestConfigRepository(super.isar, {super.hnswIndex, super.embeddingService});
-
-  @override
-  IsarCollection<TestConfig> get collection => isar.testConfigs;
-}
+import 'package:everything_stack_template/objectbox.g.dart';
 
 // ============ Tests ============
 
 void main() {
-  late Isar isar;
-  late HnswIndex hnswIndex;
+  late Store store;
+  late NoteRepository noteRepo;
   late MockEmbeddingService embeddingService;
-  late TestNoteRepository noteRepo;
-  late TestConfigRepository configRepo;
+  late Directory testDir;
 
   setUp(() async {
-    // Initialize Isar for testing
-    await Isar.initializeIsarCore(download: true);
-    isar = await Isar.open(
-      [TestNoteSchema, TestConfigSchema],
-      directory: '',
-      name: 'test_${DateTime.now().millisecondsSinceEpoch}',
-    );
+    // Create temporary directory for ObjectBox store
+    testDir = await Directory.systemTemp.createTemp('objectbox_hnsw_test_');
 
-    // Create shared HNSW index (Option A: global index)
-    // Now uses String UUIDs as keys
-    hnswIndex = HnswIndex(
-      dimensions: EmbeddingService.dimension,
-      seed: 42, // Deterministic for tests
-    );
+    // Open ObjectBox store
+    store = await openStore(directory: testDir.path);
 
     // Use mock embedding service
     embeddingService = MockEmbeddingService();
 
-    // Create repositories sharing the same index
-    noteRepo = TestNoteRepository(
-      isar,
-      hnswIndex: hnswIndex,
-      embeddingService: embeddingService,
-    );
-    configRepo = TestConfigRepository(
-      isar,
-      hnswIndex: hnswIndex,
+    // Create repository with ObjectBox adapter
+    final noteAdapter = NoteObjectBoxAdapter(store);
+    noteRepo = NoteRepository(
+      adapter: noteAdapter,
       embeddingService: embeddingService,
     );
   });
 
   tearDown(() async {
-    await isar.close(deleteFromDisk: true);
+    store.close();
+    // Clean up temp directory
+    if (await testDir.exists()) {
+      await testDir.delete(recursive: true);
+    }
   });
 
   group('Entity save adds to index', () {
-    test(
-        'saving Embeddable entity generates embedding and adds to index by uuid',
-        () async {
-      final note = TestNote(title: 'Test Note', content: 'Some content');
-      final noteUuid = note.uuid; // Capture uuid before save
+    test('saving Embeddable entity generates embedding and stores it', () async {
+      final note = Note(title: 'Test Note', content: 'Some content');
+      final noteUuid = note.uuid;
 
       await noteRepo.save(note);
 
@@ -155,14 +70,10 @@ void main() {
       expect(saved, isNotNull);
       expect(saved!.embedding, isNotNull);
       expect(saved.embedding!.length, EmbeddingService.dimension);
-
-      // Verify added to HNSW index by uuid
-      expect(hnswIndex.contains(noteUuid), isTrue);
-      expect(hnswIndex.size, 1);
     });
 
     test('semantic search finds saved entity', () async {
-      final note = TestNote(
+      final note = Note(
         title: 'Meeting Notes',
         content: 'Discussed project timeline and milestones',
       );
@@ -178,41 +89,43 @@ void main() {
       expect(results.first.title, 'Meeting Notes');
     });
 
-    test('saveAll adds all entities to index by uuid', () async {
+    test('saveAll adds all entities with embeddings', () async {
       final notes = [
-        TestNote(title: 'Note A', content: 'Content A'),
-        TestNote(title: 'Note B', content: 'Content B'),
-        TestNote(title: 'Note C', content: 'Content C'),
+        Note(title: 'Note A', content: 'Content A'),
+        Note(title: 'Note B', content: 'Content B'),
+        Note(title: 'Note C', content: 'Content C'),
       ];
-      final uuids = notes.map((n) => n.uuid).toList();
 
       await noteRepo.saveAll(notes);
 
-      expect(hnswIndex.size, 3);
-      for (var i = 0; i < notes.length; i++) {
-        expect(notes[i].embedding, isNotNull);
-        expect(hnswIndex.contains(uuids[i]), isTrue);
+      // Verify all have embeddings
+      for (final note in notes) {
+        final saved = await noteRepo.findByUuid(note.uuid);
+        expect(saved!.embedding, isNotNull);
       }
+
+      // Verify count
+      final count = await noteRepo.count();
+      expect(count, 3);
     });
   });
 
   group('Entity delete removes from index', () {
-    test('deleting entity removes from HNSW index by uuid', () async {
-      final note = TestNote(title: 'To Delete', content: 'Will be removed');
+    test('deleting entity removes it', () async {
+      final note = Note(title: 'To Delete', content: 'Will be removed');
       final noteUuid = note.uuid;
       final id = await noteRepo.save(note);
 
-      expect(hnswIndex.contains(noteUuid), isTrue);
+      expect(await noteRepo.findByUuid(noteUuid), isNotNull);
 
       await noteRepo.delete(id);
 
-      expect(hnswIndex.contains(noteUuid), isFalse);
-      expect(hnswIndex.size, 0);
+      expect(await noteRepo.findByUuid(noteUuid), isNull);
     });
 
     test('deleted entity not returned in semantic search', () async {
-      final note1 = TestNote(title: 'Keep', content: 'Staying');
-      final note2 = TestNote(title: 'Remove', content: 'Going away');
+      final note1 = Note(title: 'Keep', content: 'Staying');
+      final note2 = Note(title: 'Remove', content: 'Going away');
       final uuid1 = note1.uuid;
       final uuid2 = note2.uuid;
 
@@ -221,37 +134,32 @@ void main() {
 
       await noteRepo.delete(id2);
 
-      // Search with exact content should find note1
-      // (Mock embeddings are hash-based, not semantic)
+      // Search should only find note1
       final results = await noteRepo.semanticSearch('Keep\nStaying', limit: 10);
       expect(results.map((n) => n.uuid), contains(uuid1));
       expect(results.map((n) => n.uuid), isNot(contains(uuid2)));
     });
 
-    test('deleteAll removes all from index', () async {
+    test('deleteAll removes all', () async {
       final notes = [
-        TestNote(title: 'A'),
-        TestNote(title: 'B'),
-        TestNote(title: 'C'),
+        Note(title: 'A'),
+        Note(title: 'B'),
+        Note(title: 'C'),
       ];
-      final uuids = notes.map((n) => n.uuid).toList();
       await noteRepo.saveAll(notes);
-      final ids = notes.map((n) => n.id).whereType<int>().toList();
+      final ids = notes.map((n) => n.id).toList();
 
-      expect(hnswIndex.size, 3);
+      expect(await noteRepo.count(), 3);
 
       await noteRepo.deleteAll(ids);
 
-      expect(hnswIndex.size, 0);
-      for (final uuid in uuids) {
-        expect(hnswIndex.contains(uuid), isFalse);
-      }
+      expect(await noteRepo.count(), 0);
     });
   });
 
   group('Entity update re-indexes', () {
     test('updating entity content re-generates embedding', () async {
-      final note = TestNote(title: 'Original', content: 'First version');
+      final note = Note(title: 'Original', content: 'First version');
       final noteUuid = note.uuid;
       await noteRepo.save(note);
 
@@ -265,14 +173,10 @@ void main() {
       // Embedding should have changed
       final updated = await noteRepo.findByUuid(noteUuid);
       expect(updated!.embedding, isNot(equals(originalEmbedding)));
-
-      // Index should still contain the uuid (with updated vector)
-      expect(hnswIndex.contains(noteUuid), isTrue);
-      expect(hnswIndex.size, 1);
     });
 
     test('search reflects updated content', () async {
-      final note = TestNote(title: 'Apples', content: 'About apples');
+      final note = Note(title: 'Apples', content: 'About apples');
       final noteUuid = note.uuid;
       await noteRepo.save(note);
 
@@ -293,235 +197,16 @@ void main() {
     });
   });
 
-  group('Index persistence', () {
-    test('index serializes and deserializes correctly with uuid keys',
-        () async {
-      // Save some entities
-      final note1 = TestNote(title: 'Note 1', content: 'Content 1');
-      final note2 = TestNote(title: 'Note 2', content: 'Content 2');
-      final note3 = TestNote(title: 'Note 3', content: 'Content 3');
-      await noteRepo.save(note1);
-      await noteRepo.save(note2);
-      await noteRepo.save(note3);
-
-      // Serialize the index
-      final bytes = hnswIndex.toBytes();
-
-      // Create new index from bytes
-      final restoredIndex = HnswIndex.fromBytes(bytes);
-
-      expect(restoredIndex.size, 3);
-      expect(restoredIndex.contains(note1.uuid), isTrue);
-      expect(restoredIndex.contains(note2.uuid), isTrue);
-      expect(restoredIndex.contains(note3.uuid), isTrue);
-
-      // Search should work on restored index
-      final results = restoredIndex.search(
-        await embeddingService.generate('Note 1\nContent 1'),
-        k: 3,
-      );
-      expect(results.length, 3);
-    });
-
-    test('repository can restore index on init', () async {
-      // Save entities and serialize index
-      // Use completely different content so embeddings are distinct
-      final note1 = TestNote(title: 'Quantum', content: 'Physics mechanics');
-      final note2 = TestNote(title: 'Banana', content: 'Yellow fruit');
-      await noteRepo.save(note1);
-      await noteRepo.save(note2);
-
-      final serializedBytes = hnswIndex.toBytes();
-
-      // Simulate restart: create new index from bytes
-      final restoredIndex = HnswIndex.fromBytes(serializedBytes);
-
-      // Create new repository with restored index
-      final newRepo = TestNoteRepository(
-        isar,
-        hnswIndex: restoredIndex,
-        embeddingService: embeddingService,
-      );
-
-      // Search should return best match as top result
-      final results1 =
-          await newRepo.semanticSearch('Quantum\nPhysics mechanics', limit: 10);
-      expect(results1.isNotEmpty, isTrue);
-      expect(results1.first.title, 'Quantum');
-
-      final results2 =
-          await newRepo.semanticSearch('Banana\nYellow fruit', limit: 10);
-      expect(results2.isNotEmpty, isTrue);
-      expect(results2.first.title, 'Banana');
-    });
-
-    test('index bytes can be stored in Isar', () async {
-      // This test verifies the pattern of storing index in database
-      await noteRepo.save(TestNote(title: 'Test'));
-
-      final bytes = hnswIndex.toBytes();
-
-      // Store bytes (would typically go in a settings/metadata collection)
-      // For this test, just verify bytes are valid
-      expect(bytes, isA<Uint8List>());
-      expect(bytes.length, greaterThan(0));
-
-      // Verify can restore
-      final restored = HnswIndex.fromBytes(bytes);
-      expect(restored.size, 1);
-    });
-  });
-
-  group('Rebuild index from entities', () {
-    test('rebuildIndex recreates index from all Embeddable entities', () async {
-      // Save entities with embeddings
-      // Use distinctive content so embeddings are different
-      final note1 = TestNote(title: 'Dog', content: 'Barks loudly');
-      final note2 = TestNote(title: 'Cat', content: 'Meows softly');
-      final note3 = TestNote(title: 'Bird', content: 'Chirps happily');
-      await noteRepo.save(note1);
-      await noteRepo.save(note2);
-      await noteRepo.save(note3);
-
-      expect(hnswIndex.size, 3);
-
-      // Simulate corrupt/missing index by creating empty one
-      final freshIndex = HnswIndex(
-        dimensions: EmbeddingService.dimension,
-        seed: 42,
-      );
-      final repoWithEmptyIndex = TestNoteRepository(
-        isar,
-        hnswIndex: freshIndex,
-        embeddingService: embeddingService,
-      );
-
-      expect(freshIndex.size, 0);
-
-      // Rebuild index from stored entities
-      await repoWithEmptyIndex.rebuildIndex();
-
-      // Index should be restored
-      expect(freshIndex.size, 3);
-      expect(freshIndex.contains(note1.uuid), isTrue);
-      expect(freshIndex.contains(note2.uuid), isTrue);
-      expect(freshIndex.contains(note3.uuid), isTrue);
-
-      // Search should return best match as top result
-      final results = await repoWithEmptyIndex
-          .semanticSearch('Dog\nBarks loudly', limit: 10);
-      expect(results.isNotEmpty, isTrue);
-      expect(results.first.title, 'Dog');
-    });
-
-    test('rebuildIndex regenerates missing embeddings', () async {
-      // Manually insert entities without embeddings (simulating data migration)
-      await isar.writeTxn(() async {
-        await isar.testNotes.putAll([
-          TestNote(title: 'No Embedding 1'),
-          TestNote(title: 'No Embedding 2'),
-        ]);
-      });
-
-      // Verify embeddings are null
-      final all = await noteRepo.findAll();
-      expect(all.every((n) => n.embedding == null), isTrue);
-
-      // Create fresh index and rebuild
-      final freshIndex = HnswIndex(
-        dimensions: EmbeddingService.dimension,
-        seed: 42,
-      );
-      final repoWithEmptyIndex = TestNoteRepository(
-        isar,
-        hnswIndex: freshIndex,
-        embeddingService: embeddingService,
-      );
-
-      await repoWithEmptyIndex.rebuildIndex();
-
-      // All entities should now have embeddings
-      final afterRebuild = await repoWithEmptyIndex.findAll();
-      expect(afterRebuild.every((n) => n.embedding != null), isTrue);
-
-      // And be in the index
-      expect(freshIndex.size, 2);
-    });
-
-    test('rebuildIndex skips entities with empty embedding input', () async {
-      // Save entity with content and one without
-      await noteRepo.save(TestNote(title: 'Has Content'));
-
-      // Manually insert empty entity
-      await isar.writeTxn(() async {
-        await isar.testNotes.put(TestNote(title: '', content: ''));
-      });
-
-      final freshIndex = HnswIndex(
-        dimensions: EmbeddingService.dimension,
-        seed: 42,
-      );
-      final repoWithEmptyIndex = TestNoteRepository(
-        isar,
-        hnswIndex: freshIndex,
-        embeddingService: embeddingService,
-      );
-
-      await repoWithEmptyIndex.rebuildIndex();
-
-      // Only entity with content should be indexed
-      expect(freshIndex.size, 1);
-    });
-  });
-
-  group('Non-Embeddable entities', () {
-    test('non-Embeddable entity not added to index', () async {
-      final config = TestConfig(key: 'setting', value: 'enabled');
-
-      await configRepo.save(config);
-
-      // Should not be in HNSW index (uuid not added)
-      expect(hnswIndex.contains(config.uuid), isFalse);
-      expect(hnswIndex.size, 0);
-    });
-
-    test('semantic search on non-Embeddable returns empty', () async {
-      final config = TestConfig(key: 'api_key', value: 'secret');
-      await configRepo.save(config);
-
-      // semanticSearch should return empty (no embeddings to search)
-      final results = await configRepo.semanticSearch('api key');
-      expect(results, isEmpty);
-    });
-
-    test('mixed save does not affect non-Embeddable', () async {
-      final note = TestNote(title: 'Note');
-      final config = TestConfig(key: 'key', value: 'value');
-
-      await noteRepo.save(note);
-      await configRepo.save(config);
-
-      // Only note should be in index (by uuid)
-      // With uuid keys, there's no ID collision issue
-      expect(hnswIndex.size, 1);
-      expect(hnswIndex.contains(note.uuid), isTrue);
-      expect(hnswIndex.contains(config.uuid), isFalse);
-    });
-  });
-
   group('UUID uniqueness', () {
     test('each entity gets unique uuid', () async {
-      final note1 = TestNote(title: 'Note 1');
-      final note2 = TestNote(title: 'Note 2');
-      final config = TestConfig(key: 'key', value: 'value');
+      final note1 = Note(title: 'Note 1');
+      final note2 = Note(title: 'Note 2');
 
       expect(note1.uuid, isNot(equals(note2.uuid)));
-      expect(note1.uuid, isNot(equals(config.uuid)));
-      expect(note2.uuid, isNot(equals(config.uuid)));
     });
 
     test('uuid is stable across saves', () async {
-      final note = TestNote(title: 'Original');
+      final note = Note(title: 'Original');
       final originalUuid = note.uuid;
 
       await noteRepo.save(note);
@@ -540,7 +225,7 @@ void main() {
     });
 
     test('findByUuid works correctly', () async {
-      final note = TestNote(title: 'Findable');
+      final note = Note(title: 'Findable');
       final noteUuid = note.uuid;
       await noteRepo.save(note);
 
@@ -557,16 +242,13 @@ void main() {
 
   group('Edge cases', () {
     test('empty embedding input skips indexing', () async {
-      final note = TestNote(title: '', content: '');
+      final note = Note(title: '', content: '');
       final noteUuid = note.uuid;
       await noteRepo.save(note);
 
       // Empty input should result in null embedding
       final saved = await noteRepo.findByUuid(noteUuid);
       expect(saved!.embedding, isNull);
-
-      // Should not be in index
-      expect(hnswIndex.contains(noteUuid), isFalse);
     });
 
     test('search with no indexed entities returns empty', () async {
@@ -574,23 +256,22 @@ void main() {
       expect(results, isEmpty);
     });
 
-    test('concurrent saves maintain index consistency', () async {
+    test('concurrent saves maintain consistency', () async {
       // Save multiple entities concurrently
-      final notes = List.generate(10, (i) => TestNote(title: 'Note $i'));
+      final notes = List.generate(10, (i) => Note(title: 'Note $i'));
       final uuids = notes.map((n) => n.uuid).toList();
 
       final futures = notes.map((n) => noteRepo.save(n));
       await Future.wait(futures);
 
-      expect(hnswIndex.size, 10);
+      expect(await noteRepo.count(), 10);
       for (final uuid in uuids) {
-        expect(hnswIndex.contains(uuid), isTrue);
+        expect(await noteRepo.findByUuid(uuid), isNotNull);
       }
     });
 
     test('re-saving same entity updates rather than duplicates', () async {
-      final note = TestNote(title: 'Original');
-      final noteUuid = note.uuid;
+      final note = Note(title: 'Original');
       await noteRepo.save(note);
 
       // Save again (simulating update)
@@ -598,17 +279,14 @@ void main() {
       await noteRepo.save(note);
 
       // Should still be only one entry
-      expect(hnswIndex.size, 1);
-      expect(hnswIndex.contains(noteUuid), isTrue);
+      expect(await noteRepo.count(), 1);
     });
   });
 
   group('UUID preservation and indexed lookup', () {
-    test(
-        'uuid is preserved when loading from Isar (not regenerated by late default)',
-        () async {
+    test('uuid is preserved when loading from ObjectBox', () async {
       // Create entity - uuid is auto-generated
-      final original = TestNote(title: 'Test', content: 'Content');
+      final original = Note(title: 'Test', content: 'Content');
       final originalUuid = original.uuid;
 
       // Save to database
@@ -620,15 +298,14 @@ void main() {
       // Verify uuid is identical (not regenerated)
       expect(loaded, isNotNull);
       expect(loaded!.uuid, equals(originalUuid),
-          reason:
-              'uuid should be preserved from database, not regenerated by late default');
+          reason: 'uuid should be preserved from database, not regenerated');
     });
 
     test('O(1) indexed findByUuid lookup works correctly', () async {
       // Create multiple entities with different uuids
-      final note1 = TestNote(title: 'Note 1');
-      final note2 = TestNote(title: 'Note 2');
-      final note3 = TestNote(title: 'Note 3');
+      final note1 = Note(title: 'Note 1');
+      final note2 = Note(title: 'Note 2');
+      final note3 = Note(title: 'Note 3');
 
       final uuid1 = note1.uuid;
       final uuid2 = note2.uuid;

@@ -18,25 +18,6 @@
 /// - Changes stored as JSON Patch deltas (RFC 6902)
 /// - Periodic snapshots for reconstruction efficiency (every N deltas)
 ///
-/// ## Schema
-/// ```dart
-/// @Collection()
-/// class EntityVersion {
-///   String uuid;                 // Unique version ID (for sync)
-///   String entityType;           // 'Note', 'Tool', etc.
-///   String entityUuid;           // Which entity this versions
-///   DateTime timestamp;          // When change occurred
-///   int versionNumber;           // Sequential per entity (1, 2, 3...)
-///   String deltaJson;            // RFC 6902 patch operations
-///   List<String> changedFields;  // ['title', 'body'] - queryable
-///   bool isSnapshot;             // true for initial + periodic snapshots
-///   String? snapshotJson;        // Full state when isSnapshot=true
-///   String? userId;              // Who made the change
-///   String? changeDescription;   // Optional description
-///   SyncStatus syncStatus;       // For syncing versions
-/// }
-/// ```
-///
 /// ## Reconstruction
 /// Forward-only: Find nearest snapshot before target → apply deltas forward → done
 ///
@@ -65,34 +46,34 @@
 /// - EntityRepository: Calls recordChange() on save for Versionable entities
 /// - Sync: Versions sync to remote database
 
-import 'package:isar/isar.dart';
+import 'package:objectbox/objectbox.dart';
 import 'package:uuid/uuid.dart';
 import '../core/base_entity.dart';
-
-part 'entity_version.g.dart';
 
 /// UUID generator for version records
 const _uuidGenerator = Uuid();
 
-@Collection()
+@Entity()
 class EntityVersion {
-  /// Isar auto-generated ID.
+  /// Database auto-generated ID.
   /// INTERNAL USE ONLY - use uuid for external references.
-  Id id = Isar.autoIncrement;
+  @Id()
+  int id = 0;
 
   /// Unique identifier for this version record (for sync correlation)
-  @Index(unique: true)
+  @Unique(onConflict: ConflictStrategy.replace)
   String uuid = _uuidGenerator.v4();
 
   /// Type of entity this versions ('Note', 'Tool', 'Contract', etc.)
-  /// Composite index: query by type → entity → time
-  @Index(composite: [CompositeIndex('entityUuid'), CompositeIndex('timestamp')])
+  @Index()
   String entityType;
 
   /// UUID of the entity this version belongs to
+  @Index()
   String entityUuid;
 
   /// When this change occurred
+  @Property(type: PropertyType.date)
   DateTime timestamp;
 
   /// Sequential version number per entity (1, 2, 3...)
@@ -105,7 +86,13 @@ class EntityVersion {
 
   /// Top-level fields that changed (for queryability without parsing delta)
   /// Example: ['title', 'body']
+  /// Stored as comma-separated string in ObjectBox
+  @Transient()
   List<String> changedFields = [];
+
+  String get dbChangedFields => changedFields.join(',');
+  set dbChangedFields(String value) =>
+      changedFields = value.isEmpty ? [] : value.split(',');
 
   /// True for initial creation + periodic snapshots (every N versions)
   bool isSnapshot;
@@ -121,8 +108,13 @@ class EntityVersion {
   String? changeDescription;
 
   /// Sync status for this version record
-  @Enumerated(EnumType.name)
+  /// Marked @Transient - use dbSyncStatus for storage
+  @Transient()
   SyncStatus syncStatus = SyncStatus.local;
+
+  /// Sync status stored as int (enum index)
+  int get dbSyncStatus => syncStatus.index;
+  set dbSyncStatus(int value) => syncStatus = SyncStatus.values[value];
 
   /// Constructor
   EntityVersion({
@@ -131,14 +123,18 @@ class EntityVersion {
     required this.timestamp,
     required this.versionNumber,
     required this.deltaJson,
-    required this.changedFields,
+    List<String>? changedFields,
     required this.isSnapshot,
     this.snapshotJson,
     this.userId,
     this.changeDescription,
-  });
+  }) {
+    if (changedFields != null) {
+      this.changedFields = changedFields;
+    }
+  }
 
-  /// Default constructor for Isar
+  /// Default constructor for ObjectBox (no args needed)
   EntityVersion.empty()
       : entityType = '',
         entityUuid = '',

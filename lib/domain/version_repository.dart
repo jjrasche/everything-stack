@@ -13,7 +13,7 @@
 ///
 /// ## Usage
 /// ```dart
-/// final repo = VersionRepository(isar);
+/// final repo = VersionRepository(store);
 ///
 /// // Record a change
 /// await repo.recordChange(
@@ -42,16 +42,20 @@
 /// - Pruning keeps snapshots
 
 import 'dart:convert';
-import 'package:isar/isar.dart';
+import 'package:objectbox/objectbox.dart';
 import 'package:rfc_6902/rfc_6902.dart';
 import 'entity_version.dart';
 import '../utils/json_diff.dart';
 import '../core/base_entity.dart';
+import '../objectbox.g.dart';
 
 class VersionRepository {
-  final Isar _isar;
+  final Store _store;
+  late final Box<EntityVersion> _box;
 
-  VersionRepository(this._isar);
+  VersionRepository(this._store) {
+    _box = _store.box<EntityVersion>();
+  }
 
   /// Record a change to an entity.
   ///
@@ -99,32 +103,35 @@ class VersionRepository {
       changeDescription: changeDescription,
     );
 
-    await _isar.writeTxn(() async {
-      await _isar.entityVersions.put(version);
-    });
+    _box.put(version);
   }
 
   /// Get all versions for an entity, ordered by version number.
   Future<List<EntityVersion>> getHistory(String entityUuid) async {
-    return await _isar.entityVersions
-        .where()
-        .filter()
-        .entityUuidEqualTo(entityUuid)
-        .sortByVersionNumber()
-        .findAll();
+    final query = _box
+        .query(EntityVersion_.entityUuid.equals(entityUuid))
+        .order(EntityVersion_.versionNumber)
+        .build();
+    try {
+      return query.find();
+    } finally {
+      query.close();
+    }
   }
 
   /// Get the latest version number for an entity.
   /// Returns 0 if entity has no versions.
   Future<int> getLatestVersionNumber(String entityUuid) async {
-    final latest = await _isar.entityVersions
-        .where()
-        .filter()
-        .entityUuidEqualTo(entityUuid)
-        .sortByVersionNumberDesc()
-        .findFirst();
-
-    return latest?.versionNumber ?? 0;
+    final query = _box
+        .query(EntityVersion_.entityUuid.equals(entityUuid))
+        .order(EntityVersion_.versionNumber, flags: Order.descending)
+        .build();
+    try {
+      final latest = query.findFirst();
+      return latest?.versionNumber ?? 0;
+    } finally {
+      query.close();
+    }
   }
 
   /// Reconstruct entity state at a specific timestamp.
@@ -140,14 +147,19 @@ class VersionRepository {
     DateTime targetTimestamp,
   ) async {
     // Get all versions up to target timestamp
-    final versions = await _isar.entityVersions
-        .where()
-        .filter()
-        .entityUuidEqualTo(entityUuid)
-        .and()
-        .timestampLessThan(targetTimestamp.add(const Duration(milliseconds: 1)))
-        .sortByVersionNumber()
-        .findAll();
+    final targetMs = targetTimestamp.add(const Duration(milliseconds: 1)).millisecondsSinceEpoch;
+    final query = _box
+        .query(EntityVersion_.entityUuid.equals(entityUuid)
+            .and(EntityVersion_.timestamp.lessThan(targetMs)))
+        .order(EntityVersion_.versionNumber)
+        .build();
+
+    List<EntityVersion> versions;
+    try {
+      versions = query.find();
+    } finally {
+      query.close();
+    }
 
     if (versions.isEmpty) {
       return null; // No versions before target
@@ -189,14 +201,18 @@ class VersionRepository {
     DateTime from,
     DateTime to,
   ) async {
-    return await _isar.entityVersions
-        .where()
-        .filter()
-        .entityUuidEqualTo(entityUuid)
-        .and()
-        .timestampBetween(from, to)
-        .sortByVersionNumber()
-        .findAll();
+    final fromMs = from.millisecondsSinceEpoch;
+    final toMs = to.millisecondsSinceEpoch;
+    final query = _box
+        .query(EntityVersion_.entityUuid.equals(entityUuid)
+            .and(EntityVersion_.timestamp.between(fromMs, toMs)))
+        .order(EntityVersion_.versionNumber)
+        .build();
+    try {
+      return query.find();
+    } finally {
+      query.close();
+    }
   }
 
   /// Prune old versions while keeping recent snapshots.
@@ -222,43 +238,52 @@ class VersionRepository {
     final oldestKeptSnapshot = snapshotsToKeep.first;
 
     // Delete all versions older than oldest kept snapshot
-    await _isar.writeTxn(() async {
-      for (final version in allVersions) {
-        if (version.versionNumber < oldestKeptSnapshot.versionNumber) {
-          await _isar.entityVersions.delete(version.id);
-        }
-      }
-    });
+    final idsToDelete = allVersions
+        .where((v) => v.versionNumber < oldestKeptSnapshot.versionNumber)
+        .map((v) => v.id)
+        .toList();
+    _box.removeMany(idsToDelete);
   }
 
   // ============ Sync Methods ============
 
   /// Find all unsynced versions (for sync service)
   Future<List<EntityVersion>> findUnsynced() async {
-    return _isar.entityVersions
-        .filter()
-        .syncStatusEqualTo(SyncStatus.local)
-        .findAll();
+    final query = _box
+        .query(EntityVersion_.dbSyncStatus.equals(SyncStatus.local.index))
+        .build();
+    try {
+      return query.find();
+    } finally {
+      query.close();
+    }
   }
 
   /// Find unsynced versions for a specific entity
   Future<List<EntityVersion>> findByEntityUuidUnsynced(
       String entityUuid) async {
-    return _isar.entityVersions
-        .filter()
-        .entityUuidEqualTo(entityUuid)
-        .syncStatusEqualTo(SyncStatus.local)
-        .findAll();
+    final query = _box
+        .query(EntityVersion_.entityUuid.equals(entityUuid)
+            .and(EntityVersion_.dbSyncStatus.equals(SyncStatus.local.index)))
+        .build();
+    try {
+      return query.find();
+    } finally {
+      query.close();
+    }
   }
 
   /// Mark version as synced (for sync service)
   Future<void> markSynced(String uuid) async {
-    final version =
-        await _isar.entityVersions.filter().uuidEqualTo(uuid).findFirst();
-
-    if (version != null) {
-      version.syncStatus = SyncStatus.synced;
-      await _isar.writeTxn(() => _isar.entityVersions.put(version));
+    final query = _box.query(EntityVersion_.uuid.equals(uuid)).build();
+    try {
+      final version = query.findFirst();
+      if (version != null) {
+        version.syncStatus = SyncStatus.synced;
+        _box.put(version);
+      }
+    } finally {
+      query.close();
     }
   }
 }

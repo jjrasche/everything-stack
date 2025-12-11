@@ -6,7 +6,7 @@
 ///
 /// ## Usage
 /// ```dart
-/// final repo = EdgeRepository(isar);
+/// final repo = EdgeRepository(store);
 ///
 /// // Connect entities
 /// final edge = Edge(
@@ -35,9 +35,10 @@
 /// await repo.delete('note-1', 'project-1', 'belongs_to');
 /// ```
 
-import 'package:isar/isar.dart';
+import 'package:objectbox/objectbox.dart';
 import 'edge.dart';
 import '../core/base_entity.dart';
+import '../objectbox.g.dart';
 
 /// Exception thrown when attempting to create a duplicate edge
 class DuplicateEdgeException implements Exception {
@@ -57,20 +58,21 @@ class DuplicateEdgeException implements Exception {
 }
 
 class EdgeRepository {
-  final Isar isar;
+  final Store _store;
+  late final Box<Edge> _box;
 
-  EdgeRepository(this.isar);
-
-  IsarCollection<Edge> get collection => isar.edges;
+  EdgeRepository(this._store) {
+    _box = _store.box<Edge>();
+  }
 
   // ============ CRUD ============
 
   /// Save edge to database, enforcing uniqueness on (sourceUuid, targetUuid, edgeType)
   /// Throws DuplicateEdgeException if edge already exists.
-  Future<Id> save(Edge edge) async {
+  Future<int> save(Edge edge) async {
     // Check for existing edge with same composite key
     final existing = await findBetween(edge.sourceUuid, edge.targetUuid);
-    if (existing.any((e) => e.edgeType == edge.edgeType)) {
+    if (existing.any((e) => e.edgeType == edge.edgeType && e.id != edge.id)) {
       throw DuplicateEdgeException(
         sourceUuid: edge.sourceUuid,
         targetUuid: edge.targetUuid,
@@ -79,12 +81,13 @@ class EdgeRepository {
     }
 
     // Set createdAt if not already set
-    if (edge.createdAt == DateTime(1970)) {
+    if (edge.createdAt.year == 1970) {
       edge.createdAt = DateTime.now();
     }
+    edge.touch();
 
     // Save to database
-    return isar.writeTxn(() => collection.put(edge));
+    return _box.put(edge);
   }
 
   /// Delete edge by composite key (sourceUuid, targetUuid, edgeType)
@@ -97,31 +100,46 @@ class EdgeRepository {
     final edge = await _findEdge(sourceUuid, targetUuid, edgeType);
     if (edge == null) return false;
 
-    return isar.writeTxn(() => collection.delete(edge.id));
+    return _box.remove(edge.id);
   }
 
   // ============ Queries ============
 
   /// Find all edges originating from sourceUuid (outgoing edges)
   Future<List<Edge>> findBySource(String sourceUuid) async {
-    return collection.where().sourceUuidEqualTo(sourceUuid).findAll();
+    final query = _box.query(Edge_.sourceUuid.equals(sourceUuid)).build();
+    try {
+      return query.find();
+    } finally {
+      query.close();
+    }
   }
 
   /// Find all edges pointing to targetUuid (incoming edges)
   Future<List<Edge>> findByTarget(String targetUuid) async {
-    return collection.where().targetUuidEqualTo(targetUuid).findAll();
+    final query = _box.query(Edge_.targetUuid.equals(targetUuid)).build();
+    try {
+      return query.find();
+    } finally {
+      query.close();
+    }
   }
 
   /// Find all edges between two entities (both directions)
   Future<List<Edge>> findBetween(String sourceUuid, String targetUuid) async {
-    // Fetch by source and filter for target (since .where() doesn't support chaining indexed queries)
+    // Fetch by source and filter for target
     final edges = await findBySource(sourceUuid);
     return edges.where((e) => e.targetUuid == targetUuid).toList();
   }
 
   /// Find all edges of specific type
   Future<List<Edge>> findByType(String edgeType) async {
-    return collection.where().edgeTypeEqualTo(edgeType).findAll();
+    final query = _box.query(Edge_.edgeType.equals(edgeType)).build();
+    try {
+      return query.find();
+    } finally {
+      query.close();
+    }
   }
 
   // ============ Traversal ============
@@ -273,12 +291,22 @@ class EdgeRepository {
 
   /// Find edge by UUID using indexed field - O(1) lookup
   Future<Edge?> findByUuid(String uuid) async {
-    return collection.where().uuidEqualTo(uuid).findFirst();
+    final query = _box.query(Edge_.uuid.equals(uuid)).build();
+    try {
+      return query.findFirst();
+    } finally {
+      query.close();
+    }
   }
 
   /// Find all unsynced edges (for sync service)
   Future<List<Edge>> findUnsynced() async {
-    return collection.filter().syncStatusEqualTo(SyncStatus.local).findAll();
+    final query = _box.query(Edge_.dbSyncStatus.equals(SyncStatus.local.index)).build();
+    try {
+      return query.find();
+    } finally {
+      query.close();
+    }
   }
 
   /// Mark edge as synced with remote ID
@@ -288,7 +316,7 @@ class EdgeRepository {
       edge.syncId = syncId;
       edge.syncStatus = SyncStatus.synced;
       edge.touch();
-      await isar.writeTxn(() => collection.put(edge));
+      _box.put(edge);
     }
   }
 

@@ -1,0 +1,288 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:6992802254019946092",
+      "lastPropertyId": "13:1358136971119991860",
+      "name": "EntityVersion",
+      "properties": [
+        {
+          "id": "1:2621438308174631850",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:4178430621396499126",
+          "name": "uuid",
+          "type": 9,
+          "flags": 34848,
+          "indexId": "1:7714910532022851413"
+        },
+        {
+          "id": "3:1481940285499117411",
+          "name": "entityType",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "2:4576672766041714415"
+        },
+        {
+          "id": "4:9032570872267102986",
+          "name": "entityUuid",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "3:4117663692901978143"
+        },
+        {
+          "id": "5:3232243847063463198",
+          "name": "timestamp",
+          "type": 10
+        },
+        {
+          "id": "6:8823329960105253751",
+          "name": "versionNumber",
+          "type": 6
+        },
+        {
+          "id": "7:9200604007431173264",
+          "name": "deltaJson",
+          "type": 9
+        },
+        {
+          "id": "8:7586224938457432493",
+          "name": "isSnapshot",
+          "type": 1
+        },
+        {
+          "id": "9:4725051611918609940",
+          "name": "snapshotJson",
+          "type": 9
+        },
+        {
+          "id": "10:5587419819136123911",
+          "name": "userId",
+          "type": 9
+        },
+        {
+          "id": "11:9077844693467798628",
+          "name": "changeDescription",
+          "type": 9
+        },
+        {
+          "id": "12:7702240613120351442",
+          "name": "dbChangedFields",
+          "type": 9
+        },
+        {
+          "id": "13:1358136971119991860",
+          "name": "dbSyncStatus",
+          "type": 6
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:535829179100744751",
+      "lastPropertyId": "13:449702846580132141",
+      "name": "Edge",
+      "properties": [
+        {
+          "id": "1:7855343886921700643",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:7494529591938893065",
+          "name": "uuid",
+          "type": 9,
+          "flags": 34848,
+          "indexId": "4:7354548606125904867"
+        },
+        {
+          "id": "3:98589822264940793",
+          "name": "sourceType",
+          "type": 9
+        },
+        {
+          "id": "4:4326134788349402657",
+          "name": "sourceUuid",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "5:5950750812988015658"
+        },
+        {
+          "id": "5:8573208884758051653",
+          "name": "targetType",
+          "type": 9
+        },
+        {
+          "id": "6:2729509792144110740",
+          "name": "targetUuid",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "6:2876520057442365559"
+        },
+        {
+          "id": "7:6384099857825893268",
+          "name": "edgeType",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "7:3685638988006263135"
+        },
+        {
+          "id": "8:1151196063342949914",
+          "name": "metadata",
+          "type": 9
+        },
+        {
+          "id": "9:5207929525703155764",
+          "name": "createdBy",
+          "type": 9
+        },
+        {
+          "id": "10:4320191970887013060",
+          "name": "dbSyncStatus",
+          "type": 6
+        },
+        {
+          "id": "11:2342117536465608966",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "12:5005998662676886244",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "13:449702846580132141",
+          "name": "syncId",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:1896400914108017857",
+      "lastPropertyId": "19:8160817361200854572",
+      "name": "Note",
+      "properties": [
+        {
+          "id": "1:5479204354378495908",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:562726591435344803",
+          "name": "uuid",
+          "type": 9,
+          "flags": 34848,
+          "indexId": "8:3842611413757238541"
+        },
+        {
+          "id": "3:523502418871133291",
+          "name": "title",
+          "type": 9
+        },
+        {
+          "id": "4:2455423289275736960",
+          "name": "content",
+          "type": 9
+        },
+        {
+          "id": "5:4869806315470017560",
+          "name": "isPinned",
+          "type": 1
+        },
+        {
+          "id": "6:4263608210442424046",
+          "name": "isArchived",
+          "type": 1
+        },
+        {
+          "id": "7:5336154639726615857",
+          "name": "embedding",
+          "type": 28,
+          "flags": 8,
+          "indexId": "9:7291703553020141515"
+        },
+        {
+          "id": "8:5389162515835272288",
+          "name": "dbTags",
+          "type": 9
+        },
+        {
+          "id": "9:1995383308105176893",
+          "name": "dbSyncStatus",
+          "type": 6
+        },
+        {
+          "id": "10:5594750255525501576",
+          "name": "dbVisibility",
+          "type": 6
+        },
+        {
+          "id": "11:7735315001714780964",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "12:4262970131958959412",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "13:5270051458316421944",
+          "name": "syncId",
+          "type": 9
+        },
+        {
+          "id": "14:640186598561464360",
+          "name": "ownerId",
+          "type": 9
+        },
+        {
+          "id": "15:5145283475056670751",
+          "name": "latitude",
+          "type": 8
+        },
+        {
+          "id": "16:550649784594667287",
+          "name": "longitude",
+          "type": 8
+        },
+        {
+          "id": "17:8014800166260028383",
+          "name": "locationName",
+          "type": 9
+        },
+        {
+          "id": "18:3349409269074552014",
+          "name": "dbSharedWith",
+          "type": 9
+        },
+        {
+          "id": "19:8160817361200854572",
+          "name": "dbAttachments",
+          "type": 9
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "3:1896400914108017857",
+  "lastIndexId": "9:7291703553020141515",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}

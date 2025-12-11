@@ -28,7 +28,9 @@
 /// await edgeRepo.connect(note, otherNote, edgeType: EdgeTypes.references);
 /// ```
 
-import 'package:isar/isar.dart';
+import 'dart:convert';
+
+import 'package:objectbox/objectbox.dart';
 import 'package:json_annotation/json_annotation.dart';
 import '../core/base_entity.dart';
 import '../patterns/embeddable.dart';
@@ -38,28 +40,40 @@ import '../patterns/versionable.dart';
 import '../patterns/file_storable.dart';
 import '../patterns/locatable.dart';
 
+// JSON serialization generated code
 part 'note.g.dart';
 
-@Collection()
+// Note: ObjectBox generates objectbox.g.dart at lib root, not here
+
+@Entity()
 @JsonSerializable()
 class Note extends BaseEntity
     with Embeddable, Ownable, Edgeable, Versionable, FileStorable, Locatable {
-  // ============ Isar field overrides ============
-  // Override uuid with @Index for O(1) findByUuid() lookups
-  // (Isar doesn't inherit indexed fields from base classes)
-  @Index(unique: true)
+  // ============ ObjectBox field overrides ============
+  // Override id with @Id() for ObjectBox
+  @override
+  @Id()
+  int id = 0;
+
+  // Override uuid with @Unique for O(1) findByUuid() lookups
+  @Unique(onConflict: ConflictStrategy.replace)
   @override
   String uuid = '';
 
-  // Override syncStatus with @enumerated annotation
+  // ============ BaseEntity field overrides ============
+  /// When entity was created
+  @Property(type: PropertyType.date)
   @override
-  @enumerated
-  SyncStatus syncStatus = SyncStatus.local;
+  DateTime createdAt = DateTime.now();
 
-  // Override visibility with @enumerated annotation
+  /// When entity was last modified
+  @Property(type: PropertyType.date)
   @override
-  @enumerated
-  Visibility visibility = Visibility.private;
+  DateTime updatedAt = DateTime.now();
+
+  /// For sync identification across devices
+  @override
+  String? syncId;
 
   // ============ Note fields ============
   /// Note title
@@ -68,14 +82,96 @@ class Note extends BaseEntity
   /// Note content (markdown supported)
   String content;
 
-  /// Optional tags for organization
+  /// Optional tags for organization (stored as comma-separated string in ObjectBox)
+  @Transient()
   List<String> tags;
+
+  /// Internal storage for tags as string (ObjectBox doesn't support List<String> well)
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String get dbTags => tags.join(',');
+  set dbTags(String value) => tags = value.isEmpty ? [] : value.split(',');
 
   /// Whether note is pinned to top
   bool isPinned;
 
   /// Whether note is archived
   bool isArchived;
+
+  // ============ Pattern field overrides for ObjectBox ============
+
+  /// Embedding vector for semantic search
+  /// 384 dimensions for typical embedding models
+  /// Excluded from JSON serialization (not suitable for version tracking)
+  @HnswIndex(dimensions: 384)
+  @Property(type: PropertyType.floatVector)
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  List<double>? embedding;
+
+  /// Sync status stored as int (enum index)
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  int get dbSyncStatus => syncStatus.index;
+  set dbSyncStatus(int value) => syncStatus = SyncStatus.values[value];
+
+  /// Visibility stored as int (enum index)
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  int get dbVisibility => visibility.index;
+  set dbVisibility(int value) => visibility = Visibility.values[value];
+
+  // ============ Ownable field overrides ============
+  /// User ID of owner
+  @override
+  String? ownerId;
+
+  /// User IDs this is shared with (stored as comma-separated string)
+  @Transient()
+  @override
+  List<String> sharedWith = [];
+
+  /// Internal storage for sharedWith
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String get dbSharedWith => sharedWith.join(',');
+  set dbSharedWith(String value) =>
+      sharedWith = value.isEmpty ? [] : value.split(',');
+
+  // ============ FileStorable field overrides ============
+  /// Attachments stored as JSON string
+  @override
+  @Transient()
+  List<FileMetadata> attachments = [];
+
+  /// Database storage for attachments
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  String get dbAttachments {
+    if (attachments.isEmpty) return '';
+    return jsonEncode(attachments.map((a) => a.toJson()).toList());
+  }
+
+  @override
+  set dbAttachments(String value) {
+    if (value.isEmpty) {
+      attachments = [];
+      return;
+    }
+    final List<dynamic> decoded = jsonDecode(value);
+    attachments = decoded
+        .map((json) => FileMetadata.fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
+
+  // ============ Locatable field overrides ============
+  /// Latitude in decimal degrees
+  @override
+  double? latitude;
+
+  /// Longitude in decimal degrees
+  @override
+  double? longitude;
+
+  /// Human-readable location name
+  @override
+  String? locationName;
 
   Note({
     required this.title,

@@ -3,50 +3,50 @@
 /// Comprehensive integration tests proving all patterns work together.
 /// This test suite validates the full stack functionality of the template.
 
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:isar/isar.dart';
+import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/domain/note.dart';
 import 'package:everything_stack_template/domain/note_repository.dart';
 import 'package:everything_stack_template/domain/edge.dart';
 import 'package:everything_stack_template/domain/edge_repository.dart';
 import 'package:everything_stack_template/domain/entity_version.dart';
 import 'package:everything_stack_template/domain/version_repository.dart';
-import 'package:everything_stack_template/services/hnsw_index.dart';
+import 'package:everything_stack_template/persistence/objectbox/note_objectbox_adapter.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/blob_store.dart';
 import 'package:everything_stack_template/patterns/file_storable.dart';
 import 'package:everything_stack_template/core/base_entity.dart';
+import 'package:everything_stack_template/objectbox.g.dart';
 
 void main() {
-  late Isar isar;
+  late Store store;
   late NoteRepository noteRepo;
   late EdgeRepository edgeRepo;
   late VersionRepository versionRepo;
-  late HnswIndex hnswIndex;
   late MockEmbeddingService embeddingService;
   late MockBlobStore blobStore;
+  late Directory testDir;
 
   setUp(() async {
-    // Create in-memory Isar instance with all schemas
-    isar = await Isar.open(
-      [NoteSchema, EdgeSchema, EntityVersionSchema],
-      directory: '',
-      name: 'notes_demo_${DateTime.now().millisecondsSinceEpoch}',
-    );
+    // Create temporary directory for ObjectBox store
+    testDir = await Directory.systemTemp.createTemp('objectbox_test_');
+
+    // Open ObjectBox store
+    store = await openStore(directory: testDir.path);
 
     // Initialize services
-    hnswIndex = HnswIndex(dimensions: 384);
     embeddingService = MockEmbeddingService();
     blobStore = MockBlobStore();
     await blobStore.initialize();
 
     // Initialize repositories
-    versionRepo = VersionRepository(isar);
-    edgeRepo = EdgeRepository(isar);
+    versionRepo = VersionRepository(store);
+    edgeRepo = EdgeRepository(store);
+    final noteAdapter = NoteObjectBoxAdapter(store);
     noteRepo = NoteRepository(
-      isar,
-      hnswIndex: hnswIndex,
+      adapter: noteAdapter,
       embeddingService: embeddingService,
       versionRepo: versionRepo,
     );
@@ -54,8 +54,12 @@ void main() {
   });
 
   tearDown(() async {
-    await isar.close(deleteFromDisk: true);
+    store.close();
     blobStore.dispose();
+    // Clean up temp directory
+    if (await testDir.exists()) {
+      await testDir.delete(recursive: true);
+    }
   });
 
   group('Notes Demo Integration', () {

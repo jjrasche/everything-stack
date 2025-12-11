@@ -1,44 +1,50 @@
-/// # Edge Collection
+/// # Edge Entity
 ///
 /// ## What it does
-/// Isar collection for storing entity-to-entity connections.
+/// Entity for storing entity-to-entity connections.
 /// Implements the Edge entity from the Edgeable pattern with persistence.
 ///
 /// ## Schema
 /// - uuid: Unique ID for sync (inherited from BaseEntity)
 /// - Composite key (domain): sourceUuid + targetUuid + edgeType
-/// - Uniqueness enforced at repository level (Isar composite unique not supported)
-/// - Indexed fields: uuid, sourceUuid, targetUuid, edgeType, syncStatus
+/// - Uniqueness enforced at repository level
+/// - Indexed fields: uuid, sourceUuid, targetUuid, edgeType
 /// - Metadata stored as JSON string
 /// - Timestamps: createdAt, updatedAt (inherited from BaseEntity)
-///
-/// ## Known limitation
-/// Isar 3.1.0 doesn't support composite unique constraints.
-/// Repository checks for duplicates before insert. Low risk of race condition
-/// in single-user offline-first app, but theoretically possible with concurrent writes.
 ///
 /// ## Testing approach
 /// Test through EdgeRepository. Verify CRUD operations,
 /// unique constraint enforcement, indexed queries.
 
-import 'package:isar/isar.dart';
+import 'package:objectbox/objectbox.dart';
 import '../core/base_entity.dart';
 
-part 'edge.g.dart';
-
-@Collection()
+@Entity()
 class Edge extends BaseEntity {
-  // ============ Isar field overrides ============
-  // Override uuid with @Index for O(1) findByUuid() lookups
-  // (Isar doesn't inherit indexed fields from base classes)
-  @Index(unique: true)
+  // ============ ObjectBox field overrides ============
+  // Override id with @Id() for ObjectBox
+  @override
+  @Id()
+  int id = 0;
+
+  @Unique(onConflict: ConflictStrategy.replace)
   @override
   String uuid = '';
 
-  // Override syncStatus with @enumerated annotation
+  // ============ BaseEntity field overrides ============
+  /// When entity was created
+  @Property(type: PropertyType.date)
   @override
-  @enumerated
-  SyncStatus syncStatus = SyncStatus.local;
+  DateTime createdAt = DateTime.now();
+
+  /// When entity was last modified
+  @Property(type: PropertyType.date)
+  @override
+  DateTime updatedAt = DateTime.now();
+
+  /// For sync identification across devices
+  @override
+  String? syncId;
 
   /// Source entity type name (e.g., 'Note', 'Project')
   String sourceType;
@@ -64,6 +70,10 @@ class Edge extends BaseEntity {
 
   /// Who created this edge (user ID or 'system' for AI-generated)
   String? createdBy;
+
+  /// Sync status stored as int (enum index)
+  int get dbSyncStatus => syncStatus.index;
+  set dbSyncStatus(int value) => syncStatus = SyncStatus.values[value];
 
   Edge({
     required this.sourceType,

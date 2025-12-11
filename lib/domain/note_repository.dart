@@ -6,7 +6,8 @@
 ///
 /// ## Usage
 /// ```dart
-/// final repo = NoteRepository(isar, hnswIndex: index);
+/// final adapter = NoteObjectBoxAdapter(store);
+/// final repo = NoteRepository(adapter: adapter);
 ///
 /// // CRUD
 /// final id = await repo.save(note);
@@ -22,9 +23,9 @@
 /// final accessible = await repo.findAccessibleBy(userId);
 /// ```
 
-import 'package:isar/isar.dart';
 import '../core/entity_repository.dart';
 import '../core/base_entity.dart';
+import '../core/persistence/persistence_adapter.dart';
 import 'note.dart';
 import 'entity_version.dart';
 import 'version_repository.dart';
@@ -34,115 +35,92 @@ class NoteRepository extends EntityRepository<Note> {
   final VersionRepository? _versionRepo;
   EdgeRepository? _edgeRepo;
 
-  NoteRepository(
-    super.isar, {
-    super.hnswIndex,
+  NoteRepository({
+    required PersistenceAdapter<Note> adapter,
     super.embeddingService,
     VersionRepository? versionRepo,
   })  : _versionRepo = versionRepo,
-        super(versionRepository: versionRepo);
+        super(adapter: adapter, versionRepository: versionRepo);
 
   /// Set EdgeRepository after construction (avoids circular dependency)
   void setEdgeRepository(EdgeRepository edgeRepo) {
     _edgeRepo = edgeRepo;
   }
 
-  @override
-  IsarCollection<Note> get collection => isar.notes;
-
-  /// Find note by UUID using indexed field - O(1) lookup.
-  /// Overrides base implementation to leverage the @Index(unique: true)
-  /// override of uuid field in Note class.
-  @override
-  Future<Note?> findByUuid(String uuid) async {
-    return collection.where().uuidEqualTo(uuid).findFirst();
-  }
-
   // ============ Note-specific queries ============
+  // These queries load all notes and filter in memory.
+  // For production scale, extend the adapter with optimized queries.
 
   /// Find all pinned notes (sorted by updatedAt descending)
   Future<List<Note>> findPinned() async {
-    return collection
-        .filter()
-        .isPinnedEqualTo(true)
-        .isArchivedEqualTo(false)
-        .sortByUpdatedAtDesc()
-        .findAll();
+    final all = await findAll();
+    return all
+        .where((n) => n.isPinned && !n.isArchived)
+        .toList()
+      ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
   }
 
   /// Find all archived notes
   Future<List<Note>> findArchived() async {
-    return collection
-        .filter()
-        .isArchivedEqualTo(true)
-        .sortByUpdatedAtDesc()
-        .findAll();
+    final all = await findAll();
+    return all.where((n) => n.isArchived).toList()
+      ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
   }
 
   /// Find notes by tag
   Future<List<Note>> findByTag(String tag) async {
-    return collection
-        .filter()
-        .tagsElementEqualTo(tag)
-        .isArchivedEqualTo(false)
-        .sortByUpdatedAtDesc()
-        .findAll();
+    final all = await findAll();
+    return all
+        .where((n) => n.tags.contains(tag) && !n.isArchived)
+        .toList()
+      ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
   }
 
   /// Find all non-archived notes (default view)
   Future<List<Note>> findActive() async {
-    return collection
-        .filter()
-        .isArchivedEqualTo(false)
-        .sortByIsPinnedDesc()
-        .thenByUpdatedAtDesc()
-        .findAll();
+    final all = await findAll();
+    final active = all.where((n) => !n.isArchived).toList();
+    active.sort((a, b) {
+      if (a.isPinned != b.isPinned) {
+        return a.isPinned ? -1 : 1;
+      }
+      return b.updatedAt.compareTo(a.updatedAt);
+    });
+    return active;
   }
 
   /// Find notes accessible by user (owned by or shared with)
   Future<List<Note>> findAccessibleBy(String userId) async {
-    // Get owned notes
-    final owned = await collection
-        .filter()
-        .ownerIdEqualTo(userId)
-        .isArchivedEqualTo(false)
-        .findAll();
-
-    // Get shared notes
-    final shared = await collection
-        .filter()
-        .sharedWithElementEqualTo(userId)
-        .isArchivedEqualTo(false)
-        .findAll();
-
-    // Combine and sort
-    final all = {...owned, ...shared}.toList();
-    all.sort((a, b) {
-      // Pinned first
+    final all = await findAll();
+    final accessible = all.where((n) =>
+        !n.isArchived &&
+        (n.ownerId == userId || n.sharedWith.contains(userId))).toList();
+    accessible.sort((a, b) {
       if (a.isPinned != b.isPinned) {
         return a.isPinned ? -1 : 1;
       }
-      // Then by updatedAt
       return b.updatedAt.compareTo(a.updatedAt);
     });
-
-    return all;
+    return accessible;
   }
 
   /// Find notes owned by user
   Future<List<Note>> findOwnedBy(String userId) async {
-    return collection
-        .filter()
-        .ownerIdEqualTo(userId)
-        .isArchivedEqualTo(false)
-        .sortByIsPinnedDesc()
-        .thenByUpdatedAtDesc()
-        .findAll();
+    final all = await findAll();
+    final owned = all.where((n) =>
+        n.ownerId == userId && !n.isArchived).toList();
+    owned.sort((a, b) {
+      if (a.isPinned != b.isPinned) {
+        return a.isPinned ? -1 : 1;
+      }
+      return b.updatedAt.compareTo(a.updatedAt);
+    });
+    return owned;
   }
 
   /// Get all unique tags used in notes
   Future<List<String>> getAllTags() async {
-    final notes = await collection.where().findAll();
+    final notes = await findAll();
     final tags = <String>{};
     for (final note in notes) {
       tags.addAll(note.tags);
@@ -185,11 +163,5 @@ class NoteRepository extends EntityRepository<Note> {
     }
 
     return linkedNotes;
-  }
-
-  /// Find all unsynced notes (for sync service)
-  @override
-  Future<List<Note>> findUnsynced() async {
-    return collection.filter().syncStatusEqualTo(SyncStatus.local).findAll();
   }
 }

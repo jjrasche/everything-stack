@@ -11,7 +11,7 @@
 /// - Cross-type identification via uuid
 ///
 /// ## Identifiers
-/// - `id`: Isar's internal auto-increment ID. NEVER use outside persistence layer.
+/// - `id`: Database auto-increment ID. NEVER use outside persistence layer.
 /// - `uuid`: Universal identifier for the entity. Use for:
 ///   - HNSW index keys (O(1) semantic search)
 ///   - Edge connections (source/target UUIDs)
@@ -19,25 +19,24 @@
 ///   - Cross-type lookups
 ///   - API references
 ///
-/// ## IMPORTANT: Override uuid with @Index in Concrete Classes
-/// Each @Collection() class MUST override the uuid field with @Index annotation.
-/// Isar doesn't inherit indexed fields from base classes, so explicit override
-/// is required for O(1) findByUuid() lookups. This is the same pattern as
-/// the @enumerated override on syncStatus.
+/// ## ObjectBox Annotations
+/// Concrete entity classes must add ObjectBox annotations:
+/// - `@Entity()` on the class
+/// - `@Unique(onConflict: ConflictStrategy.replace)` on uuid override
 ///
 /// Example:
 /// ```dart
-/// @Collection()
+/// @Entity()
 /// class Tool extends BaseEntity with Embeddable {
-///   @Index(unique: true)
+///   @Unique(onConflict: ConflictStrategy.replace)
 ///   @override
-///   late String uuid;
+///   String uuid = '';
 ///
 ///   String name;
 ///   String description;
 ///
-///   Tool() {
-///     uuid = Uuid().v4();  // Override default if needed
+///   Tool({required this.name, required this.description}) {
+///     if (uuid.isEmpty) uuid = super.uuid;
 ///   }
 ///
 ///   @override
@@ -49,7 +48,7 @@
 /// BaseEntity itself needs no testing. Test domain entities that extend it.
 /// Verify timestamps update correctly, uuids generate uniquely.
 
-import 'package:isar/isar.dart';
+import 'package:objectbox/objectbox.dart';
 import 'package:uuid/uuid.dart';
 import '../services/sync_service.dart' show SyncStatus;
 
@@ -60,21 +59,27 @@ export '../services/sync_service.dart' show SyncStatus;
 const _uuidGenerator = Uuid();
 
 abstract class BaseEntity {
-  /// Isar auto-generated ID.
+  /// Database auto-generated ID.
   /// INTERNAL USE ONLY - never reference outside persistence layer.
   /// Use [uuid] for all external identification.
-  Id id = Isar.autoIncrement;
+  ///
+  /// ObjectBox assigns this automatically when id = 0.
+  @Id()
+  int id = 0;
 
   /// Universal unique identifier for this entity.
   /// Use for HNSW index, edges, sync, cross-type lookups, APIs.
   /// Auto-generated on entity creation.
-  @Index(unique: true)
+  ///
+  /// Concrete classes should override with @Unique annotation.
   String uuid = _uuidGenerator.v4();
 
   /// When entity was created
+  @Property(type: PropertyType.date)
   DateTime createdAt = DateTime.now();
 
   /// When entity was last modified
+  @Property(type: PropertyType.date)
   DateTime updatedAt = DateTime.now();
 
   /// Update timestamp before save
@@ -87,5 +92,6 @@ abstract class BaseEntity {
   String? syncId;
 
   /// Sync status: local, syncing, synced, conflict
+  /// Stored as int (enum index) in ObjectBox.
   SyncStatus syncStatus = SyncStatus.local;
 }

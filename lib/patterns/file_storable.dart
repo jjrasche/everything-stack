@@ -69,13 +69,14 @@
 /// - BlobStore: Stores actual file bytes
 /// - FileService: Picks/processes files, updates metadata
 
-import 'package:isar/isar.dart';
+import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'file_storable.g.dart';
 
 /// File attachment metadata
-@embedded
+/// Stored as JSON in database (not embedded object)
+@JsonSerializable()
 class FileMetadata {
   /// Unique identifier (UUID) for blob in BlobStore
   String uuid;
@@ -123,15 +124,36 @@ class FileMetadata {
   @override
   String toString() =>
       'FileMetadata($filename, $mimeType, ${sizeBytes}b, created: $createdAt)';
+
+  /// JSON serialization
+  Map<String, dynamic> toJson() => _$FileMetadataToJson(this);
+  factory FileMetadata.fromJson(Map<String, dynamic> json) =>
+      _$FileMetadataFromJson(json);
 }
 
 /// Mixin for entities with file attachments
 mixin FileStorable {
   /// List of attached files
-  /// Note: Included in Isar schema, but excluded from JSON for versioning
-  /// (FileMetadata is @embedded for Isar but not JSON-serializable)
+  /// Stored as JSON string in database, excluded from entity JSON serialization
   @JsonKey(includeFromJson: false, includeToJson: false)
   List<FileMetadata> attachments = [];
+
+  /// Database storage for attachments as JSON string
+  /// Override in entity class if using ObjectBox
+  String get dbAttachments {
+    if (attachments.isEmpty) return '';
+    return jsonEncode(attachments.map((a) => a.toJson()).toList());
+  }
+
+  set dbAttachments(String value) {
+    if (value.isEmpty) {
+      attachments = [];
+      return;
+    }
+    final List<dynamic> decoded = jsonDecode(value);
+    attachments =
+        decoded.map((json) => FileMetadata.fromJson(json as Map<String, dynamic>)).toList();
+  }
 
   /// Add attachment to this entity
   void addAttachment(FileMetadata metadata) {
