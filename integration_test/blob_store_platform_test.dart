@@ -111,7 +111,8 @@ void main() {
 
       // Stream with chunks
       int bytesRead = 0;
-      await for (final chunk in blobStore.streamRead(testId, chunkSize: 8 * 1024)) {
+      await for (final chunk
+          in blobStore.streamRead(testId, chunkSize: 8 * 1024)) {
         bytesRead += chunk.length;
       }
 

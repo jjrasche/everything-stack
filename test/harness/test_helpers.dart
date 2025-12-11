@@ -1,5 +1,5 @@
 /// # Test Harness
-/// 
+///
 /// Shared test utilities for parameterized, data-driven testing.
 /// Use these helpers to keep tests DRY and consistent.
 
@@ -30,7 +30,7 @@ abstract class TestCase {
 }
 
 /// Run parameterized test for each case.
-/// 
+///
 /// Usage:
 /// ```dart
 /// parameterizedTest(
@@ -64,17 +64,16 @@ class SimilarityTestCase extends TestCase {
   final String content;
   final bool shouldMatch;
   final double? minSimilarity;
-  
+
   SimilarityTestCase({
     required this.query,
     required this.content,
     required this.shouldMatch,
     this.minSimilarity,
   });
-  
+
   @override
-  String get description => 
-    shouldMatch 
+  String get description => shouldMatch
       ? '"$query" should find "$content"'
       : '"$query" should not find "$content"';
 }
@@ -88,7 +87,7 @@ class ProximityTestCase extends TestCase {
   final double toLng;
   final double expectedDistanceKm;
   final double toleranceKm;
-  
+
   ProximityTestCase({
     required this.fromLat,
     required this.fromLng,
@@ -97,10 +96,10 @@ class ProximityTestCase extends TestCase {
     required this.expectedDistanceKm,
     this.toleranceKm = 1.0,
   });
-  
+
   @override
-  String get description => 
-    '($fromLat,$fromLng) to ($toLat,$toLng) = ${expectedDistanceKm}km';
+  String get description =>
+      '($fromLat,$fromLng) to ($toLat,$toLng) = ${expectedDistanceKm}km';
 }
 
 /// Time range test case.
@@ -110,17 +109,16 @@ class TimeRangeTestCase extends TestCase {
   final DateTime rangeStart;
   final DateTime rangeEnd;
   final bool shouldInclude;
-  
+
   TimeRangeTestCase({
     required this.itemDue,
     required this.rangeStart,
     required this.rangeEnd,
     required this.shouldInclude,
   });
-  
+
   @override
-  String get description =>
-    shouldInclude
+  String get description => shouldInclude
       ? 'item due $itemDue should be in range'
       : 'item due $itemDue should not be in range';
 }
@@ -133,7 +131,7 @@ class AccessTestCase extends TestCase {
   final String visibility;
   final String queryingUserId;
   final bool shouldHaveAccess;
-  
+
   AccessTestCase({
     required this.ownerId,
     required this.sharedWith,
@@ -141,8 +139,8 @@ class AccessTestCase extends TestCase {
     required this.queryingUserId,
     required this.shouldHaveAccess,
   });
-  
+
   @override
   String get description =>
-    'user $queryingUserId ${shouldHaveAccess ? "can" : "cannot"} access';
+      'user $queryingUserId ${shouldHaveAccess ? "can" : "cannot"} access';
 }

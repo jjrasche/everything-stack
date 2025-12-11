@@ -151,7 +151,8 @@ class MockFileService extends FileService {
   }
 
   @override
-  Future<FileMetadata?> pickPhoto({PhotoSource source = PhotoSource.gallery}) async {
+  Future<FileMetadata?> pickPhoto(
+      {PhotoSource source = PhotoSource.gallery}) async {
     if (_cancelNext) {
       _cancelNext = false;
       return null;
@@ -170,7 +171,8 @@ class MockFileService extends FileService {
   }
 
   @override
-  Future<FileMetadata?> pickVideo({VideoSource source = VideoSource.gallery}) async {
+  Future<FileMetadata?> pickVideo(
+      {VideoSource source = VideoSource.gallery}) async {
     if (_cancelNext) {
       _cancelNext = false;
       return null;
@@ -331,12 +333,14 @@ class RealFileService extends FileService {
   // - image: compress, generateThumbnail
 
   @override
-  Future<FileMetadata?> pickPhoto({PhotoSource source = PhotoSource.gallery}) async {
+  Future<FileMetadata?> pickPhoto(
+      {PhotoSource source = PhotoSource.gallery}) async {
     throw UnimplementedError('RealFileService requires image_picker package');
   }
 
   @override
-  Future<FileMetadata?> pickVideo({VideoSource source = VideoSource.gallery}) async {
+  Future<FileMetadata?> pickVideo(
+      {VideoSource source = VideoSource.gallery}) async {
     throw UnimplementedError('RealFileService requires image_picker package');
   }
 

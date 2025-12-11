@@ -90,11 +90,14 @@ void main() {
 
     group('Stream', () {
       test('streamRead streams blob in chunks', () async {
-        final bytes = Uint8List.fromList(List<int>.generate(1000, (i) => i % 256));
+        final bytes =
+            Uint8List.fromList(List<int>.generate(1000, (i) => i % 256));
         await store.save('blob-stream', bytes);
 
         final chunks = <Uint8List>[];
-        await store.streamRead('blob-stream', chunkSize: 100).forEach(chunks.add);
+        await store
+            .streamRead('blob-stream', chunkSize: 100)
+            .forEach(chunks.add);
 
         // Should get 10 chunks of 100 bytes each
         expect(chunks.length, greaterThan(0));
@@ -127,7 +130,8 @@ void main() {
       });
 
       test('streamRead respects custom chunk size', () async {
-        final bytes = Uint8List.fromList(List<int>.generate(500, (i) => i % 256));
+        final bytes =
+            Uint8List.fromList(List<int>.generate(500, (i) => i % 256));
         await store.save('blob-id', bytes);
 
         final chunks = <Uint8List>[];
@@ -168,7 +172,8 @@ void main() {
         await store.save('blob-id', Uint8List.fromList([1, 2, 3]));
         expect(store.size('blob-id'), 3);
 
-        await store.save('blob-id', Uint8List.fromList(List<int>.generate(100, (i) => i)));
+        await store.save(
+            'blob-id', Uint8List.fromList(List<int>.generate(100, (i) => i)));
         expect(store.size('blob-id'), 100);
       });
     });

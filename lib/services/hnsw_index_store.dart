@@ -78,10 +78,8 @@ class HnswIndexStore {
 
     await isar.writeTxn(() async {
       // Find existing or create new
-      final existing = await isar.hnswIndexDatas
-          .where()
-          .keyEqualTo(key)
-          .findFirst();
+      final existing =
+          await isar.hnswIndexDatas.where().keyEqualTo(key).findFirst();
 
       final data = HnswIndexData(
         key: key,
@@ -103,10 +101,8 @@ class HnswIndexStore {
   /// Returns null if no stored index exists or if deserialization fails.
   Future<HnswIndex?> load({String key = mainIndexKey}) async {
     try {
-      final data = await isar.hnswIndexDatas
-          .where()
-          .keyEqualTo(key)
-          .findFirst();
+      final data =
+          await isar.hnswIndexDatas.where().keyEqualTo(key).findFirst();
 
       if (data == null) return null;
 
@@ -119,19 +115,13 @@ class HnswIndexStore {
 
   /// Check if a stored index exists
   Future<bool> exists({String key = mainIndexKey}) async {
-    final count = await isar.hnswIndexDatas
-        .where()
-        .keyEqualTo(key)
-        .count();
+    final count = await isar.hnswIndexDatas.where().keyEqualTo(key).count();
     return count > 0;
   }
 
   /// Get stats about stored index without loading it
   Future<Map<String, dynamic>?> getStats({String key = mainIndexKey}) async {
-    final data = await isar.hnswIndexDatas
-        .where()
-        .keyEqualTo(key)
-        .findFirst();
+    final data = await isar.hnswIndexDatas.where().keyEqualTo(key).findFirst();
 
     if (data == null) return null;
 

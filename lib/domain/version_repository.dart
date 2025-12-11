@@ -75,15 +75,16 @@ class VersionRepository {
     final newVersionNumber = latestVersion + 1;
 
     final isFirstVersion = newVersionNumber == 1;
-    final isPeriodicSnapshot = snapshotFrequency != null &&
-                               newVersionNumber % snapshotFrequency == 1;
+    final isPeriodicSnapshot =
+        snapshotFrequency != null && newVersionNumber % snapshotFrequency == 1;
     final shouldSnapshot = isFirstVersion || isPeriodicSnapshot;
 
     // Compute delta and changed fields
     final previousState = previousJson ?? {};
     final delta = JsonDiff.diff(previousState, currentJson);
     final deltaJson = jsonEncode(delta);
-    final changedFields = JsonDiff.extractChangedFields(previousState, currentJson);
+    final changedFields =
+        JsonDiff.extractChangedFields(previousState, currentJson);
 
     final version = EntityVersion(
       entityType: entityType,
@@ -241,7 +242,8 @@ class VersionRepository {
   }
 
   /// Find unsynced versions for a specific entity
-  Future<List<EntityVersion>> findByEntityUuidUnsynced(String entityUuid) async {
+  Future<List<EntityVersion>> findByEntityUuidUnsynced(
+      String entityUuid) async {
     return _isar.entityVersions
         .filter()
         .entityUuidEqualTo(entityUuid)
@@ -251,10 +253,8 @@ class VersionRepository {
 
   /// Mark version as synced (for sync service)
   Future<void> markSynced(String uuid) async {
-    final version = await _isar.entityVersions
-        .filter()
-        .uuidEqualTo(uuid)
-        .findFirst();
+    final version =
+        await _isar.entityVersions.filter().uuidEqualTo(uuid).findFirst();
 
     if (version != null) {
       version.syncStatus = SyncStatus.synced;

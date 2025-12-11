@@ -56,7 +56,8 @@ class SearchResult {
   SearchResult(this.id, this.distance);
 
   @override
-  String toString() => 'SearchResult(id: $id, distance: ${distance.toStringAsFixed(4)})';
+  String toString() =>
+      'SearchResult(id: $id, distance: ${distance.toStringAsFixed(4)})';
 }
 
 /// Distance metric for comparing vectors
@@ -368,7 +369,8 @@ class HnswIndex {
 
         // Get current furthest in results
         results.sort((a, b) => a.distance.compareTo(b.distance));
-        final currentFurthest = results.isNotEmpty ? results.last.distance : double.infinity;
+        final currentFurthest =
+            results.isNotEmpty ? results.last.distance : double.infinity;
 
         // Add if closer than furthest, or we haven't filled ef yet
         if (dist < currentFurthest || results.length < ef) {
@@ -485,7 +487,8 @@ class HnswIndex {
     var size = 1 + 4 + 4 + 1 + 4 + 4 + 4; // Header (without entry point id)
 
     // Entry point ID
-    final entryPointBytes = _entryPointId != null ? utf8.encode(_entryPointId!) : <int>[];
+    final entryPointBytes =
+        _entryPointId != null ? utf8.encode(_entryPointId!) : <int>[];
     size += entryPointBytes.length;
 
     for (final node in _nodes.values) {

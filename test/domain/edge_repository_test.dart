@@ -67,8 +67,7 @@ void main() {
         );
       });
 
-      test('allows same source and target with different edge types',
-          () async {
+      test('allows same source and target with different edge types', () async {
         final edge1 = Edge(
           sourceType: 'Note',
           sourceUuid: 'note-1',
@@ -107,10 +106,14 @@ void main() {
         final saved = await repo.findBetween('note-1', 'project-1');
 
         // createdAt set at construction, not save
-        expect(saved[0].createdAt.isBefore(afterCreate) ||
-               saved[0].createdAt.isAtSameMomentAs(afterCreate), isTrue);
-        expect(saved[0].createdAt.isAfter(beforeCreate) ||
-               saved[0].createdAt.isAtSameMomentAs(beforeCreate), isTrue);
+        expect(
+            saved[0].createdAt.isBefore(afterCreate) ||
+                saved[0].createdAt.isAtSameMomentAs(afterCreate),
+            isTrue);
+        expect(
+            saved[0].createdAt.isAfter(beforeCreate) ||
+                saved[0].createdAt.isAtSameMomentAs(beforeCreate),
+            isTrue);
       });
 
       test('preserves metadata when saving', () async {
@@ -274,14 +277,13 @@ void main() {
 
         expect(edges, hasLength(2));
         expect(
-          edges.every((e) =>
-              e.sourceUuid == 'note-1' && e.targetUuid == 'project-1'),
+          edges.every(
+              (e) => e.sourceUuid == 'note-1' && e.targetUuid == 'project-1'),
           isTrue,
         );
       });
 
-      test('returns empty list when no edge exists between entities',
-          () async {
+      test('returns empty list when no edge exists between entities', () async {
         final edges = await repo.findBetween('note-1', 'project-1');
         expect(edges, isEmpty);
       });

@@ -22,13 +22,15 @@ void main() {
     });
 
     group('Photo picking and storing', () {
-      test('pickPhoto returns metadata with UUID suitable for blob storage', () async {
+      test('pickPhoto returns metadata with UUID suitable for blob storage',
+          () async {
         // Given: File service ready
         await fileService.initialize();
         await blobStore.initialize();
 
         // When: Pick a photo
-        final metadata = await fileService.pickPhoto(source: PhotoSource.gallery);
+        final metadata =
+            await fileService.pickPhoto(source: PhotoSource.gallery);
 
         // Then: Metadata is suitable for storage
         expect(metadata, isNotNull);
@@ -39,14 +41,16 @@ void main() {
         expect(metadata.thumbnailBase64, isNotNull);
       });
 
-      test('Complete workflow: pick photo → save to blob → verify contains → load → stream',
+      test(
+          'Complete workflow: pick photo → save to blob → verify contains → load → stream',
           () async {
         // Setup
         await fileService.initialize();
         await blobStore.initialize();
 
         // When: Pick photo
-        final metadata = await fileService.pickPhoto(source: PhotoSource.gallery);
+        final metadata =
+            await fileService.pickPhoto(source: PhotoSource.gallery);
         expect(metadata, isNotNull);
 
         // Given: Generate some mock photo bytes
@@ -86,13 +90,15 @@ void main() {
         // When: Stream with small chunks
         final chunks = <Uint8List>[];
         const chunkSize = 8 * 1024; // 8KB chunks
-        await for (final chunk in blobStore.streamRead(testUuid, chunkSize: chunkSize)) {
+        await for (final chunk
+            in blobStore.streamRead(testUuid, chunkSize: chunkSize)) {
           chunks.add(chunk);
         }
 
         // Then: Got multiple chunks
         expect(chunks, isNotEmpty);
-        expect(chunks.length, greaterThan(1)); // 100KB with 8KB chunks = 12-13 chunks
+        expect(chunks.length,
+            greaterThan(1)); // 100KB with 8KB chunks = 12-13 chunks
 
         // Then: Chunks reconstruct original
         final reconstructed = Uint8List.fromList(
@@ -109,7 +115,8 @@ void main() {
         await blobStore.initialize();
 
         // When: Pick video
-        final metadata = await fileService.pickVideo(source: VideoSource.gallery);
+        final metadata =
+            await fileService.pickVideo(source: VideoSource.gallery);
         expect(metadata, isNotNull);
 
         // Given: Mock video bytes
@@ -195,7 +202,8 @@ void main() {
         );
 
         // Verify total size calculation
-        final totalSize = attachments.fold<int>(0, (sum, m) => sum + m.sizeBytes);
+        final totalSize =
+            attachments.fold<int>(0, (sum, m) => sum + m.sizeBytes);
         expect(totalSize, 2560); // 2048 + 512
       });
 
@@ -273,7 +281,8 @@ void main() {
         // Trigger cancellation
         fileService.setCancelNextPick();
 
-        final metadata = await fileService.pickPhoto(source: PhotoSource.gallery);
+        final metadata =
+            await fileService.pickPhoto(source: PhotoSource.gallery);
 
         expect(metadata, isNull);
       });
@@ -303,7 +312,8 @@ void main() {
       blobStore = MockBlobStore();
     });
 
-    test('Complete user flow: create attachment, store, retrieve, delete', () async {
+    test('Complete user flow: create attachment, store, retrieve, delete',
+        () async {
       // Initialize services
       await fileService.initialize();
       await blobStore.initialize();

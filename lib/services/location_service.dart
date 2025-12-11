@@ -90,7 +90,8 @@ class Position {
 
   /// Calculate distance to another position in kilometers using Haversine formula.
   double distanceTo(Position other) {
-    return haversineDistance(latitude, longitude, other.latitude, other.longitude);
+    return haversineDistance(
+        latitude, longitude, other.latitude, other.longitude);
   }
 
   @override

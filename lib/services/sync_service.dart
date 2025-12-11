@@ -178,7 +178,8 @@ class MockSyncService extends SyncService {
 
     int count = 0;
     for (final entry in _syncStatuses.entries) {
-      if (entry.value == SyncStatus.local || entry.value == SyncStatus.syncing) {
+      if (entry.value == SyncStatus.local ||
+          entry.value == SyncStatus.syncing) {
         await setSyncStatus(entry.key, SyncStatus.syncing);
         await Future.delayed(Duration(milliseconds: 10));
         await setSyncStatus(entry.key, SyncStatus.synced);
@@ -402,8 +403,10 @@ class SupabaseSyncService extends SyncService {
 
       if (existing != null) {
         // Entity exists - check if our version is newer
-        final remoteUpdatedAt = DateTime.parse(existing['updated_at'] as String);
-        if (now.isBefore(remoteUpdatedAt) || now.isAtSameMomentAs(remoteUpdatedAt)) {
+        final remoteUpdatedAt =
+            DateTime.parse(existing['updated_at'] as String);
+        if (now.isBefore(remoteUpdatedAt) ||
+            now.isAtSameMomentAs(remoteUpdatedAt)) {
           // Remote is newer or same - don't overwrite
           return true; // Still considered success
         }

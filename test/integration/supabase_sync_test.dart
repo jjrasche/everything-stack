@@ -101,7 +101,8 @@ void main() {
     });
 
     // ============ Test #2: Push entity to Supabase ============
-    test('Push entity to Supabase - create local → sync → verify in remote', () async {
+    test('Push entity to Supabase - create local → sync → verify in remote',
+        () async {
       if (!hasSupabaseCredentials) {
         markTestSkipped('SUPABASE_URL not set - skipping E2E test');
         return;
@@ -135,7 +136,8 @@ void main() {
     });
 
     // ============ Test #3: Pull entity from Supabase ============
-    test('Pull entity from Supabase - entity in remote → pull → verify data', () async {
+    test('Pull entity from Supabase - entity in remote → pull → verify data',
+        () async {
       if (!hasSupabaseCredentials) {
         markTestSkipped('SUPABASE_URL not set - skipping E2E test');
         return;
@@ -161,7 +163,8 @@ void main() {
     });
 
     // ============ Test #4: Round-trip sync ============
-    test('Round-trip sync - create → push → verify → delete local simulation', () async {
+    test('Round-trip sync - create → push → verify → delete local simulation',
+        () async {
       if (!hasSupabaseCredentials) {
         markTestSkipped('SUPABASE_URL not set - skipping E2E test');
         return;
@@ -269,7 +272,9 @@ void main() {
     });
 
     // ============ Test #7: Offline behavior ============
-    test('Offline behavior - operations return gracefully when simulating offline', () async {
+    test(
+        'Offline behavior - operations return gracefully when simulating offline',
+        () async {
       if (!hasSupabaseCredentials) {
         markTestSkipped('SUPABASE_URL not set - skipping E2E test');
         return;
@@ -318,7 +323,9 @@ void main() {
     });
 
     // ============ Test #9: Sync status tracking ============
-    test('Sync status tracking - entity.syncStatus updates through local→syncing→synced flow', () async {
+    test(
+        'Sync status tracking - entity.syncStatus updates through local→syncing→synced flow',
+        () async {
       if (!hasSupabaseCredentials) {
         markTestSkipped('SUPABASE_URL not set - skipping E2E test');
         return;

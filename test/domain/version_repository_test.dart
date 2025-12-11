@@ -315,7 +315,8 @@ void main() {
           snapshotFrequency: 20,
         );
 
-        final changes = await repo.getChangesBetween(entityUuid, fromTime, toTime);
+        final changes =
+            await repo.getChangesBetween(entityUuid, fromTime, toTime);
 
         expect(changes, hasLength(3)); // V2, V3, V4
         expect(changes[0].versionNumber, 2);
@@ -389,7 +390,9 @@ void main() {
         expect(unsynced[0].versionNumber, 2);
       });
 
-      test('findByEntityUuidUnsynced returns unsynced versions for specific entity', () async {
+      test(
+          'findByEntityUuidUnsynced returns unsynced versions for specific entity',
+          () async {
         final entity1 = 'note-1';
         final entity2 = 'note-2';
 

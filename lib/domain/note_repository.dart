@@ -164,7 +164,8 @@ class NoteRepository extends EntityRepository<Note> {
   /// Uses multi-hop traversal (depth=2) to find indirectly connected notes too.
   Future<List<Note>> getLinkedNotes(String uuid) async {
     if (_edgeRepo == null) {
-      throw StateError('EdgeRepository not set. Call setEdgeRepository() first');
+      throw StateError(
+          'EdgeRepository not set. Call setEdgeRepository() first');
     }
 
     // Use traverse for multi-hop discovery (up to 2 hops)
@@ -189,9 +190,6 @@ class NoteRepository extends EntityRepository<Note> {
   /// Find all unsynced notes (for sync service)
   @override
   Future<List<Note>> findUnsynced() async {
-    return collection
-        .filter()
-        .syncStatusEqualTo(SyncStatus.local)
-        .findAll();
+    return collection.filter().syncStatusEqualTo(SyncStatus.local).findAll();
   }
 }

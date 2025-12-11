@@ -218,11 +218,13 @@ abstract class EntityRepository<T extends BaseEntity> {
 
     // Use HNSW index if available
     if (hnswIndex != null && hnswIndex!.size > 0) {
-      return _hnswSearch(queryEmbedding, limit: limit, minSimilarity: minSimilarity);
+      return _hnswSearch(queryEmbedding,
+          limit: limit, minSimilarity: minSimilarity);
     }
 
     // Fallback to brute force
-    return _bruteForceSearch(queryEmbedding, limit: limit, minSimilarity: minSimilarity);
+    return _bruteForceSearch(queryEmbedding,
+        limit: limit, minSimilarity: minSimilarity);
   }
 
   /// HNSW-based search - O(log n)

@@ -1,0 +1,369 @@
+00:00 +0: loading C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart
+00:00 +0: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository save saves edge to database
+00:00 +1: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository save enforces uniqueness: composite key sourceUuid+targetUuid+edgeType
+00:00 +2: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository save allows same source and target with different edge types
+00:00 +3: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository save sets createdAt at construction time
+00:00 +4: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository save preserves metadata when saving
+00:00 +5: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository delete deletes edge by composite key
+00:01 +6: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository delete returns false when edge does not exist
+00:01 +7: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository findBySource finds all edges from source entity
+00:01 +8: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository findBySource returns empty list when source has no edges
+00:01 +9: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository findByTarget finds all edges to target entity
+00:01 +10: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository findByTarget returns empty list when target has no edges
+00:01 +11: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository findBetween finds all edges between two entities
+00:01 +12: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository recordChange creates first version with snapshot
+00:01 +13: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository recordChange creates first version with snapshot
+00:01 +14: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository recordChange creates first version with snapshot
+00:01 +15: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository findByType returns empty list for non-existent edge type
+00:01 +16: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository recordChange creates subsequent versions with deltas
+00:02 +17: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository traverse traverses 1-hop outgoing edges
+00:02 +18: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository recordChange creates periodic snapshots at frequency intervals
+00:02 +19: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository recordChange creates periodic snapshots at frequency intervals
+00:02 +20: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository recordChange creates periodic snapshots at frequency intervals
+00:02 +21: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository traverse traverses multi-hop (3-depth) edges
+00:02 +22: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository traverse traverses multi-hop (3-depth) edges
+00:02 +23: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository getHistory returns versions ordered by versionNumber
+00:02 +24: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository getHistory returns versions ordered by versionNumber
+00:02 +25: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository traverse does not include start node in results
+00:02 +26: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository getHistory returns empty list for non-existent entity
+00:02 +27: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository traverse respects direction: only outgoing edges when direction=outgoing
+00:02 +28: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository getLatestVersionNumber returns 0 for entity with no versions
+00:02 +29: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository traverse respects direction: only incoming edges when direction=incoming
+00:03 +30: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository getLatestVersionNumber returns latest version number
+00:03 +31: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository traverse handles bidirectional traversal (both directions)
+00:03 +32: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository reconstruct reconstructs state at specific timestamp from snapshot
+00:03 +33: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository traverse avoids cycles in multi-hop traversal
+00:03 +34: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository reconstruct reconstructs state by applying deltas forward
+00:03 +35: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository reconstruct reconstructs state by applying deltas forward
+00:03 +36: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository sync methods markSynced updates syncStatus and syncId
+00:03 +37: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository reconstruct returns null for timestamp before first version
+00:03 +38: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository reconstruct returns null for timestamp before first version
+00:03 +39: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository reconstruct returns null for timestamp before first version
+00:03 +40: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/edge_repository_test.dart: EdgeRepository sync methods new edges default to local sync status
+00:03 +41: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/blob_store_integration_test.dart: FileService + BlobStore Integration Photo picking and storing Can stream large photo from blob store with chunks
+00:03 +42: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository getChangesBetween returns deltas in time range
+00:03 +43: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/blob_store_integration_test.dart: FileService + BlobStore Integration Video picking and storing pickVideo → save → stream workflow
+00:03 +44: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository prune removes old versions but keeps snapshots
+00:04 +45: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository prune removes old versions but keeps snapshots
+00:04 +46: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository prune removes old versions but keeps snapshots
+00:04 +47: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository prune removes old versions but keeps snapshots
+00:04 +48: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository prune removes old versions but keeps snapshots
+00:04 +49: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository prune removes old versions but keeps snapshots
+00:04 +50: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository prune removes old versions but keeps snapshots
+00:04 +51: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository prune removes old versions but keeps snapshots
+00:04 +52: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository prune removes old versions but keeps snapshots
+00:04 +53: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository prune removes old versions but keeps snapshots
+00:04 +54: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository prune removes old versions but keeps snapshots
+00:04 +55: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository sync methods findUnsynced returns only versions with local status
+00:04 +56: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository sync methods findByEntityUuidUnsynced returns unsynced versions for specific entity
+00:04 +57: C:/Users/rasche_j/Documents/workspace/everything-stack/test/domain/version_repository_test.dart: VersionRepository sync methods markSynced updates syncStatus
+00:05 +58: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/hnsw_integration_test.dart: Entity save adds to index saving Embeddable entity generates embedding and adds to index by uuid
+00:05 +59: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/hnsw_integration_test.dart: Entity save adds to index semantic search finds saved entity
+00:06 +60: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/hnsw_integration_test.dart: Entity save adds to index saveAll adds all entities to index by uuid
+00:06 +61: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/hnsw_integration_test.dart: Entity delete removes from index deleting entity removes from HNSW index by uuid
+00:06 +62: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/hnsw_integration_test.dart: Entity delete removes from index deleted entity not returned in semantic search
+00:06 +63: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/hnsw_integration_test.dart: Entity delete removes from index deleteAll removes all from index
+00:06 +64: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/hnsw_integration_test.dart: Entity update re-indexes updating entity content re-generates embedding
+00:06 +65: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/hnsw_integration_test.dart: Entity update re-indexes search reflects updated content
+00:06 +66: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/hnsw_integration_test.dart: Index persistence index serializes and deserializes correctly with uuid keys
+00:07 +67: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/hnsw_integration_test.dart: Index persistence repository can restore index on init
+00:07 +68: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/hnsw_integration_test.dart: Index persistence index bytes can be stored in Isar
+00:07 +69: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/hnsw_integration_test.dart: Rebuild index from entities rebuildIndex recreates index from all Embeddable entities
+00:07 +70: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 1. Create and Search semantic search returns most relevant notes
+00:07 +71: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 1. Create and Search semantic search returns most relevant notes
+00:07 +72: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 1. Create and Search semantic search returns most relevant notes
+00:07 +73: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 1. Create and Search semantic search returns most relevant notes
+00:07 +74: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 1. Create and Search semantic search returns most relevant notes
+00:07 +75: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 1. Create and Search semantic search returns most relevant notes
+00:08 +76: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 1. Create and Search semantic search returns most relevant notes
+00:08 +77: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/hnsw_integration_test.dart: UUID uniqueness uuid is stable across saves
+00:08 +78: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 2. Version Tracking tracks version history and reconstructs past state
+00:08 +79: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 2. Version Tracking tracks version history and reconstructs past state
+00:08 +80: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 2. Version Tracking tracks version history and reconstructs past state
+00:08 +81: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/hnsw_integration_test.dart: Edge cases search with no indexed entities returns empty
+00:08 +82: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 3. File Attachments attaches files and stores blobs
+00:09 +83: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/hnsw_integration_test.dart: Edge cases concurrent saves maintain index consistency
+00:09 +84: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 4. Graph Edges traverses multi-hop note links
+00:09 +85: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 4. Graph Edges traverses multi-hop note links
+00:09 +86: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/hnsw_integration_test.dart: UUID preservation and indexed lookup uuid is preserved when loading from Isar (not regenerated by late default)
+00:10 +87: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/hnsw_integration_test.dart: UUID preservation and indexed lookup uuid is preserved when loading from Isar (not regenerated by late default)
+00:10 +88: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 5. Pattern Composition all patterns work together without conflict
+00:10 +88: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/supabase_sync_test.dart: Supabase Sync - E2E Tests Push entity to Supabase - create local → sync → verify in remote
+SKIPPED: SUPABASE_URL not set - skipping E2E test
+00:10 +89: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 5. Pattern Composition all patterns work together without conflict
+00:10 +89: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/supabase_sync_test.dart: Supabase Sync - E2E Tests Pull entity from Supabase - entity in remote → pull → verify data
+SKIPPED: SUPABASE_URL not set - skipping E2E test
+00:10 +90: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 5. Pattern Composition all patterns work together without conflict
+00:10 +90: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/supabase_sync_test.dart: Supabase Sync - E2E Tests Round-trip sync - create → push → verify → delete local simulation
+SKIPPED: SUPABASE_URL not set - skipping E2E test
+00:10 +91: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 5. Pattern Composition all patterns work together without conflict
+00:10 +91: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/supabase_sync_test.dart: Supabase Sync - E2E Tests Last-write-wins conflict - newer updated_at wins
+SKIPPED: SUPABASE_URL not set - skipping E2E test
+00:10 +92: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 5. Pattern Composition all patterns work together without conflict
+00:10 +93: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 5. Pattern Composition all patterns work together without conflict
+00:10 +93: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/supabase_sync_test.dart: Supabase Sync - E2E Tests Blob sync - upload bytes → verify in Storage → download
+SKIPPED: SUPABASE_URL not set - skipping E2E test
+00:10 +94: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 5. Pattern Composition all patterns work together without conflict
+00:10 +94: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/supabase_sync_test.dart: Supabase Sync - E2E Tests Offline behavior - operations return gracefully when simulating offline
+SKIPPED: SUPABASE_URL not set - skipping E2E test
+00:10 +95: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 5. Pattern Composition all patterns work together without conflict
+00:10 +95: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/supabase_sync_test.dart: Supabase Sync - E2E Tests Cleanup test data - verify deletion works
+SKIPPED: SUPABASE_URL not set - skipping E2E test
+00:10 +96: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 5. Pattern Composition all patterns work together without conflict
+00:10 +96: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/supabase_sync_test.dart: Supabase Sync - E2E Tests Sync status tracking - entity.syncStatus updates through local→syncing→synced flow
+SKIPPED: SUPABASE_URL not set - skipping E2E test
+00:10 +97: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 5. Pattern Composition all patterns work together without conflict
+00:10 +98: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/hnsw_integration_test.dart: UUID preservation and indexed lookup findByUuid returns null for non-existent uuid
+00:10 +99: C:/Users/rasche_j/Documents/workspace/everything-stack/test/integration/notes_demo_test.dart: Notes Demo Integration 6. Sync Status Flow tracks sync status through edit cycle
+00:13 +100: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileMetadata FileMetadata stores all required fields
+00:13 +101: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileMetadata FileMetadata thumbnailBase64 can be null
+00:13 +102: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileMetadata FileMetadata isImage returns true for image MIME types
+00:13 +103: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileMetadata FileMetadata isAudio returns true for audio MIME types
+00:13 +104: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileMetadata FileMetadata isVideo returns true for video MIME types
+00:13 +105: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileStorable mixin Attachment management entity starts with empty attachments list
+00:13 +106: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileStorable mixin Attachment management addAttachment adds file metadata
+00:13 +107: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileStorable mixin Attachment management addAttachment adds multiple attachments
+00:13 +108: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileStorable mixin Attachment management removeAttachment by uuid removes matching attachment
+00:13 +109: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileStorable mixin Attachment management removeAttachment returns true if found
+00:13 +110: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileStorable mixin Attachment management removeAttachment returns false if not found
+00:13 +111: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileStorable mixin Attachment management getAttachment returns matching attachment
+00:13 +112: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileStorable mixin Attachment management getAttachment returns null if not found
+00:13 +113: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileStorable mixin Attachment queries hasAttachments returns true when attachments exist
+00:13 +114: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileStorable mixin Attachment queries hasAttachments returns false when empty
+00:13 +115: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileStorable mixin Attachment queries imageAttachments returns only image files
+00:13 +116: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileStorable mixin Attachment queries audioAttachments returns only audio files
+00:13 +117: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileStorable mixin Attachment queries videoAttachments returns only video files
+00:13 +118: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileStorable mixin Attachment queries totalAttachmentSize returns sum of all sizes
+00:13 +119: C:/Users/rasche_j/Documents/workspace/everything-stack/test/patterns/file_storable_test.dart: FileStorable mixin Attachment queries totalAttachmentSize returns 0 when empty
+00:15 +120: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: BlobStore interface BlobStore is abstract
+00:15 +121: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: BlobStore interface MockBlobStore is default instance
+00:15 +122: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: MockBlobStore Save and load save stores blob with id
+00:15 +123: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: MockBlobStore Save and load load retrieves saved blob
+00:15 +124: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: MockBlobStore Save and load load returns null for non-existent blob
+00:15 +125: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: MockBlobStore Save and load save overwrites existing blob
+00:15 +126: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: MockBlobStore Delete delete removes blob
+00:15 +127: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: MockBlobStore Delete delete non-existent blob returns false
+00:15 +128: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: MockBlobStore Delete delete existing blob returns true
+00:15 +129: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: MockBlobStore Stream streamRead streams blob in chunks
+00:15 +130: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: MockBlobStore Stream streamRead with default chunk size
+00:15 +131: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: MockBlobStore Stream streamRead returns empty stream for non-existent blob
+00:15 +132: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: MockBlobStore Stream streamRead respects custom chunk size
+00:15 +133: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: MockBlobStore Contains contains returns true for saved blob
+00:15 +134: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: MockBlobStore Contains contains returns false for non-existent blob
+00:15 +135: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: MockBlobStore Size size returns blob size in bytes
+00:15 +136: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: MockBlobStore Size size returns -1 for non-existent blob
+00:15 +137: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: MockBlobStore Size size reflects overwritten blob
+00:15 +138: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: MockBlobStore Lifecycle initialize completes
+00:15 +139: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: MockBlobStore Lifecycle dispose clears all blobs
+00:15 +140: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: FileSystemBlobStore FileSystemBlobStore is a BlobStore
+00:15 +141: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/blob_store_test.dart: IndexedDBBlobStore IndexedDBBlobStore is a BlobStore
+00:18 +142: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: ConnectivityService interface ConnectivityState enum has expected values
+00:18 +143: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: ConnectivityService interface ConnectivityServiceException is Exception subtype
+00:18 +144: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: ConnectivityService interface ConnectivityServiceException.toString includes message
+00:18 +145: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: ConnectivityService interface ConnectivityServiceException.toString includes cause when present
+00:18 +146: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: ConnectivityService interface MockConnectivityService is default instance
+00:18 +147: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: MockConnectivityService Initial state starts online (wifi)
+00:18 +148: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: MockConnectivityService Initial state initialize completes immediately
+00:18 +149: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: MockConnectivityService State properties isOnline is true when state is wifi
+00:18 +150: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: MockConnectivityService State properties isOnline is true when state is cellular
+00:18 +151: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: MockConnectivityService State properties isOnline is true when state is ethernet
+00:18 +152: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: MockConnectivityService State properties isOnline is false when state is offline
+00:18 +153: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: MockConnectivityService State properties isWifi is true when state is wifi
+00:18 +154: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: MockConnectivityService State properties isWifi is true when state is ethernet
+00:18 +155: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: MockConnectivityService State properties isWifi is false when state is cellular
+00:18 +156: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: MockConnectivityService State properties isWifi is false when state is offline
+00:18 +157: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: MockConnectivityService State properties state property reflects current state
+00:18 +158: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: MockConnectivityService Stream emission onConnectivityChanged emits state changes
+00:18 +159: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: MockConnectivityService Stream emission simulate to same state does not emit
+00:18 +160: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: MockConnectivityService Stream emission multiple listeners receive state changes
+00:18 +161: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: MockConnectivityService Lifecycle dispose closes stream
+00:18 +162: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: MockConnectivityService Lifecycle dispose can be called multiple times
+00:18 +163: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: MockConnectivityService Edge cases accessing properties before initialize works
+00:18 +164: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: MockConnectivityService Edge cases simulate with all state values works
+00:18 +165: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/connectivity_service_test.dart: ConnectivityPlusService ConnectivityPlusService maps ConnectivityResult correctly
+00:19 +166: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: EmbeddingService interface dimension constant is 384 (Gemini text-embedding-004)
+00:20 +167: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: EmbeddingService interface default instance is available
+00:20 +168: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: EmbeddingService interface can set custom instance
+00:20 +169: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: EmbeddingService interface default instance is MockEmbeddingService
+00:20 +170: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: MockEmbeddingService generate returns vector of correct dimension
+00:20 +171: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: MockEmbeddingService generate returns same vector for same input
+00:20 +172: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: MockEmbeddingService generate returns different vectors for different inputs
+00:20 +173: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: MockEmbeddingService generate returns normalized vectors
+00:20 +174: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: MockEmbeddingService generate returns values in valid range
+00:20 +175: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: MockEmbeddingService generateBatch returns correct number of embeddings
+00:20 +176: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: MockEmbeddingService generateBatch returns same as individual generate calls
+00:20 +177: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: MockEmbeddingService generateBatch handles empty list
+00:20 +178: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: MockEmbeddingService generate handles empty string
+00:20 +179: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: MockEmbeddingService generate handles whitespace-only string
+00:20 +180: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: MockEmbeddingService generate handles very long text
+00:20 +181: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: MockEmbeddingService generate handles unicode text
+00:20 +182: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: MockEmbeddingService different MockEmbeddingService instances produce same results
+00:20 +183: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: EmbeddingService.cosineSimilarity identical vectors have similarity 1
+00:20 +184: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: EmbeddingService.cosineSimilarity opposite vectors have similarity -1
+00:20 +185: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: EmbeddingService.cosineSimilarity orthogonal vectors have similarity 0
+00:20 +186: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: EmbeddingService.cosineSimilarity throws on mismatched dimensions
+00:20 +187: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: EmbeddingService.cosineSimilarity handles zero vectors gracefully
+00:20 +188: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: EmbeddingService.cosineSimilarity handles empty lists gracefully
+00:20 +189: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: EmbeddingService.cosineSimilarity similarity is symmetric
+00:20 +190: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: EmbeddingService.cosineSimilarity normalized vectors work correctly
+00:20 +191: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: GeminiEmbeddingService throws when API key not configured
+00:20 +192: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: GeminiEmbeddingService throws when API key is empty string
+00:20 +193: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: GeminiEmbeddingService can be constructed with API key
+00:20 +194: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: GeminiEmbeddingService throws when HTTP client not configured
+00:20 +195: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: GeminiEmbeddingService fromEnvironment returns service instance
+00:20 +196: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: GeminiEmbeddingService generate parses successful API response
+00:20 +197: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: GeminiEmbeddingService generateBatch parses successful API response
+00:20 +198: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: GeminiEmbeddingService generateBatch handles empty list
+00:20 +199: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: GeminiEmbeddingService handles API error response
+00:20 +200: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: GeminiEmbeddingService handles API error in batch response
+00:20 +201: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: GeminiEmbeddingService wraps JSON decode errors
+00:20 +202: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: GeminiEmbeddingService wraps network errors
+00:20 +203: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: GeminiEmbeddingService throws on wrong dimension in single response
+00:20 +204: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: GeminiEmbeddingService throws on wrong dimension in batch response
+00:20 +205: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: GeminiEmbeddingService sends correct request format for single embedding
+00:20 +206: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: GeminiEmbeddingService sends correct request format for batch embedding
+00:20 +207: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: JinaEmbeddingService throws when API key not configured
+00:20 +208: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: JinaEmbeddingService throws when API key is empty string
+00:20 +209: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: JinaEmbeddingService can be constructed with API key
+00:20 +210: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: JinaEmbeddingService throws when HTTP client not configured
+00:20 +211: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: JinaEmbeddingService fromEnvironment returns service instance
+00:20 +212: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: JinaEmbeddingService generate parses successful API response
+00:20 +213: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: JinaEmbeddingService generateBatch parses successful API response
+00:20 +214: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: JinaEmbeddingService generateBatch handles out-of-order response
+00:20 +215: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: JinaEmbeddingService generateBatch handles empty list
+00:20 +216: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: JinaEmbeddingService handles API error with detail field
+00:20 +217: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: JinaEmbeddingService handles API error with error field
+00:20 +218: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: JinaEmbeddingService wraps network errors
+00:20 +219: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: JinaEmbeddingService throws on wrong dimension in response
+00:20 +220: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: JinaEmbeddingService sends correct request format
+00:20 +221: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: JinaEmbeddingService sends batch request with multiple inputs
+00:20 +222: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: EmbeddingServiceException contains message
+00:20 +223: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: EmbeddingServiceException can wrap original error
+00:20 +224: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: EmbeddingServiceException toString includes cause when present
+00:20 +225: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/embedding_service_test.dart: EmbeddingServiceException toString works without cause
+00:21 +226: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: FileService interface FileService is abstract
+00:21 +227: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: FileService interface MockFileService is default instance
+00:21 +228: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService Photo picking pickPhoto from gallery returns FileMetadata
+00:21 +229: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService Photo picking pickPhoto from camera returns FileMetadata
+00:21 +230: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService Photo picking pickPhoto returns null when cancelled
+00:21 +231: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService Photo picking pickPhoto includes thumbnail for images
+00:21 +232: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService Video picking pickVideo from gallery returns FileMetadata
+00:21 +233: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService Video picking pickVideo from camera returns FileMetadata
+00:21 +234: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService Video picking pickVideo returns null when cancelled
+00:21 +235: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService Audio recording recordAudio returns FileMetadata
+00:21 +236: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService Audio recording recordAudio returns null when cancelled
+00:21 +237: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService Audio recording recordAudio has no thumbnail
+00:21 +238: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService File picking pickFile returns FileMetadata for documents
+00:21 +239: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService File picking pickFile returns null when cancelled
+00:21 +240: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService File picking pickFile can pick any file type
+00:21 +241: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService Image compression compress reduces image bytes
+00:21 +242: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService Image compression compress with lower quality produces smaller output
+00:21 +243: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService Image compression compress returns null for invalid input
+00:21 +244: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService Thumbnail generation generateThumbnail returns base64 encoded data URI
+00:21 +245: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService Thumbnail generation generateThumbnail returns null for invalid input
+00:21 +246: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService Thumbnail generation generateThumbnail respects width parameter
+00:21 +247: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService MIME type detection detectMimeType recognizes common image formats
+00:21 +248: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService MIME type detection detectMimeType recognizes audio formats
+00:21 +249: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService MIME type detection detectMimeType recognizes video formats
+00:21 +250: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService MIME type detection detectMimeType recognizes document formats
+00:21 +251: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService MIME type detection detectMimeType is case insensitive
+00:21 +252: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService MIME type detection detectMimeType returns default for unknown
+00:21 +253: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService Lifecycle initialize completes
+00:21 +254: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: MockFileService Lifecycle dispose completes
+00:21 +255: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/file_service_test.dart: FileService real implementation FileService has real implementation
+00:22 +256: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex creates empty index with correct parameters
+00:22 +257: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex creates index with custom parameters
+00:23 +258: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex inserts single vector
+00:23 +259: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex inserts multiple vectors
+00:23 +260: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex throws on wrong dimensions
+00:23 +261: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex throws on duplicate ID
+00:23 +262: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex returns empty list when searching empty index
+00:23 +263: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex finds exact match
+00:23 +264: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex finds nearest neighbors in correct order
+00:23 +265: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex returns only k results when more exist
+00:23 +266: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex throws on wrong query dimensions
+00:23 +267: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex cosine distance is 0 for identical normalized vectors
+00:23 +268: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex cosine distance is 2 for opposite vectors
+00:23 +269: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex cosine finds semantically similar vectors
+00:23 +270: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex deletes existing vector
+00:23 +271: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex returns false when deleting non-existent vector
+00:23 +272: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex search works after deletion
+00:23 +273: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex serializes and deserializes empty index
+00:23 +274: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex serializes and deserializes index with data
+00:23 +275: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex search works on deserialized index
+00:23 +276: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +277: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +278: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +279: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +280: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +281: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +282: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +283: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +284: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +285: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +286: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +287: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +288: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +289: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +290: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +291: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +292: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +293: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +294: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:24 +295: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:25 +296: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex achieves reasonable recall on random data
+00:25 +297: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex getStats returns correct information
+00:25 +298: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles single vector index
+00:25 +299: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles zero vector
+00:25 +300: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +301: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +302: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +303: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +304: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +305: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +306: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +307: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +308: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +309: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +310: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +311: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +312: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +313: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +314: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +315: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +316: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +317: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +318: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +319: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +320: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +321: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +322: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +323: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +324: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +325: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +326: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +327: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:26 +328: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +329: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +330: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +331: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +332: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +333: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +334: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +335: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +336: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +337: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +338: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +339: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +340: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +341: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +342: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +343: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +344: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +345: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +346: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:27 +347: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:31 +348: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles large number of insertions
+00:36 +349: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex handles realistic UUID format
+00:36 +350: C:/Users/rasche_j/Documents/workspace/everything-stack/test/services/hnsw_index_test.dart: HnswIndex serializes and deserializes UUIDs correctly
+00:36 +351: All tests passed!

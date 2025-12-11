@@ -97,7 +97,8 @@ void main() {
         expect(syncService.getSyncStatus('entity-2'), SyncStatus.local);
       });
 
-      test('syncEntity creates tracking for non-existent uuid and syncs', () async {
+      test('syncEntity creates tracking for non-existent uuid and syncs',
+          () async {
         await syncService.initialize();
 
         // Non-existent entity gets tracked and synced

@@ -178,7 +178,8 @@ void main() {
       });
 
       test('generateThumbnail returns null for invalid input', () async {
-        final result = await service.generateThumbnail(Uint8List(0), width: 200);
+        final result =
+            await service.generateThumbnail(Uint8List(0), width: 200);
 
         expect(result, isNull);
       });
@@ -217,8 +218,10 @@ void main() {
 
       test('detectMimeType recognizes document formats', () {
         expect(service.detectMimeType('document.pdf'), 'application/pdf');
-        expect(service.detectMimeType('sheet.xlsx'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        expect(service.detectMimeType('doc.docx'), 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        expect(service.detectMimeType('sheet.xlsx'),
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        expect(service.detectMimeType('doc.docx'),
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
       });
 
       test('detectMimeType is case insensitive', () {

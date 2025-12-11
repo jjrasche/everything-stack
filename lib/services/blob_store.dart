@@ -149,32 +149,38 @@ class FileSystemBlobStore extends BlobStore {
 
   @override
   Future<void> save(String id, Uint8List bytes) async {
-    throw UnimplementedError('FileSystemBlobStore requires platform-specific implementation');
+    throw UnimplementedError(
+        'FileSystemBlobStore requires platform-specific implementation');
   }
 
   @override
   Future<Uint8List?> load(String id) async {
-    throw UnimplementedError('FileSystemBlobStore requires platform-specific implementation');
+    throw UnimplementedError(
+        'FileSystemBlobStore requires platform-specific implementation');
   }
 
   @override
   Future<bool> delete(String id) async {
-    throw UnimplementedError('FileSystemBlobStore requires platform-specific implementation');
+    throw UnimplementedError(
+        'FileSystemBlobStore requires platform-specific implementation');
   }
 
   @override
   Stream<Uint8List> streamRead(String id, {int chunkSize = 64 * 1024}) {
-    throw UnimplementedError('FileSystemBlobStore requires platform-specific implementation');
+    throw UnimplementedError(
+        'FileSystemBlobStore requires platform-specific implementation');
   }
 
   @override
   bool contains(String id) {
-    throw UnimplementedError('FileSystemBlobStore requires platform-specific implementation');
+    throw UnimplementedError(
+        'FileSystemBlobStore requires platform-specific implementation');
   }
 
   @override
   int size(String id) {
-    throw UnimplementedError('FileSystemBlobStore requires platform-specific implementation');
+    throw UnimplementedError(
+        'FileSystemBlobStore requires platform-specific implementation');
   }
 
   @override
@@ -199,32 +205,38 @@ class IndexedDBBlobStore extends BlobStore {
 
   @override
   Future<void> save(String id, Uint8List bytes) async {
-    throw UnimplementedError('IndexedDBBlobStore requires web-specific implementation');
+    throw UnimplementedError(
+        'IndexedDBBlobStore requires web-specific implementation');
   }
 
   @override
   Future<Uint8List?> load(String id) async {
-    throw UnimplementedError('IndexedDBBlobStore requires web-specific implementation');
+    throw UnimplementedError(
+        'IndexedDBBlobStore requires web-specific implementation');
   }
 
   @override
   Future<bool> delete(String id) async {
-    throw UnimplementedError('IndexedDBBlobStore requires web-specific implementation');
+    throw UnimplementedError(
+        'IndexedDBBlobStore requires web-specific implementation');
   }
 
   @override
   Stream<Uint8List> streamRead(String id, {int chunkSize = 64 * 1024}) {
-    throw UnimplementedError('IndexedDBBlobStore requires web-specific implementation');
+    throw UnimplementedError(
+        'IndexedDBBlobStore requires web-specific implementation');
   }
 
   @override
   bool contains(String id) {
-    throw UnimplementedError('IndexedDBBlobStore requires web-specific implementation');
+    throw UnimplementedError(
+        'IndexedDBBlobStore requires web-specific implementation');
   }
 
   @override
   int size(String id) {
-    throw UnimplementedError('IndexedDBBlobStore requires web-specific implementation');
+    throw UnimplementedError(
+        'IndexedDBBlobStore requires web-specific implementation');
   }
 
   @override
@@ -326,10 +338,10 @@ class SupabaseBlobStore extends BlobStore {
 
       // Upload to storage
       await _client!.storage.from(bucketName).uploadBinary(
-        storagePath,
-        bytes,
-        fileOptions: const FileOptions(upsert: true),
-      );
+            storagePath,
+            bytes,
+            fileOptions: const FileOptions(upsert: true),
+          );
 
       // Save metadata
       await _client!.from('blob_metadata').upsert({
@@ -357,7 +369,8 @@ class SupabaseBlobStore extends BlobStore {
     try {
       final storagePath = 'blobs/$id';
 
-      final bytes = await _client!.storage.from(bucketName).download(storagePath);
+      final bytes =
+          await _client!.storage.from(bucketName).download(storagePath);
 
       // Update cache
       _metadataCache[id] = bytes.length;

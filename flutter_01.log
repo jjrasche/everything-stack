@@ -1,0 +1,90 @@
+Flutter crash report.
+Please report a bug at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter test test/patterns/file_storable_test.dart::FileMetadata --no-pub
+
+## exception
+
+ArgumentError: Invalid argument(s): Illegal character in path
+
+```
+#0      _Uri._checkWindowsPathReservedCharacters (dart:core/uri.dart:2170:11)
+#1      _Uri._makeWindowsFileUrl (dart:core/uri.dart:2243:7)
+#2      new _Uri.file (dart:core/uri.dart:2133:11)
+#3      TestCommand._parseTestArgument (package:flutter_tools/src/commands/test.dart:758:16)
+#4      MappedListIterable.elementAt (dart:_internal/iterable.dart:442:31)
+#5      ListIterator.moveNext (dart:_internal/iterable.dart:371:26)
+#6      new _GrowableList._ofEfficientLengthIterable (dart:core-patch/growable_array.dart:194:27)
+#7      new _GrowableList.of (dart:core-patch/growable_array.dart:154:28)
+#8      new List.of (dart:core-patch/array_patch.dart:39:18)
+#9      ListIterable.toList (dart:_internal/iterable.dart:224:7)
+#10     TestCommand.verifyThenRunCommand (package:flutter_tools/src/commands/test.dart:336:73)
+#11     FlutterCommand.run.<anonymous closure> (package:flutter_tools/src/runner/flutter_command.dart:1559:33)
+<asynchronous suspension>
+#12     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#13     CommandRunner.runCommand (package:args/command_runner.dart:212:13)
+<asynchronous suspension>
+#14     FlutterCommandRunner.runCommand.<anonymous closure> (package:flutter_tools/src/runner/flutter_command_runner.dart:487:9)
+<asynchronous suspension>
+#15     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#16     FlutterCommandRunner.runCommand (package:flutter_tools/src/runner/flutter_command_runner.dart:422:5)
+<asynchronous suspension>
+#17     run.<anonymous closure>.<anonymous closure> (package:flutter_tools/runner.dart:104:11)
+<asynchronous suspension>
+#18     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#19     main (package:flutter_tools/executable.dart:103:3)
+<asynchronous suspension>
+```
+
+## flutter doctor
+
+```
+[✓] Flutter (Channel stable, 3.38.3, on Microsoft Windows [Version 10.0.26200.7171], locale en-US) [5.0s]
+    • Flutter version 3.38.3 on channel stable at C:\tools\flutter
+    • Upstream repository https://github.com/flutter/flutter.git
+    • Framework revision 19074d12f7 (3 weeks ago), 2025-11-20 17:53:13 -0500
+    • Engine revision 13e658725d
+    • Dart version 3.10.1
+    • DevTools version 2.51.1
+    • Feature flags: enable-web, enable-linux-desktop, enable-macos-desktop, enable-windows-desktop, enable-android, enable-ios, cli-animations, enable-native-assets, omit-legacy-version-file, enable-lldb-debugging
+
+[✓] Windows Version (Windows 11 or higher, 25H2, 2009) [11.6s]
+
+[!] Android toolchain - develop for Android devices (Android SDK version 36.0.0) [10.0s]
+    • Android SDK at C:\Users\rasche_j\AppData\Local\Android\sdk
+    • Emulator version 35.6.11.0 (build_id 13610412) (CL:N/A)
+    ✗ cmdline-tools component is missing.
+      Try installing or updating Android Studio.
+      Alternatively, download the tools from https://developer.android.com/studio#command-line-tools-only and make sure to set the ANDROID_HOME environment variable.
+      See https://developer.android.com/studio/command-line for more details.
+    ✗ Android license status unknown.
+      Run `flutter doctor --android-licenses` to accept the SDK licenses.
+      See https://flutter.dev/to/windows-android-setup for more details.
+
+[✓] Chrome - develop for the web [2.8s]
+    • Chrome at C:\Program Files\Google\Chrome\Application\chrome.exe
+
+[!] Visual Studio - develop Windows apps (Visual Studio Professional 2022 17.13.3) [2.7s]
+    • Visual Studio at C:\Program Files\Microsoft Visual Studio\2022\Professional
+    • Visual Studio Professional 2022 version 17.13.35828.75
+    ✗ Visual Studio is missing necessary components. Please re-run the Visual Studio installer for the "Desktop development with C++" workload, and include these components:
+        MSVC v142 - VS 2019 C++ x64/x86 build tools
+         - If there are multiple build tool versions available, install the latest
+        C++ CMake tools for Windows
+        Windows 10 SDK
+
+[✓] Connected device (3 available) [1,729ms]
+    • Windows (desktop) • windows • windows-x64    • Microsoft Windows [Version 10.0.26200.7171]
+    • Chrome (web)      • chrome  • web-javascript • Google Chrome 143.0.7499.41
+    • Edge (web)        • edge    • web-javascript • Microsoft Edge 143.0.3650.75
+
+[✓] Network resources [587ms]
+    • All expected network resources are available.
+
+! Doctor found issues in 2 categories.
+```

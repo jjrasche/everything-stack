@@ -58,7 +58,8 @@ class JsonDiff {
 
     // Check for changed/removed fields
     for (final key in oldState.keys) {
-      if (!newState.containsKey(key) || !_deepEqual(oldState[key], newState[key])) {
+      if (!newState.containsKey(key) ||
+          !_deepEqual(oldState[key], newState[key])) {
         fields.add(key);
       }
     }
@@ -142,7 +143,8 @@ class JsonDiff {
     String path,
     List<Map<String, dynamic>> operations,
   ) {
-    final minLength = oldList.length < newList.length ? oldList.length : newList.length;
+    final minLength =
+        oldList.length < newList.length ? oldList.length : newList.length;
 
     // Check existing indices for changes
     for (int i = 0; i < minLength; i++) {

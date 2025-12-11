@@ -36,7 +36,8 @@ void main() {
       expect(pos.accuracy, isNull);
     });
 
-    test('distanceTo calculates distance in kilometers (Boston to NYC ~306km)', () {
+    test('distanceTo calculates distance in kilometers (Boston to NYC ~306km)',
+        () {
       final boston = Position(
         latitude: 42.3601,
         longitude: -71.0589,
@@ -88,12 +89,15 @@ void main() {
 
   group('LocationPermission enum', () {
     test('LocationPermission has expected values', () {
-      expect(LocationPermission.values, contains(LocationPermission.undetermined));
+      expect(
+          LocationPermission.values, contains(LocationPermission.undetermined));
       expect(LocationPermission.values, contains(LocationPermission.denied));
-      expect(LocationPermission.values, contains(LocationPermission.deniedForever));
+      expect(LocationPermission.values,
+          contains(LocationPermission.deniedForever));
       expect(LocationPermission.values, contains(LocationPermission.granted));
       // Note: 'restricted' is for iOS system-level restrictions
-      expect(LocationPermission.values, contains(LocationPermission.restricted));
+      expect(
+          LocationPermission.values, contains(LocationPermission.restricted));
     });
   });
 
@@ -141,7 +145,8 @@ void main() {
     });
 
     group('Location queries', () {
-      test('getCurrentLocation returns Position with accuracy parameter', () async {
+      test('getCurrentLocation returns Position with accuracy parameter',
+          () async {
         service.setMockPosition(
           Position(
             latitude: 42.3601,
@@ -161,7 +166,8 @@ void main() {
         expect(pos.accuracy, 10.0);
       });
 
-      test('getCurrentLocation returns null when permission not granted', () async {
+      test('getCurrentLocation returns null when permission not granted',
+          () async {
         service.setPermission(LocationPermission.denied);
         service.setMockPosition(
           Position(
@@ -186,7 +192,8 @@ void main() {
         service.setMockPosition(pos);
 
         // Both calls should return the same position (mock)
-        final low = await service.getCurrentLocation(accuracy: LocationAccuracy.low);
+        final low =
+            await service.getCurrentLocation(accuracy: LocationAccuracy.low);
         final finest =
             await service.getCurrentLocation(accuracy: LocationAccuracy.finest);
 
@@ -222,7 +229,9 @@ void main() {
         final positions = <Position>[];
 
         // Request high accuracy - mock should reflect it
-        service.onLocationChanged(accuracy: LocationAccuracy.finest).listen(positions.add);
+        service
+            .onLocationChanged(accuracy: LocationAccuracy.finest)
+            .listen(positions.add);
 
         service.simulateMove(
           Position(

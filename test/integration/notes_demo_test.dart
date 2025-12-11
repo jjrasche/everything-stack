@@ -64,7 +64,8 @@ void main() {
         // Create notes with different content
         final note1 = Note(
           title: 'Project Timeline',
-          content: 'The project deadline is December 15th. We need to complete the API integration by next week.',
+          content:
+              'The project deadline is December 15th. We need to complete the API integration by next week.',
         );
         final note2 = Note(
           title: 'Grocery List',
@@ -72,7 +73,8 @@ void main() {
         );
         final note3 = Note(
           title: 'API Documentation',
-          content: 'REST API endpoints for user authentication and project management.',
+          content:
+              'REST API endpoints for user authentication and project management.',
         );
 
         await noteRepo.save(note1);
@@ -80,7 +82,8 @@ void main() {
         await noteRepo.save(note3);
 
         // Search for project-related content
-        final results = await noteRepo.semanticSearch('project deadlines', limit: 2);
+        final results =
+            await noteRepo.semanticSearch('project deadlines', limit: 2);
 
         // Should find note1 and note3, not note2
         expect(results, hasLength(2));
@@ -139,7 +142,8 @@ void main() {
         await noteRepo.save(note);
 
         // Attach mock image
-        final imageBytes = Uint8List.fromList([0xFF, 0xD8, 0xFF, 0xE0]); // JPEG header
+        final imageBytes =
+            Uint8List.fromList([0xFF, 0xD8, 0xFF, 0xE0]); // JPEG header
         final fileMetadata = FileMetadata(
           uuid: 'file-123',
           filename: 'screenshot.jpg',
@@ -227,7 +231,8 @@ void main() {
         await noteRepo.save(note);
 
         // Attach file (FileStorable)
-        final fileBytes = Uint8List.fromList([0x25, 0x50, 0x44, 0x46]); // PDF header
+        final fileBytes =
+            Uint8List.fromList([0x25, 0x50, 0x44, 0x46]); // PDF header
         final fileMetadata = FileMetadata(
           uuid: 'file-456',
           filename: 'roadmap.pdf',
@@ -239,7 +244,8 @@ void main() {
         await blobStore.save(fileMetadata.uuid, fileBytes);
 
         // Link to another note (Edgeable)
-        final relatedNote = Note(title: 'Budget Details', content: 'Q4 budget breakdown');
+        final relatedNote =
+            Note(title: 'Budget Details', content: 'Q4 budget breakdown');
         await noteRepo.save(relatedNote);
         await edgeRepo.save(Edge(
           sourceType: 'Note',
@@ -274,7 +280,8 @@ void main() {
         expect(edges[0].targetUuid, relatedNote.uuid);
 
         // Embeddable (search should find it)
-        final searchResults = await noteRepo.semanticSearch('roadmap', limit: 5);
+        final searchResults =
+            await noteRepo.semanticSearch('roadmap', limit: 5);
         expect(searchResults.any((n) => n.uuid == note.uuid), isTrue);
 
         // Ownable (set owner)

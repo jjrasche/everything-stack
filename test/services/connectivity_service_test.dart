@@ -28,7 +28,8 @@ void main() {
       expect(exception.toString(), contains('network error'));
     });
 
-    test('ConnectivityServiceException.toString includes cause when present', () {
+    test('ConnectivityServiceException.toString includes cause when present',
+        () {
       final cause = Exception('underlying cause');
       final exception = ConnectivityServiceException('wrapped error', cause);
       expect(exception.toString(), contains('wrapped error'));
@@ -120,7 +121,8 @@ void main() {
         service.onConnectivityChanged.listen(states.add);
 
         service.simulate(ConnectivityState.cellular);
-        await Future.delayed(Duration.zero); // Allow stream event to be processed
+        await Future.delayed(
+            Duration.zero); // Allow stream event to be processed
 
         service.simulate(ConnectivityState.offline);
         await Future.delayed(Duration.zero);

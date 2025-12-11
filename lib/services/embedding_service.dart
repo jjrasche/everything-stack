@@ -240,8 +240,8 @@ class JinaEmbeddingService extends EmbeddingService {
   ///
   /// If null, the service will throw EmbeddingServiceException.
   /// Inject an HTTP client implementation for production use.
-  final Future<String> Function(String url, Map<String, String> headers,
-      String body)? _httpClient;
+  final Future<String> Function(
+      String url, Map<String, String> headers, String body)? _httpClient;
 
   JinaEmbeddingService({
     String? apiKey,
@@ -406,8 +406,8 @@ class GeminiEmbeddingService extends EmbeddingService {
   ///
   /// If null, the service will throw EmbeddingServiceException.
   /// Inject an HTTP client implementation for production use.
-  final Future<String> Function(String url, Map<String, String> headers,
-      String body)? _httpClient;
+  final Future<String> Function(
+      String url, Map<String, String> headers, String body)? _httpClient;
 
   GeminiEmbeddingService({
     String? apiKey,

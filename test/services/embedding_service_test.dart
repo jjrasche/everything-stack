@@ -144,7 +144,8 @@ void main() {
 
     // ============ Consistency Across Instances ============
 
-    test('different MockEmbeddingService instances produce same results', () async {
+    test('different MockEmbeddingService instances produce same results',
+        () async {
       final service1 = MockEmbeddingService();
       final service2 = MockEmbeddingService();
 
@@ -400,7 +401,8 @@ void main() {
     test('throws on wrong dimension in single response', () async {
       final wrongDimResponse = jsonEncode({
         'embedding': {
-          'values': List.generate(128, (i) => i * 0.001), // Wrong: 128 instead of 384
+          'values':
+              List.generate(128, (i) => i * 0.001), // Wrong: 128 instead of 384
         }
       });
 
@@ -720,7 +722,8 @@ void main() {
       final wrongDimResponse = jsonEncode({
         'data': [
           {
-            'embedding': List.generate(768, (i) => i * 0.001), // Wrong: 768 instead of 384
+            'embedding': List.generate(
+                768, (i) => i * 0.001), // Wrong: 768 instead of 384
             'index': 0,
           }
         ],

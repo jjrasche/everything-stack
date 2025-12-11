@@ -104,18 +104,12 @@ class EdgeRepository {
 
   /// Find all edges originating from sourceUuid (outgoing edges)
   Future<List<Edge>> findBySource(String sourceUuid) async {
-    return collection
-        .where()
-        .sourceUuidEqualTo(sourceUuid)
-        .findAll();
+    return collection.where().sourceUuidEqualTo(sourceUuid).findAll();
   }
 
   /// Find all edges pointing to targetUuid (incoming edges)
   Future<List<Edge>> findByTarget(String targetUuid) async {
-    return collection
-        .where()
-        .targetUuidEqualTo(targetUuid)
-        .findAll();
+    return collection.where().targetUuidEqualTo(targetUuid).findAll();
   }
 
   /// Find all edges between two entities (both directions)
@@ -127,10 +121,7 @@ class EdgeRepository {
 
   /// Find all edges of specific type
   Future<List<Edge>> findByType(String edgeType) async {
-    return collection
-        .where()
-        .edgeTypeEqualTo(edgeType)
-        .findAll();
+    return collection.where().edgeTypeEqualTo(edgeType).findAll();
   }
 
   // ============ Traversal ============
@@ -287,10 +278,7 @@ class EdgeRepository {
 
   /// Find all unsynced edges (for sync service)
   Future<List<Edge>> findUnsynced() async {
-    return collection
-        .filter()
-        .syncStatusEqualTo(SyncStatus.local)
-        .findAll();
+    return collection.filter().syncStatusEqualTo(SyncStatus.local).findAll();
   }
 
   /// Mark edge as synced with remote ID
