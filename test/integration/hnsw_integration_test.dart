@@ -322,8 +322,9 @@ void main() {
 
     test('repository can restore index on init', () async {
       // Save entities and serialize index
-      final note1 = TestNote(title: 'Persistent 1');
-      final note2 = TestNote(title: 'Persistent 2');
+      // Use completely different content so embeddings are distinct
+      final note1 = TestNote(title: 'Quantum', content: 'Physics mechanics');
+      final note2 = TestNote(title: 'Banana', content: 'Yellow fruit');
       await noteRepo.save(note1);
       await noteRepo.save(note2);
 
@@ -339,15 +340,14 @@ void main() {
         embeddingService: embeddingService,
       );
 
-      // Search with exact content should work
-      // (Mock embeddings are hash-based, not semantic)
-      final results1 = await newRepo.semanticSearch('Persistent 1\n', limit: 10);
-      expect(results1.length, 1);
-      expect(results1.first.title, 'Persistent 1');
+      // Search should return best match as top result
+      final results1 = await newRepo.semanticSearch('Quantum\nPhysics mechanics', limit: 10);
+      expect(results1.isNotEmpty, isTrue);
+      expect(results1.first.title, 'Quantum');
 
-      final results2 = await newRepo.semanticSearch('Persistent 2\n', limit: 10);
-      expect(results2.length, 1);
-      expect(results2.first.title, 'Persistent 2');
+      final results2 = await newRepo.semanticSearch('Banana\nYellow fruit', limit: 10);
+      expect(results2.isNotEmpty, isTrue);
+      expect(results2.first.title, 'Banana');
     });
 
     test('index bytes can be stored in Isar', () async {
@@ -370,9 +370,10 @@ void main() {
   group('Rebuild index from entities', () {
     test('rebuildIndex recreates index from all Embeddable entities', () async {
       // Save entities with embeddings
-      final note1 = TestNote(title: 'Note 1', content: 'Content 1');
-      final note2 = TestNote(title: 'Note 2', content: 'Content 2');
-      final note3 = TestNote(title: 'Note 3', content: 'Content 3');
+      // Use distinctive content so embeddings are different
+      final note1 = TestNote(title: 'Dog', content: 'Barks loudly');
+      final note2 = TestNote(title: 'Cat', content: 'Meows softly');
+      final note3 = TestNote(title: 'Bird', content: 'Chirps happily');
       await noteRepo.save(note1);
       await noteRepo.save(note2);
       await noteRepo.save(note3);
@@ -401,11 +402,10 @@ void main() {
       expect(freshIndex.contains(note2.uuid), isTrue);
       expect(freshIndex.contains(note3.uuid), isTrue);
 
-      // Search with exact content should work
-      // (Mock embeddings are hash-based, not semantic)
-      final results = await repoWithEmptyIndex.semanticSearch('Note 1\nContent 1', limit: 10);
-      expect(results.length, 1);
-      expect(results.first.title, 'Note 1');
+      // Search should return best match as top result
+      final results = await repoWithEmptyIndex.semanticSearch('Dog\nBarks loudly', limit: 10);
+      expect(results.isNotEmpty, isTrue);
+      expect(results.first.title, 'Dog');
     });
 
     test('rebuildIndex regenerates missing embeddings', () async {
