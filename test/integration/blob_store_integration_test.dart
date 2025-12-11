@@ -35,7 +35,7 @@ void main() {
         expect(metadata!.uuid, isNotEmpty);
         expect(metadata.filename, contains('.jpg'));
         expect(metadata.mimeType, 'image/jpeg');
-        expect(metadata.size, greaterThan(0));
+        expect(metadata.sizeBytes, greaterThan(0));
         expect(metadata.thumbnailBase64, isNotNull);
       });
 
@@ -170,9 +170,8 @@ void main() {
           uuid: 'photo-1',
           filename: 'photo.jpg',
           mimeType: 'image/jpeg',
-          size: 2048,
+          sizeBytes: 2048,
           thumbnailBase64: 'data:image/jpeg;base64,abc123==',
-          createdAt: DateTime.now(),
         );
         attachments.add(photo);
 
@@ -180,8 +179,7 @@ void main() {
           uuid: 'audio-1',
           filename: 'note.m4a',
           mimeType: 'audio/mp4',
-          size: 512,
-          createdAt: DateTime.now(),
+          sizeBytes: 512,
         );
         attachments.add(audio);
 
@@ -197,7 +195,7 @@ void main() {
         );
 
         // Verify total size calculation
-        final totalSize = attachments.fold<int>(0, (sum, m) => sum + m.size);
+        final totalSize = attachments.fold<int>(0, (sum, m) => sum + m.sizeBytes);
         expect(totalSize, 2560); // 2048 + 512
       });
 
@@ -206,8 +204,7 @@ void main() {
           uuid: 'img-1',
           filename: 'image.png',
           mimeType: 'image/png',
-          size: 1024,
-          createdAt: DateTime.now(),
+          sizeBytes: 1024,
         );
         expect(imageMetadata.isImage, isTrue);
         expect(imageMetadata.isAudio, isFalse);
@@ -217,8 +214,7 @@ void main() {
           uuid: 'aud-1',
           filename: 'sound.mp3',
           mimeType: 'audio/mpeg',
-          size: 5000,
-          createdAt: DateTime.now(),
+          sizeBytes: 5000,
         );
         expect(audioMetadata.isAudio, isTrue);
         expect(audioMetadata.isImage, isFalse);
@@ -228,8 +224,7 @@ void main() {
           uuid: 'vid-1',
           filename: 'movie.mp4',
           mimeType: 'video/mp4',
-          size: 50000,
-          createdAt: DateTime.now(),
+          sizeBytes: 50000,
         );
         expect(videoMetadata.isVideo, isTrue);
         expect(videoMetadata.isImage, isFalse);
@@ -344,7 +339,7 @@ void main() {
       expect(attachments.where((m) => m.isAudio).length, 1);
 
       // Calculate total size of attachments
-      final totalSize = attachments.fold<int>(0, (sum, m) => sum + m.size);
+      final totalSize = attachments.fold<int>(0, (sum, m) => sum + m.sizeBytes);
       expect(totalSize, greaterThan(0));
 
       // User deletes a file

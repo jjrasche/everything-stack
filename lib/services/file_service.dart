@@ -139,14 +139,15 @@ class MockFileService extends FileService {
     required int size,
     String? thumbnailBase64,
   }) {
-    return FileMetadata(
+    final metadata = FileMetadata(
       uuid: _uuidGen.v4(),
       filename: filename,
       mimeType: mimeType,
-      size: size,
+      sizeBytes: size,
       thumbnailBase64: thumbnailBase64,
-      createdAt: DateTime.now(),
     );
+    metadata.createdAt = DateTime.now();
+    return metadata;
   }
 
   @override

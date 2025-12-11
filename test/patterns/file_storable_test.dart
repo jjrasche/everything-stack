@@ -23,15 +23,14 @@ void main() {
         uuid: uuid,
         filename: filename,
         mimeType: mimeType,
-        size: size,
+        sizeBytes: size,
         thumbnailBase64: thumbnailBase64,
-        createdAt: now,
       );
 
       expect(metadata.uuid, uuid);
       expect(metadata.filename, filename);
       expect(metadata.mimeType, mimeType);
-      expect(metadata.size, size);
+      expect(metadata.sizeBytes, size);
       expect(metadata.thumbnailBase64, thumbnailBase64);
       expect(metadata.createdAt, now);
     });
@@ -41,8 +40,7 @@ void main() {
         uuid: 'uuid',
         filename: 'file.bin',
         mimeType: 'application/octet-stream',
-        size: 500,
-        createdAt: DateTime.now(),
+        sizeBytes: 500,
       );
 
       expect(metadata.thumbnailBase64, isNull);
@@ -53,24 +51,21 @@ void main() {
         uuid: 'uuid',
         filename: 'photo.jpg',
         mimeType: 'image/jpeg',
-        size: 2000,
-        createdAt: DateTime.now(),
+        sizeBytes: 2000,
       );
 
       final pngMetadata = FileMetadata(
         uuid: 'uuid',
         filename: 'image.png',
         mimeType: 'image/png',
-        size: 2000,
-        createdAt: DateTime.now(),
+        sizeBytes: 2000,
       );
 
       final pdfMetadata = FileMetadata(
         uuid: 'uuid',
         filename: 'doc.pdf',
         mimeType: 'application/pdf',
-        size: 2000,
-        createdAt: DateTime.now(),
+        sizeBytes: 2000,
       );
 
       expect(jpegMetadata.isImage, isTrue);
@@ -83,16 +78,14 @@ void main() {
         uuid: 'uuid',
         filename: 'recording.mp3',
         mimeType: 'audio/mpeg',
-        size: 5000,
-        createdAt: DateTime.now(),
+        sizeBytes: 5000,
       );
 
       final videoMetadata = FileMetadata(
         uuid: 'uuid',
         filename: 'video.mp4',
         mimeType: 'video/mp4',
-        size: 50000,
-        createdAt: DateTime.now(),
+        sizeBytes: 50000,
       );
 
       expect(audioMetadata.isAudio, isTrue);
@@ -104,16 +97,14 @@ void main() {
         uuid: 'uuid',
         filename: 'clip.mp4',
         mimeType: 'video/mp4',
-        size: 50000,
-        createdAt: DateTime.now(),
+        sizeBytes: 50000,
       );
 
       final audioMetadata = FileMetadata(
         uuid: 'uuid',
         filename: 'sound.wav',
         mimeType: 'audio/wav',
-        size: 5000,
-        createdAt: DateTime.now(),
+        sizeBytes: 5000,
       );
 
       expect(videoMetadata.isVideo, isTrue);
@@ -138,8 +129,7 @@ void main() {
           uuid: 'uuid-1',
           filename: 'file.txt',
           mimeType: 'text/plain',
-          size: 100,
-          createdAt: DateTime.now(),
+          sizeBytes: 100,
         );
 
         entity.addAttachment(metadata);
@@ -153,15 +143,13 @@ void main() {
           uuid: 'uuid-1',
           filename: 'file1.txt',
           mimeType: 'text/plain',
-          size: 100,
-          createdAt: DateTime.now(),
+          sizeBytes: 100,
         );
         final meta2 = FileMetadata(
           uuid: 'uuid-2',
           filename: 'file2.txt',
           mimeType: 'text/plain',
-          size: 200,
-          createdAt: DateTime.now(),
+          sizeBytes: 200,
         );
 
         entity.addAttachment(meta1);
@@ -176,15 +164,13 @@ void main() {
           uuid: 'uuid-1',
           filename: 'file1.txt',
           mimeType: 'text/plain',
-          size: 100,
-          createdAt: DateTime.now(),
+          sizeBytes: 100,
         );
         final meta2 = FileMetadata(
           uuid: 'uuid-2',
           filename: 'file2.txt',
           mimeType: 'text/plain',
-          size: 200,
-          createdAt: DateTime.now(),
+          sizeBytes: 200,
         );
 
         entity.addAttachment(meta1);
@@ -202,8 +188,7 @@ void main() {
           uuid: 'uuid-1',
           filename: 'file.txt',
           mimeType: 'text/plain',
-          size: 100,
-          createdAt: DateTime.now(),
+          sizeBytes: 100,
         );
 
         entity.addAttachment(meta);
@@ -222,8 +207,7 @@ void main() {
           uuid: 'uuid-1',
           filename: 'file.txt',
           mimeType: 'text/plain',
-          size: 100,
-          createdAt: DateTime.now(),
+          sizeBytes: 100,
         );
 
         entity.addAttachment(meta);
@@ -248,8 +232,7 @@ void main() {
             uuid: 'uuid-1',
             filename: 'file.jpg',
             mimeType: 'image/jpeg',
-            size: 1000,
-            createdAt: DateTime.now(),
+            sizeBytes: 1000,
           ),
         );
 
@@ -262,8 +245,7 @@ void main() {
             uuid: 'uuid-1',
             filename: 'file.jpg',
             mimeType: 'image/jpeg',
-            size: 1000,
-            createdAt: DateTime.now(),
+            sizeBytes: 1000,
           ),
         );
 
@@ -277,8 +259,7 @@ void main() {
             uuid: 'uuid-1',
             filename: 'photo.jpg',
             mimeType: 'image/jpeg',
-            size: 2000,
-            createdAt: DateTime.now(),
+            sizeBytes: 2000,
           ),
         );
         entity.addAttachment(
@@ -286,8 +267,7 @@ void main() {
             uuid: 'uuid-2',
             filename: 'audio.mp3',
             mimeType: 'audio/mpeg',
-            size: 5000,
-            createdAt: DateTime.now(),
+            sizeBytes: 5000,
           ),
         );
 
@@ -303,8 +283,7 @@ void main() {
             uuid: 'uuid-1',
             filename: 'recording.wav',
             mimeType: 'audio/wav',
-            size: 5000,
-            createdAt: DateTime.now(),
+            sizeBytes: 5000,
           ),
         );
         entity.addAttachment(
@@ -312,8 +291,7 @@ void main() {
             uuid: 'uuid-2',
             filename: 'video.mp4',
             mimeType: 'video/mp4',
-            size: 50000,
-            createdAt: DateTime.now(),
+            sizeBytes: 50000,
           ),
         );
 
@@ -329,8 +307,7 @@ void main() {
             uuid: 'uuid-1',
             filename: 'clip.mp4',
             mimeType: 'video/mp4',
-            size: 50000,
-            createdAt: DateTime.now(),
+            sizeBytes: 50000,
           ),
         );
         entity.addAttachment(
@@ -338,8 +315,7 @@ void main() {
             uuid: 'uuid-2',
             filename: 'image.png',
             mimeType: 'image/png',
-            size: 2000,
-            createdAt: DateTime.now(),
+            sizeBytes: 2000,
           ),
         );
 
@@ -355,8 +331,7 @@ void main() {
             uuid: 'uuid-1',
             filename: 'file1.txt',
             mimeType: 'text/plain',
-            size: 1000,
-            createdAt: DateTime.now(),
+            sizeBytes: 1000,
           ),
         );
         entity.addAttachment(
@@ -364,8 +339,7 @@ void main() {
             uuid: 'uuid-2',
             filename: 'file2.txt',
             mimeType: 'text/plain',
-            size: 2000,
-            createdAt: DateTime.now(),
+            sizeBytes: 2000,
           ),
         );
 

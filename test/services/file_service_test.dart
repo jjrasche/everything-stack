@@ -36,7 +36,7 @@ void main() {
         expect(result, isNotNull);
         expect(result!.filename, contains('.jpg'));
         expect(result.mimeType, 'image/jpeg');
-        expect(result.size, greaterThan(0));
+        expect(result.sizeBytes, greaterThan(0));
       });
 
       test('pickPhoto from camera returns FileMetadata', () async {
@@ -68,7 +68,7 @@ void main() {
         expect(result, isNotNull);
         expect(result!.filename, contains('.mp4'));
         expect(result.mimeType, 'video/mp4');
-        expect(result.size, greaterThan(0));
+        expect(result.sizeBytes, greaterThan(0));
       });
 
       test('pickVideo from camera returns FileMetadata', () async {
@@ -93,7 +93,7 @@ void main() {
         expect(result, isNotNull);
         expect(result!.filename, contains('.m4a'));
         expect(result.mimeType, 'audio/mp4');
-        expect(result.size, greaterThan(0));
+        expect(result.sizeBytes, greaterThan(0));
       });
 
       test('recordAudio returns null when cancelled', () async {
@@ -116,7 +116,7 @@ void main() {
 
         expect(result, isNotNull);
         expect(result!.mimeType, isNotEmpty);
-        expect(result.size, greaterThan(0));
+        expect(result.sizeBytes, greaterThan(0));
       });
 
       test('pickFile returns null when cancelled', () async {
