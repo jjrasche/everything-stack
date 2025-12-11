@@ -26,10 +26,10 @@
 import '../core/entity_repository.dart';
 import '../core/base_entity.dart';
 import '../core/persistence/persistence_adapter.dart';
+import '../core/entity_version.dart';
+import '../core/version_repository.dart';
+import '../core/edge_repository.dart';
 import 'note.dart';
-import 'entity_version.dart';
-import 'version_repository.dart';
-import 'edge_repository.dart';
 
 class NoteRepository extends EntityRepository<Note> {
   final VersionRepository? _versionRepo;

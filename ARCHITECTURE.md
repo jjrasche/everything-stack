@@ -1,13 +1,29 @@
 # Architecture
 
+## Non-Negotiable Principles
+
+These principles govern all architectural decisions. They are not suggestions.
+
+**Universal Platform Support:** Android, iOS, macOS, Windows, Linux, Web. ALL platforms are first-class. Not "native-first with web as afterthought." If a platform isn't fully supported, the template is incomplete.
+
+**Infrastructure Completeness:** If ANY application might need a feature, it's in the template. Authentication, persistence, file storage, semantic search, sync, offline-first - all solved. Complexity is a feature, not a bug. It's paid once here, not N times across applications.
+
+**No Architectural Decisions for Domain Developers:** Developers (human or AI) never choose between ObjectBox vs Drift vs Isar. That decision is made. They configure domain entities and write business logic.
+
+**When to Add vs Remove:**
+- **Add:** Any infrastructure pattern that 2+ applications might need
+- **Remove:** Never remove platform support or infrastructure capability to "simplify"
+- **Question:** If you're asking "do we really need X?" - the answer is probably yes
+
 ## Stack
 
 | Layer | Choice |
 |-------|--------|
 | Language | Dart |
-| Framework | Flutter (iOS, Android, Web) |
-| Local DB | Isar |
+| Framework | Flutter (iOS, Android, Web, macOS, Windows, Linux) |
+| Local DB | ObjectBox (native) + IndexedDB (web) |
 | Cloud DB | Supabase (Postgres + Auth + Realtime) |
+| Vector Search | ObjectBox @HnswIndex (native) + pure Dart HNSW (web) |
 | Embeddings | Jina AI API |
 | Transcription | API (Deepgram or similar) |
 | CI | GitHub Actions |
@@ -129,9 +145,13 @@ class Edge {
 
 ## Persistence
 
-**Local**: Isar. All data local first. App works offline.
+**Native (iOS, Android, macOS, Windows, Linux):** ObjectBox. High-performance, offline-first, native vector search via @HnswIndex.
 
-**Remote**: Supabase. Sync when online. Metadata immediate, blobs queued.
+**Web:** IndexedDB (via idb_shim). Persists to browser storage. Vector search via pure Dart HNSW implementation.
+
+**Remote:** Supabase. Sync when online. Metadata immediate, blobs queued.
+
+**Abstraction:** Platform-specific adapters implement common interfaces. Domain code doesn't know which persistence layer it's using.
 
 **Files**: All file data stored as bytes in entity fields. Stream all files when reading/writing to avoid memory issues. This applies to every file regardless of size - there is no threshold.
 
@@ -139,9 +159,9 @@ class Edge {
 
 All file I/O must be streamed. Do not load entire files into memory.
 
-**Reading**: Stream bytes from Isar/Supabase in chunks.
+**Reading**: Stream bytes from ObjectBox/IndexedDB/Supabase in chunks.
 
-**Writing**: Stream bytes to Isar/Supabase in chunks.
+**Writing**: Stream bytes to ObjectBox/IndexedDB/Supabase in chunks.
 
 **Why**: Consistent behavior regardless of file size. No need to distinguish "large" vs "small" files.
 
@@ -157,9 +177,9 @@ CREATE POLICY "shared_notes" ON notes
 
 ## Search
 
-**Text search**: Isar full-text, works offline.
+**Text search**: ObjectBox queries (native) / IndexedDB filtering (web). Works offline.
 
-**Semantic search**: Embeddings via Jina AI API. Local similarity search via brute-force cosine or Dart HNSW package.
+**Semantic search**: Embeddings via Jina AI API. Local similarity search via ObjectBox @HnswIndex (native) or pure Dart HNSW (web).
 
 ## Testing Strategy
 

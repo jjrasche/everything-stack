@@ -1,13 +1,19 @@
 # Everything Stack
 
-A clonable template for AI-native software development. Clone, initialize, build.
+**One template. Every platform. Zero architectural decisions.**
 
-## Philosophy
+Everything Stack is complete application infrastructure for autonomous software development. Small language models adjust domain logic - not architecture, not persistence, not platform abstractions. If ANY application might need a capability, this template provides it.
 
-This template embeds the Autonomous Software Development (ASD) paradigm. AI builds, humans govern. Infrastructure is solved once. Domain logic is fresh per project.
+## Core Philosophy
+
+**Infrastructure completeness over simplicity.** The complexity of dual persistence (ObjectBox + IndexedDB), multi-platform blob storage, vector search, and offline-first sync is paid ONCE in this template. Every application built on it inherits that infrastructure without thinking about it.
+
+**All platforms are first-class.** Android, iOS, macOS, Windows, Linux, Web. Not "native-first with web as afterthought." Every platform works completely, or the template is incomplete.
+
+**AI models write domain logic only.** When a small model builds an app on Everything Stack, it defines entities, writes business logic, and creates BDD scenarios. It never chooses between databases, designs sync protocols, or solves platform-specific storage.
 
 **Core beliefs:**
-- One codebase across all platforms reduces what AI manages
+- One codebase across all platforms reduces what AI must manage
 - Opinionated choices eliminate decision fatigue
 - Patterns solve common problems once, dormant until needed
 - Documentation lives in code, co-located with implementation
@@ -48,8 +54,9 @@ This template embeds the Autonomous Software Development (ASD) paradigm. AI buil
 |-------|--------|
 | Language | Dart |
 | Framework | Flutter (mobile, web, desktop, embedded) |
-| Local DB | Isar |
+| Local DB | ObjectBox (native) + IndexedDB (web) |
 | Cloud DB | Supabase (self-hosted or cloud) |
+| Vector Search | HNSW (native via ObjectBox, pure Dart for web) |
 | AI Coder | Claude Code |
 | CI | GitHub Actions |
 | CD | Firebase App Distribution + Hosting |

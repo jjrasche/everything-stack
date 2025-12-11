@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:isar/isar.dart';
-import 'package:everything_stack_template/domain/edge.dart';
-import 'package:everything_stack_template/domain/edge_repository.dart';
+import 'package:everything_stack_template/core/edge.dart';
+import 'package:everything_stack_template/core/edge_repository.dart';
 import 'package:everything_stack_template/core/base_entity.dart';
 
 void main() {

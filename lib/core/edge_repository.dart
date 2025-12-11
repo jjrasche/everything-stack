@@ -6,7 +6,8 @@
 ///
 /// ## Usage
 /// ```dart
-/// final repo = EdgeRepository(store);
+/// final adapter = EdgeObjectBoxAdapter(store);
+/// final repo = EdgeRepository(adapter: adapter);
 ///
 /// // Connect entities
 /// final edge = Edge(
@@ -32,13 +33,12 @@
 /// ); // Returns Map<uuid, depth>
 ///
 /// // Delete
-/// await repo.delete('note-1', 'project-1', 'belongs_to');
+/// await repo.deleteEdge('note-1', 'project-1', 'belongs_to');
 /// ```
 
-import 'package:objectbox/objectbox.dart';
 import 'edge.dart';
-import '../core/base_entity.dart';
-import '../objectbox.g.dart';
+import 'base_entity.dart' show SyncStatus;
+import '../persistence/objectbox/edge_objectbox_adapter.dart';
 
 /// Exception thrown when attempting to create a duplicate edge
 class DuplicateEdgeException implements Exception {
@@ -58,12 +58,9 @@ class DuplicateEdgeException implements Exception {
 }
 
 class EdgeRepository {
-  final Store _store;
-  late final Box<Edge> _box;
+  final EdgeObjectBoxAdapter _adapter;
 
-  EdgeRepository(this._store) {
-    _box = _store.box<Edge>();
-  }
+  EdgeRepository({required EdgeObjectBoxAdapter adapter}) : _adapter = adapter;
 
   // ============ CRUD ============
 
@@ -84,15 +81,15 @@ class EdgeRepository {
     if (edge.createdAt.year == 1970) {
       edge.createdAt = DateTime.now();
     }
-    edge.touch();
 
-    // Save to database
-    return _box.put(edge);
+    // Save via adapter (adapter handles touch())
+    final saved = await _adapter.save(edge);
+    return saved.id;
   }
 
   /// Delete edge by composite key (sourceUuid, targetUuid, edgeType)
   /// Returns true if edge was deleted, false if it didn't exist.
-  Future<bool> delete(
+  Future<bool> deleteEdge(
     String sourceUuid,
     String targetUuid,
     String edgeType,
@@ -100,29 +97,19 @@ class EdgeRepository {
     final edge = await _findEdge(sourceUuid, targetUuid, edgeType);
     if (edge == null) return false;
 
-    return _box.remove(edge.id);
+    return _adapter.delete(edge.id);
   }
 
   // ============ Queries ============
 
   /// Find all edges originating from sourceUuid (outgoing edges)
   Future<List<Edge>> findBySource(String sourceUuid) async {
-    final query = _box.query(Edge_.sourceUuid.equals(sourceUuid)).build();
-    try {
-      return query.find();
-    } finally {
-      query.close();
-    }
+    return _adapter.findBySource(sourceUuid);
   }
 
   /// Find all edges pointing to targetUuid (incoming edges)
   Future<List<Edge>> findByTarget(String targetUuid) async {
-    final query = _box.query(Edge_.targetUuid.equals(targetUuid)).build();
-    try {
-      return query.find();
-    } finally {
-      query.close();
-    }
+    return _adapter.findByTarget(targetUuid);
   }
 
   /// Find all edges between two entities (both directions)
@@ -134,12 +121,7 @@ class EdgeRepository {
 
   /// Find all edges of specific type
   Future<List<Edge>> findByType(String edgeType) async {
-    final query = _box.query(Edge_.edgeType.equals(edgeType)).build();
-    try {
-      return query.find();
-    } finally {
-      query.close();
-    }
+    return _adapter.findByType(edgeType);
   }
 
   // ============ Traversal ============
@@ -291,22 +273,12 @@ class EdgeRepository {
 
   /// Find edge by UUID using indexed field - O(1) lookup
   Future<Edge?> findByUuid(String uuid) async {
-    final query = _box.query(Edge_.uuid.equals(uuid)).build();
-    try {
-      return query.findFirst();
-    } finally {
-      query.close();
-    }
+    return _adapter.findByUuid(uuid);
   }
 
   /// Find all unsynced edges (for sync service)
   Future<List<Edge>> findUnsynced() async {
-    final query = _box.query(Edge_.dbSyncStatus.equals(SyncStatus.local.index)).build();
-    try {
-      return query.find();
-    } finally {
-      query.close();
-    }
+    return _adapter.findUnsynced();
   }
 
   /// Mark edge as synced with remote ID
@@ -315,8 +287,7 @@ class EdgeRepository {
     if (edge != null) {
       edge.syncId = syncId;
       edge.syncStatus = SyncStatus.synced;
-      edge.touch();
-      _box.put(edge);
+      await _adapter.save(edge);
     }
   }
 

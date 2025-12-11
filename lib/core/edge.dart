@@ -17,7 +17,7 @@
 /// unique constraint enforcement, indexed queries.
 
 import 'package:objectbox/objectbox.dart';
-import '../core/base_entity.dart';
+import 'base_entity.dart';
 
 @Entity()
 class Edge extends BaseEntity {

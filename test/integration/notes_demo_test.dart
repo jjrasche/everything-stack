@@ -9,11 +9,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/domain/note.dart';
 import 'package:everything_stack_template/domain/note_repository.dart';
-import 'package:everything_stack_template/domain/edge.dart';
-import 'package:everything_stack_template/domain/edge_repository.dart';
-import 'package:everything_stack_template/domain/entity_version.dart';
-import 'package:everything_stack_template/domain/version_repository.dart';
+import 'package:everything_stack_template/core/edge.dart';
+import 'package:everything_stack_template/core/edge_repository.dart';
+import 'package:everything_stack_template/core/entity_version.dart';
+import 'package:everything_stack_template/core/version_repository.dart';
 import 'package:everything_stack_template/persistence/objectbox/note_objectbox_adapter.dart';
+import 'package:everything_stack_template/persistence/objectbox/edge_objectbox_adapter.dart';
+import 'package:everything_stack_template/persistence/objectbox/entity_version_objectbox_adapter.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/blob_store.dart';
 import 'package:everything_stack_template/patterns/file_storable.dart';
@@ -41,9 +43,13 @@ void main() {
     blobStore = MockBlobStore();
     await blobStore.initialize();
 
-    // Initialize repositories
-    versionRepo = VersionRepository(store);
-    edgeRepo = EdgeRepository(store);
+    // Initialize repositories with adapters
+    final versionAdapter = EntityVersionObjectBoxAdapter(store);
+    versionRepo = VersionRepository(adapter: versionAdapter);
+
+    final edgeAdapter = EdgeObjectBoxAdapter(store);
+    edgeRepo = EdgeRepository(adapter: edgeAdapter);
+
     final noteAdapter = NoteObjectBoxAdapter(store);
     noteRepo = NoteRepository(
       adapter: noteAdapter,

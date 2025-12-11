@@ -3,6 +3,18 @@
 ## Project Type
 Everything Stack template - Dart/Flutter cross-platform application
 
+## Non-Negotiable Principles
+
+**Read these first. They override all other guidance.**
+
+1. **ALL platforms are first-class.** Android, iOS, macOS, Windows, Linux, Web. Not "native-first with web later." If you're implementing a feature that only works on some platforms, you're not done.
+
+2. **Infrastructure completeness over simplicity.** If asking "do we really need X?" - the answer is probably yes. Complexity is paid once in this template so applications don't pay it.
+
+3. **Domain developers write domain logic only.** No architectural decisions. No persistence layer design. No platform-specific code outside adapters.
+
+4. **No platform shortcuts.** "Just for Android" or "web can come later" is not acceptable. Universal or don't build it.
+
 ## Foundation Documents
 - Vision: `docs/templates/VISION_TEMPLATE.md` (complete before building)
 - Architecture: `docs/templates/ARCHITECTURE_TEMPLATE.md` (complete before building)
@@ -101,5 +113,6 @@ Testing follows a 4-layer approach. All layers run in CI. All must pass before m
 - All entities extend `BaseEntity`
 - All repositories extend `EntityRepository`
 - File storage uses bytes-in-database pattern (no filesystem)
-- Offline-first with Isar, sync via Supabase
+- Offline-first with ObjectBox (native) + IndexedDB (web), sync via Supabase
 - Cross-platform code only - no platform-specific logic outside adapters
+- Dual persistence: adapters implement common interfaces, domain code is platform-agnostic
