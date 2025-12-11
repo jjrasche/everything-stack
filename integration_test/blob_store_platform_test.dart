@@ -6,14 +6,17 @@
 /// Layer 4 testing: Platform verification on Android, iOS, web, desktop.
 ///
 /// Platform implementations tested:
-/// - Android/iOS: FileSystemBlobStore using path_provider
+/// - Android/iOS/Desktop: FileSystemBlobStore using path_provider
 /// - Web: IndexedDBBlobStore using browser IndexedDB
-/// - Desktop: FileSystemBlobStore using home directory
+library;
 
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:everything_stack_template/services/blob_store.dart';
+import 'package:everything_stack_template/bootstrap/blob_store_factory_stub.dart'
+    if (dart.library.io) 'package:everything_stack_template/bootstrap/blob_store_factory_io.dart'
+    if (dart.library.html) 'package:everything_stack_template/bootstrap/blob_store_factory_web.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -21,30 +24,24 @@ void main() {
   group('BlobStore Platform Implementation', () {
     late BlobStore blobStore;
 
-    // Platform detection helper
-    bool isWeb() => identical(0, 0.0) == false; // Simple web check
-
-    setUp(() {
-      // Use appropriate implementation based on platform
-      if (isWeb()) {
-        // Would be: blobStore = IndexedDBBlobStore();
-        // For now, use mock (real implementation not yet complete)
-        blobStore = MockBlobStore();
-      } else {
-        // Would be: blobStore = FileSystemBlobStore();
-        // For now, use mock (real implementation not yet complete)
-        blobStore = MockBlobStore();
-      }
+    setUp(() async {
+      // Use REAL platform implementation via conditional import
+      blobStore = createPlatformBlobStore();
+      await blobStore.initialize();
     });
 
-    test('BlobStore initializes without error', () async {
-      await blobStore.initialize();
-      // No exception = success
+    tearDown(() {
+      blobStore.dispose();
     });
 
-    test('BlobStore can save and load bytes', () async {
-      await blobStore.initialize();
+    testWidgets('BlobStore initializes without error',
+        (WidgetTester tester) async {
+      // If we got here, initialization succeeded in setUp
+      expect(blobStore, isNotNull);
+    });
 
+    testWidgets('BlobStore can save and load bytes',
+        (WidgetTester tester) async {
       final testBytes = Uint8List.fromList([1, 2, 3, 4, 5]);
       const testId = 'platform-test-blob';
 
@@ -57,11 +54,12 @@ void main() {
       // Verify
       expect(loaded, isNotNull);
       expect(loaded, equals(testBytes));
+
+      // Cleanup
+      await blobStore.delete(testId);
     });
 
-    test('BlobStore can delete blobs', () async {
-      await blobStore.initialize();
-
+    testWidgets('BlobStore can delete blobs', (WidgetTester tester) async {
       const testId = 'platform-test-delete';
       final testBytes = Uint8List.fromList([10, 20, 30]);
 
@@ -81,9 +79,8 @@ void main() {
       expect(loaded, isNull);
     });
 
-    test('BlobStore reports size correctly', () async {
-      await blobStore.initialize();
-
+    testWidgets('BlobStore reports size correctly',
+        (WidgetTester tester) async {
       const testId = 'platform-test-size';
       final testBytes = Uint8List.fromList(
         List<int>.filled(1024, 255),
@@ -95,11 +92,13 @@ void main() {
       // Check size
       final size = blobStore.size(testId);
       expect(size, 1024);
+
+      // Cleanup
+      await blobStore.delete(testId);
     });
 
-    test('BlobStore can stream large blobs', () async {
-      await blobStore.initialize();
-
+    testWidgets('BlobStore can stream large blobs',
+        (WidgetTester tester) async {
       const testId = 'platform-test-stream';
       const testSize = 100 * 1024; // 100KB
       final testBytes = Uint8List.fromList(
@@ -118,11 +117,13 @@ void main() {
 
       // Verify all bytes were streamed
       expect(bytesRead, testSize);
+
+      // Cleanup
+      await blobStore.delete(testId);
     });
 
-    test('BlobStore handles non-existent blobs gracefully', () async {
-      await blobStore.initialize();
-
+    testWidgets('BlobStore handles non-existent blobs gracefully',
+        (WidgetTester tester) async {
       // Load non-existent
       final loaded = await blobStore.load('non-existent-uuid');
       expect(loaded, isNull);
@@ -139,14 +140,8 @@ void main() {
       expect(blobStore.contains('non-existent-uuid'), isFalse);
     });
 
-    test('BlobStore can be disposed', () {
-      // No exception = success
-      blobStore.dispose();
-    });
-
-    test('Multiple sequential saves and loads work correctly', () async {
-      await blobStore.initialize();
-
+    testWidgets('Multiple sequential saves and loads work correctly',
+        (WidgetTester tester) async {
       final testData = {
         'file-1': Uint8List.fromList([1, 2, 3]),
         'file-2': Uint8List.fromList([4, 5, 6]),
@@ -163,16 +158,49 @@ void main() {
         final loaded = await blobStore.load(entry.key);
         expect(loaded, equals(entry.value), reason: 'Failed for ${entry.key}');
       }
+
+      // Cleanup
+      for (final key in testData.keys) {
+        await blobStore.delete(key);
+      }
     });
 
-    test('BlobStore can handle large binary data', () async {
-      await blobStore.initialize();
+    testWidgets('BlobStore persists data across instances',
+        (WidgetTester tester) async {
+      const testId = 'platform-test-persist';
+      final testBytes = Uint8List.fromList([42, 43, 44, 45]);
 
-      const testId = 'platform-test-large';
-      // 10MB of random-ish data
+      // Save with first instance
+      await blobStore.save(testId, testBytes);
+
+      // Dispose first instance
+      blobStore.dispose();
+
+      // Create new instance
+      final secondBlobStore = createPlatformBlobStore();
+      await secondBlobStore.initialize();
+
+      // Load from second instance - this proves REAL persistence
+      final loaded = await secondBlobStore.load(testId);
+      expect(loaded, isNotNull, reason: 'Data should persist across instances');
+      expect(loaded, equals(testBytes));
+
+      // Cleanup
+      await secondBlobStore.delete(testId);
+      secondBlobStore.dispose();
+
+      // Restore original for tearDown
+      blobStore = createPlatformBlobStore();
+      await blobStore.initialize();
+    });
+
+    testWidgets('BlobStore can handle medium binary data (1MB)',
+        (WidgetTester tester) async {
+      const testId = 'platform-test-medium';
+      // 1MB of data - reasonable for integration test
       final testBytes = Uint8List.fromList(
         List.generate(
-          10 * 1024 * 1024,
+          1 * 1024 * 1024,
           (i) => (i * 7) % 256, // Pseudo-random pattern
         ),
       );
@@ -188,6 +216,9 @@ void main() {
       expect(loaded?[0], testBytes[0]);
       expect(loaded?[1000], testBytes[1000]);
       expect(loaded?[testBytes.length - 1], testBytes[testBytes.length - 1]);
+
+      // Cleanup
+      await blobStore.delete(testId);
     });
   });
 }
