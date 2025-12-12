@@ -21,11 +21,12 @@
 /// ```
 ///
 /// ## Initialization Order
-/// 1. BlobStore (platform-specific: FileSystem or IndexedDB)
-/// 2. FileService (depends on BlobStore)
-/// 3. ConnectivityService
-/// 4. SyncService (optional, requires Supabase credentials)
-/// 5. EmbeddingService (optional, requires API key)
+/// 1. Persistence (platform-specific: ObjectBox or IndexedDB)
+/// 2. BlobStore (platform-specific: FileSystem or IndexedDB)
+/// 3. FileService (depends on BlobStore)
+/// 4. ConnectivityService
+/// 5. SyncService (optional, requires Supabase credentials)
+/// 6. EmbeddingService (optional, requires API key)
 
 library;
 
@@ -40,7 +41,13 @@ import 'bootstrap/blob_store_factory_stub.dart'
     if (dart.library.io) 'bootstrap/blob_store_factory_io.dart'
     if (dart.library.html) 'bootstrap/blob_store_factory_web.dart';
 
+// Conditional import for platform-specific Persistence
+import 'bootstrap/persistence_factory_stub.dart'
+    if (dart.library.io) 'bootstrap/persistence_factory_io.dart'
+    if (dart.library.html) 'bootstrap/persistence_factory_web.dart';
+
 import 'bootstrap/http_client.dart';
+import 'bootstrap/persistence_factory.dart';
 
 /// Configuration for Everything Stack initialization.
 class EverythingStackConfig {
@@ -138,6 +145,21 @@ class EverythingStackConfig {
 ///   ),
 /// );
 /// ```
+/// Global persistence factory instance.
+/// Initialized by initializeEverythingStack() and used by repositories.
+PersistenceFactory? _persistenceFactory;
+
+/// Get the initialized persistence factory.
+/// Throws if initializeEverythingStack() hasn't been called.
+PersistenceFactory get persistenceFactory {
+  if (_persistenceFactory == null) {
+    throw StateError(
+      'PersistenceFactory not initialized. Call initializeEverythingStack() first.',
+    );
+  }
+  return _persistenceFactory!;
+}
+
 Future<void> initializeEverythingStack({
   EverythingStackConfig? config,
 }) async {
@@ -148,22 +170,25 @@ Future<void> initializeEverythingStack({
     return;
   }
 
-  // 1. Initialize BlobStore (platform-specific)
+  // 1. Initialize Persistence (platform-specific: ObjectBox or IndexedDB)
+  _persistenceFactory = await initializePersistence();
+
+  // 2. Initialize BlobStore (platform-specific)
   final blobStore = createPlatformBlobStore();
   await blobStore.initialize();
   BlobStore.instance = blobStore;
 
-  // 2. Initialize FileService (depends on BlobStore)
+  // 3. Initialize FileService (depends on BlobStore)
   final fileService = RealFileService(blobStore: blobStore);
   await fileService.initialize();
   FileService.instance = fileService;
 
-  // 3. Initialize ConnectivityService
+  // 4. Initialize ConnectivityService
   final connectivityService = ConnectivityPlusService();
   await connectivityService.initialize();
   ConnectivityService.instance = connectivityService;
 
-  // 4. Initialize SyncService (optional - requires Supabase config)
+  // 5. Initialize SyncService (optional - requires Supabase config)
   if (cfg.hasSyncConfig) {
     final syncService = SupabaseSyncService(
       supabaseUrl: cfg.supabaseUrl!,
@@ -174,7 +199,7 @@ Future<void> initializeEverythingStack({
   }
   // else: keeps MockSyncService default
 
-  // 5. Initialize EmbeddingService (optional - requires API key)
+  // 6. Initialize EmbeddingService (optional - requires API key)
   if (cfg.jinaApiKey != null && cfg.jinaApiKey!.isNotEmpty) {
     EmbeddingService.instance = JinaEmbeddingService(
       apiKey: cfg.jinaApiKey,
@@ -206,6 +231,7 @@ Future<void> _initializeMocks() async {
 
 /// Dispose all services (call on app shutdown if needed).
 Future<void> disposeEverythingStack() async {
+  await _persistenceFactory?.close();
   FileService.instance.dispose();
   BlobStore.instance.dispose();
   ConnectivityService.instance.dispose();

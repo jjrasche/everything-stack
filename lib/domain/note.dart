@@ -30,7 +30,6 @@
 
 import 'dart:convert';
 
-import 'package:objectbox/objectbox.dart';
 import 'package:json_annotation/json_annotation.dart';
 import '../core/base_entity.dart';
 import '../patterns/embeddable.dart';
@@ -43,35 +42,27 @@ import '../patterns/locatable.dart';
 // JSON serialization generated code
 part 'note.g.dart';
 
-// Note: ObjectBox generates objectbox.g.dart at lib root, not here
-
-@Entity()
 @JsonSerializable()
 class Note extends BaseEntity
     with Embeddable, Ownable, Edgeable, Versionable, FileStorable, Locatable {
-  // ============ ObjectBox field overrides ============
-  // Override id with @Id() for ObjectBox
+  // ============ BaseEntity field overrides ============
+  /// Database auto-generated ID (inherited from BaseEntity)
   @override
-  @Id()
   int id = 0;
 
-  // Override uuid with @Unique for O(1) findByUuid() lookups
-  @Unique(onConflict: ConflictStrategy.replace)
+  /// Universal unique identifier (inherited from BaseEntity)
   @override
   String uuid = '';
 
-  // ============ BaseEntity field overrides ============
-  /// When entity was created
-  @Property(type: PropertyType.date)
+  /// When entity was created (inherited from BaseEntity)
   @override
   DateTime createdAt = DateTime.now();
 
-  /// When entity was last modified
-  @Property(type: PropertyType.date)
+  /// When entity was last modified (inherited from BaseEntity)
   @override
   DateTime updatedAt = DateTime.now();
 
-  /// For sync identification across devices
+  /// For sync identification across devices (inherited from BaseEntity)
   @override
   String? syncId;
 
@@ -82,11 +73,10 @@ class Note extends BaseEntity
   /// Note content (markdown supported)
   String content;
 
-  /// Optional tags for organization (stored as comma-separated string in ObjectBox)
-  @Transient()
+  /// Optional tags for organization
   List<String> tags;
 
-  /// Internal storage for tags as string (ObjectBox doesn't support List<String> well)
+  /// Internal storage for tags as string (for database persistence)
   @JsonKey(includeFromJson: false, includeToJson: false)
   String get dbTags => tags.join(',');
   set dbTags(String value) => tags = value.isEmpty ? [] : value.split(',');
@@ -97,12 +87,10 @@ class Note extends BaseEntity
   /// Whether note is archived
   bool isArchived;
 
-  // ============ Pattern field overrides for ObjectBox ============
+  // ============ Pattern field overrides ============
 
   /// Embedding vector for semantic search
   /// 384 dimensions for typical embedding models
-  @HnswIndex(dimensions: 384)
-  @Property(type: PropertyType.floatVector)
   @override
   List<double>? embedding;
 
@@ -121,8 +109,7 @@ class Note extends BaseEntity
   @override
   String? ownerId;
 
-  /// User IDs this is shared with (stored as comma-separated string)
-  @Transient()
+  /// User IDs this is shared with
   @override
   List<String> sharedWith = [];
 
@@ -133,9 +120,8 @@ class Note extends BaseEntity
       sharedWith = value.isEmpty ? [] : value.split(',');
 
   // ============ FileStorable field overrides ============
-  /// Attachments stored as JSON string
+  /// Attachments
   @override
-  @Transient()
   List<FileMetadata> attachments = [];
 
   /// Database storage for attachments

@@ -16,58 +16,49 @@
 /// Test through EdgeRepository. Verify CRUD operations,
 /// unique constraint enforcement, indexed queries.
 
-import 'package:objectbox/objectbox.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'base_entity.dart';
 
 // JSON serialization generated code
 part 'edge.g.dart';
 
-@Entity()
 @JsonSerializable()
 class Edge extends BaseEntity {
-  // ============ ObjectBox field overrides ============
-  // Override id with @Id() for ObjectBox
+  // ============ BaseEntity field overrides ============
+  /// Database auto-generated ID (inherited from BaseEntity)
   @override
-  @Id()
   int id = 0;
 
-  @Unique(onConflict: ConflictStrategy.replace)
+  /// Universal unique identifier (inherited from BaseEntity)
   @override
   String uuid = '';
 
-  // ============ BaseEntity field overrides ============
-  /// When entity was created
-  @Property(type: PropertyType.date)
+  /// When entity was created (inherited from BaseEntity)
   @override
   DateTime createdAt = DateTime.now();
 
-  /// When entity was last modified
-  @Property(type: PropertyType.date)
+  /// When entity was last modified (inherited from BaseEntity)
   @override
   DateTime updatedAt = DateTime.now();
 
-  /// For sync identification across devices
+  /// For sync identification across devices (inherited from BaseEntity)
   @override
   String? syncId;
 
   /// Source entity type name (e.g., 'Note', 'Project')
   String sourceType;
 
-  /// Source entity UUID (indexed for fast lookup)
-  @Index()
+  /// Source entity UUID (indexed in adapters for fast lookup)
   String sourceUuid;
 
   /// Target entity type name (e.g., 'Project', 'Tag')
   String targetType;
 
-  /// Target entity UUID (indexed for fast lookup)
-  @Index()
+  /// Target entity UUID (indexed in adapters for fast lookup)
   String targetUuid;
 
   /// Type of relationship (e.g., 'belongs_to', 'references', 'similar_to')
-  /// Indexed to support filtering by edge type
-  @Index()
+  /// Indexed in adapters to support filtering by edge type
   String edgeType;
 
   /// Optional metadata about the edge (stored as JSON string)

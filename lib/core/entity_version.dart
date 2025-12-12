@@ -46,48 +46,41 @@
 /// - EntityRepository: Calls recordChange() on save for Versionable entities
 /// - Sync: Versions sync to remote database
 
-import 'package:objectbox/objectbox.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'base_entity.dart';
 
 // JSON serialization generated code
 part 'entity_version.g.dart';
 
-@Entity()
 @JsonSerializable()
 class EntityVersion extends BaseEntity {
-  // ============ ObjectBox field overrides ============
-  // Override id with @Id() for ObjectBox
+  // ============ BaseEntity field overrides ============
+  /// Database auto-generated ID (inherited from BaseEntity)
   @override
-  @Id()
   int id = 0;
 
   /// Unique identifier for this version record (for sync correlation)
-  @Unique(onConflict: ConflictStrategy.replace)
   @override
   String uuid = '';
 
-  // ============ BaseEntity field overrides ============
   /// When this version was created (versions are immutable)
-  @Property(type: PropertyType.date)
   @override
   DateTime createdAt = DateTime.now();
 
   /// Same as createdAt for versions (immutable records)
-  @Property(type: PropertyType.date)
   @override
   DateTime updatedAt = DateTime.now();
 
-  /// For sync identification across devices
+  /// For sync identification across devices (inherited from BaseEntity)
   @override
   String? syncId;
 
   /// Type of entity this versions ('Note', 'Tool', 'Contract', etc.)
-  @Index()
+  /// Indexed in adapters for efficient queries
   String entityType;
 
   /// UUID of the entity this version belongs to
-  @Index()
+  /// Indexed in adapters for efficient queries
   String entityUuid;
 
   /// Alias for createdAt - when this version was recorded.

@@ -1,26 +1,91 @@
-/// # Test Harness
-///
-/// Shared test utilities for parameterized, data-driven testing.
-/// Use these helpers to keep tests DRY and consistent.
-
 import 'package:flutter_test/flutter_test.dart';
-import 'package:isar/isar.dart';
+import 'package:everything_stack_template/bootstrap/persistence_factory.dart';
+import 'package:everything_stack_template/domain/note_repository.dart';
+import 'package:everything_stack_template/core/edge_repository.dart';
+import 'package:everything_stack_template/core/version_repository.dart';
+import 'package:everything_stack_template/services/embedding_service.dart';
+import 'package:everything_stack_template/services/blob_store.dart';
 
-/// Initialize Isar for testing.
-/// Call in setUpAll.
-Future<Isar> initTestIsar() async {
-  await Isar.initializeIsarCore(download: true);
-  return await Isar.open(
-    [], // Add your schemas here
-    directory: '',
-    name: 'test_${DateTime.now().millisecondsSinceEpoch}',
+// Conditional import for platform-specific test persistence
+import 'test_persistence_stub.dart'
+    if (dart.library.io) 'test_persistence_io.dart'
+    if (dart.library.html) 'test_persistence_web.dart';
+
+/// Test context containing all initialized services and repositories.
+class TestContext {
+  final PersistenceFactory persistence;
+  final NoteRepository noteRepo;
+  final EdgeRepository edgeRepo;
+  final VersionRepository versionRepo;
+  final MockEmbeddingService embeddingService;
+  final MockBlobStore blobStore;
+
+  TestContext({
+    required this.persistence,
+    required this.noteRepo,
+    required this.edgeRepo,
+    required this.versionRepo,
+    required this.embeddingService,
+    required this.blobStore,
+  });
+
+  /// Close all resources
+  Future<void> dispose() async {
+    await persistence.close();
+    blobStore.dispose();
+  }
+}
+
+/// Initialize test environment with platform-specific persistence.
+///
+/// Works on:
+/// - Native platforms (ObjectBox)
+/// - Web (IndexedDB)
+///
+/// Call in setUp:
+/// ```dart
+/// late TestContext ctx;
+/// setUp(() async {
+///   ctx = await initTestEnvironment();
+/// });
+/// tearDown(() async {
+///   await cleanupTestEnvironment(ctx);
+/// });
+/// ```
+Future<TestContext> initTestEnvironment() async {
+  // Initialize platform-specific persistence
+  final persistence = await initTestPersistence();
+
+  // Initialize services
+  final embeddingService = MockEmbeddingService();
+  final blobStore = MockBlobStore();
+  await blobStore.initialize();
+
+  // Initialize repositories with adapters from factory (cast to correct types)
+  final versionRepo = VersionRepository(adapter: persistence.versionAdapter as dynamic);
+  final edgeRepo = EdgeRepository(adapter: persistence.edgeAdapter as dynamic);
+  final noteRepo = NoteRepository(
+    adapter: persistence.noteAdapter as dynamic,
+    embeddingService: embeddingService,
+    versionRepo: versionRepo,
+  );
+  noteRepo.setEdgeRepository(edgeRepo);
+
+  return TestContext(
+    persistence: persistence,
+    noteRepo: noteRepo,
+    edgeRepo: edgeRepo,
+    versionRepo: versionRepo,
+    embeddingService: embeddingService,
+    blobStore: blobStore,
   );
 }
 
-/// Close and delete test database.
-/// Call in tearDownAll.
-Future<void> cleanupTestIsar(Isar isar) async {
-  await isar.close(deleteFromDisk: true);
+/// Cleanup test environment.
+/// Call in tearDown.
+Future<void> cleanupTestEnvironment(TestContext ctx) async {
+  await ctx.dispose();
+  await cleanupTestPersistence();
 }
 
 /// Base class for parameterized test cases.
