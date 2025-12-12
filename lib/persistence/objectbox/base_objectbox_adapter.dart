@@ -1,37 +1,32 @@
-/// # BaseObjectBoxAdapter
+/// # BaseObjectBoxAdapter (Path C: Anti-Corruption Layer)
 ///
 /// ## What it does
-/// Base implementation of PersistenceAdapter for ObjectBox.
-/// Handles 90% of adapter logic - transaction boilerplate, context casting,
-/// box access, query execution, and cleanup.
+/// Base implementation of PersistenceAdapter for ObjectBox with wrapper support.
+/// Generic over BOTH domain entity (T) and ObjectBox wrapper (OB) types.
 ///
-/// ## What it enables
-/// - DRY: Write transaction logic once, not per entity type
-/// - New entities are ~5 lines (extend base + provide query conditions)
-/// - Consistent patterns across all ObjectBox adapters
+/// ## Path C Pattern
+/// Domain entities stay clean (no ObjectBox annotations).
+/// ObjectBox wrappers (NoteOB, EdgeOB, etc.) have all annotations.
+/// Base adapter handles conversion automatically.
 ///
 /// ## How it works
-/// Subclasses provide entity-specific query conditions via abstract methods:
-/// - uuidEqualsCondition(): Condition for UUID lookups
-/// - syncStatusLocalCondition(): Condition for unsynced entities
-///
-/// Base class handles all the boilerplate:
-/// - Context casting (TransactionContext -> ObjectBoxTxContext)
-/// - Box access (store.box<T>())
-/// - Query execution and cleanup
-/// - Touch behavior (controlled via shouldTouchOnSave)
-///
-/// ## Usage
 /// ```dart
-/// class NoteObjectBoxAdapter extends BaseObjectBoxAdapter<Note> {
+/// class NoteObjectBoxAdapter extends BaseObjectBoxAdapter<Note, NoteOB> {
 ///   NoteObjectBoxAdapter(Store store) : super(store);
 ///
 ///   @override
-///   Condition<Note> uuidEqualsCondition(String uuid) => Note_.uuid.equals(uuid);
+///   NoteOB toOB(Note entity) => NoteOB.fromNote(entity);
 ///
 ///   @override
-///   Condition<Note> syncStatusLocalCondition() =>
-///       Note_.dbSyncStatus.equals(SyncStatus.local.index);
+///   Note fromOB(NoteOB ob) => ob.toNote();
+///
+///   @override
+///   Condition<NoteOB> uuidEqualsCondition(String uuid) =>
+///       NoteOB_.uuid.equals(uuid);
+///
+///   @override
+///   Condition<NoteOB> syncStatusLocalCondition() =>
+///       NoteOB_.dbSyncStatus.equals(SyncStatus.local.index);
 /// }
 /// ```
 
@@ -43,33 +38,39 @@ import '../../core/persistence/transaction_context.dart';
 import '../../core/persistence/objectbox_tx_context.dart';
 import '../../core/exceptions/persistence_exceptions.dart';
 
-/// Base ObjectBox adapter implementation.
+/// Base ObjectBox adapter with Anti-Corruption Layer pattern.
 ///
-/// Provides complete implementation of PersistenceAdapter for ObjectBox.
-/// Subclasses only need to provide entity-specific query conditions.
-abstract class BaseObjectBoxAdapter<T extends BaseEntity>
+/// Generic over domain entity (T) and ObjectBox wrapper (OB) types.
+/// Handles all CRUD logic with automatic wrapper conversion.
+abstract class BaseObjectBoxAdapter<T extends BaseEntity, OB>
     implements PersistenceAdapter<T> {
   final Store _store;
-  late final Box<T> _box;
+  late final Box<OB> _box;
 
   BaseObjectBoxAdapter(this._store) {
-    _box = _store.box<T>();
+    _box = _store.box<OB>();
   }
 
-  /// Access to the box for subclass-specific queries.
-  /// Used by entity-specific methods like findPinned(), findBySource(), etc.
+  /// Access to the ObjectBox wrapper box.
+  /// Used by subclass-specific queries.
   @protected
-  Box<T> get box => _box;
+  Box<OB> get box => _box;
 
-  // ============ Abstract Methods (Entity-Specific) ============
+  // ============ Abstract Methods (Subclass Must Provide) ============
 
-  /// Condition for finding entity by UUID.
-  /// Example: Note_.uuid.equals(uuid)
-  Condition<T> uuidEqualsCondition(String uuid);
+  /// Convert domain entity to ObjectBox wrapper.
+  OB toOB(T entity);
 
-  /// Condition for finding entities with SyncStatus.local.
-  /// Example: Note_.dbSyncStatus.equals(SyncStatus.local.index)
-  Condition<T> syncStatusLocalCondition();
+  /// Convert ObjectBox wrapper to domain entity.
+  T fromOB(OB ob);
+
+  /// Condition for finding wrapper by UUID.
+  /// Example: NoteOB_.uuid.equals(uuid)
+  Condition<OB> uuidEqualsCondition(String uuid);
+
+  /// Condition for finding unsynced wrappers.
+  /// Example: NoteOB_.dbSyncStatus.equals(SyncStatus.local.index)
+  Condition<OB> syncStatusLocalCondition();
 
   /// Whether to call touch() on entities before saving.
   /// Override to false for immutable entities (e.g., EntityVersion).
@@ -78,13 +79,13 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
   // ============ Helper Methods ============
 
   /// Get box from transaction context.
-  Box<T> _getBox(TransactionContext ctx) {
+  Box<OB> _getBox(TransactionContext ctx) {
     final obCtx = ctx as ObjectBoxTxContext;
-    return obCtx.store.box<T>();
+    return obCtx.store.box<OB>();
   }
 
   /// Execute query and ensure cleanup.
-  R _executeQuery<R>(Query<T> query, R Function(Query<T>) work) {
+  R _executeQuery<R>(Query<OB> query, R Function(Query<OB>) work) {
     try {
       return work(query);
     } finally {
@@ -104,7 +105,6 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
     final entityType = T.toString();
 
     if (error is UniqueViolationException) {
-      // Unique constraint violation
       throw DuplicateEntityException(
         entityType,
         'unique constraint',
@@ -115,7 +115,6 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
     }
 
     if (error is NonUniqueResultException) {
-      // Query returned multiple when expecting one
       throw QueryException(
         'Query returned multiple ${entityType}s when expecting one',
         cause: error,
@@ -124,7 +123,6 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
     }
 
     if (error is NumericOverflowException) {
-      // Numeric overflow in aggregates
       throw QueryException(
         'Numeric overflow in $entityType query',
         cause: error,
@@ -133,7 +131,6 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
     }
 
     if (error is StorageException) {
-      // Storage errors - could be quota exceeded
       final message = error.toString();
       if (message.contains('quota') ||
           message.contains('disk') ||
@@ -144,7 +141,6 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
           stackTrace: stackTrace,
         );
       }
-      // Other storage errors
       throw PersistenceException(
         'Storage error: $message',
         cause: error,
@@ -153,7 +149,6 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
     }
 
     if (error is SchemaException) {
-      // Schema errors
       throw PersistenceException(
         'Schema error for $entityType: $error',
         cause: error,
@@ -162,7 +157,6 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
     }
 
     if (error is ObjectBoxException) {
-      // Other ObjectBox exceptions
       throw PersistenceException(
         'ObjectBox error for $entityType: $error',
         cause: error,
@@ -170,7 +164,6 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
       );
     }
 
-    // Unknown exception - wrap as generic PersistenceException
     throw PersistenceException(
       'Unexpected error with $entityType: $error',
       cause: error,
@@ -198,21 +191,19 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
     }
   }
 
-  // ============ CRUD ============
+  // ============ CRUD (with automatic wrapper conversion) ============
 
   @override
   Future<T?> findById(int id) async {
-    return _box.get(id);
+    final ob = _box.get(id);
+    return ob != null ? fromOB(ob) : null;
   }
 
   @override
   Future<T> getById(int id) async {
     final entity = await findById(id);
     if (entity == null) {
-      throw EntityNotFoundException(
-        T.toString(),
-        id: id,
-      );
+      throw EntityNotFoundException(T.toString(), id: id);
     }
     return entity;
   }
@@ -220,31 +211,34 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
   @override
   Future<T?> findByUuid(String uuid) async {
     final query = _box.query(uuidEqualsCondition(uuid)).build();
-    return _executeQuery(query, (q) => q.findFirst());
+    return _executeQuery(query, (q) {
+      final ob = q.findFirst();
+      return ob != null ? fromOB(ob) : null;
+    });
   }
 
   @override
   Future<T> getByUuid(String uuid) async {
     final entity = await findByUuid(uuid);
     if (entity == null) {
-      throw EntityNotFoundException(
-        T.toString(),
-        uuid: uuid,
-      );
+      throw EntityNotFoundException(T.toString(), uuid: uuid);
     }
     return entity;
   }
 
   @override
   Future<List<T>> findAll() async {
-    return _box.getAll();
+    final obList = _box.getAll();
+    return obList.map((ob) => fromOB(ob)).toList();
   }
 
   @override
   Future<T> save(T entity) async {
     return _executeAsyncWithExceptionHandling(() async {
       _touchIfNeeded(entity);
-      _box.put(entity);
+      final ob = toOB(entity);
+      final id = _box.put(ob);
+      entity.id = id;
       return entity;
     });
   }
@@ -255,7 +249,11 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
       for (final entity in entities) {
         _touchIfNeeded(entity);
       }
-      _box.putMany(entities);
+      final obList = entities.map((e) => toOB(e)).toList();
+      final ids = _box.putMany(obList);
+      for (var i = 0; i < entities.length; i++) {
+        entities[i].id = ids[i];
+      }
       return entities;
     });
   }
@@ -282,7 +280,10 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
   @override
   Future<List<T>> findUnsynced() async {
     final query = _box.query(syncStatusLocalCondition()).build();
-    return _executeQuery(query, (q) => q.find());
+    return _executeQuery(query, (q) {
+      final obList = q.find();
+      return obList.map((ob) => fromOB(ob)).toList();
+    });
   }
 
   @override
@@ -291,8 +292,7 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
   }
 
   // ============ Semantic Search ============
-  // Default implementation: no semantic search (entities without embeddings)
-  // Subclasses with embeddings override these methods
+  // Default: no semantic search (entities without embeddings override this)
 
   @override
   Future<List<T>> semanticSearch(
@@ -300,18 +300,17 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
     int limit = 10,
     double minSimilarity = 0.0,
   }) async {
-    // Default: no semantic search support
     return [];
   }
 
   @override
-  int get indexSize => 0; // Default: no embeddings
+  int get indexSize => 0;
 
   @override
   Future<void> rebuildIndex(
     Future<List<double>?> Function(T entity) generateEmbedding,
   ) async {
-    // Default: no-op for entities without embeddings
+    // No-op for entities without embeddings
   }
 
   // ============ Transaction Operations ============
@@ -319,20 +318,25 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
   @override
   T? findByIdInTx(TransactionContext ctx, int id) {
     final box = _getBox(ctx);
-    return box.get(id);
+    final ob = box.get(id);
+    return ob != null ? fromOB(ob) : null;
   }
 
   @override
   T? findByUuidInTx(TransactionContext ctx, String uuid) {
     final box = _getBox(ctx);
     final query = box.query(uuidEqualsCondition(uuid)).build();
-    return _executeQuery(query, (q) => q.findFirst());
+    return _executeQuery(query, (q) {
+      final ob = q.findFirst();
+      return ob != null ? fromOB(ob) : null;
+    });
   }
 
   @override
   List<T> findAllInTx(TransactionContext ctx) {
     final box = _getBox(ctx);
-    return box.getAll();
+    final obList = box.getAll();
+    return obList.map((ob) => fromOB(ob)).toList();
   }
 
   @override
@@ -340,7 +344,9 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
     return _executeWithExceptionHandling(() {
       final box = _getBox(ctx);
       _touchIfNeeded(entity);
-      box.put(entity);
+      final ob = toOB(entity);
+      final id = box.put(ob);
+      entity.id = id;
       return entity;
     });
   }
@@ -352,7 +358,11 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
       for (final entity in entities) {
         _touchIfNeeded(entity);
       }
-      box.putMany(entities);
+      final obList = entities.map((e) => toOB(e)).toList();
+      final ids = box.putMany(obList);
+      for (var i = 0; i < entities.length; i++) {
+        entities[i].id = ids[i];
+      }
       return entities;
     });
   }
@@ -371,8 +381,10 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
       final box = _getBox(ctx);
       final query = box.query(uuidEqualsCondition(uuid)).build();
       return _executeQuery(query, (q) {
-        final entity = q.findFirst();
-        if (entity == null) return false;
+        final ob = q.findFirst();
+        if (ob == null) return false;
+        // Convert to get entity ID
+        final entity = fromOB(ob);
         return box.remove(entity.id);
       });
     });
@@ -391,6 +403,5 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity>
   @override
   Future<void> close() async {
     // Store lifecycle is managed externally
-    // Don't close the store here - it may be shared
   }
 }

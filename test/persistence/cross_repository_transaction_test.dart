@@ -10,6 +10,8 @@ import 'package:everything_stack_template/domain/note.dart';
 import 'package:everything_stack_template/core/entity_version.dart';
 import 'package:everything_stack_template/persistence/objectbox/note_objectbox_adapter.dart';
 import 'package:everything_stack_template/persistence/objectbox/entity_version_objectbox_adapter.dart';
+import 'package:everything_stack_template/persistence/objectbox/wrappers/note_ob.dart';
+import 'package:everything_stack_template/persistence/objectbox/wrappers/entity_version_ob.dart';
 import 'package:everything_stack_template/objectbox.g.dart';
 
 void main() {
@@ -38,20 +40,21 @@ void main() {
       final note = Note(title: 'Test Note', content: 'Test Content');
       final noteUuid = note.uuid;
 
-      // Execute in transaction - simulating EntityRepository.save()
+      // Execute in transaction using wrapper entities
       await store.runInTransactionAsync<void, Map<String, dynamic>>(
         TxMode.write,
         (Store txStore, Map<String, dynamic> params) {
-          // Access boxes directly in transaction (adapters share same Store)
-          final noteBox = txStore.box<Note>();
-          final versionBox = txStore.box<EntityVersion>();
+          // Access wrapper boxes in transaction
+          final noteBox = txStore.box<NoteOB>();
+          final versionBox = txStore.box<EntityVersionOB>();
 
-          // Save note
+          // Save note using wrapper
           final note = params['note'] as Note;
           note.touch();
-          noteBox.put(note);
+          final noteOB = NoteOB.fromNote(note);
+          noteBox.put(noteOB);
 
-          // Save version
+          // Save version using wrapper
           final version = EntityVersion(
             entityType: 'Note',
             entityUuid: note.uuid,
@@ -61,7 +64,8 @@ void main() {
             changedFields: ['title', 'content'],
             isSnapshot: true,
           );
-          versionBox.put(version);
+          final versionOB = EntityVersionOB.fromEntityVersion(version);
+          versionBox.put(versionOB);
         },
         {'note': note},
       );
@@ -84,15 +88,16 @@ void main() {
         await store.runInTransactionAsync<void, Map<String, dynamic>>(
           TxMode.write,
           (Store txStore, Map<String, dynamic> params) {
-            final noteBox = txStore.box<Note>();
-            final versionBox = txStore.box<EntityVersion>();
+            final noteBox = txStore.box<NoteOB>();
+            final versionBox = txStore.box<EntityVersionOB>();
 
-            // Save note
+            // Save note using wrapper
             final note = params['note'] as Note;
             note.touch();
-            noteBox.put(note);
+            final noteOB = NoteOB.fromNote(note);
+            noteBox.put(noteOB);
 
-            // Save version
+            // Save version using wrapper
             final version = EntityVersion(
               entityType: 'Note',
               entityUuid: note.uuid,
@@ -102,7 +107,8 @@ void main() {
               changedFields: [],
               isSnapshot: true,
             );
-            versionBox.put(version);
+            final versionOB = EntityVersionOB.fromEntityVersion(version);
+            versionBox.put(versionOB);
 
             // Simulate failure after both operations
             throw Exception('Simulated failure after both saves');
@@ -130,16 +136,16 @@ void main() {
         await store.runInTransactionAsync<void, Map<String, dynamic>>(
           TxMode.write,
           (Store txStore, Map<String, dynamic> params) {
-            final noteBox = txStore.box<Note>();
-            final versionBox = txStore.box<EntityVersion>();
+            final noteBox = txStore.box<NoteOB>();
 
-            // Save note successfully
+            // Save note using wrapper
             final note = params['note'] as Note;
             note.touch();
-            noteBox.put(note);
+            final noteOB = NoteOB.fromNote(note);
+            noteBox.put(noteOB);
 
-            // Verify note is saved (within transaction)
-            final check = noteBox.get(note.id);
+            // Verify note wrapper is saved (within transaction)
+            final check = noteBox.get(noteOB.id);
             if (check == null) {
               throw Exception('Note save failed');
             }
@@ -166,15 +172,16 @@ void main() {
       await store.runInTransactionAsync<void, List<Note>>(
         TxMode.write,
         (Store txStore, List<Note> notes) {
-          final noteBox = txStore.box<Note>();
-          final versionBox = txStore.box<EntityVersion>();
+          final noteBox = txStore.box<NoteOB>();
+          final versionBox = txStore.box<EntityVersionOB>();
 
           for (final note in notes) {
-            // Save note
+            // Save note using wrapper
             note.touch();
-            noteBox.put(note);
+            final noteOB = NoteOB.fromNote(note);
+            noteBox.put(noteOB);
 
-            // Save version
+            // Save version using wrapper
             final version = EntityVersion(
               entityType: 'Note',
               entityUuid: note.uuid,
@@ -184,7 +191,8 @@ void main() {
               changedFields: ['title', 'content'],
               isSnapshot: true,
             );
-            versionBox.put(version);
+            final versionOB = EntityVersionOB.fromEntityVersion(version);
+            versionBox.put(versionOB);
           }
         },
         [note1, note2],

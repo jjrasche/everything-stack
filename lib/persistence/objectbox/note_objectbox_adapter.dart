@@ -2,7 +2,7 @@
 ///
 /// ## What it does
 /// ObjectBox implementation of PersistenceAdapter for Note entities.
-/// Handles CRUD operations and native HNSW vector search.
+/// Uses NoteOB wrapper (Anti-Corruption Layer) to keep domain entities clean.
 ///
 /// ## Usage
 /// ```dart
@@ -15,21 +15,29 @@ import 'package:objectbox/objectbox.dart';
 import 'base_objectbox_adapter.dart';
 import '../../core/base_entity.dart';
 import '../../domain/note.dart';
+import 'wrappers/note_ob.dart';
 import '../../objectbox.g.dart';
 
-class NoteObjectBoxAdapter extends BaseObjectBoxAdapter<Note> {
+class NoteObjectBoxAdapter extends BaseObjectBoxAdapter<Note, NoteOB> {
   NoteObjectBoxAdapter(Store store) : super(store);
 
-  // ============ Entity-Specific Query Conditions ============
+  // ============ Abstract Method Implementations ============
 
   @override
-  Condition<Note> uuidEqualsCondition(String uuid) => Note_.uuid.equals(uuid);
+  NoteOB toOB(Note entity) => NoteOB.fromNote(entity);
 
   @override
-  Condition<Note> syncStatusLocalCondition() =>
-      Note_.dbSyncStatus.equals(SyncStatus.local.index);
+  Note fromOB(NoteOB ob) => ob.toNote();
 
-  // ============ Semantic Search (Override for Embeddings) ============
+  @override
+  Condition<NoteOB> uuidEqualsCondition(String uuid) =>
+      NoteOB_.uuid.equals(uuid);
+
+  @override
+  Condition<NoteOB> syncStatusLocalCondition() =>
+      NoteOB_.dbSyncStatus.equals(SyncStatus.local.index);
+
+  // ============ Entity-Specific Methods (Semantic Search) ============
 
   @override
   Future<List<Note>> semanticSearch(
@@ -37,22 +45,20 @@ class NoteObjectBoxAdapter extends BaseObjectBoxAdapter<Note> {
     int limit = 10,
     double minSimilarity = 0.0,
   }) async {
-    // ObjectBox uses nearestNeighborsF32 for HNSW search
-    // The score returned is distance (lower = more similar)
+    // ObjectBox HNSW vector search on wrapper entity
     final query = box
-        .query(Note_.embedding.nearestNeighborsF32(queryVector, limit))
+        .query(NoteOB_.embedding.nearestNeighborsF32(queryVector, limit))
         .build();
 
     try {
       final results = query.findWithScores();
 
-      // Filter by minimum similarity
-      // ObjectBox returns cosine distance, convert to similarity: 1 - distance
+      // Filter by minimum similarity (1 - distance)
       final filtered = <Note>[];
       for (final result in results) {
         final similarity = 1.0 - result.score;
         if (similarity >= minSimilarity) {
-          filtered.add(result.object);
+          filtered.add(fromOB(result.object));
         }
       }
 
@@ -64,8 +70,7 @@ class NoteObjectBoxAdapter extends BaseObjectBoxAdapter<Note> {
 
   @override
   int get indexSize {
-    // Count entities that have embeddings
-    final query = box.query(Note_.embedding.notNull()).build();
+    final query = box.query(NoteOB_.embedding.notNull()).build();
     try {
       return query.count();
     } finally {
@@ -77,8 +82,6 @@ class NoteObjectBoxAdapter extends BaseObjectBoxAdapter<Note> {
   Future<void> rebuildIndex(
     Future<List<double>?> Function(Note entity) generateEmbedding,
   ) async {
-    // For ObjectBox, the HNSW index is automatic.
-    // We just need to ensure all entities have embeddings.
     final notes = await findAll();
 
     for (final note in notes) {

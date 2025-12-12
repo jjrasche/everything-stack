@@ -101,8 +101,6 @@ class EntityVersion extends BaseEntity {
 
   /// Top-level fields that changed (for queryability without parsing delta)
   /// Example: ['title', 'body']
-  /// Stored as comma-separated string in ObjectBox
-  @Transient()
   List<String> changedFields = [];
 
   @JsonKey(includeFromJson: false, includeToJson: false)

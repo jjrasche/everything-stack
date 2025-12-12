@@ -1,19 +1,8 @@
 /// # EntityVersionObjectBoxAdapter
 ///
 /// ## What it does
-/// ObjectBox implementation of PersistenceAdapter for EntityVersion entities.
-/// Handles CRUD operations for version tracking records.
-///
-/// ## Note on semantic search
-/// EntityVersion records don't have embeddings, so semantic search methods
-/// return empty results. This is expected behavior.
-///
-/// ## Usage
-/// ```dart
-/// final store = await openStore();
-/// final adapter = EntityVersionObjectBoxAdapter(store);
-/// final repo = VersionRepository(adapter: adapter);
-/// ```
+/// ObjectBox implementation of VersionPersistenceAdapter.
+/// Uses EntityVersionOB wrapper (Anti-Corruption Layer) to keep domain entities clean.
 
 import 'package:objectbox/objectbox.dart';
 import 'base_objectbox_adapter.dart';
@@ -22,39 +11,46 @@ import '../../core/persistence/version_persistence_adapter.dart';
 import '../../core/persistence/transaction_context.dart';
 import '../../core/persistence/objectbox_tx_context.dart';
 import '../../core/entity_version.dart';
+import 'wrappers/entity_version_ob.dart';
 import '../../objectbox.g.dart';
 
-class EntityVersionObjectBoxAdapter extends BaseObjectBoxAdapter<EntityVersion>
+class EntityVersionObjectBoxAdapter
+    extends BaseObjectBoxAdapter<EntityVersion, EntityVersionOB>
     implements VersionPersistenceAdapter {
   EntityVersionObjectBoxAdapter(Store store) : super(store);
 
-  // ============ Entity-Specific Query Conditions ============
+  // ============ Abstract Method Implementations ============
 
   @override
-  Condition<EntityVersion> uuidEqualsCondition(String uuid) =>
-      EntityVersion_.uuid.equals(uuid);
+  EntityVersionOB toOB(EntityVersion entity) =>
+      EntityVersionOB.fromEntityVersion(entity);
 
   @override
-  Condition<EntityVersion> syncStatusLocalCondition() =>
-      EntityVersion_.dbSyncStatus.equals(SyncStatus.local.index);
+  EntityVersion fromOB(EntityVersionOB ob) => ob.toEntityVersion();
 
-  // ============ EntityVersion-Specific Behavior ============
+  @override
+  Condition<EntityVersionOB> uuidEqualsCondition(String uuid) =>
+      EntityVersionOB_.uuid.equals(uuid);
+
+  @override
+  Condition<EntityVersionOB> syncStatusLocalCondition() =>
+      EntityVersionOB_.dbSyncStatus.equals(SyncStatus.local.index);
 
   /// Versions are immutable - don't touch() them
   @override
   bool get shouldTouchOnSave => false;
 
-  // ============ Version-specific queries ============
-  // These are used by VersionRepository for version management
+  // ============ Entity-Specific Methods (Version Queries) ============
 
   @override
   Future<List<EntityVersion>> findByEntityUuid(String entityUuid) async {
     final query = box
-        .query(EntityVersion_.entityUuid.equals(entityUuid))
-        .order(EntityVersion_.versionNumber)
+        .query(EntityVersionOB_.entityUuid.equals(entityUuid))
+        .order(EntityVersionOB_.versionNumber)
         .build();
     try {
-      return query.find();
+      final obList = query.find();
+      return obList.map((ob) => fromOB(ob)).toList();
     } finally {
       query.close();
     }
@@ -63,11 +59,12 @@ class EntityVersionObjectBoxAdapter extends BaseObjectBoxAdapter<EntityVersion>
   @override
   Future<EntityVersion?> findLatestByEntityUuid(String entityUuid) async {
     final query = box
-        .query(EntityVersion_.entityUuid.equals(entityUuid))
-        .order(EntityVersion_.versionNumber, flags: Order.descending)
+        .query(EntityVersionOB_.entityUuid.equals(entityUuid))
+        .order(EntityVersionOB_.versionNumber, flags: Order.descending)
         .build();
     try {
-      return query.findFirst();
+      final ob = query.findFirst();
+      return ob != null ? fromOB(ob) : null;
     } finally {
       query.close();
     }
@@ -79,13 +76,14 @@ class EntityVersionObjectBoxAdapter extends BaseObjectBoxAdapter<EntityVersion>
     String entityUuid,
   ) {
     final obCtx = ctx as ObjectBoxTxContext;
-    final txBox = obCtx.store.box<EntityVersion>();
+    final txBox = obCtx.store.box<EntityVersionOB>();
     final query = txBox
-        .query(EntityVersion_.entityUuid.equals(entityUuid))
-        .order(EntityVersion_.versionNumber, flags: Order.descending)
+        .query(EntityVersionOB_.entityUuid.equals(entityUuid))
+        .order(EntityVersionOB_.versionNumber, flags: Order.descending)
         .build();
     try {
-      return query.findFirst();
+      final ob = query.findFirst();
+      return ob != null ? fromOB(ob) : null;
     } finally {
       query.close();
     }
@@ -99,13 +97,14 @@ class EntityVersionObjectBoxAdapter extends BaseObjectBoxAdapter<EntityVersion>
     final timestampMs =
         timestamp.add(const Duration(milliseconds: 1)).millisecondsSinceEpoch;
     final query = box
-        .query(EntityVersion_.entityUuid
+        .query(EntityVersionOB_.entityUuid
             .equals(entityUuid)
-            .and(EntityVersion_.createdAt.lessThan(timestampMs)))
-        .order(EntityVersion_.versionNumber)
+            .and(EntityVersionOB_.createdAt.lessThan(timestampMs)))
+        .order(EntityVersionOB_.versionNumber)
         .build();
     try {
-      return query.find();
+      final obList = query.find();
+      return obList.map((ob) => fromOB(ob)).toList();
     } finally {
       query.close();
     }
@@ -120,28 +119,29 @@ class EntityVersionObjectBoxAdapter extends BaseObjectBoxAdapter<EntityVersion>
     final fromMs = from.millisecondsSinceEpoch;
     final toMs = to.millisecondsSinceEpoch;
     final query = box
-        .query(EntityVersion_.entityUuid
+        .query(EntityVersionOB_.entityUuid
             .equals(entityUuid)
-            .and(EntityVersion_.createdAt.between(fromMs, toMs)))
-        .order(EntityVersion_.versionNumber)
+            .and(EntityVersionOB_.createdAt.between(fromMs, toMs)))
+        .order(EntityVersionOB_.versionNumber)
         .build();
     try {
-      return query.find();
+      final obList = query.find();
+      return obList.map((ob) => fromOB(ob)).toList();
     } finally {
       query.close();
     }
   }
 
   @override
-  Future<List<EntityVersion>> findByEntityUuidUnsynced(
-      String entityUuid) async {
+  Future<List<EntityVersion>> findByEntityUuidUnsynced(String entityUuid) async {
     final query = box
-        .query(EntityVersion_.entityUuid
+        .query(EntityVersionOB_.entityUuid
             .equals(entityUuid)
-            .and(EntityVersion_.dbSyncStatus.equals(SyncStatus.local.index)))
+            .and(EntityVersionOB_.dbSyncStatus.equals(SyncStatus.local.index)))
         .build();
     try {
-      return query.find();
+      final obList = query.find();
+      return obList.map((ob) => fromOB(ob)).toList();
     } finally {
       query.close();
     }

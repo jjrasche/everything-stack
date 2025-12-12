@@ -11,6 +11,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/domain/note.dart';
 import 'package:everything_stack_template/core/entity_version.dart';
+import 'package:everything_stack_template/persistence/objectbox/wrappers/note_ob.dart';
+import 'package:everything_stack_template/persistence/objectbox/wrappers/entity_version_ob.dart';
 import 'package:everything_stack_template/objectbox.g.dart';
 
 void main() {
@@ -35,22 +37,23 @@ void main() {
       final noteData = ['note-uuid', 'Test Note', 'Content'];
       final versionData = ['note-uuid', 'Note', 1];
 
-      // Execute in transaction
+      // Execute in transaction using wrapper entities
       await store.runInTransactionAsync<void, List<dynamic>>(
         TxMode.write,
         (Store txStore, List<dynamic> params) {
-          final noteBox = txStore.box<Note>();
-          final versionBox = txStore.box<EntityVersion>();
+          final noteBox = txStore.box<NoteOB>();
+          final versionBox = txStore.box<EntityVersionOB>();
 
-          // Save note
+          // Save note wrapper
           final note = Note(
             title: params[0][1] as String,
             content: params[0][2] as String,
           );
           note.uuid = params[0][0] as String;
-          noteBox.put(note);
+          final noteOB = NoteOB.fromNote(note);
+          noteBox.put(noteOB);
 
-          // Save version
+          // Save version wrapper
           final version = EntityVersion(
             entityType: params[1][1] as String,
             entityUuid: params[1][0] as String,
@@ -60,28 +63,29 @@ void main() {
             changedFields: [],
             isSnapshot: true,
           );
-          versionBox.put(version);
+          final versionOB = EntityVersionOB.fromEntityVersion(version);
+          versionBox.put(versionOB);
         },
         [noteData, versionData],
       );
 
-      // Verify both were saved
-      final noteBox = store.box<Note>();
-      final versionBox = store.box<EntityVersion>();
+      // Verify both were saved using wrapper entities
+      final noteBox = store.box<NoteOB>();
+      final versionBox = store.box<EntityVersionOB>();
 
-      final savedNote = await noteBox
-          .query(Note_.uuid.equals('note-uuid'))
+      final savedNoteOB = await noteBox
+          .query(NoteOB_.uuid.equals('note-uuid'))
           .build()
           .findFirst();
-      final savedVersion = await versionBox
-          .query(EntityVersion_.entityUuid.equals('note-uuid'))
+      final savedVersionOB = await versionBox
+          .query(EntityVersionOB_.entityUuid.equals('note-uuid'))
           .build()
           .findFirst();
 
-      expect(savedNote, isNotNull);
-      expect(savedNote!.title, 'Test Note');
-      expect(savedVersion, isNotNull);
-      expect(savedVersion!.versionNumber, 1);
+      expect(savedNoteOB, isNotNull);
+      expect(savedNoteOB!.toNote().title, 'Test Note');
+      expect(savedVersionOB, isNotNull);
+      expect(savedVersionOB!.toEntityVersion().versionNumber, 1);
     });
 
     test('runInTransactionAsync rolls back on exception', () async {
@@ -91,18 +95,18 @@ void main() {
         await store.runInTransactionAsync<void, List<dynamic>>(
           TxMode.write,
           (Store txStore, List<dynamic> params) {
-            final noteBox = txStore.box<Note>();
-            final versionBox = txStore.box<EntityVersion>();
+            final noteBox = txStore.box<NoteOB>();
 
-            // Save note
+            // Save note wrapper
             final note = Note(
               title: params[0][1] as String,
               content: params[0][2] as String,
             );
             note.uuid = params[0][0] as String;
-            noteBox.put(note);
+            final noteOB = NoteOB.fromNote(note);
+            noteBox.put(noteOB);
 
-            // Throw exception before saving version
+            // Throw exception before completing transaction
             throw Exception('Simulated failure');
           },
           [noteData],
@@ -113,30 +117,32 @@ void main() {
       }
 
       // Verify note was NOT saved (rollback worked)
-      final noteBox = store.box<Note>();
-      final savedNote = await noteBox
-          .query(Note_.uuid.equals('note-uuid-2'))
+      final noteBox = store.box<NoteOB>();
+      final savedNoteOB = await noteBox
+          .query(NoteOB_.uuid.equals('note-uuid-2'))
           .build()
           .findFirst();
 
-      expect(savedNote, isNull, reason: 'Transaction should have rolled back');
+      expect(savedNoteOB, isNull, reason: 'Transaction should have rolled back');
     });
 
     test('runInTransactionAsync with synchronous adapter pattern', () async {
-      // Simulate adapter-style operations inside transaction
+      // Simulate adapter-style operations inside transaction using wrappers
       final result = await store.runInTransactionAsync<String, List<String>>(
         TxMode.write,
         (Store txStore, List<String> params) {
-          final noteBox = txStore.box<Note>();
+          final noteBox = txStore.box<NoteOB>();
 
-          // Adapter-style save operation
+          // Adapter-style save operation using wrappers
           final note1 = Note(title: params[0], content: 'Content 1');
           note1.touch();
-          noteBox.put(note1);
+          final noteOB1 = NoteOB.fromNote(note1);
+          noteBox.put(noteOB1);
 
           final note2 = Note(title: params[1], content: 'Content 2');
           note2.touch();
-          noteBox.put(note2);
+          final noteOB2 = NoteOB.fromNote(note2);
+          noteBox.put(noteOB2);
 
           // Return result
           return 'Saved ${params.length} notes';
@@ -146,26 +152,27 @@ void main() {
 
       expect(result, 'Saved 2 notes');
 
-      // Verify both saved
-      final noteBox = store.box<Note>();
+      // Verify both saved using wrappers
+      final noteBox = store.box<NoteOB>();
       final all = noteBox.getAll();
       expect(all.length, 2);
     });
 
     test('verify Box operations are synchronous', () async {
       // This test verifies our adapters use sync operations that work in transactions
-      final noteBox = store.box<Note>();
+      final noteBox = store.box<NoteOB>();
 
-      // Create note outside transaction
+      // Create note wrapper outside transaction
       final note = Note(title: 'Test', content: 'Content');
+      final noteOB = NoteOB.fromNote(note);
 
       // Verify these are synchronous calls (no await needed)
-      noteBox.put(note);  // Synchronous
-      final retrieved = noteBox.get(note.id);  // Synchronous
+      noteBox.put(noteOB);  // Synchronous
+      final retrieved = noteBox.get(noteOB.id);  // Synchronous
       final all = noteBox.getAll();  // Synchronous
 
       expect(retrieved, isNotNull);
-      expect(retrieved!.title, 'Test');
+      expect(retrieved!.toNote().title, 'Test');
       expect(all.length, greaterThan(0));
     });
   });
