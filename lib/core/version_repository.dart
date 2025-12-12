@@ -47,12 +47,13 @@ import 'package:rfc_6902/rfc_6902.dart';
 import 'entity_version.dart';
 import '../utils/json_diff.dart';
 import 'base_entity.dart' show SyncStatus;
-import '../persistence/objectbox/entity_version_objectbox_adapter.dart';
+import 'persistence/version_persistence_adapter.dart';
+import 'persistence/transaction_context.dart';
 
 class VersionRepository {
-  final EntityVersionObjectBoxAdapter _adapter;
+  final VersionPersistenceAdapter _adapter;
 
-  VersionRepository({required EntityVersionObjectBoxAdapter adapter})
+  VersionRepository({required VersionPersistenceAdapter adapter})
       : _adapter = adapter;
 
   /// Record a change to an entity.
@@ -225,5 +226,16 @@ class VersionRepository {
       version.syncStatus = SyncStatus.synced;
       await _adapter.save(version);
     }
+  }
+
+  // ============ Transaction Methods ============
+
+  /// Get latest version number synchronously within transaction.
+  ///
+  /// Must be called within TransactionManager.transaction() callback.
+  /// Returns 0 if entity has no versions.
+  int getLatestVersionNumberInTx(TransactionContext ctx, String entityUuid) {
+    final latest = _adapter.findLatestByEntityUuidInTx(ctx, entityUuid);
+    return latest?.versionNumber ?? 0;
   }
 }

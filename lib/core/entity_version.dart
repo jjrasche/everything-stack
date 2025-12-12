@@ -47,9 +47,14 @@
 /// - Sync: Versions sync to remote database
 
 import 'package:objectbox/objectbox.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'base_entity.dart';
 
+// JSON serialization generated code
+part 'entity_version.g.dart';
+
 @Entity()
+@JsonSerializable()
 class EntityVersion extends BaseEntity {
   // ============ ObjectBox field overrides ============
   // Override id with @Id() for ObjectBox
@@ -107,6 +112,7 @@ class EntityVersion extends BaseEntity {
   @Transient()
   List<String> changedFields = [];
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   String get dbChangedFields => changedFields.join(',');
   set dbChangedFields(String value) =>
       changedFields = value.isEmpty ? [] : value.split(',');
@@ -125,6 +131,7 @@ class EntityVersion extends BaseEntity {
   String? changeDescription;
 
   /// Sync status stored as int (enum index)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   int get dbSyncStatus => syncStatus.index;
   set dbSyncStatus(int value) => syncStatus = SyncStatus.values[value];
 
@@ -164,4 +171,10 @@ class EntityVersion extends BaseEntity {
       uuid = super.uuid;
     }
   }
+
+  // ============ JSON Serialization ============
+
+  Map<String, dynamic> toJson() => _$EntityVersionToJson(this);
+  factory EntityVersion.fromJson(Map<String, dynamic> json) =>
+      _$EntityVersionFromJson(json);
 }

@@ -1,25 +1,35 @@
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:isar/isar.dart';
+import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/core/edge.dart';
 import 'package:everything_stack_template/core/edge_repository.dart';
 import 'package:everything_stack_template/core/base_entity.dart';
+import 'package:everything_stack_template/persistence/objectbox/edge_objectbox_adapter.dart';
+import 'package:everything_stack_template/objectbox.g.dart';
 
 void main() {
-  late Isar isar;
+  late Store store;
   late EdgeRepository repo;
+  late Directory testDir;
 
   setUp(() async {
-    // Create in-memory Isar instance
-    isar = await Isar.open(
-      [EdgeSchema],
-      directory: '',
-      name: 'test_${DateTime.now().millisecondsSinceEpoch}',
-    );
-    repo = EdgeRepository(isar);
+    // Create temporary directory for ObjectBox store
+    testDir = await Directory.systemTemp.createTemp('objectbox_edge_test_');
+
+    // Open ObjectBox store
+    store = await openStore(directory: testDir.path);
+
+    // Create repository with ObjectBox adapter
+    final adapter = EdgeObjectBoxAdapter(store);
+    repo = EdgeRepository(adapter: adapter);
   });
 
   tearDown(() async {
-    await isar.close(deleteFromDisk: true);
+    store.close();
+    // Clean up temp directory
+    if (await testDir.exists()) {
+      await testDir.delete(recursive: true);
+    }
   });
 
   group('EdgeRepository', () {
@@ -92,7 +102,6 @@ void main() {
       });
 
       test('sets createdAt at construction time', () async {
-        final beforeCreate = DateTime.now();
         final edge = Edge(
           sourceType: 'Note',
           sourceUuid: 'note-1',
@@ -100,20 +109,21 @@ void main() {
           targetUuid: 'project-1',
           edgeType: 'belongs_to',
         );
-        final afterCreate = DateTime.now();
+
+        // Capture edge's createdAt before save (truncated to milliseconds like ObjectBox)
+        final createdAtBeforeSave = edge.createdAt.millisecondsSinceEpoch;
 
         await repo.save(edge);
         final saved = await repo.findBetween('note-1', 'project-1');
 
-        // createdAt set at construction, not save
+        // createdAt should be set at construction and not change on save
+        // ObjectBox stores DateTime with millisecond precision
+        expect(saved[0].createdAt.millisecondsSinceEpoch, equals(createdAtBeforeSave));
+        // createdAt should be recent (within last minute)
         expect(
-            saved[0].createdAt.isBefore(afterCreate) ||
-                saved[0].createdAt.isAtSameMomentAs(afterCreate),
-            isTrue);
-        expect(
-            saved[0].createdAt.isAfter(beforeCreate) ||
-                saved[0].createdAt.isAtSameMomentAs(beforeCreate),
-            isTrue);
+          DateTime.now().difference(saved[0].createdAt).inMinutes,
+          lessThan(1),
+        );
       });
 
       test('preserves metadata when saving', () async {
@@ -133,7 +143,7 @@ void main() {
       });
     });
 
-    group('delete', () {
+    group('deleteEdge', () {
       test('deletes edge by composite key', () async {
         final edge = Edge(
           sourceType: 'Note',
@@ -144,14 +154,14 @@ void main() {
         );
 
         await repo.save(edge);
-        await repo.delete('note-1', 'project-1', 'belongs_to');
+        await repo.deleteEdge('note-1', 'project-1', 'belongs_to');
 
         final remaining = await repo.findBetween('note-1', 'project-1');
         expect(remaining, isEmpty);
       });
 
       test('returns false when edge does not exist', () async {
-        final deleted = await repo.delete('note-1', 'project-1', 'belongs_to');
+        final deleted = await repo.deleteEdge('note-1', 'project-1', 'belongs_to');
         expect(deleted, isFalse);
       });
     });

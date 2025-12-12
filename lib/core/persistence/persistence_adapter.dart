@@ -26,6 +26,7 @@
 /// ```
 
 import '../base_entity.dart';
+import 'transaction_context.dart';
 
 /// Core persistence operations for entities.
 ///
@@ -33,6 +34,14 @@ import '../base_entity.dart';
 /// 1. ObjectBox uses codegen with entity-specific Box<T>
 /// 2. Query methods vary by entity fields
 /// 3. Vector search configuration is entity-specific
+///
+/// ## Transaction Support
+/// Adapters provide dual APIs:
+/// - Async methods (save, delete, etc.) for normal operations
+/// - Synchronous *InTx methods for use within transactions
+///
+/// Transaction methods receive a TransactionContext which platform-specific
+/// adapters cast to their concrete type (ObjectBoxTxContext, IndexedDBTxContext).
 abstract class PersistenceAdapter<T extends BaseEntity> {
   // ============ CRUD ============
 
@@ -40,10 +49,24 @@ abstract class PersistenceAdapter<T extends BaseEntity> {
   /// Returns null if not found.
   Future<T?> findById(int id);
 
+  /// Get entity by internal database ID.
+  /// Throws EntityNotFoundException if not found.
+  ///
+  /// Use this when the entity MUST exist (e.g., loading for update).
+  /// Use findById() when the entity is optional.
+  Future<T> getById(int id);
+
   /// Find entity by UUID (universal identifier).
   /// Returns null if not found.
   /// Implementations should use an index for O(1) lookup.
   Future<T?> findByUuid(String uuid);
+
+  /// Get entity by UUID (universal identifier).
+  /// Throws EntityNotFoundException if not found.
+  ///
+  /// Use this when the entity MUST exist (e.g., loading for update).
+  /// Use findByUuid() when the entity is optional.
+  Future<T> getByUuid(String uuid);
 
   /// Get all entities of this type.
   Future<List<T>> findAll();
@@ -118,6 +141,59 @@ abstract class PersistenceAdapter<T extends BaseEntity> {
   Future<void> rebuildIndex(
     Future<List<double>?> Function(T entity) generateEmbedding,
   );
+
+  // ============ Transaction Operations ============
+  // These methods are synchronous and must be called within a transaction.
+  // They receive a TransactionContext which platform implementations cast
+  // to their specific type (ObjectBoxTxContext, IndexedDBTxContext).
+
+  /// Find entity by ID within a transaction (synchronous).
+  ///
+  /// Must be called within TransactionManager.transaction() callback.
+  /// Returns null if not found.
+  T? findByIdInTx(TransactionContext ctx, int id);
+
+  /// Find entity by UUID within a transaction (synchronous).
+  ///
+  /// Must be called within TransactionManager.transaction() callback.
+  /// Returns null if not found.
+  T? findByUuidInTx(TransactionContext ctx, String uuid);
+
+  /// Find all entities within a transaction (synchronous).
+  ///
+  /// Must be called within TransactionManager.transaction() callback.
+  List<T> findAllInTx(TransactionContext ctx);
+
+  /// Save entity within a transaction (synchronous).
+  ///
+  /// Must be called within TransactionManager.transaction() callback.
+  /// Platform implementations cast ctx to their specific type.
+  ///
+  /// Returns the entity with id assigned.
+  T saveInTx(TransactionContext ctx, T entity);
+
+  /// Batch save entities within a transaction (synchronous).
+  ///
+  /// Must be called within TransactionManager.transaction() callback.
+  /// Returns entities with ids assigned.
+  List<T> saveAllInTx(TransactionContext ctx, List<T> entities);
+
+  /// Delete entity by ID within a transaction (synchronous).
+  ///
+  /// Must be called within TransactionManager.transaction() callback.
+  /// Returns true if deleted, false if not found.
+  bool deleteInTx(TransactionContext ctx, int id);
+
+  /// Delete entity by UUID within a transaction (synchronous).
+  ///
+  /// Must be called within TransactionManager.transaction() callback.
+  /// Returns true if deleted, false if not found.
+  bool deleteByUuidInTx(TransactionContext ctx, String uuid);
+
+  /// Batch delete entities by IDs within a transaction (synchronous).
+  ///
+  /// Must be called within TransactionManager.transaction() callback.
+  void deleteAllInTx(TransactionContext ctx, List<int> ids);
 
   // ============ Lifecycle ============
 

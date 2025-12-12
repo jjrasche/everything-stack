@@ -47,6 +47,9 @@ dependencies:
   # Web storage (IndexedDB)
   idb_shim: ^2.4.0
 
+  # HNSW vector search (for web platform)
+  local_hnsw: ^1.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

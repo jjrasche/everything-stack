@@ -12,94 +12,24 @@
 /// ```
 
 import 'package:objectbox/objectbox.dart';
+import 'base_objectbox_adapter.dart';
 import '../../core/base_entity.dart';
-import '../../core/persistence/persistence_adapter.dart';
 import '../../domain/note.dart';
 import '../../objectbox.g.dart';
 
-class NoteObjectBoxAdapter implements PersistenceAdapter<Note> {
-  final Store _store;
-  late final Box<Note> _box;
+class NoteObjectBoxAdapter extends BaseObjectBoxAdapter<Note> {
+  NoteObjectBoxAdapter(Store store) : super(store);
 
-  NoteObjectBoxAdapter(this._store) {
-    _box = _store.box<Note>();
-  }
-
-  // ============ CRUD ============
+  // ============ Entity-Specific Query Conditions ============
 
   @override
-  Future<Note?> findById(int id) async {
-    return _box.get(id);
-  }
+  Condition<Note> uuidEqualsCondition(String uuid) => Note_.uuid.equals(uuid);
 
   @override
-  Future<Note?> findByUuid(String uuid) async {
-    final query = _box.query(Note_.uuid.equals(uuid)).build();
-    try {
-      return query.findFirst();
-    } finally {
-      query.close();
-    }
-  }
+  Condition<Note> syncStatusLocalCondition() =>
+      Note_.dbSyncStatus.equals(SyncStatus.local.index);
 
-  @override
-  Future<List<Note>> findAll() async {
-    return _box.getAll();
-  }
-
-  @override
-  Future<Note> save(Note entity) async {
-    entity.touch();
-    _box.put(entity);
-    return entity;
-  }
-
-  @override
-  Future<List<Note>> saveAll(List<Note> entities) async {
-    for (final entity in entities) {
-      entity.touch();
-    }
-    _box.putMany(entities);
-    return entities;
-  }
-
-  @override
-  Future<bool> delete(int id) async {
-    return _box.remove(id);
-  }
-
-  @override
-  Future<bool> deleteByUuid(String uuid) async {
-    final entity = await findByUuid(uuid);
-    if (entity == null) return false;
-    return _box.remove(entity.id);
-  }
-
-  @override
-  Future<void> deleteAll(List<int> ids) async {
-    _box.removeMany(ids);
-  }
-
-  // ============ Queries ============
-
-  @override
-  Future<List<Note>> findUnsynced() async {
-    final query = _box
-        .query(Note_.dbSyncStatus.equals(SyncStatus.local.index))
-        .build();
-    try {
-      return query.find();
-    } finally {
-      query.close();
-    }
-  }
-
-  @override
-  Future<int> count() async {
-    return _box.count();
-  }
-
-  // ============ Semantic Search ============
+  // ============ Semantic Search (Override for Embeddings) ============
 
   @override
   Future<List<Note>> semanticSearch(
@@ -109,7 +39,7 @@ class NoteObjectBoxAdapter implements PersistenceAdapter<Note> {
   }) async {
     // ObjectBox uses nearestNeighborsF32 for HNSW search
     // The score returned is distance (lower = more similar)
-    final query = _box
+    final query = box
         .query(Note_.embedding.nearestNeighborsF32(queryVector, limit))
         .build();
 
@@ -135,7 +65,7 @@ class NoteObjectBoxAdapter implements PersistenceAdapter<Note> {
   @override
   int get indexSize {
     // Count entities that have embeddings
-    final query = _box.query(Note_.embedding.notNull()).build();
+    final query = box.query(Note_.embedding.notNull()).build();
     try {
       return query.count();
     } finally {
@@ -160,13 +90,5 @@ class NoteObjectBoxAdapter implements PersistenceAdapter<Note> {
         }
       }
     }
-  }
-
-  // ============ Lifecycle ============
-
-  @override
-  Future<void> close() async {
-    // Store lifecycle is managed externally
-    // Don't close the store here - it may be shared
   }
 }

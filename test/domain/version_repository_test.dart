@@ -1,25 +1,35 @@
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:isar/isar.dart';
+import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/core/entity_version.dart';
 import 'package:everything_stack_template/core/version_repository.dart';
 import 'package:everything_stack_template/core/base_entity.dart';
+import 'package:everything_stack_template/persistence/objectbox/entity_version_objectbox_adapter.dart';
+import 'package:everything_stack_template/objectbox.g.dart';
 
 void main() {
-  late Isar isar;
+  late Store store;
   late VersionRepository repo;
+  late Directory testDir;
 
   setUp(() async {
-    // Create in-memory Isar instance
-    isar = await Isar.open(
-      [EntityVersionSchema],
-      directory: '',
-      name: 'test_${DateTime.now().millisecondsSinceEpoch}',
-    );
-    repo = VersionRepository(isar);
+    // Create temporary directory for ObjectBox store
+    testDir = await Directory.systemTemp.createTemp('objectbox_version_test_');
+
+    // Open ObjectBox store
+    store = await openStore(directory: testDir.path);
+
+    // Create repository with ObjectBox adapter
+    final adapter = EntityVersionObjectBoxAdapter(store);
+    repo = VersionRepository(adapter: adapter);
   });
 
   tearDown(() async {
-    await isar.close(deleteFromDisk: true);
+    store.close();
+    // Clean up temp directory
+    if (await testDir.exists()) {
+      await testDir.delete(recursive: true);
+    }
   });
 
   group('VersionRepository', () {

@@ -38,7 +38,7 @@
 
 import 'edge.dart';
 import 'base_entity.dart' show SyncStatus;
-import '../persistence/objectbox/edge_objectbox_adapter.dart';
+import 'persistence/edge_persistence_adapter.dart';
 
 /// Exception thrown when attempting to create a duplicate edge
 class DuplicateEdgeException implements Exception {
@@ -58,9 +58,9 @@ class DuplicateEdgeException implements Exception {
 }
 
 class EdgeRepository {
-  final EdgeObjectBoxAdapter _adapter;
+  final EdgePersistenceAdapter _adapter;
 
-  EdgeRepository({required EdgeObjectBoxAdapter adapter}) : _adapter = adapter;
+  EdgeRepository({required EdgePersistenceAdapter adapter}) : _adapter = adapter;
 
   // ============ CRUD ============
 

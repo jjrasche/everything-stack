@@ -101,10 +101,8 @@ class Note extends BaseEntity
 
   /// Embedding vector for semantic search
   /// 384 dimensions for typical embedding models
-  /// Excluded from JSON serialization (not suitable for version tracking)
   @HnswIndex(dimensions: 384)
   @Property(type: PropertyType.floatVector)
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   List<double>? embedding;
 

@@ -17,9 +17,14 @@
 /// unique constraint enforcement, indexed queries.
 
 import 'package:objectbox/objectbox.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'base_entity.dart';
 
+// JSON serialization generated code
+part 'edge.g.dart';
+
 @Entity()
+@JsonSerializable()
 class Edge extends BaseEntity {
   // ============ ObjectBox field overrides ============
   // Override id with @Id() for ObjectBox
@@ -72,6 +77,7 @@ class Edge extends BaseEntity {
   String? createdBy;
 
   /// Sync status stored as int (enum index)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   int get dbSyncStatus => syncStatus.index;
   set dbSyncStatus(int value) => syncStatus = SyncStatus.values[value];
 
@@ -92,6 +98,11 @@ class Edge extends BaseEntity {
 
   /// Get composite key for uniqueness checking
   String get compositeKey => '$sourceUuid|$targetUuid|$edgeType';
+
+  // ============ JSON Serialization ============
+
+  Map<String, dynamic> toJson() => _$EdgeToJson(this);
+  factory Edge.fromJson(Map<String, dynamic> json) => _$EdgeFromJson(json);
 
   @override
   String toString() =>

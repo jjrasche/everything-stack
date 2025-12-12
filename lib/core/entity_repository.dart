@@ -30,11 +30,16 @@
 /// Test through domain repositories. Verify CRUD operations,
 /// query correctness, sync status transitions.
 
+import 'dart:convert';
 import 'base_entity.dart';
 import 'persistence/persistence_adapter.dart';
+import 'persistence/transaction_manager.dart';
+import 'persistence/transaction_context.dart';
+import 'entity_version.dart';
 import '../patterns/embeddable.dart';
 import '../patterns/versionable.dart';
 import '../services/embedding_service.dart';
+import '../utils/json_diff.dart';
 
 abstract class EntityRepository<T extends BaseEntity> {
   /// Persistence adapter for database operations.
@@ -50,11 +55,31 @@ abstract class EntityRepository<T extends BaseEntity> {
   /// If null, Versionable entities are still saved but changes not versioned.
   final dynamic versionRepository;
 
+  /// Transaction manager for atomic multi-entity operations.
+  /// If provided, Versionable entity saves are atomic (entity + version together).
+  /// If null, saves are not atomic across repositories.
+  final TransactionManager? transactionManager;
+
   EntityRepository({
     required this.adapter,
     EmbeddingService? embeddingService,
     this.versionRepository,
+    this.transactionManager,
   }) : embeddingService = embeddingService ?? EmbeddingService.instance;
+
+  /// Object stores this repository accesses in transactions.
+  /// Used by IndexedDB to declare transaction scope upfront.
+  /// ObjectBox ignores this.
+  List<String> get transactionStores => [
+        _entityStoreName,
+        if (versionRepository != null) 'entity_versions',
+      ];
+
+  String get _entityStoreName {
+    // Convert type to store name: Note -> 'notes'
+    final typeName = T.toString().toLowerCase();
+    return typeName.endsWith('s') ? typeName : '${typeName}s';
+  }
 
   // ============ CRUD ============
 
@@ -81,21 +106,94 @@ abstract class EntityRepository<T extends BaseEntity> {
 
   /// Save entity to database.
   /// For Embeddable entities: generates embedding (adapter handles indexing).
-  /// For Versionable entities: records change in VersionRepository if available.
+  /// For Versionable entities: records change atomically if TransactionManager provided.
   Future<int> save(T entity) async {
-    // Record change for Versionable entities
-    if (entity is Versionable && versionRepository != null) {
-      await _recordVersionChange(entity as Versionable);
-    }
-
-    // Generate embedding for Embeddable entities
+    // Generate embedding BEFORE transaction (async operation)
     if (entity is Embeddable) {
       await _generateEmbedding(entity as Embeddable);
     }
 
-    // Save to database (adapter handles touch() and indexing)
+    // Versionable entities with transaction support: atomic save + version
+    if (entity is Versionable &&
+        versionRepository != null &&
+        transactionManager != null) {
+      return await transactionManager!.transaction(
+        (ctx) => _saveWithVersionSync(ctx, entity as Versionable),
+        objectStores: transactionStores,
+      );
+    }
+
+    // Non-transactional path (no transaction manager or not versionable)
+    if (entity is Versionable && versionRepository != null) {
+      // Record version without transaction (NOT atomic)
+      await _recordVersionChange(entity as Versionable);
+    }
+
     final saved = await adapter.save(entity);
     return saved.id;
+  }
+
+  /// Synchronous save with version recording (for use in transactions).
+  int _saveWithVersionSync(TransactionContext ctx, Versionable entity) {
+    // Build version record (synchronous)
+    final version = _buildVersionSync(ctx, entity);
+
+    // Save version first
+    versionRepository!.saveInTx(ctx, version);
+
+    // Save entity
+    final saved = adapter.saveInTx(ctx, entity as T);
+    return saved.id;
+  }
+
+  /// Build version record synchronously for transaction.
+  EntityVersion _buildVersionSync(TransactionContext ctx, Versionable entity) {
+    // Fetch previous state synchronously
+    // Note: This uses adapter's synchronous query within transaction
+    final previousEntity = _findByUuidSync(ctx, (entity as BaseEntity).uuid);
+    final previousJson = (previousEntity is Versionable)
+        ? (previousEntity as dynamic).toJson() as Map<String, dynamic>?
+        : null;
+
+    final currentJson = (entity as dynamic).toJson() as Map<String, dynamic>;
+
+    // Calculate version number
+    final latestVersion = _getLatestVersionNumberSync(ctx, (entity as BaseEntity).uuid);
+    final newVersionNumber = latestVersion + 1;
+
+    // Compute delta
+    final previousState = previousJson ?? {};
+    final delta = JsonDiff.diff(previousState, currentJson);
+    final deltaJson = jsonEncode(delta);
+    final changedFields =
+        JsonDiff.extractChangedFields(previousState, currentJson);
+
+    final isFirstVersion = newVersionNumber == 1;
+    final isPeriodicSnapshot = entity.snapshotFrequency != null &&
+        newVersionNumber % entity.snapshotFrequency! == 1;
+    final shouldSnapshot = isFirstVersion || isPeriodicSnapshot;
+
+    return EntityVersion(
+      entityType: T.toString(),
+      entityUuid: (entity as BaseEntity).uuid,
+      timestamp: DateTime.now(),
+      versionNumber: newVersionNumber,
+      deltaJson: deltaJson,
+      changedFields: changedFields,
+      isSnapshot: shouldSnapshot,
+      snapshotJson: shouldSnapshot ? jsonEncode(currentJson) : null,
+      userId: (entity as dynamic).lastModifiedBy as String?,
+    );
+  }
+
+  /// Find entity by UUID synchronously within transaction.
+  T? _findByUuidSync(TransactionContext ctx, String uuid) {
+    return adapter.findByUuidInTx(ctx, uuid);
+  }
+
+  /// Get latest version number synchronously within transaction.
+  int _getLatestVersionNumberSync(TransactionContext ctx, String entityUuid) {
+    return versionRepository?.getLatestVersionNumberInTx(ctx, entityUuid) ?? 0;
   }
 
   /// Save multiple entities to database.
