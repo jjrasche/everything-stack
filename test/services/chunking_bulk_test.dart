@@ -8,10 +8,13 @@ void main() {
   setUp(() {
     EmbeddingService.instance = MockEmbeddingService();
     chunker = SemanticChunker(
-      similarityThreshold: 0.5,
-      targetChunkSize: 128,
-      minChunkSize: 128,
-      maxChunkSize: 400,
+      config: ChunkingConfig(
+        windowSize: 128,
+        overlap: 32,
+        minChunkSize: 128,
+        maxChunkSize: 400,
+        similarityThreshold: 0.5,
+      ),
     );
   });
 
@@ -174,7 +177,7 @@ void main() {
 
       // All chunks should respect max size
       for (final chunk in chunks) {
-        expect(chunk.tokenCount, lessThanOrEqualTo(chunker.maxChunkSize));
+        expect(chunk.tokenCount, lessThanOrEqualTo(chunker.config.maxChunkSize));
       }
 
       // Verify total coverage (no text lost)
@@ -336,7 +339,7 @@ void main() {
       expect(avgSize, lessThan(400)); // Within max chunk size
 
       // Max should respect guardrail
-      expect(maxSize, lessThanOrEqualTo(chunker.maxChunkSize));
+      expect(maxSize, lessThanOrEqualTo(chunker.config.maxChunkSize));
     });
   });
 }

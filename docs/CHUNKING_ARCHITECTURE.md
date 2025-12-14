@@ -2,13 +2,13 @@
 
 ## Executive Summary
 
-Everything Stack implements **semantic chunking** as the primary text segmentation strategy for local-first semantic search. This document explains the architectural decisions, implementation approach, and trade-offs.
+Everything Stack implements **semantic chunking** as the primary text segmentation strategy for semantic search. This document explains the architectural decisions, implementation approach, and trade-offs.
 
 **Key Decisions:**
 - Semantic chunking over recursive splitting
 - 128-token target chunk size (128-400 range)
 - Sliding window approach for unpunctuated text
-- Model-in-memory architecture
+- Cloud embeddings (Gemini/Jina API)
 - Quality over speed optimization
 
 ---
@@ -507,7 +507,7 @@ Decision: Profile performance if this becomes bottleneck
 | **Semantic chunking** | 70% better retrieval for unstructured content | ~120 lines vs ~80 for recursive |
 | **128-token chunks** | 3x better precision (84% vs 28% MRR) | More chunks to search |
 | **Sliding windows** | Handles unpunctuated text | Slightly slower (11ms vs 9ms) |
-| **Model-in-memory** | Embeddings are core feature | ~80MB memory (acceptable) |
+| **Cloud embeddings** | Highest quality embeddings available | ~100ms API latency per note |
 | **Quality > speed** | ~100ms acceptable for use case | Not optimized for sub-10ms |
 
 ### Implementation Completeness

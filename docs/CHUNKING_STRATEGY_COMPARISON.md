@@ -12,7 +12,7 @@ The complexity delta is marginal given your existing infrastructure. The "expens
 | Lines of code | ~80 | ~200 | +120 |
 | Platform-specific code | None | None | None |
 | Quality improvement | Baseline | +2-9% recall | Significant |
-| Chunking speed (2000 words) | ~5ms | ~50-200ms | Acceptable |
+| Chunking speed (2000 words) | ~5ms | ~100-500ms | Acceptable |
 | Testing complexity | Low | Medium | Manageable |
 
 ---
@@ -205,16 +205,14 @@ For 95% of note-taking use cases, this regex approach is sufficient. More sophis
 
 #### Semantic Chunking
 
-| Operation | Time (API) | Time (Local*) | Notes |
-|-----------|-----------|---------------|-------|
-| Sentence splitting | ~1ms | ~1ms | Regex |
-| Embed 50 sentences | ~500-2000ms | ~50-100ms | Batch API vs local |
-| Distance calculation | ~1ms | ~1ms | 50 cosine ops |
-| Breakpoint detection | ~1ms | ~1ms | Percentile calc |
-| Sentence grouping | ~1ms | ~1ms | List ops |
-| **Total** | **~500-2000ms** | **~55-105ms** | API-dominated |
-
-*Local timing assumes all-MiniLM-L6-v2 via FONNX when implemented.
+| Operation | Time (Cloud API) | Notes |
+|-----------|-------------|-------|
+| Sentence splitting | ~1ms | Regex |
+| Embed 50 sentences | ~100-500ms | Cloud API call (Gemini/Jina) |
+| Distance calculation | ~1ms | 50 cosine ops |
+| Breakpoint detection | ~1ms | Percentile calc |
+| Sentence grouping | ~1ms | List ops |
+| **Total** | **~100-500ms** | Cloud API-dominated |
 
 ### Memory Footprint
 
@@ -225,12 +223,12 @@ For 95% of note-taking use cases, this regex approach is sufficient. More sophis
 
 ### Cold Start Implications
 
-| Scenario | Recursive | Semantic (API) | Semantic (Local) |
-|----------|-----------|----------------|------------------|
-| First chunk | ~5ms | ~500-2000ms | ~1-2s (model load) + 100ms |
-| Subsequent | ~5ms | ~500-2000ms | ~100ms |
+| Scenario | Recursive | Semantic (API) |
+|----------|-----------|----------------|
+| First chunk | ~5ms | ~500-2000ms |
+| Subsequent | ~5ms | ~500-2000ms |
 
-**Verdict:** Semantic chunking with local embeddings adds ~100ms per note. This is imperceptible in a note-taking workflow where users spend minutes writing.
+**Verdict:** Semantic chunking with cloud embeddings (Gemini/Jina API) adds ~100-500ms per note. This is acceptable in a note-taking workflow where users spend minutes writing and prioritize retrieval quality.
 
 ---
 
@@ -339,7 +337,7 @@ For a note-taking application where users expect to find semantically related co
    - Future-proof for knowledge graph features
 
 3. **Acceptable performance:**
-   - ~100ms per note with local embeddings
+   - ~100-500ms per note with cloud embeddings (network-dependent)
    - Imperceptible in user workflow
    - Can batch process during idle time
 

@@ -1,357 +1,220 @@
-import 'dart:math' as math;
-
-import '../embedding_service.dart';
+import 'package:everything_stack_template/services/embedding_service.dart';
 import 'chunk.dart';
 import 'chunking_config.dart';
 import 'chunking_strategy.dart';
 import 'sentence_splitter.dart';
 
-/// Semantic chunking strategy using embedding similarity
+/// Semantic chunking implementation that detects topic boundaries in text.
 ///
-/// **Algorithm:**
+/// Uses embedding similarity to identify where topics change, creating semantically
+/// coherent chunks. Supports configurable window sizes and overlap for two-level
+/// chunking (parent level for broad topics, child level for fine-grained units).
 ///
-/// 1. Split text into sentences (or sliding windows if unpunctuated)
-/// 2. Generate embeddings for each sentence/window using batch API
-/// 3. Calculate cosine similarity between adjacent segments
-/// 4. Detect topic boundaries where similarity drops below threshold
-/// 5. Group segments into chunks within min/max size guardrails
-/// 6. Apply size constraints while respecting semantic boundaries
+/// ## Key Features
 ///
-/// **Configuration:**
-///
-/// The algorithm accepts a [ChunkingConfig] that controls:
-/// - Window size and overlap for unpunctuated text
-/// - Min/max chunk sizes and similarity threshold
-/// - Supports two-level chunking (parent and child) with different configs
-///
-/// **Example:**
-///
-/// ```dart
-/// // Parent-level: Broad topic boundaries, larger chunks
-/// final parentChunker = SemanticChunker(
-///   config: ChunkingConfig.parent(),
-/// );
-///
-/// // Child-level: Fine-grained boundaries, smaller chunks
-/// final childChunker = SemanticChunker(
-///   config: ChunkingConfig.child(),
-/// );
-/// ```
-///
-/// **Use Case Alignment:**
-///
-/// Optimized for unstructured content:
-/// - Voice transcriptions, stream-of-consciousness notes
-/// - Rambling text without clear boundaries
-/// - Research shows 70% retrieval improvement over recursive
-///
-/// **Performance:**
-///
-/// - ~100ms per 2000-word note (with remote embedding API)
-/// - Bulk operations inherently slow; users expect this
-/// - Optimize for retrieval quality, not chunking speed
-class SemanticChunker implements ChunkingStrategy {
+/// - **Adaptive text handling**: Detects structured vs unstructured (unpunctuated) text
+/// - **Configurable granularity**: Parent/child presets for different retrieval levels
+/// - **Sliding windows**: For unpunctuated text (voice transcriptions)
+/// - **Soft + hard limits**: Respects semantic boundaries while enforcing size guardrails
+/// - **Batch embedding**: Uses EmbeddingService for efficient API usage
+class SemanticChunker extends ChunkingStrategy {
   final EmbeddingService _embeddingService;
   final ChunkingConfig config;
 
   SemanticChunker({
     EmbeddingService? embeddingService,
     ChunkingConfig? config,
-    // Legacy parameters for backwards compatibility
-    double? similarityThreshold,
-    int? targetChunkSize,
-    int? minChunkSize,
-    int? maxChunkSize,
-  }) : _embeddingService = embeddingService ?? EmbeddingService.instance,
-       config = config ??
-           _buildLegacyConfig(
-             similarityThreshold: similarityThreshold,
-             targetChunkSize: targetChunkSize,
-             minChunkSize: minChunkSize,
-             maxChunkSize: maxChunkSize,
-           );
-
-  /// Build ChunkingConfig from legacy parameters (for backwards compatibility)
-  static ChunkingConfig _buildLegacyConfig({
-    double? similarityThreshold,
-    int? targetChunkSize,
-    int? minChunkSize,
-    int? maxChunkSize,
-  }) {
-    return ChunkingConfig.parent(
-      similarityThreshold: similarityThreshold ?? 0.5,
-      windowSize: 200,
-      overlap: 50,
-      minChunkSize: minChunkSize ?? 128,
-      maxChunkSize: maxChunkSize ?? 400,
-    );
-  }
-
-  // Convenience getters for backwards compatibility
-  double get similarityThreshold => config.similarityThreshold;
-  int get minChunkSize => config.minChunkSize;
-  int get maxChunkSize => config.maxChunkSize;
+  })  : _embeddingService = embeddingService ?? EmbeddingService.instance,
+        config = config ?? ChunkingConfig.parent();
 
   @override
-  String get name => 'semantic';
+  String get name => 'semantic-chunker-${config.name}';
 
   @override
   Future<List<Chunk>> chunk(String text) async {
-    if (text.trim().isEmpty) {
-      return [];
-    }
+    if (text.trim().isEmpty) return [];
 
-    // Step 1: Split into sentences or windows using config parameters
-    final segments = SentenceSplitter.split(
-      text,
-      windowSize: config.windowSize,
-      overlap: config.overlap,
-    );
-
-    if (segments.isEmpty) {
-      return [];
-    }
-
-    // Handle single segment (very short text)
+    // Step 1: Segment text (sentences or sliding windows)
+    final segments = _segmentText(text);
+    if (segments.isEmpty) return [];
     if (segments.length == 1) {
-      final segment = segments.first;
-      if (segment.tokenCount < config.minChunkSize) {
-        // Text is too short to chunk - return as single chunk
-        return [
-          Chunk(
-            text: segment.text,
-            startToken: segment.startToken,
-            endToken: segment.endToken,
-          )
-        ];
+      final tokenCount = SentenceSplitter.countTokens(text);
+      final chunks = <Chunk>[];
+      
+      // If single segment exceeds max, split it
+      if (tokenCount > config.maxChunkSize) {
+        final tokens = text.split(' ').where((t) => t.isNotEmpty).toList();
+        int globalPos = 0;
+        for (int i = 0; i < tokens.length; i += config.maxChunkSize) {
+          final end = (i + config.maxChunkSize).clamp(0, tokens.length);
+          final chunkText = tokens.sublist(i, end).join(' ');
+          final chunkTokens = end - i;
+          chunks.add(Chunk(
+            text: chunkText,
+            startToken: globalPos,
+            endToken: globalPos + chunkTokens,
+          ));
+          globalPos += chunkTokens;
+        }
+        return chunks;
       }
+      
+      return [Chunk(text: text, startToken: 0, endToken: tokenCount)];
     }
 
-    // Step 2: Generate embeddings for all segments in batch
-    final segmentTexts = segments.map((s) => s.text).toList();
-    final embeddings = await _embeddingService.generateBatch(segmentTexts);
+    // Step 2: Generate embeddings for all segments
+    final embeddings = await _embeddingService.generateBatch(segments);
 
     // Step 3: Calculate similarity between adjacent segments
+    final similarities = _calculateSimilarities(embeddings);
+
+    // Step 4: Detect topic boundaries based on similarity drops
+    final boundaries = _detectBoundaries(similarities);
+
+    // Step 5: Group segments into chunks
+    return _groupSegments(segments, boundaries);
+  }
+
+  /// Segment text into sentences (structured) or sliding windows (unstructured)
+  List<String> _segmentText(String text) {
+    if (SentenceSplitter.isUnstructured(text)) {
+      return SentenceSplitter.slidingWindows(
+        text,
+        windowSize: config.windowSize,
+        overlap: config.overlap,
+      );
+    } else {
+      return SentenceSplitter.splitSentences(text);
+    }
+  }
+
+  /// Calculate cosine similarity between adjacent segments
+  List<double> _calculateSimilarities(List<List<double>> embeddings) {
     final similarities = <double>[];
+
     for (int i = 0; i < embeddings.length - 1; i++) {
-      final similarity =
-          EmbeddingService.cosineSimilarity(embeddings[i], embeddings[i + 1]);
-      similarities.add(similarity);
+      final sim = EmbeddingService.cosineSimilarity(
+        embeddings[i],
+        embeddings[i + 1],
+      );
+      similarities.add(sim);
     }
 
-    // Step 4: Detect topic boundaries (similarity drops + size limits)
-    final boundaries = _detectBoundaries(similarities, segments);
-
-    // Step 5: Group segments into chunks based on boundaries and target size
-    final chunks = _createChunks(segments, boundaries);
-
-    // Step 6: Recalculate token positions to ensure sequential, non-overlapping chunks
-    // This is necessary because sliding windows may overlap
-    final normalizedChunks = _normalizeTokenPositions(chunks);
-
-    return normalizedChunks;
+    return similarities;
   }
 
-  /// Normalize token positions to be sequential and non-overlapping
+  /// Detect topic boundaries using similarity threshold
   ///
-  /// When using sliding windows with overlap, chunks may inherit overlapping
-  /// token positions. This method recalculates positions based on actual
-  /// token counts to ensure chunks are properly sequential.
-  ///
-  /// Additionally enforces maxChunkSize as a hard limit - if recounting reveals
-  /// a chunk exceeds the maximum, it splits the chunk.
-  List<Chunk> _normalizeTokenPositions(List<Chunk> chunks) {
-    if (chunks.isEmpty) return chunks;
-
-    final normalized = <Chunk>[];
-    int currentPosition = 0;
-
-    for (final chunk in chunks) {
-      final tokenCount = SentenceSplitter.countTokens(chunk.text);
-
-      // Check if chunk exceeds maximum after normalization
-      if (tokenCount > config.maxChunkSize) {
-        // Split this chunk further
-        final tokens = SentenceSplitter.tokenize(chunk.text);
-        int start = 0;
-
-        while (start < tokens.length) {
-          final end = (start + config.maxChunkSize).clamp(0, tokens.length);
-          final chunkTokens = tokens.sublist(start, end);
-          final chunkText = chunkTokens.join(' ');
-
-          normalized.add(Chunk(
-            text: chunkText,
-            startToken: currentPosition,
-            endToken: currentPosition + chunkTokens.length,
-            embedding: chunk.embedding,
-          ));
-
-          currentPosition += chunkTokens.length;
-          start = end;
-        }
-      } else {
-        // Chunk is within bounds
-        normalized.add(Chunk(
-          text: chunk.text,
-          startToken: currentPosition,
-          endToken: currentPosition + tokenCount,
-          embedding: chunk.embedding,
-        ));
-        currentPosition += tokenCount;
-      }
-    }
-
-    return normalized;
-  }
-
-  /// Detect topic boundaries from similarity scores
-  ///
-  /// A boundary exists between segments i and i+1 if:
-  /// 1. Similarity drops below threshold (semantic boundary), OR
-  /// 2. Adding next segment would exceed maxChunkSize (size boundary)
-  ///
-  /// This ensures we respect both semantic coherence AND size guardrails.
-  List<int> _detectBoundaries(
-    List<double> similarities,
-    List<TextSegment> segments,
-  ) {
+  /// Returns list of indices where chunks should start (after a boundary).
+  List<int> _detectBoundaries(List<double> similarities) {
     final boundaries = <int>[];
-    int currentChunkTokens = segments.first.tokenCount;
+
+    if (similarities.isEmpty) return boundaries;
 
     for (int i = 0; i < similarities.length; i++) {
-      final nextSegmentTokens = segments[i + 1].tokenCount;
-
-      // Check if we should create a boundary
-      final semanticBoundary = similarities[i] < config.similarityThreshold;
-      final sizeBoundary = currentChunkTokens + nextSegmentTokens > config.maxChunkSize;
-
-      if (semanticBoundary || sizeBoundary) {
-        boundaries.add(i + 1); // Boundary is AFTER index i
-        currentChunkTokens = nextSegmentTokens; // Start new chunk
-      } else {
-        currentChunkTokens += nextSegmentTokens;
+      // Boundary if similarity drops below threshold
+      if (similarities[i] < config.similarityThreshold) {
+        boundaries.add(i + 1); // Boundary after segment i
       }
     }
 
     return boundaries;
   }
 
-  /// Create chunks from segments and boundaries
-  ///
-  /// Groups consecutive segments into chunks while:
-  /// - Respecting detected topic boundaries
-  /// - Targeting optimal chunk size per config
-  /// - Enforcing min/max guardrails
-  List<Chunk> _createChunks(List<TextSegment> segments, List<int> boundaries) {
+  /// Group segments into chunks based on boundaries and size limits
+  List<Chunk> _groupSegments(List<String> segments, List<int> boundaries) {
     final chunks = <Chunk>[];
-    int chunkStart = 0;
+    var currentSegments = <String>[];
+    var currentTokens = 0;
+    var globalTokenPosition = 0;
 
-    // Add final boundary at end
-    final allBoundaries = [...boundaries, segments.length];
+    for (int i = 0; i < segments.length; i++) {
+      final segmentTokens = SentenceSplitter.countTokens(segments[i]);
 
-    for (final boundaryIndex in allBoundaries) {
-      // Collect segments for this chunk
-      final chunkSegments = segments.sublist(chunkStart, boundaryIndex);
+      // Size boundary: would exceed maxChunkSize
+      final wouldExceed = currentTokens + segmentTokens > config.maxChunkSize;
 
-      if (chunkSegments.isEmpty) continue;
+      // Semantic boundary: topic change detected
+      final hasBoundary = boundaries.contains(i);
 
-      // Calculate total tokens in chunk
-      final totalTokens = chunkSegments.fold<int>(
-        0,
-        (sum, seg) => sum + seg.tokenCount,
-      );
+      // Create chunk if we hit a boundary or size limit
+      if ((hasBoundary || wouldExceed) && currentSegments.isNotEmpty) {
+        final chunkText = currentSegments.join(' ');
+        final chunkTokens = SentenceSplitter.countTokens(chunkText);
 
-      // Check if chunk needs splitting due to size
-      if (totalTokens > config.maxChunkSize) {
-        // Split large chunk into smaller chunks
-        chunks.addAll(_splitLargeChunk(chunkSegments));
-      } else if (totalTokens < config.minChunkSize && chunks.isNotEmpty) {
-        // Merge small chunk with previous chunk
+        // Only create chunk if it meets minimum size (soft limit)
+        if (chunkTokens >= config.minChunkSize || chunks.isEmpty) {
+          chunks.add(Chunk(
+            text: chunkText,
+            startToken: globalTokenPosition,
+            endToken: globalTokenPosition + chunkTokens,
+          ));
+          globalTokenPosition += chunkTokens;
+          currentSegments.clear();
+          currentTokens = 0;
+        }
+      }
+
+      // Add segment to current chunk
+      currentSegments.add(segments[i]);
+      currentTokens += segmentTokens;
+    }
+
+    // Handle remaining segments
+    if (currentSegments.isNotEmpty) {
+      final chunkText = currentSegments.join(' ');
+      final chunkTokens = SentenceSplitter.countTokens(chunkText);
+
+      // Merge small chunk with previous if possible
+      if (chunkTokens < config.minChunkSize && chunks.isNotEmpty) {
         final lastChunk = chunks.removeLast();
-        final mergedSegments = [
-          TextSegment(
-            text: lastChunk.text,
-            startToken: lastChunk.startToken,
-            endToken: lastChunk.endToken,
-          ),
-          ...chunkSegments,
-        ];
-        chunks.add(_mergeSegments(mergedSegments));
+        final mergedText = '${lastChunk.text} $chunkText';
+        final mergedTokens = SentenceSplitter.countTokens(mergedText);
+        chunks.add(Chunk(
+          text: mergedText,
+          startToken: lastChunk.startToken,
+          endToken: lastChunk.startToken + mergedTokens,
+        ));
       } else {
-        // Chunk size is within bounds - create chunk
-        chunks.add(_mergeSegments(chunkSegments));
+        chunks.add(Chunk(
+          text: chunkText,
+          startToken: globalTokenPosition,
+          endToken: globalTokenPosition + chunkTokens,
+        ));
       }
-
-      chunkStart = boundaryIndex;
     }
 
-    return chunks;
+    // Final pass: split any chunks that exceed maxChunkSize (hard limit enforcement)
+    return _enforceSizeLimits(chunks);
   }
 
-  /// Split a large chunk into smaller chunks
-  ///
-  /// When a semantic chunk exceeds maxChunkSize, split it into smaller chunks
-  /// respecting the minChunkSize and maxChunkSize guardrails.
-  /// This maintains semantic coherence while respecting size guardrails.
-  List<Chunk> _splitLargeChunk(List<TextSegment> segments) {
-    final chunks = <Chunk>[];
-    final buffer = <TextSegment>[];
-    int bufferTokens = 0;
-
-    for (final segment in segments) {
-      final wouldExceedMax = bufferTokens + segment.tokenCount > config.maxChunkSize;
-      final wouldExceedMin = bufferTokens + segment.tokenCount >= config.minChunkSize;
-
-      // Hard limit: Never exceed maxChunkSize
-      // Soft limit: Split when we hit minimum size unless it's the first segment
-      if (bufferTokens > 0 && (wouldExceedMax || (wouldExceedMin && bufferTokens >= config.minChunkSize))) {
-        // Create chunk from buffer
-        chunks.add(_mergeSegments(buffer));
-        buffer.clear();
-        bufferTokens = 0;
+  /// Final pass to enforce maximum chunk size hard limit
+  List<Chunk> _enforceSizeLimits(List<Chunk> chunks) {
+    final result = <Chunk>[];
+    
+    for (final chunk in chunks) {
+      if (chunk.tokenCount <= config.maxChunkSize) {
+        result.add(chunk);
+      } else {
+        // Split oversized chunk
+        final tokens = chunk.text.split(' ').where((t) => t.isNotEmpty).toList();
+        int chunkStart = chunk.startToken;
+        
+        for (int i = 0; i < tokens.length; i += config.maxChunkSize) {
+          final end = (i + config.maxChunkSize).clamp(0, tokens.length);
+          final splitText = tokens.sublist(i, end).join(' ');
+          final splitTokens = end - i;
+          
+          result.add(Chunk(
+            text: splitText,
+            startToken: chunkStart,
+            endToken: chunkStart + splitTokens,
+          ));
+          chunkStart += splitTokens;
+        }
       }
-
-      buffer.add(segment);
-      bufferTokens += segment.tokenCount;
     }
-
-    // Add remaining segments as final chunk
-    if (buffer.isNotEmpty) {
-      chunks.add(_mergeSegments(buffer));
-    }
-
-    return chunks;
-  }
-
-  /// Merge multiple segments into a single chunk
-  ///
-  /// Combines segment texts and tracks token positions from first to last segment.
-  Chunk _mergeSegments(List<TextSegment> segments) {
-    if (segments.isEmpty) {
-      throw ArgumentError('Cannot merge empty segments');
-    }
-
-    if (segments.length == 1) {
-      final seg = segments.first;
-      return Chunk(
-        text: seg.text,
-        startToken: seg.startToken,
-        endToken: seg.endToken,
-      );
-    }
-
-    // Join segment texts with space
-    final text = segments.map((s) => s.text).join(' ');
-
-    // Token positions span from first segment start to last segment end
-    final startToken = segments.first.startToken;
-    final endToken = segments.last.endToken;
-
-    return Chunk(
-      text: text,
-      startToken: startToken,
-      endToken: endToken,
-    );
+    
+    return result;
   }
 }

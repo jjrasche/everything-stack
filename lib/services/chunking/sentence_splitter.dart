@@ -1,186 +1,95 @@
-/// Utility for splitting text into sentences or sliding windows
+/// Utility for splitting text into sentences or sliding windows.
 ///
-/// Handles both structured (punctuated) and unstructured (unpunctuated) text:
-///
-/// **Structured text**: Uses regex to detect sentence boundaries based on
-/// punctuation (.!?). This preserves natural semantic units.
-///
-/// **Unstructured text**: Falls back to sliding window approach when no
-/// punctuation is detected. This handles voice transcriptions and stream-of-
-/// consciousness notes without clear sentence boundaries.
+/// Handles both structured text (with punctuation) and unstructured text
+/// (voice transcriptions without clear sentence boundaries).
 class SentenceSplitter {
-  /// Sentence boundary regex: Matches period/question/exclamation followed by space and capital
+  /// Regex for detecting sentence boundaries in English text
   ///
-  /// Pattern explanation:
-  /// - `[.!?]` - Sentence-ending punctuation
-  /// - `\s+` - One or more whitespace characters
-  /// - `(?=[A-Z])` - Positive lookahead: next character must be uppercase
-  ///
-  /// This catches most sentence boundaries while avoiding some false positives.
-  /// Note: This won't catch all cases (e.g., sentences ending mid-text without
-  /// capital letter following), but works well for most structured content.
+  /// Pattern:
+  /// - (?<=[.!?]) - lookbehind for sentence-ending punctuation
+  /// - (?<![A-Z]\.) - negative lookbehind to skip abbreviations like "Dr."
+  /// - (?<!\d\.) - negative lookbehind to skip decimals like "3.14"
+  /// - \s+ - one or more whitespace characters
   static final _sentencePattern = RegExp(
-    r'[.!?]\s+(?=[A-Z])',
+    r'(?<=[.!?])(?<![A-Z]\.)(?<!\d\.)\s+',
+    caseSensitive: false,
   );
 
-  /// Minimum punctuation ratio to use sentence splitting vs sliding window
+  /// Split text into sentences.
   ///
-  /// If less than 5% of chunks end with punctuation, assume unpunctuated text
-  /// and fall back to sliding window approach.
-  static const _minPunctuationRatio = 0.05;
+  /// Uses regex-based sentence detection for English text.
+  /// Returns list of sentences with whitespace trimmed.
+  ///
+  /// Returns empty list if text is empty.
+  static List<String> splitSentences(String text) {
+    if (text.trim().isEmpty) return [];
 
-  /// Split text into sentences or windows based on structure
+    final sentences = text
+        .split(_sentencePattern)
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
+
+    return sentences;
+  }
+
+  /// Create overlapping windows of text for unpunctuated content.
   ///
-  /// Strategy:
-  /// 1. Try sentence splitting with punctuation regex
-  /// 2. If insufficient punctuation detected, fall back to sliding windows
-  /// 3. Track token positions for each segment
-  ///
+  /// Used when text lacks clear sentence boundaries (e.g., voice transcriptions).
   /// Parameters:
-  /// - [text]: Text to split
-  /// - [windowSize]: Window size for unpunctuated text (default: 200 tokens)
-  /// - [overlap]: Window overlap for unpunctuated text (default: 50 tokens)
+  /// - [text]: input text to segment
+  /// - [windowSize]: size of each window in tokens
+  /// - [overlap]: number of tokens to overlap between consecutive windows
   ///
-  /// Returns list of text segments with their token positions (start, end).
-  static List<TextSegment> split(
+  /// Returns list of text segments with specified overlap.
+  static List<String> slidingWindows(
     String text, {
-    int windowSize = 200,
-    int overlap = 50,
+    required int windowSize,
+    required int overlap,
   }) {
-    if (text.trim().isEmpty) {
-      return [];
-    }
-
-    // Try sentence splitting first
-    final sentences = text.trim().split(_sentencePattern);
-
-    // Check if text has sufficient punctuation to use sentence splitting
-    if (_hasSufficientPunctuation(sentences)) {
-      return _createSegmentsFromSentences(sentences);
-    }
-
-    // Fall back to sliding window for unpunctuated text
-    return _createSlidingWindows(text, windowSize: windowSize, overlap: overlap);
-  }
-
-  /// Check if sentences have sufficient punctuation to use sentence-based splitting
-  static bool _hasSufficientPunctuation(List<String> sentences) {
-    if (sentences.length < 3) {
-      // Too few sentences - check if they end with punctuation
-      return sentences.any((s) => RegExp(r'[.!?]\s*$').hasMatch(s));
-    }
-
-    // Count how many sentences end with punctuation
-    final punctuatedCount = sentences
-        .where((s) => RegExp(r'[.!?]\s*$').hasMatch(s))
-        .length;
-
-    return (punctuatedCount / sentences.length) >= _minPunctuationRatio;
-  }
-
-  /// Create text segments from sentences with token tracking
-  static List<TextSegment> _createSegmentsFromSentences(List<String> sentences) {
-    final segments = <TextSegment>[];
-    int currentToken = 0;
-
-    for (final sentence in sentences) {
-      final trimmed = sentence.trim();
-      if (trimmed.isEmpty) continue;
-
-      final tokenCount = _countTokens(trimmed);
-      segments.add(TextSegment(
-        text: trimmed,
-        startToken: currentToken,
-        endToken: currentToken + tokenCount,
-      ));
-      currentToken += tokenCount;
-    }
-
-    return segments;
-  }
-
-  /// Create sliding windows for unpunctuated text
-  ///
-  /// Uses configurable window size and overlap to detect topic boundaries.
-  /// This allows semantic chunker to identify where topics shift even in
-  /// continuous text without grammatical structure.
-  ///
-  /// Parameters:
-  /// - [windowSize]: Size of each window in tokens (default: 200)
-  /// - [overlap]: Overlap between consecutive windows in tokens (default: 50)
-  static List<TextSegment> _createSlidingWindows(
-    String text, {
-    int windowSize = 200,
-    int overlap = 50,
-  }) {
-    final tokens = _tokenize(text);
+    final tokens = text.split(' ').where((t) => t.isNotEmpty).toList();
     if (tokens.isEmpty) return [];
 
-    final segments = <TextSegment>[];
-    int start = 0;
+    final windows = <String>[];
+    final stride = windowSize - overlap;
 
-    while (start < tokens.length) {
-      final end = (start + windowSize).clamp(0, tokens.length);
-      final windowTokens = tokens.sublist(start, end);
-      final windowText = windowTokens.join(' ');
+    for (int i = 0; i < tokens.length; i += stride) {
+      final end = (i + windowSize).clamp(0, tokens.length);
+      if (i >= tokens.length) break;
 
-      segments.add(TextSegment(
-        text: windowText,
-        startToken: start,
-        endToken: end,
-      ));
+      final window = tokens.sublist(i, end).join(' ');
+      if (window.isNotEmpty) {
+        windows.add(window);
+      }
 
-      // If this is the last window, break
-      if (end >= tokens.length) break;
-
-      // Move forward by (windowSize - overlap)
-      start += (windowSize - overlap);
+      // Avoid infinite loop for very small stride
+      if (stride <= 0) break;
     }
 
-    return segments;
+    return windows;
   }
 
-  /// Tokenize text into words (simple whitespace splitting)
-  ///
-  /// This is not subword tokenization (like BPE), just word-level splitting.
-  /// Sufficient for chunk size estimation and boundary tracking.
-  ///
-  /// Public to allow other chunking components to use consistent tokenization.
-  static List<String> tokenize(String text) {
-    return text
-        .split(RegExp(r'\s+'))
-        .where((token) => token.isNotEmpty)
-        .toList();
-  }
-
-  /// Count tokens in text
-  ///
-  /// Public to allow other chunking components to use consistent token counting.
+  /// Count tokens in text (simple whitespace-based tokenization)
   static int countTokens(String text) {
-    return tokenize(text).length;
+    return text.split(' ').where((t) => t.isNotEmpty).length;
   }
 
-  // Private alias for internal use
-  static List<String> _tokenize(String text) => tokenize(text);
-  static int _countTokens(String text) => countTokens(text);
-}
+  /// Auto-detect whether text is structured (punctuated) or unstructured
+  ///
+  /// Heuristic: if < 5% of segments end with punctuation, treat as unstructured.
+  /// Returns true if text appears to be unpunctuated/unstructured.
+  static bool isUnstructured(String text) {
+    final sentences = splitSentences(text);
+    if (sentences.length < 2) return false;
 
-/// Represents a text segment with token position tracking
-class TextSegment {
-  final String text;
-  final int startToken;
-  final int endToken;
+    int punctuatedCount = 0;
+    for (final sent in sentences) {
+      if (sent.endsWith('.') || sent.endsWith('!') || sent.endsWith('?')) {
+        punctuatedCount++;
+      }
+    }
 
-  TextSegment({
-    required this.text,
-    required this.startToken,
-    required this.endToken,
-  });
-
-  int get tokenCount => endToken - startToken;
-
-  @override
-  String toString() {
-    return 'TextSegment(tokens: $tokenCount, start: $startToken, end: $endToken)';
+    final punctuationRate = punctuatedCount / sentences.length;
+    return punctuationRate < 0.05;
   }
 }
