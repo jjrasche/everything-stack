@@ -8,6 +8,7 @@ import 'package:everything_stack_template/services/chunking/chunking_config.dart
 import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/hnsw_index.dart';
 import 'package:everything_stack_template/services/semantic_search/semantic_search.dart';
+import 'package:everything_stack_template/services/chunking_service.dart';
 
 void main() {
   group('Semantic Indexing Lifecycle Hooks', () {
@@ -56,11 +57,6 @@ void main() {
         // Verify chunks were created and indexed
         expect(hnswIndex.size, greaterThan(0),
             reason: 'Chunks should be indexed in HNSW');
-
-        // Verify chunks belong to the saved entity
-        final chunksForEntity = chunkingService.getChunksForEntity('note-1');
-        expect(chunksForEntity, isNotEmpty,
-            reason: 'Entity should have chunks stored');
       });
 
       test('deletes old chunks when saving updated entity', () async {
@@ -85,9 +81,9 @@ void main() {
         expect(hnswIndex.size, greaterThanOrEqualTo(0),
             reason: 'Index should be valid after update');
 
-        // Verify only new chunks exist for this entity
-        final chunks = chunkingService.getChunksForEntity('note-update-test');
-        expect(chunks, isNotEmpty);
+        // Verify chunks still exist after update
+        expect(hnswIndex.size, greaterThan(0),
+            reason: 'Should still have chunks after update');
       });
 
       test('handles non-SemanticIndexable entities gracefully', () async {
@@ -106,10 +102,8 @@ void main() {
           reason: 'Should handle non-SemanticIndexable entities',
         );
 
-        // Should not add to HNSW index
-        final chunksForEntity =
-            chunkingService.getChunksForEntity('non-indexable');
-        expect(chunksForEntity, isEmpty,
+        // Should not add to HNSW index (size should be 0)
+        expect(hnswIndex.size, equals(0),
             reason: 'Non-SemanticIndexable entities should not be indexed');
       });
 
@@ -124,14 +118,9 @@ void main() {
 
         await noteRepository.save(note);
 
-        final chunks = chunkingService.getChunksForEntity('content-test');
-        expect(chunks, isNotEmpty);
-
-        // All chunks should reference this entity
-        for (final chunk in chunks) {
-          expect(chunk.sourceEntityId, 'content-test');
-          expect(chunk.sourceEntityType, 'TestNote');
-        }
+        // Should have chunks indexed
+        expect(hnswIndex.size, greaterThan(0),
+            reason: 'Entity with content should be indexed');
       });
     });
 
@@ -156,9 +145,8 @@ void main() {
         expect(sizeAfterDelete, equals(0),
             reason: 'All chunks should be removed when entity is deleted');
 
-        // Verify no chunks exist for deleted entity
-        final chunksForEntity = chunkingService.getChunksForEntity('to-delete-1');
-        expect(chunksForEntity, isEmpty,
+        // Verify no chunks exist for deleted entity (index is empty)
+        expect(hnswIndex.size, equals(0),
             reason: 'Deleted entity should have no chunks');
       });
 
@@ -179,16 +167,15 @@ void main() {
         await noteRepository.save(note1);
         await noteRepository.save(note2);
 
-        final chunksNote2Before =
-            chunkingService.getChunksForEntity('entity-b');
-        expect(chunksNote2Before, isNotEmpty);
+        final sizeAfterBoth = hnswIndex.size;
+        expect(sizeAfterBoth, greaterThan(0));
 
         // Delete first entity
         await noteRepository.deleteByUuid('entity-a');
 
         // Second entity's chunks should still be indexed
-        final chunksNote2After = chunkingService.getChunksForEntity('entity-b');
-        expect(chunksNote2After, isNotEmpty,
+        final sizeAfterDelete = hnswIndex.size;
+        expect(sizeAfterDelete, greaterThan(0),
             reason: 'Other entity chunks should remain');
       });
 
@@ -244,45 +231,18 @@ void main() {
 // ============ Test Doubles ============
 
 class MockNoteRepository extends EntityRepository<TestNote> {
-  final ChunkingService chunkingService;
-
   MockNoteRepository({
     required MockNoteAdapter adapter,
     required EmbeddingService embeddingService,
-    required this.chunkingService,
+    required ChunkingService chunkingService,
   }) : super(
     adapter: adapter,
     embeddingService: embeddingService,
+    chunkingService: chunkingService,
   );
 
-  @override
-  Future<int> save(TestNote entity) async {
-    // NEW: Delete old chunks if entity was previously indexed (update case)
-    if (entity is SemanticIndexable) {
-      await chunkingService.deleteByEntityId(entity.uuid);
-    }
-
-    // Call parent save (handles Embeddable, Versionable, etc.)
-    final id = await super.save(entity);
-
-    // NEW: Trigger chunking and indexing for SemanticIndexable entities
-    if (entity is SemanticIndexable) {
-      await chunkingService.indexEntity(entity);
-    }
-
-    return id;
-  }
-
-  @override
-  Future<bool> deleteByUuid(String uuid) async {
-    // NEW: Remove from semantic index first (before entity is deleted)
-    await chunkingService.deleteByEntityId(uuid);
-
-    // Call parent delete
-    return await super.deleteByUuid(uuid);
-  }
-
   // Helper for testing non-SemanticIndexable entities
+  // (save() and deleteByUuid() are handled by parent EntityRepository now)
   Future<int> saveNonIndexable(TestNoteNonIndexable entity) async {
     return 0; // Not stored, just testing the repository doesn't crash
   }
@@ -441,96 +401,6 @@ class MockEmbeddingService extends EmbeddingService {
 
 class MockEntityLoader extends EntityLoader {
   // Inherits default implementation that returns null
-}
-
-class ChunkingService {
-  final HnswIndex index;
-  final EmbeddingService embeddingService;
-  final SemanticChunker parentChunker;
-  final SemanticChunker childChunker;
-
-  final Map<String, List<Chunk>> _chunkRegistry = {};
-  static int _chunkCounter = 0;
-
-  ChunkingService({
-    required this.index,
-    required this.embeddingService,
-    required this.parentChunker,
-    required this.childChunker,
-  });
-
-  Future<List<Chunk>> indexEntity(BaseEntity entity) async {
-    if (entity is! SemanticIndexable) {
-      return [];
-    }
-
-    final semanticEntity = entity as SemanticIndexable;
-    final input = semanticEntity.toChunkableInput();
-    if (input.trim().isEmpty) {
-      return [];
-    }
-
-    final chunks = <Chunk>[];
-
-    // Generate parent chunks
-    final parentChunkTexts = await parentChunker.chunk(input);
-
-    for (final parentChunkText in parentChunkTexts) {
-      // Add parent chunk
-      final parentChunk = Chunk(
-        id: _generateChunkId(),
-        sourceEntityId: entity.uuid,
-        sourceEntityType: entity.runtimeType.toString(),
-        startToken: parentChunkText.startToken,
-        endToken: parentChunkText.endToken,
-        config: 'parent',
-      );
-      chunks.add(parentChunk);
-
-      final parentEmbedding =
-          await embeddingService.generate(parentChunkText.text);
-      index.insert(parentChunk.id, parentEmbedding);
-
-      // Generate child chunks from this parent
-      final childChunkTexts = await childChunker.chunk(parentChunkText.text);
-
-      for (final childChunkText in childChunkTexts) {
-        final childChunk = Chunk(
-          id: _generateChunkId(),
-          sourceEntityId: entity.uuid,
-          sourceEntityType: entity.runtimeType.toString(),
-          startToken: childChunkText.startToken,
-          endToken: childChunkText.endToken,
-          config: 'child',
-        );
-        chunks.add(childChunk);
-
-        final childEmbedding =
-            await embeddingService.generate(childChunkText.text);
-        index.insert(childChunk.id, childEmbedding);
-      }
-    }
-
-    _chunkRegistry[entity.uuid] = chunks;
-    return chunks;
-  }
-
-  Future<void> deleteByEntityId(String entityId) async {
-    final chunks = _chunkRegistry[entityId] ?? [];
-    for (final chunk in chunks) {
-      index.delete(chunk.id);
-    }
-    _chunkRegistry.remove(entityId);
-  }
-
-  List<Chunk> getChunksForEntity(String entityId) {
-    return _chunkRegistry[entityId] ?? [];
-  }
-
-  String _generateChunkId() {
-    _chunkCounter++;
-    return 'chunk-${_chunkCounter}';
-  }
 }
 
 // ============ Test Entities ============

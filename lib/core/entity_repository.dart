@@ -38,7 +38,9 @@ import 'persistence/transaction_context.dart';
 import 'entity_version.dart';
 import '../patterns/embeddable.dart';
 import '../patterns/versionable.dart';
+import '../patterns/semantic_indexable.dart';
 import '../services/embedding_service.dart';
+import '../services/chunking_service.dart';
 import '../utils/json_diff.dart';
 
 abstract class EntityRepository<T extends BaseEntity> {
@@ -60,11 +62,18 @@ abstract class EntityRepository<T extends BaseEntity> {
   /// If null, saves are not atomic across repositories.
   final TransactionManager? transactionManager;
 
+  /// Chunking service for semantic indexing (optional).
+  /// If provided and entity is SemanticIndexable, chunks are auto-created on save
+  /// and auto-deleted on entity delete or update.
+  /// If null, SemanticIndexable entities are still saved but not semantically indexed.
+  final ChunkingService? chunkingService;
+
   EntityRepository({
     required this.adapter,
     EmbeddingService? embeddingService,
     this.versionRepository,
     this.transactionManager,
+    this.chunkingService,
   }) : embeddingService = embeddingService ?? EmbeddingService.instance;
 
   /// Object stores this repository accesses in transactions.
@@ -108,6 +117,11 @@ abstract class EntityRepository<T extends BaseEntity> {
   /// For Embeddable entities: generates embedding (adapter handles indexing).
   /// For Versionable entities: records change atomically if TransactionManager provided.
   Future<int> save(T entity) async {
+    // Delete old chunks if updating (must happen BEFORE save)
+    if (chunkingService != null && entity is SemanticIndexable) {
+      await chunkingService!.deleteByEntityId(entity.uuid);
+    }
+
     // Generate embedding BEFORE transaction (async operation)
     if (entity is Embeddable) {
       await _generateEmbedding(entity as Embeddable);
@@ -130,6 +144,12 @@ abstract class EntityRepository<T extends BaseEntity> {
     }
 
     final saved = await adapter.save(entity);
+
+    // Index chunks AFTER save (now entity has persisted ID)
+    if (chunkingService != null && entity is SemanticIndexable) {
+      await chunkingService!.indexEntity(entity);
+    }
+
     return saved.id;
   }
 
@@ -228,7 +248,13 @@ abstract class EntityRepository<T extends BaseEntity> {
 
   /// Delete entity by UUID from database.
   /// Adapter handles removing from vector index.
+  /// ChunkingService removes semantic chunks from HNSW if available.
   Future<bool> deleteByUuid(String uuid) async {
+    // Remove semantic chunks BEFORE deleting entity
+    if (chunkingService != null) {
+      await chunkingService!.deleteByEntityId(uuid);
+    }
+
     return adapter.deleteByUuid(uuid);
   }
 
