@@ -1,0 +1,227 @@
+00:00 +0: loading C:/Users/rasche_j/Documents/workspace/everything-stack/test/performance/persistence_benchmarks.dart
+test/performance/persistence_benchmarks.dart:220:43: Error: Can't find '}' to match '{'.
+  group('Graph Traversal Performance', () {
+                                          ^
+test/performance/persistence_benchmarks.dart:297:43: Error: Can't find '}' to match '{'.
+  group('Version History Performance', () {
+                                          ^
+test/performance/persistence_benchmarks.dart:295:4: Error: Expected a declaration, but got ')'.
+  });
+   ^
+test/performance/persistence_benchmarks.dart:295:5: Error: Unexpected token ';'.
+  });
+    ^
+test/performance/persistence_benchmarks.dart:297:9: Error: Expected an identifier, but got ''Version History Performance''.
+Try inserting an identifier before ''Version History Performance''.
+  group('Version History Performance', () {
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+test/performance/persistence_benchmarks.dart:297:40: Error: Expected an identifier, but got '('.
+Try inserting an identifier before '('.
+  group('Version History Performance', () {
+                                       ^
+test/performance/persistence_benchmarks.dart:297:43: Error: Expected ')' before this.
+  group('Version History Performance', () {
+                                          ^
+test/performance/persistence_benchmarks.dart:334:7: Error: Expected a function body or '=>'.
+Try adding {}.
+    });
+      ^
+test/performance/persistence_benchmarks.dart:336:10: Error: Expected an identifier, but got ''load version history (50 versions)''.
+Try inserting an identifier before ''load version history (50 versions)''.
+    test('load version history (50 versions)', () async {
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+test/performance/persistence_benchmarks.dart:336:48: Error: Expected an identifier, but got '('.
+Try inserting an identifier before '('.
+    test('load version history (50 versions)', () async {
+                                               ^
+test/performance/persistence_benchmarks.dart:336:51: Error: Expected ')' before this.
+    test('load version history (50 versions)', () async {
+                                                  ^^^^^
+test/performance/persistence_benchmarks.dart:355:7: Error: Expected a function body or '=>'.
+Try adding {}.
+    });
+      ^
+test/performance/persistence_benchmarks.dart:357:10: Error: Expected an identifier, but got ''reconstruct state from deltas''.
+Try inserting an identifier before ''reconstruct state from deltas''.
+    test('reconstruct state from deltas', () async {
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+test/performance/persistence_benchmarks.dart:357:43: Error: Expected an identifier, but got '('.
+Try inserting an identifier before '('.
+    test('reconstruct state from deltas', () async {
+                                          ^
+test/performance/persistence_benchmarks.dart:357:46: Error: Expected ')' before this.
+    test('reconstruct state from deltas', () async {
+                                             ^^^^^
+test/performance/persistence_benchmarks.dart:384:7: Error: Expected a function body or '=>'.
+Try adding {}.
+    });
+      ^
+test/performance/persistence_benchmarks.dart:385:3: Error: Expected a declaration, but got '}'.
+  });
+  ^
+test/performance/persistence_benchmarks.dart:385:4: Error: Expected a declaration, but got ')'.
+  });
+   ^
+test/performance/persistence_benchmarks.dart:385:5: Error: Unexpected token ';'.
+  });
+    ^
+test/performance/persistence_benchmarks.dart:386:1: Error: Expected a declaration, but got '}'.
+}
+^
+test/performance/persistence_benchmarks.dart:357:5: Error: 'test' is already declared in this scope.
+    test('reconstruct state from deltas', () async {
+    ^^^^
+test/performance/persistence_benchmarks.dart:336:5: Context: Previous declaration of 'test'.
+    test('load version history (50 versions)', () async {
+    ^^^^
+test/performance/persistence_benchmarks.dart:99:8: Error: Too many positional arguments: 0 allowed, but 2 found.
+Try removing the extra positional arguments.
+  group('Bulk Insert Performance', () {
+       ^
+test/performance/persistence_benchmarks.dart:297:3: Context: Found this candidate, but the arguments don't match.
+  group('Version History Performance', () {
+  ^^^^^
+test/performance/persistence_benchmarks.dart:148:8: Error: Too many positional arguments: 0 allowed, but 2 found.
+Try removing the extra positional arguments.
+  group('Semantic Search Performance', () {
+       ^
+test/performance/persistence_benchmarks.dart:297:3: Context: Found this candidate, but the arguments don't match.
+  group('Version History Performance', () {
+  ^^^^^
+test/performance/persistence_benchmarks.dart:220:8: Error: Too many positional arguments: 0 allowed, but 2 found.
+Try removing the extra positional arguments.
+  group('Graph Traversal Performance', () {
+       ^
+test/performance/persistence_benchmarks.dart:297:3: Context: Found this candidate, but the arguments don't match.
+  group('Version History Performance', () {
+  ^^^^^
+test/performance/persistence_benchmarks.dart:276:24: Error: Undefined name 'noteUuids'.
+            startUuid: noteUuids.first,
+                       ^^^^^^^^^
+test/performance/persistence_benchmarks.dart:278:24: Error: Undefined name 'EdgeDirection'.
+            direction: EdgeDirection.outgoing,
+                       ^^^^^^^^^^^^^
+test/performance/persistence_benchmarks.dart:275:17: Error: Undefined name 'edgeRepo'.
+          await edgeRepo.traverse(
+                ^^^^^^^^
+test/harness/benchmark_runner.dart:80:22: Error: 'max' isn't a function or method and can't be invoked.
+    return sorted[max(0, min(index, sorted.length - 1))];
+                     ^^^
+test/harness/benchmark_runner.dart:80:29: Error: 'min' isn't a function or method and can't be invoked.
+    return sorted[max(0, min(index, sorted.length - 1))];
+                            ^^^
+00:00 +0 -1: loading C:/Users/rasche_j/Documents/workspace/everything-stack/test/performance/persistence_benchmarks.dart [E]
+  Failed to load "C:/Users/rasche_j/Documents/workspace/everything-stack/test/performance/persistence_benchmarks.dart":
+  Compilation failed for testPath=C:/Users/rasche_j/Documents/workspace/everything-stack/test/performance/persistence_benchmarks.dart: test/performance/persistence_benchmarks.dart:220:43: Error: Can't find '}' to match '{'.
+    group('Graph Traversal Performance', () {
+                                            ^
+  test/performance/persistence_benchmarks.dart:297:43: Error: Can't find '}' to match '{'.
+    group('Version History Performance', () {
+                                            ^
+  test/performance/persistence_benchmarks.dart:295:4: Error: Expected a declaration, but got ')'.
+    });
+     ^
+  test/performance/persistence_benchmarks.dart:295:5: Error: Unexpected token ';'.
+    });
+      ^
+  test/performance/persistence_benchmarks.dart:297:9: Error: Expected an identifier, but got ''Version History Performance''.
+  Try inserting an identifier before ''Version History Performance''.
+    group('Version History Performance', () {
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  test/performance/persistence_benchmarks.dart:297:40: Error: Expected an identifier, but got '('.
+  Try inserting an identifier before '('.
+    group('Version History Performance', () {
+                                         ^
+  test/performance/persistence_benchmarks.dart:297:43: Error: Expected ')' before this.
+    group('Version History Performance', () {
+                                            ^
+  test/performance/persistence_benchmarks.dart:334:7: Error: Expected a function body or '=>'.
+  Try adding {}.
+      });
+        ^
+  test/performance/persistence_benchmarks.dart:336:10: Error: Expected an identifier, but got ''load version history (50 versions)''.
+  Try inserting an identifier before ''load version history (50 versions)''.
+      test('load version history (50 versions)', () async {
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  test/performance/persistence_benchmarks.dart:336:48: Error: Expected an identifier, but got '('.
+  Try inserting an identifier before '('.
+      test('load version history (50 versions)', () async {
+                                                 ^
+  test/performance/persistence_benchmarks.dart:336:51: Error: Expected ')' before this.
+      test('load version history (50 versions)', () async {
+                                                    ^^^^^
+  test/performance/persistence_benchmarks.dart:355:7: Error: Expected a function body or '=>'.
+  Try adding {}.
+      });
+        ^
+  test/performance/persistence_benchmarks.dart:357:10: Error: Expected an identifier, but got ''reconstruct state from deltas''.
+  Try inserting an identifier before ''reconstruct state from deltas''.
+      test('reconstruct state from deltas', () async {
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  test/performance/persistence_benchmarks.dart:357:43: Error: Expected an identifier, but got '('.
+  Try inserting an identifier before '('.
+      test('reconstruct state from deltas', () async {
+                                            ^
+  test/performance/persistence_benchmarks.dart:357:46: Error: Expected ')' before this.
+      test('reconstruct state from deltas', () async {
+                                               ^^^^^
+  test/performance/persistence_benchmarks.dart:384:7: Error: Expected a function body or '=>'.
+  Try adding {}.
+      });
+        ^
+  test/performance/persistence_benchmarks.dart:385:3: Error: Expected a declaration, but got '}'.
+    });
+    ^
+  test/performance/persistence_benchmarks.dart:385:4: Error: Expected a declaration, but got ')'.
+    });
+     ^
+  test/performance/persistence_benchmarks.dart:385:5: Error: Unexpected token ';'.
+    });
+      ^
+  test/performance/persistence_benchmarks.dart:386:1: Error: Expected a declaration, but got '}'.
+  }
+  ^
+  test/performance/persistence_benchmarks.dart:357:5: Error: 'test' is already declared in this scope.
+      test('reconstruct state from deltas', () async {
+      ^^^^
+  test/performance/persistence_benchmarks.dart:336:5: Context: Previous declaration of 'test'.
+      test('load version history (50 versions)', () async {
+      ^^^^
+  test/performance/persistence_benchmarks.dart:99:8: Error: Too many positional arguments: 0 allowed, but 2 found.
+  Try removing the extra positional arguments.
+    group('Bulk Insert Performance', () {
+         ^
+  test/performance/persistence_benchmarks.dart:297:3: Context: Found this candidate, but the arguments don't match.
+    group('Version History Performance', () {
+    ^^^^^
+  test/performance/persistence_benchmarks.dart:148:8: Error: Too many positional arguments: 0 allowed, but 2 found.
+  Try removing the extra positional arguments.
+    group('Semantic Search Performance', () {
+         ^
+  test/performance/persistence_benchmarks.dart:297:3: Context: Found this candidate, but the arguments don't match.
+    group('Version History Performance', () {
+    ^^^^^
+  test/performance/persistence_benchmarks.dart:220:8: Error: Too many positional arguments: 0 allowed, but 2 found.
+  Try removing the extra positional arguments.
+    group('Graph Traversal Performance', () {
+         ^
+  test/performance/persistence_benchmarks.dart:297:3: Context: Found this candidate, but the arguments don't match.
+    group('Version History Performance', () {
+    ^^^^^
+  test/performance/persistence_benchmarks.dart:276:24: Error: Undefined name 'noteUuids'.
+              startUuid: noteUuids.first,
+                         ^^^^^^^^^
+  test/performance/persistence_benchmarks.dart:278:24: Error: Undefined name 'EdgeDirection'.
+              direction: EdgeDirection.outgoing,
+                         ^^^^^^^^^^^^^
+  test/performance/persistence_benchmarks.dart:275:17: Error: Undefined name 'edgeRepo'.
+            await edgeRepo.traverse(
+                  ^^^^^^^^
+  test/harness/benchmark_runner.dart:80:22: Error: 'max' isn't a function or method and can't be invoked.
+      return sorted[max(0, min(index, sorted.length - 1))];
+                       ^^^
+  test/harness/benchmark_runner.dart:80:29: Error: 'min' isn't a function or method and can't be invoked.
+      return sorted[max(0, min(index, sorted.length - 1))];
+                              ^^^
+  .
+00:00 +0 -1: Some tests failed.

@@ -94,6 +94,9 @@ coverage/
 # Test
 .test_coverage.dart
 
+# Test and build logs
+*.log
+
 # Dependencies
 pubspec.lock
 
