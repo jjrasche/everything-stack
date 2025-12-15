@@ -23,6 +23,7 @@ import 'package:everything_stack_template/domain/note_repository.dart';
 import 'package:everything_stack_template/persistence/objectbox/note_objectbox_adapter.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/objectbox.g.dart';
+import '../harness/semantic_test_doubles.dart';
 
 // ============ Tests ============
 

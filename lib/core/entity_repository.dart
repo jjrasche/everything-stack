@@ -36,6 +36,7 @@ import 'persistence/persistence_adapter.dart';
 import 'persistence/transaction_manager.dart';
 import 'persistence/transaction_context.dart';
 import 'entity_version.dart';
+import 'repository_pattern_handler.dart';
 import '../patterns/embeddable.dart';
 import '../patterns/versionable.dart';
 import '../patterns/semantic_indexable.dart';
@@ -49,8 +50,16 @@ abstract class EntityRepository<T extends BaseEntity> {
   final PersistenceAdapter<T> adapter;
 
   /// Embedding service for generating vectors.
-  /// Defaults to global singleton if not provided.
+  /// REQUIRED - injected at repository construction time.
+  /// Used when entity implements Embeddable pattern.
   final EmbeddingService embeddingService;
+
+  /// Chunking service for semantic indexing (optional).
+  /// If provided and entity is SemanticIndexable, chunks are auto-created on save
+  /// and auto-deleted on entity delete or update.
+  /// If null, SemanticIndexable entities are saved without semantic indexing.
+  /// Only repositories for SemanticIndexable entities need to provide this.
+  final ChunkingService? chunkingService;
 
   /// Optional VersionRepository for tracking entity changes.
   /// If provided and entity is Versionable, changes are automatically recorded.
@@ -62,19 +71,20 @@ abstract class EntityRepository<T extends BaseEntity> {
   /// If null, saves are not atomic across repositories.
   final TransactionManager? transactionManager;
 
-  /// Chunking service for semantic indexing (optional).
-  /// If provided and entity is SemanticIndexable, chunks are auto-created on save
-  /// and auto-deleted on entity delete or update.
-  /// If null, SemanticIndexable entities are still saved but not semantically indexed.
-  final ChunkingService? chunkingService;
+  /// Pattern handlers orchestrating lifecycle for each pattern.
+  /// Ordered list of handlers that integrate patterns into save/delete flow.
+  /// Created by domain repository's handler factory.
+  final List<RepositoryPatternHandler<T>> handlers;
 
   EntityRepository({
     required this.adapter,
-    EmbeddingService? embeddingService,
+    required this.embeddingService,
+    ChunkingService? chunkingService,
     this.versionRepository,
     this.transactionManager,
-    this.chunkingService,
-  }) : embeddingService = embeddingService ?? EmbeddingService.instance;
+    List<RepositoryPatternHandler<T>>? handlers,
+  })  : chunkingService = chunkingService,
+        handlers = handlers ?? [];
 
   /// Object stores this repository accesses in transactions.
   /// Used by IndexedDB to declare transaction scope upfront.
@@ -114,130 +124,99 @@ abstract class EntityRepository<T extends BaseEntity> {
   }
 
   /// Save entity to database.
-  /// For Embeddable entities: generates embedding (adapter handles indexing).
-  /// For Versionable entities: records change atomically if TransactionManager provided.
+  ///
+  /// Orchestrates domain pattern lifecycle via handlers:
+  /// 1. beforeSave hooks (fail-fast)
+  /// 2. beforeSaveInTransaction hooks (if TransactionManager provided)
+  /// 3. Entity persisted to database
+  /// 4. afterSaveInTransaction hooks (if TransactionManager provided)
+  /// 5. afterSave hooks (best-effort)
+  ///
+  /// Handler execution order determines pattern integration.
+  /// See RepositoryPatternHandler for semantics of each lifecycle phase.
   Future<int> save(T entity) async {
-    // Delete old chunks if updating (must happen BEFORE save)
-    if (chunkingService != null && entity is SemanticIndexable) {
-      await chunkingService!.deleteByEntityId(entity.uuid);
+    // Phase 1: beforeSave hooks (fail-fast, outside transaction)
+    for (final handler in handlers) {
+      await handler.beforeSave(entity);
     }
 
-    // Generate embedding BEFORE transaction (async operation)
-    if (entity is Embeddable) {
-      await _generateEmbedding(entity as Embeddable);
+    // Phase 2-5: Transactional or non-transactional save
+    final savedId = await _doSave(entity);
+
+    // Phase 5: afterSave hooks (best-effort, outside transaction)
+    // These run AFTER the transaction commits (or after non-transactional save)
+    for (final handler in handlers) {
+      try {
+        await handler.afterSave(entity);
+      } catch (e) {
+        // Best-effort: log but don't propagate
+        // Entity is already persisted
+        // ignore: avoid_print
+        print('Warning: Handler afterSave failed: $e');
+      }
     }
 
-    // Versionable entities with transaction support: atomic save + version
-    if (entity is Versionable &&
-        versionRepository != null &&
-        transactionManager != null) {
+    return savedId;
+  }
+
+  /// Save entity with transactional lifecycle hooks.
+  ///
+  /// Handles both transactional and non-transactional paths.
+  /// Note: afterSave hooks are NOT called here - they're called in save() after transaction.
+  Future<int> _doSave(T entity) async {
+    if (transactionManager != null) {
+      // Transactional save: beforeSaveInTransaction, save, afterSaveInTransaction (all inside tx)
       return await transactionManager!.transaction(
-        (ctx) => _saveWithVersionSync(ctx, entity as Versionable),
+        (ctx) => _saveWithHandlersInTransaction(ctx, entity),
         objectStores: transactionStores,
       );
+    } else {
+      // Non-transactional save
+      final saved = await adapter.save(entity);
+      return saved.id;
+    }
+  }
+
+  /// Save with handler integration within transaction.
+  ///
+  /// Transactional sequence:
+  /// 2. beforeSaveInTransaction hooks (sync, inside tx)
+  /// 3. Entity persisted
+  /// 4. afterSaveInTransaction hooks (sync, inside tx)
+  ///
+  /// If ANY step fails, transaction rolls back completely.
+  int _saveWithHandlersInTransaction(TransactionContext ctx, T entity) {
+    // Phase 2: beforeSaveInTransaction hooks (sync, inside tx)
+    for (final handler in handlers) {
+      handler.beforeSaveInTransaction(ctx, entity);
     }
 
-    // Non-transactional path (no transaction manager or not versionable)
-    if (entity is Versionable && versionRepository != null) {
-      // Record version without transaction (NOT atomic)
-      await _recordVersionChange(entity as Versionable);
+    // Phase 3: Persist entity
+    final saved = adapter.saveInTx(ctx, entity);
+
+    // Phase 4: afterSaveInTransaction hooks (sync, inside tx)
+    for (final handler in handlers) {
+      handler.afterSaveInTransaction(ctx, entity);
     }
 
-    final saved = await adapter.save(entity);
-
-    // Index chunks AFTER save (now entity has persisted ID)
-    if (chunkingService != null && entity is SemanticIndexable) {
-      await chunkingService!.indexEntity(entity);
-    }
+    // Phase 5: afterSave hooks happen AFTER transaction commits
+    // (async, outside transaction, best-effort - not done here)
 
     return saved.id;
   }
 
-  /// Synchronous save with version recording (for use in transactions).
-  int _saveWithVersionSync(TransactionContext ctx, Versionable entity) {
-    // Build version record (synchronous)
-    final version = _buildVersionSync(ctx, entity);
-
-    // Save version first
-    versionRepository!.saveInTx(ctx, version);
-
-    // Save entity
-    final saved = adapter.saveInTx(ctx, entity as T);
-    return saved.id;
-  }
-
-  /// Build version record synchronously for transaction.
-  EntityVersion _buildVersionSync(TransactionContext ctx, Versionable entity) {
-    // Fetch previous state synchronously
-    // Note: This uses adapter's synchronous query within transaction
-    final previousEntity = _findByUuidSync(ctx, (entity as BaseEntity).uuid);
-    final previousJson = (previousEntity is Versionable)
-        ? (previousEntity as dynamic).toJson() as Map<String, dynamic>?
-        : null;
-
-    final currentJson = (entity as dynamic).toJson() as Map<String, dynamic>;
-
-    // Calculate version number
-    final latestVersion = _getLatestVersionNumberSync(ctx, (entity as BaseEntity).uuid);
-    final newVersionNumber = latestVersion + 1;
-
-    // Compute delta
-    final previousState = previousJson ?? {};
-    final delta = JsonDiff.diff(previousState, currentJson);
-    final deltaJson = jsonEncode(delta);
-    final changedFields =
-        JsonDiff.extractChangedFields(previousState, currentJson);
-
-    final isFirstVersion = newVersionNumber == 1;
-    final isPeriodicSnapshot = entity.snapshotFrequency != null &&
-        newVersionNumber % entity.snapshotFrequency! == 1;
-    final shouldSnapshot = isFirstVersion || isPeriodicSnapshot;
-
-    return EntityVersion(
-      entityType: T.toString(),
-      entityUuid: (entity as BaseEntity).uuid,
-      timestamp: DateTime.now(),
-      versionNumber: newVersionNumber,
-      deltaJson: deltaJson,
-      changedFields: changedFields,
-      isSnapshot: shouldSnapshot,
-      snapshotJson: shouldSnapshot ? jsonEncode(currentJson) : null,
-      userId: (entity as dynamic).lastModifiedBy as String?,
-    );
-  }
-
-  /// Find entity by UUID synchronously within transaction.
-  T? _findByUuidSync(TransactionContext ctx, String uuid) {
-    return adapter.findByUuidInTx(ctx, uuid);
-  }
-
-  /// Get latest version number synchronously within transaction.
-  int _getLatestVersionNumberSync(TransactionContext ctx, String entityUuid) {
-    return versionRepository?.getLatestVersionNumberInTx(ctx, entityUuid) ?? 0;
-  }
 
   /// Save multiple entities to database.
-  /// For Embeddable entities: generates embeddings (adapter handles indexing).
-  /// For Versionable entities: records changes in VersionRepository if available.
+  ///
+  /// Uses handlers for each entity to manage pattern lifecycle.
+  /// For efficiency with bulk operations, this method calls save() for each entity
+  /// (which applies handlers) rather than optimizing away handler execution.
+  ///
+  /// For truly bulk operations without handlers, use adapter.saveAll() directly.
   Future<void> saveAll(List<T> entities) async {
-    // Record changes for Versionable entities
-    if (versionRepository != null) {
-      for (final entity in entities) {
-        if (entity is Versionable) {
-          await _recordVersionChange(entity as Versionable);
-        }
-      }
-    }
-
-    // Generate embeddings for all Embeddable entities
     for (final entity in entities) {
-      if (entity is Embeddable) {
-        await _generateEmbedding(entity as Embeddable);
-      }
+      await save(entity);
     }
-
-    // Save all to database (adapter handles touch() and indexing)
-    await adapter.saveAll(entities);
   }
 
   /// Delete entity from database.
@@ -247,14 +226,24 @@ abstract class EntityRepository<T extends BaseEntity> {
   }
 
   /// Delete entity by UUID from database.
-  /// Adapter handles removing from vector index.
-  /// ChunkingService removes semantic chunks from HNSW if available.
+  ///
+  /// Orchestrates domain pattern lifecycle via handlers:
+  /// 1. beforeDelete hooks (fail-fast)
+  /// 2. Entity deleted from database
+  ///
+  /// Handler execution order determines pattern integration.
+  /// See RepositoryPatternHandler for semantics.
   Future<bool> deleteByUuid(String uuid) async {
-    // Remove semantic chunks BEFORE deleting entity
-    if (chunkingService != null) {
-      await chunkingService!.deleteByEntityId(uuid);
+    // Load entity to pass to handlers
+    final entity = await findByUuid(uuid);
+    if (entity == null) return false;
+
+    // Phase 1: beforeDelete hooks (fail-fast)
+    for (final handler in handlers) {
+      await handler.beforeDelete(entity);
     }
 
+    // Phase 2: Delete entity
     return adapter.deleteByUuid(uuid);
   }
 
@@ -296,51 +285,19 @@ abstract class EntityRepository<T extends BaseEntity> {
   Future<void> rebuildIndex() async {
     await adapter.rebuildIndex((entity) async {
       if (entity is! Embeddable) return null;
-      await _generateEmbedding(entity as Embeddable);
-      return (entity as Embeddable).embedding;
+      final embeddable = entity as Embeddable;
+      final input = embeddable.toEmbeddingInput();
+      if (input.trim().isEmpty) {
+        embeddable.embedding = null;
+        return null;
+      }
+      embeddable.embedding = await embeddingService.generate(input);
+      return embeddable.embedding;
     });
   }
 
   /// Number of vectors in the search index.
   int get indexSize => adapter.indexSize;
-
-  /// Generate embedding for an Embeddable entity.
-  /// Sets embedding to null if input is empty.
-  Future<void> _generateEmbedding(Embeddable entity) async {
-    final input = entity.toEmbeddingInput();
-    if (input.trim().isEmpty) {
-      entity.embedding = null;
-      return;
-    }
-    entity.embedding = await embeddingService.generate(input);
-  }
-
-  // ============ Versioning ============
-
-  /// Record a change to a Versionable entity.
-  /// Fetches previous state from database and calls versionRepository.recordChange().
-  Future<void> _recordVersionChange(Versionable entity) async {
-    if (versionRepository == null) return;
-
-    // Fetch previous state if entity exists in database
-    final previousEntity = await findByUuid((entity as BaseEntity).uuid);
-    final previousJson = (previousEntity is Versionable)
-        ? (previousEntity as dynamic).toJson() as Map<String, dynamic>?
-        : null;
-
-    // Get current state as JSON
-    final currentJson = (entity as dynamic).toJson() as Map<String, dynamic>;
-
-    // Record the change
-    await versionRepository.recordChange(
-      entityUuid: (entity as BaseEntity).uuid,
-      entityType: T.toString(),
-      previousJson: previousJson,
-      currentJson: currentJson,
-      userId: (entity as dynamic).lastModifiedBy as String?,
-      snapshotFrequency: entity.snapshotFrequency,
-    );
-  }
 
   // ============ Sync Helpers ============
 

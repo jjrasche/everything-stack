@@ -72,10 +72,8 @@ abstract class EmbeddingService {
 
   /// Global instance for dependency injection.
   /// Set this at app startup to configure the embedding backend.
-  ///
-  /// Default is MockEmbeddingService for safe testing.
-  /// For production, set to GeminiEmbeddingService with API key.
-  static EmbeddingService instance = MockEmbeddingService();
+  /// Must be set before any repository is used.
+  static late EmbeddingService instance;
 
   /// Generate embedding for a single text input.
   /// Returns vector of length [dimension].
@@ -126,85 +124,6 @@ abstract class EmbeddingService {
 ///
 /// The mock does NOT have semantic understanding - it just produces
 /// consistent vectors. Use for testing infrastructure, not semantics.
-class MockEmbeddingService extends EmbeddingService {
-  @override
-  Future<List<double>> generate(String text) async {
-    // Generate semantic vector based on word content
-    // Documents with shared words will have similar vectors
-    final words = _tokenize(text);
-
-    if (words.isEmpty) {
-      // Return zero vector for empty text
-      return List.filled(EmbeddingService.dimension, 0.0);
-    }
-
-    // Sum word vectors
-    final vector = List<double>.filled(EmbeddingService.dimension, 0.0);
-    for (final word in words) {
-      final wordHash = _hashString(word);
-      for (var i = 0; i < EmbeddingService.dimension; i++) {
-        vector[i] += _deterministicFloat(wordHash, i);
-      }
-    }
-
-    // Normalize to unit length
-    return _normalize(vector);
-  }
-
-  /// Tokenize text into lowercase words
-  List<String> _tokenize(String text) {
-    return text
-        .toLowerCase()
-        .replaceAll(RegExp(r'[^\w\s]'), ' ') // Remove punctuation
-        .split(RegExp(r'\s+'))
-        .where((w) => w.isNotEmpty)
-        .toList();
-  }
-
-  /// Hash string to int using FNV-1a algorithm.
-  /// Produces consistent hash across runs (unlike String.hashCode which
-  /// could theoretically vary, though in practice it's stable in Dart).
-  int _hashString(String text) {
-    const fnvPrime = 0x01000193;
-    const fnvOffset = 0x811c9dc5;
-    var hash = fnvOffset;
-
-    final bytes = utf8.encode(text);
-    for (final byte in bytes) {
-      hash ^= byte;
-      hash = (hash * fnvPrime) & 0xFFFFFFFF;
-    }
-
-    return hash;
-  }
-
-  /// Generate deterministic float from hash and index.
-  double _deterministicFloat(int hash, int index) {
-    // Combine hash with index to get unique value per dimension
-    final combined = (hash + index * 31) & 0xFFFFFFFF;
-    // Use sine for smooth distribution in [-1, 1] range
-    return math.sin(combined.toDouble() / 1000000);
-  }
-
-  /// Normalize vector to unit length.
-  List<double> _normalize(List<double> vector) {
-    var sumSquares = 0.0;
-    for (final v in vector) {
-      sumSquares += v * v;
-    }
-
-    if (sumSquares == 0) {
-      // Return arbitrary unit vector if input is zero
-      return List.generate(
-        vector.length,
-        (i) => i == 0 ? 1.0 : 0.0,
-      );
-    }
-
-    final norm = math.sqrt(sumSquares);
-    return vector.map((v) => v / norm).toList();
-  }
-}
 
 /// Production implementation using Jina AI Embeddings API.
 ///

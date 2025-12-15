@@ -16,11 +16,13 @@ import 'package:everything_stack_template/core/version_repository.dart';
 import 'package:everything_stack_template/persistence/objectbox/note_objectbox_adapter.dart';
 import 'package:everything_stack_template/persistence/objectbox/edge_objectbox_adapter.dart';
 import 'package:everything_stack_template/persistence/objectbox/entity_version_objectbox_adapter.dart';
+import 'package:everything_stack_template/core/persistence/objectbox_transaction_manager.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/blob_store.dart';
 import 'package:everything_stack_template/patterns/file_storable.dart';
 import 'package:everything_stack_template/core/base_entity.dart';
 import 'package:everything_stack_template/objectbox.g.dart';
+import '../harness/semantic_test_doubles.dart';
 
 void main() {
   late Store store;
@@ -55,6 +57,7 @@ void main() {
       adapter: noteAdapter,
       embeddingService: embeddingService,
       versionRepo: versionRepo,
+      transactionManager: ObjectBoxTransactionManager(store),
     );
     noteRepo.setEdgeRepository(edgeRepo);
   });

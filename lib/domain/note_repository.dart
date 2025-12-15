@@ -4,43 +4,79 @@
 /// Repository for Note entities. Extends EntityRepository with
 /// Note-specific queries.
 ///
-/// ## Usage
+/// ## Usage - Production
 /// ```dart
 /// final adapter = NoteObjectBoxAdapter(store);
-/// final repo = NoteRepository(adapter: adapter);
+/// final repo = NoteRepository.production(
+///   adapter: adapter,
+/// );
+/// ```
 ///
-/// // CRUD
-/// final id = await repo.save(note);
-/// final note = await repo.findById(id);
-/// await repo.delete(id);
-///
-/// // Semantic search
-/// final results = await repo.semanticSearch('project timeline');
-///
-/// // Note-specific queries
-/// final pinned = await repo.findPinned();
-/// final byTag = await repo.findByTag('work');
-/// final accessible = await repo.findAccessibleBy(userId);
+/// ## Usage - Testing
+/// ```dart
+/// final repo = NoteRepository(
+///   adapter: adapter,
+///   embeddingService: MockEmbeddingService(),
+///   chunkingService: chunkingService,
+/// );
 /// ```
 
 import '../core/entity_repository.dart';
-import '../core/base_entity.dart';
 import '../core/persistence/persistence_adapter.dart';
+import '../core/persistence/transaction_manager.dart';
 import '../core/entity_version.dart';
 import '../core/version_repository.dart';
 import '../core/edge_repository.dart';
+import '../services/embedding_service.dart';
+import '../services/chunking_service.dart';
 import 'note.dart';
+import 'note_handler_factory.dart';
 
 class NoteRepository extends EntityRepository<Note> {
   final VersionRepository? _versionRepo;
   EdgeRepository? _edgeRepo;
 
+  /// Full constructor for testing and infrastructure setup.
+  /// Requires explicit service injection.
+  ///
+  /// Services are wired into handlers via NoteHandlerFactory.
+  /// Handler factory determines which patterns are integrated.
   NoteRepository({
     required PersistenceAdapter<Note> adapter,
-    super.embeddingService,
+    EmbeddingService? embeddingService,
+    ChunkingService? chunkingService,
     VersionRepository? versionRepo,
+    TransactionManager? transactionManager,
   })  : _versionRepo = versionRepo,
-        super(adapter: adapter, versionRepository: versionRepo);
+        super(
+          adapter: adapter,
+          embeddingService: embeddingService ?? EmbeddingService.instance,
+          chunkingService: chunkingService,
+          versionRepository: versionRepo,
+          transactionManager: transactionManager,
+          handlers: NoteHandlerFactory(
+            embeddingService: embeddingService,
+            chunkingService: chunkingService,
+            versionRepository: versionRepo,
+            adapter: adapter,
+          ).createHandlers(),
+        );
+
+  /// Factory for production use - uses global singleton services.
+  /// Requires EmbeddingService to be initialized globally.
+  /// ChunkingService must be provided - only needed if Note implements SemanticIndexable.
+  factory NoteRepository.production({
+    required PersistenceAdapter<Note> adapter,
+    ChunkingService? chunkingService,
+    VersionRepository? versionRepo,
+  }) {
+    return NoteRepository(
+      adapter: adapter,
+      embeddingService: EmbeddingService.instance,
+      chunkingService: chunkingService,
+      versionRepo: versionRepo,
+    );
+  }
 
   /// Set EdgeRepository after construction (avoids circular dependency)
   void setEdgeRepository(EdgeRepository edgeRepo) {
