@@ -31,13 +31,25 @@ import '../repository_pattern_handler.dart';
 /// Handler for Versionable pattern.
 ///
 /// Responsible for:
-/// - Recording entity version within save transaction (atomic)
+/// - Recording entity version atomically within save transaction
 ///
-/// Why transactional?
-/// Version history must be atomic with entity save. An entity without
-/// its version history is a data corruption. This handler uses
-/// beforeSaveInTransaction to record version inside the same transaction
-/// as the entity save.
+/// ARCHITECTURAL CONSTRAINT:
+/// Version recording REQUIRES TransactionManager. This is a hard requirement
+/// because version history must be atomic with entity save - an entity without
+/// its version history is data corruption.
+///
+/// Without TransactionManager:
+/// - VersionableHandler only records versions in beforeSaveInTransaction
+/// - beforeSaveInTransaction is never called without a transaction
+/// - Versionable entities are saved WITHOUT version history
+/// - This matches pre-handler behavior when transactionManager is not provided
+///
+/// Production systems using Versionable entities MUST provide TransactionManager.
+/// For ObjectBox on native platforms, use ObjectBoxTransactionManager(store).
+/// For Web with IndexedDB, transaction support is built into IndexedDB.
+///
+/// This is not a limitation of the handler pattern - it's a fundamental
+/// requirement of reliable version tracking.
 class VersionableHandler<T extends BaseEntity>
     extends RepositoryPatternHandler<T> {
   final dynamic versionRepository;
@@ -70,63 +82,6 @@ class VersionableHandler<T extends BaseEntity>
     versionRepository.saveInTx(ctx, version);
   }
 
-  /// Record version AFTER entity is persisted (fallback for non-transactional saves).
-  ///
-  /// When TransactionManager is not provided, version recording falls back to
-  /// this async method called after the entity is persisted.
-  ///
-  /// Note: This is NOT atomic - if it fails, entity is already persisted.
-  /// Best-effort semantics: log errors but don't propagate them.
-  @override
-  Future<void> afterSave(T entity) async {
-    if (entity is! Versionable) return;
-    if (versionRepository == null) return;
-
-    try {
-      // For non-transactional saves, record version asynchronously after save
-      final previousEntity = await versionRepository.findByUuid(entity.uuid);
-      final previousJson = (previousEntity is Versionable)
-          ? (previousEntity as dynamic).toJson() as Map<String, dynamic>?
-          : null;
-
-      final currentJson = (entity as dynamic).toJson() as Map<String, dynamic>;
-
-      // Calculate version number
-      final latestVersion = await versionRepository.getLatestVersionNumber(entity.uuid);
-      final newVersionNumber = latestVersion + 1;
-
-      // Compute delta
-      final previousState = previousJson ?? {};
-      final delta = JsonDiff.diff(previousState, currentJson);
-      final deltaJson = jsonEncode(delta);
-      final changedFields = JsonDiff.extractChangedFields(previousState, currentJson);
-
-      final versionableEntity = entity as Versionable;
-      final isFirstVersion = newVersionNumber == 1;
-      final isPeriodicSnapshot = versionableEntity.snapshotFrequency != null &&
-          newVersionNumber % versionableEntity.snapshotFrequency! == 1;
-      final shouldSnapshot = isFirstVersion || isPeriodicSnapshot;
-
-      final version = EntityVersion(
-        entityType: T.toString(),
-        entityUuid: entity.uuid,
-        timestamp: DateTime.now(),
-        versionNumber: newVersionNumber,
-        deltaJson: deltaJson,
-        changedFields: changedFields,
-        isSnapshot: shouldSnapshot,
-        snapshotJson: shouldSnapshot ? jsonEncode(currentJson) : null,
-        userId: (entity as dynamic).lastModifiedBy as String?,
-      );
-
-      await versionRepository.save(version);
-    } catch (e) {
-      // Best-effort: log but don't propagate
-      // Version recording failure should not fail the entity save
-      // ignore: avoid_print
-      print('Warning: Version recording failed for entity ${entity.uuid}: $e');
-    }
-  }
 
   /// Build version record synchronously for transaction.
   ///
