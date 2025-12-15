@@ -187,6 +187,22 @@ class ChunkingService {
     // In a real implementation, would call: await indexStore.save(index);
     // For now, this is called but assumes persistence happens elsewhere
   }
+
+  /// Check if HNSW index is consistent (has data).
+  ///
+  /// For production use, this should:
+  /// 1. Count indexed vectors
+  /// 2. Count entities with chunks
+  /// 3. Verify they match
+  ///
+  /// For now, returns true if index has any vectors
+  bool isIndexConsistent() {
+    // Simple check: if index has vectors, assume it's consistent
+    // A more thorough check would compare:
+    // - Total chunks expected vs indexed
+    // - Orphaned chunks in index but missing entities
+    return index.size > 0;
+  }
 }
 
 /// Lightweight chunk representation for semantic search results.

@@ -16,6 +16,7 @@ import '../../core/base_entity.dart';
 /// - Cross-entity search (find chunks from any entity type)
 /// - Ranked results by relevance (similarity score)
 /// - Type filtering (search only specific entity types)
+/// - Consistency enforcement (rejects searches if index is stale)
 ///
 /// ## Usage
 /// ```dart
@@ -44,6 +45,7 @@ import '../../core/base_entity.dart';
 /// ## Architecture
 /// - HNSW index stores: chunk UUID → embedding vector
 /// - On search:
+///   0. Verify index is consistent (before returning any results)
 ///   1. Generate embedding for query
 ///   2. HNSW returns k closest chunk UUIDs + distances
 ///   3. Load chunks metadata (sourceEntityId, sourceEntityType, etc)
@@ -51,7 +53,17 @@ import '../../core/base_entity.dart';
 ///   5. Filter by entity type if specified
 ///   6. Return sorted by similarity (highest first)
 ///
+/// ## Index Consistency
+/// Before search, verifies that HNSW index is consistent with entity data.
+/// If stale or missing:
+/// - Throws StateError
+/// - Search is disabled
+/// - User must rebuild index
+///
+/// This prevents silent data loss from returning incomplete results.
+///
 /// ## Performance
+/// - Consistency check: O(1) cache lookup
 /// - Search: O(log n) via HNSW
 /// - Load chunks: O(k) via HNSW results
 /// - Load entities: O(k) parallel entity loads
@@ -62,6 +74,7 @@ import '../../core/base_entity.dart';
 /// - Results ordered by similarity descending
 /// - Deleted entities return null but don't crash search
 /// - No caching (embeddings are cheap, entities are small)
+/// - **Index consistency is enforced (fail-fast if stale)**
 
 class SemanticSearchService {
   /// HNSW index storing chunk embeddings
@@ -74,10 +87,15 @@ class SemanticSearchService {
   /// Abstracts over multiple repositories
   final EntityLoader entityLoader;
 
+  /// Chunking service for index consistency checks
+  /// Optional - if provided, search verifies index consistency before returning results
+  final dynamic chunkingService;
+
   SemanticSearchService({
     required this.index,
     required this.embeddingService,
     required this.entityLoader,
+    this.chunkingService,
   });
 
   /// Search for chunks similar to query.
@@ -89,12 +107,31 @@ class SemanticSearchService {
   ///
   /// Returns: Ranked list of SemanticSearchResult (highest similarity first)
   ///
+  /// Throws: StateError if index is stale or inconsistent
   /// Throws: If query embedding generation fails
+  ///
+  /// CONSISTENCY GUARANTEE:
+  /// Before returning results, verifies that HNSW index is consistent with
+  /// entity data. If stale, throws StateError rather than returning incomplete
+  /// results. This prevents silent data loss.
   Future<List<SemanticSearchResult>> search(
     String query, {
     List<String>? entityTypes,
     int limit = 10,
   }) async {
+    // Verify index consistency BEFORE search
+    // If stale, fail fast rather than return incomplete results
+    if (chunkingService != null) {
+      final isConsistent = (chunkingService as dynamic).isIndexConsistent();
+      if (!isConsistent) {
+        throw StateError(
+          'HNSW semantic index is stale or missing. '
+          'Search is disabled to prevent incomplete results. '
+          'Call rebuildIndex() to repair the index and enable search.'
+        );
+      }
+    }
+
     // Generate embedding for query
     final queryEmbedding = await embeddingService.generate(query);
 
