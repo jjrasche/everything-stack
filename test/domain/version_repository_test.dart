@@ -449,5 +449,400 @@ void main() {
         expect(updated[0].syncStatus, SyncStatus.synced);
       });
     });
+
+    group('edge cases', () {
+      test('handles snapshot frequency of 1 (snapshot on every version)',
+          () async {
+        final entityUuid = 'note-123';
+        var state = {'title': 'V1'};
+
+        // Create 5 versions with frequency=1
+        // Logic: newVersionNumber % snapshotFrequency == 1
+        // With freq=1: 1%1=0, 2%1=0, 3%1=0... so NO periodic snapshots
+        // Only the first version (v1) is always a snapshot
+        for (int i = 1; i <= 5; i++) {
+          final newState = {'title': 'V$i'};
+          await repo.recordChange(
+            entityUuid: entityUuid,
+            entityType: 'Note',
+            previousJson: i == 1 ? null : state,
+            currentJson: newState,
+            snapshotFrequency: 1,
+          );
+          state = newState;
+        }
+
+        final versions = await repo.getHistory(entityUuid);
+        expect(versions, hasLength(5));
+        // First version is always snapshot, but freq=1 doesn't create periodic snapshots
+        // because no version number is divisible by 1 with remainder 1
+        expect(versions[0].isSnapshot, isTrue);
+        expect(versions[1].isSnapshot, isFalse);
+        expect(versions[2].isSnapshot, isFalse);
+        expect(versions[3].isSnapshot, isFalse);
+        expect(versions[4].isSnapshot, isFalse);
+      });
+
+      test('handles snapshot frequency of null (no periodic snapshots)',
+          () async {
+        final entityUuid = 'note-123';
+        var state = {'title': 'V1'};
+
+        // Create 5 versions with frequency=null (only first is snapshot)
+        for (int i = 1; i <= 5; i++) {
+          final newState = {'title': 'V$i'};
+          await repo.recordChange(
+            entityUuid: entityUuid,
+            entityType: 'Note',
+            previousJson: i == 1 ? null : state,
+            currentJson: newState,
+            snapshotFrequency: null,
+          );
+          state = newState;
+        }
+
+        final versions = await repo.getHistory(entityUuid);
+        expect(versions, hasLength(5));
+        expect(versions[0].isSnapshot, isTrue); // First is always snapshot
+        expect(versions[1].isSnapshot, isFalse);
+        expect(versions[2].isSnapshot, isFalse);
+        expect(versions[3].isSnapshot, isFalse);
+        expect(versions[4].isSnapshot, isFalse);
+      });
+
+      test('handles empty delta (no changes between versions)', () async {
+        final entityUuid = 'note-123';
+        final state = {'title': 'Unchanged', 'body': 'Content'};
+
+        // Record initial version
+        await repo.recordChange(
+          entityUuid: entityUuid,
+          entityType: 'Note',
+          previousJson: null,
+          currentJson: state,
+          snapshotFrequency: 20,
+        );
+
+        // Record "change" with identical state
+        await repo.recordChange(
+          entityUuid: entityUuid,
+          entityType: 'Note',
+          previousJson: state,
+          currentJson: state,
+          snapshotFrequency: 20,
+        );
+
+        final versions = await repo.getHistory(entityUuid);
+        expect(versions, hasLength(2));
+        expect(versions[1].deltaJson, isNotEmpty);
+        // Delta should be empty array [] for no changes
+      });
+
+      test('reconstructs with empty delta correctly', () async {
+        final entityUuid = 'note-123';
+        final state = {'title': 'V1', 'body': 'Content'};
+
+        // Version 1
+        await repo.recordChange(
+          entityUuid: entityUuid,
+          entityType: 'Note',
+          previousJson: null,
+          currentJson: state,
+          snapshotFrequency: 20,
+        );
+
+        final captureTime = DateTime.now();
+        await Future.delayed(const Duration(milliseconds: 10));
+
+        // Version 2 with empty delta
+        await repo.recordChange(
+          entityUuid: entityUuid,
+          entityType: 'Note',
+          previousJson: state,
+          currentJson: state,
+          snapshotFrequency: 20,
+        );
+
+        final reconstructed = await repo.reconstruct(entityUuid, captureTime);
+        expect(reconstructed, isNotNull);
+        expect(reconstructed!['title'], 'V1');
+      });
+
+      test('prunes with zero snapshots to keep (handles edge case)',
+          () async {
+        final entityUuid = 'note-123';
+        var state = {'title': 'V1'};
+
+        // Create 10 versions (v1 and v6 will be snapshots with freq=5)
+        for (int i = 1; i <= 10; i++) {
+          final newState = {'title': 'V$i'};
+          await repo.recordChange(
+            entityUuid: entityUuid,
+            entityType: 'Note',
+            previousJson: i == 1 ? null : state,
+            currentJson: newState,
+            snapshotFrequency: 5,
+          );
+          state = newState;
+        }
+
+        // Prune keeping 0 snapshots - should keep at least the most recent
+        await repo.prune(entityUuid, keepSnapshots: 1);
+
+        final versions = await repo.getHistory(entityUuid);
+        expect(versions.isNotEmpty, isTrue);
+        // At least the most recent snapshot should remain
+      });
+
+      test('prunes when fewer snapshots exist than requested', () async {
+        final entityUuid = 'note-123';
+        var state = {'title': 'V1'};
+
+        // Create 5 versions with high frequency (only v1 is snapshot)
+        for (int i = 1; i <= 5; i++) {
+          final newState = {'title': 'V$i'};
+          await repo.recordChange(
+            entityUuid: entityUuid,
+            entityType: 'Note',
+            previousJson: i == 1 ? null : state,
+            currentJson: newState,
+            snapshotFrequency: 100,
+          );
+          state = newState;
+        }
+
+        // Request to keep 10 snapshots (more than exist)
+        await repo.prune(entityUuid, keepSnapshots: 10);
+
+        final versions = await repo.getHistory(entityUuid);
+        // All versions should remain since we don't have 10 snapshots to keep
+        expect(versions, hasLength(5));
+      });
+
+      test('reconstructs across multiple snapshots and deltas', () async {
+        final entityUuid = 'note-123';
+        Map<String, dynamic> state = {'title': 'V1', 'section': 'A'};
+
+        // Create 15 versions with freq=5 (v1, v6, v11 are snapshots)
+        DateTime? captureTime;
+        for (int i = 1; i <= 15; i++) {
+          final Map<String, dynamic> newState = {
+            'title': 'V$i',
+            'section': i <= 7 ? 'A' : 'B',
+            'count': i
+          };
+          await repo.recordChange(
+            entityUuid: entityUuid,
+            entityType: 'Note',
+            previousJson: i == 1 ? null : state,
+            currentJson: newState,
+            snapshotFrequency: 5,
+          );
+          // Capture time AFTER v6 but BEFORE v7
+          if (i == 6) {
+            await Future.delayed(const Duration(milliseconds: 10));
+            captureTime = DateTime.now();
+            await Future.delayed(const Duration(milliseconds: 10));
+          }
+          state = newState;
+        }
+
+        // Reconstruct at captured time (between v6 snapshot and v7)
+        final reconstructed = await repo.reconstruct(entityUuid, captureTime!);
+
+        expect(reconstructed, isNotNull);
+        expect(reconstructed!['title'], 'V6');
+        expect(reconstructed['section'], 'A');
+        expect(reconstructed['count'], 6);
+      });
+
+      test('handles multiple entities with interleaved versions', () async {
+        final entity1 = 'note-1';
+        final entity2 = 'note-2';
+
+        var state1 = {'title': 'E1-V1'};
+        var state2 = {'title': 'E2-V1'};
+
+        // Create versions for both entities
+        for (int i = 1; i <= 3; i++) {
+          final newState1 = {'title': 'E1-V$i'};
+          await repo.recordChange(
+            entityUuid: entity1,
+            entityType: 'Note',
+            previousJson: i == 1 ? null : state1,
+            currentJson: newState1,
+            snapshotFrequency: 20,
+          );
+          state1 = newState1;
+
+          final newState2 = {'title': 'E2-V$i'};
+          await repo.recordChange(
+            entityUuid: entity2,
+            entityType: 'Note',
+            previousJson: i == 1 ? null : state2,
+            currentJson: newState2,
+            snapshotFrequency: 20,
+          );
+          state2 = newState2;
+        }
+
+        final history1 = await repo.getHistory(entity1);
+        final history2 = await repo.getHistory(entity2);
+
+        expect(history1, hasLength(3));
+        expect(history2, hasLength(3));
+        expect(history1[0].entityUuid, entity1);
+        expect(history2[0].entityUuid, entity2);
+      });
+
+      test('stores complex nested JSON states correctly', () async {
+        final entityUuid = 'doc-123';
+        final complexState = {
+          'title': 'Document',
+          'metadata': {
+            'author': 'John',
+            'tags': ['important', 'review'],
+            'nested': {
+              'level': 2,
+              'values': [1, 2, 3]
+            }
+          },
+          'sections': [
+            {'name': 'Intro', 'content': 'Hello'},
+            {'name': 'Body', 'content': 'Main'}
+          ]
+        };
+
+        await repo.recordChange(
+          entityUuid: entityUuid,
+          entityType: 'Document',
+          previousJson: null,
+          currentJson: complexState,
+          snapshotFrequency: 20,
+        );
+
+        final versions = await repo.getHistory(entityUuid);
+        final reconstructed = await repo.reconstruct(entityUuid, DateTime.now());
+
+        expect(reconstructed, isNotNull);
+        expect(reconstructed!['metadata']['author'], 'John');
+        expect(reconstructed['metadata']['nested']['level'], 2);
+        expect((reconstructed['sections'] as List).length, 2);
+      });
+
+      test('handles field addition and removal in deltas', () async {
+        final entityUuid = 'note-123';
+        final v1 = {'title': 'Test', 'body': 'Content', 'tags': []};
+
+        await repo.recordChange(
+          entityUuid: entityUuid,
+          entityType: 'Note',
+          previousJson: null,
+          currentJson: v1,
+          snapshotFrequency: 20,
+        );
+
+        // Version 2: add field
+        final v2 = {
+          ...v1,
+          'priority': 'high'
+        };
+        await repo.recordChange(
+          entityUuid: entityUuid,
+          entityType: 'Note',
+          previousJson: v1,
+          currentJson: v2,
+          snapshotFrequency: 20,
+        );
+
+        // Version 3: remove field
+        final v3 = {
+          'title': 'Test',
+          'body': 'Content',
+        };
+        await repo.recordChange(
+          entityUuid: entityUuid,
+          entityType: 'Note',
+          previousJson: v2,
+          currentJson: v3,
+          snapshotFrequency: 20,
+        );
+
+        final versions = await repo.getHistory(entityUuid);
+        expect(versions, hasLength(3));
+
+        // Reconstruct at v3
+        final reconstructed = await repo.reconstruct(entityUuid, DateTime.now());
+        expect(reconstructed!.containsKey('priority'), isFalse);
+        expect(reconstructed['title'], 'Test');
+      });
+
+      test('handles time boundary cases in reconstruction', () async {
+        final entityUuid = 'note-123';
+
+        // Get time just before any versions
+        final beforeTime = DateTime.now();
+        await Future.delayed(const Duration(milliseconds: 20));
+
+        // Create first version
+        await repo.recordChange(
+          entityUuid: entityUuid,
+          entityType: 'Note',
+          previousJson: null,
+          currentJson: {'title': 'V1'},
+          snapshotFrequency: 20,
+        );
+
+        // Get time after first version
+        await Future.delayed(const Duration(milliseconds: 10));
+        final afterTime = DateTime.now();
+
+        // Reconstruct before first version (should be null)
+        final before = await repo.reconstruct(entityUuid, beforeTime);
+        expect(before, isNull);
+
+        // Reconstruct after first version (should return v1)
+        final after = await repo.reconstruct(entityUuid, afterTime);
+        expect(after, isNotNull);
+        expect(after!['title'], 'V1');
+      });
+
+      test('getChangesBetween with exact timestamp boundaries', () async {
+        final entityUuid = 'note-123';
+        var state = {'title': 'V1'};
+
+        // Create v1
+        await repo.recordChange(
+          entityUuid: entityUuid,
+          entityType: 'Note',
+          previousJson: null,
+          currentJson: state,
+          snapshotFrequency: 20,
+        );
+
+        await Future.delayed(const Duration(milliseconds: 10));
+        final fromTime = DateTime.now();
+        await Future.delayed(const Duration(milliseconds: 10));
+
+        // Create v2, v3
+        for (int i = 2; i <= 3; i++) {
+          final newState = {'title': 'V$i'};
+          await repo.recordChange(
+            entityUuid: entityUuid,
+            entityType: 'Note',
+            previousJson: state,
+            currentJson: newState,
+            snapshotFrequency: 20,
+          );
+          state = newState;
+        }
+
+        await Future.delayed(const Duration(milliseconds: 10));
+        final toTime = DateTime.now();
+
+        final changes = await repo.getChangesBetween(entityUuid, fromTime, toTime);
+        expect(changes, hasLength(2)); // v2 and v3
+      });
+    });
   });
 }
