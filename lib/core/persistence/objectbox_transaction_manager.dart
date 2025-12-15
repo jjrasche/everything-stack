@@ -2,17 +2,25 @@
 ///
 /// ## What it does
 /// ObjectBox implementation of TransactionManager.
-/// Wraps Store.runInTransactionAsync to provide platform-agnostic transaction API.
+/// Wraps Store.runInTransaction to provide platform-agnostic transaction API.
 ///
 /// ## What it enables
 /// - ACID transactions using ObjectBox native transaction support
 /// - Automatic rollback on exception
 /// - Cross-box atomic operations (Note + EntityVersion in one transaction)
+/// - VersionableHandler works atomically (Repository references serializable in same thread)
 ///
 /// ## How it works
-/// Uses Store.runInTransactionAsync with write mode.
-/// The work callback executes synchronously within the transaction.
+/// Uses Store.runInTransaction (synchronous variant) with write mode.
+/// The work callback executes synchronously within the transaction on the same thread.
 /// All box operations (put, get, query) are atomic.
+///
+/// Why runInTransaction (not runInTransactionAsync)?
+/// - Work callback is synchronous (no await needed)
+/// - No isolate spawning required (no serialization issues)
+/// - Repository references accessible directly (fixes VersionableHandler)
+/// - Simpler, cleaner code matching the callback interface contract
+/// - Same thread = no "callback across isolate boundary" problem
 ///
 /// ## Usage
 /// ```dart
@@ -41,7 +49,8 @@ import 'transaction_manager.dart';
 
 /// ObjectBox transaction coordinator.
 ///
-/// Provides ACID transactions using ObjectBox Store.runInTransactionAsync.
+/// Provides ACID transactions using ObjectBox Store.runInTransaction (synchronous).
+/// This is the correct variant for synchronous callbacks - no isolate spawning needed.
 class ObjectBoxTransactionManager implements TransactionManager {
   final Store _store;
 
@@ -52,13 +61,12 @@ class ObjectBoxTransactionManager implements TransactionManager {
     R Function(TransactionContext ctx) work, {
     List<String> objectStores = const [],  // Ignored by ObjectBox
   }) async {
-    return await _store.runInTransactionAsync<R, void>(
+    return _store.runInTransaction<R>(
       TxMode.write,
-      (txStore, _) {
-        final ctx = ObjectBoxTxContext(txStore);
+      () {
+        final ctx = ObjectBoxTxContext(_store);
         return work(ctx);
       },
-      null,
     );
   }
 }
