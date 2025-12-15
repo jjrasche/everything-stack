@@ -42,13 +42,16 @@ import '../repository_pattern_handler.dart';
 /// If chunk indexing fails, save is aborted. If entity save fails after
 /// chunks are indexed, chunks were generated but not persisted - they'll be
 /// rebuilt by SyncService. No data loss, but index may need rebuild.
+///
+/// NOTE: Chunk IDs are passed through entity object (temporary field) to avoid
+/// concurrency issues with concurrent saves of the same entity.
 class SemanticIndexableHandler<T extends BaseEntity>
     extends RepositoryPatternHandler<T> {
   final ChunkingService chunkingService;
 
-  /// Chunks generated in beforeSave, indexed in this save cycle
-  /// Stored as instance variable to pass between beforeSave and beforeSaveInTransaction
-  final Map<String, List<String>> _generatedChunks = {};
+  /// Temporary field name for passing chunk IDs between hooks
+  /// Not persisted, used only during save operation
+  static const String _tempChunkIdsField = '__tempChunkIds';
 
   SemanticIndexableHandler(this.chunkingService);
 
@@ -61,7 +64,11 @@ class SemanticIndexableHandler<T extends BaseEntity>
   /// 1. Delete old chunks from index
   /// 2. Generate (chunk + embed) new chunks from entity content
   /// 3. Insert chunks into HNSW index (in-memory)
-  /// 4. Store generated chunk IDs for transaction phase
+  /// 4. Store generated chunk IDs on entity for transaction phase
+  ///
+  /// NOTE: Chunk IDs are stored on entity (dynamic property) to avoid concurrency
+  /// issues with concurrent saves. Instance state map would be overwritten by
+  /// concurrent saves of the same entity.
   @override
   Future<void> beforeSave(T entity) async {
     if (entity is! SemanticIndexable) return;
@@ -72,8 +79,9 @@ class SemanticIndexableHandler<T extends BaseEntity>
     // Generate and index new chunks (fail-fast if fails)
     final chunks = await chunkingService.indexEntity(entity);
 
-    // Store generated chunk IDs for registration in transaction
-    _generatedChunks[entity.uuid] = chunks.map((c) => c.id).toList();
+    // Store generated chunk IDs on entity for registration in transaction
+    // Use dynamic property to pass data between hooks (thread-safe per entity)
+    (entity as dynamic).__tempChunkIds = chunks.map((c) => c.id).toList();
   }
 
   /// Register chunks within transaction (atomic with entity save).
@@ -83,16 +91,23 @@ class SemanticIndexableHandler<T extends BaseEntity>
   ///
   /// Fail-fast: if registration fails, transaction rolls back and entity is not saved.
   /// This guarantees: if entity is persisted, its chunks are registered.
+  ///
+  /// CONCURRENCY SAFETY: Chunk IDs passed through entity object (not instance state),
+  /// so concurrent saves don't interfere with each other.
   @override
   void beforeSaveInTransaction(TransactionContext ctx, T entity) {
     if (entity is! SemanticIndexable) return;
 
     // Get chunks that were generated in beforeSave
-    final chunkIds = _generatedChunks.remove(entity.uuid);
+    final chunkIds =
+        (entity as dynamic).__tempChunkIds as List<String>?;
     if (chunkIds != null && chunkIds.isNotEmpty) {
       // Register chunks in the registry so they're tracked for deletion
       chunkingService.registerChunksForEntity(entity.uuid, chunkIds);
     }
+
+    // Clean up temporary field
+    (entity as dynamic).__tempChunkIds = null;
   }
 
   /// Persist HNSW index to storage after entity is saved.
