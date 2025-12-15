@@ -51,11 +51,13 @@ class VersionableHandler<T extends BaseEntity>
     required this.getLatestVersionNumberSync,
   });
 
-  /// Record version within transaction BEFORE entity is persisted.
+  /// Record version within transaction BEFORE entity is persisted (atomic path).
   ///
   /// This is the critical piece: version recording happens inside the
   /// same transaction as entity persistence. If either fails, both
   /// are rolled back together.
+  ///
+  /// Only called when TransactionManager is provided.
   @override
   void beforeSaveInTransaction(TransactionContext ctx, T entity) {
     if (entity is! Versionable) return;
@@ -66,6 +68,64 @@ class VersionableHandler<T extends BaseEntity>
 
     // Save version first, then entity save follows
     versionRepository.saveInTx(ctx, version);
+  }
+
+  /// Record version AFTER entity is persisted (fallback for non-transactional saves).
+  ///
+  /// When TransactionManager is not provided, version recording falls back to
+  /// this async method called after the entity is persisted.
+  ///
+  /// Note: This is NOT atomic - if it fails, entity is already persisted.
+  /// Best-effort semantics: log errors but don't propagate them.
+  @override
+  Future<void> afterSave(T entity) async {
+    if (entity is! Versionable) return;
+    if (versionRepository == null) return;
+
+    try {
+      // For non-transactional saves, record version asynchronously after save
+      final previousEntity = await versionRepository.findByUuid(entity.uuid);
+      final previousJson = (previousEntity is Versionable)
+          ? (previousEntity as dynamic).toJson() as Map<String, dynamic>?
+          : null;
+
+      final currentJson = (entity as dynamic).toJson() as Map<String, dynamic>;
+
+      // Calculate version number
+      final latestVersion = await versionRepository.getLatestVersionNumber(entity.uuid);
+      final newVersionNumber = latestVersion + 1;
+
+      // Compute delta
+      final previousState = previousJson ?? {};
+      final delta = JsonDiff.diff(previousState, currentJson);
+      final deltaJson = jsonEncode(delta);
+      final changedFields = JsonDiff.extractChangedFields(previousState, currentJson);
+
+      final versionableEntity = entity as Versionable;
+      final isFirstVersion = newVersionNumber == 1;
+      final isPeriodicSnapshot = versionableEntity.snapshotFrequency != null &&
+          newVersionNumber % versionableEntity.snapshotFrequency! == 1;
+      final shouldSnapshot = isFirstVersion || isPeriodicSnapshot;
+
+      final version = EntityVersion(
+        entityType: T.toString(),
+        entityUuid: entity.uuid,
+        timestamp: DateTime.now(),
+        versionNumber: newVersionNumber,
+        deltaJson: deltaJson,
+        changedFields: changedFields,
+        isSnapshot: shouldSnapshot,
+        snapshotJson: shouldSnapshot ? jsonEncode(currentJson) : null,
+        userId: (entity as dynamic).lastModifiedBy as String?,
+      );
+
+      await versionRepository.save(version);
+    } catch (e) {
+      // Best-effort: log but don't propagate
+      // Version recording failure should not fail the entity save
+      // ignore: avoid_print
+      print('Warning: Version recording failed for entity ${entity.uuid}: $e');
+    }
   }
 
   /// Build version record synchronously for transaction.
