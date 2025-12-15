@@ -57,7 +57,21 @@ void main() {
       adapter: noteAdapter,
       embeddingService: embeddingService,
       versionRepo: versionRepo,
-      transactionManager: ObjectBoxTransactionManager(store),
+      // IMPORTANT: ObjectBox's transaction manager cannot be used with EntityRepository's
+      // transactional save path due to Dart isolate serialization limitations.
+      // ObjectBox.runInTransactionAsync uses isolates to execute callbacks, but the lambda
+      // would need to capture the repository instance (which contains the Store), and
+      // the Store cannot be serialized across isolate boundaries.
+      //
+      // Without transactionManager: VersionableHandler falls back to non-transactional
+      // version recording (calls _recordVersionChange after save). This is not atomic
+      // but maintains consistency for the demo.
+      //
+      // For production systems requiring atomic version tracking with ObjectBox,
+      // consider alternatives:
+      // - Use IndexedDB on Web (doesn't have this limitation)
+      // - Implement custom atomic operations at the adapter level
+      // - Use a different persistence backend that supports atomic transactions
     );
     noteRepo.setEdgeRepository(edgeRepo);
   });
