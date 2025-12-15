@@ -37,6 +37,8 @@ import 'repository_pattern_handler.dart';
 import 'handlers/embeddable_handler.dart';
 import 'handlers/semantic_indexable_handler.dart';
 import 'handlers/versionable_handler.dart';
+import 'handlers/edge_cascade_delete_handler.dart';
+import 'edge_repository.dart';
 import '../services/embedding_service.dart';
 import '../services/chunking_service.dart';
 
@@ -47,6 +49,7 @@ import '../services/chunking_service.dart';
 /// 1. SemanticIndexable - ephemeral, safe to fail post-save
 /// 2. Embeddable - lightweight embedding generation
 /// 3. Versionable - atomic, needs transaction
+/// 4. EdgeCascadeDelete - cascade delete edges (if EdgeRepository provided)
 ///
 /// Override createHandlers() if your entity needs different order.
 class GenericHandlerFactory<T extends BaseEntity>
@@ -55,12 +58,14 @@ class GenericHandlerFactory<T extends BaseEntity>
   final ChunkingService? chunkingService;
   final dynamic versionRepository;
   final PersistenceAdapter<T> adapter;
+  final EdgeRepository? edgeRepository;
 
   GenericHandlerFactory({
     required this.embeddingService,
     required this.chunkingService,
     required this.versionRepository,
     required this.adapter,
+    this.edgeRepository,
   });
 
   /// Create handlers in optimal execution order.
@@ -69,8 +74,13 @@ class GenericHandlerFactory<T extends BaseEntity>
   /// 1. SemanticIndexable - delete old chunks before save (ephemeral, fail-safe)
   /// 2. Embeddable - generate embeddings before save (lightweight)
   /// 3. Versionable - record changes inside transaction (atomic)
+  /// 4. EdgeCascadeDelete - cascade delete edges (if EdgeRepository provided)
   ///
   /// Handlers are only created if their service is provided.
+  ///
+  /// **Delete-specific handlers** (e.g., EdgeCascadeDelete) are added even if not
+  /// used for saves, because they hook into the delete lifecycle via
+  /// beforeDelete and beforeDeleteInTransaction.
   @override
   List<RepositoryPatternHandler<T>> createHandlers() {
     final handlerList = <RepositoryPatternHandler<T>>[];
@@ -96,6 +106,13 @@ class GenericHandlerFactory<T extends BaseEntity>
               0,
         ),
       );
+    }
+
+    // Edge cascade delete: delete edges atomically with entity
+    if (edgeRepository != null) {
+      handlerList.add(EdgeCascadeDeleteHandler<T>(
+        edgeRepository: edgeRepository!,
+      ));
     }
 
     return handlerList;

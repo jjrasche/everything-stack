@@ -199,8 +199,46 @@ abstract class RepositoryPatternHandler<T extends BaseEntity> {
   /// - Cleanup that must succeed before deletion
   ///
   /// **Do NOT use for:**
+  /// - Operations that must be atomic (use beforeDeleteInTransaction)
   /// - Post-delete operations (EntityRepository doesn't call afterDelete)
   Future<void> beforeDelete(T entity) async {}
+
+  /// Called within transaction BEFORE entity is deleted (synchronous).
+  ///
+  /// **Transactional semantics:** If this throws, transaction rolls back.
+  /// Entity is NOT deleted.
+  ///
+  /// Use for:
+  /// - Cleanup that must be atomic with entity deletion
+  /// - Cascade deletes (edges, chunks)
+  /// - Pre-delete state that must succeed or fail together with entity
+  ///
+  /// **Important:** This is SYNCHRONOUS. Async operations must use
+  /// try-catch internally or this becomes the async bottleneck.
+  ///
+  /// **Only called if:**
+  /// - EntityRepository has TransactionManager
+  /// - Handler needs atomicity with entity delete
+  ///
+  /// **Do NOT use for:**
+  /// - External async operations (network, file I/O)
+  /// - Non-atomic cleanup (use beforeDelete for those)
+  void beforeDeleteInTransaction(TransactionContext ctx, T entity) {}
+
+  /// Called within transaction AFTER entity is deleted (synchronous).
+  ///
+  /// **Transactional semantics:** If this throws, transaction rolls back.
+  ///
+  /// Use for:
+  /// - Synchronous operations that depend on entity having been deleted
+  /// - Post-delete state updates
+  ///
+  /// **Important:** This is SYNCHRONOUS within transaction.
+  ///
+  /// **Only called if:**
+  /// - EntityRepository has TransactionManager
+  /// - Handler needs post-delete atomicity
+  void afterDeleteInTransaction(TransactionContext ctx, T entity) {}
 
   /// Called after entity is deleted from database (outside transaction).
   ///

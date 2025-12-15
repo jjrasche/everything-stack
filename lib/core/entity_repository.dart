@@ -228,8 +228,10 @@ abstract class EntityRepository<T extends BaseEntity> {
   /// Delete entity by UUID from database.
   ///
   /// Orchestrates domain pattern lifecycle via handlers:
-  /// 1. beforeDelete hooks (fail-fast)
-  /// 2. Entity deleted from database
+  /// 1. beforeDelete hooks (fail-fast, outside transaction)
+  /// 2. beforeDeleteInTransaction hooks (if TransactionManager provided)
+  /// 3. Entity deleted from database
+  /// 4. afterDeleteInTransaction hooks (if TransactionManager provided)
   ///
   /// Handler execution order determines pattern integration.
   /// See RepositoryPatternHandler for semantics.
@@ -238,13 +240,54 @@ abstract class EntityRepository<T extends BaseEntity> {
     final entity = await findByUuid(uuid);
     if (entity == null) return false;
 
-    // Phase 1: beforeDelete hooks (fail-fast)
+    // Phase 1: beforeDelete hooks (fail-fast, outside transaction)
     for (final handler in handlers) {
       await handler.beforeDelete(entity);
     }
 
-    // Phase 2: Delete entity
-    return adapter.deleteByUuid(uuid);
+    // Phase 2-4: Transactional or non-transactional delete
+    return await _doDelete(entity);
+  }
+
+  /// Delete entity with transactional lifecycle hooks.
+  ///
+  /// Handles both transactional and non-transactional paths.
+  Future<bool> _doDelete(T entity) async {
+    if (transactionManager != null) {
+      // Transactional delete: beforeDeleteInTransaction, delete, afterDeleteInTransaction (all inside tx)
+      return await transactionManager!.transaction(
+        (ctx) => _deleteWithHandlersInTransaction(ctx, entity),
+        objectStores: transactionStores,
+      );
+    } else {
+      // Non-transactional delete
+      return adapter.deleteByUuid(entity.uuid);
+    }
+  }
+
+  /// Delete with handler integration within transaction.
+  ///
+  /// Transactional sequence:
+  /// 2. beforeDeleteInTransaction hooks (sync, inside tx)
+  /// 3. Entity deleted
+  /// 4. afterDeleteInTransaction hooks (sync, inside tx)
+  ///
+  /// If ANY step fails, transaction rolls back completely.
+  bool _deleteWithHandlersInTransaction(TransactionContext ctx, T entity) {
+    // Phase 2: beforeDeleteInTransaction hooks (sync, inside tx)
+    for (final handler in handlers) {
+      handler.beforeDeleteInTransaction(ctx, entity);
+    }
+
+    // Phase 3: Delete entity
+    final deleted = adapter.deleteByUuidInTx(ctx, entity.uuid);
+
+    // Phase 4: afterDeleteInTransaction hooks (sync, inside tx)
+    for (final handler in handlers) {
+      handler.afterDeleteInTransaction(ctx, entity);
+    }
+
+    return deleted;
   }
 
   /// Delete multiple entities from database.

@@ -39,6 +39,7 @@
 import 'edge.dart';
 import 'base_entity.dart' show SyncStatus;
 import 'persistence/edge_persistence_adapter.dart';
+import 'persistence/transaction_context.dart';
 
 /// Exception thrown when attempting to create a duplicate edge
 class DuplicateEdgeException implements Exception {
@@ -305,5 +306,43 @@ class EdgeRepository {
     } catch (e) {
       return null;
     }
+  }
+
+  // ============ Cascade Delete ============
+
+  /// Collect edge IDs for an entity (for cascade delete).
+  /// Queries for all edges where entityUuid is source or target.
+  /// Returns list of edge IDs to delete.
+  ///
+  /// Use this from handlers to collect IDs before transaction.
+  /// This enables atomic deletion within EntityRepository transaction.
+  Future<List<int>> getEdgeIdsForEntity(String entityUuid) async {
+    final outgoing = await findBySource(entityUuid);
+    final incoming = await findByTarget(entityUuid);
+
+    final edgeIds = <int>[];
+    for (final edge in outgoing) {
+      edgeIds.add(edge.id);
+    }
+    for (final edge in incoming) {
+      edgeIds.add(edge.id);
+    }
+
+    return edgeIds;
+  }
+
+  /// Delete edges by IDs within a transaction (synchronous, atomic).
+  /// Called from handlers within EntityRepository transaction.
+  ///
+  /// [ctx] - TransactionContext for deletion within transaction
+  /// [edgeIds] - List of edge IDs to delete (pre-computed before transaction)
+  int deleteEdgesInTx(TransactionContext ctx, List<int> edgeIds) {
+    int count = 0;
+    for (final edgeId in edgeIds) {
+      if (_adapter.deleteInTx(ctx, edgeId)) {
+        count++;
+      }
+    }
+    return count;
   }
 }

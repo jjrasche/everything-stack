@@ -41,13 +41,18 @@ class NoteRepository extends EntityRepository<Note> {
   ///
   /// Services are wired into handlers via NoteHandlerFactory.
   /// Handler factory determines which patterns are integrated.
+  ///
+  /// If edgeRepository is provided, cascade delete for edges is automatically
+  /// integrated via EdgeCascadeDeleteHandler in the handler factory.
   NoteRepository({
     required PersistenceAdapter<Note> adapter,
     EmbeddingService? embeddingService,
     ChunkingService? chunkingService,
     VersionRepository? versionRepo,
     TransactionManager? transactionManager,
+    EdgeRepository? edgeRepository,
   })  : _versionRepo = versionRepo,
+        _edgeRepo = edgeRepository,
         super(
           adapter: adapter,
           embeddingService: embeddingService ?? EmbeddingService.instance,
@@ -59,26 +64,35 @@ class NoteRepository extends EntityRepository<Note> {
             chunkingService: chunkingService,
             versionRepository: versionRepo,
             adapter: adapter,
+            edgeRepository: edgeRepository,
           ).createHandlers(),
         );
 
   /// Factory for production use - uses global singleton services.
   /// Requires EmbeddingService to be initialized globally.
   /// ChunkingService must be provided - only needed if Note implements SemanticIndexable.
+  /// EdgeRepository can be provided for cascade delete support on delete.
   factory NoteRepository.production({
     required PersistenceAdapter<Note> adapter,
     ChunkingService? chunkingService,
     VersionRepository? versionRepo,
+    EdgeRepository? edgeRepository,
   }) {
     return NoteRepository(
       adapter: adapter,
       embeddingService: EmbeddingService.instance,
       chunkingService: chunkingService,
       versionRepo: versionRepo,
+      edgeRepository: edgeRepository,
     );
   }
 
-  /// Set EdgeRepository after construction (avoids circular dependency)
+  /// Set EdgeRepository after construction (avoids circular dependency).
+  /// NOTE: This does NOT update the handlers if they were already created!
+  /// Prefer passing edgeRepository in the constructor instead.
+  ///
+  /// This method is deprecated and kept for backward compatibility only.
+  @deprecated
   void setEdgeRepository(EdgeRepository edgeRepo) {
     _edgeRepo = edgeRepo;
   }

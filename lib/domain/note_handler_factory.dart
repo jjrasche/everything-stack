@@ -11,6 +11,7 @@
 import 'package:everything_stack_template/core/generic_handler_factory.dart';
 import 'package:everything_stack_template/core/persistence/persistence_adapter.dart';
 import 'package:everything_stack_template/core/repository_pattern_handler.dart';
+import 'package:everything_stack_template/core/edge_repository.dart';
 import 'package:everything_stack_template/services/chunking_service.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
 import 'note.dart';
@@ -18,7 +19,7 @@ import 'note.dart';
 /// Factory for creating Note handlers.
 ///
 /// Inherits handler creation from GenericHandlerFactory.
-/// Handler order: SemanticIndexable → Embeddable → Versionable
+/// Handler order: SemanticIndexable → Embeddable → Versionable → EdgeCascadeDelete
 ///
 /// This is a thin wrapper that allows:
 /// 1. Type-safe Note-specific factory
@@ -30,10 +31,12 @@ class NoteHandlerFactory extends GenericHandlerFactory<Note> {
     required ChunkingService? chunkingService,
     required dynamic versionRepository,
     required PersistenceAdapter<Note> adapter,
+    EdgeRepository? edgeRepository,
   }) : super(
     embeddingService: embeddingService,
     chunkingService: chunkingService,
     versionRepository: versionRepository,
     adapter: adapter,
+    edgeRepository: edgeRepository,
   );
 }

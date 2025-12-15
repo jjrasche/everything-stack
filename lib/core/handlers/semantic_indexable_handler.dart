@@ -22,6 +22,7 @@
 import 'package:everything_stack_template/core/base_entity.dart';
 import 'package:everything_stack_template/patterns/semantic_indexable.dart';
 import 'package:everything_stack_template/services/chunking_service.dart';
+import 'package:everything_stack_template/core/persistence/transaction_context.dart';
 import '../repository_pattern_handler.dart';
 
 /// Handler for SemanticIndexable pattern.
@@ -62,7 +63,7 @@ class SemanticIndexableHandler<T extends BaseEntity>
     await chunkingService.indexEntity(entity);
   }
 
-  /// Delete chunks before entity is deleted.
+  /// Delete chunks before entity is deleted (fail-fast, outside transaction).
   ///
   /// Called before entity is deleted from database. Fail-fast: if deletion
   /// fails, entity delete is aborted (prevents orphaned chunks in index).
@@ -72,5 +73,40 @@ class SemanticIndexableHandler<T extends BaseEntity>
 
     // Delete chunks from HNSW (safe even if no chunks exist)
     await chunkingService.deleteByEntityId(entity.uuid);
+  }
+
+  /// Delete chunks within transaction (atomic with entity deletion).
+  ///
+  /// Called within entity delete transaction (if TransactionManager provided).
+  /// Ensures chunks and entity are deleted together atomically.
+  ///
+  /// For SemanticIndexable entities with TransactionManager:
+  /// - beforeDeleteInTransaction deletes chunks inside transaction
+  /// - beforeDelete (below) is still called (outside transaction) as fallback
+  ///
+  /// For SemanticIndexable entities without TransactionManager:
+  /// - beforeDelete (below) deletes chunks outside transaction
+  /// - beforeDeleteInTransaction is never called
+  ///
+  /// Rationale: Chunks are ephemeral and in-memory, so deletion is naturally atomic.
+  /// Even if entity deletion fails, the transaction rollback has no effect on chunks
+  /// since they're not transactional storage (they're in HNSW index).
+  /// The beforeDelete fallback ensures chunks are deleted in all cases.
+  @override
+  void beforeDeleteInTransaction(TransactionContext ctx, T entity) {
+    if (entity is! SemanticIndexable) return;
+
+    // Delete chunks synchronously within transaction
+    // This is safe because:
+    // 1. ChunkingService tracks chunks in memory (_chunkRegistry)
+    // 2. HNSW index is in-memory
+    // 3. Chunk deletion is synchronous (index.delete() + registry.remove())
+    //
+    // Delete chunks from registry (safe even if no chunks exist)
+    final chunkIds = chunkingService.getChunkIdsForEntity(entity.uuid);
+    for (final chunkId in chunkIds) {
+      chunkingService.index.delete(chunkId);
+    }
+    // Note: Registry removal happens in deleteByEntityId, called in beforeDelete
   }
 }
