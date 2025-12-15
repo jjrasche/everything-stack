@@ -1,0 +1,103 @@
+/// # GenericHandlerFactory
+///
+/// ## What it does
+/// Creates handler chains for ANY entity type that implements patterns.
+/// Eliminates per-entity factory boilerplate while keeping handler ordering explicit.
+///
+/// ## Design Philosophy
+/// This is the template solution: one factory for all entity types.
+/// Specific entities can override if they need custom handler ordering.
+///
+/// ## Usage
+///
+/// **Directly (most entities):**
+/// ```dart
+/// final handlers = GenericHandlerFactory<Edge>(
+///   embeddingService: embeddingService,
+///   chunkingService: chunkingService,
+///   versionRepository: versionRepository,
+///   adapter: edgeAdapter,
+/// ).createHandlers();
+/// ```
+///
+/// **Via thin wrapper (entities with custom ordering):**
+/// ```dart
+/// class NoteHandlerFactory extends GenericHandlerFactory<Note> {
+///   @override
+///   List<RepositoryPatternHandler<Note>> createHandlers() {
+///     // Custom ordering if needed
+///     return super.createHandlers();
+///   }
+/// }
+/// ```
+
+import 'base_entity.dart';
+import 'persistence/persistence_adapter.dart';
+import 'repository_pattern_handler.dart';
+import 'handlers/embeddable_handler.dart';
+import 'handlers/semantic_indexable_handler.dart';
+import 'handlers/versionable_handler.dart';
+import '../services/embedding_service.dart';
+import '../services/chunking_service.dart';
+
+/// Generic handler factory for all entity types.
+///
+/// Handles conditional handler creation based on available services.
+/// Handler order is fixed and optimal for most cases:
+/// 1. SemanticIndexable - ephemeral, safe to fail post-save
+/// 2. Embeddable - lightweight embedding generation
+/// 3. Versionable - atomic, needs transaction
+///
+/// Override createHandlers() if your entity needs different order.
+class GenericHandlerFactory<T extends BaseEntity>
+    implements RepositoryHandlerFactory<T> {
+  final EmbeddingService? embeddingService;
+  final ChunkingService? chunkingService;
+  final dynamic versionRepository;
+  final PersistenceAdapter<T> adapter;
+
+  GenericHandlerFactory({
+    required this.embeddingService,
+    required this.chunkingService,
+    required this.versionRepository,
+    required this.adapter,
+  });
+
+  /// Create handlers in optimal execution order.
+  ///
+  /// Order:
+  /// 1. SemanticIndexable - delete old chunks before save (ephemeral, fail-safe)
+  /// 2. Embeddable - generate embeddings before save (lightweight)
+  /// 3. Versionable - record changes inside transaction (atomic)
+  ///
+  /// Handlers are only created if their service is provided.
+  @override
+  List<RepositoryPatternHandler<T>> createHandlers() {
+    final handlerList = <RepositoryPatternHandler<T>>[];
+
+    // Semantic indexing: chunks are ephemeral, safe to lose if indexing fails
+    if (chunkingService != null) {
+      handlerList.add(SemanticIndexableHandler<T>(chunkingService!));
+    }
+
+    // Embedding: lightweight, can fail in afterSave without entity corruption
+    if (embeddingService != null) {
+      handlerList.add(EmbeddableHandler<T>(embeddingService!));
+    }
+
+    // Versioning: atomic, needs transaction, must succeed with entity
+    if (versionRepository != null) {
+      handlerList.add(
+        VersionableHandler<T>(
+          versionRepository: versionRepository,
+          findByUuidSync: (ctx, uuid) => adapter.findByUuidInTx(ctx, uuid),
+          getLatestVersionNumberSync: (ctx, entityUuid) =>
+              versionRepository.getLatestVersionNumberInTx(ctx, entityUuid) ??
+              0,
+        ),
+      );
+    }
+
+    return handlerList;
+  }
+}
