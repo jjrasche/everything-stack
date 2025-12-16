@@ -22,7 +22,6 @@ import 'package:everything_stack_template/services/blob_store.dart';
 import 'package:everything_stack_template/patterns/file_storable.dart';
 import 'package:everything_stack_template/core/base_entity.dart';
 import 'package:everything_stack_template/objectbox.g.dart';
-import '../harness/semantic_test_doubles.dart';
 
 void main() {
   late Store store;

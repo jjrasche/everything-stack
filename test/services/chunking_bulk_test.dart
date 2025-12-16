@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:everything_stack_template/services/chunking/chunking.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
-import '../harness/semantic_test_doubles.dart';
 
 void main() {
   late SemanticChunker chunker;

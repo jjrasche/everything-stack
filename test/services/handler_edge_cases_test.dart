@@ -17,7 +17,6 @@ import 'package:everything_stack_template/patterns/embeddable.dart';
 import 'package:everything_stack_template/patterns/semantic_indexable.dart';
 import 'package:everything_stack_template/patterns/versionable.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
-import '../harness/semantic_test_doubles.dart';
 
 // ============ Test Entities ============
 

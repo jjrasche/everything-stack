@@ -8,14 +8,19 @@ import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
-import '../harness/semantic_test_doubles.dart';
 
 void main() {
   // Store original instance to restore after tests
   late EmbeddingService originalInstance;
 
-  setUp(() {
+  setUpAll(() {
+    // Initialize with mock for testing
+    EmbeddingService.instance = MockEmbeddingService();
     originalInstance = EmbeddingService.instance;
+  });
+
+  setUp(() {
+    EmbeddingService.instance = originalInstance;
   });
 
   tearDown(() {

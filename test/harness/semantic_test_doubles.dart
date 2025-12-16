@@ -7,6 +7,14 @@
 /// - MockNoteAdapter: In-memory persistence adapter
 /// - MockNoteRepository: Repository with mock adapter
 
+/// Shared test utilities for:
+/// - MockEntityLoader: Placeholder entity loader for tests
+/// - TestNote: Simple test entity with SemanticIndexable
+/// - MockNoteAdapter: In-memory persistence adapter
+/// - MockNoteRepository: Repository with mock adapter
+/// - MockEmbeddingService: Imported from main library
+
+
 import 'dart:convert';
 import 'dart:math' show sqrt, sin;
 import 'package:everything_stack_template/core/base_entity.dart';
@@ -18,9 +26,6 @@ import 'package:everything_stack_template/services/chunking_service.dart';
 import 'package:everything_stack_template/services/semantic_search/semantic_search.dart';
 
 import 'package:everything_stack_template/core/generic_handler_factory.dart';
-
-export 'package:everything_stack_template/services/embedding_service.dart' show MockEmbeddingService;
-
 // ============ Embedding Service Mock ============
 
 /// Deterministic mock embedding service for testing.
