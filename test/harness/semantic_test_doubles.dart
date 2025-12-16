@@ -212,7 +212,7 @@ class MockNoteAdapter extends PersistenceAdapter<TestNote> {
   int _nextId = 1;
 
   @override
-  Future<TestNote> save(TestNote entity) async {
+  Future<TestNote> save(TestNote entity, {bool touch = true}) async {
     if (!_store.containsKey(entity.uuid)) {
       entity.id = _nextId++;
     }
@@ -294,7 +294,7 @@ class MockNoteAdapter extends PersistenceAdapter<TestNote> {
   List<TestNote> findAllInTx(dynamic ctx) => _store.values.toList();
 
   @override
-  TestNote saveInTx(dynamic ctx, TestNote entity) {
+  TestNote saveInTx(dynamic ctx, TestNote entity, {bool touch = true}) {
     if (!_store.containsKey(entity.uuid)) {
       entity.id = _nextId++;
     }
