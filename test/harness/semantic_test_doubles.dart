@@ -17,6 +17,9 @@ import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/chunking_service.dart';
 import 'package:everything_stack_template/services/semantic_search/semantic_search.dart';
 
+
+export 'package:everything_stack_template/services/embedding_service.dart' show MockEmbeddingService;
+
 // ============ Embedding Service Mock ============
 
 /// Deterministic mock embedding service for testing.

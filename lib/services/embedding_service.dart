@@ -44,6 +44,7 @@
 import 'dart:convert';
 import 'dart:math' as math;
 
+import 'dart:math' show sqrt, sin;
 /// Exception thrown when embedding generation fails.
 class EmbeddingServiceException implements Exception {
   final String message;
@@ -121,11 +122,106 @@ abstract class EmbeddingService {
 ///
 /// Generates deterministic embeddings based on input hash.
 /// Same input always produces same output, enabling reproducible tests.
+/// Uses FNV-1a hashing + trigonometric functions for distribution.
 ///
 /// The mock does NOT have semantic understanding - it just produces
 /// consistent vectors. Use for testing infrastructure, not semantics.
+class MockEmbeddingService extends EmbeddingService {
+  final Map<String, List<double>> _cache = {};
 
-/// Production implementation using Jina AI Embeddings API.
+  @override
+  Future<List<double>> generate(String text) async {
+    return mockEmbedding(text);
+  }
+
+  /// Generate deterministic embedding for text.
+  /// Cached for performance - same text always returns same vector.
+  List<double> mockEmbedding(String text) {
+    if (_cache.containsKey(text)) {
+      return _cache[text]!;
+    }
+
+    // Generate semantic vector based on word content
+    // Documents with shared words will have similar vectors
+    final words = _tokenize(text);
+
+    if (words.isEmpty) {
+      // Return zero vector for empty text
+      return List.filled(EmbeddingService.dimension, 0.0);
+    }
+
+    // Sum word vectors
+    final vector = List<double>.filled(EmbeddingService.dimension, 0.0);
+    for (final word in words) {
+      final wordHash = _hashString(word);
+      for (var i = 0; i < EmbeddingService.dimension; i++) {
+        vector[i] += _deterministicFloat(wordHash, i);
+      }
+    }
+
+    // Normalize to unit length
+    final normalized = _normalize(vector);
+    _cache[text] = normalized;
+    return normalized;
+  }
+
+  @override
+  Future<List<List<double>>> generateBatch(List<String> texts) async {
+    return texts.map((t) => mockEmbedding(t)).toList();
+  }
+
+  /// Tokenize text into lowercase words
+  List<String> _tokenize(String text) {
+    return text
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^\w\s]'), ' ') // Remove punctuation
+        .split(RegExp(r'\s+'))
+        .where((w) => w.isNotEmpty)
+        .toList();
+  }
+
+  /// Hash string to int using FNV-1a algorithm.
+  int _hashString(String text) {
+    const fnvPrime = 0x01000193;
+    const fnvOffset = 0x811c9dc5;
+    var hash = fnvOffset;
+
+    final bytes = utf8.encode(text);
+    for (final byte in bytes) {
+      hash ^= byte;
+      hash = (hash * fnvPrime) & 0xFFFFFFFF;
+    }
+
+    return hash;
+  }
+
+  /// Generate deterministic float from hash and index.
+  double _deterministicFloat(int hash, int index) {
+    // Combine hash with index to get unique value per dimension
+    final combined = (hash + index * 31) & 0xFFFFFFFF;
+    // Use sine for smooth distribution in [-1, 1] range
+    return sin(combined.toDouble() / 1000000);
+  }
+
+  /// Normalize vector to unit length.
+  List<double> _normalize(List<double> vector) {
+    var sumSquares = 0.0;
+    for (final v in vector) {
+      sumSquares += v * v;
+    }
+
+    if (sumSquares == 0) {
+      // Return arbitrary unit vector if input is zero
+      return List.generate(
+        vector.length,
+        (i) => i == 0 ? 1.0 : 0.0,
+      );
+    }
+
+    final norm = sqrt(sumSquares);
+    return vector.map((v) => v / norm).toList();
+  }
+}
 ///
 /// Requires API key passed to constructor or via compile-time environment.
 /// Uses jina-embeddings-v3 model with Matryoshka Representation Learning
