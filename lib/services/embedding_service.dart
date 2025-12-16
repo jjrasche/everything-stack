@@ -6,17 +6,18 @@
 ///
 /// ## Architecture
 /// Abstract interface with swappable implementations:
-/// - MockEmbeddingService: Deterministic hash-based vectors for testing
+/// - NullEmbeddingService: Production default when no API key configured (embeddings disabled)
 /// - JinaEmbeddingService: Production implementation using Jina AI API
 /// - GeminiEmbeddingService: Alternative using Google Gemini API
+/// - MockEmbeddingService: Test-only deterministic hash-based vectors
 ///
 /// ## Usage
 /// ```dart
 /// // Use default instance (configured at startup)
 /// final embedding = await EmbeddingService.instance.generate('query');
 ///
-/// // Or inject specific implementation
-/// EmbeddingService.instance = MockEmbeddingService();
+/// // Configure at app startup (see bootstrap.dart)
+/// EmbeddingService.instance = JinaEmbeddingService(apiKey: 'your-key');
 ///
 /// // Batch generation for efficiency
 /// final embeddings = await service.generateBatch(['a', 'b', 'c']);
@@ -73,8 +74,8 @@ abstract class EmbeddingService {
 
   /// Global instance for dependency injection.
   /// Set this at app startup to configure the embedding backend.
-  /// Must be set before any repository is used.
-  static late EmbeddingService instance;
+  /// Defaults to NullEmbeddingService (embeddings disabled).
+  static EmbeddingService instance = NullEmbeddingService();
 
   /// Generate embedding for a single text input.
   /// Returns vector of length [dimension].
@@ -115,6 +116,38 @@ abstract class EmbeddingService {
     if (normA == 0 || normB == 0) return 0;
 
     return dotProduct / (math.sqrt(normA) * math.sqrt(normB));
+  }
+}
+
+/// Null Object implementation for production when embeddings are disabled.
+///
+/// Returns zero vectors and logs warnings when embedding generation is attempted.
+/// Use this when no embedding API key is configured - semantic search will not work,
+/// but the application continues to function.
+///
+/// This is NOT a mock - it's intentional production behavior for graceful degradation.
+/// For testing with deterministic embeddings, use MockEmbeddingService instead.
+class NullEmbeddingService extends EmbeddingService {
+  @override
+  Future<List<double>> generate(String text) async {
+    print(
+      'Warning: NullEmbeddingService - embeddings disabled. '
+      'Configure JINA_API_KEY or GEMINI_API_KEY to enable semantic search.',
+    );
+    return List.filled(EmbeddingService.dimension, 0.0);
+  }
+
+  @override
+  Future<List<List<double>>> generateBatch(List<String> texts) async {
+    if (texts.isEmpty) return [];
+    print(
+      'Warning: NullEmbeddingService - embeddings disabled. '
+      'Returning ${texts.length} zero vectors.',
+    );
+    return List.generate(
+      texts.length,
+      (_) => List.filled(EmbeddingService.dimension, 0.0),
+    );
   }
 }
 

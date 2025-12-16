@@ -76,7 +76,11 @@ abstract class PersistenceAdapter<T extends BaseEntity> {
   ///
   /// For Embeddable entities: indexes the embedding if present.
   /// The adapter handles both document storage and vector indexing.
-  Future<T> save(T entity);
+  ///
+  /// If touch=false, skip updatedAt update. Used for background async
+  /// operations that update entities without user action (e.g., embedding
+  /// generation). Prevents updatedAt collision on side-effect updates.
+  Future<T> save(T entity, {bool touch = true});
 
   /// Batch save multiple entities.
   /// Returns entities with ids assigned.
@@ -170,7 +174,11 @@ abstract class PersistenceAdapter<T extends BaseEntity> {
   /// Platform implementations cast ctx to their specific type.
   ///
   /// Returns the entity with id assigned.
-  T saveInTx(TransactionContext ctx, T entity);
+  ///
+  /// If touch=false, skip updatedAt update. Used for background async
+  /// operations that update entities without user action (e.g., embedding
+  /// generation). Prevents updatedAt collision on side-effect updates.
+  T saveInTx(TransactionContext ctx, T entity, {bool touch = true});
 
   /// Batch save entities within a transaction (synchronous).
   ///

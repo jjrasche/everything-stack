@@ -29,12 +29,15 @@ import '../core/version_repository.dart';
 import '../core/edge_repository.dart';
 import '../services/embedding_service.dart';
 import '../services/chunking_service.dart';
+import '../services/embedding_queue_service.dart';
+import '../bootstrap.dart' show embeddingQueueService;
 import 'note.dart';
 import 'note_handler_factory.dart';
 
 class NoteRepository extends EntityRepository<Note> {
   final VersionRepository? _versionRepo;
   EdgeRepository? _edgeRepo;
+  final EmbeddingQueueService? _embeddingQueueService;
 
   /// Full constructor for testing and infrastructure setup.
   /// Requires explicit service injection.
@@ -51,8 +54,10 @@ class NoteRepository extends EntityRepository<Note> {
     VersionRepository? versionRepo,
     TransactionManager? transactionManager,
     EdgeRepository? edgeRepository,
+    EmbeddingQueueService? embeddingQueueService,
   })  : _versionRepo = versionRepo,
         _edgeRepo = edgeRepository,
+        _embeddingQueueService = embeddingQueueService,
         super(
           adapter: adapter,
           embeddingService: embeddingService ?? EmbeddingService.instance,
@@ -70,7 +75,7 @@ class NoteRepository extends EntityRepository<Note> {
 
   /// Factory for production use - uses global singleton services.
   /// Requires EmbeddingService to be initialized globally.
-  /// ChunkingService must be provided - only needed if Note implements SemanticIndexable.
+  /// Uses global embeddingQueueService for background embedding generation.
   /// EdgeRepository can be provided for cascade delete support on delete.
   factory NoteRepository.production({
     required PersistenceAdapter<Note> adapter,
@@ -84,6 +89,7 @@ class NoteRepository extends EntityRepository<Note> {
       chunkingService: chunkingService,
       versionRepo: versionRepo,
       edgeRepository: edgeRepository,
+      embeddingQueueService: embeddingQueueService, // Use global instance
     );
   }
 
@@ -95,6 +101,32 @@ class NoteRepository extends EntityRepository<Note> {
   @deprecated
   void setEdgeRepository(EdgeRepository edgeRepo) {
     _edgeRepo = edgeRepo;
+  }
+
+  // ============ Repository Overrides ============
+
+  /// Override save to enqueue background embedding generation.
+  /// Save completes immediately, embedding happens asynchronously.
+  @override
+  Future<int> save(Note entity) async {
+    // Save entity first (returns immediately)
+    final id = await super.save(entity);
+
+    // Enqueue for background embedding if queue service is available
+    if (_embeddingQueueService != null) {
+      // Combine title and content for embedding
+      final textToEmbed = '${entity.title}\n${entity.content}'.trim();
+
+      if (textToEmbed.isNotEmpty) {
+        await _embeddingQueueService!.enqueue(
+          entityUuid: entity.uuid,
+          entityType: 'Note',
+          text: textToEmbed,
+        );
+      }
+    }
+
+    return id;
   }
 
   // ============ Note-specific queries ============

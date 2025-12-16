@@ -233,9 +233,14 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity, OB>
   }
 
   @override
-  Future<T> save(T entity) async {
+  Future<T> save(T entity, {bool touch = true}) async {
     return _executeAsyncWithExceptionHandling(() async {
-      _touchIfNeeded(entity);
+      if (touch) {
+        _touchIfNeeded(entity);
+      }
+      // If touch=false, skip updatedAt update. Used for background async
+      // operations that update entities without user action (e.g., embedding
+      // generation). Prevents updatedAt collision on side-effect updates.
       final ob = toOB(entity);
       final id = _box.put(ob);
       entity.id = id;
@@ -340,10 +345,15 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity, OB>
   }
 
   @override
-  T saveInTx(TransactionContext ctx, T entity) {
+  T saveInTx(TransactionContext ctx, T entity, {bool touch = true}) {
     return _executeWithExceptionHandling(() {
       final box = _getBox(ctx);
-      _touchIfNeeded(entity);
+      if (touch) {
+        _touchIfNeeded(entity);
+      }
+      // If touch=false, skip updatedAt update. Used for background async
+      // operations that update entities without user action (e.g., embedding
+      // generation). Prevents updatedAt collision on side-effect updates.
       final ob = toOB(entity);
       final id = box.put(ob);
       entity.id = id;

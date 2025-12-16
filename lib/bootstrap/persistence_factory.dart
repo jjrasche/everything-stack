@@ -15,9 +15,12 @@ class PersistenceFactory {
   final dynamic versionAdapter;
 
   /// Platform-specific close handle (Store for ObjectBox, Database for IndexedDB).
-  /// Kept for potential future use (diagnostic access, forced cleanup).
-  // ignore: unused_field
+  /// Used by background services (e.g., EmbeddingQueueService) that need direct access.
   final dynamic _handle;
+
+  /// Get the underlying store (ObjectBox Store on native, Database on web).
+  /// Required by services that need direct Box access (e.g., EmbeddingQueueService).
+  dynamic get store => _handle;
 
   PersistenceFactory({
     required this.noteAdapter,

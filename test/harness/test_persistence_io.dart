@@ -12,8 +12,11 @@ import 'package:everything_stack_template/persistence/objectbox/entity_version_o
 Directory? _testDir;
 Store? _store;
 
+/// Platform detection - returns false for native (IO) platforms
+bool detectWebPlatform() => false;
+
 /// Initialize ObjectBox test persistence in temporary directory.
-Future<PersistenceFactory> initTestPersistence() async {
+Future<PersistenceFactory> initializeTestPersistence() async {
   // Create temporary directory for ObjectBox store
   _testDir = await Directory.systemTemp.createTemp('objectbox_test_');
 

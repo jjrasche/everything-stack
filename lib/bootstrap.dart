@@ -35,6 +35,9 @@ import 'services/file_service.dart';
 import 'services/sync_service.dart';
 import 'services/connectivity_service.dart';
 import 'services/embedding_service.dart';
+import 'services/embedding_queue_service.dart';
+import 'domain/note.dart';
+import 'persistence/objectbox/note_objectbox_adapter.dart';
 
 // Conditional import for platform-specific BlobStore
 import 'bootstrap/blob_store_factory_stub.dart'
@@ -149,6 +152,10 @@ class EverythingStackConfig {
 /// Initialized by initializeEverythingStack() and used by repositories.
 PersistenceFactory? _persistenceFactory;
 
+/// Global embedding queue service instance.
+/// Initialized by initializeEverythingStack() and used by NoteRepository.
+EmbeddingQueueService? _embeddingQueueService;
+
 /// Get the initialized persistence factory.
 /// Throws if initializeEverythingStack() hasn't been called.
 PersistenceFactory get persistenceFactory {
@@ -159,6 +166,10 @@ PersistenceFactory get persistenceFactory {
   }
   return _persistenceFactory!;
 }
+
+/// Get the initialized embedding queue service.
+/// Returns null if not initialized (embeddings disabled).
+EmbeddingQueueService? get embeddingQueueService => _embeddingQueueService;
 
 Future<void> initializeEverythingStack({
   EverythingStackConfig? config,
@@ -211,7 +222,22 @@ Future<void> initializeEverythingStack({
       httpClient: defaultHttpClient,
     );
   }
-  // else: keeps MockEmbeddingService default
+  // else: keeps NullEmbeddingService default (embeddings disabled)
+
+  // 7. Initialize EmbeddingQueueService (optional - requires embedding service)
+  if (EmbeddingService.instance is! NullEmbeddingService) {
+    final store = _persistenceFactory!.store;
+    final noteAdapter = NoteObjectBoxAdapter(store);
+
+    _embeddingQueueService = EmbeddingQueueService(
+      store: store,
+      embeddingService: EmbeddingService.instance,
+      noteAdapter: noteAdapter,
+    );
+
+    await _embeddingQueueService!.start();
+    print('EmbeddingQueueService initialized and started');
+  }
 }
 
 /// Initialize with mock services (for testing).
@@ -231,6 +257,11 @@ Future<void> _initializeMocks() async {
 
 /// Dispose all services (call on app shutdown if needed).
 Future<void> disposeEverythingStack() async {
+  // Stop embedding queue first (flush pending tasks)
+  if (_embeddingQueueService != null) {
+    await _embeddingQueueService!.stop(flushPending: true);
+  }
+
   await _persistenceFactory?.close();
   FileService.instance.dispose();
   BlobStore.instance.dispose();

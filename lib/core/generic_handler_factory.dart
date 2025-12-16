@@ -35,7 +35,6 @@ import 'base_entity.dart';
 import 'persistence/persistence_adapter.dart';
 import 'repository_pattern_handler.dart';
 import 'handlers/embeddable_handler.dart';
-import 'handlers/semantic_indexable_handler.dart';
 import 'handlers/versionable_handler.dart';
 import 'handlers/edge_cascade_delete_handler.dart';
 import 'edge_repository.dart';
@@ -85,15 +84,9 @@ class GenericHandlerFactory<T extends BaseEntity>
   List<RepositoryPatternHandler<T>> createHandlers() {
     final handlerList = <RepositoryPatternHandler<T>>[];
 
-    // Semantic indexing: chunks are ephemeral, safe to lose if indexing fails
-    if (chunkingService != null) {
-      handlerList.add(SemanticIndexableHandler<T>(chunkingService!));
-    }
-
-    // Embedding: lightweight, can fail in afterSave without entity corruption
-    if (embeddingService != null) {
-      handlerList.add(EmbeddableHandler<T>(embeddingService!));
-    }
+    // SemanticIndexableHandler and EmbeddableHandler removed
+    // All embedding generation now happens asynchronously via EmbeddingQueueService
+    // This prevents blocking saves on API calls and enables batch processing
 
     // Versioning: atomic, needs transaction, must succeed with entity
     if (versionRepository != null) {

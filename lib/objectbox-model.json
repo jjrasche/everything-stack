@@ -282,10 +282,66 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "7:972571647561966209",
+      "lastPropertyId": "9:7056299683293053218",
+      "name": "EmbeddingTask",
+      "properties": [
+        {
+          "id": "1:7712668945623866137",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:8896777171818547187",
+          "name": "entityUuid",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "19:5323546749645590333"
+        },
+        {
+          "id": "3:2867095632096537709",
+          "name": "entityType",
+          "type": 9
+        },
+        {
+          "id": "4:5001390272470959143",
+          "name": "text",
+          "type": 9
+        },
+        {
+          "id": "5:8125161250120508788",
+          "name": "dbTaskStatus",
+          "type": 2
+        },
+        {
+          "id": "6:2257710141904480491",
+          "name": "retryCount",
+          "type": 6
+        },
+        {
+          "id": "7:6796198366278685156",
+          "name": "enqueuedAt",
+          "type": 10
+        },
+        {
+          "id": "8:7552976627570014699",
+          "name": "lastAttemptAt",
+          "type": 10
+        },
+        {
+          "id": "9:7056299683293053218",
+          "name": "lastError",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "6:3999569737911974565",
-  "lastIndexId": "18:3398258189838926374",
+  "lastEntityId": "7:972571647561966209",
+  "lastIndexId": "19:5323546749645590333",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
