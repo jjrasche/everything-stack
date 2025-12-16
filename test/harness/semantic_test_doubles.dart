@@ -17,6 +17,7 @@ import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/chunking_service.dart';
 import 'package:everything_stack_template/services/semantic_search/semantic_search.dart';
 
+import 'package:everything_stack_template/core/generic_handler_factory.dart';
 
 export 'package:everything_stack_template/services/embedding_service.dart' show MockEmbeddingService;
 
@@ -150,6 +151,9 @@ class TestNote extends BaseEntity with SemanticIndexable {
   }
 
   late String _uuid;
+  
+  // Support dynamic property access for semantic indexing handler
+  final Map<String, dynamic> _dynamicProperties = {};
 
   @override
   String get uuid => _uuid;
@@ -163,10 +167,19 @@ class TestNote extends BaseEntity with SemanticIndexable {
   String getChunkingConfig() {
     return 'parent';
   }
+  
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    if (invocation.isGetter) {
+      return _dynamicProperties[invocation.memberName.toString()];
+    } else if (invocation.isSetter) {
+      final name = invocation.memberName.toString().replaceFirst('=', '');
+      _dynamicProperties[name] = invocation.positionalArguments[0];
+      return null;
+    }
+    return super.noSuchMethod(invocation);
+  }
 }
-
-// ============ Non-Indexable Test Entity ============
-
 class TestNoteNonIndexable extends BaseEntity {
   String title;
   String content;
@@ -314,6 +327,13 @@ class MockNoteRepository extends EntityRepository<TestNote> {
     adapter: adapter,
     embeddingService: embeddingService,
     chunkingService: chunkingService,
+    handlers: GenericHandlerFactory<TestNote>(
+      embeddingService: embeddingService,
+      chunkingService: chunkingService,
+      versionRepository: null,
+      adapter: adapter,
+      edgeRepository: null,
+    ).createHandlers(),
   );
 
   // Helper for testing non-SemanticIndexable entities
