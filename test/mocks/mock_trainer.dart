@@ -1,7 +1,26 @@
 /// Mock Trainer for testing Intent Engine learning loop
 /// Captures failure signals, success signals, and null intents for analysis
+/// Implements the abstract Trainer interface from ToolExecutor
 
-class MockTrainer {
+// Abstract Trainer interface (defined in tool_executor)
+abstract class Trainer {
+  void recordSuccess({
+    required String tool,
+    required Map<String, dynamic> slotsUsed,
+    required String reasoning,
+    Map<String, dynamic>? metadata,
+  });
+
+  void recordFailure({
+    required String tool,
+    required String failureType,
+    required String message,
+    String? slotAffected,
+    double? slotConfidenceAtFailure,
+  });
+}
+
+class MockTrainer implements Trainer {
   /// Last failure signal received
   Map<String, dynamic>? lastFailureSignal;
 
@@ -21,14 +40,13 @@ class MockTrainer {
   final List<Map<String, dynamic>> nullIntentHistory = [];
 
   /// Record a tool execution failure for training
+  /// Matches abstract Trainer interface from ToolExecutor
+  @override
   void recordFailure({
     required String tool,
     required String failureType,
     required String message,
     String? slotAffected,
-    String? originalUtterance,
-    Map<String, dynamic>? attemptedSlots,
-    List<String>? ambiguousValues,
     double? slotConfidenceAtFailure,
   }) {
     lastFailureSignal = {
@@ -36,9 +54,6 @@ class MockTrainer {
       'failure_type': failureType,
       'message': message,
       'slot_affected': slotAffected,
-      'original_utterance': originalUtterance,
-      'attempted_slots': attemptedSlots,
-      'ambiguous_values': ambiguousValues,
       'slot_confidence_at_failure': slotConfidenceAtFailure,
       'timestamp': DateTime.now(),
     };
@@ -47,19 +62,19 @@ class MockTrainer {
   }
 
   /// Record a successful tool execution for training
+  /// Matches abstract Trainer interface from ToolExecutor
+  @override
   void recordSuccess({
-    required String utterance,
-    required Map<String, dynamic> intent,
-    required dynamic executionResult,
-    Map<String, dynamic>? slotsUsed,
-    Map<String, num>? slotConfidenceAtExecution,
+    required String tool,
+    required Map<String, dynamic> slotsUsed,
+    required String reasoning,
+    Map<String, dynamic>? metadata,
   }) {
     lastSuccess = {
-      'utterance': utterance,
-      'tool': intent['tool'],
-      'slotsUsed': slotsUsed ?? intent['slots'],
-      'slot_confidence_at_execution': slotConfidenceAtExecution ?? intent['slot_confidence'],
-      'reasoning': intent['reasoning'],
+      'tool': tool,
+      'slotsUsed': slotsUsed,
+      'reasoning': reasoning,
+      'metadata': metadata,
       'execution_status': 'success',
       'timestamp': DateTime.now(),
     };
