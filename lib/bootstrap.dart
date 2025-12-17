@@ -36,6 +36,9 @@ import 'services/sync_service.dart';
 import 'services/connectivity_service.dart';
 import 'services/embedding_service.dart';
 import 'services/embedding_queue_service.dart';
+import 'services/stt_service.dart';
+import 'services/tts_service.dart';
+import 'services/llm_service.dart';
 import 'domain/note.dart';
 import 'persistence/objectbox/note_objectbox_adapter.dart';
 
@@ -50,7 +53,9 @@ import 'bootstrap/persistence_factory_stub.dart'
     if (dart.library.html) 'bootstrap/persistence_factory_web.dart';
 
 import 'bootstrap/http_client.dart';
+import 'bootstrap/timeout_http_client.dart';
 import 'bootstrap/persistence_factory.dart';
+import 'package:http/http.dart' as http;
 
 /// Configuration for Everything Stack initialization.
 class EverythingStackConfig {
@@ -66,6 +71,15 @@ class EverythingStackConfig {
   /// Gemini API key for embeddings (alternative to Jina)
   final String? geminiApiKey;
 
+  /// Deepgram API key for speech-to-text (optional - STT disabled if not provided)
+  final String? deepgramApiKey;
+
+  /// Google Cloud API key for text-to-speech (optional - TTS disabled if not provided)
+  final String? googleTtsApiKey;
+
+  /// Anthropic API key for Claude LLM (optional - LLM disabled if not provided)
+  final String? claudeApiKey;
+
   /// Whether to use mock services (for testing)
   final bool useMocks;
 
@@ -74,6 +88,9 @@ class EverythingStackConfig {
     this.supabaseAnonKey,
     this.jinaApiKey,
     this.geminiApiKey,
+    this.deepgramApiKey,
+    this.googleTtsApiKey,
+    this.claudeApiKey,
     this.useMocks = false,
   });
 
@@ -86,6 +103,9 @@ class EverythingStackConfig {
       supabaseAnonKey: _envOrNull('SUPABASE_ANON_KEY'),
       jinaApiKey: _envOrNull('JINA_API_KEY'),
       geminiApiKey: _envOrNull('GEMINI_API_KEY'),
+      deepgramApiKey: _envOrNull('DEEPGRAM_API_KEY'),
+      googleTtsApiKey: _envOrNull('GOOGLE_TTS_API_KEY'),
+      claudeApiKey: _envOrNull('CLAUDE_API_KEY'),
     );
   }
 
@@ -95,6 +115,9 @@ class EverythingStackConfig {
   static const _supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
   static const _jinaApiKey = String.fromEnvironment('JINA_API_KEY');
   static const _geminiApiKey = String.fromEnvironment('GEMINI_API_KEY');
+  static const _deepgramApiKey = String.fromEnvironment('DEEPGRAM_API_KEY');
+  static const _googleTtsApiKey = String.fromEnvironment('GOOGLE_TTS_API_KEY');
+  static const _claudeApiKey = String.fromEnvironment('CLAUDE_API_KEY');
 
   static String? _envOrNull(String key) {
     switch (key) {
@@ -106,6 +129,12 @@ class EverythingStackConfig {
         return _jinaApiKey.isEmpty ? null : _jinaApiKey;
       case 'GEMINI_API_KEY':
         return _geminiApiKey.isEmpty ? null : _geminiApiKey;
+      case 'DEEPGRAM_API_KEY':
+        return _deepgramApiKey.isEmpty ? null : _deepgramApiKey;
+      case 'GOOGLE_TTS_API_KEY':
+        return _googleTtsApiKey.isEmpty ? null : _googleTtsApiKey;
+      case 'CLAUDE_API_KEY':
+        return _claudeApiKey.isEmpty ? null : _claudeApiKey;
       default:
         return null;
     }
@@ -181,6 +210,10 @@ Future<void> initializeEverythingStack({
     return;
   }
 
+  // 0. Create timeout-wrapped HTTP client (Layer 1 defense)
+  final timeoutClient = TimeoutHttpClient(http.Client());
+  final wrappedHttpClient = _wrapHttpClientWithTimeout(timeoutClient);
+
   // 1. Initialize Persistence (platform-specific: ObjectBox or IndexedDB)
   _persistenceFactory = await initializePersistence();
 
@@ -214,12 +247,12 @@ Future<void> initializeEverythingStack({
   if (cfg.jinaApiKey != null && cfg.jinaApiKey!.isNotEmpty) {
     EmbeddingService.instance = JinaEmbeddingService(
       apiKey: cfg.jinaApiKey,
-      httpClient: defaultHttpClient,
+      httpClient: wrappedHttpClient,
     );
   } else if (cfg.geminiApiKey != null && cfg.geminiApiKey!.isNotEmpty) {
     EmbeddingService.instance = GeminiEmbeddingService(
       apiKey: cfg.geminiApiKey,
-      httpClient: defaultHttpClient,
+      httpClient: wrappedHttpClient,
     );
   }
   // else: keeps NullEmbeddingService default (embeddings disabled)
@@ -238,6 +271,57 @@ Future<void> initializeEverythingStack({
     await _embeddingQueueService!.start();
     print('EmbeddingQueueService initialized and started');
   }
+
+  // 8. Initialize STTService (optional - requires Deepgram API key)
+  if (cfg.deepgramApiKey != null && cfg.deepgramApiKey!.isNotEmpty) {
+    final sttService = DeepgramSTTService(apiKey: cfg.deepgramApiKey!);
+    await sttService.initialize();
+    STTService.instance = sttService;
+    print('STTService initialized (Deepgram)');
+  }
+  // else: keeps NullSTTService default
+
+  // 9. Initialize TTSService (optional - requires Google Cloud API key)
+  if (cfg.googleTtsApiKey != null && cfg.googleTtsApiKey!.isNotEmpty) {
+    final ttsService = GoogleTTSService(apiKey: cfg.googleTtsApiKey!);
+    await ttsService.initialize();
+    TTSService.instance = ttsService;
+    print('TTSService initialized (Google Cloud)');
+  }
+  // else: keeps NullTTSService default
+
+  // 10. Initialize LLMService (optional - requires Claude API key)
+  if (cfg.claudeApiKey != null && cfg.claudeApiKey!.isNotEmpty) {
+    final llmService = ClaudeService(apiKey: cfg.claudeApiKey!);
+    await llmService.initialize();
+    LLMService.instance = llmService;
+    print('LLMService initialized (Claude)');
+  }
+  // else: keeps NullLLMService default
+}
+
+/// Wrap TimeoutHttpClient to match HttpClientFunction signature.
+///
+/// This adapts the package:http Client to the HttpClientFunction type
+/// expected by embedding services.
+HttpClientFunction _wrapHttpClientWithTimeout(http.Client client) {
+  return (String url, Map<String, String> headers, String body) async {
+    final response = await client.post(
+      Uri.parse(url),
+      headers: headers,
+      body: body,
+    );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return response.body;
+    }
+
+    throw HttpClientException(
+      'HTTP ${response.statusCode}: ${response.reasonPhrase}',
+      statusCode: response.statusCode,
+      body: response.body,
+    );
+  };
 }
 
 /// Initialize with mock services (for testing).
@@ -262,6 +346,12 @@ Future<void> disposeEverythingStack() async {
     await _embeddingQueueService!.stop(flushPending: true);
   }
 
+  // Dispose streaming services
+  STTService.instance.dispose();
+  TTSService.instance.dispose();
+  LLMService.instance.dispose();
+
+  // Dispose other services
   await _persistenceFactory?.close();
   FileService.instance.dispose();
   BlobStore.instance.dispose();
