@@ -2,23 +2,7 @@
 /// Captures failure signals, success signals, and null intents for analysis
 /// Implements the abstract Trainer interface from ToolExecutor
 
-// Abstract Trainer interface (defined in tool_executor)
-abstract class Trainer {
-  void recordSuccess({
-    required String tool,
-    required Map<String, dynamic> slotsUsed,
-    required String reasoning,
-    Map<String, dynamic>? metadata,
-  });
-
-  void recordFailure({
-    required String tool,
-    required String failureType,
-    required String message,
-    String? slotAffected,
-    double? slotConfidenceAtFailure,
-  });
-}
+import 'package:everything_stack_template/services/tool_executor/tool_executor.dart';
 
 class MockTrainer implements Trainer {
   /// Last failure signal received
@@ -138,10 +122,9 @@ class MockTrainer implements Trainer {
       }
     }
 
-    return slotFailureCounts.entries
-        .sorted((a, b) => b.value.compareTo(a.value))
-        .map((e) => e.key)
-        .toList();
+    final sorted = slotFailureCounts.entries.toList();
+    sorted.sort((a, b) => b.value.compareTo(a.value));
+    return sorted.map((e) => e.key).toList();
   }
 
   /// Reset trainer state
@@ -168,14 +151,5 @@ class MockTrainer implements Trainer {
       'most_common_failure': getMostCommonFailureType(),
       'most_failed_slots': getMostFailedSlots(),
     };
-  }
-}
-
-extension on List<MapEntry<String, int>> {
-  List<MapEntry<String, int>> sorted(
-      int Function(MapEntry<String, int>, MapEntry<String, int>) compare) {
-    final copy = [...this];
-    copy.sort(compare);
-    return copy;
   }
 }

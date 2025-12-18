@@ -28,7 +28,7 @@
 /// }
 
 import 'dart:convert';
-import 'package:everything_stack/services/llm_service.dart';
+import 'package:everything_stack_template/services/llm_service.dart';
 import 'tool_registry.dart';
 
 export 'tool_registry.dart';

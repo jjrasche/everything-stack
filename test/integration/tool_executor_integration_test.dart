@@ -1,7 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:everything_stack/services/tool_executor/tool_executor.dart';
-import 'package:everything_stack/services/tool_executor/mock_tools.dart';
-import 'package:everything_stack/services/intent_engine/tool_registry.dart';
+import 'package:everything_stack_template/services/tool_executor/tool_executor.dart';
+import 'package:everything_stack_template/services/tool_executor/mock_tools.dart';
+import 'package:everything_stack_template/services/intent_engine/tool_registry.dart';
+import 'package:everything_stack_template/services/intent_engine/intent_engine.dart';
 import '../mocks/mock_trainer.dart';
 
 void main() {
@@ -106,7 +107,8 @@ void main() {
       expect(result.failure, isNotNull);
       expect(result.failure!.type, equals(ExecutionFailureType.requiredSlotMissing));
       expect(result.failure!.slotName, equals('target'));
-      expect(trainer.lastFailureSignal['slot_affected'], equals('target'));
+      expect(trainer.lastFailureSignal, isNotNull);
+      expect(trainer.lastFailureSignal!['slot_affected'], equals('target'));
     });
 
     test('rejects intent with invalid slot type (duration malformed)', () async {
@@ -327,7 +329,7 @@ void main() {
 
       expect(result.status, equals(ExecutionStatus.failed));
       expect(result.failure!.type, equals(ExecutionFailureType.toolReturnedFailure));
-      expect(result.failure!.message, containsString('not found'));
+      expect(result.failure!.message, contains('not found'));
 
       // Trainer should receive the failure signal
       expect(trainer.lastFailureSignal, isNotNull);

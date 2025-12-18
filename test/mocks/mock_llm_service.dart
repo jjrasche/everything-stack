@@ -1,7 +1,7 @@
 /// Mock LLMService for testing Intent Engine
 /// Returns pre-configured JSON responses as token streams
 
-import 'package:everything_stack/services/llm_service.dart';
+import 'package:everything_stack_template/services/llm_service.dart';
 
 class MockLLMService extends LLMService {
   /// Pre-configured JSON response to return

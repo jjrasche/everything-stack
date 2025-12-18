@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:everything_stack/services/intent_engine/intent_engine.dart';
-import 'package:everything_stack/services/intent_engine/tool_registry.dart';
-import 'package:everything_stack/services/llm_service.dart';
+import 'package:everything_stack_template/services/intent_engine/intent_engine.dart';
+import 'package:everything_stack_template/services/intent_engine/tool_registry.dart';
+import 'package:everything_stack_template/services/llm_service.dart';
 import '../mocks/mock_llm_service.dart';
 
 void main() {
@@ -147,11 +147,11 @@ void main() {
       final systemPrompt = call['systemPrompt'] as String;
 
       // System prompt should contain tool definitions
-      expect(systemPrompt, containsString('REMINDER'));
-      expect(systemPrompt, containsString('MESSAGE'));
-      expect(systemPrompt, containsString('ALARM'));
-      expect(systemPrompt, containsString('Set a reminder'));
-      expect(systemPrompt, containsString('Send a message'));
+      expect(systemPrompt, contains('REMINDER'));
+      expect(systemPrompt, contains('MESSAGE'));
+      expect(systemPrompt, contains('ALARM'));
+      expect(systemPrompt, contains('Set a reminder'));
+      expect(systemPrompt, contains('Send a message'));
     });
 
     test('passes conversation history to LLM', () async {
@@ -198,8 +198,8 @@ void main() {
       final userMessage = call['userMessage'] as String;
 
       // Entity context should be in user message
-      expect(userMessage, containsString('contacts'));
-      expect(userMessage, containsString('mom'));
+      expect(userMessage, contains('contacts'));
+      expect(userMessage, contains('mom'));
     });
 
     test('rejects intent with tool not in registry', () async {
@@ -223,8 +223,8 @@ void main() {
           history: [],
           entities: {},
         ),
-        throwsA(isA<UnknownToolException>()),
-        reason: 'Should reject tool not in registry',
+        throwsA(isA<IntentClassificationException>()),
+        reason: 'Should reject tool not in registry (wrapped in IntentClassificationException)',
       );
     });
 

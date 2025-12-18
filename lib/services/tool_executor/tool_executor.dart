@@ -9,10 +9,12 @@
 ///
 /// Tool implementations themselves are mocked (don't do real actions)
 
-import 'package:everything_stack/services/intent_engine/tool_registry.dart';
+import 'package:everything_stack_template/services/intent_engine/tool_registry.dart';
+import 'package:everything_stack_template/services/intent_engine/intent_engine.dart';
 import 'slot_type_validator.dart';
 
 export 'slot_type_validator.dart';
+export 'package:everything_stack_template/services/intent_engine/intent_engine.dart' show Intent;
 
 enum ExecutionFailureType {
   requiredSlotMissing,    // Required slot is null
@@ -77,43 +79,7 @@ abstract class Tool {
   Future<ToolResult> invoke(Map<String, dynamic> slots);
 }
 
-class Intent {
-  final String tool;
-  final Map<String, dynamic> slots;
-  final String reasoning;
-  final Map<String, num> slotConfidence;
-  final int executionOrder;
-
-  Intent({
-    required this.tool,
-    required this.slots,
-    required this.reasoning,
-    required this.slotConfidence,
-    required this.executionOrder,
-  });
-
-  /// Deserialize from Claude's JSON response
-  static Intent fromJson(Map<String, dynamic> json) {
-    return Intent(
-      tool: json['tool'] as String,
-      slots: Map<String, dynamic>.from(json['slots'] as Map),
-      reasoning: json['reasoning'] as String,
-      slotConfidence: Map<String, num>.from(json['slot_confidence'] as Map),
-      executionOrder: json['execution_order'] as int,
-    );
-  }
-
-  /// Serialize to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'tool': tool,
-      'slots': slots,
-      'reasoning': reasoning,
-      'slot_confidence': slotConfidence,
-      'execution_order': executionOrder,
-    };
-  }
-}
+// Intent is defined in intent_engine.dart and exported above
 
 class ExecutionResult {
   final ExecutionStatus status;
@@ -188,11 +154,12 @@ class ToolExecutor {
       final slotValue = intent.slots[slotName];
 
       if (isRequired && slotValue == null) {
+        final confidence = intent.slotConfidence[slotName];
         final failure = ExecutionFailure(
           type: ExecutionFailureType.requiredSlotMissing,
           message: 'Required slot "$slotName" is null',
           slotName: slotName,
-          slotConfidence: intent.slotConfidence[slotName] ?? 0.0,
+          slotConfidence: confidence != null ? confidence.toDouble() : 0.0,
         );
 
         trainer.recordFailure(
