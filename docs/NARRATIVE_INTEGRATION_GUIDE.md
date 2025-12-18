@@ -184,6 +184,33 @@ if (delta.hasChanges) {
 await trainer.recordNarrativeDelta(delta);
 ```
 
+## 5. Embedding Service Configuration
+
+NarrativeRepository uses `EmbeddingService.instance` for semantic search. Configure at bootstrap:
+
+```dart
+// In bootstrap, pick ONE embedding provider:
+
+// Option 1: Jina (if JINA_API_KEY set)
+if (cfg.jinaApiKey != null) {
+  EmbeddingService.instance = JinaEmbeddingService(apiKey: cfg.jinaApiKey);
+}
+
+// Option 2: Gemini (if GEMINI_API_KEY set)
+else if (cfg.geminiApiKey != null) {
+  EmbeddingService.instance = GeminiEmbeddingService(apiKey: cfg.geminiApiKey);
+}
+
+// Option 3: Local ONNX model (recommended for offline-first)
+// else if (!kIsWeb) {
+//   EmbeddingService.instance = OnnxEmbeddingService(modelPath: '...');
+// }
+
+// Default: NullEmbeddingService (embeddings disabled - semantic search unavailable)
+```
+
+**Key**: NarrativeRepository is agnostic about provider. Just inject whatever EmbeddingService is configured.
+
 ## 6. ObjectBox Model Update
 
 Update `lib/objectbox.dart` to include `NarrativeEntry`:

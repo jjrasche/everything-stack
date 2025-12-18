@@ -4,11 +4,14 @@
 /// Repository for NarrativeEntry entities. Manages CRUD operations,
 /// scope-based queries, and semantic search across narrative entries.
 ///
+/// Uses EmbeddingService abstraction - works with any provider (Jina, Gemini, local ONNX, etc.)
+///
 /// ## Usage - Production
 /// ```dart
 /// final adapter = NarrativeObjectBoxAdapter(store);
 /// final repo = NarrativeRepository.production(
 ///   adapter: adapter,
+///   // Uses global EmbeddingService.instance (configured at bootstrap)
 /// );
 /// ```
 ///
