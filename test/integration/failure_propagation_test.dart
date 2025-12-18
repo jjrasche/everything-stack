@@ -1,30 +1,30 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:everything_stack/services/intent_engine/intent_engine.dart';
 import 'package:everything_stack/services/tool_executor/tool_executor.dart';
-import '../mocks/mock_chat_service.dart';
+import '../mocks/mock_llm_service.dart';
 import '../mocks/mock_tool_executor.dart';
 import '../mocks/mock_trainer.dart';
 
 void main() {
   group('Failure Propagation to Trainer', () {
     late IntentEngine intentEngine;
-    late MockChatService mockChatService;
+    late MockLLMService mockLLMService;
     late MockToolExecutor mockExecutor;
     late MockTrainer mockTrainer;
 
     setUp(() {
-      mockChatService = MockChatService();
+      mockLLMService = MockLLMService();
       mockExecutor = MockToolExecutor();
       mockTrainer = MockTrainer();
       intentEngine = IntentEngine(
-        chatService: mockChatService,
+        chatService: mockLLMService,
         executor: mockExecutor,
         trainer: mockTrainer,
       );
     });
 
     test('tool execution failure returns error signal to Trainer', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Setting a reminder...',
         'intents': [
           {
@@ -74,7 +74,7 @@ void main() {
     });
 
     test('trainer receives complete failure context for learning', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Sending a message...',
         'intents': [
           {
@@ -131,7 +131,7 @@ void main() {
     });
 
     test('trainer receives slot-specific failure information', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Setting reminder...',
         'intents': [
           {
@@ -175,7 +175,7 @@ void main() {
     });
 
     test('trainer tracks failure by failure type for pattern learning', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Got it.',
         'intents': [
           {
@@ -209,7 +209,7 @@ void main() {
     });
 
     test('successful execution also reaches trainer (positive signal)', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'I\'ll set a reminder.',
         'intents': [
           {
@@ -259,7 +259,7 @@ void main() {
     });
 
     test('trainer records both confidence scores and execution outcomes', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Got it.',
         'intents': [
           {
@@ -307,7 +307,7 @@ void main() {
     });
 
     test('trainer logs failed intent classification (null intent case)', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'I don\'t understand what you\'re asking.',
         'intents': [],
         'turn_complete': true

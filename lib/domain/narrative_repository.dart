@@ -23,6 +23,8 @@
 /// );
 /// ```
 
+import 'dart:math';
+
 import '../core/entity_repository.dart';
 import '../core/persistence/persistence_adapter.dart';
 import '../core/persistence/transaction_manager.dart';
@@ -152,8 +154,13 @@ class NarrativeRepository extends EntityRepository<NarrativeEntry> {
     bool excludeArchived = true,
   }) async {
     // Generate embedding for query
-    final queryEmbedding = await embeddingService.embed(query);
-    if (queryEmbedding == null) {
+    List<double> queryEmbedding;
+    try {
+      queryEmbedding = await embeddingService.generate(query);
+      if (queryEmbedding.isEmpty) {
+        return []; // No embedding generated
+      }
+    } catch (_) {
       return []; // Embedding service unavailable
     }
 
@@ -219,7 +226,7 @@ class NarrativeRepository extends EntityRepository<NarrativeEntry> {
           entry.archivedAt != null &&
           entry.archivedAt!.isBefore(threshold)) {
         if (scope == null || entry.scope == scope) {
-          await delete(entry.uuid);
+          await delete(entry.id);
           deleted++;
         }
       }
@@ -244,7 +251,7 @@ class NarrativeRepository extends EntityRepository<NarrativeEntry> {
       normB += b[i] * b[i];
     }
 
-    final denominator = (normA * normB).sqrt();
+    final denominator = sqrt(normA * normB);
     if (denominator == 0.0) return 0.0;
     return dotProduct / denominator;
   }

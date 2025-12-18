@@ -26,11 +26,12 @@
 /// ```
 
 import 'dart:async';
-import '../core/logging/logger.dart';
+import 'dart:convert';
+
 import '../domain/narrative_entry.dart';
 import '../domain/narrative_repository.dart';
 import 'narrative_retriever.dart';
-import 'groq_service.dart';
+import 'llm_service.dart';
 
 /// Represents changes made to narratives during training
 class NarrativeDelta {
@@ -50,13 +51,12 @@ class NarrativeDelta {
 class NarrativeCheckpoint {
   final NarrativeRepository _narrativeRepo;
   final NarrativeRetriever _retriever;
-  final GroqService _groqService;
-  final Logger _logger = Logger.instance;
+  final LLMService _groqService;
 
   NarrativeCheckpoint({
     required NarrativeRepository narrativeRepo,
     required NarrativeRetriever retriever,
-    required GroqService groqService,
+    required LLMService groqService,
   })  : _narrativeRepo = narrativeRepo,
         _retriever = retriever,
         _groqService = groqService;
@@ -79,7 +79,6 @@ class NarrativeCheckpoint {
       final sessionEntries = await _retriever.findByScope('session');
       final dayEntries = await _retriever.findByScope('day');
 
-      _logger.info('Training checkpoint started: ${sessionEntries.length} session, ${dayEntries.length} day entries');
 
       // Simulate user review of Session/Day (in real UI, this is interactive)
       final (sessionRemoved, sessionKept) =
@@ -100,7 +99,6 @@ class NarrativeCheckpoint {
 
       return delta;
     } catch (e, st) {
-      _logger.error('NarrativeCheckpoint.train failed: $e', stackTrace: st);
       return NarrativeDelta(added: [], removed: [], promoted: []);
     }
   }
@@ -112,7 +110,7 @@ class NarrativeCheckpoint {
     String scopeName,
   ) async {
     if (entries.isEmpty) {
-      return ([], []);
+      return const (<NarrativeEntry>[], <NarrativeEntry>[]);
     }
 
     // In real implementation, this displays a UI card with entries
@@ -131,7 +129,6 @@ class NarrativeCheckpoint {
       }
     }
 
-    _logger.debug('$scopeName review: kept ${kept.length}, removed ${removed.length}');
     return (removed, kept);
   }
 
@@ -164,7 +161,6 @@ class NarrativeCheckpoint {
     for (final suggestion in suggestions) {
       await _narrativeRepo.save(suggestion);
       added.add(suggestion);
-      _logger.debug('Added ${suggestion.scope} entry: "${suggestion.content.substring(0, 50)}..."');
     }
 
     return added;
@@ -205,22 +201,24 @@ Response format:
     ];
 
     try {
-      // Stream completion from Groq
-      final stream = _groqService.stream(
-        messages: messages,
-        model: 'mixtral-8x7b-32768',
-        maxTokens: 500,
+      // Stream completion from LLM
+      final systemPrompt = messages.first['content'] as String;
+      final userMessage = messages.last['content'] as String;
+
+      final stream = _groqService.chat(
+        history: [],
+        userMessage: userMessage,
+        systemPrompt: systemPrompt,
       );
 
       final tokens = <String>[];
       await for (final token in stream) {
-        tokens.add(token.text);
+        tokens.add(token);
       }
 
       final response = tokens.join();
       return _parseProjectLifeResponse(response);
     } catch (e, st) {
-      _logger.error('NarrativeCheckpoint Groq call failed: $e', stackTrace: st);
       return [];
     }
   }
@@ -248,7 +246,6 @@ Response format:
               (entry.scope == 'project' || entry.scope == 'life'))
           .toList();
     } catch (e) {
-      _logger.error('NarrativeCheckpoint: Failed to parse Groq response: $e');
       return [];
     }
   }
@@ -264,6 +261,3 @@ Response format:
     return noisePatterns.any((pattern) => content.contains(pattern));
   }
 }
-
-// Add to top of file after imports
-import 'dart:convert';

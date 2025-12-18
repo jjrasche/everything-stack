@@ -1,19 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:everything_stack/services/intent_engine/intent_engine.dart';
-import '../mocks/mock_chat_service.dart';
+import '../mocks/mock_llm_service.dart';
 
 void main() {
   group('Intent Engine Bundled LLM Call', () {
     late IntentEngine intentEngine;
-    late MockChatService mockChatService;
+    late MockLLMService mockLLMService;
 
     setUp(() {
-      mockChatService = MockChatService();
-      intentEngine = IntentEngine(chatService: mockChatService);
+      mockLLMService = MockLLMService();
+      intentEngine = IntentEngine(chatService: mockLLMService);
     });
 
     test('makes single LLM call returning conversational response and intents', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Sure, I\'ll set a reminder.',
         'intents': [
           {
@@ -34,7 +34,7 @@ void main() {
       );
 
       // Verify single call was made
-      expect(mockChatService.callCount, equals(1),
+      expect(mockLLMService.callCount, equals(1),
           reason: 'Should make exactly one LLM call');
 
       // Verify both response and intents are in the result
@@ -43,7 +43,7 @@ void main() {
     });
 
     test('bundles conversation history in single call', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'I\'ll set that reminder for you.',
         'intents': [
           {
@@ -69,15 +69,15 @@ void main() {
       );
 
       // Verify history was included in the single call
-      final callPrompt = mockChatService.lastPrompt;
+      final callPrompt = mockLLMService.lastPrompt;
       expect(callPrompt, containsString('what time is it'));
       expect(callPrompt, containsString('It is 3 PM'));
-      expect(mockChatService.callCount, equals(1),
+      expect(mockLLMService.callCount, equals(1),
           reason: 'Should bundle history in single call, not make additional calls');
     });
 
     test('includes tool registry in prompt during single call', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Got it.',
         'intents': [],
         'turn_complete': true
@@ -90,20 +90,20 @@ void main() {
       );
 
       // Verify registry was injected into the single call
-      final prompt = mockChatService.lastPrompt;
+      final prompt = mockLLMService.lastPrompt;
       expect(prompt, containsString('REMINDER'),
           reason: 'Tool registry should be in prompt');
       expect(prompt, containsString('MESSAGE'),
           reason: 'Tool registry should be in prompt');
       expect(prompt, containsString('ALARM'),
           reason: 'Tool registry should be in prompt');
-      expect(mockChatService.callCount, equals(1));
+      expect(mockLLMService.callCount, equals(1));
     });
 
     test('does not make follow-up calls for slot clarification', () async {
       // Intent Engine returns slots as-is or null
       // No additional inference calls for clarification
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Who should I remind you to call?',
         'intents': [
           {
@@ -125,12 +125,12 @@ void main() {
 
       // Should have asked in conversational response, not made extra calls
       expect(result['conversational_response'], containsString('Who'));
-      expect(mockChatService.callCount, equals(1),
+      expect(mockLLMService.callCount, equals(1),
           reason: 'Should not make follow-up inference calls');
     });
 
     test('response and intents come from same LLM call', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Setting reminder with your message.',
         'intents': [
           {
@@ -153,7 +153,7 @@ void main() {
       // Both pieces present from same call
       expect(result['conversational_response'], contains('reminder'));
       expect(result['intents'], isNotEmpty);
-      expect(mockChatService.callCount, equals(1),
+      expect(mockLLMService.callCount, equals(1),
           reason: 'Bundled call returns both conversational response and intent');
     });
   });

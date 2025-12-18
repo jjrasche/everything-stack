@@ -18,7 +18,6 @@
 /// // Returns top 5 most relevant narrative entries
 /// ```
 
-import '../core/logging/logger.dart';
 import '../domain/narrative_entry.dart';
 import '../domain/narrative_repository.dart';
 import 'embedding_service.dart';
@@ -26,7 +25,6 @@ import 'embedding_service.dart';
 class NarrativeRetriever {
   final NarrativeRepository _narrativeRepo;
   final EmbeddingService _embeddingService;
-  final Logger _logger = Logger.instance;
 
   NarrativeRetriever({
     required NarrativeRepository narrativeRepo,
@@ -60,16 +58,11 @@ class NarrativeRetriever {
       );
 
       if (results.isEmpty) {
-        _logger.debug('NarrativeRetriever: No relevant narratives found for query');
         return [];
       }
 
-      _logger.debug(
-        'NarrativeRetriever: Found ${results.length} relevant narratives',
-      );
       return results;
     } catch (e, st) {
-      _logger.error('NarrativeRetriever.findRelevant failed: $e', stackTrace: st);
       return [];
     }
   }
@@ -86,7 +79,6 @@ class NarrativeRetriever {
         includeArchived: includeArchived,
       );
     } catch (e, st) {
-      _logger.error('NarrativeRetriever.findByScope failed: $e', stackTrace: st);
       return [];
     }
   }
@@ -100,7 +92,6 @@ class NarrativeRetriever {
     try {
       return await _narrativeRepo.findByType(type, scope: scope);
     } catch (e, st) {
-      _logger.error('NarrativeRetriever.findByType failed: $e', stackTrace: st);
       return [];
     }
   }
@@ -142,7 +133,6 @@ class NarrativeRetriever {
       }
       return buffer.toString();
     } catch (e, st) {
-      _logger.error('NarrativeRetriever.getScopeSummary failed: $e', stackTrace: st);
       return 'Error retrieving summary';
     }
   }

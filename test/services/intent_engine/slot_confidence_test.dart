@@ -1,19 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:everything_stack/services/intent_engine/intent_engine.dart';
-import '../mocks/mock_chat_service.dart';
+import '../mocks/mock_llm_service.dart';
 
 void main() {
   group('Slot Confidence Scoring', () {
     late IntentEngine intentEngine;
-    late MockChatService mockChatService;
+    late MockLLMService mockLLMService;
 
     setUp(() {
-      mockChatService = MockChatService();
-      intentEngine = IntentEngine(chatService: mockChatService);
+      mockLLMService = MockLLMService();
+      intentEngine = IntentEngine(chatService: mockLLMService);
     });
 
     test('required slot with null value has confidence of 0.0', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Who should I remind you to call?',
         'intents': [
           {
@@ -52,7 +52,7 @@ void main() {
     });
 
     test('required slot with present value has confidence > 0.8', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'I\'ll set a reminder to call your mom.',
         'intents': [
           {
@@ -89,7 +89,7 @@ void main() {
     });
 
     test('optional slot with null value has confidence < 0.5', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Setting a 5-minute reminder for you.',
         'intents': [
           {
@@ -126,7 +126,7 @@ void main() {
     });
 
     test('filled optional slot has higher confidence than unfilled optional', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'I\'ll remind you with that message.',
         'intents': [
           {
@@ -166,7 +166,7 @@ void main() {
         'david': ['David Smith', 'David Johnson', 'David Williams']
       };
 
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response':
             'There are 3 people named David. Which one do you mean?',
         'intents': [
@@ -215,7 +215,7 @@ void main() {
         'mom': ['Mary Smith']
       };
 
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'I\'ll remind your mom.',
         'intents': [
           {
@@ -251,7 +251,7 @@ void main() {
     });
 
     test('partial slot fill has confidence reflecting partial coverage', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'What time should I set the alarm for?',
         'intents': [
           {
@@ -284,7 +284,7 @@ void main() {
     });
 
     test('confidence is numeric and bounded [0.0, 1.0]', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Setting reminder.',
         'intents': [
           {

@@ -16,13 +16,13 @@
 /// Skip locally: Set SKIP_INTEGRATION_TESTS=true
 /// Runs in CI automatically.
 
-import 'package:test/test.dart';
-import '../../lib/domain/narrative_entry.dart';
-import '../../lib/domain/narrative_repository.dart';
-import '../../lib/services/narrative_thinker.dart';
-import '../../lib/services/narrative_retriever.dart';
-import '../../lib/services/narrative_checkpoint.dart';
-import '../../lib/services/groq_service.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:everything_stack_template/domain/narrative_entry.dart';
+import 'package:everything_stack_template/domain/narrative_repository.dart';
+import 'package:everything_stack_template/services/narrative_thinker.dart';
+import 'package:everything_stack_template/services/narrative_retriever.dart';
+import 'package:everything_stack_template/services/narrative_checkpoint.dart';
+import 'package:everything_stack_template/services/llm_service.dart';
 
 void main() {
   group('Narrative Full Stack Integration', () {

@@ -6,7 +6,7 @@
 /// Handles deduplication to avoid repetitive entries.
 ///
 /// ## Flow
-/// 1. User speaks → ChatService processes
+/// 1. User speaks → LLMService processes
 /// 2. Intent Engine classifies intent (returns intent object)
 /// 3. Thinker receives: utterance + intent + chat history + previous narratives
 /// 4. Single Groq call: "Extract new narrative entries. Skip if redundant. Return empty if nothing new."
@@ -18,7 +18,7 @@
 /// // Initialize with repositories
 /// final thinker = NarrativeThinker(
 ///   narrativeRepo: narrativeRepo,
-///   groqService: GroqService.instance,
+///   groqService: LLMService.instance,
 /// );
 ///
 /// // On each turn: utterance + intent from Intent Engine + chat history
@@ -32,19 +32,18 @@
 
 import 'dart:async';
 import 'dart:convert';
-import '../core/logging/logger.dart';
+
 import '../domain/narrative_entry.dart';
 import '../domain/narrative_repository.dart';
-import 'groq_service.dart';
+import 'llm_service.dart';
 
 class NarrativeThinker {
   final NarrativeRepository _narrativeRepo;
-  final GroqService _groqService;
-  final Logger _logger = Logger.instance;
+  final LLMService _groqService;
 
   NarrativeThinker({
     required NarrativeRepository narrativeRepo,
-    required GroqService groqService,
+    required LLMService groqService,
   })  : _narrativeRepo = narrativeRepo,
         _groqService = groqService;
 
@@ -83,15 +82,11 @@ class NarrativeThinker {
         if (entry.scope == 'session' || entry.scope == 'day') {
           await _narrativeRepo.save(entry);
           saved.add(entry);
-          _logger.debug(
-            'NarrativeThinker: Saved ${entry.scope} entry: "${entry.content.substring(0, 50)}..."',
-          );
         }
       }
 
       return saved;
     } catch (e, st) {
-      _logger.error('NarrativeThinker.updateFromTurn failed: $e', stackTrace: st);
       return [];
     }
   }
@@ -138,37 +133,25 @@ class NarrativeThinker {
     return buffer.toString();
   }
 
-  /// Call Groq to extract new narrative entries.
+  /// Call LLM to extract new narrative entries.
   /// Handles deduplication and returns structured results.
   Future<List<NarrativeEntry>> _extractWithGroq(String context) async {
-    final messages = <Map<String, dynamic>>[
-      {
-        'role': 'system',
-        'content': _systemPrompt(),
-      },
-      {
-        'role': 'user',
-        'content': context,
-      },
-    ];
-
     try {
-      // Stream completion from Groq
-      final stream = _groqService.stream(
-        messages: messages,
-        model: 'mixtral-8x7b-32768', // or any available Groq model
-        maxTokens: 1000,
+      // Stream completion from LLM
+      final stream = _groqService.chat(
+        history: [], // No previous messages in this flow
+        userMessage: context,
+        systemPrompt: _systemPrompt(),
       );
 
       final tokens = <String>[];
       await for (final token in stream) {
-        tokens.add(token.text);
+        tokens.add(token);
       }
 
       final response = tokens.join();
       return _parseResponse(response);
     } catch (e, st) {
-      _logger.error('NarrativeThinker Groq call failed: $e', stackTrace: st);
       return [];
     }
   }
@@ -213,7 +196,6 @@ Example response:
       // Find JSON array in response
       final jsonMatch = RegExp(r'\[\s*\{.*\}\s*\]', dotAll: true).firstMatch(response);
       if (jsonMatch == null) {
-        _logger.debug('NarrativeThinker: No JSON found in response');
         return [];
       }
 
@@ -230,7 +212,6 @@ Example response:
           .where((entry) => entry.content.isNotEmpty)
           .toList();
     } catch (e) {
-      _logger.error('NarrativeThinker: Failed to parse Groq response: $e');
       return [];
     }
   }

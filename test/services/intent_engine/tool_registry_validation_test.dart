@@ -1,16 +1,16 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:everything_stack/services/intent_engine/intent_engine.dart';
 import 'package:everything_stack/services/intent_engine/tool_registry.dart';
-import '../mocks/mock_chat_service.dart';
+import '../mocks/mock_llm_service.dart';
 
 void main() {
   group('Tool Registry Validation', () {
     late IntentEngine intentEngine;
-    late MockChatService mockChatService;
+    late MockLLMService mockLLMService;
     late ToolRegistry registry;
 
     setUp(() {
-      mockChatService = MockChatService();
+      mockLLMService = MockLLMService();
       registry = ToolRegistry(tools: [
         ToolDefinition(
           name: 'REMINDER',
@@ -38,14 +38,14 @@ void main() {
         ),
       ]);
       intentEngine = IntentEngine(
-        chatService: mockChatService,
+        chatService: mockLLMService,
         toolRegistry: registry,
       );
     });
 
     test('fails fast if intent returns tool not in registry', () async {
       // Simulate Claude returning a tool that doesn't exist
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Setting reminder...',
         'intents': [
           {
@@ -72,7 +72,7 @@ void main() {
     });
 
     test('validates all tools in intent list are in registry before execution', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Setting up both...',
         'intents': [
           {
@@ -106,7 +106,7 @@ void main() {
     });
 
     test('registry injection includes all tools in LLM prompt', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Got it.',
         'intents': [],
         'turn_complete': true
@@ -118,7 +118,7 @@ void main() {
         entities: {},
       );
 
-      final prompt = mockChatService.lastPrompt;
+      final prompt = mockLLMService.lastPrompt;
 
       // All tool names present
       expect(prompt, containsString('REMINDER'));
@@ -139,7 +139,7 @@ void main() {
     });
 
     test('registry includes required/optional slot metadata in prompt', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Got it.',
         'intents': [],
         'turn_complete': true
@@ -151,7 +151,7 @@ void main() {
         entities: {},
       );
 
-      final prompt = mockChatService.lastPrompt;
+      final prompt = mockLLMService.lastPrompt;
 
       // Metadata about slot requirements should be in prompt
       expect(prompt, containsString('required'),
@@ -163,11 +163,11 @@ void main() {
     test('handles empty tool registry gracefully', () async {
       final emptyRegistry = ToolRegistry(tools: []);
       final emptyEngine = IntentEngine(
-        chatService: mockChatService,
+        chatService: mockLLMService,
         toolRegistry: emptyRegistry,
       );
 
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'I don\'t have any tools available.',
         'intents': [],
         'turn_complete': true
@@ -185,7 +185,7 @@ void main() {
     });
 
     test('raises error if tool in intent has mismatched slot definitions', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Setting reminder.',
         'intents': [
           {

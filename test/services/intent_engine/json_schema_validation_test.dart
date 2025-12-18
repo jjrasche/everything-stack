@@ -1,19 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:everything_stack/services/intent_engine/intent_engine.dart';
-import '../mocks/mock_chat_service.dart';
+import '../mocks/mock_llm_service.dart';
 
 void main() {
   group('Intent Engine JSON Schema', () {
     late IntentEngine intentEngine;
-    late MockChatService mockChatService;
+    late MockLLMService mockLLMService;
 
     setUp(() {
-      mockChatService = MockChatService();
-      intentEngine = IntentEngine(chatService: mockChatService);
+      mockLLMService = MockLLMService();
+      intentEngine = IntentEngine(chatService: mockLLMService);
     });
 
     test('classifies utterance and returns exact schema structure', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Sure, I\'ll set a reminder.',
         'intents': [
           {
@@ -48,7 +48,7 @@ void main() {
     });
 
     test('intents list contains exactly the required fields per intent', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Sure, I\'ll set a reminder.',
         'intents': [
           {
@@ -90,7 +90,7 @@ void main() {
     });
 
     test('slot_confidence map has entry for every slot (filled or not)', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Setting a reminder.',
         'intents': [
           {
@@ -122,7 +122,7 @@ void main() {
     });
 
     test('null intent returns empty intents array (not missing key)', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'I\'m doing well, thank you for asking!',
         'intents': [],
         'turn_complete': true
@@ -140,7 +140,7 @@ void main() {
     });
 
     test('turn_complete is always present and boolean', () async {
-      mockChatService.mockResponse = {
+      mockLLMService.mockResponse = {
         'conversational_response': 'Setting reminder.',
         'intents': [],
         'turn_complete': true
