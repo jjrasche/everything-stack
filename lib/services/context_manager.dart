@@ -55,6 +55,7 @@ import '../domain/tool.dart';
 import '../domain/tool_repository.dart';
 import '../domain/context_manager_invocation.dart';
 import '../domain/context_manager_invocation_repository.dart';
+import '../domain/invocations.dart';
 import '../tools/task/repositories/task_repository.dart';
 import '../tools/timer/repositories/timer_repository.dart';
 import 'llm_service.dart';
@@ -222,8 +223,18 @@ class ContextManager implements Trainable {
       if (executionResult.finalResponse != null &&
           executionResult.finalResponse!.isNotEmpty) {
         try {
+          // Create TTSInvocation and record it
+          final ttsInvocation = TTSInvocation(
+            correlationId: event.correlationId,
+            text: executionResult.finalResponse!,
+            audioId: 'audio_${event.correlationId}',
+          );
+
+          // Record the invocation (persists to repository)
+          await ttsService.recordInvocation(ttsInvocation);
+
           // Call TTS to synthesize the LLM response
-          // This records a TTSInvocation with the same correlationId
+          // Invocation was already recorded above
           await for (final audioChunk
               in ttsService.synthesize(executionResult.finalResponse!)) {
             // Stream audio chunks (application layer handles playback)

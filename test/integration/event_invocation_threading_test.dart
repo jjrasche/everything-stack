@@ -32,6 +32,12 @@ import 'package:everything_stack_template/services/mcp_executor.dart';
 import 'package:everything_stack_template/services/tool_executor.dart';
 import 'package:everything_stack_template/services/trainable.dart';
 import 'package:everything_stack_template/services/context_manager_result.dart' show ToolCall, ToolResult, ContextManagerResult;
+import 'package:everything_stack_template/domain/personality_repository.dart';
+import 'package:everything_stack_template/domain/namespace_repository.dart';
+import 'package:everything_stack_template/domain/tool_repository.dart';
+import 'package:everything_stack_template/core/feedback_repository.dart';
+import 'package:everything_stack_template/tools/task/repositories/task_repository.dart';
+import 'package:everything_stack_template/tools/timer/repositories/timer_repository.dart';
 
 void main() {
   group('Event → Invocation Threading (Phase B - Real Behavior)', () {
@@ -264,7 +270,7 @@ void main() {
       // THIS WILL FAIL - TTS is never called by the real pipeline
       expect(ttsInvs.length, greaterThanOrEqualTo(1),
           reason:
-              'TTS invocation MISSING - ContextManager.handleEvent() never calls TTSService!');
+              'TTS invocation NOW RECORDED - ContextManager.handleEvent() now calls TTSService!');
     });
   });
 }
@@ -273,7 +279,6 @@ void main() {
 
 /// Simplified ContextManager stub for testing publishEvent() and queue processing
 /// This stub MANUALLY creates invocations without calling real services
-/// (Used by the old Phase D test - not the real pipeline test)
 class _SimpleContextManagerStub {
   final ContextManagerInvocationRepositoryImpl cmInvocationRepo;
   final LLMInvocationRepositoryImpl llmInvocationRepo;
