@@ -245,14 +245,16 @@ abstract class BaseIndexedDBAdapter<T extends BaseEntity>
   }
 
   @override
-  Future<T> save(T entity) async {
+  Future<T> save(T entity, {bool touch = true}) async {
     return _executeAsyncWithExceptionHandling(() async {
       // Assign ID if new entity
       if (entity.id == 0) {
         entity.id = _nextId++;
       }
 
-      _touchIfNeeded(entity);
+      if (touch) {
+        _touchIfNeeded(entity);
+      }
       final store = _getStore();
       final json = (entity as dynamic).toJson() as Map<String, dynamic>;
       // IndexedDB uses in-line keys (keyPath: 'uuid')
@@ -392,10 +394,12 @@ abstract class BaseIndexedDBAdapter<T extends BaseEntity>
   }
 
   @override
-  T saveInTx(TransactionContext ctx, T entity) {
+  T saveInTx(TransactionContext ctx, T entity, {bool touch = true}) {
     return _executeWithExceptionHandling(() {
       final store = _getStoreInTx(ctx);
-      _touchIfNeeded(entity);
+      if (touch) {
+        _touchIfNeeded(entity);
+      }
       final json = (entity as dynamic).toJson() as Map<String, dynamic>;
       // Note: put() is async in IndexedDB, but we return synchronously
       // The transaction will wait for all promises to complete

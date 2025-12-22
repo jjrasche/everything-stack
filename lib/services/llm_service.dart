@@ -1,6 +1,10 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 
 import 'timeout_config.dart';
+import 'trainable.dart';
+import 'package:everything_stack_template/domain/invocations.dart';
+import 'package:everything_stack_template/domain/llm_invocation_repository.dart';
 
 /// Large language model service contract.
 ///
@@ -36,7 +40,7 @@ import 'timeout_config.dart';
 /// - **Connection timeout**: 15s to establish connection
 /// - **Streaming idle timeout**: 10s without token → assume connection stalled
 /// - **No automatic retry**: Caller must retry on timeout
-abstract class LLMService {
+abstract class LLMService implements Trainable {
   /// Global instance (default: NullLLMService)
   ///
   /// Replace with ClaudeService in bootstrap:
@@ -89,6 +93,47 @@ abstract class LLMService {
     int? maxTokens,
   });
 
+  /// Non-streaming chat with tool calling support.
+  ///
+  /// Used for agent workflows where structured tool calls are needed.
+  /// Returns complete response (not streamed).
+  ///
+  /// ## Parameters
+  /// - [model]: Model identifier (provider-specific)
+  /// - [messages]: Conversation messages (system prompts + user input)
+  /// - [tools]: Available tools the LLM can call
+  /// - [temperature]: Sampling temperature (0.0-1.0)
+  /// - [maxTokens]: Optional max tokens to generate
+  ///
+  /// ## Usage
+  /// ```dart
+  /// final response = await llm.chatWithTools(
+  ///   model: 'llama-3.3-70b-versatile',
+  ///   messages: [
+  ///     {'role': 'system', 'content': 'You help manage tasks'},
+  ///     {'role': 'user', 'content': 'create a task to buy groceries'},
+  ///   ],
+  ///   tools: [
+  ///     LLMTool(name: 'task.create', description: '...', parameters: {...}),
+  ///   ],
+  ///   temperature: 0.7,
+  /// );
+  ///
+  /// if (response.toolCalls.isNotEmpty) {
+  ///   // Execute tools
+  ///   for (final call in response.toolCalls) {
+  ///     await executeToolCall(call.toolName, call.params);
+  ///   }
+  /// }
+  /// ```
+  Future<LLMResponse> chatWithTools({
+    required String model,
+    required List<Map<String, dynamic>> messages,
+    List<LLMTool>? tools,
+    double temperature = 0.7,
+    int? maxTokens,
+  });
+
   /// Cleanup resources.
   ///
   /// Always call this when done with the service.
@@ -99,6 +144,25 @@ abstract class LLMService {
   ///
   /// Returns true after successful [initialize], false after [dispose].
   bool get isReady;
+
+  /// Record LLM invocation for training/adaptation
+  ///
+  /// Called after LLM response completes.
+  /// Saves to repository for later feedback and learning.
+  @override
+  Future<String> recordInvocation(dynamic invocation);
+
+  /// Learn from user feedback (LLM-specific)
+  @override
+  Future<void> trainFromFeedback(String turnId, {String? userId});
+
+  /// Get current LLM adaptation state
+  @override
+  Future<Map<String, dynamic>> getAdaptationState({String? userId});
+
+  /// Build UI for LLM feedback
+  @override
+  Widget buildFeedbackUI(String invocationId);
 }
 
 // ============================================================================
@@ -147,86 +211,74 @@ class Message {
 }
 
 // ============================================================================
+// LLM Domain Types (Provider-Agnostic)
+// ============================================================================
+
+/// Provider-agnostic LLM response with tool calling support.
+///
+/// Returned by [LLMService.chatWithTools].
+/// Contains either text content or tool calls (or both).
+class LLMResponse {
+  final String id;
+  final String? content;
+  final List<LLMToolCall> toolCalls;
+  final int tokensUsed;
+
+  LLMResponse({
+    required this.id,
+    this.content,
+    required this.toolCalls,
+    required this.tokensUsed,
+  });
+
+  /// Did the LLM want to call tools?
+  bool get hasToolCalls => toolCalls.isNotEmpty;
+}
+
+/// Provider-agnostic tool call.
+///
+/// Represents a single tool invocation requested by the LLM.
+/// Parameters are already parsed and validated.
+class LLMToolCall {
+  final String id;
+  final String toolName;
+  final Map<String, dynamic> params;
+
+  LLMToolCall({
+    required this.id,
+    required this.toolName,
+    required this.params,
+  });
+}
+
+/// Provider-agnostic tool definition.
+///
+/// Passed to LLM to describe available tools.
+class LLMTool {
+  final String name;
+  final String description;
+  final Map<String, dynamic> parameters;
+
+  LLMTool({
+    required this.name,
+    required this.description,
+    required this.parameters,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'type': 'function',
+        'function': {
+          'name': name,
+          'description': description,
+          'parameters': parameters,
+        },
+      };
+}
+
+// ============================================================================
 // Claude Service (Production Implementation Stub)
 // ============================================================================
 
-/// Anthropic Claude API service.
-///
-/// **STUB IMPLEMENTATION** - Interface complete, implementation needed.
-///
-/// ## Implementation Checklist
-/// - [ ] HTTP SSE streaming to Claude API
-/// - [ ] Authentication (API key via x-api-key header)
-/// - [ ] Message history management
-/// - [ ] System prompts
-/// - [ ] Model selection (claude-3-5-sonnet, claude-3-opus, etc.)
-/// - [ ] Connection timeout (15s)
-/// - [ ] Streaming idle timeout (10s no token)
-/// - [ ] Error handling (network, auth, rate limit, content policy)
-///
-/// ## Configuration
-/// ```dart
-/// final llm = ClaudeService(
-///   apiKey: 'YOUR_API_KEY',
-///   model: 'claude-3-5-sonnet-20241022', // Optional
-///   defaultMaxTokens: 1024, // Optional
-/// );
-/// ```
-class ClaudeService extends LLMService {
-  final String apiKey;
-  final String model;
-  final int defaultMaxTokens;
-
-  bool _isReady = false;
-
-  ClaudeService({
-    required this.apiKey,
-    this.model = 'claude-3-5-sonnet-20241022',
-    this.defaultMaxTokens = 1024,
-  });
-
-  @override
-  Future<void> initialize() async {
-    // TODO: Implement initialization
-    // - Validate API key
-    // - Test connection with timeout
-    // - Set _isReady = true on success
-
-    print('ClaudeService.initialize() - STUB: Not implemented');
-    _isReady = true; // Fake success for now
-  }
-
-  @override
-  Stream<String> chat({
-    required List<Message> history,
-    required String userMessage,
-    String? systemPrompt,
-    int? maxTokens,
-  }) async* {
-    // TODO: Implement SSE streaming chat
-    // 1. POST to /v1/messages with stream=true
-    // 2. Parse SSE events (data: {...})
-    // 3. Extract tokens from content_block_delta events
-    // 4. Apply connection timeout (15s)
-    // 5. Apply idle timeout (10s no token)
-    // 6. Handle errors (rate limit, content policy, network)
-
-    print('ClaudeService.chat() - STUB: Not implemented');
-
-    // Throw for now
-    throw LLMException('ClaudeService not implemented');
-  }
-
-  @override
-  void dispose() {
-    // TODO: Cleanup any resources
-    _isReady = false;
-    print('ClaudeService.dispose() - STUB: Not implemented');
-  }
-
-  @override
-  bool get isReady => _isReady;
-}
 
 // ============================================================================
 // Null LLM Service (Safe Fallback)
@@ -254,17 +306,49 @@ class NullLLMService extends LLMService {
   }
 
   @override
+  Future<LLMResponse> chatWithTools({
+    required String model,
+    required List<Map<String, dynamic>> messages,
+    List<LLMTool>? tools,
+    double temperature = 0.7,
+    int? maxTokens,
+  }) async {
+    print('Warning: LLM unavailable - using NullLLMService');
+    throw LLMException('LLM not configured');
+  }
+
+  @override
   void dispose() {}
 
   @override
   bool get isReady => false;
+
+  @override
+  Future<String> recordInvocation(dynamic invocation) async {
+    throw LLMException('LLM not configured');
+  }
+
+  @override
+  Future<void> trainFromFeedback(String turnId, {String? userId}) async {
+    throw LLMException('LLM not configured');
+  }
+
+  @override
+  Future<Map<String, dynamic>> getAdaptationState({String? userId}) async {
+    throw LLMException('LLM not configured');
+  }
+
+  @override
+  Widget buildFeedbackUI(String invocationId) {
+    return Center(child: Text('LLM not configured'));
+  }
 }
 
 // ============================================================================
-// Exceptions
+// LLM Domain Exceptions (Provider-Agnostic)
 // ============================================================================
 
-/// Exception thrown by LLM service.
+/// Base exception for LLM service errors.
 class LLMException implements Exception {
   final String message;
   final Object? cause;
@@ -278,4 +362,27 @@ class LLMException implements Exception {
     }
     return 'LLMException: $message';
   }
+}
+
+/// LLM request timeout.
+///
+/// Thrown when connection or streaming idle timeout is exceeded.
+class LLMTimeoutException extends LLMException {
+  LLMTimeoutException(super.message, {super.cause});
+}
+
+/// LLM rate limit exceeded.
+///
+/// Thrown when provider rate limits are hit.
+/// Caller should retry with exponential backoff.
+class LLMRateLimitException extends LLMException {
+  LLMRateLimitException(super.message, {super.cause});
+}
+
+/// LLM server error (5xx).
+///
+/// Thrown when provider API has server-side errors.
+/// Caller may retry after delay.
+class LLMServerException extends LLMException {
+  LLMServerException(super.message, {super.cause});
 }

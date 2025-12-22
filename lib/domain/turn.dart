@@ -1,90 +1,125 @@
 /// # Turn
 ///
 /// ## What it does
-/// Represents one user utterance cycle in a conversation.
-/// Groups the invocations that occurred as part of this turn:
-/// STT (user input) → Intent (classification) → LLM (response) → TTS (audio)
+/// Represents a single user interaction turn (one speech → audio cycle).
+/// Links together all the invocations from that turn:
+/// - STTInvocation (speech → text)
+/// - ContextManagerInvocation (text → namespace/tool selection)
+/// - LLMInvocation (context → response + tool calls)
+/// - TTSInvocation (response → audio)
 ///
-/// ## Key Design
-/// - Each component has a single invocationId (the final/successful attempt)
-/// - Retries are separate records with contextType='retry'
-/// - Turn doesn't store turnId—it IS identified by conversationId + turnIndex
-/// - markedForFeedback allows users to flag turns for review
+/// ## Turn Lifecycle
+/// 1. User speaks (correlationId generated)
+/// 2. STT processes audio → STTInvocation created
+/// 3. ContextManager processes utterance → ContextManagerInvocation created
+/// 4. LLM generates response → LLMInvocation created
+/// 5. TTS synthesizes audio → TTSInvocation created
+/// 6. Turn created, linking all 4 invocations
+/// 7. User provides feedback (Feedback entities created)
+/// 8. trainFromFeedback() called on each component
+///
+/// ## Feedback Loop
+/// All feedback for a Turn has turnId = this Turn's uuid.
+/// trainFromFeedback(turnId) pulls feedback from FeedbackRepository.
+/// Each service (STT, ContextManager, LLM, TTS) trains independently.
 ///
 /// ## Usage
 /// ```dart
 /// final turn = Turn(
-///   conversationId: 'conv_123',
-///   turnIndex: 5,
+///   correlationId: event.correlationId,
+///   sttInvocationId: sttInv.uuid,
+///   contextManagerInvocationId: cmInv.uuid,
+///   llmInvocationId: llmInv.uuid,
+///   ttsInvocationId: ttsInv.uuid,
+///   result: 'success',
 /// );
-///
-/// turn.sttInvocationId = 'stt_inv_001';
-/// turn.intentInvocationId = 'intent_inv_001';
 /// await turnRepo.save(turn);
+///
+/// // Later, after user provides feedback:
+/// await sttService.trainFromFeedback(turn.uuid);
+/// await contextManager.trainFromFeedback(turn.uuid);
+/// await llmService.trainFromFeedback(turn.uuid);
+/// await ttsService.trainFromFeedback(turn.uuid);
 /// ```
 
+import 'package:objectbox/objectbox.dart';
 import '../core/base_entity.dart';
 
+@Entity()
 class Turn extends BaseEntity {
   // ============ BaseEntity field overrides ============
   @override
+  @Id()
   int id = 0;
 
   @override
+  @Unique()
   String uuid = '';
 
   @override
+  @Property(type: PropertyType.date)
   DateTime createdAt = DateTime.now();
 
   @override
+  @Property(type: PropertyType.date)
   DateTime updatedAt = DateTime.now();
 
   @override
   String? syncId;
 
-  // ============ Turn fields ============
+  // ============ Turn identity ============
 
-  /// Which conversation does this turn belong to?
-  String conversationId;
-
-  /// Sequential index within the conversation (0-indexed)
-  /// Allows reconstruction of conversation flow
-  int turnIndex;
+  /// Ties together all invocations from this turn
+  /// Same as the Event.correlationId that triggered the turn
+  String correlationId;
 
   /// When this turn occurred
+  @Property(type: PropertyType.date)
   DateTime timestamp = DateTime.now();
 
-  /// User marked this turn for feedback/review
-  bool markedForFeedback = false;
+  // ============ Invocation references ============
 
-  /// When user marked it (null if not marked)
-  DateTime? markedAt;
-
-  /// When this turn was last trained on feedback (null if never trained)
-  DateTime? feedbackTrainedAt;
-
-  // ============ Component Invocation Mapping ============
-  /// RULE: Each field stores the FINAL invocation ID for that component
-  /// Final = successful attempt, or last attempt before giving up
-  /// Retries are separate records with contextType='retry'
-
-  /// STT invocation (speech → transcription)
+  /// The STT invocation that transcribed the audio
+  /// FK to STTInvocation.uuid
   String? sttInvocationId;
 
-  /// Intent invocation (transcription → tool classification)
-  String? intentInvocationId;
+  /// The ContextManager invocation that selected namespace/tools
+  /// FK to ContextManagerInvocation.uuid
+  String? contextManagerInvocationId;
 
-  /// LLM invocation (context + history → response)
+  /// The LLM invocation that generated response
+  /// FK to LLMInvocation.uuid
   String? llmInvocationId;
 
-  /// TTS invocation (response → audio)
+  /// The TTS invocation that synthesized audio
+  /// FK to TTSInvocation.uuid
   String? ttsInvocationId;
+
+  // ============ Outcome ============
+
+  /// Did the turn succeed? 'success', 'error', 'partial'
+  String result = 'success';
+
+  /// Why did it fail? (if result != 'success')
+  String? errorMessage;
+
+  /// Which component failed? 'stt', 'context_manager', 'llm', 'tts'
+  String? failureComponent;
+
+  /// How long did the entire turn take (ms)
+  int latencyMs = 0;
 
   // ============ Constructor ============
 
   Turn({
-    required this.conversationId,
-    required this.turnIndex,
+    required this.correlationId,
+    this.sttInvocationId,
+    this.contextManagerInvocationId,
+    this.llmInvocationId,
+    this.ttsInvocationId,
+    this.result = 'success',
+    this.errorMessage,
+    this.failureComponent,
   }) {
     if (uuid.isEmpty) {
       uuid = super.uuid;
@@ -93,108 +128,74 @@ class Turn extends BaseEntity {
 
   // ============ Helpers ============
 
-  /// Get all invocation IDs that exist for this turn
-  /// Used for querying all invocations at once
-  List<String> getExistingInvocationIds() => [
-        sttInvocationId,
-        intentInvocationId,
-        llmInvocationId,
-        ttsInvocationId,
-      ].whereType<String>().toList();
+  /// Did all components succeed?
+  bool get isSuccessful => result == 'success';
 
-  /// Check if all components ran successfully
-  bool get isComplete =>
-      sttInvocationId != null &&
-      intentInvocationId != null &&
-      llmInvocationId != null &&
-      ttsInvocationId != null;
-
-  /// Check if turn has any invocations yet
-  bool get hasInvocations => getExistingInvocationIds().isNotEmpty;
-
-  // ============ Copy Constructor ============
-
-  /// Create a copy of this turn with selected fields replaced
-  Turn copyWith({
-    String? conversationId,
-    int? turnIndex,
-    DateTime? timestamp,
-    bool? markedForFeedback,
-    DateTime? markedAt,
-    DateTime? feedbackTrainedAt,
-    String? sttInvocationId,
-    String? intentInvocationId,
-    String? llmInvocationId,
-    String? ttsInvocationId,
-  }) {
-    final copy = Turn(
-      conversationId: conversationId ?? this.conversationId,
-      turnIndex: turnIndex ?? this.turnIndex,
-    );
-    copy.id = id;
-    copy.uuid = uuid;
-    copy.createdAt = createdAt;
-    copy.updatedAt = DateTime.now();
-    copy.syncId = syncId;
-    copy.timestamp = timestamp ?? this.timestamp;
-    copy.markedForFeedback = markedForFeedback ?? this.markedForFeedback;
-    copy.markedAt = markedAt ?? this.markedAt;
-    copy.feedbackTrainedAt = feedbackTrainedAt ?? this.feedbackTrainedAt;
-    copy.sttInvocationId = sttInvocationId ?? this.sttInvocationId;
-    copy.intentInvocationId = intentInvocationId ?? this.intentInvocationId;
-    copy.llmInvocationId = llmInvocationId ?? this.llmInvocationId;
-    copy.ttsInvocationId = ttsInvocationId ?? this.ttsInvocationId;
-    return copy;
+  /// How many invocations are linked to this turn?
+  int get invocationCount {
+    int count = 0;
+    if (sttInvocationId != null) count++;
+    if (contextManagerInvocationId != null) count++;
+    if (llmInvocationId != null) count++;
+    if (ttsInvocationId != null) count++;
+    return count;
   }
 
-  // ============ JSON Serialization ============
+  /// Get all invocation IDs
+  List<String> getInvocationIds() {
+    return [
+      if (sttInvocationId != null) sttInvocationId!,
+      if (contextManagerInvocationId != null) contextManagerInvocationId!,
+      if (llmInvocationId != null) llmInvocationId!,
+      if (ttsInvocationId != null) ttsInvocationId!,
+    ];
+  }
 
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'uuid': uuid,
-    'createdAt': createdAt.toIso8601String(),
-    'updatedAt': updatedAt.toIso8601String(),
-    'syncId': syncId,
-    'conversationId': conversationId,
-    'turnIndex': turnIndex,
-    'timestamp': timestamp.toIso8601String(),
-    'markedForFeedback': markedForFeedback,
-    'markedAt': markedAt?.toIso8601String(),
-    'feedbackTrainedAt': feedbackTrainedAt?.toIso8601String(),
-    'sttInvocationId': sttInvocationId,
-    'intentInvocationId': intentInvocationId,
-    'llmInvocationId': llmInvocationId,
-    'ttsInvocationId': ttsInvocationId,
-  };
+  // ============ Serialization ============
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'uuid': uuid,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+      'syncId': syncId,
+      'correlationId': correlationId,
+      'timestamp': timestamp.toIso8601String(),
+      'sttInvocationId': sttInvocationId,
+      'contextManagerInvocationId': contextManagerInvocationId,
+      'llmInvocationId': llmInvocationId,
+      'ttsInvocationId': ttsInvocationId,
+      'result': result,
+      'errorMessage': errorMessage,
+      'failureComponent': failureComponent,
+      'latencyMs': latencyMs,
+    };
+  }
 
   factory Turn.fromJson(Map<String, dynamic> json) {
-    final turn = Turn(
-      conversationId: json['conversationId'] as String,
-      turnIndex: json['turnIndex'] as int,
-    );
-    turn.id = json['id'] as int? ?? 0;
-    turn.uuid = json['uuid'] as String? ?? '';
-    turn.createdAt = json['createdAt'] != null
-        ? DateTime.parse(json['createdAt'] as String)
-        : DateTime.now();
-    turn.updatedAt = json['updatedAt'] != null
-        ? DateTime.parse(json['updatedAt'] as String)
-        : DateTime.now();
-    turn.syncId = json['syncId'] as String?;
-    turn.timestamp = json['timestamp'] != null
-        ? DateTime.parse(json['timestamp'] as String)
-        : DateTime.now();
-    turn.markedForFeedback = json['markedForFeedback'] as bool? ?? false;
-    turn.markedAt = json['markedAt'] != null
-        ? DateTime.parse(json['markedAt'] as String)
-        : null;
-    turn.feedbackTrainedAt = json['feedbackTrainedAt'] != null
-        ? DateTime.parse(json['feedbackTrainedAt'] as String)
-        : null;
-    turn.sttInvocationId = json['sttInvocationId'] as String?;
-    turn.intentInvocationId = json['intentInvocationId'] as String?;
-    turn.llmInvocationId = json['llmInvocationId'] as String?;
-    turn.ttsInvocationId = json['ttsInvocationId'] as String?;
-    return turn;
+    return Turn(
+      correlationId: json['correlationId'] as String,
+      sttInvocationId: json['sttInvocationId'] as String?,
+      contextManagerInvocationId: json['contextManagerInvocationId'] as String?,
+      llmInvocationId: json['llmInvocationId'] as String?,
+      ttsInvocationId: json['ttsInvocationId'] as String?,
+      result: json['result'] as String? ?? 'success',
+      errorMessage: json['errorMessage'] as String?,
+      failureComponent: json['failureComponent'] as String?,
+    )
+      ..id = json['id'] as int? ?? 0
+      ..uuid = json['uuid'] as String? ?? ''
+      ..createdAt = json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : DateTime.now()
+      ..updatedAt = json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : DateTime.now()
+      ..syncId = json['syncId'] as String?
+      ..timestamp = json['timestamp'] != null
+          ? DateTime.parse(json['timestamp'] as String)
+          : DateTime.now()
+      ..latencyMs = json['latencyMs'] as int? ?? 0;
   }
 }

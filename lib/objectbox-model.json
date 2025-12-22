@@ -338,10 +338,642 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "8:1953369255634375451",
+      "lastPropertyId": "25:3048114588034159210",
+      "name": "ContextManagerInvocation",
+      "properties": [
+        {
+          "id": "1:5982122806070916874",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2919763491032422877",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "20:8535269422538927819"
+        },
+        {
+          "id": "3:4595584511069192329",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "4:6231107779885344020",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "5:1212723844398843048",
+          "name": "syncId",
+          "type": 9
+        },
+        {
+          "id": "6:4475505293714843217",
+          "name": "contextType",
+          "type": 9
+        },
+        {
+          "id": "7:4596555240924825857",
+          "name": "eventPayloadJson",
+          "type": 9
+        },
+        {
+          "id": "8:2486896320614029595",
+          "name": "eventEmbeddingJson",
+          "type": 9
+        },
+        {
+          "id": "9:2314720052349284849",
+          "name": "correlationId",
+          "type": 9
+        },
+        {
+          "id": "10:4973981343147818945",
+          "name": "personalityId",
+          "type": 9
+        },
+        {
+          "id": "11:5776281629022675758",
+          "name": "namespacesConsideredJson",
+          "type": 9
+        },
+        {
+          "id": "12:5278575408811429277",
+          "name": "selectedNamespace",
+          "type": 9
+        },
+        {
+          "id": "13:1300478617947201104",
+          "name": "namespaceScoresJson",
+          "type": 9
+        },
+        {
+          "id": "14:2495255408358639292",
+          "name": "toolsAvailableJson",
+          "type": 9
+        },
+        {
+          "id": "15:4688365299446587349",
+          "name": "toolsFilteredJson",
+          "type": 9
+        },
+        {
+          "id": "16:6958657842961889623",
+          "name": "toolsPassedToLLMJson",
+          "type": 9
+        },
+        {
+          "id": "17:2630498489510169714",
+          "name": "toolScoresJson",
+          "type": 9
+        },
+        {
+          "id": "18:3377245468038711345",
+          "name": "toolsCalledJson",
+          "type": 9
+        },
+        {
+          "id": "19:5567209274778593079",
+          "name": "contextItemCountsJson",
+          "type": 9
+        },
+        {
+          "id": "20:263815472058849487",
+          "name": "contextItemIdsJson",
+          "type": 9
+        },
+        {
+          "id": "21:6565510325540549621",
+          "name": "confidence",
+          "type": 8
+        },
+        {
+          "id": "22:8251909334644716676",
+          "name": "timestamp",
+          "type": 10
+        },
+        {
+          "id": "23:3161230589942454756",
+          "name": "latencyMs",
+          "type": 6
+        },
+        {
+          "id": "24:8616875538870044091",
+          "name": "errorType",
+          "type": 9
+        },
+        {
+          "id": "25:3048114588034159210",
+          "name": "errorMessage",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "9:2339023973143755844",
+      "lastPropertyId": "9:8096285661363892497",
+      "name": "Namespace",
+      "properties": [
+        {
+          "id": "1:3745792722763563464",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:7082410109343384813",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "21:415325960104051185"
+        },
+        {
+          "id": "3:8868391332931301230",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "4:433906084118260254",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "5:5669192075742814662",
+          "name": "syncId",
+          "type": 9
+        },
+        {
+          "id": "6:4274237801237235102",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "7:3785259573324357410",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "8:1650313680999720521",
+          "name": "keywords",
+          "type": 30
+        },
+        {
+          "id": "9:8096285661363892497",
+          "name": "semanticCentroidJson",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "10:3961943751322773208",
+      "lastPropertyId": "14:384848698351707531",
+      "name": "Personality",
+      "properties": [
+        {
+          "id": "1:6196333364495217569",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:3538996904063110754",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "22:189933893168486"
+        },
+        {
+          "id": "3:6852297710146118873",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "4:1531713621666877381",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "5:6548082347406341862",
+          "name": "syncId",
+          "type": 9
+        },
+        {
+          "id": "6:1653316338532734199",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "7:1293630094435723418",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "8:4997360385270532241",
+          "name": "isActive",
+          "type": 1
+        },
+        {
+          "id": "9:820285682108068037",
+          "name": "systemPrompt",
+          "type": 9
+        },
+        {
+          "id": "10:2999830264482609380",
+          "name": "userPromptTemplate",
+          "type": 9
+        },
+        {
+          "id": "11:6753593118977645038",
+          "name": "temperature",
+          "type": 8
+        },
+        {
+          "id": "12:7341158649100677947",
+          "name": "baseModel",
+          "type": 9
+        },
+        {
+          "id": "13:259232714516564864",
+          "name": "namespaceAttentionJson",
+          "type": 9
+        },
+        {
+          "id": "14:384848698351707531",
+          "name": "toolAttentionJson",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "11:1371154119659599463",
+      "lastPropertyId": "20:6983702727960598988",
+      "name": "Task",
+      "properties": [
+        {
+          "id": "1:2468402319333934426",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:4822062030699907936",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "23:4393467804055116837"
+        },
+        {
+          "id": "3:7454328910520881061",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "4:4916490273580035186",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "5:214751691038600415",
+          "name": "syncId",
+          "type": 9
+        },
+        {
+          "id": "6:9054771718628867007",
+          "name": "title",
+          "type": 9
+        },
+        {
+          "id": "7:4732398863033532211",
+          "name": "dueDate",
+          "type": 10
+        },
+        {
+          "id": "8:5983175952920767501",
+          "name": "priority",
+          "type": 9
+        },
+        {
+          "id": "9:8450730126488748943",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "10:4691631718615762431",
+          "name": "completed",
+          "type": 1
+        },
+        {
+          "id": "11:614160581303866561",
+          "name": "completedAt",
+          "type": 10
+        },
+        {
+          "id": "12:6500092282006077765",
+          "name": "ownerId",
+          "type": 9
+        },
+        {
+          "id": "13:5817908070982361825",
+          "name": "sharedWith",
+          "type": 30
+        },
+        {
+          "id": "14:8362332040021916933",
+          "name": "invocationCorrelationId",
+          "type": 9
+        },
+        {
+          "id": "15:3724635790059591763",
+          "name": "invokedAt",
+          "type": 10
+        },
+        {
+          "id": "16:1331483313995182043",
+          "name": "invokedByTool",
+          "type": 9
+        },
+        {
+          "id": "17:4383360066997751490",
+          "name": "invocationParamsJson",
+          "type": 9
+        },
+        {
+          "id": "18:3415296836697917629",
+          "name": "invocationConfidence",
+          "type": 8
+        },
+        {
+          "id": "19:5130971016851249649",
+          "name": "invocationStatus",
+          "type": 9
+        },
+        {
+          "id": "20:6983702727960598988",
+          "name": "visibilityIndex",
+          "type": 6
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "12:590017759601725335",
+      "lastPropertyId": "17:3673486212452205106",
+      "name": "Timer",
+      "properties": [
+        {
+          "id": "1:6076634933084318117",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:916176338036289621",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "24:3126815867815300258"
+        },
+        {
+          "id": "3:7047139709481237580",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "4:648605916515681709",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "5:3797697666563590392",
+          "name": "syncId",
+          "type": 9
+        },
+        {
+          "id": "6:7106793030556640865",
+          "name": "label",
+          "type": 9
+        },
+        {
+          "id": "7:1376477093357019353",
+          "name": "durationSeconds",
+          "type": 6
+        },
+        {
+          "id": "8:8293728326253996094",
+          "name": "setAt",
+          "type": 10
+        },
+        {
+          "id": "9:2501110367504332364",
+          "name": "endsAt",
+          "type": 10
+        },
+        {
+          "id": "10:8069586750348795404",
+          "name": "fired",
+          "type": 1
+        },
+        {
+          "id": "11:7276781333484610035",
+          "name": "firedAt",
+          "type": 10
+        },
+        {
+          "id": "12:120336737018262837",
+          "name": "invocationCorrelationId",
+          "type": 9
+        },
+        {
+          "id": "13:6318073966253659413",
+          "name": "invokedAt",
+          "type": 10
+        },
+        {
+          "id": "14:7396670086731438257",
+          "name": "invokedByTool",
+          "type": 9
+        },
+        {
+          "id": "15:5803058591704225901",
+          "name": "invocationParamsJson",
+          "type": 9
+        },
+        {
+          "id": "16:803816339549710682",
+          "name": "invocationConfidence",
+          "type": 8
+        },
+        {
+          "id": "17:3673486212452205106",
+          "name": "invocationStatus",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "13:1699843594981519411",
+      "lastPropertyId": "11:8113664052130371384",
+      "name": "Tool",
+      "properties": [
+        {
+          "id": "1:2157723649840192412",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2008265623088990802",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "25:7861915011575645466"
+        },
+        {
+          "id": "3:8265643788121851873",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "4:8068058209704004967",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "5:5402218133583458380",
+          "name": "syncId",
+          "type": 9
+        },
+        {
+          "id": "6:6896755379029578919",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "7:7715400141683792836",
+          "name": "namespaceId",
+          "type": 9
+        },
+        {
+          "id": "8:6107793233298558975",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "9:6613236966461181405",
+          "name": "keywords",
+          "type": 30
+        },
+        {
+          "id": "10:8886437548931843849",
+          "name": "parametersJson",
+          "type": 9
+        },
+        {
+          "id": "11:8113664052130371384",
+          "name": "semanticCentroidJson",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "14:408906828312508098",
+      "lastPropertyId": "15:3216364536210278060",
+      "name": "Turn",
+      "properties": [
+        {
+          "id": "1:2655381058177920171",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:8695620091114092533",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "26:464418598415758182"
+        },
+        {
+          "id": "3:4602579476436154616",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "4:2801300875349178602",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "5:1440772769461641281",
+          "name": "syncId",
+          "type": 9
+        },
+        {
+          "id": "6:595595731912427646",
+          "name": "correlationId",
+          "type": 9
+        },
+        {
+          "id": "7:6787395696959488948",
+          "name": "timestamp",
+          "type": 10
+        },
+        {
+          "id": "8:3591896340034571371",
+          "name": "sttInvocationId",
+          "type": 9
+        },
+        {
+          "id": "9:1635675557493783687",
+          "name": "contextManagerInvocationId",
+          "type": 9
+        },
+        {
+          "id": "10:7080200254256624368",
+          "name": "llmInvocationId",
+          "type": 9
+        },
+        {
+          "id": "11:8832160035653447905",
+          "name": "ttsInvocationId",
+          "type": 9
+        },
+        {
+          "id": "12:2036974557854473435",
+          "name": "result",
+          "type": 9
+        },
+        {
+          "id": "13:2704222977777009733",
+          "name": "errorMessage",
+          "type": 9
+        },
+        {
+          "id": "14:7447254825569258511",
+          "name": "failureComponent",
+          "type": 9
+        },
+        {
+          "id": "15:3216364536210278060",
+          "name": "latencyMs",
+          "type": 6
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "7:972571647561966209",
-  "lastIndexId": "19:5323546749645590333",
+  "lastEntityId": "14:408906828312508098",
+  "lastIndexId": "26:464418598415758182",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

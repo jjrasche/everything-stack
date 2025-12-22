@@ -226,9 +226,9 @@ class NoteIndexedDBAdapter extends BaseIndexedDBAdapter<Note> {
   // ============ CRUD with Index Updates ============
 
   @override
-  Future<Note> save(Note entity) async {
+  Future<Note> save(Note entity, {bool touch = true}) async {
     // Save entity
-    final saved = await super.save(entity);
+    final saved = await super.save(entity, touch: touch);
 
     // Update HNSW index if entity has embedding
     if (saved.embedding != null && saved.embedding!.isNotEmpty) {

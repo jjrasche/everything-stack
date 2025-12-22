@@ -3,8 +3,7 @@
 /// ## What they do
 /// Each invocation represents a component's execution:
 /// - STTInvocation: speech → transcription
-/// - IntentInvocation: transcription → structured intent
-/// - LLMInvocation: context + intent → response
+/// - LLMInvocation: context → response
 /// - TTSInvocation: response → audio
 ///
 /// ## Key Design
@@ -15,10 +14,13 @@
 ///
 /// ## Turn Mapping
 /// Turn.sttInvocationId = the final STT invocation (successful or last attempt)
-/// Turn.intentInvocationId = the final Intent invocation
+/// Turn.llmInvocationId = the final LLM invocation
 /// ... etc
 ///
 /// Retries are stored separately with contextType='retry'
+///
+/// ## Note
+/// Tool selection is now handled by ContextManagerInvocation (see context_manager_invocation.dart)
 
 import '../core/base_entity.dart';
 
@@ -68,6 +70,9 @@ class STTInvocation extends BaseEntity {
   /// Identifies this as STT component
   final String componentType = 'stt';
 
+  /// Links to the Event/Turn that triggered this invocation
+  String correlationId;
+
   /// Execution context: 'conversation', 'retry', 'background', 'test'
   String contextType = 'conversation';
 
@@ -90,6 +95,7 @@ class STTInvocation extends BaseEntity {
   DateTime timestamp = DateTime.now();
 
   STTInvocation({
+    required this.correlationId,
     required this.audioId,
     required this.output,
     required this.confidence,
@@ -101,6 +107,7 @@ class STTInvocation extends BaseEntity {
 
   Map<String, dynamic> toJson() => {
         'componentType': componentType,
+        'correlationId': correlationId,
         'contextType': contextType,
         'audioId': audioId,
         'output': output,
@@ -111,91 +118,9 @@ class STTInvocation extends BaseEntity {
       };
 
   factory STTInvocation.fromJson(Map<String, dynamic> json) => STTInvocation(
+        correlationId: json['correlationId'] as String,
         audioId: json['audioId'] as String,
         output: json['output'] as String,
-        confidence: json['confidence'] as double,
-      )
-        ..contextType = json['contextType'] as String? ?? 'conversation'
-        ..retryCount = json['retryCount'] as int? ?? 0
-        ..lastError = json['lastError'] as String?
-        ..timestamp = json['timestamp'] != null
-            ? DateTime.parse(json['timestamp'] as String)
-            : DateTime.now();
-}
-
-// ============ Intent Invocation ============
-
-class IntentInvocation extends BaseEntity {
-  // ============ BaseEntity field overrides ============
-  @override
-  int id = 0;
-
-  @override
-  String uuid = '';
-
-  @override
-  DateTime createdAt = DateTime.now();
-
-  @override
-  DateTime updatedAt = DateTime.now();
-
-  @override
-  String? syncId;
-
-  // ============ Invocation fields ============
-
-  final String componentType = 'intent';
-
-  String contextType = 'conversation';
-
-  /// Which transcription was classified
-  String transcription;
-
-  /// Which tool was selected (empty = conversational, no tool)
-  String toolName;
-
-  /// Filled slots as JSON string
-  /// {"slotName": value, ...}
-  String slotsJson;
-
-  /// How confident is Intent in this classification (0.0-1.0)
-  double confidence;
-
-  /// How many times did Intent retry?
-  int retryCount = 0;
-
-  String? lastError;
-
-  DateTime timestamp = DateTime.now();
-
-  IntentInvocation({
-    required this.transcription,
-    required this.toolName,
-    required this.slotsJson,
-    required this.confidence,
-  }) {
-    if (uuid.isEmpty) {
-      uuid = super.uuid;
-    }
-  }
-
-  Map<String, dynamic> toJson() => {
-        'componentType': componentType,
-        'contextType': contextType,
-        'transcription': transcription,
-        'toolName': toolName,
-        'slotsJson': slotsJson,
-        'confidence': confidence,
-        'retryCount': retryCount,
-        'lastError': lastError,
-        'timestamp': timestamp.toIso8601String(),
-      };
-
-  factory IntentInvocation.fromJson(Map<String, dynamic> json) =>
-      IntentInvocation(
-        transcription: json['transcription'] as String,
-        toolName: json['toolName'] as String,
-        slotsJson: json['slotsJson'] as String,
         confidence: json['confidence'] as double,
       )
         ..contextType = json['contextType'] as String? ?? 'conversation'
@@ -229,6 +154,9 @@ class LLMInvocation extends BaseEntity {
 
   final String componentType = 'llm';
 
+  /// Links to the Event/Turn that triggered this invocation
+  String correlationId;
+
   String contextType = 'conversation';
 
   /// Which prompt template was used (e.g., 'v1.2.3')
@@ -256,6 +184,7 @@ class LLMInvocation extends BaseEntity {
   DateTime timestamp = DateTime.now();
 
   LLMInvocation({
+    required this.correlationId,
     required this.systemPromptVersion,
     required this.conversationHistoryLength,
     required this.response,
@@ -268,6 +197,7 @@ class LLMInvocation extends BaseEntity {
 
   Map<String, dynamic> toJson() => {
         'componentType': componentType,
+        'correlationId': correlationId,
         'contextType': contextType,
         'systemPromptVersion': systemPromptVersion,
         'conversationHistoryLength': conversationHistoryLength,
@@ -280,6 +210,7 @@ class LLMInvocation extends BaseEntity {
       };
 
   factory LLMInvocation.fromJson(Map<String, dynamic> json) => LLMInvocation(
+        correlationId: json['correlationId'] as String,
         systemPromptVersion: json['systemPromptVersion'] as String,
         conversationHistoryLength: json['conversationHistoryLength'] as int,
         response: json['response'] as String,
@@ -317,6 +248,9 @@ class TTSInvocation extends BaseEntity {
 
   final String componentType = 'tts';
 
+  /// Links to the Event/Turn that triggered this invocation
+  String correlationId;
+
   String contextType = 'conversation';
 
   /// Text that was synthesized
@@ -333,6 +267,7 @@ class TTSInvocation extends BaseEntity {
   DateTime timestamp = DateTime.now();
 
   TTSInvocation({
+    required this.correlationId,
     required this.text,
     required this.audioId,
   }) {
@@ -343,6 +278,7 @@ class TTSInvocation extends BaseEntity {
 
   Map<String, dynamic> toJson() => {
         'componentType': componentType,
+        'correlationId': correlationId,
         'contextType': contextType,
         'text': text,
         'audioId': audioId,
@@ -352,6 +288,7 @@ class TTSInvocation extends BaseEntity {
       };
 
   factory TTSInvocation.fromJson(Map<String, dynamic> json) => TTSInvocation(
+        correlationId: json['correlationId'] as String,
         text: json['text'] as String,
         audioId: json['audioId'] as String,
       )

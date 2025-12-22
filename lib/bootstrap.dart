@@ -30,17 +30,19 @@
 
 library;
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'services/blob_store.dart';
 import 'services/file_service.dart';
 import 'services/sync_service.dart';
 import 'services/connectivity_service.dart';
 import 'services/embedding_service.dart';
 import 'services/embedding_queue_service.dart';
+import 'services/jina_embedding_service_impl.dart';
 import 'services/stt_service.dart';
 import 'services/tts_service.dart';
 import 'services/llm_service.dart';
-import 'domain/note.dart';
-import 'persistence/objectbox/note_objectbox_adapter.dart';
+import 'services/groq_service.dart';
 
 // Conditional import for platform-specific BlobStore
 import 'bootstrap/blob_store_factory_stub.dart'
@@ -80,6 +82,9 @@ class EverythingStackConfig {
   /// Anthropic API key for Claude LLM (optional - LLM disabled if not provided)
   final String? claudeApiKey;
 
+  /// Groq API key for Groq LLM (optional - uses Claude if not provided)
+  final String? groqApiKey;
+
   /// Whether to use mock services (for testing)
   final bool useMocks;
 
@@ -91,6 +96,7 @@ class EverythingStackConfig {
     this.deepgramApiKey,
     this.googleTtsApiKey,
     this.claudeApiKey,
+    this.groqApiKey,
     this.useMocks = false,
   });
 
@@ -106,6 +112,7 @@ class EverythingStackConfig {
       deepgramApiKey: _envOrNull('DEEPGRAM_API_KEY'),
       googleTtsApiKey: _envOrNull('GOOGLE_TTS_API_KEY'),
       claudeApiKey: _envOrNull('CLAUDE_API_KEY'),
+      groqApiKey: _envOrNull('GROQ_API_KEY'),
     );
   }
 
@@ -118,8 +125,16 @@ class EverythingStackConfig {
   static const _deepgramApiKey = String.fromEnvironment('DEEPGRAM_API_KEY');
   static const _googleTtsApiKey = String.fromEnvironment('GOOGLE_TTS_API_KEY');
   static const _claudeApiKey = String.fromEnvironment('CLAUDE_API_KEY');
+  static const _groqApiKey = String.fromEnvironment('GROQ_API_KEY');
 
   static String? _envOrNull(String key) {
+    // Try .env file first (runtime), then fall back to compile-time
+    final runtimeValue = dotenv.maybeGet(key);
+    if (runtimeValue != null && runtimeValue.isNotEmpty) {
+      return runtimeValue;
+    }
+
+    // Fall back to compile-time environment
     switch (key) {
       case 'SUPABASE_URL':
         return _supabaseUrl.isEmpty ? null : _supabaseUrl;
@@ -135,6 +150,8 @@ class EverythingStackConfig {
         return _googleTtsApiKey.isEmpty ? null : _googleTtsApiKey;
       case 'CLAUDE_API_KEY':
         return _claudeApiKey.isEmpty ? null : _claudeApiKey;
+      case 'GROQ_API_KEY':
+        return _groqApiKey.isEmpty ? null : _groqApiKey;
       default:
         return null;
     }
@@ -203,6 +220,14 @@ EmbeddingQueueService? get embeddingQueueService => _embeddingQueueService;
 Future<void> initializeEverythingStack({
   EverythingStackConfig? config,
 }) async {
+  // Load .env file (runtime environment variables)
+  try {
+    await dotenv.load(fileName: '.env');
+  } catch (e) {
+    // .env file is optional - continue with compile-time env vars if not found
+    print('Note: .env file not found, using compile-time environment variables');
+  }
+
   final cfg = config ?? EverythingStackConfig.fromEnvironment();
 
   if (cfg.useMocks) {
@@ -245,10 +270,7 @@ Future<void> initializeEverythingStack({
 
   // 6. Initialize EmbeddingService (optional - requires API key)
   if (cfg.jinaApiKey != null && cfg.jinaApiKey!.isNotEmpty) {
-    EmbeddingService.instance = JinaEmbeddingService(
-      apiKey: cfg.jinaApiKey,
-      httpClient: wrappedHttpClient,
-    );
+    EmbeddingService.instance = createJinaEmbeddingService(cfg.jinaApiKey!);
   } else if (cfg.geminiApiKey != null && cfg.geminiApiKey!.isNotEmpty) {
     EmbeddingService.instance = GeminiEmbeddingService(
       apiKey: cfg.geminiApiKey,
@@ -290,14 +312,25 @@ Future<void> initializeEverythingStack({
   }
   // else: keeps NullTTSService default
 
-  // 10. Initialize LLMService (optional - requires Claude API key)
-  if (cfg.claudeApiKey != null && cfg.claudeApiKey!.isNotEmpty) {
+  // 10. Initialize LLMService
+  // Priority: Groq (recommended for tool calling) → Claude → None
+  if (cfg.groqApiKey != null && cfg.groqApiKey!.isNotEmpty) {
+    final llmService = GroqService(apiKey: cfg.groqApiKey!);
+    await llmService.initialize();
+    LLMService.instance = llmService;
+    print('LLMService initialized (Groq)');
+  } else if (cfg.claudeApiKey != null && cfg.claudeApiKey!.isNotEmpty) {
     final llmService = ClaudeService(apiKey: cfg.claudeApiKey!);
     await llmService.initialize();
     LLMService.instance = llmService;
     print('LLMService initialized (Claude)');
   }
   // else: keeps NullLLMService default
+
+  // 11. Initialize ToolRegistry and register tool handlers
+  // Note: ContextManager uses ToolRegistry at runtime, so we register handlers here at bootstrap
+  // TODO: Complete tool registration when ContextManager is integrated into application
+  print('ToolRegistry ready for tool handler registration');
 }
 
 /// Wrap TimeoutHttpClient to match HttpClientFunction signature.

@@ -1,8 +1,13 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:convert';
+import 'package:flutter/material.dart';
 
 import 'streaming_service.dart';
-import 'timeout_config.dart';
+import 'trainable.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:everything_stack_template/domain/invocations.dart';
+import 'package:everything_stack_template/domain/stt_invocation_repository.dart';
 
 /// Speech-to-text service contract.
 ///
@@ -34,7 +39,7 @@ import 'timeout_config.dart';
 /// - **Connection timeout**: 10s to establish WebSocket
 /// - **Idle timeout**: 30s without transcript → assume connection dead
 /// - **No automatic retry**: Caller must reconnect on timeout
-abstract class STTService extends StreamingService<Uint8List, String> {
+abstract class STTService extends StreamingService<Uint8List, String> implements Trainable {
   /// Global instance (default: NullSTTService)
   ///
   /// Replace with DeepgramSTTService in bootstrap:
@@ -79,6 +84,25 @@ abstract class STTService extends StreamingService<Uint8List, String> {
       onDone: onDone,
     );
   }
+
+  /// Record STT invocation for training/adaptation
+  ///
+  /// Called after transcription completes.
+  /// Saves to repository for later feedback and learning.
+  @override
+  Future<String> recordInvocation(dynamic invocation);
+
+  /// Learn from user feedback (STT-specific)
+  @override
+  Future<void> trainFromFeedback(String turnId, {String? userId});
+
+  /// Get current STT adaptation state
+  @override
+  Future<Map<String, dynamic>> getAdaptationState({String? userId});
+
+  /// Build UI for STT feedback
+  @override
+  Widget buildFeedbackUI(String invocationId);
 }
 
 // ============================================================================
@@ -110,24 +134,28 @@ class DeepgramSTTService extends STTService {
   final String apiKey;
   final String model;
   final String language;
+  final STTInvocationRepository _sttInvocationRepository;
 
   bool _isReady = false;
+  WebSocketChannel? _ws;
+  StreamSubscription<dynamic>? _wsSubscription;
+  Timer? _idleTimer;
 
   DeepgramSTTService({
     required this.apiKey,
+    required STTInvocationRepository sttInvocationRepository,
     this.model = 'nova-2',
     this.language = 'en-US',
-  });
+  }) : _sttInvocationRepository = sttInvocationRepository;
 
   @override
   Future<void> initialize() async {
-    // TODO: Implement WebSocket connection setup
-    // - Validate API key
-    // - Test connection with timeout
-    // - Set _isReady = true on success
-
-    print('DeepgramSTTService.initialize() - STUB: Not implemented');
-    _isReady = true; // Fake success for now
+    // Validate API key
+    if (apiKey.isEmpty) {
+      throw STTException('Deepgram API key is empty');
+    }
+    _isReady = true;
+    print('DeepgramSTTService initialized (API key validated)');
   }
 
   @override
@@ -137,29 +165,190 @@ class DeepgramSTTService extends STTService {
     required void Function(Object) onError,
     void Function()? onDone,
   }) {
-    // TODO: Implement WebSocket streaming
-    // 1. Connect to Deepgram with connection timeout
-    // 2. Send audio bytes from input stream
-    // 3. Receive transcript chunks from WebSocket
-    // 4. Apply idle timeout (30s no data → close)
-    // 5. Handle errors gracefully
+    if (!_isReady) {
+      onError(STTException('DeepgramSTTService not initialized'));
+      return Stream<String>.empty().listen(null);
+    }
 
-    print('DeepgramSTTService.stream() - STUB: Not implemented');
+    // Controller to manage transcript stream
+    final controller = StreamController<String>();
 
-    // Return empty stream for now
-    onError(STTException('DeepgramSTTService not implemented'));
-    return Stream<String>.empty().listen(null);
+    // Track if connection is active
+    bool isActive = true;
+
+    Future<void> connect() async {
+      try {
+        // Build WebSocket URL with parameters and API key
+        final url = Uri.parse(
+          'wss://api.deepgram.com/v1/listen'
+          '?model=$model'
+          '&language=$language'
+          '&encoding=linear16'
+          '&sample_rate=16000'
+          '&channels=1'
+          '&api_key=$apiKey',
+        );
+
+        // Connect with timeout
+        try {
+          _ws = WebSocketChannel.connect(url);
+        } catch (e) {
+          throw STTException('Failed to connect to Deepgram', cause: e);
+        }
+
+        // Handle WebSocket messages
+        _wsSubscription = _ws!.stream.listen(
+          (message) {
+            // Reset idle timer on any message
+            _idleTimer?.cancel();
+            _idleTimer = Timer(Duration(seconds: 30), () {
+              if (isActive) {
+                onError(STTException('Deepgram idle timeout (30s)'));
+                _cleanup();
+              }
+            });
+
+            // Parse Deepgram response
+            try {
+              final json = jsonDecode(message);
+
+              // Extract transcript from response
+              if (json['type'] == 'Results') {
+                final results = json['result']?['results'] as List?;
+                if (results != null && results.isNotEmpty) {
+                  final alternatives = results[0]['alternatives'] as List?;
+                  if (alternatives != null && alternatives.isNotEmpty) {
+                    final transcript = alternatives[0]['transcript'] as String?;
+                    if (transcript != null && transcript.isNotEmpty) {
+                      onData(transcript);
+                    }
+                  }
+                }
+              }
+            } catch (e) {
+              // Log parse errors but don't fail - continue streaming
+              print('Warning: Failed to parse Deepgram response: $e');
+            }
+          },
+          onError: (error) {
+            if (isActive) {
+              onError(STTException('WebSocket error', cause: error));
+              _cleanup();
+            }
+          },
+          onDone: () {
+            if (isActive) {
+              onDone?.call();
+              _cleanup();
+            }
+          },
+        );
+
+        // Send audio from input stream
+        input.listen(
+          (audioBytes) {
+            if (_ws != null && isActive) {
+              try {
+                _ws!.sink.add(audioBytes);
+              } catch (e) {
+                if (isActive) {
+                  onError(STTException('Failed to send audio', cause: e));
+                  _cleanup();
+                }
+              }
+            }
+          },
+          onError: (error) {
+            if (isActive) {
+              onError(STTException('Audio stream error', cause: error));
+              _cleanup();
+            }
+          },
+          onDone: () {
+            if (isActive) {
+              // Close WebSocket connection when audio stream ends
+              _cleanup();
+            }
+          },
+        );
+
+        // Set initial idle timeout
+        _idleTimer = Timer(Duration(seconds: 30), () {
+          if (isActive) {
+            onError(STTException('Deepgram idle timeout (30s)'));
+            _cleanup();
+          }
+        });
+      } catch (e) {
+        if (isActive) {
+          onError(STTException('Deepgram connection failed', cause: e));
+          _cleanup();
+        }
+      }
+    }
+
+    // Start connection
+    connect();
+
+    // Return subscription that allows caller to cancel
+    return controller.stream.listen(
+      onData,
+      onError: onError,
+      onDone: onDone,
+    );
+  }
+
+  void _cleanup() {
+    _idleTimer?.cancel();
+    _idleTimer = null;
+    _wsSubscription?.cancel();
+    _ws?.sink.close();
+    _ws = null;
   }
 
   @override
   void dispose() {
-    // TODO: Close WebSocket connection
+    _cleanup();
     _isReady = false;
-    print('DeepgramSTTService.dispose() - STUB: Not implemented');
+    print('DeepgramSTTService disposed');
   }
 
   @override
   bool get isReady => _isReady;
+
+  // ============================================================================
+  // Trainable Implementation
+  // ============================================================================
+
+  @override
+  Future<String> recordInvocation(dynamic invocation) async {
+    if (invocation is! STTInvocation) {
+      throw ArgumentError('Expected STTInvocation, got ${invocation.runtimeType}');
+    }
+    await _sttInvocationRepository.save(invocation);
+    return invocation.uuid;
+  }
+
+  @override
+  Future<void> trainFromFeedback(String turnId, {String? userId}) async {
+    // TODO: Implement STT learning from feedback
+    // For MVP: placeholder - full implementation in Phase 3
+    print('DeepgramSTTService.trainFromFeedback() - TODO');
+  }
+
+  @override
+  Future<Map<String, dynamic>> getAdaptationState({String? userId}) async {
+    // TODO: Implement returning current STT adaptation state
+    // For MVP: placeholder - full implementation in Phase 3
+    return {'status': 'baseline'};
+  }
+
+  @override
+  Widget buildFeedbackUI(String invocationId) {
+    // TODO: Implement STT feedback UI
+    // For MVP: placeholder - full implementation in Phase 3
+    return Center(child: Text('STT Feedback UI (TODO)'));
+  }
 }
 
 // ============================================================================
@@ -192,6 +381,26 @@ class NullSTTService extends STTService {
 
   @override
   bool get isReady => false;
+
+  @override
+  Future<String> recordInvocation(dynamic invocation) async {
+    throw STTException('STT not configured');
+  }
+
+  @override
+  Future<void> trainFromFeedback(String turnId, {String? userId}) async {
+    throw STTException('STT not configured');
+  }
+
+  @override
+  Future<Map<String, dynamic>> getAdaptationState({String? userId}) async {
+    throw STTException('STT not configured');
+  }
+
+  @override
+  Widget buildFeedbackUI(String invocationId) {
+    return Center(child: Text('STT not configured'));
+  }
 }
 
 // ============================================================================

@@ -2,18 +2,21 @@
 ///
 /// Four separate repositories per component:
 /// - STTInvocationRepository
-/// - IntentInvocationRepository
 /// - LLMInvocationRepository
 /// - TTSInvocationRepository
+/// - ContextManagerInvocationRepository (in-memory for testing)
 ///
-/// Each extends InvocationRepository<T> with platform-specific storage.
+/// Each implements domain-specific repository interface with in-memory storage.
 
-import 'package:everything_stack_template/core/invocation_repository.dart';
 import 'package:everything_stack_template/domain/invocations.dart';
+import 'package:everything_stack_template/domain/stt_invocation_repository.dart';
+import 'package:everything_stack_template/domain/llm_invocation_repository.dart';
+import 'package:everything_stack_template/domain/tts_invocation_repository.dart';
+import 'package:everything_stack_template/domain/context_manager_invocation.dart';
 
 // ============ STT Invocation Repository ============
 
-class STTInvocationRepositoryImpl extends InvocationRepository<STTInvocation> {
+class STTInvocationRepositoryImpl implements STTInvocationRepository {
   final Map<String, STTInvocation> _store = {};
 
   STTInvocationRepositoryImpl._();
@@ -23,15 +26,8 @@ class STTInvocationRepositoryImpl extends InvocationRepository<STTInvocation> {
   }
 
   @override
-  Future<STTInvocation?> findById(String id) async {
-    return _store[id];
-  }
-
-  @override
-  Future<List<STTInvocation>> findByTurn(String turnId) async {
-    // This would require Turn reference; typically queried from TurnRepository
-    // For now, return empty (would be populated via Turn.invocationIds)
-    return [];
+  Future<STTInvocation?> findByUuid(String uuid) async {
+    return _store[uuid];
   }
 
   @override
@@ -40,88 +36,68 @@ class STTInvocationRepositoryImpl extends InvocationRepository<STTInvocation> {
   }
 
   @override
-  Future<List<STTInvocation>> findByIds(List<String> ids) async {
-    return ids.map((id) => _store[id]).whereType<STTInvocation>().toList();
+  Future<List<STTInvocation>> findByAudioId(String audioId) async {
+    return _store.values.where((i) => i.audioId == audioId).toList();
   }
 
   @override
-  Future<STTInvocation> save(STTInvocation invocation) async {
+  Future<List<STTInvocation>> findByCorrelationId(String correlationId) async {
+    return _store.values
+        .where((i) => i.correlationId == correlationId)
+        .toList()
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+  }
+
+  @override
+  Future<List<STTInvocation>> findSuccessful() async {
+    return _store.values
+        .where((i) => i.retryCount == 0)
+        .toList();
+  }
+
+  @override
+  Future<List<STTInvocation>> findFailed() async {
+    return _store.values
+        .where((i) => i.retryCount > 0)
+        .toList();
+  }
+
+  @override
+  Future<List<STTInvocation>> findLowConfidence(
+      {double confidenceThreshold = 0.7}) async {
+    return _store.values
+        .where((i) => i.confidence < confidenceThreshold)
+        .toList();
+  }
+
+  @override
+  Future<List<STTInvocation>> findRecent({int limit = 10}) async {
+    final all = _store.values.toList();
+    all.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    return all.take(limit).toList();
+  }
+
+  @override
+  Future<int> save(STTInvocation invocation) async {
     _store[invocation.uuid] = invocation;
-    return invocation;
+    return invocation.id;
   }
 
   @override
-  Future<bool> delete(String id) async {
-    return _store.remove(id) != null;
+  Future<bool> delete(String uuid) async {
+    return _store.remove(uuid) != null;
   }
 
   @override
-  Future<int> deleteByTurn(String turnId) async {
-    // Would delete all invocations for a turn
-    // Typically: delete if invocationId in Turn.invocationIds
-    return 0;
+  Future<int> count() async {
+    return _store.length;
   }
 
   @override
-  Future<List<STTInvocation>> findAll() async {
-    return _store.values.toList();
-  }
-
-  void clear() {
+  Future<int> deleteAll() async {
+    final count = _store.length;
     _store.clear();
-  }
-}
-
-// ============ Intent Invocation Repository ============
-
-class IntentInvocationRepositoryImpl extends InvocationRepository<IntentInvocation> {
-  final Map<String, IntentInvocation> _store = {};
-
-  IntentInvocationRepositoryImpl._();
-
-  factory IntentInvocationRepositoryImpl.inMemory() {
-    return IntentInvocationRepositoryImpl._();
-  }
-
-  @override
-  Future<IntentInvocation?> findById(String id) async {
-    return _store[id];
-  }
-
-  @override
-  Future<List<IntentInvocation>> findByTurn(String turnId) async {
-    return [];
-  }
-
-  @override
-  Future<List<IntentInvocation>> findByContextType(String contextType) async {
-    return _store.values.where((i) => i.contextType == contextType).toList();
-  }
-
-  @override
-  Future<List<IntentInvocation>> findByIds(List<String> ids) async {
-    return ids.map((id) => _store[id]).whereType<IntentInvocation>().toList();
-  }
-
-  @override
-  Future<IntentInvocation> save(IntentInvocation invocation) async {
-    _store[invocation.uuid] = invocation;
-    return invocation;
-  }
-
-  @override
-  Future<bool> delete(String id) async {
-    return _store.remove(id) != null;
-  }
-
-  @override
-  Future<int> deleteByTurn(String turnId) async {
-    return 0;
-  }
-
-  @override
-  Future<List<IntentInvocation>> findAll() async {
-    return _store.values.toList();
+    return count;
   }
 
   void clear() {
@@ -131,7 +107,7 @@ class IntentInvocationRepositoryImpl extends InvocationRepository<IntentInvocati
 
 // ============ LLM Invocation Repository ============
 
-class LLMInvocationRepositoryImpl extends InvocationRepository<LLMInvocation> {
+class LLMInvocationRepositoryImpl implements LLMInvocationRepository {
   final Map<String, LLMInvocation> _store = {};
 
   LLMInvocationRepositoryImpl._();
@@ -141,13 +117,8 @@ class LLMInvocationRepositoryImpl extends InvocationRepository<LLMInvocation> {
   }
 
   @override
-  Future<LLMInvocation?> findById(String id) async {
-    return _store[id];
-  }
-
-  @override
-  Future<List<LLMInvocation>> findByTurn(String turnId) async {
-    return [];
+  Future<LLMInvocation?> findByUuid(String uuid) async {
+    return _store[uuid];
   }
 
   @override
@@ -156,29 +127,69 @@ class LLMInvocationRepositoryImpl extends InvocationRepository<LLMInvocation> {
   }
 
   @override
-  Future<List<LLMInvocation>> findByIds(List<String> ids) async {
-    return ids.map((id) => _store[id]).whereType<LLMInvocation>().toList();
+  Future<List<LLMInvocation>> findByCorrelationId(String correlationId) async {
+    return _store.values
+        .where((i) => i.correlationId == correlationId)
+        .toList()
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
   }
 
   @override
-  Future<LLMInvocation> save(LLMInvocation invocation) async {
+  Future<List<LLMInvocation>> findSuccessful() async {
+    return _store.values
+        .where((i) => i.retryCount == 0)
+        .toList();
+  }
+
+  @override
+  Future<List<LLMInvocation>> findFailed() async {
+    return _store.values
+        .where((i) => i.retryCount > 0)
+        .toList();
+  }
+
+  @override
+  Future<List<LLMInvocation>> findByStopReason(String stopReason) async {
+    return _store.values
+        .where((i) => i.stopReason == stopReason)
+        .toList();
+  }
+
+  @override
+  Future<List<LLMInvocation>> findExceedingTokens(int tokenThreshold) async {
+    return _store.values
+        .where((i) => i.tokenCount > tokenThreshold)
+        .toList();
+  }
+
+  @override
+  Future<List<LLMInvocation>> findRecent({int limit = 10}) async {
+    final all = _store.values.toList();
+    all.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    return all.take(limit).toList();
+  }
+
+  @override
+  Future<int> save(LLMInvocation invocation) async {
     _store[invocation.uuid] = invocation;
-    return invocation;
+    return invocation.id;
   }
 
   @override
-  Future<bool> delete(String id) async {
-    return _store.remove(id) != null;
+  Future<bool> delete(String uuid) async {
+    return _store.remove(uuid) != null;
   }
 
   @override
-  Future<int> deleteByTurn(String turnId) async {
-    return 0;
+  Future<int> count() async {
+    return _store.length;
   }
 
   @override
-  Future<List<LLMInvocation>> findAll() async {
-    return _store.values.toList();
+  Future<int> deleteAll() async {
+    final count = _store.length;
+    _store.clear();
+    return count;
   }
 
   void clear() {
@@ -188,7 +199,7 @@ class LLMInvocationRepositoryImpl extends InvocationRepository<LLMInvocation> {
 
 // ============ TTS Invocation Repository ============
 
-class TTSInvocationRepositoryImpl extends InvocationRepository<TTSInvocation> {
+class TTSInvocationRepositoryImpl implements TTSInvocationRepository {
   final Map<String, TTSInvocation> _store = {};
 
   TTSInvocationRepositoryImpl._();
@@ -198,13 +209,8 @@ class TTSInvocationRepositoryImpl extends InvocationRepository<TTSInvocation> {
   }
 
   @override
-  Future<TTSInvocation?> findById(String id) async {
-    return _store[id];
-  }
-
-  @override
-  Future<List<TTSInvocation>> findByTurn(String turnId) async {
-    return [];
+  Future<TTSInvocation?> findByUuid(String uuid) async {
+    return _store[uuid];
   }
 
   @override
@@ -213,29 +219,141 @@ class TTSInvocationRepositoryImpl extends InvocationRepository<TTSInvocation> {
   }
 
   @override
-  Future<List<TTSInvocation>> findByIds(List<String> ids) async {
-    return ids.map((id) => _store[id]).whereType<TTSInvocation>().toList();
+  Future<List<TTSInvocation>> findByCorrelationId(String correlationId) async {
+    return _store.values
+        .where((i) => i.correlationId == correlationId)
+        .toList()
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
   }
 
   @override
-  Future<TTSInvocation> save(TTSInvocation invocation) async {
+  Future<List<TTSInvocation>> findByAudioId(String audioId) async {
+    return _store.values.where((i) => i.audioId == audioId).toList();
+  }
+
+  @override
+  Future<List<TTSInvocation>> findByText(String text) async {
+    return _store.values.where((i) => i.text == text).toList();
+  }
+
+  @override
+  Future<List<TTSInvocation>> findSuccessful() async {
+    return _store.values
+        .where((i) => i.retryCount == 0)
+        .toList();
+  }
+
+  @override
+  Future<List<TTSInvocation>> findFailed() async {
+    return _store.values
+        .where((i) => i.retryCount > 0)
+        .toList();
+  }
+
+  @override
+  Future<List<TTSInvocation>> findSlowInvocations(int maxLatencyMs) async {
+    // Would calculate latency: timestamp to now
+    // For now, return empty
+    return [];
+  }
+
+  @override
+  Future<List<TTSInvocation>> findRecent({int limit = 10}) async {
+    final all = _store.values.toList();
+    all.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    return all.take(limit).toList();
+  }
+
+  @override
+  Future<int> save(TTSInvocation invocation) async {
     _store[invocation.uuid] = invocation;
-    return invocation;
+    return invocation.id;
   }
 
   @override
-  Future<bool> delete(String id) async {
-    return _store.remove(id) != null;
+  Future<bool> delete(String uuid) async {
+    return _store.remove(uuid) != null;
   }
 
   @override
-  Future<int> deleteByTurn(String turnId) async {
-    return 0;
+  Future<int> count() async {
+    return _store.length;
   }
 
   @override
-  Future<List<TTSInvocation>> findAll() async {
-    return _store.values.toList();
+  Future<int> deleteAll() async {
+    final count = _store.length;
+    _store.clear();
+    return count;
+  }
+
+  void clear() {
+    _store.clear();
+  }
+}
+
+// ============ ContextManager Invocation Repository ============
+
+class ContextManagerInvocationRepositoryImpl {
+  final Map<String, ContextManagerInvocation> _store = {};
+
+  ContextManagerInvocationRepositoryImpl._();
+
+  factory ContextManagerInvocationRepositoryImpl.inMemory() {
+    return ContextManagerInvocationRepositoryImpl._();
+  }
+
+  Future<ContextManagerInvocation?> findByUuid(String uuid) async {
+    return _store[uuid];
+  }
+
+  Future<List<ContextManagerInvocation>> findByCorrelationId(
+      String correlationId) async {
+    return _store.values
+        .where((i) => i.correlationId == correlationId)
+        .toList()
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+  }
+
+  Future<List<ContextManagerInvocation>> findByPersonality(
+      String personalityId) async {
+    return _store.values
+        .where((i) => i.personalityId == personalityId)
+        .toList()
+      ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+  }
+
+  Future<List<ContextManagerInvocation>> findRecent({int limit = 50}) async {
+    final all = _store.values.toList();
+    all.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    return all.take(limit).toList();
+  }
+
+  Future<List<ContextManagerInvocation>> findWithErrors() async {
+    return _store.values
+        .where((i) => i.errorType != null)
+        .toList()
+      ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+  }
+
+  Future<int> save(ContextManagerInvocation invocation) async {
+    invocation.prepareForSave();
+    _store[invocation.uuid] = invocation;
+    return invocation.id;
+  }
+
+  Future<bool> delete(String uuid) async {
+    return _store.remove(uuid) != null;
+  }
+
+  Future<int> count() async {
+    return _store.length;
+  }
+
+  Future<int> deleteAll() async {
+    final count = _store.length;
+    _store.clear();
+    return count;
   }
 
   void clear() {

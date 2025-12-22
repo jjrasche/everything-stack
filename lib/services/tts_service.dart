@@ -1,7 +1,13 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:convert';
+import 'package:flutter/material.dart';
 
+import 'package:http/http.dart' as http;
 import 'timeout_config.dart';
+import 'trainable.dart';
+import 'package:everything_stack_template/domain/invocations.dart';
+import 'package:everything_stack_template/domain/tts_invocation_repository.dart';
 
 /// Text-to-speech service contract.
 ///
@@ -30,7 +36,7 @@ import 'timeout_config.dart';
 /// - **Connection timeout**: 10s to establish HTTP connection
 /// - **Streaming idle timeout**: 5s without audio chunk → assume connection stalled
 /// - **No automatic retry**: Caller must retry on timeout
-abstract class TTSService {
+abstract class TTSService implements Trainable {
   /// Global instance (default: NullTTSService)
   ///
   /// Replace with GoogleTTSService in bootstrap:
@@ -86,6 +92,25 @@ abstract class TTSService {
   ///
   /// Returns true after successful [initialize], false after [dispose].
   bool get isReady;
+
+  /// Record TTS invocation for training/adaptation
+  ///
+  /// Called after synthesis completes.
+  /// Saves to repository for later feedback and learning.
+  @override
+  Future<String> recordInvocation(dynamic invocation);
+
+  /// Learn from user feedback (TTS-specific)
+  @override
+  Future<void> trainFromFeedback(String turnId, {String? userId});
+
+  /// Get current TTS adaptation state
+  @override
+  Future<Map<String, dynamic>> getAdaptationState({String? userId});
+
+  /// Build UI for TTS feedback
+  @override
+  Widget buildFeedbackUI(String invocationId);
 }
 
 // ============================================================================
@@ -117,24 +142,26 @@ class GoogleTTSService extends TTSService {
   final String apiKey;
   final String defaultVoice;
   final String audioEncoding;
+  final TTSInvocationRepository _ttsInvocationRepository;
 
   bool _isReady = false;
+  final http.Client _httpClient = http.Client();
 
   GoogleTTSService({
     required this.apiKey,
+    required TTSInvocationRepository ttsInvocationRepository,
     this.defaultVoice = 'en-US-Neural2-A',
     this.audioEncoding = 'LINEAR16',
-  });
+  }) : _ttsInvocationRepository = ttsInvocationRepository;
 
   @override
   Future<void> initialize() async {
-    // TODO: Implement initialization
-    // - Validate API key
-    // - Test connection with timeout
-    // - Set _isReady = true on success
-
-    print('GoogleTTSService.initialize() - STUB: Not implemented');
-    _isReady = true; // Fake success for now
+    // Validate API key
+    if (apiKey.isEmpty) {
+      throw TTSException('Google Cloud TTS API key is empty');
+    }
+    _isReady = true;
+    print('GoogleTTSService initialized (API key validated)');
   }
 
   @override
@@ -143,27 +170,116 @@ class GoogleTTSService extends TTSService {
     String? voice,
     String? languageCode,
   }) async* {
-    // TODO: Implement HTTP streaming synthesis
-    // 1. POST request to Google Cloud TTS API with connection timeout
-    // 2. Stream response body chunks
-    // 3. Apply idle timeout (5s no chunk → close)
-    // 4. Handle errors gracefully
+    if (!_isReady) {
+      throw TTSException('GoogleTTSService not initialized');
+    }
 
-    print('GoogleTTSService.synthesize() - STUB: Not implemented');
+    if (text.isEmpty) {
+      throw TTSException('Synthesis text cannot be empty');
+    }
 
-    // Throw for now
-    throw TTSException('GoogleTTSService not implemented');
+    final voiceId = voice ?? defaultVoice;
+    final lang = languageCode ?? 'en-US';
+
+    try {
+      // Prepare request
+      final url = Uri.parse(
+        'https://texttospeech.googleapis.com/v1/text:synthesize?key=$apiKey',
+      );
+
+      final requestBody = {
+        'input': {'text': text},
+        'voice': {
+          'languageCode': lang,
+          'name': voiceId,
+        },
+        'audioConfig': {
+          'audioEncoding': audioEncoding,
+          'sampleRateHertz': audioEncoding == 'LINEAR16' ? 16000 : null,
+        },
+      };
+
+      // Make HTTP request with timeout
+      final response = await _httpClient
+          .post(
+            url,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(requestBody),
+          )
+          .timeout(TimeoutConfig.ttsGeneration);
+
+      // Check for errors
+      if (response.statusCode != 200) {
+        throw TTSException(
+          'Google TTS API error: ${response.statusCode}',
+          cause: response.body,
+        );
+      }
+
+      // Parse response
+      final responseJson = jsonDecode(response.body);
+      final audioContent = responseJson['audioContent'] as String?;
+
+      if (audioContent == null) {
+        throw TTSException('No audio content in response');
+      }
+
+      // Decode base64 audio
+      final audioBytes = base64Decode(audioContent);
+
+      // Yield the audio bytes as a single chunk
+      // (For streaming, could split into smaller chunks if needed)
+      yield audioBytes;
+    } on TTSException {
+      rethrow;
+    } catch (e) {
+      throw TTSException('Google TTS synthesis failed', cause: e);
+    }
   }
 
   @override
   void dispose() {
-    // TODO: Cleanup any resources
+    _httpClient.close();
     _isReady = false;
-    print('GoogleTTSService.dispose() - STUB: Not implemented');
+    print('GoogleTTSService disposed');
   }
 
   @override
   bool get isReady => _isReady;
+
+  // ============================================================================
+  // Trainable Implementation
+  // ============================================================================
+
+  @override
+  Future<String> recordInvocation(dynamic invocation) async {
+    if (invocation is! TTSInvocation) {
+      throw ArgumentError('Expected TTSInvocation, got ${invocation.runtimeType}');
+    }
+    await _ttsInvocationRepository.save(invocation);
+    return invocation.uuid;
+  }
+
+  @override
+  Future<void> trainFromFeedback(String turnId, {String? userId}) async {
+    // TODO: Implement TTS learning from feedback
+    // For MVP: placeholder - full implementation in Phase 3
+    print('GoogleTTSService.trainFromFeedback() - TODO');
+  }
+
+  @override
+  Future<Map<String, dynamic>> getAdaptationState({String? userId}) async {
+    // TODO: Implement returning current TTS adaptation state
+    // For MVP: placeholder - full implementation in Phase 3
+    return {'status': 'baseline'};
+  }
+
+  @override
+  Widget buildFeedbackUI(String invocationId) {
+    // TODO: Implement TTS feedback UI
+    // For MVP: placeholder - full implementation in Phase 3
+    return Center(child: Text('TTS Feedback UI (TODO)'));
+  }
 }
 
 // ============================================================================
@@ -195,6 +311,26 @@ class NullTTSService extends TTSService {
 
   @override
   bool get isReady => false;
+
+  @override
+  Future<String> recordInvocation(dynamic invocation) async {
+    throw TTSException('TTS not configured');
+  }
+
+  @override
+  Future<void> trainFromFeedback(String turnId, {String? userId}) async {
+    throw TTSException('TTS not configured');
+  }
+
+  @override
+  Future<Map<String, dynamic>> getAdaptationState({String? userId}) async {
+    throw TTSException('TTS not configured');
+  }
+
+  @override
+  Widget buildFeedbackUI(String invocationId) {
+    return Center(child: Text('TTS not configured'));
+  }
 }
 
 // ============================================================================
