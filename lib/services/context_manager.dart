@@ -58,6 +58,7 @@ import '../domain/context_manager_invocation_repository.dart';
 import '../tools/task/repositories/task_repository.dart';
 import '../tools/timer/repositories/timer_repository.dart';
 import 'llm_service.dart';
+import 'tts_service.dart';
 import 'embedding_service.dart';
 import 'context_manager_result.dart';
 import 'mcp_executor.dart';
@@ -72,6 +73,7 @@ class ContextManager implements Trainable {
   final TaskRepository taskRepo;
   final TimerRepository timerRepo;
   final LLMService llmService;
+  final TTSService ttsService;
   final EmbeddingService embeddingService;
   final MCPExecutor mcpExecutor;
 
@@ -88,6 +90,7 @@ class ContextManager implements Trainable {
     required this.taskRepo,
     required this.timerRepo,
     required this.llmService,
+    required this.ttsService,
     required this.embeddingService,
     required this.mcpExecutor,
   });
@@ -215,7 +218,23 @@ class ContextManager implements Trainable {
         );
       }
 
-      // 7. Extract tool calls and apply confidence scores
+      // 7. Synthesize LLM response via TTS (records TTSInvocation)
+      if (executionResult.finalResponse != null &&
+          executionResult.finalResponse!.isNotEmpty) {
+        try {
+          // Call TTS to synthesize the LLM response
+          // This records a TTSInvocation with the same correlationId
+          await for (final audioChunk
+              in ttsService.synthesize(executionResult.finalResponse!)) {
+            // Stream audio chunks (application layer handles playback)
+          }
+        } catch (e) {
+          // TTS failure is non-fatal - log but continue
+          print('TTS synthesis failed: $e');
+        }
+      }
+
+      // 8. Extract tool calls and apply confidence scores
       final toolCalls = executionResult.toolCalls.map((tc) {
         // Use confidence from tool scoring, not default
         final confidence = invocation.toolScores[tc.toolName] ?? 0.5;

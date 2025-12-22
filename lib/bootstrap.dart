@@ -43,6 +43,7 @@ import 'services/stt_service.dart';
 import 'services/tts_service.dart';
 import 'services/llm_service.dart';
 import 'services/groq_service.dart';
+import 'repositories/invocation_repository_impl.dart';
 
 // Conditional import for platform-specific BlobStore
 import 'bootstrap/blob_store_factory_stub.dart'
@@ -294,25 +295,37 @@ Future<void> initializeEverythingStack({
     print('EmbeddingQueueService initialized and started');
   }
 
-  // 8. Initialize STTService (optional - requires Deepgram API key)
+  // 8. Initialize Invocation Repositories (required by STT/TTS/LLM services for training)
+  // Using in-memory implementations for MVP
+  final sttInvocationRepo = STTInvocationRepositoryImpl.inMemory();
+  final llmInvocationRepo = LLMInvocationRepositoryImpl.inMemory();
+  final ttsInvocationRepo = TTSInvocationRepositoryImpl.inMemory();
+
+  // 9. Initialize STTService (optional - requires Deepgram API key)
   if (cfg.deepgramApiKey != null && cfg.deepgramApiKey!.isNotEmpty) {
-    final sttService = DeepgramSTTService(apiKey: cfg.deepgramApiKey!);
+    final sttService = DeepgramSTTService(
+      apiKey: cfg.deepgramApiKey!,
+      sttInvocationRepository: sttInvocationRepo,
+    );
     await sttService.initialize();
     STTService.instance = sttService;
     print('STTService initialized (Deepgram)');
   }
   // else: keeps NullSTTService default
 
-  // 9. Initialize TTSService (optional - requires Google Cloud API key)
+  // 10. Initialize TTSService (optional - requires Google Cloud API key)
   if (cfg.googleTtsApiKey != null && cfg.googleTtsApiKey!.isNotEmpty) {
-    final ttsService = GoogleTTSService(apiKey: cfg.googleTtsApiKey!);
+    final ttsService = GoogleTTSService(
+      apiKey: cfg.googleTtsApiKey!,
+      ttsInvocationRepository: ttsInvocationRepo,
+    );
     await ttsService.initialize();
     TTSService.instance = ttsService;
     print('TTSService initialized (Google Cloud)');
   }
   // else: keeps NullTTSService default
 
-  // 10. Initialize LLMService
+  // 11. Initialize LLMService
   // Priority: Groq (recommended for tool calling) → Claude → None
   if (cfg.groqApiKey != null && cfg.groqApiKey!.isNotEmpty) {
     final llmService = GroqService(apiKey: cfg.groqApiKey!);
@@ -327,10 +340,16 @@ Future<void> initializeEverythingStack({
   }
   // else: keeps NullLLMService default
 
-  // 11. Initialize ToolRegistry and register tool handlers
-  // Note: ContextManager uses ToolRegistry at runtime, so we register handlers here at bootstrap
-  // TODO: Complete tool registration when ContextManager is integrated into application
-  print('ToolRegistry ready for tool handler registration');
+  // 12. Note: Domain repositories (Task, Timer, Personality, Namespace) are initialized
+  // by the application layer, not bootstrap. This allows for platform-specific
+  // persistence handling and dependency injection.
+  //
+  // Bootstrap sets up infrastructure services (Persistence, BlobStore, Sync, etc).
+  // Application layer creates domain repositories and ContextManager.
+  //
+  // See: lib/providers/ for Riverpod provider setup with repositories
+  // See: lib/main.dart for ContextManager initialization
+  print('Bootstrap complete: infrastructure services initialized');
 }
 
 /// Wrap TimeoutHttpClient to match HttpClientFunction signature.

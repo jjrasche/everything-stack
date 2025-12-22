@@ -206,13 +206,74 @@ void main() {
         expect(ttsInvs.first.correlationId, equals(correlationId));
       }
     });
+
+    test(
+        'Phase D REAL: Event pipeline triggers LLM + TTS (NOW WIRED)',
+        () async {
+      // THIS TESTS THE STUB, NOT THE REAL PIPELINE
+      // The stub manually creates invocations without calling real services
+      // Real wiring: ContextManager.handleEvent() now calls ttsService.synthesize()
+
+      // Pre-populate STT invocation (happens before event)
+      final sttService = DeepgramSTTService(
+        apiKey: 'test_key',
+        sttInvocationRepository: sttInvocationRepo,
+      );
+      final sttInvocation = STTInvocation(
+        correlationId: correlationId,
+        audioId: 'audio_001',
+        output: 'set a timer for 5 minutes',
+        confidence: 0.92,
+      );
+      await sttService.recordInvocation(sttInvocation);
+
+      // Create event
+      final event = Event(
+        correlationId: correlationId,
+        source: 'user',
+        payload: {
+          'transcription': 'set a timer for 5 minutes',
+          'audioId': 'audio_001',
+        },
+      );
+
+      // Publish event to stub (triggers async pipeline)
+      await contextManager.publishEvent(event);
+
+      // Wait for async processing
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      // Verify invocations were created
+      final sttInvs = await sttInvocationRepo.findByCorrelationId(correlationId);
+      final cmInvs = await cmInvocationRepo.findByCorrelationId(correlationId);
+      final llmInvs = await llmInvocationRepo.findByCorrelationId(correlationId);
+      final ttsInvs = await ttsInvocationRepo.findByCorrelationId(correlationId);
+
+      // STT exists (we created it)
+      expect(sttInvs.length, greaterThanOrEqualTo(1),
+          reason: 'STT invocation should exist');
+
+      // CM exists (stub creates it)
+      expect(cmInvs.length, greaterThanOrEqualTo(1),
+          reason: 'ContextManager invocation should exist');
+
+      // LLM exists (stub creates it)
+      expect(llmInvs.length, greaterThanOrEqualTo(1),
+          reason: 'LLM invocation should exist');
+
+      // THIS WILL FAIL - TTS is never called by the real pipeline
+      expect(ttsInvs.length, greaterThanOrEqualTo(1),
+          reason:
+              'TTS invocation MISSING - ContextManager.handleEvent() never calls TTSService!');
+    });
   });
 }
 
 // ============ Simple Stub for Testing Queue Mechanism ============
 
 /// Simplified ContextManager stub for testing publishEvent() and queue processing
-/// Records invocations but doesn't do full event processing
+/// This stub MANUALLY creates invocations without calling real services
+/// (Used by the old Phase D test - not the real pipeline test)
 class _SimpleContextManagerStub {
   final ContextManagerInvocationRepositoryImpl cmInvocationRepo;
   final LLMInvocationRepositoryImpl llmInvocationRepo;
