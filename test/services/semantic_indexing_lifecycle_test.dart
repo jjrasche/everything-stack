@@ -213,7 +213,7 @@ void main() {
         );
 
         final results = await searchService.search('learning from data', limit: 5);
-        expect(results is List, isTrue,
+        expect(results, isA<List>(),
             reason: 'Should be able to search indexed content');
 
         // 4. Delete

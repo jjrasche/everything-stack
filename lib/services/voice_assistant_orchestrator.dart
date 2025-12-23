@@ -40,7 +40,6 @@
 
 import 'dart:async';
 import 'dart:typed_data';
-import 'package:uuid/uuid.dart';
 
 import '../domain/event.dart';
 import '../domain/turn.dart';

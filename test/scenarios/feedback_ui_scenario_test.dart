@@ -34,7 +34,6 @@ import 'package:everything_stack_template/domain/turn.dart';
 import 'package:everything_stack_template/domain/invocations.dart';
 import 'package:everything_stack_template/repositories/turn_repository_impl.dart';
 import 'package:everything_stack_template/repositories/invocation_repository_impl.dart';
-import 'package:everything_stack_template/repositories/feedback_repository_impl.dart';
 import 'package:everything_stack_template/ui/screens/turn_list_screen.dart';
 
 void main() {

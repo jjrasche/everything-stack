@@ -74,7 +74,7 @@ Future<Database> openIndexedDatabase({
 void _onUpgradeNeeded(VersionChangeEvent event) {
   final db = event.database;
   final oldVersion = event.oldVersion;
-  final newVersion = event.newVersion ?? DatabaseSchema.version;
+  final newVersion = event.newVersion;
 
   print('IndexedDB upgrade: v$oldVersion → v$newVersion');
 

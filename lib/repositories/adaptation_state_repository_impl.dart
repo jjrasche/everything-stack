@@ -68,10 +68,11 @@ class STTAdaptationStateRepositoryImpl
 
   @override
   Future<STTAdaptationState?> getGlobal() async {
-    return _store.values.firstWhere(
-      (s) => s.scope == 'global',
-      orElse: () => null as STTAdaptationState,
-    ) as STTAdaptationState?;
+    try {
+      return _store.values.firstWhere((s) => s.scope == 'global');
+    } catch (_) {
+      return null;
+    }
   }
 
   @override
@@ -161,10 +162,11 @@ class LLMAdaptationStateRepositoryImpl
 
   @override
   Future<LLMAdaptationState?> getGlobal() async {
-    return _store.values.firstWhere(
-      (s) => s.scope == 'global',
-      orElse: () => null as LLMAdaptationState,
-    ) as LLMAdaptationState?;
+    try {
+      return _store.values.firstWhere((s) => s.scope == 'global');
+    } catch (_) {
+      return null;
+    }
   }
 
   @override
@@ -254,10 +256,11 @@ class TTSAdaptationStateRepositoryImpl
 
   @override
   Future<TTSAdaptationState?> getGlobal() async {
-    return _store.values.firstWhere(
-      (s) => s.scope == 'global',
-      orElse: () => null as TTSAdaptationState,
-    ) as TTSAdaptationState?;
+    try {
+      return _store.values.firstWhere((s) => s.scope == 'global');
+    } catch (_) {
+      return null;
+    }
   }
 
   @override

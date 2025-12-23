@@ -54,13 +54,16 @@ class TurnRepositoryImpl extends TurnRepository {
   @override
   Future<Turn?> findByInvocationId(String invocationId) async {
     // Linear scan: acceptable for Phase 0
-    return _store.values.firstWhere(
-      (turn) =>
-          turn.sttInvocationId == invocationId ||
-          turn.llmInvocationId == invocationId ||
-          turn.ttsInvocationId == invocationId,
-      orElse: () => null as Turn,
-    ) as Turn?;
+    try {
+      return _store.values.firstWhere(
+        (turn) =>
+            turn.sttInvocationId == invocationId ||
+            turn.llmInvocationId == invocationId ||
+            turn.ttsInvocationId == invocationId,
+      );
+    } catch (_) {
+      return null;
+    }
   }
 
   @override

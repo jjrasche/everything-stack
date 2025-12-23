@@ -277,15 +277,12 @@ class MockNoteAdapter extends PersistenceAdapter<TestNote> {
     return [];
   }
 
-  @override
   Future<bool> deleteEmbedding(String entityUuid) async => true;
 
   Future<void> close() async {}
 
-  @override
   TestNote? findByIdInTx(dynamic ctx, int id) => null;
 
-  @override
   TestNote? findByUuidInTx(dynamic ctx, String uuid) => _store[uuid];
 
   @override

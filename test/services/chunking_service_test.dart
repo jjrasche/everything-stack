@@ -155,7 +155,7 @@ void main() {
 
         final chunks = await chunkingService.indexEntity(tinyNote);
         // Should still create at least one chunk (or handle gracefully)
-        expect(chunks is List, isTrue);
+        expect(chunks, isA<List>());
       });
     });
 
@@ -262,7 +262,7 @@ void main() {
         // Should find the indexed chunks
         // Note: This depends on _reconstructChunks being implemented
         // For now we're verifying the service can be called
-        expect(results is List, isTrue);
+        expect(results, isA<List>());
       });
     });
   });

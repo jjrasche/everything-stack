@@ -10,7 +10,6 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:everything_stack_template/domain/personality.dart';
-import 'package:everything_stack_template/domain/event.dart';
 
 void main() {
   group('Thresholds Actually Used Test', () {

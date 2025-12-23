@@ -42,7 +42,6 @@ import '../domain/invocations.dart';
 import 'llm_service.dart';
 import 'tool_executor.dart';
 import 'context_manager_result.dart';
-import 'trainable.dart';
 
 class MCPExecutor {
   final LLMService llmService;
@@ -123,7 +122,7 @@ class MCPExecutor {
       );
 
       // Record LLM invocation for training if correlationId provided
-      if (correlationId != null && llmService is Trainable) {
+      if (correlationId != null) {
         final llmInvocation = LLMInvocation(
           correlationId: correlationId,
           systemPromptVersion: '1.0', // TODO: Track actual version
@@ -131,7 +130,7 @@ class MCPExecutor {
           response: llmResponse.content ?? '',
           tokenCount: llmResponse.tokensUsed,
         );
-        await (llmService as Trainable).recordInvocation(llmInvocation);
+        await llmService.recordInvocation(llmInvocation);
       }
 
       // No tool calls - LLM is done

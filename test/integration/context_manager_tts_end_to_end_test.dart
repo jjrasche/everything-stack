@@ -177,10 +177,8 @@ class MockEmbeddingService extends EmbeddingService {
 }
 
 class _DummyToolRegistry extends ToolRegistry {
-  @override
   Future<void> init() async {}
 
-  @override
   noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 

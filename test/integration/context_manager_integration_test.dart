@@ -31,14 +31,14 @@ void main() {
       taskTools.setKeywordWeight('create', 'new', 1.3);
 
       // 2. Create namespaces with centroids
-      final _taskNs = domain.Namespace(
+      domain.Namespace(
         name: 'task',
         description: 'Manage tasks and to-dos',
         keywords: ['task', 'todo', 'remind'],
         semanticCentroid: List.filled(384, 0.7), // Mock embedding
       );
 
-      final _timerNs = domain.Namespace(
+      domain.Namespace(
         name: 'timer',
         description: 'Set timers and countdowns',
         keywords: ['timer', 'alarm', 'countdown'],
@@ -62,7 +62,7 @@ void main() {
         semanticCentroid: List.filled(384, 0.8), // High semantic match
       );
 
-      final _completeTool = Tool(
+      Tool(
         name: 'complete',
         namespaceId: 'task',
         description: 'Mark a task as complete',
@@ -129,13 +129,13 @@ void main() {
       final timerTools = personality.getToolAttention('timer');
       timerTools.setSuccessRate('set', 0.95);
 
-      final timerNs = domain.Namespace(
+      domain.Namespace(
         name: 'timer',
         description: 'Set timers and alarms',
         semanticCentroid: List.filled(384, 0.8), // High score for "timer"
       );
 
-      final event = Event(
+      Event(
         correlationId: 'corr_002',
         source: 'user',
         payload: {'transcription': 'set a timer for 5 minutes'},
@@ -159,7 +159,7 @@ void main() {
       personality.namespaceAttention.setThreshold('task', 0.9);
       personality.namespaceAttention.setThreshold('timer', 0.9);
 
-      final event = Event(
+      Event(
         correlationId: 'corr_003',
         source: 'user',
         payload: {'transcription': 'hello'},

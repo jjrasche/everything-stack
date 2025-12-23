@@ -302,7 +302,7 @@ void main() {
         content: 'Content',
       );
 
-      expect(note is SemanticIndexable, isTrue);
+      expect(note, isA<SemanticIndexable>());
       expect(note.toChunkableInput(), isNotEmpty);
       expect(note.toChunkableInput(), contains('Title'));
       expect(note.toChunkableInput(), contains('Content'));
