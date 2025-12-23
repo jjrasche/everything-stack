@@ -12,8 +12,11 @@ import 'package:everything_stack_template/persistence/indexeddb/entity_version_i
 var _idbFactory = newIdbFactoryMemory();
 dynamic _db; // Database type
 
+/// Platform detection - returns true for web
+bool detectWebPlatform() => true;
+
 /// Initialize IndexedDB test persistence in-memory.
-Future<PersistenceFactory> initTestPersistence() async {
+Future<PersistenceFactory> initializeTestPersistence() async {
   // Use in-memory IndexedDB for testing
   _idbFactory = newIdbFactoryMemory();
 

@@ -5,18 +5,17 @@ library;
 
 import 'package:everything_stack_template/bootstrap/persistence_factory.dart';
 
-/// Initialize platform-specific test persistence.
-/// This stub throws - real implementations in _io.dart and _web.dart.
-Future<PersistenceFactory> initTestPersistence() {
+/// Platform detection - stub always throws
+bool detectWebPlatform() {
   throw UnsupportedError(
-    'Cannot initialize test persistence without dart:io or dart:html',
+    'Cannot detect platform without dart:io or dart:html',
   );
 }
 
-/// Cleanup test persistence.
+/// Initialize platform-specific test persistence.
 /// This stub throws - real implementations in _io.dart and _web.dart.
-Future<void> cleanupTestPersistence() {
+Future<PersistenceFactory> initializeTestPersistence() {
   throw UnsupportedError(
-    'Cannot cleanup test persistence without dart:io or dart:html',
+    'Cannot initialize test persistence without dart:io or dart:html',
   );
 }
