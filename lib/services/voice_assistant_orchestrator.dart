@@ -56,8 +56,6 @@ import 'stt_service.dart';
 import 'tts_service.dart';
 import 'mcp_executor.dart';
 
-const _uuid = Uuid();
-
 /// Result of processing user audio through the full pipeline
 class VoiceAssistantResult {
   /// Unique identifier for this interaction
@@ -183,9 +181,7 @@ class VoiceAssistantOrchestrator {
         cmResult = await contextManager.handleEvent(event);
 
         // Link invocation
-        if (cmResult.invocationId != null) {
-          turn.contextManagerInvocationId = cmResult.invocationId;
-        }
+        turn.contextManagerInvocationId = cmResult.invocationId;
 
         if (cmResult.hasError) {
           throw Exception('ContextManager failed: ${cmResult.error}');
@@ -387,9 +383,7 @@ class VoiceAssistantOrchestrator {
             );
             cmResult = await contextManager.handleEvent(event);
 
-            if (cmResult.invocationId != null) {
-              turn.contextManagerInvocationId = cmResult.invocationId;
-            }
+            turn.contextManagerInvocationId = cmResult.invocationId;
 
             if (cmResult.hasError) {
               throw Exception('ContextManager failed: ${cmResult.error}');

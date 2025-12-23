@@ -15,11 +15,9 @@ abstract class AudioPlaybackService {
 /// Production implementation using `just_audio` package
 class JustAudioPlaybackService implements AudioPlaybackService {
   final AudioPlayer _player = AudioPlayer();
-  bool _isReady = false;
 
   @override
   Future<void> initialize() async {
-    _isReady = true;
     print('AudioPlaybackService initialized');
   }
 

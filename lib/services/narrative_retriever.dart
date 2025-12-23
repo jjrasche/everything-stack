@@ -24,13 +24,11 @@ import 'embedding_service.dart';
 
 class NarrativeRetriever {
   final NarrativeRepository _narrativeRepo;
-  final EmbeddingService _embeddingService;
 
   NarrativeRetriever({
     required NarrativeRepository narrativeRepo,
     EmbeddingService? embeddingService,
-  })  : _narrativeRepo = narrativeRepo,
-        _embeddingService = embeddingService ?? EmbeddingService.instance;
+  })  : _narrativeRepo = narrativeRepo;
 
   /// Find narratives most relevant to current utterance/context.
   ///

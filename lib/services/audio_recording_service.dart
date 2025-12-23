@@ -25,12 +25,10 @@ abstract class AudioRecordingService {
 class RecordAudioRecordingService implements AudioRecordingService {
   final AudioRecorder _recorder = AudioRecorder();
   StreamController<Uint8List>? _audioStreamController;
-  bool _isReady = false;
   bool _isRecording = false;
 
   @override
   Future<void> initialize() async {
-    _isReady = true;
     print('AudioRecordingService initialized');
   }
 
