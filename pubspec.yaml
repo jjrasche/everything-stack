@@ -45,6 +45,7 @@ dependencies:
   # File input and storage
   image_picker: ^1.1.0
   record: ^6.1.2
+  just_audio: ^0.9.36
   file_picker: ^8.0.0
   image: ^4.1.0
 

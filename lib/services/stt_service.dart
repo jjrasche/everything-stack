@@ -56,6 +56,7 @@ abstract class STTService extends StreamingService<Uint8List, String> implements
   /// ## Parameters
   /// - [audio]: Stream of audio bytes (e.g., from microphone)
   /// - [onTranscript]: Called for each transcript chunk
+  /// - [onUtteranceEnd]: Called when speech ends (turn detection via Deepgram)
   /// - [onError]: Called on timeout or connection error
   /// - [onDone]: Called when stream completes
   ///
@@ -68,18 +69,21 @@ abstract class STTService extends StreamingService<Uint8List, String> implements
   /// final sub = STTService.instance.transcribe(
   ///   audio: micStream,
   ///   onTranscript: (text) => _appendToBuffer(text),
+  ///   onUtteranceEnd: () => _processTranscript(),
   ///   onError: (e) => _showError(e),
   /// );
   /// ```
   StreamSubscription<String> transcribe({
     required Stream<Uint8List> audio,
     required void Function(String) onTranscript,
+    void Function()? onUtteranceEnd,
     required void Function(Object) onError,
     void Function()? onDone,
   }) {
     return stream(
       input: audio,
       onData: onTranscript,
+      onUtteranceEnd: onUtteranceEnd,
       onError: onError,
       onDone: onDone,
     );
@@ -158,10 +162,10 @@ class DeepgramSTTService extends STTService {
     print('DeepgramSTTService initialized (API key validated)');
   }
 
-  @override
   StreamSubscription<String> stream({
     required Stream<Uint8List> input,
     required void Function(String) onData,
+    void Function()? onUtteranceEnd,
     required void Function(Object) onError,
     void Function()? onDone,
   }) {
@@ -179,6 +183,7 @@ class DeepgramSTTService extends STTService {
     Future<void> connect() async {
       try {
         // Build WebSocket URL with parameters and API key
+        // Turn detection enabled via utterance_end_ms parameter
         final url = Uri.parse(
           'wss://api.deepgram.com/v1/listen'
           '?model=$model'
@@ -186,6 +191,10 @@ class DeepgramSTTService extends STTService {
           '&encoding=linear16'
           '&sample_rate=16000'
           '&channels=1'
+          '&interim_results=true'
+          '&endpointing=true'
+          '&vad_events=true'
+          '&utterance_end_ms=1000'
           '&api_key=$apiKey',
         );
 
@@ -223,7 +232,20 @@ class DeepgramSTTService extends STTService {
                       onData(transcript);
                     }
                   }
+
+                  // Check speech_final flag for interim finalization
+                  final speechFinal = results[0]['speech_final'] as bool? ?? false;
+                  if (speechFinal) {
+                    // Optional: Signal interim finalization
+                    print('Speech finalized');
+                  }
                 }
+              }
+              // NEW: Handle UtteranceEnd event (turn detection)
+              else if (json['type'] == 'UtteranceEnd') {
+                final lastWordEnd = json['last_word_end'] as double?;
+                print('Turn ended at ${lastWordEnd}s');
+                onUtteranceEnd?.call();
               }
             } catch (e) {
               // Log parse errors but don't fail - continue streaming
@@ -369,6 +391,7 @@ class NullSTTService extends STTService {
   StreamSubscription<String> stream({
     required Stream<Uint8List> input,
     required void Function(String) onData,
+    void Function()? onUtteranceEnd,
     required void Function(Object) onError,
     void Function()? onDone,
   }) {
