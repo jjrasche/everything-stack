@@ -5,8 +5,6 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:everything_stack_template/services/trainable.dart';
-import 'package:everything_stack_template/services/stt_service.dart';
-import 'package:everything_stack_template/services/intent_engine_trainable.dart';
 import 'package:everything_stack_template/services/llm_service_trainable.dart';
 import 'package:everything_stack_template/services/tts_service_trainable.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
@@ -23,11 +21,6 @@ import 'package:everything_stack_template/domain/adaptation_state.dart';
 /// STT Invocation Repository (in-memory for Phase 0)
 final sttInvocationRepositoryProvider = Provider<InvocationRepository<STTInvocation>>((ref) {
   return STTInvocationRepositoryImpl.inMemory();
-});
-
-/// Intent Invocation Repository
-final intentInvocationRepositoryProvider = Provider<InvocationRepository<IntentInvocation>>((ref) {
-  return IntentInvocationRepositoryImpl.inMemory();
 });
 
 /// LLM Invocation Repository
@@ -55,11 +48,6 @@ final sttAdaptationStateRepositoryProvider = Provider<AdaptationStateRepository<
   return STTAdaptationStateRepositoryImpl.inMemory();
 });
 
-/// Intent Adaptation State Repository
-final intentAdaptationStateRepositoryProvider = Provider<AdaptationStateRepository<IntentAdaptationState>>((ref) {
-  return IntentAdaptationStateRepositoryImpl.inMemory();
-});
-
 /// LLM Adaptation State Repository
 final llmAdaptationStateRepositoryProvider = Provider<AdaptationStateRepository<LLMAdaptationState>>((ref) {
   return LLMAdaptationStateRepositoryImpl.inMemory();
@@ -68,32 +56,6 @@ final llmAdaptationStateRepositoryProvider = Provider<AdaptationStateRepository<
 /// TTS Adaptation State Repository
 final ttsAdaptationStateRepositoryProvider = Provider<AdaptationStateRepository<TTSAdaptationState>>((ref) {
   return TTSAdaptationStateRepositoryImpl.inMemory();
-});
-
-/// STT Trainable Service
-final sttTrainableProvider = Provider<Trainable>((ref) {
-  final invocationRepo = ref.watch(sttInvocationRepositoryProvider);
-  final feedbackRepo = ref.watch(feedbackRepositoryProvider);
-  final stateRepo = ref.watch(sttAdaptationStateRepositoryProvider);
-
-  return STTService(
-    invocationRepository: invocationRepo,
-    feedbackRepository: feedbackRepo,
-    adaptationStateRepository: stateRepo,
-  );
-});
-
-/// Intent Engine Trainable Service
-final intentTrainableProvider = Provider<Trainable>((ref) {
-  final invocationRepo = ref.watch(intentInvocationRepositoryProvider);
-  final feedbackRepo = ref.watch(feedbackRepositoryProvider);
-  final stateRepo = ref.watch(intentAdaptationStateRepositoryProvider);
-
-  return IntentEngineTrainable(
-    invocationRepository: invocationRepo,
-    feedbackRepository: feedbackRepo,
-    adaptationStateRepository: stateRepo,
-  );
 });
 
 /// LLM Trainable Service

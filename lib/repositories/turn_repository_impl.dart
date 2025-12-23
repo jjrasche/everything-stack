@@ -31,19 +31,17 @@ class TurnRepositoryImpl extends TurnRepository {
 
   @override
   Future<List<Turn>> findByConversation(String conversationId) async {
-    final turns = _store.values
-        .where((t) => t.conversationId == conversationId)
-        .toList();
-    turns.sort((a, b) => a.turnIndex.compareTo(b.turnIndex));
-    return turns;
+    // Phase 0: Conversations not yet implemented
+    // Return empty list - will be implemented in Phase 1 when Turn has conversationId
+    return [];
   }
 
   @override
   Future<List<Turn>> findMarkedForFeedbackByConversation(
       String conversationId) async {
+    // Phase 0: Return all marked turns (conversations not yet implemented)
     final turns = _store.values
-        .where((t) =>
-            t.conversationId == conversationId && t.markedForFeedback == true)
+        .where((t) => t.markedForFeedback == true)
         .toList();
     turns.sort((a, b) {
       final timeA = a.markedAt ?? DateTime(2000);
@@ -59,7 +57,6 @@ class TurnRepositoryImpl extends TurnRepository {
     return _store.values.firstWhere(
       (turn) =>
           turn.sttInvocationId == invocationId ||
-          turn.intentInvocationId == invocationId ||
           turn.llmInvocationId == invocationId ||
           turn.ttsInvocationId == invocationId,
       orElse: () => null as Turn,
@@ -79,13 +76,9 @@ class TurnRepositoryImpl extends TurnRepository {
 
   @override
   Future<int> deleteByConversation(String conversationId) async {
-    final keys = _store.keys
-        .where((key) => _store[key]!.conversationId == conversationId)
-        .toList();
-    for (final key in keys) {
-      _store.remove(key);
-    }
-    return keys.length;
+    // Phase 0: Conversations not yet implemented
+    // Return 0 - will be implemented in Phase 1 when Turn has conversationId
+    return 0;
   }
 
   /// Clear all turns (for testing)

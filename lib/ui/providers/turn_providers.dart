@@ -45,9 +45,6 @@ final invocationByIdProvider = FutureProvider.family<dynamic, (String, String)>(
     case 'stt':
       final repo = ref.watch(sttInvocationRepositoryProvider);
       return await repo.findById(invocationId);
-    case 'intent':
-      final repo = ref.watch(intentInvocationRepositoryProvider);
-      return await repo.findById(invocationId);
     case 'llm':
       final repo = ref.watch(llmInvocationRepositoryProvider);
       return await repo.findById(invocationId);

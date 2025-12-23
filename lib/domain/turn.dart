@@ -109,6 +109,17 @@ class Turn extends BaseEntity {
   /// How long did the entire turn take (ms)
   int latencyMs = 0;
 
+  /// Whether this turn is marked for user feedback review
+  bool markedForFeedback = false;
+
+  /// When this turn was marked for feedback
+  @Property(type: PropertyType.date)
+  DateTime? markedAt;
+
+  /// When feedback was trained on this turn
+  @Property(type: PropertyType.date)
+  DateTime? feedbackTrainedAt;
+
   // ============ Constructor ============
 
   Turn({
@@ -120,6 +131,9 @@ class Turn extends BaseEntity {
     this.result = 'success',
     this.errorMessage,
     this.failureComponent,
+    this.markedForFeedback = false,
+    this.markedAt,
+    this.feedbackTrainedAt,
   }) {
     if (uuid.isEmpty) {
       uuid = super.uuid;
@@ -170,6 +184,9 @@ class Turn extends BaseEntity {
       'errorMessage': errorMessage,
       'failureComponent': failureComponent,
       'latencyMs': latencyMs,
+      'markedForFeedback': markedForFeedback,
+      'markedAt': markedAt?.toIso8601String(),
+      'feedbackTrainedAt': feedbackTrainedAt?.toIso8601String(),
     };
   }
 
@@ -183,6 +200,13 @@ class Turn extends BaseEntity {
       result: json['result'] as String? ?? 'success',
       errorMessage: json['errorMessage'] as String?,
       failureComponent: json['failureComponent'] as String?,
+      markedForFeedback: json['markedForFeedback'] as bool? ?? false,
+      markedAt: json['markedAt'] != null
+          ? DateTime.parse(json['markedAt'] as String)
+          : null,
+      feedbackTrainedAt: json['feedbackTrainedAt'] != null
+          ? DateTime.parse(json['feedbackTrainedAt'] as String)
+          : null,
     )
       ..id = json['id'] as int? ?? 0
       ..uuid = json['uuid'] as String? ?? ''
@@ -197,5 +221,43 @@ class Turn extends BaseEntity {
           ? DateTime.parse(json['timestamp'] as String)
           : DateTime.now()
       ..latencyMs = json['latencyMs'] as int? ?? 0;
+  }
+
+  /// Create a copy of this Turn with optional field overrides
+  Turn copyWith({
+    String? correlationId,
+    String? sttInvocationId,
+    String? contextManagerInvocationId,
+    String? llmInvocationId,
+    String? ttsInvocationId,
+    String? result,
+    String? errorMessage,
+    String? failureComponent,
+    int? latencyMs,
+    bool? markedForFeedback,
+    DateTime? markedAt,
+    DateTime? feedbackTrainedAt,
+  }) {
+    return Turn(
+      correlationId: correlationId ?? this.correlationId,
+      sttInvocationId: sttInvocationId ?? this.sttInvocationId,
+      contextManagerInvocationId:
+          contextManagerInvocationId ?? this.contextManagerInvocationId,
+      llmInvocationId: llmInvocationId ?? this.llmInvocationId,
+      ttsInvocationId: ttsInvocationId ?? this.ttsInvocationId,
+      result: result ?? this.result,
+      errorMessage: errorMessage ?? this.errorMessage,
+      failureComponent: failureComponent ?? this.failureComponent,
+      markedForFeedback: markedForFeedback ?? this.markedForFeedback,
+      markedAt: markedAt ?? this.markedAt,
+      feedbackTrainedAt: feedbackTrainedAt ?? this.feedbackTrainedAt,
+    )
+      ..id = id
+      ..uuid = uuid
+      ..createdAt = createdAt
+      ..updatedAt = updatedAt
+      ..syncId = syncId
+      ..timestamp = timestamp
+      ..latencyMs = latencyMs ?? this.latencyMs;
   }
 }

@@ -12,7 +12,6 @@ import 'package:everything_stack_template/domain/invocations.dart';
 import 'package:everything_stack_template/ui/providers/turn_providers.dart';
 import 'package:everything_stack_template/ui/providers/trainable_providers.dart';
 import 'package:everything_stack_template/ui/widgets/stt_feedback_widget.dart';
-import 'package:everything_stack_template/ui/widgets/intent_feedback_widget.dart';
 import 'package:everything_stack_template/ui/widgets/llm_feedback_widget.dart';
 import 'package:everything_stack_template/ui/widgets/tts_feedback_widget.dart';
 
@@ -52,15 +51,6 @@ class _FeedbackReviewScreenState extends ConsumerState<FeedbackReviewScreen> {
                   invocationId: widget.turn.sttInvocationId!,
                   turnId: widget.turn.uuid,
                   color: Colors.blue,
-                ),
-
-              // Intent Invocation
-              if (widget.turn.intentInvocationId != null)
-                _FeedbackSection(
-                  componentType: 'Intent',
-                  invocationId: widget.turn.intentInvocationId!,
-                  turnId: widget.turn.uuid,
-                  color: Colors.green,
                 ),
 
               // LLM Invocation
@@ -154,19 +144,12 @@ class _FeedbackReviewScreenState extends ConsumerState<FeedbackReviewScreen> {
     });
 
     try {
-      // Get all trainable services
-      final sttService = ref.read(sttTrainableProvider);
-      final intentService = ref.read(intentTrainableProvider);
+      // Get trainable services (Phase 0: LLM + TTS only)
+      // STT training deferred to Phase 1
       final llmService = ref.read(llmTrainableProvider);
       final ttsService = ref.read(ttsTrainableProvider);
 
       // Train each service from feedback for this turn
-      if (widget.turn.sttInvocationId != null) {
-        await sttService.trainFromFeedback(widget.turn.uuid);
-      }
-      if (widget.turn.intentInvocationId != null) {
-        await intentService.trainFromFeedback(widget.turn.uuid);
-      }
       if (widget.turn.llmInvocationId != null) {
         await llmService.trainFromFeedback(widget.turn.uuid);
       }
@@ -307,12 +290,6 @@ class _FeedbackSection extends ConsumerWidget {
       case 'stt':
         return STTFeedbackWidget(
           invocation: invocation as STTInvocation,
-          invocationId: invocationId,
-          turnId: turnId,
-        );
-      case 'intent':
-        return IntentFeedbackWidget(
-          invocation: invocation as IntentInvocation,
           invocationId: invocationId,
           turnId: turnId,
         );

@@ -111,7 +111,7 @@ class _TurnListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final invocationCount = turn.getExistingInvocationIds().length;
+    final invocationCount = turn.getInvocationIds().length;
     final timestamp = turn.createdAt;
     final formattedTime = _formatDateTime(timestamp);
 
@@ -139,8 +139,6 @@ class _TurnListItem extends StatelessWidget {
               children: [
                 if (turn.sttInvocationId != null)
                   _ComponentBadge(label: 'STT'),
-                if (turn.intentInvocationId != null)
-                  _ComponentBadge(label: 'Intent'),
                 if (turn.llmInvocationId != null)
                   _ComponentBadge(label: 'LLM'),
                 if (turn.ttsInvocationId != null)
@@ -192,7 +190,6 @@ class _ComponentBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = {
       'STT': Colors.blue,
-      'Intent': Colors.green,
       'LLM': Colors.purple,
       'TTS': Colors.orange,
     };
