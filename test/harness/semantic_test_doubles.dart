@@ -75,7 +75,6 @@ class MockEmbeddingService extends EmbeddingService {
     return texts.map((t) => mockEmbedding(t)).toList();
   }
 
-  @override
   double cosineSimilarity(List<double> a, List<double> b) {
     return EmbeddingService.cosineSimilarity(a, b);
   }
@@ -281,7 +280,6 @@ class MockNoteAdapter extends PersistenceAdapter<TestNote> {
   @override
   Future<bool> deleteEmbedding(String entityUuid) async => true;
 
-  @override
   Future<void> close() async {}
 
   @override

@@ -99,7 +99,6 @@ class MockFeedbackRepository implements FeedbackRepository {
   @override
   Future<domain_feedback.Feedback> save(domain_feedback.Feedback entity) async => entity;
 
-  @override
   Future<List<domain_feedback.Feedback>> findAll() async => [];
 
   @override
@@ -174,7 +173,6 @@ class MockLLMService extends LLMService {
 }
 
 class MockEmbeddingService extends EmbeddingService {
-  @override
   Future<List<double>> generate(String text) async => List.filled(384, 0.5);
 }
 
