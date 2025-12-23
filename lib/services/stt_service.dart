@@ -89,6 +89,17 @@ abstract class STTService extends StreamingService<Uint8List, String> implements
     );
   }
 
+  /// Internal streaming implementation for platform-specific audio processing
+  ///
+  /// Subclasses must implement the actual streaming logic.
+  StreamSubscription<String> stream({
+    required Stream<Uint8List> input,
+    required void Function(String) onData,
+    void Function()? onUtteranceEnd,
+    required void Function(Object) onError,
+    void Function()? onDone,
+  });
+
   /// Record STT invocation for training/adaptation
   ///
   /// Called after transcription completes.

@@ -292,7 +292,13 @@ class ContextManager implements Trainable {
     }
   }
 
-  /// Select namespace via semantic similarity + LLM confirmation
+  /// Select namespace via LLM
+  ///
+  /// PATH 3: Loose pre-filtering + trust LLM
+  /// 1. Send ALL namespaces to LLM (no pre-filtering)
+  /// 2. LLM picks the best namespace
+  /// 3. Use it
+  /// 4. Feedback infrastructure captures corrections for Phase 2 analysis
   Future<Map<String, dynamic>?> _selectNamespace(
     Personality personality,
     String utterance,
@@ -304,69 +310,41 @@ class ContextManager implements Trainable {
     invocation.namespacesConsidered =
         namespaces.map((ns) => ns.name).toList();
 
-    // Score each namespace
-    final scores = <String, double>{};
-    for (final ns in namespaces) {
-      if (ns.semanticCentroid != null) {
-        final similarity =
-            _cosineSimilarity(embedding, ns.semanticCentroid!);
-        scores[ns.name] = similarity;
-      } else {
-        scores[ns.name] = 0.0;
-      }
-    }
-    invocation.namespaceScores = scores;
+    final namespaceNames = namespaces.map((ns) => ns.name).toList();
 
-    // Filter by threshold (from personality's learned attention)
-    final candidates = <domain.Namespace>[];
-    for (final ns in namespaces) {
-      final score = scores[ns.name] ?? 0.0;
-      final threshold =
-          personality.namespaceAttention.getThreshold(ns.name);
-      if (score >= threshold) {
-        candidates.add(ns);
-      }
+    if (namespaceNames.isEmpty) return null;
+
+    // If only one namespace, use it
+    if (namespaceNames.length == 1) {
+      return {'namespace': namespaceNames.first};
     }
 
-    if (candidates.isEmpty) return null;
-
-    // If only one candidate, use it
-    if (candidates.length == 1) {
-      return {'namespace': candidates.first.name};
-    }
-
-    // Multiple candidates - ask LLM to pick
-    final namespaceNames = candidates.map((ns) => ns.name).toList();
+    // Multiple namespaces - ask LLM to pick
     final llmResponse = await llmService.chatWithTools(
       model: personality.baseModel,
       messages: [
         {
           'role': 'system',
-          'content':
-              'Pick the most relevant namespace for this user request. Respond with ONLY the namespace name, nothing else.',
+          'content': 'Pick the namespace. Respond with ONLY the namespace name.',
         },
         {
           'role': 'user',
-          'content':
-              'User request: "$utterance"\n\nAvailable namespaces: ${namespaceNames.join(", ")}\n\nWhich namespace?',
+          'content': 'User said: "$utterance"\n\nNamespaces: ${namespaceNames.join(", ")}',
         },
       ],
-      tools: null, // No tool calling needed for namespace selection
-      temperature: 0.0, // Deterministic
+      tools: null,
+      temperature: 0.0,
     );
 
     final selected = llmResponse.content?.trim().toLowerCase();
+
     if (selected != null && namespaceNames.contains(selected)) {
       return {'namespace': selected};
     }
 
-    // LLM picked invalid namespace - use highest scoring
-    candidates.sort((a, b) {
-      final scoreB = scores[b.name] ?? 0.0;
-      final scoreA = scores[a.name] ?? 0.0;
-      return scoreB.compareTo(scoreA);
-    });
-    return {'namespace': candidates.first.name};
+    // LLM failed to pick - return null
+    // This will be caught by handleEvent and treated as error
+    return null;
   }
 
   /// Filter tools in namespace via statistical classifier
