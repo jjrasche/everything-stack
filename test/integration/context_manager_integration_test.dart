@@ -135,7 +135,7 @@ void main() {
         semanticCentroid: List.filled(384, 0.8), // High score for "timer"
       );
 
-      Event(
+      final event = Event(
         correlationId: 'corr_002',
         source: 'user',
         payload: {'transcription': 'set a timer for 5 minutes'},
