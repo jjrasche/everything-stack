@@ -55,10 +55,11 @@ class SemanticIndexableHandler<T extends BaseEntity>
   @override
   Future<void> afterSave(T entity) async {
     if (entity is! SemanticIndexable) return;
+    if (chunkingService == null) return;
 
     try {
       // Create chunks from entity content and index them
-      await chunkingService.indexEntity(entity);
+      await chunkingService!.indexEntity(entity);
     } catch (e) {
       // Log but don't rethrow - entity is persisted and valid
       // Index can be rebuilt later by SyncService
