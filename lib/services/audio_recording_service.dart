@@ -26,6 +26,7 @@ class RecordAudioRecordingService implements AudioRecordingService {
   final AudioRecorder _recorder = AudioRecorder();
   StreamController<Uint8List>? _audioStreamController;
   bool _isReady = false;
+  bool _isRecording = false;
 
   @override
   Future<void> initialize() async {
@@ -44,6 +45,7 @@ class RecordAudioRecordingService implements AudioRecordingService {
 
   @override
   Stream<Uint8List> startRecording() {
+    _isRecording = true;
     _audioStreamController = StreamController<Uint8List>();
 
     final config = RecordConfig(
@@ -74,12 +76,13 @@ class RecordAudioRecordingService implements AudioRecordingService {
 
   @override
   Future<void> stopRecording() async {
+    _isRecording = false;
     await _recorder.stop();
     await _audioStreamController?.close();
   }
 
   @override
-  bool get isRecording => _recorder.isRecording;
+  bool get isRecording => _isRecording;
 
   @override
   void dispose() {

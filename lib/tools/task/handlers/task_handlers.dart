@@ -221,7 +221,7 @@ void registerTaskTools(ToolRegistry registry, TaskRepository taskRepo) {
         };
       }
 
-      await taskRepo.delete(task.uuid);
+      await taskRepo.delete(task.id!);
 
       return {
         'success': true,
