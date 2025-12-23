@@ -233,8 +233,7 @@ class ContextManager implements Trainable {
 
           // Call TTS to synthesize the LLM response
           // Invocation was already recorded above
-          await for (final audioChunk
-              in ttsService.synthesize(executionResult.finalResponse!)) {
+          await for (final _ in ttsService.synthesize(executionResult.finalResponse!)) {
             // Stream audio chunks (application layer handles playback)
           }
         } catch (e) {

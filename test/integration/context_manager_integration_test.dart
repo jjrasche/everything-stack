@@ -31,14 +31,14 @@ void main() {
       taskTools.setKeywordWeight('create', 'new', 1.3);
 
       // 2. Create namespaces with centroids
-      final taskNs = domain.Namespace(
+      final _taskNs = domain.Namespace(
         name: 'task',
         description: 'Manage tasks and to-dos',
         keywords: ['task', 'todo', 'remind'],
         semanticCentroid: List.filled(384, 0.7), // Mock embedding
       );
 
-      final timerNs = domain.Namespace(
+      final _timerNs = domain.Namespace(
         name: 'timer',
         description: 'Set timers and countdowns',
         keywords: ['timer', 'alarm', 'countdown'],
@@ -62,7 +62,7 @@ void main() {
         semanticCentroid: List.filled(384, 0.8), // High semantic match
       );
 
-      final completeTool = Tool(
+      final _completeTool = Tool(
         name: 'complete',
         namespaceId: 'task',
         description: 'Mark a task as complete',

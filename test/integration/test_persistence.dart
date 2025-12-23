@@ -29,7 +29,6 @@ void main() {
       final initialTaskThreshold =
           personality1.namespaceAttention.getThreshold('task');
       print('   Initial task threshold: $initialTaskThreshold');
-      final uuid = personality1.uuid;
 
       // Step 2: Modify thresholds (simulate feedback)
       print('\n🎯 STEP 2: Modify thresholds via feedback');

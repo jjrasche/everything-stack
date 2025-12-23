@@ -228,7 +228,6 @@ void main() {
         final corrected =
             jsonDecode(feedbackList[0].correctedData!) as Map<String, dynamic>;
         if (corrected['namespace'] is String) {
-          final correctNamespace = corrected['namespace'] as String;
           personality.namespaceAttention.raiseThreshold('task');
           personality.namespaceAttention.lowerThreshold('timer');
           print('   ✓ task threshold raised');

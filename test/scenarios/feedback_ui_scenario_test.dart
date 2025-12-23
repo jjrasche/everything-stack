@@ -41,12 +41,10 @@ void main() {
   group('Feedback Review UI Scenario', () {
     late TurnRepositoryImpl turnRepo;
     late LLMInvocationRepositoryImpl llmInvocationRepo;
-    late FeedbackRepositoryImpl feedbackRepo;
 
     setUp(() {
       turnRepo = TurnRepositoryImpl.inMemory();
       llmInvocationRepo = LLMInvocationRepositoryImpl.inMemory();
-      feedbackRepo = FeedbackRepositoryImpl.inMemory();
     });
 
     testWidgets(

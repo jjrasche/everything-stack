@@ -347,7 +347,7 @@ class VoiceAssistantOrchestrator {
     );
 
     // Start STT with turn detection
-    final sttSubscription = sttService.transcribe(
+    sttService.transcribe(
       audio: audioStream,
       onTranscript: (transcript) {
         transcriptBuffer.write(transcript);

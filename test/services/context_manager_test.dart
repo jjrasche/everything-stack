@@ -151,7 +151,6 @@ void main() {
   group('ContextManager - Context Injection', () {
     test('injects tasks for task namespace', () async {
       final task1 = Task(title: 'Task 1', priority: 'high');
-      final task2 = Task(title: 'Task 2', priority: 'low', completed: true);
       final task3 = Task(title: 'Task 3', priority: 'medium');
 
       final incomplete = [task1, task3]; // task2 is completed
@@ -176,13 +175,6 @@ void main() {
         durationSeconds: 300,
         setAt: now,
         endsAt: now.add(const Duration(seconds: 300)),
-      );
-      final timer2 = Timer(
-        label: 'Timer 2',
-        durationSeconds: 60,
-        setAt: now,
-        endsAt: now.add(const Duration(seconds: 60)),
-        fired: true,
       );
 
       final active = [timer1]; // timer2 is fired
@@ -227,7 +219,6 @@ void main() {
     });
 
     test('returns noTools when namespace selected but no tools pass', () {
-      final selectedNamespace = 'task';
       final toolScores = {'task.create': 0.3, 'task.complete': 0.2};
       const threshold = 0.5;
 
