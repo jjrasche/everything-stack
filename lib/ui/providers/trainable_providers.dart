@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:everything_stack_template/services/trainable.dart';
 import 'package:everything_stack_template/services/llm_service_trainable.dart';
 import 'package:everything_stack_template/services/tts_service_trainable.dart';
-import 'package:everything_stack_template/core/invocation_repository.dart';
 import 'package:everything_stack_template/core/feedback_repository.dart';
 import 'package:everything_stack_template/core/adaptation_state_repository.dart';
 import 'package:everything_stack_template/core/turn_repository.dart';
@@ -15,21 +14,17 @@ import 'package:everything_stack_template/repositories/invocation_repository_imp
 import 'package:everything_stack_template/repositories/feedback_repository_impl.dart';
 import 'package:everything_stack_template/repositories/adaptation_state_repository_impl.dart';
 import 'package:everything_stack_template/repositories/turn_repository_impl.dart';
-import 'package:everything_stack_template/domain/invocations.dart';
+import 'package:everything_stack_template/domain/llm_invocation_repository.dart';
+import 'package:everything_stack_template/domain/tts_invocation_repository.dart';
 import 'package:everything_stack_template/domain/adaptation_state.dart';
 
-/// STT Invocation Repository (in-memory for Phase 0)
-final sttInvocationRepositoryProvider = Provider<InvocationRepository<STTInvocation>>((ref) {
-  return STTInvocationRepositoryImpl.inMemory();
-});
-
 /// LLM Invocation Repository
-final llmInvocationRepositoryProvider = Provider<InvocationRepository<LLMInvocation>>((ref) {
+final llmInvocationRepositoryProvider = Provider<LLMInvocationRepository>((ref) {
   return LLMInvocationRepositoryImpl.inMemory();
 });
 
 /// TTS Invocation Repository
-final ttsInvocationRepositoryProvider = Provider<InvocationRepository<TTSInvocation>>((ref) {
+final ttsInvocationRepositoryProvider = Provider<TTSInvocationRepository>((ref) {
   return TTSInvocationRepositoryImpl.inMemory();
 });
 

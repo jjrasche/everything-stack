@@ -7,13 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:everything_stack_template/services/trainable.dart';
 import 'package:everything_stack_template/domain/invocations.dart';
 import 'package:everything_stack_template/domain/feedback.dart';
-import 'package:everything_stack_template/core/invocation_repository.dart';
+import 'package:everything_stack_template/domain/tts_invocation_repository.dart';
 import 'package:everything_stack_template/core/feedback_repository.dart';
 import 'package:everything_stack_template/core/adaptation_state_repository.dart';
 import 'package:everything_stack_template/domain/adaptation_state.dart';
 
 class TTSServiceTrainable implements Trainable {
-  final InvocationRepository<TTSInvocation> _invocationRepository;
+  final TTSInvocationRepository _invocationRepository;
   final FeedbackRepository _feedbackRepository;
   final AdaptationStateRepository<TTSAdaptationState>
       _adaptationStateRepository;
@@ -21,7 +21,7 @@ class TTSServiceTrainable implements Trainable {
   TTSAdaptationState? _currentState;
 
   TTSServiceTrainable({
-    required InvocationRepository<TTSInvocation> invocationRepository,
+    required TTSInvocationRepository invocationRepository,
     required FeedbackRepository feedbackRepository,
     required AdaptationStateRepository<TTSAdaptationState>
         adaptationStateRepository,
@@ -35,8 +35,8 @@ class TTSServiceTrainable implements Trainable {
       throw ArgumentError('Expected TTSInvocation, got ${invocation.runtimeType}');
     }
 
-    final saved = await _invocationRepository.save(invocation);
-    return saved.uuid;
+    await _invocationRepository.save(invocation);
+    return invocation.uuid;
   }
 
   @override

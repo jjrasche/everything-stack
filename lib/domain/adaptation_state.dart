@@ -180,6 +180,10 @@ class LLMAdaptationState extends BaseEntity {
   /// Learned from: feedback on truncated responses
   int maxTokens = 2048;
 
+  /// Minimum feedback count before updating state
+  /// Prevents overtraining on small sample
+  int minFeedbackCount = 10;
+
   // ============ Version & audit trail ============
 
   int version = 0;
@@ -209,6 +213,7 @@ class LLMAdaptationState extends BaseEntity {
     'systemPromptVariant': systemPromptVariant,
     'temperature': temperature,
     'maxTokens': maxTokens,
+    'minFeedbackCount': minFeedbackCount,
     'version': version,
     'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     'lastUpdateReason': lastUpdateReason,
@@ -234,6 +239,7 @@ class LLMAdaptationState extends BaseEntity {
         json['systemPromptVariant'] as String? ?? 'default';
     state.temperature = json['temperature'] as double? ?? 0.7;
     state.maxTokens = json['maxTokens'] as int? ?? 2048;
+    state.minFeedbackCount = json['minFeedbackCount'] as int? ?? 10;
     state.version = json['version'] as int? ?? 0;
     state.lastUpdatedAt = json['lastUpdatedAt'] != null
         ? DateTime.parse(json['lastUpdatedAt'] as String)
@@ -276,6 +282,10 @@ class TTSAdaptationState extends BaseEntity {
   /// Learned from: feedback on speech clarity
   double speechRate = 1.0;
 
+  /// Minimum feedback count before updating state
+  /// Prevents overtraining on small sample
+  int minFeedbackCount = 10;
+
   // ============ Version & audit trail ============
 
   int version = 0;
@@ -304,6 +314,7 @@ class TTSAdaptationState extends BaseEntity {
     'deviceId': deviceId,
     'voiceId': voiceId,
     'speechRate': speechRate,
+    'minFeedbackCount': minFeedbackCount,
     'version': version,
     'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     'lastUpdateReason': lastUpdateReason,
@@ -327,6 +338,7 @@ class TTSAdaptationState extends BaseEntity {
     state.syncId = json['syncId'] as String?;
     state.voiceId = json['voiceId'] as String? ?? 'default';
     state.speechRate = json['speechRate'] as double? ?? 1.0;
+    state.minFeedbackCount = json['minFeedbackCount'] as int? ?? 10;
     state.version = json['version'] as int? ?? 0;
     state.lastUpdatedAt = json['lastUpdatedAt'] != null
         ? DateTime.parse(json['lastUpdatedAt'] as String)

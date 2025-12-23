@@ -280,20 +280,7 @@ Future<void> initializeEverythingStack({
   }
   // else: keeps NullEmbeddingService default (embeddings disabled)
 
-  // 7. Initialize EmbeddingQueueService (optional - requires embedding service)
-  if (EmbeddingService.instance is! NullEmbeddingService) {
-    final store = _persistenceFactory!.store;
-    final noteAdapter = NoteObjectBoxAdapter(store);
-
-    _embeddingQueueService = EmbeddingQueueService(
-      store: store,
-      embeddingService: EmbeddingService.instance,
-      noteAdapter: noteAdapter,
-    );
-
-    await _embeddingQueueService!.start();
-    print('EmbeddingQueueService initialized and started');
-  }
+  // 7. EmbeddingQueueService deferred to Phase 1 (Note entity not yet implemented)
 
   // 8. Initialize Invocation Repositories (required by STT/TTS/LLM services for training)
   // Using in-memory implementations for MVP
@@ -326,19 +313,17 @@ Future<void> initializeEverythingStack({
   // else: keeps NullTTSService default
 
   // 11. Initialize LLMService
-  // Priority: Groq (recommended for tool calling) → Claude → None
+  // Priority: Groq (recommended for tool calling) → None (Claude deferred to Phase 1)
   if (cfg.groqApiKey != null && cfg.groqApiKey!.isNotEmpty) {
-    final llmService = GroqService(apiKey: cfg.groqApiKey!);
+    final llmService = GroqService(
+      apiKey: cfg.groqApiKey!,
+      llmInvocationRepository: llmInvocationRepo,
+    );
     await llmService.initialize();
     LLMService.instance = llmService;
     print('LLMService initialized (Groq)');
-  } else if (cfg.claudeApiKey != null && cfg.claudeApiKey!.isNotEmpty) {
-    final llmService = ClaudeService(apiKey: cfg.claudeApiKey!);
-    await llmService.initialize();
-    LLMService.instance = llmService;
-    print('LLMService initialized (Claude)');
   }
-  // else: keeps NullLLMService default
+  // else: keeps NullLLMService default (Claude deferred to Phase 1)
 
   // 12. Note: Domain repositories (Task, Timer, Personality, Namespace) are initialized
   // by the application layer, not bootstrap. This allows for platform-specific

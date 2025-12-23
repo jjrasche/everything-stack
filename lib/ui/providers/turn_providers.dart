@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:everything_stack_template/domain/turn.dart';
 import 'package:everything_stack_template/domain/invocations.dart';
 import 'package:everything_stack_template/domain/feedback.dart';
+import 'package:everything_stack_template/domain/llm_invocation_repository.dart';
+import 'package:everything_stack_template/domain/tts_invocation_repository.dart';
 import 'package:everything_stack_template/ui/providers/trainable_providers.dart';
 
 /// Fetch all turns marked for feedback
@@ -42,15 +44,12 @@ final invocationByIdProvider = FutureProvider.family<dynamic, (String, String)>(
   final (invocationId, componentType) = args;
 
   switch (componentType) {
-    case 'stt':
-      final repo = ref.watch(sttInvocationRepositoryProvider);
-      return await repo.findById(invocationId);
     case 'llm':
       final repo = ref.watch(llmInvocationRepositoryProvider);
-      return await repo.findById(invocationId);
+      return await repo.findByUuid(invocationId);
     case 'tts':
       final repo = ref.watch(ttsInvocationRepositoryProvider);
-      return await repo.findById(invocationId);
+      return await repo.findByUuid(invocationId);
     default:
       return null;
   }
