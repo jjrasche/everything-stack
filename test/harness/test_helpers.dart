@@ -9,7 +9,7 @@ import 'package:everything_stack_template/services/blob_store.dart';
 // Conditional import for platform-specific test persistence
 import 'test_persistence_stub.dart'
     if (dart.library.io) 'test_persistence_io.dart'
-    if (dart.library.html) 'test_persistence_web.dart';
+    if (dart.library.html) 'test_persistence_web.dart' as persistence;
 
 /// Test context containing all initialized services and repositories.
 class TestContext {
@@ -54,7 +54,7 @@ class TestContext {
 /// ```
 Future<TestContext> initTestEnvironment() async {
   // Initialize platform-specific persistence
-  final persistence = await initTestPersistence();
+  final persistenceFactory = await persistence.initializeTestPersistence();
 
   // Initialize services
   final embeddingService = MockEmbeddingService();
@@ -62,17 +62,17 @@ Future<TestContext> initTestEnvironment() async {
   await blobStore.initialize();
 
   // Initialize repositories with adapters from factory (cast to correct types)
-  final versionRepo = VersionRepository(adapter: persistence.versionAdapter as dynamic);
-  final edgeRepo = EdgeRepository(adapter: persistence.edgeAdapter as dynamic);
+  final versionRepo = VersionRepository(adapter: persistenceFactory.versionAdapter as dynamic);
+  final edgeRepo = EdgeRepository(adapter: persistenceFactory.edgeAdapter as dynamic);
   final noteRepo = NoteRepository(
-    adapter: persistence.noteAdapter as dynamic,
+    adapter: persistenceFactory.noteAdapter as dynamic,
     embeddingService: embeddingService,
     versionRepo: versionRepo,
   );
   noteRepo.setEdgeRepository(edgeRepo);
 
   return TestContext(
-    persistence: persistence,
+    persistence: persistenceFactory,
     noteRepo: noteRepo,
     edgeRepo: edgeRepo,
     versionRepo: versionRepo,
@@ -85,7 +85,7 @@ Future<TestContext> initTestEnvironment() async {
 /// Call in tearDown.
 Future<void> cleanupTestEnvironment(TestContext ctx) async {
   await ctx.dispose();
-  await cleanupTestPersistence();
+  await persistence.cleanupTestPersistence();
 }
 
 /// Base class for parameterized test cases.

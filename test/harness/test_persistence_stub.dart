@@ -19,3 +19,11 @@ Future<PersistenceFactory> initializeTestPersistence() {
     'Cannot initialize test persistence without dart:io or dart:html',
   );
 }
+
+/// Cleanup test persistence.
+/// This stub throws - real implementations in _io.dart and _web.dart.
+Future<void> cleanupTestPersistence() {
+  throw UnsupportedError(
+    'Cannot cleanup test persistence without dart:io or dart:html',
+  );
+}
