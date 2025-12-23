@@ -17,8 +17,8 @@ void main() {
 
     test('creates deny feedback (wrong, no correction)', () {
       final feedback = Feedback(
-        invocationId: 'intent_inv_001',
-        componentType: 'intent',
+        invocationId: 'llm_inv_001',
+        componentType: 'llm',
         action: FeedbackAction.deny,
       );
 
@@ -50,8 +50,8 @@ void main() {
 
     test('links feedback to turn context', () {
       final feedback = Feedback(
-        invocationId: 'intent_inv_001',
-        componentType: 'intent',
+        invocationId: 'tts_inv_001',
+        componentType: 'tts',
         action: FeedbackAction.deny,
         turnId: 'turn_5',
       );

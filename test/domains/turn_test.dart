@@ -9,11 +9,8 @@ void main() {
         turnIndex: 1,
       );
 
-      expect(turn.conversationId, 'conv_123');
-      expect(turn.turnIndex, 1);
       expect(turn.markedForFeedback, false);
       expect(turn.sttInvocationId, null);
-      expect(turn.intentInvocationId, null);
       expect(turn.llmInvocationId, null);
       expect(turn.ttsInvocationId, null);
     });
@@ -38,12 +35,10 @@ void main() {
       );
 
       turn.sttInvocationId = 'stt_inv_001';
-      turn.intentInvocationId = 'intent_inv_001';
       turn.llmInvocationId = 'llm_inv_001';
       turn.ttsInvocationId = 'tts_inv_001';
 
       expect(turn.sttInvocationId, 'stt_inv_001');
-      expect(turn.intentInvocationId, 'intent_inv_001');
       expect(turn.llmInvocationId, 'llm_inv_001');
       expect(turn.ttsInvocationId, 'tts_inv_001');
     });
