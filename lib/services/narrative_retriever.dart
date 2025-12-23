@@ -62,7 +62,7 @@ class NarrativeRetriever {
       }
 
       return results;
-    } catch (e, st) {
+    } catch (e) {
       return [];
     }
   }
@@ -78,7 +78,7 @@ class NarrativeRetriever {
         scope,
         includeArchived: includeArchived,
       );
-    } catch (e, st) {
+    } catch (e) {
       return [];
     }
   }
@@ -91,7 +91,7 @@ class NarrativeRetriever {
   }) async {
     try {
       return await _narrativeRepo.findByType(type, scope: scope);
-    } catch (e, st) {
+    } catch (e) {
       return [];
     }
   }
@@ -132,7 +132,7 @@ class NarrativeRetriever {
         buffer.writeln('  ... and ${entries.length - 10} more');
       }
       return buffer.toString();
-    } catch (e, st) {
+    } catch (e) {
       return 'Error retrieving summary';
     }
   }

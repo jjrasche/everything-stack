@@ -86,7 +86,7 @@ class NarrativeThinker {
       }
 
       return saved;
-    } catch (e, st) {
+    } catch (e) {
       return [];
     }
   }
@@ -151,7 +151,7 @@ class NarrativeThinker {
 
       final response = tokens.join();
       return _parseResponse(response);
-    } catch (e, st) {
+    } catch (e) {
       return [];
     }
   }

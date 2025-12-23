@@ -98,7 +98,7 @@ class NarrativeCheckpoint {
       }
 
       return delta;
-    } catch (e, st) {
+    } catch (e) {
       return NarrativeDelta(added: [], removed: [], promoted: []);
     }
   }
@@ -218,7 +218,7 @@ Response format:
 
       final response = tokens.join();
       return _parseProjectLifeResponse(response);
-    } catch (e, st) {
+    } catch (e) {
       return [];
     }
   }
