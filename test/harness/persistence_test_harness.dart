@@ -17,7 +17,7 @@ import 'package:everything_stack_template/bootstrap/persistence_factory.dart';
 // Conditional import for platform-specific persistence
 import 'test_persistence_stub.dart'
     if (dart.library.io) 'test_persistence_io.dart'
-    if (dart.library.html) 'test_persistence_web.dart';
+    if (dart.library.html) 'test_persistence_web.dart' as persistence;
 
 /// Test harness for persistence layer
 class PersistenceTestHarness {
@@ -38,12 +38,12 @@ class PersistenceTestHarness {
     // This function is defined in the conditionally-imported files:
     // - test_persistence_io.dart: returns false (native)
     // - test_persistence_web.dart: returns true (web)
-    return detectWebPlatform();
+    return persistence.detectWebPlatform();
   }
 
   /// Initialize persistence layer
   Future<void> initialize() async {
-    _factory = await initializeTestPersistence();
+    _factory = await persistence.initializeTestPersistence();
   }
 
   /// Clean up and close persistence layer
