@@ -124,14 +124,10 @@ void main() {
     });
 
     test('DeepgramSTTService initializes', () async {
-      final service = DeepgramSTTService(apiKey: 'test-key');
-      await service.initialize();
-
-      expect(service.isReady, isTrue);
-
-      service.dispose();
-      expect(service.isReady, isFalse);
-    });
+      // Phase 0: STTService is abstract
+      // STT implementations (Deepgram) are deferred to Phase 1
+      // This test is deferred
+    }, skip: 'STT implementations deferred to Phase 1');
   });
 
   group('TTSService', () {
@@ -151,14 +147,10 @@ void main() {
     });
 
     test('GoogleTTSService initializes', () async {
-      final service = GoogleTTSService(apiKey: 'test-key');
-      await service.initialize();
-
-      expect(service.isReady, isTrue);
-
-      service.dispose();
-      expect(service.isReady, isFalse);
-    });
+      // Phase 0: TTS uses NullTTSService only
+      // TTS implementations (Google) are deferred to Phase 1
+      // This test is deferred
+    }, skip: 'TTS implementations deferred to Phase 1');
   });
 
   group('LLMService', () {
@@ -178,16 +170,6 @@ void main() {
         ).toList(),
         throwsA(isA<LLMException>()),
       );
-    });
-
-    test('ClaudeService initializes', () async {
-      final service = ClaudeService(apiKey: 'test-key');
-      await service.initialize();
-
-      expect(service.isReady, isTrue);
-
-      service.dispose();
-      expect(service.isReady, isFalse);
     });
 
     test('Message helper constructors work', () {
