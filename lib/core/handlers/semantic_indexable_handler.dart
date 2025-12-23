@@ -40,10 +40,13 @@ class SemanticIndexableHandler<T extends BaseEntity>
   @override
   Future<void> beforeSave(T entity) async {
     if (entity is! SemanticIndexable) return;
-    if (entity.id == null) return; // New entity, no old chunks to delete
 
     // Delete old chunks for this entity
-    await chunkingService.deleteByEntityId(entity.uuid);
+    try {
+      await chunkingService.deleteByEntityId(entity.uuid);
+    } catch (e) {
+      // Safe to fail - entity will still be saved
+    }
   }
 
   /// Create and index new chunks after entity is persisted.
@@ -55,15 +58,13 @@ class SemanticIndexableHandler<T extends BaseEntity>
   @override
   Future<void> afterSave(T entity) async {
     if (entity is! SemanticIndexable) return;
-    if (chunkingService == null) return;
 
     try {
       // Create chunks from entity content and index them
-      await chunkingService!.indexEntity(entity);
+      await chunkingService.indexEntity(entity);
     } catch (e) {
-      // Log but don't rethrow - entity is persisted and valid
+      // Silently fail - entity is persisted and valid
       // Index can be rebuilt later by SyncService
-      print('Warning: Failed to chunk entity ${entity.uuid}: $e');
     }
   }
 
@@ -78,8 +79,7 @@ class SemanticIndexableHandler<T extends BaseEntity>
     try {
       await chunkingService.deleteByEntityId(entity.uuid);
     } catch (e) {
-      // Log but don't rethrow - entity deletion should proceed
-      print('Warning: Failed to delete chunks for ${entity.uuid}: $e');
+      // Silently fail - entity deletion should proceed
     }
   }
 }
