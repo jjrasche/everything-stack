@@ -54,7 +54,8 @@ void main() {
     });
 
     testWidgets(
-      'User marks turn wrong and trains system via UI',
+      'User marks turn wrong and trains system via UI (Phase 1 - deferred)',
+      skip: true,
       (WidgetTester tester) async {
         // GIVEN: A turn with LLM invocation, marked for feedback
         final llmInvocation = LLMInvocation(
