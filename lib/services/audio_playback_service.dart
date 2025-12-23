@@ -41,7 +41,6 @@ class JustAudioPlaybackService implements AudioPlaybackService {
   @override
   void dispose() {
     _player.dispose();
-    _isReady = false;
   }
 }
 

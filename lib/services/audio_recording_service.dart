@@ -85,7 +85,6 @@ class RecordAudioRecordingService implements AudioRecordingService {
   @override
   void dispose() {
     _recorder.dispose();
-    _isReady = false;
   }
 }
 
