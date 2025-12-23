@@ -30,19 +30,14 @@
 /// Test through domain repositories. Verify CRUD operations,
 /// query correctness, sync status transitions.
 
-import 'dart:convert';
 import 'base_entity.dart';
 import 'persistence/persistence_adapter.dart';
 import 'persistence/transaction_manager.dart';
 import 'persistence/transaction_context.dart';
-import 'entity_version.dart';
 import 'repository_pattern_handler.dart';
 import '../patterns/embeddable.dart';
-import '../patterns/versionable.dart';
-import '../patterns/semantic_indexable.dart';
 import '../services/embedding_service.dart';
 import '../services/chunking_service.dart';
-import '../utils/json_diff.dart';
 
 abstract class EntityRepository<T extends BaseEntity> {
   /// Persistence adapter for database operations.

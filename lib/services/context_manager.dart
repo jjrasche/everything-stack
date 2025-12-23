@@ -46,10 +46,8 @@ import 'package:flutter/material.dart';
 
 import '../core/feedback_repository.dart';
 import '../domain/event.dart';
-import '../domain/feedback.dart';
 import '../domain/personality.dart';
 import '../domain/personality_repository.dart';
-import '../domain/namespace.dart' as domain;
 import '../domain/namespace_repository.dart';
 import '../domain/tool.dart';
 import '../domain/tool_repository.dart';

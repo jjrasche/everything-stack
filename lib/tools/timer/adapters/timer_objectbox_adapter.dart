@@ -12,11 +12,9 @@
 /// ```
 
 import 'package:objectbox/objectbox.dart';
-import '../../../core/base_entity.dart';
 import '../../../core/persistence/persistence_adapter.dart';
 import '../../../core/persistence/transaction_context.dart';
 import '../../../core/persistence/objectbox_tx_context.dart';
-import '../../../core/exceptions/persistence_exceptions.dart';
 import '../entities/timer.dart';
 import '../../../objectbox.g.dart';
 

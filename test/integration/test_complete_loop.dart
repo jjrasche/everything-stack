@@ -7,7 +7,6 @@
 /// Success = loop completes without crashing and feedback is captured
 
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:uuid/uuid.dart';

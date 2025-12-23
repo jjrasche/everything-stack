@@ -32,14 +32,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:everything_stack_template/domain/turn.dart';
 import 'package:everything_stack_template/domain/invocations.dart';
-import 'package:everything_stack_template/domain/feedback.dart';
-import 'package:everything_stack_template/domain/personality.dart';
 import 'package:everything_stack_template/repositories/turn_repository_impl.dart';
 import 'package:everything_stack_template/repositories/invocation_repository_impl.dart';
 import 'package:everything_stack_template/repositories/feedback_repository_impl.dart';
-import 'package:everything_stack_template/ui/screens/feedback_review_screen.dart';
 import 'package:everything_stack_template/ui/screens/turn_list_screen.dart';
-import 'package:everything_stack_template/main.dart';
 
 void main() {
   group('Feedback Review UI Scenario', () {

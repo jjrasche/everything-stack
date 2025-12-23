@@ -3,7 +3,6 @@ import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/hnsw_index.dart';
 import 'package:everything_stack_template/services/semantic_search/semantic_search.dart';
 import 'package:everything_stack_template/patterns/semantic_indexable.dart';
-import '../harness/semantic_test_doubles.dart';
 
 void main() {
   group('Chunk model contract', () {

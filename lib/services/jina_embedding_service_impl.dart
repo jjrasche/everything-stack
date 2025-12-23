@@ -2,7 +2,6 @@
 ///
 /// Wraps the abstract JinaEmbeddingService with actual HTTP calls using dart:http.
 
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'embedding_service.dart';
 

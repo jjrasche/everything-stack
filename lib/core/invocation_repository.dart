@@ -17,8 +17,6 @@
 /// - save(): Persist invocation
 /// - delete(): Remove invocation
 
-import '../domain/turn.dart';
-
 abstract class InvocationRepository<T> {
   /// Find invocation by ID
   ///

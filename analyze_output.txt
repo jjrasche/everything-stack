@@ -1,0 +1,960 @@
+Resolving dependencies...
+Downloading packages...
+  _fe_analyzer_shared 61.0.0 (92.0.0 available)
+  analyzer 5.13.0 (9.0.0 available)
+  app_links 6.4.1 (7.0.0 available)
+  audio_session 0.1.25 (0.2.2 available)
+  build 2.4.1 (4.0.3 available)
+  build_config 1.1.2 (1.2.0 available)
+  build_resolvers 2.4.2 (3.0.4 available)
+  build_runner 2.4.13 (2.10.4 available)
+  build_runner_core 7.3.2 (9.3.2 available)
+  characters 1.4.0 (1.4.1 available)
+  connectivity_plus 5.0.2 (7.0.0 available)
+  connectivity_plus_platform_interface 1.2.4 (2.0.1 available)
+  dart_style 2.3.2 (3.1.3 available)
+  file_picker 8.3.7 (10.3.8 available)
+  flat_buffers 23.5.26 (25.9.23 available)
+  flutter_dotenv 5.2.1 (6.0.0 available)
+  flutter_lints 3.0.2 (6.0.0 available)
+  flutter_riverpod 2.6.1 (3.0.3 available)
+  geolocator 10.1.1 (14.0.2 available)
+  geolocator_android 4.6.2 (5.0.2 available)
+  geolocator_web 2.2.1 (4.1.3 available)
+  gotrue 2.16.0 (2.18.0 available)
+  idb_shim 2.6.7+1 (2.7.1+2 available)
+  image 4.5.4 (4.7.2 available)
+  js 0.6.7 (0.7.2 available)
+  json_serializable 6.8.0 (6.11.3 available)
+  just_audio 0.9.46 (0.10.5 available)
+  lints 3.0.0 (6.0.0 available)
+  matcher 0.12.17 (0.12.18 available)
+  material_color_utilities 0.11.1 (0.13.0 available)
+  mockito 5.4.4 (5.6.1 available)
+  objectbox 4.1.0 (5.1.0 available)
+  objectbox_flutter_libs 4.1.0 (5.1.0 available)
+  objectbox_generator 4.1.0 (5.1.0 available)
+  pointycastle 3.9.1 (4.0.0 available)
+  postgrest 2.5.0 (2.6.0 available)
+  realtime_client 2.6.0 (2.7.0 available)
+  riverpod 2.6.1 (3.0.3 available)
+  rxdart 0.27.7 (0.28.0 available)
+  sembast 3.8.5+2 (3.8.6 available)
+  shelf_web_socket 2.0.1 (3.0.0 available)
+  source_gen 1.5.0 (4.1.1 available)
+  source_helper 1.3.5 (1.3.9 available)
+  supabase 2.10.0 (2.10.2 available)
+  supabase_flutter 2.10.3 (2.12.0 available)
+  test_api 0.7.7 (0.7.8 available)
+  watcher 1.1.4 (1.2.0 available)
+Got dependencies!
+47 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Analyzing everything-stack...                                   
+
+warning - Unused import: 'dart:typed_data' - integration_test\web_smoke_test.dart:25:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/patterns/file_storable.dart' - integration_test\web_smoke_test.dart:35:8 - unused_import
+   info - 'setEdgeRepository' is deprecated and shouldn't be used - integration_test\web_smoke_test.dart:66:16 - deprecated_member_use_from_same_package
+   info - Don't invoke 'print' in production code - integration_test\web_smoke_test.dart:72:7 - avoid_print
+   info - Don't invoke 'print' in production code - integration_test\web_smoke_test.dart:85:7 - avoid_print
+   info - Don't invoke 'print' in production code - integration_test\web_smoke_test.dart:98:7 - avoid_print
+   info - Don't invoke 'print' in production code - integration_test\web_smoke_test.dart:106:7 - avoid_print
+   info - Don't invoke 'print' in production code - integration_test\web_smoke_test.dart:121:7 - avoid_print
+   info - Don't invoke 'print' in production code - integration_test\web_smoke_test.dart:129:7 - avoid_print
+   info - Don't invoke 'print' in production code - integration_test\web_smoke_test.dart:134:7 - avoid_print
+   info - Don't invoke 'print' in production code - integration_test\web_smoke_test.dart:135:7 - avoid_print
+   info - Don't invoke 'print' in production code - integration_test\web_smoke_test.dart:136:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\bootstrap.dart:229:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\bootstrap.dart:299:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\bootstrap.dart:311:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\bootstrap.dart:324:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\bootstrap.dart:337:3 - avoid_print
+   info - Dangling library doc comment - lib\core\adaptation_state_repository.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\base_entity.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\edge.dart:1:1 - dangling_library_doc_comments
+   info - Field overrides a field inherited from 'BaseEntity' - lib\core\edge.dart:30:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\core\edge.dart:34:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\core\edge.dart:38:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\core\edge.dart:42:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\core\edge.dart:46:11 - overridden_fields
+   info - Dangling library doc comment - lib\core\edge_repository.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\entity_repository.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: 'dart:convert' - lib\core\entity_repository.dart:33:8 - unused_import
+warning - Unused import: 'entity_version.dart' - lib\core\entity_repository.dart:38:8 - unused_import
+warning - Unused import: '../patterns/versionable.dart' - lib\core\entity_repository.dart:41:8 - unused_import
+warning - Unused import: '../patterns/semantic_indexable.dart' - lib\core\entity_repository.dart:42:8 - unused_import
+warning - Unused import: '../utils/json_diff.dart' - lib\core\entity_repository.dart:45:8 - unused_import
+   info - Use an initializing formal to assign a parameter to a field - lib\core\entity_repository.dart:86:9 - prefer_initializing_formals
+   info - Dangling library doc comment - lib\core\entity_version.dart:1:1 - dangling_library_doc_comments
+   info - Field overrides a field inherited from 'BaseEntity' - lib\core\entity_version.dart:60:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\core\entity_version.dart:64:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\core\entity_version.dart:68:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\core\entity_version.dart:72:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\core\entity_version.dart:76:11 - overridden_fields
+   info - Dangling library doc comment - lib\core\exceptions\exceptions.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\exceptions\persistence_exceptions.dart:31:1 - dangling_library_doc_comments
+   info - Parameters ''message', 'cause', and 'stackTrace'' could be super parameters - lib\core\exceptions\persistence_exceptions.dart:172:3 - use_super_parameters
+   info - Parameters ''message', 'cause', and 'stackTrace'' could be super parameters - lib\core\exceptions\persistence_exceptions.dart:231:3 - use_super_parameters
+   info - Parameters ''message', 'cause', and 'stackTrace'' could be super parameters - lib\core\exceptions\persistence_exceptions.dart:264:3 - use_super_parameters
+   info - Dangling library doc comment - lib\core\feedback_repository.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\generic_handler_factory.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\handlers\edge_cascade_delete_handler.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\handlers\embeddable_handler.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\handlers\semantic_indexable_handler.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\handlers\versionable_handler.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\invocation_repository.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: '../domain/turn.dart' - lib\core\invocation_repository.dart:20:8 - unused_import
+   info - Dangling library doc comment - lib\core\persistence\edge_persistence_adapter.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\persistence\indexeddb_transaction_manager.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\persistence\indexeddb_tx_context.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\persistence\objectbox_transaction_manager.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\persistence\objectbox_tx_context.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\persistence\persistence_adapter.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\persistence\transaction_context.dart:34:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\persistence\transaction_manager.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\persistence\version_persistence_adapter.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\repository_pattern_handler.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\turn_repository.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\core\version_repository.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\domain\adaptation_state.dart:1:1 - dangling_library_doc_comments
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\adaptation_state.dart:40:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\adaptation_state.dart:43:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\adaptation_state.dart:46:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\adaptation_state.dart:49:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\adaptation_state.dart:52:11 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\adaptation_state.dart:150:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\adaptation_state.dart:153:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\adaptation_state.dart:156:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\adaptation_state.dart:159:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\adaptation_state.dart:162:11 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\adaptation_state.dart:257:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\adaptation_state.dart:260:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\adaptation_state.dart:263:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\adaptation_state.dart:266:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\adaptation_state.dart:269:11 - overridden_fields
+   info - Dangling library doc comment - lib\domain\context_manager_invocation.dart:1:1 - dangling_library_doc_comments
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\context_manager_invocation.dart:49:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\context_manager_invocation.dart:53:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\context_manager_invocation.dart:57:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\context_manager_invocation.dart:61:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\context_manager_invocation.dart:64:11 - overridden_fields
+   info - Dangling library doc comment - lib\domain\context_manager_invocation_repository.dart:1:1 - dangling_library_doc_comments
+   info - Parameter 'adapter' could be a super parameter - lib\domain\context_manager_invocation_repository.dart:26:3 - use_super_parameters
+   info - Dangling library doc comment - lib\domain\event.dart:1:1 - dangling_library_doc_comments
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\event.dart:47:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\event.dart:50:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\event.dart:53:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\event.dart:56:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\event.dart:59:11 - overridden_fields
+   info - Dangling library doc comment - lib\domain\feedback.dart:1:1 - dangling_library_doc_comments
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\feedback.dart:57:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\feedback.dart:60:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\feedback.dart:63:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\feedback.dart:66:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\feedback.dart:69:11 - overridden_fields
+   info - Dangling library doc comment - lib\domain\invocations.dart:1:1 - dangling_library_doc_comments
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\invocations.dart:54:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\invocations.dart:57:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\invocations.dart:60:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\invocations.dart:63:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\invocations.dart:66:11 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\invocations.dart:139:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\invocations.dart:142:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\invocations.dart:145:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\invocations.dart:148:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\invocations.dart:151:11 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\invocations.dart:233:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\invocations.dart:236:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\invocations.dart:239:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\invocations.dart:242:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\invocations.dart:245:11 - overridden_fields
+   info - Dangling library doc comment - lib\domain\llm_invocation_repository.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\domain\namespace.dart:1:1 - dangling_library_doc_comments
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\namespace.dart:32:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\namespace.dart:36:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\namespace.dart:40:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\namespace.dart:44:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\namespace.dart:47:11 - overridden_fields
+   info - Dangling library doc comment - lib\domain\namespace_adaptation_state.dart:37:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\domain\namespace_repository.dart:1:1 - dangling_library_doc_comments
+   info - Parameter 'adapter' could be a super parameter - lib\domain\namespace_repository.dart:21:3 - use_super_parameters
+   info - Dangling library doc comment - lib\domain\narrative_entry.dart:1:1 - dangling_library_doc_comments
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\narrative_entry.dart:41:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\narrative_entry.dart:45:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\narrative_entry.dart:49:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\narrative_entry.dart:53:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\narrative_entry.dart:57:11 - overridden_fields
+   info - Field overrides a field inherited from 'Embeddable' - lib\domain\narrative_entry.dart:86:17 - overridden_fields
+   info - Dangling library doc comment - lib\domain\narrative_repository.dart:1:1 - dangling_library_doc_comments
+   info - Parameters ''adapter' and 'transactionManager'' could be super parameters - lib\domain\narrative_repository.dart:40:3 - use_super_parameters
+   info - Dangling library doc comment - lib\domain\note.dart:1:1 - dangling_library_doc_comments
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\note.dart:51:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\note.dart:55:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\note.dart:59:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\note.dart:63:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\note.dart:67:11 - overridden_fields
+   info - Field overrides a field inherited from 'Embeddable' - lib\domain\note.dart:95:17 - overridden_fields
+   info - Field overrides a field inherited from 'Ownable' - lib\domain\note.dart:110:11 - overridden_fields
+   info - Field overrides a field inherited from 'Ownable' - lib\domain\note.dart:114:16 - overridden_fields
+   info - Field overrides a field inherited from 'FileStorable' - lib\domain\note.dart:125:22 - overridden_fields
+   info - Field overrides a field inherited from 'Locatable' - lib\domain\note.dart:150:11 - overridden_fields
+   info - Field overrides a field inherited from 'Locatable' - lib\domain\note.dart:154:11 - overridden_fields
+   info - Field overrides a field inherited from 'Locatable' - lib\domain\note.dart:158:11 - overridden_fields
+   info - Dangling library doc comment - lib\domain\note_handler_factory.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: 'package:everything_stack_template/core/repository_pattern_handler.dart' - lib\domain\note_handler_factory.dart:13:8 - unused_import
+   info - Parameters ''embeddingService', 'chunkingService', 'versionRepository', 'adapter', and 'edgeRepository'' could be super parameters - lib\domain\note_handler_factory.dart:29:3 - use_super_parameters
+   info - Dangling library doc comment - lib\domain\note_repository.dart:1:1 - dangling_library_doc_comments
+   info - Parameters ''adapter', 'chunkingService', and 'transactionManager'' could be super parameters - lib\domain\note_repository.dart:50:3 - use_super_parameters
+   info - Missing a deprecation message - lib\domain\note_repository.dart:101:3 - provide_deprecation_message
+   info - Dangling library doc comment - lib\domain\personality.dart:1:1 - dangling_library_doc_comments
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\personality.dart:51:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\personality.dart:55:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\personality.dart:59:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\personality.dart:63:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\personality.dart:66:11 - overridden_fields
+   info - Dangling library doc comment - lib\domain\personality_repository.dart:1:1 - dangling_library_doc_comments
+   info - Parameter 'adapter' could be a super parameter - lib\domain\personality_repository.dart:28:3 - use_super_parameters
+   info - Dangling library doc comment - lib\domain\stt_invocation_repository.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\domain\tool.dart:1:1 - dangling_library_doc_comments
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\tool.dart:46:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\tool.dart:50:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\tool.dart:54:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\tool.dart:58:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\tool.dart:61:11 - overridden_fields
+   info - Dangling library doc comment - lib\domain\tool_repository.dart:1:1 - dangling_library_doc_comments
+   info - Parameter 'adapter' could be a super parameter - lib\domain\tool_repository.dart:24:3 - use_super_parameters
+   info - Dangling library doc comment - lib\domain\tool_selection_adaptation_state.dart:31:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\domain\tts_invocation_repository.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\domain\turn.dart:1:1 - dangling_library_doc_comments
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\turn.dart:53:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\turn.dart:57:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\turn.dart:61:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\turn.dart:65:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\domain\turn.dart:68:11 - overridden_fields
+   info - Dangling library doc comment - lib\domain\turn_repository.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\patterns\edgeable.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\patterns\embeddable.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\patterns\file_storable.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\patterns\invocable.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\patterns\locatable.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\patterns\ownable.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\patterns\semantic_indexable.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\patterns\temporal.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\patterns\versionable.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\persistence\indexeddb\base_indexeddb_adapter.dart:1:1 - dangling_library_doc_comments
+   info - The imported package 'meta' isn't a dependency of the importing package - lib\persistence\indexeddb\base_indexeddb_adapter.dart:40:8 - depend_on_referenced_packages
+   info - Dangling library doc comment - lib\persistence\indexeddb\database_init.dart:1:1 - dangling_library_doc_comments
+   info - The import of 'package:idb_shim/idb.dart' is unnecessary because all of the used elements are also provided by the import of 'package:idb_shim/idb_browser.dart' - lib\persistence\indexeddb\database_init.dart:26:8 - unnecessary_import
+warning - The left operand can't be null, so the right operand is never executed - lib\persistence\indexeddb\database_init.dart:77:42 - dead_null_aware_expression
+   info - Don't invoke 'print' in production code - lib\persistence\indexeddb\database_init.dart:79:3 - avoid_print
+   info - Don't invoke 'print' in production code - lib\persistence\indexeddb\database_init.dart:99:3 - avoid_print
+   info - Don't invoke 'print' in production code - lib\persistence\indexeddb\database_init.dart:106:3 - avoid_print
+   info - Don't invoke 'print' in production code - lib\persistence\indexeddb\database_init.dart:111:3 - avoid_print
+   info - Don't invoke 'print' in production code - lib\persistence\indexeddb\database_init.dart:122:5 - avoid_print
+   info - Dangling library doc comment - lib\persistence\indexeddb\database_schema.dart:34:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\persistence\indexeddb\edge_indexeddb_adapter.dart:1:1 - dangling_library_doc_comments
+   info - Parameter 'db' could be a super parameter - lib\persistence\indexeddb\edge_indexeddb_adapter.dart:22:3 - use_super_parameters
+   info - Dangling library doc comment - lib\persistence\indexeddb\entity_version_indexeddb_adapter.dart:1:1 - dangling_library_doc_comments
+   info - Parameter 'db' could be a super parameter - lib\persistence\indexeddb\entity_version_indexeddb_adapter.dart:22:3 - use_super_parameters
+   info - Dangling library doc comment - lib\persistence\indexeddb\note_indexeddb_adapter.dart:1:1 - dangling_library_doc_comments
+   info - Parameter 'db' could be a super parameter - lib\persistence\indexeddb\note_indexeddb_adapter.dart:46:3 - use_super_parameters
+   info - Don't invoke 'print' in production code - lib\persistence\indexeddb\note_indexeddb_adapter.dart:70:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\persistence\indexeddb\note_indexeddb_adapter.dart:71:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\persistence\indexeddb\note_indexeddb_adapter.dart:84:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\persistence\indexeddb\note_indexeddb_adapter.dart:93:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\persistence\indexeddb\note_indexeddb_adapter.dart:108:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\persistence\indexeddb\note_indexeddb_adapter.dart:109:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\persistence\indexeddb\note_indexeddb_adapter.dart:117:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\persistence\indexeddb\note_indexeddb_adapter.dart:141:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\persistence\indexeddb\note_indexeddb_adapter.dart:154:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\persistence\indexeddb\note_indexeddb_adapter.dart:159:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\persistence\indexeddb\note_indexeddb_adapter.dart:195:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\persistence\indexeddb\note_indexeddb_adapter.dart:219:5 - avoid_print
+   info - The 'if' statement could be replaced by a null-aware assignment - lib\persistence\indexeddb\note_indexeddb_adapter.dart:236:7 - prefer_conditional_assignment
+   info - The 'if' statement could be replaced by a null-aware assignment - lib\persistence\indexeddb\note_indexeddb_adapter.dart:264:7 - prefer_conditional_assignment
+   info - Dangling library doc comment - lib\persistence\objectbox\base_objectbox_adapter.dart:1:1 - dangling_library_doc_comments
+   info - The imported package 'meta' isn't a dependency of the importing package - lib\persistence\objectbox\base_objectbox_adapter.dart:33:8 - depend_on_referenced_packages
+   info - Dangling library doc comment - lib\persistence\objectbox\edge_objectbox_adapter.dart:1:1 - dangling_library_doc_comments
+   info - The import of 'package:objectbox/objectbox.dart' is unnecessary because all of the used elements are also provided by the import of '../../objectbox.g.dart' - lib\persistence\objectbox\edge_objectbox_adapter.dart:7:8 - unnecessary_import
+   info - Parameter 'store' could be a super parameter - lib\persistence\objectbox\edge_objectbox_adapter.dart:17:3 - use_super_parameters
+   info - Dangling library doc comment - lib\persistence\objectbox\entity_version_objectbox_adapter.dart:1:1 - dangling_library_doc_comments
+   info - The import of 'package:objectbox/objectbox.dart' is unnecessary because all of the used elements are also provided by the import of '../../objectbox.g.dart' - lib\persistence\objectbox\entity_version_objectbox_adapter.dart:7:8 - unnecessary_import
+   info - Parameter 'store' could be a super parameter - lib\persistence\objectbox\entity_version_objectbox_adapter.dart:20:3 - use_super_parameters
+   info - Dangling library doc comment - lib\persistence\objectbox\note_objectbox_adapter.dart:1:1 - dangling_library_doc_comments
+   info - The import of 'package:objectbox/objectbox.dart' is unnecessary because all of the used elements are also provided by the import of '../../objectbox.g.dart' - lib\persistence\objectbox\note_objectbox_adapter.dart:14:8 - unnecessary_import
+   info - Parameter 'store' could be a super parameter - lib\persistence\objectbox\note_objectbox_adapter.dart:22:3 - use_super_parameters
+   info - Dangling library doc comment - lib\persistence\objectbox\wrappers\edge_ob.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: '../../../core/base_entity.dart' - lib\persistence\objectbox\wrappers\edge_ob.dart:8:8 - unused_import
+   info - Dangling library doc comment - lib\persistence\objectbox\wrappers\entity_version_ob.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: '../../../core/base_entity.dart' - lib\persistence\objectbox\wrappers\entity_version_ob.dart:8:8 - unused_import
+   info - Dangling library doc comment - lib\persistence\objectbox\wrappers\note_ob.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: '../../../core/base_entity.dart' - lib\persistence\objectbox\wrappers\note_ob.dart:16:8 - unused_import
+warning - Unused import: '../../../patterns/ownable.dart' - lib\persistence\objectbox\wrappers\note_ob.dart:17:8 - unused_import
+   info - Dangling library doc comment - lib\repositories\adaptation_state_repository_impl.dart:1:1 - dangling_library_doc_comments
+warning - This cast always throws an exception because the expression always evaluates to 'null' - lib\repositories\adaptation_state_repository_impl.dart:73:21 - cast_from_null_always_fails
+warning - This cast always throws an exception because the expression always evaluates to 'null' - lib\repositories\adaptation_state_repository_impl.dart:166:21 - cast_from_null_always_fails
+warning - This cast always throws an exception because the expression always evaluates to 'null' - lib\repositories\adaptation_state_repository_impl.dart:259:21 - cast_from_null_always_fails
+   info - Dangling library doc comment - lib\repositories\feedback_repository_impl.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\repositories\invocation_repository_impl.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\repositories\turn_repository_impl.dart:1:1 - dangling_library_doc_comments
+warning - This cast always throws an exception because the expression always evaluates to 'null' - lib\repositories\turn_repository_impl.dart:62:21 - cast_from_null_always_fails
+warning - The value of the field '_isReady' isn't used - lib\services\audio_playback_service.dart:18:8 - unused_field
+   info - Don't invoke 'print' in production code - lib\services\audio_playback_service.dart:23:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\audio_playback_service.dart:33:7 - avoid_print
+warning - The value of the field '_isReady' isn't used - lib\services\audio_recording_service.dart:28:8 - unused_field
+   info - Don't invoke 'print' in production code - lib\services\audio_recording_service.dart:34:5 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\services\audio_recording_service.dart:51:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\audio_recording_service.dart:103:41 - prefer_const_constructors
+   info - Dangling library doc comment - lib\services\blob_store.dart:1:1 - dangling_library_doc_comments
+   info - Don't invoke 'print' in production code - lib\services\blob_store.dart:261:7 - avoid_print
+   info - Dangling library doc comment - lib\services\blob_store_io.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\services\blob_store_web.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: 'package:everything_stack_template/services/chunking/chunking_config.dart' - lib\services\chunking_service.dart:5:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/services/semantic_search/semantic_search.dart' - lib\services\chunking_service.dart:8:8 - unused_import
+   info - Dangling library doc comment - lib\services\connectivity_service.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\services\context_manager.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: '../domain/feedback.dart' - lib\services\context_manager.dart:49:8 - unused_import
+warning - Unused import: '../domain/namespace.dart' - lib\services\context_manager.dart:52:8 - unused_import
+   info - Don't invoke 'print' in production code - lib\services\context_manager.dart:125:9 - avoid_print
+warning - The value of the local variable 'audioChunk' isn't used - lib\services\context_manager.dart:238:28 - unused_local_variable
+   info - Don't invoke 'print' in production code - lib\services\context_manager.dart:244:11 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\services\context_manager.dart:662:12 - prefer_const_constructors
+   info - Dangling library doc comment - lib\services\context_manager_result.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\services\context_manager_trainer.dart:1:1 - dangling_library_doc_comments
+   info - Don't invoke 'print' in production code - lib\services\context_manager_trainer.dart:71:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\context_manager_trainer.dart:78:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\context_manager_trainer.dart:84:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\context_manager_trainer.dart:90:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\context_manager_trainer.dart:94:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\context_manager_trainer.dart:99:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\context_manager_trainer.dart:104:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\context_manager_trainer.dart:113:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\context_manager_trainer.dart:121:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\context_manager_trainer.dart:142:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\context_manager_trainer.dart:149:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\context_manager_trainer.dart:155:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\context_manager_trainer.dart:168:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\context_manager_trainer.dart:174:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\context_manager_trainer.dart:178:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\context_manager_trainer.dart:189:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\context_manager_trainer.dart:196:5 - avoid_print
+   info - Dangling library doc comment - lib\services\embedding_queue_service.dart:1:1 - dangling_library_doc_comments
+   info - The import of 'package:objectbox/objectbox.dart' is unnecessary because all of the used elements are also provided by the import of '../objectbox.g.dart' - lib\services\embedding_queue_service.dart:36:8 - unnecessary_import
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:79:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:83:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:88:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:98:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:104:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:113:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:119:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:131:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:142:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:153:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:164:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:168:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:214:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:220:9 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:225:7 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\services\embedding_queue_service.dart:238:18 - prefer_const_constructors
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:252:7 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\services\embedding_queue_service.dart:267:22 - prefer_const_constructors
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:277:9 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:294:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:305:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:319:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_queue_service.dart:325:7 - avoid_print
+   info - Dangling library doc comment - lib\services\embedding_service.dart:1:1 - dangling_library_doc_comments
+   info - Don't invoke 'print' in production code - lib\services\embedding_service.dart:133:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\embedding_service.dart:143:5 - avoid_print
+   info - Dangling library doc comment - lib\services\embedding_task.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\services\file_service.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\services\groq_service.dart:1:1 - dangling_library_doc_comments
+   info - Don't invoke 'print' in production code - lib\services\groq_service.dart:131:5 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\services\groq_service.dart:145:12 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\groq_service.dart:145:26 - prefer_const_constructors
+   info - Dangling library doc comment - lib\services\hnsw_index.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\services\hnsw_index_store.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\services\jina_embedding_service_impl.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: 'dart:convert' - lib\services\jina_embedding_service_impl.dart:5:8 - unused_import
+warning - Unused import: 'timeout_config.dart' - lib\services\llm_service.dart:4:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/domain/invocations.dart' - lib\services\llm_service.dart:6:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/domain/llm_invocation_repository.dart' - lib\services\llm_service.dart:7:8 - unused_import
+   info - Don't invoke 'print' in production code - lib\services\llm_service.dart:294:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\llm_service.dart:304:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\llm_service.dart:316:5 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\services\llm_service.dart:343:12 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\llm_service.dart:343:26 - prefer_const_constructors
+   info - Dangling library doc comment - lib\services\llm_service_trainable.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\services\location_service.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\services\mcp_client.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\services\mcp_executor.dart:1:1 - dangling_library_doc_comments
+warning - Unnecessary type check; the result is always 'true' - lib\services\mcp_executor.dart:126:36 - unnecessary_type_check
+   info - Dangling library doc comment - lib\services\mcp_server_registry.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\services\narrative_checkpoint.dart:1:1 - dangling_library_doc_comments
+warning - The stack trace variable 'st' isn't used and can be removed - lib\services\narrative_checkpoint.dart:101:17 - unused_catch_stack
+warning - The stack trace variable 'st' isn't used and can be removed - lib\services\narrative_checkpoint.dart:221:17 - unused_catch_stack
+   info - Dangling library doc comment - lib\services\narrative_retriever.dart:1:1 - dangling_library_doc_comments
+warning - The value of the field '_embeddingService' isn't used - lib\services\narrative_retriever.dart:27:26 - unused_field
+warning - The stack trace variable 'st' isn't used and can be removed - lib\services\narrative_retriever.dart:65:17 - unused_catch_stack
+warning - The stack trace variable 'st' isn't used and can be removed - lib\services\narrative_retriever.dart:81:17 - unused_catch_stack
+warning - The stack trace variable 'st' isn't used and can be removed - lib\services\narrative_retriever.dart:94:17 - unused_catch_stack
+warning - The stack trace variable 'st' isn't used and can be removed - lib\services\narrative_retriever.dart:135:17 - unused_catch_stack
+   info - Dangling library doc comment - lib\services\narrative_thinker.dart:1:1 - dangling_library_doc_comments
+warning - The stack trace variable 'st' isn't used and can be removed - lib\services\narrative_thinker.dart:89:17 - unused_catch_stack
+warning - The stack trace variable 'st' isn't used and can be removed - lib\services\narrative_thinker.dart:154:17 - unused_catch_stack
+   info - Dangling library doc comment - lib\services\personality_service.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\services\semantic_search\chunk.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\services\semantic_search\semantic_search.dart:1:1 - dangling_library_doc_comments
+   info - The imported package 'collection' isn't a dependency of the importing package - lib\services\semantic_search\semantic_search_service.dart:1:8 - depend_on_referenced_packages
+warning - Unused import: 'package:collection/collection.dart' - lib\services\semantic_search\semantic_search_service.dart:1:8 - unused_import
+   info - The member 'stream' overrides an inherited member but isn't annotated with '@override' - lib\services\stt_service.dart:95:30 - annotate_overrides
+   info - Don't invoke 'print' in production code - lib\services\stt_service.dart:173:5 - avoid_print
+   info - The member 'stream' overrides an inherited member but isn't annotated with '@override' - lib\services\stt_service.dart:176:30 - annotate_overrides
+   info - Use 'const' with the constructor to improve performance - lib\services\stt_service.dart:185:14 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\stt_service.dart:224:32 - prefer_const_constructors
+   info - Don't invoke 'print' in production code - lib\services\stt_service.dart:251:21 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\stt_service.dart:258:17 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\stt_service.dart:263:15 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\services\stt_service.dart:309:28 - prefer_const_constructors
+   info - Don't invoke 'print' in production code - lib\services\stt_service.dart:346:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\stt_service.dart:369:5 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\services\stt_service.dart:383:12 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\stt_service.dart:383:26 - prefer_const_constructors
+   info - Don't invoke 'print' in production code - lib\services\stt_service.dart:398:5 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\services\stt_service.dart:410:12 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\stt_service.dart:436:12 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\stt_service.dart:436:26 - prefer_const_constructors
+   info - Dangling library doc comment - lib\services\stt_service_trainable.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\services\sync_service.dart:1:1 - dangling_library_doc_comments
+   info - Use 'const' with the constructor to improve performance - lib\services\sync_service.dart:184:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\sync_service.dart:200:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\sync_service.dart:212:26 - prefer_const_constructors
+   info - Don't invoke 'print' in production code - lib\services\sync_service.dart:435:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\sync_service.dart:471:7 - avoid_print
+   info - Dangling library doc comment - lib\services\tool_executor.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\services\tool_registry.dart:45:1 - dangling_library_doc_comments
+   info - Don't invoke 'print' in production code - lib\services\tts_service.dart:164:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\tts_service.dart:244:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\tts_service.dart:267:5 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\services\tts_service.dart:281:12 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\tts_service.dart:281:26 - prefer_const_constructors
+   info - Don't invoke 'print' in production code - lib\services\tts_service.dart:296:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\tts_service.dart:305:5 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\services\tts_service.dart:332:12 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\services\tts_service.dart:332:26 - prefer_const_constructors
+   info - Dangling library doc comment - lib\services\tts_service_trainable.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\services\voice_assistant_orchestrator.dart:1:1 - dangling_library_doc_comments
+warning - The declaration '_uuid' isn't referenced - lib\services\voice_assistant_orchestrator.dart:59:7 - unused_element
+warning - The operand can't be 'null', so the condition is always 'true' - lib\services\voice_assistant_orchestrator.dart:186:35 - unnecessary_null_comparison
+   info - Don't invoke 'print' in production code - lib\services\voice_assistant_orchestrator.dart:248:13 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\voice_assistant_orchestrator.dart:292:9 - avoid_print
+warning - The value of the local variable 'sttSubscription' isn't used - lib\services\voice_assistant_orchestrator.dart:350:11 - unused_local_variable
+warning - The operand can't be 'null', so the condition is always 'true' - lib\services\voice_assistant_orchestrator.dart:390:39 - unnecessary_null_comparison
+   info - Don't invoke 'print' in production code - lib\services\voice_assistant_orchestrator.dart:451:17 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\voice_assistant_orchestrator.dart:493:13 - avoid_print
+   info - Dangling library doc comment - lib\tools\task\adapters\task_indexeddb_adapter.dart:1:1 - dangling_library_doc_comments
+   info - Parameter 'db' could be a super parameter - lib\tools\task\adapters\task_indexeddb_adapter.dart:19:3 - use_super_parameters
+   info - Dangling library doc comment - lib\tools\task\adapters\task_objectbox_adapter.dart:1:1 - dangling_library_doc_comments
+   info - The import of 'package:objectbox/objectbox.dart' is unnecessary because all of the used elements are also provided by the import of '../../../objectbox.g.dart' - lib\tools\task\adapters\task_objectbox_adapter.dart:14:8 - unnecessary_import
+warning - Unused import: '../../../core/base_entity.dart' - lib\tools\task\adapters\task_objectbox_adapter.dart:15:8 - unused_import
+warning - Unused import: '../../../core/exceptions/persistence_exceptions.dart' - lib\tools\task\adapters\task_objectbox_adapter.dart:19:8 - unused_import
+   info - Dangling library doc comment - lib\tools\task\entities\task.dart:1:1 - dangling_library_doc_comments
+   info - Field overrides a field inherited from 'BaseEntity' - lib\tools\task\entities\task.dart:49:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\tools\task\entities\task.dart:53:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\tools\task\entities\task.dart:57:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\tools\task\entities\task.dart:61:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\tools\task\entities\task.dart:64:11 - overridden_fields
+   info - Field overrides a field inherited from 'Ownable' - lib\tools\task\entities\task.dart:91:11 - overridden_fields
+   info - Field overrides a field inherited from 'Ownable' - lib\tools\task\entities\task.dart:94:16 - overridden_fields
+   info - Field overrides a field inherited from 'Ownable' - lib\tools\task\entities\task.dart:98:14 - overridden_fields
+   info - Field overrides a field inherited from 'Invocable' - lib\tools\task\entities\task.dart:107:11 - overridden_fields
+   info - Field overrides a field inherited from 'Invocable' - lib\tools\task\entities\task.dart:111:13 - overridden_fields
+   info - Field overrides a field inherited from 'Invocable' - lib\tools\task\entities\task.dart:114:11 - overridden_fields
+   info - Field overrides a field inherited from 'Invocable' - lib\tools\task\entities\task.dart:118:25 - overridden_fields
+   info - Field overrides a field inherited from 'Invocable' - lib\tools\task\entities\task.dart:124:11 - overridden_fields
+   info - Field overrides a field inherited from 'Invocable' - lib\tools\task\entities\task.dart:127:11 - overridden_fields
+   info - Dangling library doc comment - lib\tools\task\handlers\task_handlers.dart:1:1 - dangling_library_doc_comments
+warning - The '!' will have no effect because the receiver can't be null - lib\tools\task\handlers\task_handlers.dart:224:36 - unnecessary_non_null_assertion
+   info - Dangling library doc comment - lib\tools\task\repositories\task_repository.dart:1:1 - dangling_library_doc_comments
+   info - Parameter 'adapter' could be a super parameter - lib\tools\task\repositories\task_repository.dart:24:3 - use_super_parameters
+   info - Dangling library doc comment - lib\tools\timer\adapters\timer_indexeddb_adapter.dart:1:1 - dangling_library_doc_comments
+   info - Parameter 'db' could be a super parameter - lib\tools\timer\adapters\timer_indexeddb_adapter.dart:19:3 - use_super_parameters
+   info - Dangling library doc comment - lib\tools\timer\adapters\timer_objectbox_adapter.dart:1:1 - dangling_library_doc_comments
+   info - The import of 'package:objectbox/objectbox.dart' is unnecessary because all of the used elements are also provided by the import of '../../../objectbox.g.dart' - lib\tools\timer\adapters\timer_objectbox_adapter.dart:14:8 - unnecessary_import
+warning - Unused import: '../../../core/base_entity.dart' - lib\tools\timer\adapters\timer_objectbox_adapter.dart:15:8 - unused_import
+warning - Unused import: '../../../core/exceptions/persistence_exceptions.dart' - lib\tools\timer\adapters\timer_objectbox_adapter.dart:19:8 - unused_import
+   info - Dangling library doc comment - lib\tools\timer\entities\timer.dart:1:1 - dangling_library_doc_comments
+   info - Field overrides a field inherited from 'BaseEntity' - lib\tools\timer\entities\timer.dart:44:7 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\tools\timer\entities\timer.dart:48:10 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\tools\timer\entities\timer.dart:52:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\tools\timer\entities\timer.dart:56:12 - overridden_fields
+   info - Field overrides a field inherited from 'BaseEntity' - lib\tools\timer\entities\timer.dart:59:11 - overridden_fields
+   info - Field overrides a field inherited from 'Invocable' - lib\tools\timer\entities\timer.dart:88:11 - overridden_fields
+   info - Field overrides a field inherited from 'Invocable' - lib\tools\timer\entities\timer.dart:92:13 - overridden_fields
+   info - Field overrides a field inherited from 'Invocable' - lib\tools\timer\entities\timer.dart:95:11 - overridden_fields
+   info - Field overrides a field inherited from 'Invocable' - lib\tools\timer\entities\timer.dart:99:25 - overridden_fields
+   info - Field overrides a field inherited from 'Invocable' - lib\tools\timer\entities\timer.dart:105:11 - overridden_fields
+   info - Field overrides a field inherited from 'Invocable' - lib\tools\timer\entities\timer.dart:108:11 - overridden_fields
+   info - Dangling library doc comment - lib\tools\timer\handlers\timer_handlers.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\tools\timer\repositories\timer_repository.dart:1:1 - dangling_library_doc_comments
+   info - Parameter 'adapter' could be a super parameter - lib\tools\timer\repositories\timer_repository.dart:24:3 - use_super_parameters
+   info - Dangling library doc comment - lib\ui\providers\trainable_providers.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\ui\providers\turn_providers.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: 'package:everything_stack_template/domain/invocations.dart' - lib\ui\providers\turn_providers.dart:7:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/domain/llm_invocation_repository.dart' - lib\ui\providers\turn_providers.dart:9:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/domain/tts_invocation_repository.dart' - lib\ui\providers\turn_providers.dart:10:8 - unused_import
+   info - Dangling library doc comment - lib\ui\screens\feedback_review_screen.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: 'package:everything_stack_template/domain/feedback.dart' - lib\ui\screens\feedback_review_screen.dart:10:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\ui\screens\feedback_review_screen.dart:226:30 - deprecated_member_use
+   info - Dangling library doc comment - lib\ui\screens\turn_list_screen.dart:1:1 - dangling_library_doc_comments
+   info - Use 'const' with the constructor to improve performance - lib\ui\screens\turn_list_screen.dart:141:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\ui\screens\turn_list_screen.dart:143:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\ui\screens\turn_list_screen.dart:145:19 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\ui\screens\turn_list_screen.dart:202:22 - deprecated_member_use
+   info - Dangling library doc comment - lib\ui\widgets\llm_feedback_widget.dart:1:1 - dangling_library_doc_comments
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\ui\widgets\llm_feedback_widget.dart:259:41 - deprecated_member_use
+   info - Dangling library doc comment - lib\ui\widgets\stt_feedback_widget.dart:1:1 - dangling_library_doc_comments
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\ui\widgets\stt_feedback_widget.dart:297:41 - deprecated_member_use
+   info - Dangling library doc comment - lib\ui\widgets\tts_feedback_widget.dart:1:1 - dangling_library_doc_comments
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\ui\widgets\tts_feedback_widget.dart:319:41 - deprecated_member_use
+   info - Dangling library doc comment - lib\utils\geo_utils.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - lib\utils\json_diff.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - test\bootstrap_test.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - test\domain\phase1_verification_test.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: 'package:everything_stack_template/domain/namespace_adaptation_state.dart' - test\domain\phase1_verification_test.dart:11:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/domain/tool_selection_adaptation_state.dart' - test\domain\phase1_verification_test.dart:12:8 - unused_import
+   info - Dangling library doc comment - test\framework\narrative_rubric.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - test\harness\persistence_test_harness.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - test\harness\semantic_test_doubles.dart:1:1 - dangling_library_doc_comments
+warning - The method doesn't override an inherited method - test\harness\semantic_test_doubles.dart:79:10 - override_on_non_overriding_member
+warning - The method doesn't override an inherited method - test\harness\semantic_test_doubles.dart:282:16 - override_on_non_overriding_member
+   info - Parameter 'embeddingService' could be a super parameter - test\harness\semantic_test_doubles.dart:327:3 - use_super_parameters
+   info - 'setEdgeRepository' is deprecated and shouldn't be used - test\harness\test_helpers.dart:72:12 - deprecated_member_use_from_same_package
+   info - Dangling library doc comment - test\integration\blob_store_integration_test.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - test\integration\context_manager_integration_test.dart:1:1 - dangling_library_doc_comments
+warning - The value of the local variable 'taskNs' isn't used - test\integration\context_manager_integration_test.dart:34:13 - unused_local_variable
+warning - The value of the local variable 'timerNs' isn't used - test\integration\context_manager_integration_test.dart:41:13 - unused_local_variable
+warning - The value of the local variable 'completeTool' isn't used - test\integration\context_manager_integration_test.dart:65:13 - unused_local_variable
+warning - The value of the local variable 'timerNs' isn't used - test\integration\context_manager_integration_test.dart:132:13 - unused_local_variable
+warning - The value of the local variable 'event' isn't used - test\integration\context_manager_integration_test.dart:162:13 - unused_local_variable
+   info - Use 'const' with the constructor to improve performance - test\integration\context_manager_integration_test.dart:318:15 - prefer_const_constructors
+   info - Dangling library doc comment - test\integration\context_manager_tts_end_to_end_test.dart:1:1 - dangling_library_doc_comments
+warning - The method doesn't override an inherited method - test\integration\context_manager_tts_end_to_end_test.dart:103:42 - override_on_non_overriding_member
+warning - The method doesn't override an inherited method - test\integration\context_manager_tts_end_to_end_test.dart:183:16 - override_on_non_overriding_member
+   info - Don't invoke 'print' in production code - test\integration\context_manager_tts_end_to_end_test.dart:341:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\context_manager_tts_end_to_end_test.dart:364:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\context_manager_tts_end_to_end_test.dart:393:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\context_manager_tts_end_to_end_test.dart:394:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\context_manager_tts_end_to_end_test.dart:395:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\context_manager_tts_end_to_end_test.dart:396:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\context_manager_tts_end_to_end_test.dart:397:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\context_manager_tts_end_to_end_test.dart:419:7 - avoid_print
+   info - Dangling library doc comment - test\integration\event_invocation_threading_test.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: 'dart:typed_data' - test\integration\event_invocation_threading_test.dart:12:8 - unused_import
+warning - Unused import: 'package:flutter/material.dart' - test\integration\event_invocation_threading_test.dart:15:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/domain/personality.dart' - test\integration\event_invocation_threading_test.dart:17:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/domain/namespace.dart' - test\integration\event_invocation_threading_test.dart:18:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/domain/tool.dart' - test\integration\event_invocation_threading_test.dart:19:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/domain/context_manager_invocation_repository.dart' - test\integration\event_invocation_threading_test.dart:22:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/services/context_manager.dart' - test\integration\event_invocation_threading_test.dart:23:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/domain/stt_invocation_repository.dart' - test\integration\event_invocation_threading_test.dart:24:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/domain/llm_invocation_repository.dart' - test\integration\event_invocation_threading_test.dart:25:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/domain/tts_invocation_repository.dart' - test\integration\event_invocation_threading_test.dart:26:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/services/llm_service.dart' - test\integration\event_invocation_threading_test.dart:29:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/services/embedding_service.dart' - test\integration\event_invocation_threading_test.dart:32:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/services/mcp_executor.dart' - test\integration\event_invocation_threading_test.dart:33:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/services/tool_executor.dart' - test\integration\event_invocation_threading_test.dart:34:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/services/trainable.dart' - test\integration\event_invocation_threading_test.dart:35:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/services/context_manager_result.dart' - test\integration\event_invocation_threading_test.dart:36:8 - unused_import
+warning - The library 'package:everything_stack_template/services/context_manager_result.dart' doesn't export a member with the shown name 'ToolResult' - test\integration\event_invocation_threading_test.dart:36:96 - undefined_shown_name
+warning - Unused import: 'package:everything_stack_template/domain/personality_repository.dart' - test\integration\event_invocation_threading_test.dart:37:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/domain/namespace_repository.dart' - test\integration\event_invocation_threading_test.dart:38:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/domain/tool_repository.dart' - test\integration\event_invocation_threading_test.dart:39:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/core/feedback_repository.dart' - test\integration\event_invocation_threading_test.dart:40:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/tools/task/repositories/task_repository.dart' - test\integration\event_invocation_threading_test.dart:41:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/tools/timer/repositories/timer_repository.dart' - test\integration\event_invocation_threading_test.dart:42:8 - unused_import
+   info - Don't invoke 'print' in production code - test\integration\event_invocation_threading_test.dart:322:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\event_invocation_threading_test.dart:324:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\event_invocation_threading_test.dart:325:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\event_invocation_threading_test.dart:326:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\event_invocation_threading_test.dart:367:9 - avoid_print
+   info - Dangling library doc comment - test\integration\supabase_sync_test.dart:1:1 - dangling_library_doc_comments
+   info - Don't invoke 'print' in production code - test\integration\supabase_sync_test.dart:372:3 - avoid_print
+   info - Dangling library doc comment - test\integration\test_b_semantic_accuracy.dart:1:1 - dangling_library_doc_comments
+   info - Use 'const' with the constructor to improve performance - test\integration\test_b_semantic_accuracy.dart:397:12 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\integration\test_b_semantic_accuracy.dart:444:12 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\integration\test_b_semantic_accuracy.dart:453:28 - prefer_const_constructors
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:766:5 - avoid_print
+   info - Use interpolation to compose strings and values - test\integration\test_b_semantic_accuracy.dart:766:11 - prefer_interpolation_to_compose_strings
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:767:5 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:768:5 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:769:5 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:770:5 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:771:5 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:772:5 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:773:5 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:774:5 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:776:5 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:780:5 - avoid_print
+   info - Use interpolation to compose strings and values - test\integration\test_b_semantic_accuracy.dart:780:11 - prefer_interpolation_to_compose_strings
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:781:5 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:782:5 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:787:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:788:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:789:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:791:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:796:7 - avoid_print
+   info - Use interpolation to compose strings and values - test\integration\test_b_semantic_accuracy.dart:796:13 - prefer_interpolation_to_compose_strings
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:797:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:798:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:801:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:802:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:803:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:804:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:805:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:809:5 - avoid_print
+   info - Use interpolation to compose strings and values - test\integration\test_b_semantic_accuracy.dart:809:11 - prefer_interpolation_to_compose_strings
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:810:5 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:811:5 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:812:5 - avoid_print
+   info - Unnecessary braces in a string interpolation - test\integration\test_b_semantic_accuracy.dart:821:96 - unnecessary_brace_in_string_interps
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:825:5 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:826:5 - avoid_print
+   info - Unnecessary braces in a string interpolation - test\integration\test_b_semantic_accuracy.dart:826:35 - unnecessary_brace_in_string_interps
+   info - Don't invoke 'print' in production code - test\integration\test_b_semantic_accuracy.dart:827:5 - avoid_print
+   info - Dangling library doc comment - test\integration\test_complete_loop.dart:1:1 - dangling_library_doc_comments
+   info - The import of 'dart:async' is unnecessary because all of the used elements are also provided by the import of 'package:flutter_test/flutter_test.dart' - test\integration\test_complete_loop.dart:9:8 - unnecessary_import
+warning - Unused import: 'dart:typed_data' - test\integration\test_complete_loop.dart:10:8 - unused_import
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:182:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:183:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:184:7 - avoid_print
+   info - Use 'const' for final variables initialized to a constant value - test\integration\test_complete_loop.dart:187:7 - prefer_const_declarations
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:189:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:190:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:197:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:198:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:210:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:217:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:219:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:220:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:221:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:225:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:226:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:232:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:233:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:244:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:249:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:250:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:251:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:257:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:264:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:274:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:275:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:282:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:283:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:291:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:297:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:309:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:315:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:321:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:323:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_complete_loop.dart:324:7 - avoid_print
+   info - Dangling library doc comment - test\integration\test_persistence.dart:1:1 - dangling_library_doc_comments
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:18:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:19:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:20:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:23:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:31:7 - avoid_print
+warning - The value of the local variable 'uuid' isn't used - test\integration\test_persistence.dart:32:13 - unused_local_variable
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:35:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:39:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:42:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:45:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:46:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:49:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:54:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:55:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:58:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:59:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:60:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:61:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:62:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:63:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:68:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:69:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:71:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_persistence.dart:72:9 - avoid_print
+   info - Dangling library doc comment - test\integration\test_real_learning.dart:1:1 - dangling_library_doc_comments
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:69:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:70:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:71:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:83:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:88:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:89:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:110:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:111:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:112:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:113:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:116:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:130:11 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:133:11 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:138:11 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:143:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:148:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:149:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:152:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:153:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:154:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:159:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:160:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:163:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:164:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:165:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:167:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_learning.dart:168:9 - avoid_print
+   info - Dangling library doc comment - test\integration\test_real_llm_adaptation.dart:1:1 - dangling_library_doc_comments
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:119:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:120:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:121:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:135:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:139:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:140:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:141:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:145:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:146:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:155:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:165:7 - avoid_print
+   info - Use 'const' for final variables initialized to a constant value - test\integration\test_real_llm_adaptation.dart:166:7 - prefer_const_declarations
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:167:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:169:7 - avoid_print
+   info - Use 'const' for final variables initialized to a constant value - test\integration\test_real_llm_adaptation.dart:171:7 - prefer_const_declarations
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:189:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:196:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:198:9 - avoid_print
+   info - Use 'const' for final variables initialized to a constant value - test\integration\test_real_llm_adaptation.dart:202:7 - prefer_const_declarations
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:204:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:205:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:206:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:209:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:210:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:223:7 - avoid_print
+warning - The value of the local variable 'correctNamespace' isn't used - test\integration\test_real_llm_adaptation.dart:231:17 - unused_local_variable
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:234:11 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:235:11 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:240:7 - avoid_print
+   info - Use 'const' for final variables initialized to a constant value - test\integration\test_real_llm_adaptation.dart:241:7 - prefer_const_declarations
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:242:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:244:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:260:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:267:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:269:9 - avoid_print
+   info - Use 'const' for final variables initialized to a constant value - test\integration\test_real_llm_adaptation.dart:273:7 - prefer_const_declarations
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:275:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:276:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:277:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:280:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:281:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:282:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:283:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:284:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:286:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:287:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:288:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:289:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:290:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:293:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:294:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:295:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:302:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:303:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:304:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:305:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:306:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:307:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:309:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:310:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:311:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:312:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:313:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:314:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:321:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:322:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:323:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:326:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:327:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:329:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:330:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:332:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:333:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:334:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:335:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:338:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:339:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:340:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:342:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:344:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_real_llm_adaptation.dart:346:7 - avoid_print
+   info - Dangling library doc comment - test\integration\test_thresholds_used.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: 'dart:convert' - test\integration\test_thresholds_used.dart:11:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/domain/event.dart' - test\integration\test_thresholds_used.dart:14:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/services/context_manager.dart' - test\integration\test_thresholds_used.dart:15:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/services/embedding_service.dart' - test\integration\test_thresholds_used.dart:16:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/services/llm_service.dart' - test\integration\test_thresholds_used.dart:17:8 - unused_import
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:22:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:23:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:24:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:29:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:31:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:34:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:49:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:50:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:51:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:54:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:63:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:64:7 - avoid_print
+   info - Use 'const' for final variables initialized to a constant value - test\integration\test_thresholds_used.dart:67:7 - prefer_const_declarations
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:68:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:70:7 - avoid_print
+   info - Unnecessary escape in string literal - test\integration\test_thresholds_used.dart:70:44 - unnecessary_string_escapes
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:71:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:72:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:73:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:74:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:75:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:77:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:78:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:79:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:81:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:82:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:83:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:84:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:86:7 - avoid_print
+   info - Unnecessary escape in string literal - test\integration\test_thresholds_used.dart:86:41 - unnecessary_string_escapes
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:87:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:94:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:95:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\integration\test_thresholds_used.dart:96:7 - avoid_print
+   info - Dangling library doc comment - test\integration\voice_assistant_orchestrator_integration_test.dart:1:1 - dangling_library_doc_comments
+   info - Use 'const' with the constructor to improve performance - test\integration\voice_assistant_orchestrator_integration_test.dart:54:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\integration\voice_assistant_orchestrator_integration_test.dart:56:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\integration\voice_assistant_orchestrator_integration_test.dart:61:12 - prefer_const_constructors
+   info - Dangling library doc comment - test\mocks\mock_llm_service.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - test\mocks\mock_tool_executor.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - test\narrative_standalone.dart:1:1 - dangling_library_doc_comments
+   info - Don't invoke 'print' in production code - test\narrative_standalone.dart:151:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\narrative_standalone.dart:158:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\narrative_standalone.dart:160:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\narrative_standalone.dart:178:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\narrative_standalone.dart:191:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\narrative_standalone.dart:211:28 - avoid_print
+   info - Dangling library doc comment - test\patterns\file_storable_test.dart:1:1 - dangling_library_doc_comments
+   info - Use 'const' for final variables initialized to a constant value - test\patterns\file_storable_test.dart:14:7 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - test\patterns\file_storable_test.dart:15:7 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - test\patterns\file_storable_test.dart:16:7 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - test\patterns\file_storable_test.dart:17:7 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - test\patterns\file_storable_test.dart:18:7 - prefer_const_declarations
+   info - Dangling library doc comment - test\persistence\indexeddb\task_indexeddb_adapter_test.dart:1:1 - dangling_library_doc_comments
+   info - The import of 'package:idb_shim/idb.dart' is unnecessary because all of the used elements are also provided by the import of 'package:idb_shim/idb_client_memory.dart' - test\persistence\indexeddb\task_indexeddb_adapter_test.dart:11:8 - unnecessary_import
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\task_indexeddb_adapter_test.dart:54:37 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\task_indexeddb_adapter_test.dart:180:42 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\task_indexeddb_adapter_test.dart:187:37 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\task_indexeddb_adapter_test.dart:198:42 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\task_indexeddb_adapter_test.dart:255:44 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\task_indexeddb_adapter_test.dart:259:39 - prefer_const_constructors
+   info - Dangling library doc comment - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:1:1 - dangling_library_doc_comments
+   info - The import of 'package:idb_shim/idb.dart' is unnecessary because all of the used elements are also provided by the import of 'package:idb_shim/idb_client_memory.dart' - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:11:8 - unnecessary_import
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:51:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:82:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:105:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:127:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:133:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:139:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:162:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:170:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:185:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:193:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:194:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:202:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:203:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:224:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:232:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:233:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:241:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:242:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:263:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:271:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:272:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:282:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:303:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:311:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:319:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:320:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:346:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:356:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:380:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:406:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:412:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:417:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:418:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:423:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\persistence\indexeddb\timer_indexeddb_adapter_test.dart:424:32 - prefer_const_constructors
+   info - Dangling library doc comment - test\persistence\indexeddb_initialization_test.dart:1:1 - dangling_library_doc_comments
+   info - The import of 'package:idb_shim/idb.dart' is unnecessary because all of the used elements are also provided by the import of 'package:idb_shim/idb_client_memory.dart' - test\persistence\indexeddb_initialization_test.dart:11:8 - unnecessary_import
+   info - Dangling library doc comment - test\prompts\narrative_prompts.dart:8:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - test\scenarios\feedback_ui_scenario_test.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: 'package:everything_stack_template/domain/feedback.dart' - test\scenarios\feedback_ui_scenario_test.dart:35:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/domain/personality.dart' - test\scenarios\feedback_ui_scenario_test.dart:36:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/ui/screens/feedback_review_screen.dart' - test\scenarios\feedback_ui_scenario_test.dart:40:8 - unused_import
+warning - Unused import: 'package:everything_stack_template/main.dart' - test\scenarios\feedback_ui_scenario_test.dart:42:8 - unused_import
+warning - The value of the local variable 'feedbackRepo' isn't used - test\scenarios\feedback_ui_scenario_test.dart:48:33 - unused_local_variable
+   info - Dangling library doc comment - test\services\blob_store_test.dart:1:1 - dangling_library_doc_comments
+   info - Don't invoke 'print' in production code - test\services\chunking_bulk_test.dart:77:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\services\chunking_bulk_test.dart:78:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\services\chunking_bulk_test.dart:79:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\services\chunking_bulk_test.dart:80:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\services\chunking_bulk_test.dart:81:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\services\chunking_bulk_test.dart:82:7 - avoid_print
+   info - Use 'const' for final variables initialized to a constant value - test\services\chunking_bulk_test.dart:115:7 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - test\services\chunking_bulk_test.dart:198:7 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - test\services\chunking_bulk_test.dart:218:7 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - test\services\chunking_bulk_test.dart:233:7 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - test\services\chunking_bulk_test.dart:248:7 - prefer_const_declarations
+   info - Don't invoke 'print' in production code - test\services\chunking_bulk_test.dart:302:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\services\chunking_bulk_test.dart:330:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\services\chunking_bulk_test.dart:331:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\services\chunking_bulk_test.dart:332:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\services\chunking_bulk_test.dart:333:7 - avoid_print
+   info - Don't invoke 'print' in production code - test\services\chunking_bulk_test.dart:334:7 - avoid_print
+warning - Unnecessary type check; the result is always 'true' - test\services\chunking_service_test.dart:158:16 - unnecessary_type_check
+warning - Unnecessary type check; the result is always 'true' - test\services\chunking_service_test.dart:265:16 - unnecessary_type_check
+warning - The method doesn't override an inherited method - test\services\chunking_service_test.dart:411:10 - override_on_non_overriding_member
+   info - Dangling library doc comment - test\services\connectivity_service_test.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - test\services\context_manager_test.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: 'package:everything_stack_template/services/context_manager.dart' - test\services\context_manager_test.dart:5:8 - unused_import
+   info - Use 'const' for final variables initialized to a constant value - test\services\context_manager_test.dart:120:7 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - test\services\context_manager_test.dart:146:7 - prefer_const_declarations
+warning - The value of the local variable 'task2' isn't used - test\services\context_manager_test.dart:155:13 - unused_local_variable
+warning - The value of the local variable 'timer2' isn't used - test\services\context_manager_test.dart:181:13 - unused_local_variable
+   info - Use 'const' for final variables initialized to a constant value - test\services\context_manager_test.dart:231:7 - prefer_const_declarations
+warning - The value of the local variable 'selectedNamespace' isn't used - test\services\context_manager_test.dart:231:13 - unused_local_variable
+   info - Use 'const' for final variables initialized to a constant value - test\services\context_manager_test.dart:272:7 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - test\services\context_manager_test.dart:280:7 - prefer_const_declarations
+   info - Dangling library doc comment - test\services\embedding_service_test.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - test\services\file_service_test.dart:1:1 - dangling_library_doc_comments
+   info - Dangling library doc comment - test\services\hnsw_index_test.dart:1:1 - dangling_library_doc_comments
+   info - Use 'const' for final variables initialized to a constant value - test\services\hnsw_index_test.dart:427:7 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - test\services\hnsw_index_test.dart:428:7 - prefer_const_declarations
+   info - Dangling library doc comment - test\services\location_service_test.dart:1:1 - dangling_library_doc_comments
+warning - Unnecessary type check; the result is always 'true' - test\services\semantic_indexing_lifecycle_test.dart:216:16 - unnecessary_type_check
+warning - Unused import: '../harness/semantic_test_doubles.dart' - test\services\semantic_search_service_test.dart:6:8 - unused_import
+warning - Unnecessary type check; the result is always 'true' - test\services\semantic_search_service_test.dart:306:14 - unnecessary_type_check
+warning - The method doesn't override an inherited method - test\services\semantic_search_service_test.dart:370:10 - override_on_non_overriding_member
+   info - Dangling library doc comment - test\services\sync_service_test.dart:1:1 - dangling_library_doc_comments
+   info - Use 'const' with the constructor to improve performance - test\services\sync_service_test.dart:172:52 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\services\sync_service_test.dart:182:48 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\services\timeout_and_streaming_test.dart:29:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\services\timeout_and_streaming_test.dart:35:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\services\timeout_and_streaming_test.dart:71:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\services\timeout_and_streaming_test.dart:88:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\services\timeout_and_streaming_test.dart:93:28 - prefer_const_constructors
+

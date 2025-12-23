@@ -2,10 +2,8 @@ import 'package:uuid/uuid.dart';
 import 'package:everything_stack_template/core/base_entity.dart';
 import 'package:everything_stack_template/patterns/semantic_indexable.dart';
 import 'package:everything_stack_template/services/chunking/semantic_chunker.dart';
-import 'package:everything_stack_template/services/chunking/chunking_config.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/hnsw_index.dart';
-import 'package:everything_stack_template/services/semantic_search/semantic_search.dart';
 
 /// Service for orchestrating semantic chunking and HNSW indexing.
 ///

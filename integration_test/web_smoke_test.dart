@@ -22,7 +22,6 @@
 @TestOn('vm || browser')
 library;
 
-import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:everything_stack_template/domain/note.dart';
@@ -32,7 +31,6 @@ import 'package:everything_stack_template/core/edge_repository.dart';
 import 'package:everything_stack_template/core/version_repository.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/blob_store.dart';
-import 'package:everything_stack_template/patterns/file_storable.dart';
 
 // Web-specific imports for IndexedDB
 import 'package:everything_stack_template/bootstrap/persistence_factory_web.dart';

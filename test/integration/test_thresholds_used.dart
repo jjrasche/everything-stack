@@ -8,13 +8,9 @@
 /// 3. Call ContextManager AGAIN with same utterance
 /// 4. Check: Did namespace selection change?
 
-import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:everything_stack_template/domain/personality.dart';
 import 'package:everything_stack_template/domain/event.dart';
-import 'package:everything_stack_template/services/context_manager.dart';
-import 'package:everything_stack_template/services/embedding_service.dart';
-import 'package:everything_stack_template/services/llm_service.dart';
 
 void main() {
   group('Thresholds Actually Used Test', () {

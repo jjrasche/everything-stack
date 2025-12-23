@@ -7,7 +7,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:everything_stack_template/domain/turn.dart';
-import 'package:everything_stack_template/domain/feedback.dart';
 import 'package:everything_stack_template/domain/invocations.dart';
 import 'package:everything_stack_template/ui/providers/turn_providers.dart';
 import 'package:everything_stack_template/ui/providers/trainable_providers.dart';

@@ -9,37 +9,16 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:uuid/uuid.dart';
-import 'dart:typed_data';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:everything_stack_template/domain/event.dart';
-import 'package:everything_stack_template/domain/personality.dart';
-import 'package:everything_stack_template/domain/namespace.dart' as domain_ns;
-import 'package:everything_stack_template/domain/tool.dart';
 import 'package:everything_stack_template/domain/invocations.dart';
 import 'package:everything_stack_template/domain/context_manager_invocation.dart';
-import 'package:everything_stack_template/domain/context_manager_invocation_repository.dart';
-import 'package:everything_stack_template/services/context_manager.dart';
-import 'package:everything_stack_template/domain/stt_invocation_repository.dart';
-import 'package:everything_stack_template/domain/llm_invocation_repository.dart';
-import 'package:everything_stack_template/domain/tts_invocation_repository.dart';
 import 'package:everything_stack_template/repositories/invocation_repository_impl.dart' show STTInvocationRepositoryImpl, LLMInvocationRepositoryImpl, TTSInvocationRepositoryImpl, ContextManagerInvocationRepositoryImpl;
 import 'package:everything_stack_template/services/stt_service.dart';
-import 'package:everything_stack_template/services/llm_service.dart';
 import 'package:everything_stack_template/services/groq_service.dart';
 import 'package:everything_stack_template/services/tts_service.dart';
-import 'package:everything_stack_template/services/embedding_service.dart';
-import 'package:everything_stack_template/services/mcp_executor.dart';
-import 'package:everything_stack_template/services/tool_executor.dart';
-import 'package:everything_stack_template/services/trainable.dart';
-import 'package:everything_stack_template/services/context_manager_result.dart' show ToolCall, ToolResult, ContextManagerResult;
-import 'package:everything_stack_template/domain/personality_repository.dart';
-import 'package:everything_stack_template/domain/namespace_repository.dart';
-import 'package:everything_stack_template/domain/tool_repository.dart';
-import 'package:everything_stack_template/core/feedback_repository.dart';
-import 'package:everything_stack_template/tools/task/repositories/task_repository.dart';
-import 'package:everything_stack_template/tools/timer/repositories/timer_repository.dart';
+import 'package:everything_stack_template/services/context_manager_result.dart' show ContextManagerResult;
 
 void main() {
   group('Event → Invocation Threading (Phase B - Real Behavior)', () {

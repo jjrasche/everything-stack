@@ -10,7 +10,6 @@
 
 import 'package:everything_stack_template/core/generic_handler_factory.dart';
 import 'package:everything_stack_template/core/persistence/persistence_adapter.dart';
-import 'package:everything_stack_template/core/repository_pattern_handler.dart';
 import 'package:everything_stack_template/core/edge_repository.dart';
 import 'package:everything_stack_template/services/chunking_service.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';

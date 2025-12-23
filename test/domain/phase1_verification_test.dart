@@ -8,8 +8,6 @@ import 'package:everything_stack_template/domain/event.dart';
 import 'package:everything_stack_template/tools/timer/entities/timer.dart';
 import 'package:everything_stack_template/tools/task/entities/task.dart';
 import 'package:everything_stack_template/domain/personality.dart';
-import 'package:everything_stack_template/domain/namespace_adaptation_state.dart';
-import 'package:everything_stack_template/domain/tool_selection_adaptation_state.dart';
 import 'package:everything_stack_template/domain/context_manager_invocation.dart';
 import 'package:everything_stack_template/patterns/ownable.dart';
 

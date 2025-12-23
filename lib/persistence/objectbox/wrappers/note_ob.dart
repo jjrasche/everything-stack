@@ -14,7 +14,6 @@
 import 'package:objectbox/objectbox.dart';
 import '../../../domain/note.dart';
 import '../../../core/base_entity.dart' show SyncStatus;
-import '../../../patterns/ownable.dart' show Visibility;
 
 @Entity()
 class NoteOB {

@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'chunk.dart';
 import 'search_result.dart';
 import '../embedding_service.dart';

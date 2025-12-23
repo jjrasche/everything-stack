@@ -2,7 +2,6 @@
 /// Tests namespace selection, tool filtering, context injection, error handling
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:everything_stack_template/services/context_manager.dart';
 import 'package:everything_stack_template/services/groq_service.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/domain/event.dart';

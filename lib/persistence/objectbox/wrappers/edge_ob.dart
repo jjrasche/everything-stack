@@ -5,7 +5,6 @@
 
 import 'package:objectbox/objectbox.dart';
 import '../../../core/edge.dart';
-import '../../../core/base_entity.dart' show SyncStatus;
 
 @Entity()
 class EdgeOB {
