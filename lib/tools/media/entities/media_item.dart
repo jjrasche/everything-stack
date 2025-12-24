@@ -24,24 +24,19 @@
 /// await mediaRepo.save(media);
 /// ```
 
-import 'package:objectbox/objectbox.dart';
-
 import '../../../core/base_entity.dart';
 import '../../../services/sync_service.dart' show SyncStatus;
 import '../../../patterns/embeddable.dart';
 
-@Entity()
 class MediaItem extends BaseEntity with Embeddable {
   // ============ BaseEntity field overrides ============
   @override
-  @Id()
   int id = 0;
 
   // NOTE: uuid, createdAt, updatedAt inherited from BaseEntity
   // Do NOT override - let auto-generation work
 
   @override
-  @Property(type: PropertyType.date)
   DateTime createdAt = DateTime.now();
 
   @override
@@ -83,7 +78,6 @@ class MediaItem extends BaseEntity with Embeddable {
   String? downloadError;
 
   /// When it was downloaded
-  @Property(type: PropertyType.date)
   DateTime? downloadedAt;
 
   /// Optional description from YouTube
@@ -93,7 +87,6 @@ class MediaItem extends BaseEntity with Embeddable {
   int? durationSeconds;
 
   /// YouTube publish date
-  @Property(type: PropertyType.date)
   DateTime? publishedAt;
 
   /// View count (cached from YouTube)
@@ -108,7 +101,6 @@ class MediaItem extends BaseEntity with Embeddable {
   String? embeddingId;
 
   @override
-  @Property(type: PropertyType.date)
   DateTime? embeddedAt;
 
   // ============ Constructor ============

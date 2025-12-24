@@ -1,12 +1,12 @@
-/// # NoteIndexedDBAdapter
+/// # MediaItemIndexedDBAdapter
 ///
 /// ## What it does
-/// IndexedDB implementation of PersistenceAdapter for Note entities.
+/// IndexedDB implementation of PersistenceAdapter for MediaItem entities.
 /// Handles CRUD operations and persisted HNSW semantic search for web platform.
 ///
 /// ## HNSW Persistence Strategy
 /// - In-memory HNSW index using local_hnsw package
-/// - Index serialized and stored in _hnsw_index object store
+/// - Index serialized and stored in _hnsw_index object store (media_items_index key)
 /// - On init: Deserialize from IndexedDB (fast load)
 /// - On save/delete: Update in-memory index + mark dirty
 /// - On close or every N operations: Serialize back to IndexedDB
@@ -15,7 +15,7 @@
 /// ## Usage
 /// ```dart
 /// final db = await idbFactory.open('my_database');
-/// final adapter = NoteIndexedDBAdapter(db);
+/// final adapter = MediaItemIndexedDBAdapter(db);
 /// await adapter.initialize(); // Load HNSW index
 ///
 /// // Use semantic search
@@ -32,9 +32,9 @@ import 'package:local_hnsw/local_hnsw.dart';
 import 'package:local_hnsw/local_hnsw.item.dart';
 import 'base_indexeddb_adapter.dart';
 import 'database_schema.dart';
-import '../../domain/note.dart';
+import '../../tools/media/entities/media_item.dart';
 
-class NoteIndexedDBAdapter extends BaseIndexedDBAdapter<Note> {
+class MediaItemIndexedDBAdapter extends BaseIndexedDBAdapter<MediaItem> {
   static const int _serializeThreshold = 10; // Serialize every N operations
   static const int _embeddingDimensions = 384; // Embedding vector size
 
@@ -43,13 +43,13 @@ class NoteIndexedDBAdapter extends BaseIndexedDBAdapter<Note> {
   int _operationsSinceLastSerialize = 0; // Counter for periodic serialization
   bool _isInitialized = false;
 
-  NoteIndexedDBAdapter(Database db) : super(db);
+  MediaItemIndexedDBAdapter(Database db) : super(db);
 
   @override
-  String get objectStoreName => ObjectStores.notes;
+  String get objectStoreName => ObjectStores.mediaItems;
 
   @override
-  Note fromJson(Map<String, dynamic> json) => Note.fromJson(json);
+  MediaItem fromJson(Map<String, dynamic> json) => MediaItem.fromJson(json);
 
   // ============ Initialization ============
 
@@ -57,7 +57,7 @@ class NoteIndexedDBAdapter extends BaseIndexedDBAdapter<Note> {
   ///
   /// Call this after creating the adapter:
   /// ```dart
-  /// final adapter = NoteIndexedDBAdapter(db);
+  /// final adapter = MediaItemIndexedDBAdapter(db);
   /// await adapter.initialize();
   /// ```
   Future<void> initialize() async {
@@ -79,7 +79,7 @@ class NoteIndexedDBAdapter extends BaseIndexedDBAdapter<Note> {
     final txn = db.transaction(ObjectStores.hnswIndex, idbModeReadOnly);
     final store = txn.objectStore(ObjectStores.hnswIndex);
 
-    final value = await store.getObject('notes_index');
+    final value = await store.getObject('media_items_index');
     if (value == null) {
       print('No persisted HNSW index found - will build on demand');
       return;
@@ -90,7 +90,7 @@ class NoteIndexedDBAdapter extends BaseIndexedDBAdapter<Note> {
     final entityCount = data['entityCount'] as int;
     final version = data['version'] as int;
 
-    print('Deserializing HNSW index: v$version, $entityCount entities');
+    print('Deserializing MediaItem HNSW index: v$version, $entityCount entities');
 
     // Deserialize HNSW index from JSON
     final jsonStr = utf8.decode(bytes);
@@ -114,18 +114,17 @@ class NoteIndexedDBAdapter extends BaseIndexedDBAdapter<Note> {
   Future<void> _serializeIndex() async {
     if (_hnswIndex == null || !_indexDirty) return;
 
-    print('Serializing HNSW index...');
+    print('Serializing MediaItem HNSW index...');
 
     // Serialize to JSON then encode to bytes
-    final json =
-        _hnswIndex!.save(encodeItem: (item) => item); // item is UUID string
+    final json = _hnswIndex!.save(encodeItem: (item) => item); // item is UUID string
     final jsonStr = jsonEncode(json);
     final bytes = Uint8List.fromList(utf8.encode(jsonStr));
 
     final entityCount = await count();
 
     final data = {
-      'key': 'notes_index',
+      'key': 'media_items_index',
       'bytes': bytes,
       'version': 1, // Increment on schema changes
       'entityCount': entityCount,
@@ -139,13 +138,13 @@ class NoteIndexedDBAdapter extends BaseIndexedDBAdapter<Note> {
     _indexDirty = false;
     _operationsSinceLastSerialize = 0;
 
-    print('HNSW index serialized: $entityCount entities');
+    print('MediaItem HNSW index serialized: $entityCount entities');
   }
 
   // ============ Semantic Search ============
 
   @override
-  Future<List<Note>> semanticSearch(
+  Future<List<MediaItem>> semanticSearch(
     List<double> queryVector, {
     int limit = 10,
     double minSimilarity = 0.0,
@@ -165,21 +164,21 @@ class NoteIndexedDBAdapter extends BaseIndexedDBAdapter<Note> {
     final searchResult = _hnswIndex!.search(queryVector, limit);
 
     // Filter by minimum similarity and fetch entities
-    final notes = <Note>[];
+    final items = <MediaItem>[];
     for (final resultItem in searchResult.items) {
       // local_hnsw returns distance (lower = more similar)
       // Convert to similarity: similarity = 1 - distance for cosine
       final similarity = 1.0 - resultItem.distance;
       if (similarity >= minSimilarity) {
         // resultItem.item is the UUID string
-        final note = await findByUuid(resultItem.item);
-        if (note != null) {
-          notes.add(note);
+        final item = await findByUuid(resultItem.item);
+        if (item != null) {
+          items.add(item);
         }
       }
     }
 
-    return notes;
+    return items;
   }
 
   @override
@@ -191,9 +190,9 @@ class NoteIndexedDBAdapter extends BaseIndexedDBAdapter<Note> {
 
   @override
   Future<void> rebuildIndex([
-    Future<List<double>?> Function(Note entity)? generateEmbedding,
+    Future<List<double>?> Function(MediaItem entity)? generateEmbedding,
   ]) async {
-    print('Rebuilding HNSW index from all embeddings...');
+    print('Rebuilding MediaItem HNSW index from all embeddings...');
 
     // Create new HNSW index (cosine distance)
     _hnswIndex = LocalHNSW<String>(
@@ -201,23 +200,23 @@ class NoteIndexedDBAdapter extends BaseIndexedDBAdapter<Note> {
       metric: LocalHnswMetric.cosine,
     );
 
-    // Load all notes with embeddings
-    final notes = await findAll();
+    // Load all media items with embeddings
+    final items = await findAll();
     int addedCount = 0;
 
-    for (final note in notes) {
-      if (note.embedding != null && note.embedding!.isNotEmpty) {
+    for (final item in items) {
+      if (item.embedding != null && item.embedding!.isNotEmpty) {
         _hnswIndex!.add(
           LocalHnswItem<String>(
-            item: note.uuid, // Use UUID as identifier
-            vector: note.embedding!,
+            item: item.uuid, // Use UUID as identifier
+            vector: item.embedding!,
           ),
         );
         addedCount++;
       }
     }
 
-    print('HNSW index rebuilt: $addedCount entities');
+    print('MediaItem HNSW index rebuilt: $addedCount entities');
 
     // Mark dirty and serialize
     _indexDirty = true;
@@ -227,7 +226,7 @@ class NoteIndexedDBAdapter extends BaseIndexedDBAdapter<Note> {
   // ============ CRUD with Index Updates ============
 
   @override
-  Future<Note> save(Note entity, {bool touch = true}) async {
+  Future<MediaItem> save(MediaItem entity, {bool touch = true}) async {
     // Save entity
     final saved = await super.save(entity, touch: touch);
 
@@ -247,6 +246,7 @@ class NoteIndexedDBAdapter extends BaseIndexedDBAdapter<Note> {
           vector: saved.embedding!,
         ),
       );
+
       _markDirtyAndCheckSerialize();
     }
 
@@ -254,7 +254,7 @@ class NoteIndexedDBAdapter extends BaseIndexedDBAdapter<Note> {
   }
 
   @override
-  Future<List<Note>> saveAll(List<Note> entities) async {
+  Future<List<MediaItem>> saveAll(List<MediaItem> entities) async {
     // Save entities
     final saved = await super.saveAll(entities);
 

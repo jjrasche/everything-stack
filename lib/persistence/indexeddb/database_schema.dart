@@ -42,6 +42,8 @@ const int kDatabaseVersion = 1;
 /// Object store names
 class ObjectStores {
   static const String notes = 'notes';
+  static const String mediaItems = 'mediaItems';
+  static const String channels = 'channels';
   static const String edges = 'edges';
   static const String entityVersions = 'entity_versions';
   static const String hnswIndex = '_hnsw_index'; // Metadata store for HNSW
@@ -55,6 +57,19 @@ class Indexes {
   static const String notesSyncStatus = 'dbSyncStatus';
   static const String notesPinned = 'isPinned';
   static const String notesArchived = 'isArchived';
+
+  // MediaItems indexes
+  static const String mediaItemsId = 'id';
+  static const String mediaItemsUuid = 'uuid';
+  static const String mediaItemsSyncStatus = 'dbSyncStatus';
+  static const String mediaItemsDownloadStatus = 'downloadStatus';
+  static const String mediaItemsChannelId = 'channelId';
+
+  // Channels indexes
+  static const String channelsId = 'id';
+  static const String channelsUuid = 'uuid';
+  static const String channelsSyncStatus = 'dbSyncStatus';
+  static const String channelsSubscribed = 'isSubscribed';
 
   // Edges indexes
   static const String edgesId = 'id';
@@ -114,6 +129,77 @@ class NotesStoreSchema {
   /// - No IndexedDB index on embeddings (not supported)
   /// - NoteIndexedDBAdapter builds in-memory HNSW index using local_hnsw
   /// - Index rebuilt on app load and incrementally updated
+}
+
+/// Schema definition for mediaItems object store
+class MediaItemsStoreSchema {
+  static const String storeName = ObjectStores.mediaItems;
+  static const String keyPath = 'uuid';
+  static const bool autoIncrement = false;
+
+  static const List<IndexDefinition> indexes = [
+    IndexDefinition(
+      name: Indexes.mediaItemsId,
+      keyPath: 'id',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.mediaItemsUuid,
+      keyPath: 'uuid',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.mediaItemsSyncStatus,
+      keyPath: 'dbSyncStatus',
+      unique: false,
+    ),
+    IndexDefinition(
+      name: Indexes.mediaItemsDownloadStatus,
+      keyPath: 'downloadStatus',
+      unique: false,
+    ),
+    IndexDefinition(
+      name: Indexes.mediaItemsChannelId,
+      keyPath: 'channelId',
+      unique: false,
+    ),
+  ];
+
+  /// HNSW semantic search
+  /// - Embeddings stored in 'embedding' field (array of doubles)
+  /// - No IndexedDB index on embeddings (not supported)
+  /// - MediaItemIndexedDBAdapter builds in-memory HNSW index using local_hnsw
+  /// - Index rebuilt on app load and incrementally updated
+}
+
+/// Schema definition for channels object store
+class ChannelsStoreSchema {
+  static const String storeName = ObjectStores.channels;
+  static const String keyPath = 'uuid';
+  static const bool autoIncrement = false;
+
+  static const List<IndexDefinition> indexes = [
+    IndexDefinition(
+      name: Indexes.channelsId,
+      keyPath: 'id',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.channelsUuid,
+      keyPath: 'uuid',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.channelsSyncStatus,
+      keyPath: 'dbSyncStatus',
+      unique: false,
+    ),
+    IndexDefinition(
+      name: Indexes.channelsSubscribed,
+      keyPath: 'isSubscribed',
+      unique: false,
+    ),
+  ];
 }
 
 /// Schema definition for edges object store
@@ -241,6 +327,18 @@ class DatabaseSchema {
       keyPath: NotesStoreSchema.keyPath,
       autoIncrement: NotesStoreSchema.autoIncrement,
       indexes: NotesStoreSchema.indexes,
+    ),
+    ObjectStoreDefinition(
+      name: MediaItemsStoreSchema.storeName,
+      keyPath: MediaItemsStoreSchema.keyPath,
+      autoIncrement: MediaItemsStoreSchema.autoIncrement,
+      indexes: MediaItemsStoreSchema.indexes,
+    ),
+    ObjectStoreDefinition(
+      name: ChannelsStoreSchema.storeName,
+      keyPath: ChannelsStoreSchema.keyPath,
+      autoIncrement: ChannelsStoreSchema.autoIncrement,
+      indexes: ChannelsStoreSchema.indexes,
     ),
     ObjectStoreDefinition(
       name: EdgesStoreSchema.storeName,

@@ -6,7 +6,8 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'persistence_factory.dart';
 import '../objectbox.g.dart';
-import '../persistence/objectbox/note_objectbox_adapter.dart';
+import '../persistence/objectbox/media_item_objectbox_adapter.dart';
+import '../persistence/objectbox/channel_objectbox_adapter.dart';
 import '../persistence/objectbox/edge_objectbox_adapter.dart';
 import '../persistence/objectbox/entity_version_objectbox_adapter.dart';
 
@@ -23,12 +24,15 @@ Future<PersistenceFactory> initializePersistence() async {
   final store = await openStore(directory: storeDir.path);
 
   // Create adapters
-  final noteAdapter = NoteObjectBoxAdapter(store);
+  final mediaItemAdapter = MediaItemObjectBoxAdapter(store);
+  final channelAdapter = ChannelObjectBoxAdapter(store);
   final edgeAdapter = EdgeObjectBoxAdapter(store);
   final versionAdapter = EntityVersionObjectBoxAdapter(store);
 
   return PersistenceFactory(
-    noteAdapter: noteAdapter,
+    noteAdapter: null, // Notes removed - use media search on web
+    mediaItemAdapter: mediaItemAdapter,
+    channelAdapter: channelAdapter,
     edgeAdapter: edgeAdapter,
     versionAdapter: versionAdapter,
     handle: store,

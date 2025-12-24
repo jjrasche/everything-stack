@@ -5,7 +5,8 @@ library;
 import 'dart:io';
 import 'package:everything_stack_template/bootstrap/persistence_factory.dart';
 import 'package:everything_stack_template/objectbox.g.dart';
-import 'package:everything_stack_template/persistence/objectbox/note_objectbox_adapter.dart';
+import 'package:everything_stack_template/persistence/objectbox/media_item_objectbox_adapter.dart';
+import 'package:everything_stack_template/persistence/objectbox/channel_objectbox_adapter.dart';
 import 'package:everything_stack_template/persistence/objectbox/edge_objectbox_adapter.dart';
 import 'package:everything_stack_template/persistence/objectbox/entity_version_objectbox_adapter.dart';
 
@@ -24,12 +25,14 @@ Future<PersistenceFactory> initializeTestPersistence() async {
   _store = await openStore(directory: _testDir!.path);
 
   // Create adapters
-  final noteAdapter = NoteObjectBoxAdapter(_store!);
+  final mediaItemAdapter = MediaItemObjectBoxAdapter(_store!);
+  final channelAdapter = ChannelObjectBoxAdapter(_store!);
   final edgeAdapter = EdgeObjectBoxAdapter(_store!);
   final versionAdapter = EntityVersionObjectBoxAdapter(_store!);
 
   return PersistenceFactory(
-    noteAdapter: noteAdapter,
+    mediaItemAdapter: mediaItemAdapter,
+    channelAdapter: channelAdapter,
     edgeAdapter: edgeAdapter,
     versionAdapter: versionAdapter,
     handle: _store,

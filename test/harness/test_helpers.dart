@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:everything_stack_template/bootstrap/persistence_factory.dart';
-import 'package:everything_stack_template/domain/note_repository.dart';
 import 'package:everything_stack_template/core/edge_repository.dart';
 import 'package:everything_stack_template/core/version_repository.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
@@ -14,7 +13,6 @@ import 'test_persistence_stub.dart'
 /// Test context containing all initialized services and repositories.
 class TestContext {
   final PersistenceFactory persistence;
-  final NoteRepository noteRepo;
   final EdgeRepository edgeRepo;
   final VersionRepository versionRepo;
   final MockEmbeddingService embeddingService;
@@ -22,7 +20,6 @@ class TestContext {
 
   TestContext({
     required this.persistence,
-    required this.noteRepo,
     required this.edgeRepo,
     required this.versionRepo,
     required this.embeddingService,
@@ -66,16 +63,9 @@ Future<TestContext> initTestEnvironment() async {
       VersionRepository(adapter: persistenceFactory.versionAdapter as dynamic);
   final edgeRepo =
       EdgeRepository(adapter: persistenceFactory.edgeAdapter as dynamic);
-  final noteRepo = NoteRepository(
-    adapter: persistenceFactory.noteAdapter as dynamic,
-    embeddingService: embeddingService,
-    versionRepo: versionRepo,
-  );
-  noteRepo.setEdgeRepository(edgeRepo);
 
   return TestContext(
     persistence: persistenceFactory,
-    noteRepo: noteRepo,
     edgeRepo: edgeRepo,
     versionRepo: versionRepo,
     embeddingService: embeddingService,

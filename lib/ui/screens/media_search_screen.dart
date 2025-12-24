@@ -1,15 +1,15 @@
 /// # Media Search Screen
 ///
-/// Semantic search interface for downloaded media.
-/// Users can search by meaning - query "how do computers work" finds videos about computing.
+/// Simple semantic search interface for media library.
+/// Users enter a search query, system returns semantically similar media items.
+///
+/// Architecture:
+/// - UI: Simple prompt (search input)
+/// - Tool: Media semantic search (no UI, handles backend indexing)
+/// - Event: Query routed through ContextManager to tool registry
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-// Media search providers depend on ObjectBox entities (native-only)
-// Conditional import needed for cross-platform support
-// import 'package:everything_stack_template/ui/providers/media_search_providers.dart'
-//     if (dart.library.io) 'package:everything_stack_template/ui/providers/media_search_providers.dart';
 
 class MediaSearchScreen extends ConsumerStatefulWidget {
   const MediaSearchScreen({super.key});
@@ -20,6 +20,8 @@ class MediaSearchScreen extends ConsumerStatefulWidget {
 
 class _MediaSearchScreenState extends ConsumerState<MediaSearchScreen> {
   late TextEditingController _searchController;
+  List<String> _results = [];
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -33,6 +35,31 @@ class _MediaSearchScreenState extends ConsumerState<MediaSearchScreen> {
     super.dispose();
   }
 
+  Future<void> _performSearch(String query) async {
+    if (query.trim().isEmpty) {
+      setState(() => _results = []);
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      // TODO: Wire to ContextManager event-driven architecture
+      // For now, placeholder showing where semantic search results would appear
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      setState(() {
+        _results = [
+          'Result 1: Semantically similar media item',
+          'Result 2: Another matching item',
+          'Result 3: Related content',
+        ];
+      });
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,37 +67,95 @@ class _MediaSearchScreenState extends ConsumerState<MediaSearchScreen> {
         title: const Text('Search Media'),
         elevation: 0,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.warning_amber_rounded,
-              size: 64,
-              color: Colors.orange[400],
+      body: Column(
+        children: [
+          // Search input (the "prompt")
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: SearchBar(
+              controller: _searchController,
+              hintText: 'Search media by meaning...',
+              onSubmitted: _performSearch,
+              trailing: [
+                if (_searchController.text.isNotEmpty)
+                  IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      _searchController.clear();
+                      setState(() => _results = []);
+                    },
+                  ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Media Search',
-              style: Theme.of(context).textTheme.titleMedium,
+          ),
+
+          // Search button
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: FilledButton.icon(
+              onPressed: () => _performSearch(_searchController.text),
+              icon: _isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Icon(Icons.search),
+              label: Text(_isLoading ? 'Searching...' : 'Search'),
             ),
-            const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Text(
-                'Media search requires platform-specific persistence (ObjectBox for native, IndexedDB for web). This feature will be available after repositories are abstracted from platform details.',
-                style: Theme.of(context).textTheme.bodySmall,
-                textAlign: TextAlign.center,
+          ),
+
+          const SizedBox(height: 16),
+
+          // Results list
+          if (_results.isNotEmpty)
+            Expanded(
+              child: ListView.builder(
+                itemCount: _results.length,
+                itemBuilder: (context, index) => ListTile(
+                  leading: Icon(Icons.video_library),
+                  title: Text(_results[index]),
+                  onTap: () {
+                    // TODO: Open media details
+                  },
+                ),
+              ),
+            )
+          else if (!_isLoading && _searchController.text.isEmpty)
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.search,
+                      size: 48,
+                      color: Colors.grey[400],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Enter a search query',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.grey[600],
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else if (_results.isEmpty && !_isLoading)
+            Expanded(
+              child: Center(
+                child: Text(
+                  'No results found',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
               ),
             ),
-            const SizedBox(height: 32),
-            FilledButton.icon(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(Icons.arrow_back),
-              label: const Text('Go Back'),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }

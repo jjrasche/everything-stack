@@ -21,23 +21,18 @@
 /// await channelRepo.save(channel);
 /// ```
 
-import 'package:objectbox/objectbox.dart';
-
 import '../../../core/base_entity.dart';
 import '../../../services/sync_service.dart' show SyncStatus;
 
-@Entity()
 class Channel extends BaseEntity {
   // ============ BaseEntity field overrides ============
   @override
-  @Id()
   int id = 0;
 
   // NOTE: uuid, createdAt, updatedAt inherited from BaseEntity
   // Do NOT override - let auto-generation work
 
   @override
-  @Property(type: PropertyType.date)
   DateTime createdAt = DateTime.now();
 
   @override
@@ -64,7 +59,6 @@ class Channel extends BaseEntity {
   bool isSubscribed;
 
   /// Last time we checked for new videos
-  @Property(type: PropertyType.date)
   DateTime? lastCheckedAt;
 
   /// Optional channel description from YouTube
@@ -80,7 +74,6 @@ class Channel extends BaseEntity {
   String? avatarUrl;
 
   /// When subscription was added
-  @Property(type: PropertyType.date)
   DateTime? subscribedAt;
 
   // ============ Constructor ============

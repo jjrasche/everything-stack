@@ -5,8 +5,14 @@
 /// Platform-specific factories (_io.dart, _web.dart) create concrete adapters.
 /// Repositories cast to the correct type at usage site.
 class PersistenceFactory {
-  /// Note adapter - cast to PersistenceAdapter<Note> at usage
+  /// Note adapter - deprecated, use mediaItemAdapter instead (null on new instances)
   final dynamic noteAdapter;
+
+  /// MediaItem adapter - cast to PersistenceAdapter<MediaItem> at usage
+  final dynamic mediaItemAdapter;
+
+  /// Channel adapter - cast to PersistenceAdapter<Channel> at usage
+  final dynamic channelAdapter;
 
   /// Edge adapter - cast to EdgePersistenceAdapter at usage
   final dynamic edgeAdapter;
@@ -23,7 +29,9 @@ class PersistenceFactory {
   dynamic get store => _handle;
 
   PersistenceFactory({
-    required this.noteAdapter,
+    this.noteAdapter, // Optional - Notes removed from system
+    required this.mediaItemAdapter,
+    required this.channelAdapter,
     required this.edgeAdapter,
     required this.versionAdapter,
     required dynamic handle,
@@ -31,7 +39,11 @@ class PersistenceFactory {
 
   /// Close all adapters and underlying database.
   Future<void> close() async {
-    await (noteAdapter as dynamic).close();
+    if (noteAdapter != null) {
+      await (noteAdapter as dynamic).close();
+    }
+    await (mediaItemAdapter as dynamic).close();
+    await (channelAdapter as dynamic).close();
     await (edgeAdapter as dynamic).close();
     await (versionAdapter as dynamic).close();
 
