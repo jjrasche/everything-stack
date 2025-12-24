@@ -77,16 +77,7 @@ class DownloadHandler {
         };
       }
 
-      // Create Download record
-      final download = Download(
-        youtubeUrl: youtubeUrl,
-        youtubeVideoId: videoId,
-        format: format.toLowerCase(),
-        quality: quality,
-      );
-      await downloadRepo.save(download);
-
-      // Create MediaItem placeholder
+      // Create MediaItem placeholder first
       // TODO: Extract metadata from YouTube (title, duration, etc.)
       final mediaItem = MediaItem(
         title: 'Video $videoId', // Placeholder - will be updated with real metadata
@@ -96,6 +87,16 @@ class DownloadHandler {
         format: format.toLowerCase(),
       );
       await mediaRepo.save(mediaItem);
+
+      // Create Download record and link it to the MediaItem
+      final download = Download(
+        youtubeUrl: youtubeUrl,
+        youtubeVideoId: videoId,
+        format: format.toLowerCase(),
+        quality: quality,
+        mediaItemId: mediaItem.uuid, // Link to the MediaItem
+      );
+      await downloadRepo.save(download);
 
       // TODO: Trigger actual YouTube DL process (background task/service)
       // For now, just queue it

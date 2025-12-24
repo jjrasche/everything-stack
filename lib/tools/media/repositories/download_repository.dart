@@ -5,12 +5,18 @@
 
 import 'package:everything_stack_template/core/entity_repository.dart';
 import 'package:everything_stack_template/core/persistence/persistence_adapter.dart';
+import 'package:everything_stack_template/services/embedding_service.dart';
 
 import '../entities/download.dart';
 
 class DownloadRepository extends EntityRepository<Download> {
-  DownloadRepository({required PersistenceAdapter<Download> adapter})
-      : super(adapter: adapter);
+  DownloadRepository({
+    required PersistenceAdapter<Download> adapter,
+    EmbeddingService? embeddingService,
+  }) : super(
+    adapter: adapter,
+    embeddingService: embeddingService ?? EmbeddingService.instance,
+  );
 
   /// Get all active downloads (queued, downloading, processing)
   Future<List<Download>> findActive() async {

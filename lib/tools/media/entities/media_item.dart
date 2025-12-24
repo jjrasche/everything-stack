@@ -27,6 +27,7 @@
 import 'package:objectbox/objectbox.dart';
 
 import '../../../core/base_entity.dart';
+import '../../../services/sync_service.dart' show SyncStatus;
 import '../../../patterns/embeddable.dart';
 
 @Entity()
@@ -36,9 +37,8 @@ class MediaItem extends BaseEntity with Embeddable {
   @Id()
   int id = 0;
 
-  @override
-  @Unique()
-  String uuid = '';
+  // NOTE: uuid, createdAt, updatedAt inherited from BaseEntity
+  // Do NOT override - let auto-generation work
 
   @override
   @Property(type: PropertyType.date)
@@ -49,6 +49,9 @@ class MediaItem extends BaseEntity with Embeddable {
 
   @override
   String? syncId;
+
+  @override
+  SyncStatus syncStatus = SyncStatus.local;
 
   // ============ MediaItem fields ============
 

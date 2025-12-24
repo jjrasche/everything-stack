@@ -5,12 +5,18 @@
 
 import 'package:everything_stack_template/core/entity_repository.dart';
 import 'package:everything_stack_template/core/persistence/persistence_adapter.dart';
+import 'package:everything_stack_template/services/embedding_service.dart';
 
 import '../entities/media_item.dart';
 
 class MediaItemRepository extends EntityRepository<MediaItem> {
-  MediaItemRepository({required PersistenceAdapter<MediaItem> adapter})
-      : super(adapter: adapter);
+  MediaItemRepository({
+    required PersistenceAdapter<MediaItem> adapter,
+    EmbeddingService? embeddingService,
+  }) : super(
+    adapter: adapter,
+    embeddingService: embeddingService ?? EmbeddingService.instance,
+  );
 
   /// Get all media items in a channel
   Future<List<MediaItem>> findByChannel(String channelId) async {

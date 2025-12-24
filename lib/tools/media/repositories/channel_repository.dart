@@ -5,12 +5,18 @@
 
 import 'package:everything_stack_template/core/entity_repository.dart';
 import 'package:everything_stack_template/core/persistence/persistence_adapter.dart';
+import 'package:everything_stack_template/services/embedding_service.dart';
 
 import '../entities/channel.dart';
 
 class ChannelRepository extends EntityRepository<Channel> {
-  ChannelRepository({required PersistenceAdapter<Channel> adapter})
-      : super(adapter: adapter);
+  ChannelRepository({
+    required PersistenceAdapter<Channel> adapter,
+    EmbeddingService? embeddingService,
+  }) : super(
+    adapter: adapter,
+    embeddingService: embeddingService ?? EmbeddingService.instance,
+  );
 
   /// Get all subscribed channels
   Future<List<Channel>> findSubscribed() async {

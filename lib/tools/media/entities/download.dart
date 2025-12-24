@@ -26,6 +26,7 @@
 import 'package:objectbox/objectbox.dart';
 
 import '../../../core/base_entity.dart';
+import '../../../services/sync_service.dart' show SyncStatus;
 
 @Entity()
 class Download extends BaseEntity {
@@ -34,9 +35,8 @@ class Download extends BaseEntity {
   @Id()
   int id = 0;
 
-  @override
-  @Unique()
-  String uuid = '';
+  // NOTE: uuid, createdAt, updatedAt inherited from BaseEntity
+  // Do NOT override - let auto-generation work
 
   @override
   @Property(type: PropertyType.date)
@@ -47,6 +47,9 @@ class Download extends BaseEntity {
 
   @override
   String? syncId;
+
+  @override
+  SyncStatus syncStatus = SyncStatus.local;
 
   // ============ Download fields ============
 
@@ -119,11 +122,7 @@ class Download extends BaseEntity {
     this.mediaItemId,
     this.retryCount = 0,
     this.maxRetries = 3,
-  }) {
-    if (uuid.isEmpty) {
-      uuid = super.uuid;
-    }
-  }
+  });
 
   // ============ Computed properties ============
 
