@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'bootstrap.dart';
-import 'ui/screens/turn_list_screen.dart';
 import 'ui/screens/media_search_screen.dart';
+
+// TurnListScreen uses ObjectBox entities (not available on web)
+// Conditional import will be needed when creating cross-platform UI
+// import 'ui/screens/turn_list_screen.dart'
+//    if (dart.library.io) 'ui/screens/turn_list_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -81,17 +85,6 @@ class _MyHomePageState extends State<MyHomePage> {
               label: const Text('Search Media'),
             ),
             const SizedBox(height: 12),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const TurnListScreen(),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.feedback),
-              label: const Text('Review Feedback'),
-            ),
           ],
         ),
       ),

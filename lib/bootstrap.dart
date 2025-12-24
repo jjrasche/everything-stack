@@ -37,13 +37,15 @@ import 'services/file_service.dart';
 import 'services/sync_service.dart';
 import 'services/connectivity_service.dart';
 import 'services/embedding_service.dart';
-import 'services/embedding_queue_service.dart';
 import 'services/jina_embedding_service_impl.dart';
+
+// Conditional import for EmbeddingQueueService (native platforms only)
+import 'services/embedding_queue_service.dart'
+    if (dart.library.html) 'bootstrap/embedding_queue_service_web_stub.dart';
 import 'services/stt_service.dart';
 import 'services/tts_service.dart';
 import 'services/llm_service.dart';
 import 'services/groq_service.dart';
-import 'repositories/invocation_repository_impl.dart';
 
 // Conditional import for platform-specific BlobStore
 import 'bootstrap/blob_store_factory_stub.dart'
@@ -130,7 +132,13 @@ class EverythingStackConfig {
 
   static String? _envOrNull(String key) {
     // Try .env file first (runtime), then fall back to compile-time
-    final runtimeValue = dotenv.maybeGet(key);
+    String? runtimeValue;
+    try {
+      runtimeValue = dotenv.maybeGet(key);
+    } catch (e) {
+      // dotenv may not be initialized on web or in some environments
+      runtimeValue = null;
+    }
     if (runtimeValue != null && runtimeValue.isNotEmpty) {
       return runtimeValue;
     }
@@ -225,9 +233,9 @@ Future<void> initializeEverythingStack({
   try {
     await dotenv.load(fileName: '.env');
   } catch (e) {
-    // .env file is optional - continue with compile-time env vars if not found
-    print(
-        'Note: .env file not found, using compile-time environment variables');
+    // .env file is optional - may fail on web or when file not found
+    // Fall back to compile-time environment variables
+    // Silently ignore errors as we'll use compile-time env vars instead
   }
 
   final cfg = config ?? EverythingStackConfig.fromEnvironment();
@@ -283,50 +291,12 @@ Future<void> initializeEverythingStack({
 
   // 7. EmbeddingQueueService deferred to Phase 1 (Note entity not yet implemented)
 
-  // 8. Initialize Invocation Repositories (required by STT/TTS/LLM services for training)
-  // Using in-memory implementations for MVP
-  final sttInvocationRepo = STTInvocationRepositoryImpl.inMemory();
-  final llmInvocationRepo = LLMInvocationRepositoryImpl.inMemory();
-  final ttsInvocationRepo = TTSInvocationRepositoryImpl.inMemory();
+  // 8-11. STT/TTS/LLM Services (native platforms only)
+  // These services require invocation repositories which depend on ObjectBox entities.
+  // On web, services use null implementations (see services/).
+  // TODO: Abstract invocation repositories from ObjectBox to support web.
 
-  // 9. Initialize STTService (optional - requires Deepgram API key)
-  if (cfg.deepgramApiKey != null && cfg.deepgramApiKey!.isNotEmpty) {
-    final sttService = DeepgramSTTService(
-      apiKey: cfg.deepgramApiKey!,
-      sttInvocationRepository: sttInvocationRepo,
-    );
-    await sttService.initialize();
-    STTService.instance = sttService;
-    print('STTService initialized (Deepgram)');
-  }
-  // else: keeps NullSTTService default
-
-  // 10. Initialize TTSService (optional - requires Google Cloud API key)
-  if (cfg.googleTtsApiKey != null && cfg.googleTtsApiKey!.isNotEmpty) {
-    final ttsService = GoogleTTSService(
-      apiKey: cfg.googleTtsApiKey!,
-      ttsInvocationRepository: ttsInvocationRepo,
-    );
-    await ttsService.initialize();
-    TTSService.instance = ttsService;
-    print('TTSService initialized (Google Cloud)');
-  }
-  // else: keeps NullTTSService default
-
-  // 11. Initialize LLMService
-  // Priority: Groq (recommended for tool calling) → None (Claude deferred to Phase 1)
-  if (cfg.groqApiKey != null && cfg.groqApiKey!.isNotEmpty) {
-    final llmService = GroqService(
-      apiKey: cfg.groqApiKey!,
-      llmInvocationRepository: llmInvocationRepo,
-    );
-    await llmService.initialize();
-    LLMService.instance = llmService;
-    print('LLMService initialized (Groq)');
-  }
-  // else: keeps NullLLMService default (Claude deferred to Phase 1)
-
-  // 12. Note: Domain repositories (Task, Timer, Personality, Namespace) are initialized
+  // Note: Domain repositories (Task, Timer, Personality, Namespace) are initialized
   // by the application layer, not bootstrap. This allows for platform-specific
   // persistence handling and dependency injection.
   //
