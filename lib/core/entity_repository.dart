@@ -313,6 +313,33 @@ abstract class EntityRepository<T extends BaseEntity> {
     );
   }
 
+  /// Search semantically using a pre-generated query embedding.
+  ///
+  /// Use this when you need both the results AND the embedding for reuse
+  /// (e.g., calculating similarity scores in response formatting).
+  /// Avoids redundant embedding generation compared to calling semanticSearch(String)
+  /// and then generating the embedding again.
+  ///
+  /// Returns a tuple of (results, queryEmbedding) so you can reuse the embedding.
+  Future<(List<T>, List<double>)> semanticSearchWithEmbedding(
+    String query, {
+    int limit = 10,
+    double minSimilarity = 0.0,
+  }) async {
+    // Generate query embedding ONCE
+    final queryEmbedding = await embeddingService.generate(query);
+
+    // Delegate search to adapter
+    final results = await adapter.semanticSearch(
+      queryEmbedding,
+      limit: limit,
+      minSimilarity: minSimilarity,
+    );
+
+    // Return both results and embedding for reuse
+    return (results, queryEmbedding);
+  }
+
   // ============ Index Management ============
 
   /// Rebuild vector index from all entities.
