@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'bootstrap.dart';
 import 'ui/screens/turn_list_screen.dart';
+import 'ui/screens/media_search_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,7 +68,19 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 32),
-            // Navigation to feedback review
+            // Navigation buttons
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const MediaSearchScreen(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.search),
+              label: const Text('Search Media'),
+            ),
+            const SizedBox(height: 12),
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.of(context).push(
