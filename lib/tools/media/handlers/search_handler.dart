@@ -64,6 +64,7 @@ class SearchHandler {
       }
 
       // Use semantic search via embeddings to find relevant items
+      // EntityRepository.semanticSearch() handles embedding generation internally
       var results = await mediaRepo.semanticSearch(
         query,
         limit: limit,
@@ -83,17 +84,18 @@ class SearchHandler {
             results.where((item) => item.channelId == channelId).toList();
       }
 
-      final topResults = results;
-
-      // Generate query embedding to calculate similarity scores
+      // Generate query embedding ONCE for similarity calculation in response
+      // (EntityRepository already used it for ranking, but we need it for response scores)
       final queryEmbedding = await EmbeddingService.instance.generate(query);
 
-      // Build response with similarity scores
+      // Build response with similarity scores calculated once
       final formattedResults = <Map<String, dynamic>>[];
-      for (final item in topResults) {
+      for (final item in results) {
         // Calculate similarity score for this item
         double similarity = 0.0;
-        if (item is Embeddable && item.embedding != null && item.embedding!.isNotEmpty) {
+        if (item is Embeddable &&
+            item.embedding != null &&
+            item.embedding!.isNotEmpty) {
           similarity = EmbeddingService.cosineSimilarity(
             queryEmbedding,
             item.embedding!,

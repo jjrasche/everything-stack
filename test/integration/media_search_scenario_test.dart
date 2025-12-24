@@ -204,6 +204,9 @@ void main() {
         }
 
         // AND: Results ranked by similarity (0.0 to 1.0)
+        expect(results.isNotEmpty, true,
+            reason: 'Semantic search should find at least one relevant result');
+
         for (final result in results) {
           final similarity = result['similarity'] as double;
           expect(similarity, greaterThanOrEqualTo(0.0),
@@ -212,17 +215,28 @@ void main() {
               reason: 'Similarity score should be <= 1');
         }
 
+        // AND: Results should be ordered by descending similarity
+        for (int i = 0; i < results.length - 1; i++) {
+          final currentSim = results[i]['similarity'] as double;
+          final nextSim = results[i + 1]['similarity'] as double;
+          expect(currentSim, greaterThanOrEqualTo(nextSim),
+              reason:
+                  'Results should be ranked by descending similarity (${results[i]['title']} should rank >= ${results[i + 1]['title']})');
+        }
+
         // AND: Results include channel information
         for (final result in results) {
           expect(result['channelName'], isNotNull);
           expect(result['channelName'], 'Crash Course');
         }
 
-        // AND: Verify semantic search found relevant content
-        // The mock embedding service does semantic similarity via word overlap + hashing
-        // Results should contain videos with semantic relevance to the query
-        expect(results.isNotEmpty, true,
-            reason: 'Semantic search should find at least one relevant result');
+        // AND: Verify all required fields present in response
+        for (final result in results) {
+          expect(result['mediaItemId'], isNotEmpty, reason: 'mediaItemId required');
+          expect(result['title'], isNotEmpty, reason: 'title required');
+          expect(result['similarity'], isNotNull, reason: 'similarity score required');
+          expect(result['format'], isNotEmpty, reason: 'format required');
+        }
       },
     );
 
@@ -281,17 +295,29 @@ void main() {
         expect(results.isNotEmpty, true,
             reason: 'Search should find ML-related videos');
 
-        // AND: ML video should rank higher than cooking video
+        // AND: Verify similarity scores are meaningful
         if (results.length > 1) {
+          // ML video should have higher similarity than cooking video
           final mlIndex = results.indexWhere((r) =>
               (r['title'] as String).toLowerCase().contains('machine learning'));
           final cookingIndex = results.indexWhere((r) =>
               (r['title'] as String).toLowerCase().contains('pasta'));
 
           if (mlIndex >= 0 && cookingIndex >= 0) {
-            expect(mlIndex, lessThan(cookingIndex),
-                reason: 'ML video should rank higher than cooking video');
+            final mlSim = results[mlIndex]['similarity'] as double;
+            final cookingSim = results[cookingIndex]['similarity'] as double;
+            expect(mlSim, greaterThanOrEqualTo(cookingSim),
+                reason:
+                    'ML video (similarity: $mlSim) should rank >= cooking video (similarity: $cookingSim)');
           }
+        }
+
+        // AND: Verify results maintain ranking order
+        for (int i = 0; i < results.length - 1; i++) {
+          final currentSim = results[i]['similarity'] as double;
+          final nextSim = results[i + 1]['similarity'] as double;
+          expect(currentSim, greaterThanOrEqualTo(nextSim),
+              reason: 'Results should be ranked by descending similarity');
         }
       },
     );
