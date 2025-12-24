@@ -118,7 +118,8 @@ class _TurnListItem extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         title: Text(
           'Turn ${turn.uuid.substring(0, 8)}',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -137,12 +138,9 @@ class _TurnListItem extends StatelessWidget {
             Wrap(
               spacing: 8,
               children: [
-                if (turn.sttInvocationId != null)
-                  _ComponentBadge(label: 'STT'),
-                if (turn.llmInvocationId != null)
-                  _ComponentBadge(label: 'LLM'),
-                if (turn.ttsInvocationId != null)
-                  _ComponentBadge(label: 'TTS'),
+                if (turn.sttInvocationId != null) _ComponentBadge(label: 'STT'),
+                if (turn.llmInvocationId != null) _ComponentBadge(label: 'LLM'),
+                if (turn.ttsInvocationId != null) _ComponentBadge(label: 'TTS'),
               ],
             ),
           ],

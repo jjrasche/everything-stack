@@ -239,7 +239,9 @@ void _checkFormatValidation(
     final entry = entries.first;
 
     // All required fields present
-    if (!entry.containsKey('content') || !entry.containsKey('scope') || !entry.containsKey('type')) {
+    if (!entry.containsKey('content') ||
+        !entry.containsKey('scope') ||
+        !entry.containsKey('type')) {
       eval.addFailure(
         'MISSING_FIELDS',
         'Entry missing required fields: content, scope, type',

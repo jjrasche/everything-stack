@@ -130,8 +130,8 @@ class VersionRepository {
     DateTime targetTimestamp,
   ) async {
     // Get all versions up to target timestamp
-    final versions =
-        await _adapter.findByEntityUuidBeforeTimestamp(entityUuid, targetTimestamp);
+    final versions = await _adapter.findByEntityUuidBeforeTimestamp(
+        entityUuid, targetTimestamp);
 
     if (versions.isEmpty) {
       return null; // No versions before target

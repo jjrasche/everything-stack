@@ -107,9 +107,8 @@ void main() {
         final note = TestNote(
           uuid: 'content-test',
           title: 'Python',
-          content:
-              'Python is a programming language known for simplicity. ' *
-                  10, // Repeat to ensure multi-chunk
+          content: 'Python is a programming language known for simplicity. ' *
+              10, // Repeat to ensure multi-chunk
         );
 
         await noteRepository.save(note);
@@ -212,13 +211,15 @@ void main() {
           entityLoader: MockEntityLoader(),
         );
 
-        final results = await searchService.search('learning from data', limit: 5);
+        final results =
+            await searchService.search('learning from data', limit: 5);
         expect(results, isA<List>(),
             reason: 'Should be able to search indexed content');
 
         // 4. Delete
         await noteRepository.deleteByUuid('lifecycle-test');
-        expect(hnswIndex.size, equals(0), reason: 'Should be completely removed');
+        expect(hnswIndex.size, equals(0),
+            reason: 'Should be completely removed');
       });
     });
   });

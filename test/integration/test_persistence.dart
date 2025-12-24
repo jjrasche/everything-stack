@@ -15,7 +15,8 @@ import 'package:everything_stack_template/domain/personality.dart';
 void main() {
   group('Persistence Test', () {
     test('Thresholds persist after save and reload', () async {
-      print('\n═══════════════════════════════════════════════════════════════');
+      print(
+          '\n═══════════════════════════════════════════════════════════════');
       print('TEST 1: Do thresholds persist to storage?');
       print('═══════════════════════════════════════════════════════════════');
 
@@ -54,14 +55,16 @@ void main() {
       print('   Reloaded task threshold: $reloadedTaskThreshold');
 
       // Step 5: Check if thresholds persisted
-      print('\n═══════════════════════════════════════════════════════════════');
+      print(
+          '\n═══════════════════════════════════════════════════════════════');
       print('RESULTS:');
       print('═══════════════════════════════════════════════════════════════');
       print('Initial threshold:   $initialTaskThreshold');
       print('Modified threshold:  $modifiedTaskThreshold');
       print('Reloaded threshold:  $reloadedTaskThreshold');
 
-      final persisted = (reloadedTaskThreshold - modifiedTaskThreshold).abs() < 0.01;
+      final persisted =
+          (reloadedTaskThreshold - modifiedTaskThreshold).abs() < 0.01;
 
       if (persisted) {
         print('\n✅ SUCCESS: Thresholds persist across save/reload!');

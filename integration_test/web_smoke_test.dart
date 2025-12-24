@@ -99,7 +99,8 @@ void main() {
       final note2 = Note(title: 'Shopping', content: 'Buy milk and bread');
       await noteRepo.save(note2);
 
-      final results = await noteRepo.semanticSearch('neural network AI', limit: 2);
+      final results =
+          await noteRepo.semanticSearch('neural network AI', limit: 2);
       expect(results, isNotEmpty);
       print('✓ Test 4: Semantic search works');
 

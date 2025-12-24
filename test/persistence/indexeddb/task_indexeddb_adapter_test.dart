@@ -150,7 +150,8 @@ void main() {
 
       expect(results.length, 2);
       expect(results.every((t) => !t.completed), true);
-      expect(results.map((t) => t.title).toSet(), {'Incomplete 1', 'Incomplete 2'});
+      expect(results.map((t) => t.title).toSet(),
+          {'Incomplete 1', 'Incomplete 2'});
     });
 
     test('findCompleted returns only completed tasks', () async {
@@ -170,7 +171,8 @@ void main() {
 
       expect(results.length, 2);
       expect(results.every((t) => t.completed), true);
-      expect(results.map((t) => t.title).toSet(), {'Completed 1', 'Completed 2'});
+      expect(
+          results.map((t) => t.title).toSet(), {'Completed 1', 'Completed 2'});
     });
 
     test('findOverdue returns tasks past due date', () async {
@@ -268,7 +270,8 @@ void main() {
       expect((await adapter.findIncomplete()).length, 4);
       expect((await adapter.findCompleted()).length, 1);
       expect((await adapter.findOverdue()).length, 1);
-      expect((await adapter.findByPriority('high')).length, 1); // Only incomplete high priority
+      expect((await adapter.findByPriority('high')).length,
+          1); // Only incomplete high priority
     });
   });
 }

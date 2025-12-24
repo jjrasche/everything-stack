@@ -16,7 +16,8 @@ import 'package:everything_stack_template/domain/context_manager_invocation.dart
 import 'package:everything_stack_template/domain/context_manager_invocation_repository.dart';
 import 'package:everything_stack_template/domain/invocations.dart';
 import 'package:everything_stack_template/domain/llm_invocation_repository.dart';
-import 'package:everything_stack_template/domain/feedback.dart' as domain_feedback;
+import 'package:everything_stack_template/domain/feedback.dart'
+    as domain_feedback;
 import 'package:everything_stack_template/repositories/invocation_repository_impl.dart';
 import 'package:everything_stack_template/services/context_manager.dart';
 import 'package:everything_stack_template/services/llm_service.dart';
@@ -97,7 +98,9 @@ class MockTimerRepository implements TimerRepository {
 
 class MockFeedbackRepository implements FeedbackRepository {
   @override
-  Future<domain_feedback.Feedback> save(domain_feedback.Feedback entity) async => entity;
+  Future<domain_feedback.Feedback> save(
+          domain_feedback.Feedback entity) async =>
+      entity;
 
   Future<List<domain_feedback.Feedback>> findAll() async => [];
 
@@ -251,7 +254,8 @@ void main() {
       final taskRepo = MockTaskRepository();
       final timerRepo = MockTimerRepository();
       final feedbackRepo = MockFeedbackRepository();
-      final llmService = MockLLMService(llmInvocationRepository: llmInvocationRepo);
+      final llmService =
+          MockLLMService(llmInvocationRepository: llmInvocationRepo);
       final embeddingService = MockEmbeddingService();
       final mcpExecutor = MockMCPExecutor();
 
@@ -260,7 +264,8 @@ void main() {
         personalityRepo: personalityRepo,
         namespaceRepo: namespaceRepo,
         toolRepo: toolRepo,
-        invocationRepo: _ContextManagerInvocationRepositoryAdapter(cmInvocationRepo),
+        invocationRepo:
+            _ContextManagerInvocationRepositoryAdapter(cmInvocationRepo),
         feedbackRepo: feedbackRepo,
         taskRepo: taskRepo,
         timerRepo: timerRepo,
@@ -406,9 +411,10 @@ void main() {
       }
 
       // Verify at least one of the invocation types was recorded
-      final totalInvocations =
-          sttInvocations.length + cmInvocations.length +
-          ttsInvocations.length + llmInvocations.length;
+      final totalInvocations = sttInvocations.length +
+          cmInvocations.length +
+          ttsInvocations.length +
+          llmInvocations.length;
       expect(totalInvocations, greaterThan(0),
           reason: 'At least one invocation should be persisted');
 
@@ -429,7 +435,7 @@ class _ContextManagerInvocationRepositoryAdapter
 
   @override
   Future<List<ContextManagerInvocation>> findByCorrelationId(
-      String correlationId) =>
+          String correlationId) =>
       _impl.findByCorrelationId(correlationId);
 
   @override

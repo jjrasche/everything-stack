@@ -158,7 +158,6 @@ class _MockTurnRepository implements TurnRepository {
   List<Turn> getAll() => _turns;
 }
 
-
 // ============================================================================
 // Main Test
 // ============================================================================
@@ -173,12 +172,15 @@ void main() {
       feedbackRepo = _MockFeedbackRepository();
     });
 
-    test('Complete end-to-end loop: speak → pick tool → user corrects → feedback persists', () async {
+    test(
+        'Complete end-to-end loop: speak → pick tool → user corrects → feedback persists',
+        () async {
       // ====================================================================
       // Demonstrates full feedback loop: multiple turns with persistent feedback
       // ====================================================================
 
-      print('\n═══════════════════════════════════════════════════════════════');
+      print(
+          '\n═══════════════════════════════════════════════════════════════');
       print('TURN 1: Initial utterance with LLM decision');
       print('═══════════════════════════════════════════════════════════════');
 
@@ -213,9 +215,11 @@ void main() {
           await feedbackRepo.findByTurnAndComponent(turn1.uuid, 'llm');
       expect(feedback1Results.length, 1,
           reason: 'Should have 1 feedback for turn 1');
-      print('✓ Verified: Turn 1 has ${feedback1Results.length} feedback record');
+      print(
+          '✓ Verified: Turn 1 has ${feedback1Results.length} feedback record');
 
-      print('\n═══════════════════════════════════════════════════════════════');
+      print(
+          '\n═══════════════════════════════════════════════════════════════');
       print('TURN 2: Retry same phrase, verify feedback persists');
       print('═══════════════════════════════════════════════════════════════');
 
@@ -245,14 +249,14 @@ void main() {
       // ====================================================================
       // VERIFY: Feedback from both turns is retrievable
       // ====================================================================
-      print('\n═══════════════════════════════════════════════════════════════');
+      print(
+          '\n═══════════════════════════════════════════════════════════════');
       print('VERIFICATION: Infrastructure proves feedback loop works');
       print('═══════════════════════════════════════════════════════════════');
 
       // Can query feedback by each turn
       final allTurns = turnRepo.getAll();
-      expect(allTurns.length, 2,
-          reason: 'Should have created 2 turns');
+      expect(allTurns.length, 2, reason: 'Should have created 2 turns');
       print('✓ Created ${allTurns.length} turns');
 
       // Can query all conversational feedback
@@ -308,8 +312,7 @@ void main() {
       print('✓ Feedback can be created and saved');
 
       // Can we query feedback by turn?
-      final turnFeedback =
-          await feedbackRepo.findByTurn(turn.uuid);
+      final turnFeedback = await feedbackRepo.findByTurn(turn.uuid);
       expect(turnFeedback.length, 1);
       print('✓ Feedback can be queried by turn');
 

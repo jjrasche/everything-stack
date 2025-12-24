@@ -124,10 +124,12 @@ class Feedback extends BaseEntity {
   bool get isBackground => turnId == null;
 
   /// Did user provide a correction?
-  bool get hasCorrection => action == FeedbackAction.correct && correctedData != null;
+  bool get hasCorrection =>
+      action == FeedbackAction.correct && correctedData != null;
 
   // ============ JSON Serialization ============
 
   Map<String, dynamic> toJson() => _$FeedbackToJson(this);
-  factory Feedback.fromJson(Map<String, dynamic> json) => _$FeedbackFromJson(json);
+  factory Feedback.fromJson(Map<String, dynamic> json) =>
+      _$FeedbackFromJson(json);
 }

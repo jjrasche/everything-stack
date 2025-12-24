@@ -105,7 +105,8 @@ class NarrativeThinker {
     buffer.writeln();
 
     buffer.writeln('=== INTENT ANALYSIS ===');
-    buffer.writeln('Classification: ${intentOutput['classification'] ?? 'unknown'}');
+    buffer.writeln(
+        'Classification: ${intentOutput['classification'] ?? 'unknown'}');
     buffer.writeln('Confidence: ${intentOutput['confidence'] ?? 'N/A'}');
     if (intentOutput['reasoning'] != null) {
       buffer.writeln('Reasoning: ${intentOutput['reasoning']}');
@@ -157,7 +158,8 @@ class NarrativeThinker {
   }
 
   /// System prompt for narrative extraction
-  String _systemPrompt() => '''You are the system's self-model extractor. Your job is to identify new insights about the user's identity, goals, and reasoning from conversation.
+  String _systemPrompt() =>
+      '''You are the system's self-model extractor. Your job is to identify new insights about the user's identity, goals, and reasoning from conversation.
 
 Rules:
 1. Extract NEW narrative entries ONLY. Skip if redundant with existing narratives.
@@ -194,7 +196,8 @@ Example response:
   List<NarrativeEntry> _parseResponse(String response) {
     try {
       // Find JSON array in response
-      final jsonMatch = RegExp(r'\[\s*\{.*\}\s*\]', dotAll: true).firstMatch(response);
+      final jsonMatch =
+          RegExp(r'\[\s*\{.*\}\s*\]', dotAll: true).firstMatch(response);
       if (jsonMatch == null) {
         return [];
       }

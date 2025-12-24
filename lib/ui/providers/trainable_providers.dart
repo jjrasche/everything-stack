@@ -19,12 +19,14 @@ import 'package:everything_stack_template/domain/tts_invocation_repository.dart'
 import 'package:everything_stack_template/domain/adaptation_state.dart';
 
 /// LLM Invocation Repository
-final llmInvocationRepositoryProvider = Provider<LLMInvocationRepository>((ref) {
+final llmInvocationRepositoryProvider =
+    Provider<LLMInvocationRepository>((ref) {
   return LLMInvocationRepositoryImpl.inMemory();
 });
 
 /// TTS Invocation Repository
-final ttsInvocationRepositoryProvider = Provider<TTSInvocationRepository>((ref) {
+final ttsInvocationRepositoryProvider =
+    Provider<TTSInvocationRepository>((ref) {
   return TTSInvocationRepositoryImpl.inMemory();
 });
 
@@ -39,17 +41,20 @@ final turnRepositoryProvider = Provider<TurnRepository>((ref) {
 });
 
 /// STT Adaptation State Repository
-final sttAdaptationStateRepositoryProvider = Provider<AdaptationStateRepository<STTAdaptationState>>((ref) {
+final sttAdaptationStateRepositoryProvider =
+    Provider<AdaptationStateRepository<STTAdaptationState>>((ref) {
   return STTAdaptationStateRepositoryImpl.inMemory();
 });
 
 /// LLM Adaptation State Repository
-final llmAdaptationStateRepositoryProvider = Provider<AdaptationStateRepository<LLMAdaptationState>>((ref) {
+final llmAdaptationStateRepositoryProvider =
+    Provider<AdaptationStateRepository<LLMAdaptationState>>((ref) {
   return LLMAdaptationStateRepositoryImpl.inMemory();
 });
 
 /// TTS Adaptation State Repository
-final ttsAdaptationStateRepositoryProvider = Provider<AdaptationStateRepository<TTSAdaptationState>>((ref) {
+final ttsAdaptationStateRepositoryProvider =
+    Provider<AdaptationStateRepository<TTSAdaptationState>>((ref) {
   return TTSAdaptationStateRepositoryImpl.inMemory();
 });
 

@@ -21,9 +21,12 @@ void main() {
       );
 
       // Set namespace attention thresholds
-      personality.namespaceAttention.setThreshold('health', 0.5); // LOW = high attention
-      personality.namespaceAttention.setThreshold('task', 0.8); // HIGH = low attention
-      personality.namespaceAttention.setCentroid('health', [0.1, 0.2, 0.3, 0.4]);
+      personality.namespaceAttention
+          .setThreshold('health', 0.5); // LOW = high attention
+      personality.namespaceAttention
+          .setThreshold('task', 0.8); // HIGH = low attention
+      personality.namespaceAttention
+          .setCentroid('health', [0.1, 0.2, 0.3, 0.4]);
 
       // Set tool attention
       final healthTools = personality.getToolAttention('health');
@@ -42,7 +45,8 @@ void main() {
       expect(loaded.namespaceAttention.getThreshold('task'), 0.8);
 
       // Verify centroid preserved
-      expect(loaded.namespaceAttention.getCentroid('health'), [0.1, 0.2, 0.3, 0.4]);
+      expect(loaded.namespaceAttention.getCentroid('health'),
+          [0.1, 0.2, 0.3, 0.4]);
 
       // Verify tool attention preserved
       final loadedHealthTools = loaded.getToolAttention('health');

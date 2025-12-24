@@ -32,10 +32,10 @@ class NoteHandlerFactory extends GenericHandlerFactory<Note> {
     required PersistenceAdapter<Note> adapter,
     EdgeRepository? edgeRepository,
   }) : super(
-    embeddingService: embeddingService,
-    chunkingService: chunkingService,
-    versionRepository: versionRepository,
-    adapter: adapter,
-    edgeRepository: edgeRepository,
-  );
+          embeddingService: embeddingService,
+          chunkingService: chunkingService,
+          versionRepository: versionRepository,
+          adapter: adapter,
+          edgeRepository: edgeRepository,
+        );
 }

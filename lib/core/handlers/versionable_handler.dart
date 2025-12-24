@@ -82,7 +82,6 @@ class VersionableHandler<T extends BaseEntity>
     versionRepository.saveInTx(ctx, version);
   }
 
-
   /// Build version record synchronously for transaction.
   ///
   /// Synchronous because it happens inside a transaction and must

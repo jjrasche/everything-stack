@@ -27,7 +27,8 @@ void registerTaskTools(ToolRegistry registry, TaskRepository taskRepo) {
     ToolDefinition(
       name: 'task.create',
       namespace: 'task',
-      description: 'Create a new task with title, optional priority, and optional due date',
+      description:
+          'Create a new task with title, optional priority, and optional due date',
       parameters: {
         'type': 'object',
         'properties': {

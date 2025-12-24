@@ -117,7 +117,8 @@ class NoteIndexedDBAdapter extends BaseIndexedDBAdapter<Note> {
     print('Serializing HNSW index...');
 
     // Serialize to JSON then encode to bytes
-    final json = _hnswIndex!.save(encodeItem: (item) => item); // item is UUID string
+    final json =
+        _hnswIndex!.save(encodeItem: (item) => item); // item is UUID string
     final jsonStr = jsonEncode(json);
     final bytes = Uint8List.fromList(utf8.encode(jsonStr));
 
@@ -258,7 +259,8 @@ class NoteIndexedDBAdapter extends BaseIndexedDBAdapter<Note> {
     final saved = await super.saveAll(entities);
 
     // Update HNSW index for all entities with embeddings
-    bool hasEmbeddings = saved.any((e) => e.embedding != null && e.embedding!.isNotEmpty);
+    bool hasEmbeddings =
+        saved.any((e) => e.embedding != null && e.embedding!.isNotEmpty);
     if (hasEmbeddings) {
       // Initialize index if not already created
       if (_hnswIndex == null) {

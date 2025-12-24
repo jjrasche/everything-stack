@@ -37,7 +37,8 @@ void main() {
     });
 
     group('index(entity) - chunking and indexing', () {
-      test('indexes SemanticIndexable entity by chunking and embedding', () async {
+      test('indexes SemanticIndexable entity by chunking and embedding',
+          () async {
         final note = TestNote(
           uuid: 'note-123',
           title: 'Design Patterns',
@@ -177,14 +178,16 @@ void main() {
 
         // Verify chunks are in HNSW
         final sizeBefore = hnswIndex.size;
-        expect(sizeBefore, greaterThan(0), reason: 'Should have chunks in index before delete');
+        expect(sizeBefore, greaterThan(0),
+            reason: 'Should have chunks in index before delete');
 
         // Delete chunks for this entity
         await chunkingService.deleteByEntityId('to-delete-123');
 
         // Verify chunks are removed from HNSW
         final sizeAfter = hnswIndex.size;
-        expect(sizeAfter, equals(0), reason: 'All chunks should be removed from index');
+        expect(sizeAfter, equals(0),
+            reason: 'All chunks should be removed from index');
       });
 
       test('handles deletion of non-existent entity gracefully', () async {
@@ -207,7 +210,8 @@ void main() {
         final note2 = TestNote(
           uuid: 'entity-2',
           title: 'Second',
-          content: 'Content for second entity. Also long enough to create chunks.',
+          content:
+              'Content for second entity. Also long enough to create chunks.',
         );
 
         // Index both entities
@@ -304,8 +308,7 @@ class ChunkingService {
     final chunks = <Chunk>[];
 
     // Step 1: Generate parent chunks
-    final parentChunkTexts =
-        await parentChunker.chunk(input);
+    final parentChunkTexts = await parentChunker.chunk(input);
 
     // Step 2: For each parent chunk, generate child chunks
     for (final parentChunkText in parentChunkTexts) {

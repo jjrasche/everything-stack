@@ -26,7 +26,8 @@ class PersistenceTestHarness {
   /// Get the initialized persistence factory
   PersistenceFactory get factory {
     if (_factory == null) {
-      throw StateError('PersistenceTestHarness not initialized. Call initialize() first.');
+      throw StateError(
+          'PersistenceTestHarness not initialized. Call initialize() first.');
     }
     return _factory!;
   }

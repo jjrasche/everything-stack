@@ -79,7 +79,8 @@ void main() {
       print('  Total chunks: $totalChunks');
       print('  Total time: ${totalMs}ms');
       print('  Average per note: ${avgMs.toStringAsFixed(2)}ms');
-      print('  Average chunks per note: ${(totalChunks / 100).toStringAsFixed(2)}');
+      print(
+          '  Average chunks per note: ${(totalChunks / 100).toStringAsFixed(2)}');
 
       // Performance assertion: With MockEmbeddingService, should be fast
       // Real embedding API would be slower (~100ms per note)
@@ -177,7 +178,8 @@ void main() {
 
       // All chunks should respect max size
       for (final chunk in chunks) {
-        expect(chunk.tokenCount, lessThanOrEqualTo(chunker.config.maxChunkSize));
+        expect(
+            chunk.tokenCount, lessThanOrEqualTo(chunker.config.maxChunkSize));
       }
 
       // Verify total coverage (no text lost)

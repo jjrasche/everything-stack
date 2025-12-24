@@ -42,24 +42,18 @@ class STTInvocationRepositoryImpl implements STTInvocationRepository {
 
   @override
   Future<List<STTInvocation>> findByCorrelationId(String correlationId) async {
-    return _store.values
-        .where((i) => i.correlationId == correlationId)
-        .toList()
+    return _store.values.where((i) => i.correlationId == correlationId).toList()
       ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
   }
 
   @override
   Future<List<STTInvocation>> findSuccessful() async {
-    return _store.values
-        .where((i) => i.retryCount == 0)
-        .toList();
+    return _store.values.where((i) => i.retryCount == 0).toList();
   }
 
   @override
   Future<List<STTInvocation>> findFailed() async {
-    return _store.values
-        .where((i) => i.retryCount > 0)
-        .toList();
+    return _store.values.where((i) => i.retryCount > 0).toList();
   }
 
   @override
@@ -128,38 +122,28 @@ class LLMInvocationRepositoryImpl implements LLMInvocationRepository {
 
   @override
   Future<List<LLMInvocation>> findByCorrelationId(String correlationId) async {
-    return _store.values
-        .where((i) => i.correlationId == correlationId)
-        .toList()
+    return _store.values.where((i) => i.correlationId == correlationId).toList()
       ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
   }
 
   @override
   Future<List<LLMInvocation>> findSuccessful() async {
-    return _store.values
-        .where((i) => i.retryCount == 0)
-        .toList();
+    return _store.values.where((i) => i.retryCount == 0).toList();
   }
 
   @override
   Future<List<LLMInvocation>> findFailed() async {
-    return _store.values
-        .where((i) => i.retryCount > 0)
-        .toList();
+    return _store.values.where((i) => i.retryCount > 0).toList();
   }
 
   @override
   Future<List<LLMInvocation>> findByStopReason(String stopReason) async {
-    return _store.values
-        .where((i) => i.stopReason == stopReason)
-        .toList();
+    return _store.values.where((i) => i.stopReason == stopReason).toList();
   }
 
   @override
   Future<List<LLMInvocation>> findExceedingTokens(int tokenThreshold) async {
-    return _store.values
-        .where((i) => i.tokenCount > tokenThreshold)
-        .toList();
+    return _store.values.where((i) => i.tokenCount > tokenThreshold).toList();
   }
 
   @override
@@ -220,9 +204,7 @@ class TTSInvocationRepositoryImpl implements TTSInvocationRepository {
 
   @override
   Future<List<TTSInvocation>> findByCorrelationId(String correlationId) async {
-    return _store.values
-        .where((i) => i.correlationId == correlationId)
-        .toList()
+    return _store.values.where((i) => i.correlationId == correlationId).toList()
       ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
   }
 
@@ -238,16 +220,12 @@ class TTSInvocationRepositoryImpl implements TTSInvocationRepository {
 
   @override
   Future<List<TTSInvocation>> findSuccessful() async {
-    return _store.values
-        .where((i) => i.retryCount == 0)
-        .toList();
+    return _store.values.where((i) => i.retryCount == 0).toList();
   }
 
   @override
   Future<List<TTSInvocation>> findFailed() async {
-    return _store.values
-        .where((i) => i.retryCount > 0)
-        .toList();
+    return _store.values.where((i) => i.retryCount > 0).toList();
   }
 
   @override
@@ -309,17 +287,13 @@ class ContextManagerInvocationRepositoryImpl {
 
   Future<List<ContextManagerInvocation>> findByCorrelationId(
       String correlationId) async {
-    return _store.values
-        .where((i) => i.correlationId == correlationId)
-        .toList()
+    return _store.values.where((i) => i.correlationId == correlationId).toList()
       ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
   }
 
   Future<List<ContextManagerInvocation>> findByPersonality(
       String personalityId) async {
-    return _store.values
-        .where((i) => i.personalityId == personalityId)
-        .toList()
+    return _store.values.where((i) => i.personalityId == personalityId).toList()
       ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
   }
 
@@ -330,9 +304,7 @@ class ContextManagerInvocationRepositoryImpl {
   }
 
   Future<List<ContextManagerInvocation>> findWithErrors() async {
-    return _store.values
-        .where((i) => i.errorType != null)
-        .toList()
+    return _store.values.where((i) => i.errorType != null).toList()
       ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
   }
 

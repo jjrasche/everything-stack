@@ -118,7 +118,8 @@ class GroqService extends LLMService {
   @override
   Future<String> recordInvocation(dynamic invocation) async {
     if (invocation is! LLMInvocation) {
-      throw ArgumentError('Expected LLMInvocation, got ${invocation.runtimeType}');
+      throw ArgumentError(
+          'Expected LLMInvocation, got ${invocation.runtimeType}');
     }
     await _llmInvocationRepository.save(invocation);
     return invocation.uuid;
@@ -151,12 +152,13 @@ class GroqService extends LLMService {
       id: groqResp.id,
       content: groqResp.content,
       toolCalls: groqResp.toolCalls?.map((groqCall) {
-        return LLMToolCall(
-          id: groqCall.id,
-          toolName: groqCall.function.name,
-          params: groqCall.function.parsedArguments, // Parse JSON here
-        );
-      }).toList() ?? [],
+            return LLMToolCall(
+              id: groqCall.id,
+              toolName: groqCall.function.name,
+              params: groqCall.function.parsedArguments, // Parse JSON here
+            );
+          }).toList() ??
+          [],
       tokensUsed: groqResp.usage.totalTokens,
     );
   }
@@ -187,7 +189,8 @@ class GroqService extends LLMService {
           await Future.delayed(delay);
           return _makeRequest(body, attempt: attempt + 1);
         }
-        throw GroqRateLimitException('Rate limit exceeded after $maxRetries retries');
+        throw GroqRateLimitException(
+            'Rate limit exceeded after $maxRetries retries');
       } else if (response.statusCode >= 500 && response.statusCode < 600) {
         // Server error - retry once
         if (attempt < 2) {

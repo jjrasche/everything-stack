@@ -6,7 +6,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:everything_stack_template/domain/invocations.dart';
-import 'package:everything_stack_template/domain/feedback.dart' as feedback_model;
+import 'package:everything_stack_template/domain/feedback.dart'
+    as feedback_model;
 import 'package:everything_stack_template/ui/providers/trainable_providers.dart';
 
 class LLMFeedbackWidget extends ConsumerStatefulWidget {
@@ -33,7 +34,8 @@ class _LLMFeedbackWidgetState extends ConsumerState<LLMFeedbackWidget> {
   @override
   void initState() {
     super.initState();
-    _correctionController = TextEditingController(text: widget.invocation.response);
+    _correctionController =
+        TextEditingController(text: widget.invocation.response);
   }
 
   @override
@@ -99,16 +101,20 @@ class _LLMFeedbackWidgetState extends ConsumerState<LLMFeedbackWidget> {
               icon: Icons.check_circle,
               label: 'Confirm',
               color: Colors.green,
-              isSelected: _selectedAction == feedback_model.FeedbackAction.confirm,
-              onPressed: () => setState(() => _selectedAction = feedback_model.FeedbackAction.confirm),
+              isSelected:
+                  _selectedAction == feedback_model.FeedbackAction.confirm,
+              onPressed: () => setState(() =>
+                  _selectedAction = feedback_model.FeedbackAction.confirm),
               tooltip: 'Response is correct and helpful',
             ),
             _ActionButton(
               icon: Icons.edit,
               label: 'Correct',
               color: Colors.blue,
-              isSelected: _selectedAction == feedback_model.FeedbackAction.correct,
-              onPressed: () => setState(() => _selectedAction = feedback_model.FeedbackAction.correct),
+              isSelected:
+                  _selectedAction == feedback_model.FeedbackAction.correct,
+              onPressed: () => setState(() =>
+                  _selectedAction = feedback_model.FeedbackAction.correct),
               tooltip: 'Provide the correct response',
             ),
             _ActionButton(
@@ -116,15 +122,18 @@ class _LLMFeedbackWidgetState extends ConsumerState<LLMFeedbackWidget> {
               label: 'Deny',
               color: Colors.red,
               isSelected: _selectedAction == feedback_model.FeedbackAction.deny,
-              onPressed: () => setState(() => _selectedAction = feedback_model.FeedbackAction.deny),
+              onPressed: () => setState(
+                  () => _selectedAction = feedback_model.FeedbackAction.deny),
               tooltip: 'Response is incorrect or unhelpful',
             ),
             _ActionButton(
               icon: Icons.skip_next,
               label: 'Ignore',
               color: Colors.grey,
-              isSelected: _selectedAction == feedback_model.FeedbackAction.ignore,
-              onPressed: () => setState(() => _selectedAction = feedback_model.FeedbackAction.ignore),
+              isSelected:
+                  _selectedAction == feedback_model.FeedbackAction.ignore,
+              onPressed: () => setState(
+                  () => _selectedAction = feedback_model.FeedbackAction.ignore),
               tooltip: 'Skip learning from this',
             ),
           ],
@@ -155,7 +164,8 @@ class _LLMFeedbackWidgetState extends ConsumerState<LLMFeedbackWidget> {
         ],
 
         // Save button
-        if (_selectedAction != null && _selectedAction != feedback_model.FeedbackAction.ignore)
+        if (_selectedAction != null &&
+            _selectedAction != feedback_model.FeedbackAction.ignore)
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(

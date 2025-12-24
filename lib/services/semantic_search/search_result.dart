@@ -62,8 +62,7 @@ class SemanticSearchResult {
   }
 
   /// Get human-readable similarity percentage
-  String get similarityPercent =>
-      '${(similarity * 100).toStringAsFixed(1)}%';
+  String get similarityPercent => '${(similarity * 100).toStringAsFixed(1)}%';
 
   @override
   String toString() =>

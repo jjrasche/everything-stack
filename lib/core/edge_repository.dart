@@ -61,7 +61,8 @@ class DuplicateEdgeException implements Exception {
 class EdgeRepository {
   final EdgePersistenceAdapter _adapter;
 
-  EdgeRepository({required EdgePersistenceAdapter adapter}) : _adapter = adapter;
+  EdgeRepository({required EdgePersistenceAdapter adapter})
+      : _adapter = adapter;
 
   // ============ CRUD ============
 

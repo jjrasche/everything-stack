@@ -123,11 +123,9 @@ class SemanticSearchService {
     if (chunkingService != null) {
       final isConsistent = (chunkingService as dynamic).isIndexConsistent();
       if (!isConsistent) {
-        throw StateError(
-          'HNSW semantic index is stale or missing. '
-          'Search is disabled to prevent incomplete results. '
-          'Call rebuildIndex() to repair the index and enable search.'
-        );
+        throw StateError('HNSW semantic index is stale or missing. '
+            'Search is disabled to prevent incomplete results. '
+            'Call rebuildIndex() to repair the index and enable search.');
       }
     }
 

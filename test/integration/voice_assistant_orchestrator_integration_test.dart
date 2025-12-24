@@ -246,7 +246,8 @@ class MockTurnRepository extends Mock implements TurnRepository {
   List<Turn> getAllTurns() => _turns;
 }
 
-class MockSTTInvocationRepository extends Mock implements STTInvocationRepository {
+class MockSTTInvocationRepository extends Mock
+    implements STTInvocationRepository {
   final List<STTInvocation> _invocations = [];
 
   @override
@@ -258,7 +259,8 @@ class MockSTTInvocationRepository extends Mock implements STTInvocationRepositor
   List<STTInvocation> getAll() => _invocations;
 }
 
-class MockLLMInvocationRepository extends Mock implements LLMInvocationRepository {
+class MockLLMInvocationRepository extends Mock
+    implements LLMInvocationRepository {
   final List<LLMInvocation> _invocations = [];
 
   @override
@@ -270,7 +272,8 @@ class MockLLMInvocationRepository extends Mock implements LLMInvocationRepositor
   List<LLMInvocation> getAll() => _invocations;
 }
 
-class MockTTSInvocationRepository extends Mock implements TTSInvocationRepository {
+class MockTTSInvocationRepository extends Mock
+    implements TTSInvocationRepository {
   final List<TTSInvocation> _invocations = [];
 
   @override

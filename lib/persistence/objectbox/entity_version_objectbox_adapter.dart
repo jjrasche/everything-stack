@@ -133,7 +133,8 @@ class EntityVersionObjectBoxAdapter
   }
 
   @override
-  Future<List<EntityVersion>> findByEntityUuidUnsynced(String entityUuid) async {
+  Future<List<EntityVersion>> findByEntityUuidUnsynced(
+      String entityUuid) async {
     final query = box
         .query(EntityVersionOB_.entityUuid
             .equals(entityUuid)

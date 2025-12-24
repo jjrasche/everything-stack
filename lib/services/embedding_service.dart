@@ -46,6 +46,7 @@ import 'dart:convert';
 import 'dart:math' as math;
 
 import 'dart:math' show sqrt, sin;
+
 /// Exception thrown when embedding generation fails.
 class EmbeddingServiceException implements Exception {
   final String message;
@@ -255,6 +256,7 @@ class MockEmbeddingService extends EmbeddingService {
     return vector.map((v) => v / norm).toList();
   }
 }
+
 ///
 /// Requires API key passed to constructor or via compile-time environment.
 /// Uses jina-embeddings-v3 model with Matryoshka Representation Learning

@@ -39,7 +39,8 @@ import 'package:everything_stack_template/domain/stt_invocation_repository.dart'
 /// - **Connection timeout**: 10s to establish WebSocket
 /// - **Idle timeout**: 30s without transcript → assume connection dead
 /// - **No automatic retry**: Caller must reconnect on timeout
-abstract class STTService extends StreamingService<Uint8List, String> implements Trainable {
+abstract class STTService extends StreamingService<Uint8List, String>
+    implements Trainable {
   /// Global instance (default: NullSTTService)
   ///
   /// Replace with DeepgramSTTService in bootstrap:
@@ -245,7 +246,8 @@ class DeepgramSTTService extends STTService {
                   }
 
                   // Check speech_final flag for interim finalization
-                  final speechFinal = results[0]['speech_final'] as bool? ?? false;
+                  final speechFinal =
+                      results[0]['speech_final'] as bool? ?? false;
                   if (speechFinal) {
                     // Optional: Signal interim finalization
                     print('Speech finalized');
@@ -356,7 +358,8 @@ class DeepgramSTTService extends STTService {
   @override
   Future<String> recordInvocation(dynamic invocation) async {
     if (invocation is! STTInvocation) {
-      throw ArgumentError('Expected STTInvocation, got ${invocation.runtimeType}');
+      throw ArgumentError(
+          'Expected STTInvocation, got ${invocation.runtimeType}');
     }
     await _sttInvocationRepository.save(invocation);
     return invocation.uuid;

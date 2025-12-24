@@ -108,5 +108,6 @@ class ChunkingConfig {
   }
 
   @override
-  String toString() => 'ChunkingConfig($name: window=$windowSize, overlap=$overlap)';
+  String toString() =>
+      'ChunkingConfig($name: window=$windowSize, overlap=$overlap)';
 }

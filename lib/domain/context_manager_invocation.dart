@@ -327,10 +327,9 @@ class ContextManagerInvocation extends BaseEntity {
     }
 
     if (json['toolsPassedToLLM'] != null) {
-      invocation.toolsPassedToLLM =
-          (json['toolsPassedToLLM'] as List<dynamic>)
-              .map((e) => e as String)
-              .toList();
+      invocation.toolsPassedToLLM = (json['toolsPassedToLLM'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList();
     }
 
     if (json['toolScores'] != null) {

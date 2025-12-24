@@ -32,7 +32,8 @@ class TTSServiceTrainable implements Trainable {
   @override
   Future<String> recordInvocation(dynamic invocation) async {
     if (invocation is! TTSInvocation) {
-      throw ArgumentError('Expected TTSInvocation, got ${invocation.runtimeType}');
+      throw ArgumentError(
+          'Expected TTSInvocation, got ${invocation.runtimeType}');
     }
 
     await _invocationRepository.save(invocation);

@@ -18,10 +18,10 @@ import 'package:objectbox/objectbox.dart';
 
 /// Status of an embedding task in the queue.
 enum TaskStatus {
-  pending,    // Waiting to be processed
+  pending, // Waiting to be processed
   processing, // Currently being processed
-  completed,  // Successfully completed
-  failed,     // Failed after max retries
+  completed, // Successfully completed
+  failed, // Failed after max retries
 }
 
 @Entity()

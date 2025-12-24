@@ -32,7 +32,8 @@ class LLMServiceTrainable implements Trainable {
   @override
   Future<String> recordInvocation(dynamic invocation) async {
     if (invocation is! LLMInvocation) {
-      throw ArgumentError('Expected LLMInvocation, got ${invocation.runtimeType}');
+      throw ArgumentError(
+          'Expected LLMInvocation, got ${invocation.runtimeType}');
     }
 
     await _invocationRepository.save(invocation);

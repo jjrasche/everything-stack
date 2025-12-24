@@ -14,7 +14,12 @@ import 'dart:io';
 import 'package:everything_stack_template/domain/event.dart';
 import 'package:everything_stack_template/domain/invocations.dart';
 import 'package:everything_stack_template/domain/context_manager_invocation.dart';
-import 'package:everything_stack_template/repositories/invocation_repository_impl.dart' show STTInvocationRepositoryImpl, LLMInvocationRepositoryImpl, TTSInvocationRepositoryImpl, ContextManagerInvocationRepositoryImpl;
+import 'package:everything_stack_template/repositories/invocation_repository_impl.dart'
+    show
+        STTInvocationRepositoryImpl,
+        LLMInvocationRepositoryImpl,
+        TTSInvocationRepositoryImpl,
+        ContextManagerInvocationRepositoryImpl;
 import 'package:everything_stack_template/services/stt_service.dart';
 import 'package:everything_stack_template/services/groq_service.dart';
 import 'package:everything_stack_template/services/tts_service.dart';
@@ -98,15 +103,18 @@ void main() {
       expect(ttsId, isNotEmpty);
 
       // VERIFY: Can query all 3 by correlationId through repositories
-      final sttInvs = await sttInvocationRepo.findByCorrelationId(correlationId);
+      final sttInvs =
+          await sttInvocationRepo.findByCorrelationId(correlationId);
       expect(sttInvs.length, equals(1));
       expect(sttInvs.first.output, contains('timer'));
 
-      final llmInvs = await llmInvocationRepo.findByCorrelationId(correlationId);
+      final llmInvs =
+          await llmInvocationRepo.findByCorrelationId(correlationId);
       expect(llmInvs.length, equals(1));
       expect(llmInvs.first.response, contains('Setting'));
 
-      final ttsInvs = await ttsInvocationRepo.findByCorrelationId(correlationId);
+      final ttsInvs =
+          await ttsInvocationRepo.findByCorrelationId(correlationId);
       expect(ttsInvs.length, equals(1));
       expect(ttsInvs.first.text, contains('Setting'));
 
@@ -163,20 +171,27 @@ void main() {
       // Step 5: VERIFY all 4 invocations were created by the pipeline
 
       // STT should exist (we created it)
-      final sttInvs = await sttInvocationRepo.findByCorrelationId(correlationId);
-      expect(sttInvs.length, greaterThanOrEqualTo(1), reason: 'STT invocation should exist');
+      final sttInvs =
+          await sttInvocationRepo.findByCorrelationId(correlationId);
+      expect(sttInvs.length, greaterThanOrEqualTo(1),
+          reason: 'STT invocation should exist');
 
       // ContextManager should have recorded its invocation
       final cmInvs = await cmInvocationRepo.findByCorrelationId(correlationId);
-      expect(cmInvs.length, greaterThanOrEqualTo(1), reason: 'ContextManager invocation should exist');
+      expect(cmInvs.length, greaterThanOrEqualTo(1),
+          reason: 'ContextManager invocation should exist');
 
       // LLM should have recorded (via pipeline)
-      final llmInvs = await llmInvocationRepo.findByCorrelationId(correlationId);
-      expect(llmInvs.length, greaterThanOrEqualTo(1), reason: 'LLM invocation should exist (pipeline called)');
+      final llmInvs =
+          await llmInvocationRepo.findByCorrelationId(correlationId);
+      expect(llmInvs.length, greaterThanOrEqualTo(1),
+          reason: 'LLM invocation should exist (pipeline called)');
 
       // TTS should have recorded (via pipeline)
-      final ttsInvs = await ttsInvocationRepo.findByCorrelationId(correlationId);
-      expect(ttsInvs.length, greaterThanOrEqualTo(1), reason: 'TTS invocation should exist (pipeline called)');
+      final ttsInvs =
+          await ttsInvocationRepo.findByCorrelationId(correlationId);
+      expect(ttsInvs.length, greaterThanOrEqualTo(1),
+          reason: 'TTS invocation should exist (pipeline called)');
 
       // All must have SAME correlationId
       if (sttInvs.isNotEmpty) {
@@ -193,8 +208,7 @@ void main() {
       }
     });
 
-    test(
-        'Phase D REAL: Event pipeline triggers LLM + TTS (NOW WIRED)',
+    test('Phase D REAL: Event pipeline triggers LLM + TTS (NOW WIRED)',
         () async {
       // THIS TESTS THE STUB, NOT THE REAL PIPELINE
       // The stub manually creates invocations without calling real services
@@ -230,10 +244,13 @@ void main() {
       await Future.delayed(const Duration(milliseconds: 500));
 
       // Verify invocations were created
-      final sttInvs = await sttInvocationRepo.findByCorrelationId(correlationId);
+      final sttInvs =
+          await sttInvocationRepo.findByCorrelationId(correlationId);
       final cmInvs = await cmInvocationRepo.findByCorrelationId(correlationId);
-      final llmInvs = await llmInvocationRepo.findByCorrelationId(correlationId);
-      final ttsInvs = await ttsInvocationRepo.findByCorrelationId(correlationId);
+      final llmInvs =
+          await llmInvocationRepo.findByCorrelationId(correlationId);
+      final ttsInvs =
+          await ttsInvocationRepo.findByCorrelationId(correlationId);
 
       // STT exists (we created it)
       expect(sttInvs.length, greaterThanOrEqualTo(1),
@@ -294,7 +311,8 @@ void main() {
       expect(
         afterRecord.contains('synthesize('),
         true,
-        reason: 'After recording invocation, ContextManager must call synthesize()',
+        reason:
+            'After recording invocation, ContextManager must call synthesize()',
       );
 
       print(
@@ -385,4 +403,3 @@ class _SimpleContextManagerStub {
     }
   }
 }
-

@@ -226,7 +226,8 @@ Future<void> initializeEverythingStack({
     await dotenv.load(fileName: '.env');
   } catch (e) {
     // .env file is optional - continue with compile-time env vars if not found
-    print('Note: .env file not found, using compile-time environment variables');
+    print(
+        'Note: .env file not found, using compile-time environment variables');
   }
 
   final cfg = config ?? EverythingStackConfig.fromEnvironment();

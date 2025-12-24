@@ -45,7 +45,8 @@ class NarrativeDelta {
     required this.promoted,
   });
 
-  bool get hasChanges => added.isNotEmpty || removed.isNotEmpty || promoted.isNotEmpty;
+  bool get hasChanges =>
+      added.isNotEmpty || removed.isNotEmpty || promoted.isNotEmpty;
 }
 
 class NarrativeCheckpoint {
@@ -78,7 +79,6 @@ class NarrativeCheckpoint {
       // User can remove entries that feel noisy
       final sessionEntries = await _retriever.findByScope('session');
       final dayEntries = await _retriever.findByScope('day');
-
 
       // Simulate user review of Session/Day (in real UI, this is interactive)
       final (sessionRemoved, sessionKept) =
@@ -153,7 +153,8 @@ class NarrativeCheckpoint {
     }
 
     // Groq generates suggestions for project/life themes
-    final suggestions = await _generateProjectLifeSuggestions(context.toString());
+    final suggestions =
+        await _generateProjectLifeSuggestions(context.toString());
 
     // In real implementation, suggestions appear as conversational prompt
     // User confirms/edits via chat (not picking from list)
@@ -173,7 +174,8 @@ class NarrativeCheckpoint {
     final messages = <Map<String, dynamic>>[
       {
         'role': 'system',
-        'content': '''You are helping the user identify deeper project and life narratives.
+        'content':
+            '''You are helping the user identify deeper project and life narratives.
 Based on their session and day narratives, suggest any emerging projects or life identity patterns.
 
 Format: Return JSON array with suggested narratives.
@@ -226,7 +228,8 @@ Response format:
   /// Parse Groq response into NarrativeEntry objects (Projects/Life only)
   List<NarrativeEntry> _parseProjectLifeResponse(String response) {
     try {
-      final jsonMatch = RegExp(r'\[\s*\{.*\}\s*\]', dotAll: true).firstMatch(response);
+      final jsonMatch =
+          RegExp(r'\[\s*\{.*\}\s*\]', dotAll: true).firstMatch(response);
       if (jsonMatch == null) {
         return [];
       }
@@ -254,8 +257,12 @@ Response format:
   bool _shouldFilter(NarrativeEntry entry) {
     final content = entry.content.toLowerCase();
     final noisePatterns = [
-      'talking about', 'discussed', 'mentioned', 'said',
-      'in the conversation', 'during this chat',
+      'talking about',
+      'discussed',
+      'mentioned',
+      'said',
+      'in the conversation',
+      'during this chat',
     ];
 
     return noisePatterns.any((pattern) => content.contains(pattern));

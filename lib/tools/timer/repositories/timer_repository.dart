@@ -49,7 +49,8 @@ class TimerRepository extends EntityRepository<Timer> {
   Future<List<Timer>> findFired() async {
     final all = await findAll();
     return all.where((timer) => timer.fired).toList()
-      ..sort((a, b) => (b.firedAt ?? b.endsAt).compareTo(a.firedAt ?? a.endsAt));
+      ..sort(
+          (a, b) => (b.firedAt ?? b.endsAt).compareTo(a.firedAt ?? a.endsAt));
   }
 
   /// Find timer by label

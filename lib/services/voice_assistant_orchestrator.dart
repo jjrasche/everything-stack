@@ -244,7 +244,8 @@ class VoiceAssistantOrchestrator {
           }
         }
       } catch (e) {
-        turn.result = 'partial'; // LLM worked, but response generation had issues
+        turn.result =
+            'partial'; // LLM worked, but response generation had issues
         turn.failureComponent = 'llm';
         turn.errorMessage = 'LLM generation failed: $e';
         llmResponse = 'I encountered an error processing your request.';
@@ -263,7 +264,8 @@ class VoiceAssistantOrchestrator {
         }
 
         // Concatenate audio chunks
-        final totalLength = chunks.fold<int>(0, (sum, chunk) => sum + chunk.length);
+        final totalLength =
+            chunks.fold<int>(0, (sum, chunk) => sum + chunk.length);
         final buffer = Uint8List(totalLength);
         int offset = 0;
         for (final chunk in chunks) {
@@ -463,7 +465,8 @@ class VoiceAssistantOrchestrator {
               chunks.add(chunk);
             }
 
-            final totalLength = chunks.fold<int>(0, (sum, chunk) => sum + chunk.length);
+            final totalLength =
+                chunks.fold<int>(0, (sum, chunk) => sum + chunk.length);
             final buffer = Uint8List(totalLength);
             int offset = 0;
             for (final chunk in chunks) {
@@ -515,7 +518,8 @@ class VoiceAssistantOrchestrator {
           turn.latencyMs = DateTime.now().difference(startTime).inMilliseconds;
           await turnRepo.save(turn);
 
-          completer.complete(_errorResult(turn, 'Orchestrator failed: $e', 'orchestrator'));
+          completer.complete(
+              _errorResult(turn, 'Orchestrator failed: $e', 'orchestrator'));
         }
       },
       onError: (error) {

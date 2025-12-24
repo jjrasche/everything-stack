@@ -44,7 +44,8 @@ import 'package:everything_stack_template/domain/adaptation_state.dart';
 class STTService implements Trainable {
   final InvocationRepository<STTInvocation> _invocationRepository;
   final FeedbackRepository _feedbackRepository;
-  final AdaptationStateRepository<STTAdaptationState> _adaptationStateRepository;
+  final AdaptationStateRepository<STTAdaptationState>
+      _adaptationStateRepository;
 
   // Current adaptation state (cached for performance)
   STTAdaptationState? _currentState;
@@ -63,7 +64,8 @@ class STTService implements Trainable {
   @override
   Future<String> recordInvocation(dynamic invocation) async {
     if (invocation is! STTInvocation) {
-      throw ArgumentError('Expected STTInvocation, got ${invocation.runtimeType}');
+      throw ArgumentError(
+          'Expected STTInvocation, got ${invocation.runtimeType}');
     }
 
     final saved = await _invocationRepository.save(invocation);
@@ -81,13 +83,14 @@ class STTService implements Trainable {
         scope: 'user',
         userId: userId,
       );
-      state.confidenceThreshold = (await _adaptationStateRepository.getGlobal())
-              ?.confidenceThreshold ??
-          0.65;
+      state.confidenceThreshold =
+          (await _adaptationStateRepository.getGlobal())?.confidenceThreshold ??
+              0.65;
     }
 
     // Get all feedback for this turn's STT invocations
-    final feedbacks = await _feedbackRepository.findByTurnAndComponent(turnId, 'stt');
+    final feedbacks =
+        await _feedbackRepository.findByTurnAndComponent(turnId, 'stt');
 
     if (feedbacks.isEmpty) {
       return; // No feedback to learn from
@@ -104,7 +107,8 @@ class STTService implements Trainable {
       }
 
       // Get the invocation that was fed back on
-      final invocation = await _invocationRepository.findById(feedback.invocationId);
+      final invocation =
+          await _invocationRepository.findById(feedback.invocationId);
       if (invocation == null) {
         continue;
       }
@@ -187,7 +191,8 @@ class STTService implements Trainable {
   }
 
   /// Get all STT invocations for a context type
-  Future<List<STTInvocation>> getInvocationsByContextType(String contextType) async {
+  Future<List<STTInvocation>> getInvocationsByContextType(
+      String contextType) async {
     return await _invocationRepository.findByContextType(contextType);
   }
 

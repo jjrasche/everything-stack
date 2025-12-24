@@ -98,7 +98,8 @@ void main() {
         name: 'Test',
         systemPrompt: 'Test prompt',
       );
-      personality.namespaceAttention.setThreshold('task', 0.8); // High threshold
+      personality.namespaceAttention
+          .setThreshold('task', 0.8); // High threshold
 
       // If semantic score is 0.6, it won't pass 0.8 threshold
       expect(0.6 < 0.8, true);
@@ -275,8 +276,7 @@ void main() {
 
     test('calculates average confidence across multiple tools', () {
       final confidences = [0.9, 0.8, 0.7];
-      final avg =
-          confidences.reduce((a, b) => a + b) / confidences.length;
+      final avg = confidences.reduce((a, b) => a + b) / confidences.length;
 
       expect(avg, closeTo(0.8, 0.01));
     });

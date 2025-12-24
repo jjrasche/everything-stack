@@ -222,8 +222,7 @@ class MCPExecutor {
       if (tasks.isNotEmpty) {
         buffer.writeln('Open tasks:');
         for (final task in tasks) {
-          buffer.writeln(
-              '- ${task['title']} (priority: ${task['priority']})');
+          buffer.writeln('- ${task['title']} (priority: ${task['priority']})');
         }
       }
     }

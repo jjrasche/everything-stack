@@ -51,7 +51,9 @@ class TaskIndexedDBAdapter extends BaseIndexedDBAdapter<Task> {
   /// Find tasks by priority
   Future<List<Task>> findByPriority(String priority) async {
     final all = await findAll();
-    return all.where((task) => task.priority == priority && !task.completed).toList();
+    return all
+        .where((task) => task.priority == priority && !task.completed)
+        .toList();
   }
 
   /// Find tasks by owner

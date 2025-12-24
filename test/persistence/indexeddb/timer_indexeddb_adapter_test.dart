@@ -148,7 +148,8 @@ void main() {
       final all = await adapter.findAll();
 
       expect(all.length, 3);
-      expect(all.map((t) => t.label).toSet(), {'Timer 1', 'Timer 2', 'Timer 3'});
+      expect(
+          all.map((t) => t.label).toSet(), {'Timer 1', 'Timer 2', 'Timer 3'});
     });
 
     test('count returns correct number', () async {

@@ -14,7 +14,6 @@
 /// - MockNoteRepository: Repository with mock adapter
 /// - MockEmbeddingService: Imported from main library
 
-
 import 'dart:convert';
 import 'dart:math' show sqrt, sin;
 import 'package:everything_stack_template/core/base_entity.dart';
@@ -155,7 +154,7 @@ class TestNote extends BaseEntity with SemanticIndexable {
   }
 
   late String _uuid;
-  
+
   // Support dynamic property access for semantic indexing handler
   final Map<String, dynamic> _dynamicProperties = {};
 
@@ -171,7 +170,7 @@ class TestNote extends BaseEntity with SemanticIndexable {
   String getChunkingConfig() {
     return 'parent';
   }
-  
+
   @override
   dynamic noSuchMethod(Invocation invocation) {
     if (invocation.isGetter) {
@@ -184,6 +183,7 @@ class TestNote extends BaseEntity with SemanticIndexable {
     return super.noSuchMethod(invocation);
   }
 }
+
 class TestNoteNonIndexable extends BaseEntity {
   String title;
   String content;
@@ -263,7 +263,8 @@ class MockNoteAdapter extends PersistenceAdapter<TestNote> {
 
   @override
   Future<void> rebuildIndex(
-      Future<List<double>?> Function(TestNote entity) generateEmbedding) async {}
+      Future<List<double>?> Function(TestNote entity)
+          generateEmbedding) async {}
 
   @override
   Future<List<TestNote>> findUnsynced() async => [];
@@ -324,17 +325,17 @@ class MockNoteRepository extends EntityRepository<TestNote> {
     required EmbeddingService embeddingService,
     required ChunkingService chunkingService,
   }) : super(
-    adapter: adapter,
-    embeddingService: embeddingService,
-    chunkingService: chunkingService,
-    handlers: GenericHandlerFactory<TestNote>(
-      embeddingService: embeddingService,
-      chunkingService: chunkingService,
-      versionRepository: null,
-      adapter: adapter,
-      edgeRepository: null,
-    ).createHandlers(),
-  );
+          adapter: adapter,
+          embeddingService: embeddingService,
+          chunkingService: chunkingService,
+          handlers: GenericHandlerFactory<TestNote>(
+            embeddingService: embeddingService,
+            chunkingService: chunkingService,
+            versionRepository: null,
+            adapter: adapter,
+            edgeRepository: null,
+          ).createHandlers(),
+        );
 
   // Helper for testing non-SemanticIndexable entities
   Future<int> saveNonIndexable(TestNoteNonIndexable entity) async {

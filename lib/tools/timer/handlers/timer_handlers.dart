@@ -32,7 +32,8 @@ void registerTimerTools(ToolRegistry registry, TimerRepository timerRepo) {
         'properties': {
           'label': {
             'type': 'string',
-            'description': 'Timer label (e.g., "5 minute break", "pasta timer")',
+            'description':
+                'Timer label (e.g., "5 minute break", "pasta timer")',
           },
           'durationSeconds': {
             'type': 'integer',

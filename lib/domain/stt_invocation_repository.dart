@@ -24,7 +24,8 @@ abstract class STTInvocationRepository {
 
   /// Find invocations with low confidence (< threshold)
   /// [confidenceThreshold] Default 0.7
-  Future<List<STTInvocation>> findLowConfidence({double confidenceThreshold = 0.7});
+  Future<List<STTInvocation>> findLowConfidence(
+      {double confidenceThreshold = 0.7});
 
   /// Find invocations by context type
   /// [contextType] One of: 'conversation', 'retry', 'background', 'test'

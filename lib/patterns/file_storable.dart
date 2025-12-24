@@ -151,8 +151,9 @@ mixin FileStorable {
       return;
     }
     final List<dynamic> decoded = jsonDecode(value);
-    attachments =
-        decoded.map((json) => FileMetadata.fromJson(json as Map<String, dynamic>)).toList();
+    attachments = decoded
+        .map((json) => FileMetadata.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 
   /// Add attachment to this entity

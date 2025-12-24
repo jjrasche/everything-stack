@@ -233,7 +233,8 @@ class ContextManager implements Trainable {
 
           // Call TTS to synthesize the LLM response
           // Invocation was already recorded above
-          await for (final _ in ttsService.synthesize(executionResult.finalResponse!)) {
+          await for (final _
+              in ttsService.synthesize(executionResult.finalResponse!)) {
             // Stream audio chunks (application layer handles playback)
           }
         } catch (e) {
@@ -304,8 +305,7 @@ class ContextManager implements Trainable {
   ) async {
     // Get all namespaces
     final namespaces = await namespaceRepo.findAll();
-    invocation.namespacesConsidered =
-        namespaces.map((ns) => ns.name).toList();
+    invocation.namespacesConsidered = namespaces.map((ns) => ns.name).toList();
 
     final namespaceNames = namespaces.map((ns) => ns.name).toList();
 
@@ -322,11 +322,13 @@ class ContextManager implements Trainable {
       messages: [
         {
           'role': 'system',
-          'content': 'Pick the namespace. Respond with ONLY the namespace name.',
+          'content':
+              'Pick the namespace. Respond with ONLY the namespace name.',
         },
         {
           'role': 'user',
-          'content': 'User said: "$utterance"\n\nNamespaces: ${namespaceNames.join(", ")}',
+          'content':
+              'User said: "$utterance"\n\nNamespaces: ${namespaceNames.join(", ")}',
         },
       ],
       tools: null,
@@ -369,8 +371,7 @@ class ContextManager implements Trainable {
       // Semantic score
       double semanticScore = 0.0;
       if (tool.semanticCentroid != null) {
-        semanticScore =
-            _cosineSimilarity(embedding, tool.semanticCentroid!);
+        semanticScore = _cosineSimilarity(embedding, tool.semanticCentroid!);
       }
 
       // Statistical score (from training)
@@ -393,8 +394,7 @@ class ContextManager implements Trainable {
         .where((t) => !passedTools.contains(t))
         .map((t) => t.fullName)
         .toList();
-    invocation.toolsPassedToLLM =
-        passedTools.map((t) => t.fullName).toList();
+    invocation.toolsPassedToLLM = passedTools.map((t) => t.fullName).toList();
 
     return passedTools;
   }
@@ -559,8 +559,7 @@ class ContextManager implements Trainable {
         }
 
         if (utterance.isNotEmpty) {
-          final newEmbedding =
-              await embeddingService.generate(utterance);
+          final newEmbedding = await embeddingService.generate(utterance);
           personality.namespaceAttention
               .updateCentroid(correctNamespace, newEmbedding);
         }
@@ -583,16 +582,12 @@ class ContextManager implements Trainable {
           final currentSuccessRate =
               toolAttention.getSuccessRate(selectedToolName);
           toolAttention.setSuccessRate(
-              selectedToolName,
-              (currentSuccessRate - 0.1)
-                  .clamp(0.0, 1.0));
+              selectedToolName, (currentSuccessRate - 0.1).clamp(0.0, 1.0));
 
           final correctSuccessRate =
               toolAttention.getSuccessRate(correctToolName);
           toolAttention.setSuccessRate(
-              correctToolName,
-              (correctSuccessRate + 0.1)
-                  .clamp(0.0, 1.0));
+              correctToolName, (correctSuccessRate + 0.1).clamp(0.0, 1.0));
         }
 
         // Update keyword weights
@@ -613,7 +608,8 @@ class ContextManager implements Trainable {
             toolAttention.setKeywordWeight(
                 correctToolName, keyword, currentWeight + 0.2);
 
-            if (selectedToolName != null && selectedToolName != correctToolName) {
+            if (selectedToolName != null &&
+                selectedToolName != correctToolName) {
               final selectedWeight =
                   toolAttention.getKeywordWeight(selectedToolName, keyword);
               toolAttention.setKeywordWeight(selectedToolName, keyword,

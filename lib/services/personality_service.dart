@@ -64,7 +64,8 @@ class PersonalityService {
     // No personalities exist - create default
     final defaultPersonality = Personality(
       name: 'Default Assistant',
-      systemPrompt: '''You are a helpful voice assistant designed to help with tasks and time management.
+      systemPrompt:
+          '''You are a helpful voice assistant designed to help with tasks and time management.
 Your role is to understand natural language requests and execute them accurately.
 Be concise in responses, especially for voice interaction.
 Ask clarifying questions if needed, but keep them brief.''',

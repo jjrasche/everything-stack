@@ -13,7 +13,8 @@
 
 /// System prompt for narrative entry extraction.
 /// Used by NarrativeThinker to extract new insights from conversation.
-String getNarrativeThinkerSystemPrompt() => '''You are the system's self-model extractor. Your job is to identify new insights about the user's identity, goals, and reasoning from conversation.
+String getNarrativeThinkerSystemPrompt() =>
+    '''You are the system's self-model extractor. Your job is to identify new insights about the user's identity, goals, and reasoning from conversation.
 
 CRITICAL RULES:
 1. Extract NEW narrative entries ONLY. Skip if redundant with existing narratives.
@@ -66,7 +67,8 @@ Why incorrect: Too long, vague reasoning, premature scope elevation to "life"
 
 /// System prompt for Project/Life theme suggestion.
 /// Used by NarrativeCheckpoint to drive conversational refinement.
-String getNarrativeCheckpointSystemPrompt() => '''You are helping the user identify deeper project and life narratives.
+String getNarrativeCheckpointSystemPrompt() =>
+    '''You are helping the user identify deeper project and life narratives.
 Based on their session and day narratives, suggest any emerging projects or life identity patterns.
 
 RULES:
@@ -141,117 +143,130 @@ class NarrativeThinkerTestCase {
 
 /// Test cases for NarrativeThinker prompt
 List<NarrativeThinkerTestCase> getNarrativeThinkerTestCases() => [
-  NarrativeThinkerTestCase(
-    id: 'extract-clear-learning',
-    name: 'Extract Clear Learning Insight',
-    description: 'User explicitly states learning goal',
-    utterance: 'I want to learn Rust because it teaches ownership and memory safety',
-    intent: {
-      'classification': 'intent:learning',
-      'confidence': 0.95,
-      'reasoning': 'User expressing learning goal',
-    },
-    chatHistory: [
-      {'role': 'user', 'content': 'I want to learn Rust because it teaches ownership and memory safety'},
-    ],
-    existingNarratives: [],
-    expectedBehavior: '''Should extract:
+      NarrativeThinkerTestCase(
+        id: 'extract-clear-learning',
+        name: 'Extract Clear Learning Insight',
+        description: 'User explicitly states learning goal',
+        utterance:
+            'I want to learn Rust because it teaches ownership and memory safety',
+        intent: {
+          'classification': 'intent:learning',
+          'confidence': 0.95,
+          'reasoning': 'User expressing learning goal',
+        },
+        chatHistory: [
+          {
+            'role': 'user',
+            'content':
+                'I want to learn Rust because it teaches ownership and memory safety'
+          },
+        ],
+        existingNarratives: [],
+        expectedBehavior: '''Should extract:
 - Content: "[Atomic idea about Rust]. Because [reasoning about memory/ownership]."
 - Scope: "session" (current conversation)
 - Type: "learning"
 - NOT life scope (specific tech skill, not identity)
 - Format: Valid JSON array with single entry
 - No hallucinations or invented reasoning''',
-  ),
-
-  NarrativeThinkerTestCase(
-    id: 'dedup-redundant-entry',
-    name: 'Skip Redundant Entry',
-    description: 'Similar content exists, should detect and skip',
-    utterance: 'Rust is really good for memory safety. That\'s why I like learning it.',
-    intent: {
-      'classification': 'intent:learning',
-      'confidence': 0.90,
-      'reasoning': 'Reinforcing previous learning goal',
-    },
-    chatHistory: [
-      {'role': 'user', 'content': 'I want to learn Rust for memory safety'},
-      {'role': 'assistant', 'content': 'Great, Rust is powerful for that.'},
-      {'role': 'user', 'content': 'Rust is really good for memory safety. That\'s why I like learning it.'},
-    ],
-    existingNarratives: [
-      'Rust teaches memory safety. Because explicit control prevents bugs.',
-    ],
-    expectedBehavior: '''Should detect dedup:
+      ),
+      NarrativeThinkerTestCase(
+        id: 'dedup-redundant-entry',
+        name: 'Skip Redundant Entry',
+        description: 'Similar content exists, should detect and skip',
+        utterance:
+            'Rust is really good for memory safety. That\'s why I like learning it.',
+        intent: {
+          'classification': 'intent:learning',
+          'confidence': 0.90,
+          'reasoning': 'Reinforcing previous learning goal',
+        },
+        chatHistory: [
+          {'role': 'user', 'content': 'I want to learn Rust for memory safety'},
+          {'role': 'assistant', 'content': 'Great, Rust is powerful for that.'},
+          {
+            'role': 'user',
+            'content':
+                'Rust is really good for memory safety. That\'s why I like learning it.'
+          },
+        ],
+        existingNarratives: [
+          'Rust teaches memory safety. Because explicit control prevents bugs.',
+        ],
+        expectedBehavior: '''Should detect dedup:
 - NEW utterance is ~90% semantically similar to existing narrative
 - Prompt should check: "If redundant with existing, skip"
 - Return: [] (empty array)
 - Explanation: Same idea already captured, avoid duplication''',
-  ),
-
-  NarrativeThinkerTestCase(
-    id: 'extract-project-explicit',
-    name: 'Extract Project When Explicitly Named',
-    description: 'User names a specific project/endeavor',
-    utterance: 'I\'m building a chatbot that learns from user corrections',
-    intent: {
-      'classification': 'intent:project',
-      'confidence': 0.92,
-      'reasoning': 'User describing active project',
-    },
-    chatHistory: [
-      {'role': 'user', 'content': 'I\'m building a chatbot that learns from user corrections'},
-    ],
-    existingNarratives: [],
-    expectedBehavior: '''Should extract:
+      ),
+      NarrativeThinkerTestCase(
+        id: 'extract-project-explicit',
+        name: 'Extract Project When Explicitly Named',
+        description: 'User names a specific project/endeavor',
+        utterance: 'I\'m building a chatbot that learns from user corrections',
+        intent: {
+          'classification': 'intent:project',
+          'confidence': 0.92,
+          'reasoning': 'User describing active project',
+        },
+        chatHistory: [
+          {
+            'role': 'user',
+            'content':
+                'I\'m building a chatbot that learns from user corrections'
+          },
+        ],
+        existingNarratives: [],
+        expectedBehavior: '''Should extract:
 - Content: "Building a chatbot that learns from feedback. Because [reason about learning/iteration]."
 - Scope: "session" (first mention - not promoted to 'project' scope until training)
 - Type: "project"
 - NOT promote to 'project' scope automatically (requires training checkpoint)
 - Reason: Groq should NOT invent 'project' scope - only surface what's evident at session level''',
-  ),
-
-  NarrativeThinkerTestCase(
-    id: 'no-false-positives',
-    name: 'Avoid False Positives',
-    description: 'Casual mention, not a real insight',
-    utterance: 'By the way, I had coffee this morning',
-    intent: {
-      'classification': 'small-talk',
-      'confidence': 0.88,
-      'reasoning': 'Casual statement, no insight',
-    },
-    chatHistory: [
-      {'role': 'user', 'content': 'By the way, I had coffee this morning'},
-    ],
-    existingNarratives: [],
-    expectedBehavior: '''Should skip:
+      ),
+      NarrativeThinkerTestCase(
+        id: 'no-false-positives',
+        name: 'Avoid False Positives',
+        description: 'Casual mention, not a real insight',
+        utterance: 'By the way, I had coffee this morning',
+        intent: {
+          'classification': 'small-talk',
+          'confidence': 0.88,
+          'reasoning': 'Casual statement, no insight',
+        },
+        chatHistory: [
+          {'role': 'user', 'content': 'By the way, I had coffee this morning'},
+        ],
+        existingNarratives: [],
+        expectedBehavior: '''Should skip:
 - Not an insight about user's identity/goals/reasoning
 - Return: [] (empty array)
 - Groq should recognize: "This is noise, not a narrative insight"''',
-  ),
-
-  NarrativeThinkerTestCase(
-    id: 'format-validation',
-    name: 'Valid JSON Format Only',
-    description: 'Verify response is valid JSON, not markdown',
-    utterance: 'I believe strongly in decentralized systems',
-    intent: {
-      'classification': 'intent:belief',
-      'confidence': 0.85,
-      'reasoning': 'User expressing core value',
-    },
-    chatHistory: [
-      {'role': 'user', 'content': 'I believe strongly in decentralized systems'},
-    ],
-    existingNarratives: [],
-    expectedBehavior: '''Should return VALID JSON:
+      ),
+      NarrativeThinkerTestCase(
+        id: 'format-validation',
+        name: 'Valid JSON Format Only',
+        description: 'Verify response is valid JSON, not markdown',
+        utterance: 'I believe strongly in decentralized systems',
+        intent: {
+          'classification': 'intent:belief',
+          'confidence': 0.85,
+          'reasoning': 'User expressing core value',
+        },
+        chatHistory: [
+          {
+            'role': 'user',
+            'content': 'I believe strongly in decentralized systems'
+          },
+        ],
+        existingNarratives: [],
+        expectedBehavior: '''Should return VALID JSON:
 - Not markdown with code fences
 - Not explanatory text before/after JSON
 - Exactly: [{"content": "...", "scope": "...", "type": "..."}]
 - If extracted: scope should be "session" (identity conviction, but not 'life' without more evidence)''',
-  ),
-];
+      ),
+    ];
 
 /// Test case for NarrativeCheckpoint refinement prompt
 class NarrativeCheckpointTestCase {
@@ -274,72 +289,69 @@ class NarrativeCheckpointTestCase {
 
 /// Test cases for NarrativeCheckpoint prompt
 List<NarrativeCheckpointTestCase> getNarrativeCheckpointTestCases() => [
-  NarrativeCheckpointTestCase(
-    id: 'suggest-emerging-project',
-    name: 'Suggest Emerging Project Theme',
-    description: 'Session narratives point to a recurring project',
-    sessionNarratives: [
-      'Building conversational AI. Because friction between thought and execution kills potential.',
-      'Implementing intent extraction. Because understanding user goals is foundational.',
-      'Exploring prompt engineering. Because tuning the model is critical.',
-    ],
-    dayNarratives: [
-      'Learned about semantic search. Because relevance matters for AI systems.',
-    ],
-    expectedBehavior: '''Should suggest:
+      NarrativeCheckpointTestCase(
+        id: 'suggest-emerging-project',
+        name: 'Suggest Emerging Project Theme',
+        description: 'Session narratives point to a recurring project',
+        sessionNarratives: [
+          'Building conversational AI. Because friction between thought and execution kills potential.',
+          'Implementing intent extraction. Because understanding user goals is foundational.',
+          'Exploring prompt engineering. Because tuning the model is critical.',
+        ],
+        dayNarratives: [
+          'Learned about semantic search. Because relevance matters for AI systems.',
+        ],
+        expectedBehavior: '''Should suggest:
 - Content: "Building an intent-driven AI system. Because [reasoning about iterative improvement]."
 - Scope: "project"
 - Type: "project"
 - Conservative: Only suggest if pattern is clear (3+ related entries)
 - Format: Valid JSON, one entry max for projects in a day''',
-  ),
-
-  NarrativeCheckpointTestCase(
-    id: 'suggest-life-identity',
-    name: 'Suggest Life Identity Pattern',
-    description: 'Multiple days show consistent values/beliefs',
-    sessionNarratives: [
-      'Distributed systems enable resilience. Because centralized systems optimize for the center.',
-      'Decentralization reduces single points of failure. Because redundancy is strength.',
-    ],
-    dayNarratives: [
-      'Off-chain computation improves privacy. Because centralized control is dangerous.',
-      'Blockchain enables trust without authority. Because decentralization matters.',
-    ],
-    expectedBehavior: '''Should suggest:
+      ),
+      NarrativeCheckpointTestCase(
+        id: 'suggest-life-identity',
+        name: 'Suggest Life Identity Pattern',
+        description: 'Multiple days show consistent values/beliefs',
+        sessionNarratives: [
+          'Distributed systems enable resilience. Because centralized systems optimize for the center.',
+          'Decentralization reduces single points of failure. Because redundancy is strength.',
+        ],
+        dayNarratives: [
+          'Off-chain computation improves privacy. Because centralized control is dangerous.',
+          'Blockchain enables trust without authority. Because decentralization matters.',
+        ],
+        expectedBehavior: '''Should suggest:
 - Content: "Decentralization is core. Because centralized systems fail users."
 - Scope: "life"
 - Type: "learning"
 - CONSERVATIVE: Only suggest if pattern spans multiple days AND multiple entries
 - This is RARE. Groq should be careful not to over-generalize''',
-  ),
-
-  NarrativeCheckpointTestCase(
-    id: 'skip-insufficient-evidence',
-    name: 'Skip Project Without Enough Evidence',
-    description: 'Single mention is not a project',
-    sessionNarratives: [
-      'Mentioned wanting to try painting. Because it sounds relaxing.',
-    ],
-    dayNarratives: [],
-    expectedBehavior: '''Should return empty:
+      ),
+      NarrativeCheckpointTestCase(
+        id: 'skip-insufficient-evidence',
+        name: 'Skip Project Without Enough Evidence',
+        description: 'Single mention is not a project',
+        sessionNarratives: [
+          'Mentioned wanting to try painting. Because it sounds relaxing.',
+        ],
+        dayNarratives: [],
+        expectedBehavior: '''Should return empty:
 - Return: [] (empty array)
 - Single mention is not a project unless user explicitly commits
 - Need: Multi-turn engagement, repeated mentions, clear ownership''',
-  ),
-
-  NarrativeCheckpointTestCase(
-    id: 'format-json-only',
-    name: 'Return Valid JSON Only',
-    description: 'No markdown, no explanations',
-    sessionNarratives: [
-      'Building something. Because learning through creation matters.',
-    ],
-    dayNarratives: [],
-    expectedBehavior: '''Should return:
+      ),
+      NarrativeCheckpointTestCase(
+        id: 'format-json-only',
+        name: 'Return Valid JSON Only',
+        description: 'No markdown, no explanations',
+        sessionNarratives: [
+          'Building something. Because learning through creation matters.',
+        ],
+        dayNarratives: [],
+        expectedBehavior: '''Should return:
 - Valid JSON array (may be empty [])
 - No markdown code fences
 - No explanatory text
 - If returning suggestions: exactly the format specified''',
-  ),
-];
+      ),
+    ];

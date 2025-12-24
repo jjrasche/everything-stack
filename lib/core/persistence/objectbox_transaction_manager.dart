@@ -59,7 +59,7 @@ class ObjectBoxTransactionManager implements TransactionManager {
   @override
   Future<R> transaction<R>(
     R Function(TransactionContext ctx) work, {
-    List<String> objectStores = const [],  // Ignored by ObjectBox
+    List<String> objectStores = const [], // Ignored by ObjectBox
   }) async {
     return _store.runInTransaction<R>(
       TxMode.write,

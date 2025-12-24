@@ -120,7 +120,6 @@ class TaskObjectBoxAdapter implements PersistenceAdapter<Task> {
     }
   }
 
-
   @override
   Task saveInTx(TransactionContext ctx, Task entity, {bool touch = true}) {
     final obCtx = ctx as ObjectBoxTxContext;
@@ -243,8 +242,8 @@ class TaskObjectBoxAdapter implements PersistenceAdapter<Task> {
     final query = _box
         .query(
           Task_.completed.equals(false) &
-          Task_.dueDate.notNull() &
-          Task_.dueDate.lessThan(now.millisecondsSinceEpoch),
+              Task_.dueDate.notNull() &
+              Task_.dueDate.lessThan(now.millisecondsSinceEpoch),
         )
         .build();
     try {

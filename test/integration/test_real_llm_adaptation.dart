@@ -56,7 +56,8 @@ class _TestFeedbackRepo implements FeedbackRepository {
   @override
   Future<List<Feedback>> findByInvocationId(String invocationId) async => [];
   @override
-  Future<List<Feedback>> findByInvocationIds(List<String> invocationIds) async =>
+  Future<List<Feedback>> findByInvocationIds(
+          List<String> invocationIds) async =>
       [];
   @override
   Future<List<Feedback>> findByTurn(String turnId) async => [];
@@ -97,7 +98,8 @@ class _TestLLMInvocationRepo implements LLMInvocationRepository {
   Future<List<LLMInvocation>> findByContextType(String contextType) async => [];
 
   @override
-  Future<List<LLMInvocation>> findExceedingTokens(int tokenThreshold) async => [];
+  Future<List<LLMInvocation>> findExceedingTokens(int tokenThreshold) async =>
+      [];
 
   @override
   Future<List<LLMInvocation>> findRecent({int limit = 10}) async => [];
@@ -114,9 +116,11 @@ class _TestLLMInvocationRepo implements LLMInvocationRepository {
 
 void main() {
   group('Real LLM Adaptation Test', () {
-    test('Real Groq LLM picks differently after feedback (if API key available)',
+    test(
+        'Real Groq LLM picks differently after feedback (if API key available)',
         () async {
-      print('\n═══════════════════════════════════════════════════════════════');
+      print(
+          '\n═══════════════════════════════════════════════════════════════');
       print('TEST 3: Does REAL Groq adapt after feedback?');
       print('═══════════════════════════════════════════════════════════════');
 
@@ -221,8 +225,8 @@ void main() {
 
       // --- TRAIN ---
       print('\n🧠 trainFromFeedback() updates personality');
-      final feedbackList =
-          await feedbackRepo.findByTurnAndComponent('turn_1', 'context_manager');
+      final feedbackList = await feedbackRepo.findByTurnAndComponent(
+          'turn_1', 'context_manager');
 
       if (feedbackList.isNotEmpty) {
         final corrected =
@@ -249,7 +253,10 @@ void main() {
           model: 'llama-3.3-70b-versatile',
           messages: [
             {'role': 'system', 'content': systemPrompt1},
-            {'role': 'user', 'content': utterance2}, // IDENTICAL to Call 1 - no feedback prepended
+            {
+              'role': 'user',
+              'content': utterance2
+            }, // IDENTICAL to Call 1 - no feedback prepended
           ],
           tools: null,
           temperature: 0.0,
@@ -276,20 +283,23 @@ void main() {
       print('      confidence: $pick2Confidence');
 
       // --- VERIFY ---
-      print('\n═══════════════════════════════════════════════════════════════');
+      print(
+          '\n═══════════════════════════════════════════════════════════════');
       print('RAW GROQ RESPONSES:');
       print('═══════════════════════════════════════════════════════════════');
       print('CALL 1 - GROQ said: "$groq1RawResponse"');
       print('CALL 2 - GROQ said: "$groq2RawResponse"');
 
-      print('\n═══════════════════════════════════════════════════════════════');
+      print(
+          '\n═══════════════════════════════════════════════════════════════');
       print('SYSTEM SELECTED:');
       print('═══════════════════════════════════════════════════════════════');
       print('CALL 1: $pick1Namespace (confidence: $pick1Confidence)');
       print('CALL 2: $pick2Namespace (confidence: $pick2Confidence)');
 
       // Determine which scenario occurred
-      print('\n═══════════════════════════════════════════════════════════════');
+      print(
+          '\n═══════════════════════════════════════════════════════════════');
       print('SCENARIO ANALYSIS:');
       print('═══════════════════════════════════════════════════════════════');
 
@@ -309,7 +319,8 @@ void main() {
         print('   Groq Call 1: "$groq1Lower" (initial response)');
         print('   Groq Call 2: "$groq2Lower" (same response)');
         print('   → LLM gave same answer both times');
-        print('   → System filtered/rejected it second time due to new thresholds');
+        print(
+            '   → System filtered/rejected it second time due to new thresholds');
         print('   ✅ CONCLUSION: Thresholds are learning, filtering behavior');
       }
 
@@ -317,24 +328,28 @@ void main() {
       final confidenceShifted =
           (pick1Confidence - pick2Confidence).abs() > 0.02;
 
-      print('\n═══════════════════════════════════════════════════════════════');
+      print(
+          '\n═══════════════════════════════════════════════════════════════');
       print('FINAL RESULT:');
       print('═══════════════════════════════════════════════════════════════');
 
       if (changed) {
         print('✅ CONFIRMED: System picked DIFFERENTLY!');
-        print('   (Whether LLM learned or thresholds filtered, behavior changed)');
+        print(
+            '   (Whether LLM learned or thresholds filtered, behavior changed)');
       } else if (confidenceShifted) {
         print('⚠️  Same namespace, but confidence shifted');
         print('   Thresholds may be filtering differently');
       } else {
         print('❓ No change detected');
         print('   Could mean:');
-        print('   - LLM semantic similarity strong enough that thresholds don\'t matter');
+        print(
+            '   - LLM semantic similarity strong enough that thresholds don\'t matter');
         print('   - Real API would show different behavior');
       }
 
-      print('\n═══════════════════════════════════════════════════════════════');
+      print(
+          '\n═══════════════════════════════════════════════════════════════');
       print('CONCLUSION:');
       print('═══════════════════════════════════════════════════════════════');
       if (groqChanged) {

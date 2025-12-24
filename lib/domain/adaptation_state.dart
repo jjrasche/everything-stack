@@ -100,21 +100,21 @@ class STTAdaptationState extends BaseEntity {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'uuid': uuid,
-    'createdAt': createdAt.toIso8601String(),
-    'updatedAt': updatedAt.toIso8601String(),
-    'syncId': syncId,
-    'scope': scope,
-    'userId': userId,
-    'deviceId': deviceId,
-    'confidenceThreshold': confidenceThreshold,
-    'minFeedbackCount': minFeedbackCount,
-    'version': version,
-    'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
-    'lastUpdateReason': lastUpdateReason,
-    'feedbackCountApplied': feedbackCountApplied,
-  };
+        'id': id,
+        'uuid': uuid,
+        'createdAt': createdAt.toIso8601String(),
+        'updatedAt': updatedAt.toIso8601String(),
+        'syncId': syncId,
+        'scope': scope,
+        'userId': userId,
+        'deviceId': deviceId,
+        'confidenceThreshold': confidenceThreshold,
+        'minFeedbackCount': minFeedbackCount,
+        'version': version,
+        'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
+        'lastUpdateReason': lastUpdateReason,
+        'feedbackCountApplied': feedbackCountApplied,
+      };
 
   factory STTAdaptationState.fromJson(Map<String, dynamic> json) {
     final state = STTAdaptationState(
@@ -202,23 +202,23 @@ class LLMAdaptationState extends BaseEntity {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'uuid': uuid,
-    'createdAt': createdAt.toIso8601String(),
-    'updatedAt': updatedAt.toIso8601String(),
-    'syncId': syncId,
-    'scope': scope,
-    'userId': userId,
-    'deviceId': deviceId,
-    'systemPromptVariant': systemPromptVariant,
-    'temperature': temperature,
-    'maxTokens': maxTokens,
-    'minFeedbackCount': minFeedbackCount,
-    'version': version,
-    'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
-    'lastUpdateReason': lastUpdateReason,
-    'feedbackCountApplied': feedbackCountApplied,
-  };
+        'id': id,
+        'uuid': uuid,
+        'createdAt': createdAt.toIso8601String(),
+        'updatedAt': updatedAt.toIso8601String(),
+        'syncId': syncId,
+        'scope': scope,
+        'userId': userId,
+        'deviceId': deviceId,
+        'systemPromptVariant': systemPromptVariant,
+        'temperature': temperature,
+        'maxTokens': maxTokens,
+        'minFeedbackCount': minFeedbackCount,
+        'version': version,
+        'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
+        'lastUpdateReason': lastUpdateReason,
+        'feedbackCountApplied': feedbackCountApplied,
+      };
 
   factory LLMAdaptationState.fromJson(Map<String, dynamic> json) {
     final state = LLMAdaptationState(
@@ -304,22 +304,22 @@ class TTSAdaptationState extends BaseEntity {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'uuid': uuid,
-    'createdAt': createdAt.toIso8601String(),
-    'updatedAt': updatedAt.toIso8601String(),
-    'syncId': syncId,
-    'scope': scope,
-    'userId': userId,
-    'deviceId': deviceId,
-    'voiceId': voiceId,
-    'speechRate': speechRate,
-    'minFeedbackCount': minFeedbackCount,
-    'version': version,
-    'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
-    'lastUpdateReason': lastUpdateReason,
-    'feedbackCountApplied': feedbackCountApplied,
-  };
+        'id': id,
+        'uuid': uuid,
+        'createdAt': createdAt.toIso8601String(),
+        'updatedAt': updatedAt.toIso8601String(),
+        'syncId': syncId,
+        'scope': scope,
+        'userId': userId,
+        'deviceId': deviceId,
+        'voiceId': voiceId,
+        'speechRate': speechRate,
+        'minFeedbackCount': minFeedbackCount,
+        'version': version,
+        'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
+        'lastUpdateReason': lastUpdateReason,
+        'feedbackCountApplied': feedbackCountApplied,
+      };
 
   factory TTSAdaptationState.fromJson(Map<String, dynamic> json) {
     final state = TTSAdaptationState(

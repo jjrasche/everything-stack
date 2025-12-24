@@ -162,13 +162,10 @@ class NamespaceAdaptationState {
     }
 
     if (json['namespaceCentroids'] != null) {
-      state.namespaceCentroids =
-          (json['namespaceCentroids'] as Map<String, dynamic>).map((k, v) =>
-              MapEntry(
-                  k,
-                  (v as List<dynamic>)
-                      .map((e) => (e as num).toDouble())
-                      .toList()));
+      state.namespaceCentroids = (json['namespaceCentroids']
+              as Map<String, dynamic>)
+          .map((k, v) => MapEntry(k,
+              (v as List<dynamic>).map((e) => (e as num).toDouble()).toList()));
     }
 
     state.centroidLearningRate =

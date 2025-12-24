@@ -136,9 +136,7 @@ class NoteRepository extends EntityRepository<Note> {
   /// Find all pinned notes (sorted by updatedAt descending)
   Future<List<Note>> findPinned() async {
     final all = await findAll();
-    return all
-        .where((n) => n.isPinned && !n.isArchived)
-        .toList()
+    return all.where((n) => n.isPinned && !n.isArchived).toList()
       ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
   }
 
@@ -152,9 +150,7 @@ class NoteRepository extends EntityRepository<Note> {
   /// Find notes by tag
   Future<List<Note>> findByTag(String tag) async {
     final all = await findAll();
-    return all
-        .where((n) => n.tags.contains(tag) && !n.isArchived)
-        .toList()
+    return all.where((n) => n.tags.contains(tag) && !n.isArchived).toList()
       ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
   }
 
@@ -174,9 +170,11 @@ class NoteRepository extends EntityRepository<Note> {
   /// Find notes accessible by user (owned by or shared with)
   Future<List<Note>> findAccessibleBy(String userId) async {
     final all = await findAll();
-    final accessible = all.where((n) =>
-        !n.isArchived &&
-        (n.ownerId == userId || n.sharedWith.contains(userId))).toList();
+    final accessible = all
+        .where((n) =>
+            !n.isArchived &&
+            (n.ownerId == userId || n.sharedWith.contains(userId)))
+        .toList();
     accessible.sort((a, b) {
       if (a.isPinned != b.isPinned) {
         return a.isPinned ? -1 : 1;
@@ -189,8 +187,8 @@ class NoteRepository extends EntityRepository<Note> {
   /// Find notes owned by user
   Future<List<Note>> findOwnedBy(String userId) async {
     final all = await findAll();
-    final owned = all.where((n) =>
-        n.ownerId == userId && !n.isArchived).toList();
+    final owned =
+        all.where((n) => n.ownerId == userId && !n.isArchived).toList();
     owned.sort((a, b) {
       if (a.isPinned != b.isPinned) {
         return a.isPinned ? -1 : 1;

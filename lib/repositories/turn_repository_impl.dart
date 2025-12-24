@@ -40,9 +40,8 @@ class TurnRepositoryImpl extends TurnRepository {
   Future<List<Turn>> findMarkedForFeedbackByConversation(
       String conversationId) async {
     // Phase 0: Return all marked turns (conversations not yet implemented)
-    final turns = _store.values
-        .where((t) => t.markedForFeedback == true)
-        .toList();
+    final turns =
+        _store.values.where((t) => t.markedForFeedback == true).toList();
     turns.sort((a, b) {
       final timeA = a.markedAt ?? DateTime(2000);
       final timeB = b.markedAt ?? DateTime(2000);
@@ -112,7 +111,8 @@ class TurnRepositoryObjectBox extends TurnRepository {
   }
 
   @override
-  Future<List<Turn>> findMarkedForFeedbackByConversation(String conversationId) {
+  Future<List<Turn>> findMarkedForFeedbackByConversation(
+      String conversationId) {
     throw UnimplementedError();
   }
 
@@ -158,7 +158,8 @@ class TurnRepositoryIndexedDB extends TurnRepository {
   }
 
   @override
-  Future<List<Turn>> findMarkedForFeedbackByConversation(String conversationId) {
+  Future<List<Turn>> findMarkedForFeedbackByConversation(
+      String conversationId) {
     throw UnimplementedError();
   }
 

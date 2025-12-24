@@ -68,9 +68,7 @@ class EntityVersionIndexedDBAdapter extends BaseIndexedDBAdapter<EntityVersion>
   ) async {
     final versions = await findByEntityUuid(entityUuid);
     // Filter to versions created before timestamp
-    return versions
-        .where((v) => v.createdAt.isBefore(timestamp))
-        .toList();
+    return versions.where((v) => v.createdAt.isBefore(timestamp)).toList();
   }
 
   @override
@@ -87,7 +85,8 @@ class EntityVersionIndexedDBAdapter extends BaseIndexedDBAdapter<EntityVersion>
   }
 
   @override
-  Future<List<EntityVersion>> findByEntityUuidUnsynced(String entityUuid) async {
+  Future<List<EntityVersion>> findByEntityUuidUnsynced(
+      String entityUuid) async {
     final versions = await findByEntityUuid(entityUuid);
     // Filter to unsynced versions (syncStatus == SyncStatus.local)
     return versions

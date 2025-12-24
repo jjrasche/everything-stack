@@ -6,7 +6,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:everything_stack_template/domain/invocations.dart';
-import 'package:everything_stack_template/domain/feedback.dart' as feedback_model;
+import 'package:everything_stack_template/domain/feedback.dart'
+    as feedback_model;
 import 'package:everything_stack_template/ui/providers/trainable_providers.dart';
 
 class STTFeedbackWidget extends ConsumerStatefulWidget {
@@ -33,7 +34,8 @@ class _STTFeedbackWidgetState extends ConsumerState<STTFeedbackWidget> {
   @override
   void initState() {
     super.initState();
-    _correctionController = TextEditingController(text: widget.invocation.output);
+    _correctionController =
+        TextEditingController(text: widget.invocation.output);
   }
 
   @override
@@ -120,22 +122,23 @@ class _STTFeedbackWidgetState extends ConsumerState<STTFeedbackWidget> {
                 ),
           ),
           const SizedBox(height: 8),
-            TextField(
-              controller: _correctionController,
-              maxLines: 2,
-              decoration: InputDecoration(
-                hintText: 'Enter the correct transcription',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                contentPadding: const EdgeInsets.all(12),
+          TextField(
+            controller: _correctionController,
+            maxLines: 2,
+            decoration: InputDecoration(
+              hintText: 'Enter the correct transcription',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
               ),
+              contentPadding: const EdgeInsets.all(12),
             ),
+          ),
           const SizedBox(height: 16),
         ],
 
         // Save feedback button
-        if (_selectedAction != null && _selectedAction != feedback_model.FeedbackAction.ignore)
+        if (_selectedAction != null &&
+            _selectedAction != feedback_model.FeedbackAction.ignore)
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -233,7 +236,8 @@ class _FeedbackActionButtons extends StatelessWidget {
           label: 'Confirm',
           color: Colors.green,
           isSelected: selectedAction == feedback_model.FeedbackAction.confirm,
-          onPressed: () => onActionSelected(feedback_model.FeedbackAction.confirm),
+          onPressed: () =>
+              onActionSelected(feedback_model.FeedbackAction.confirm),
           tooltip: 'Transcription is correct',
         ),
         _ActionButton(
@@ -241,7 +245,8 @@ class _FeedbackActionButtons extends StatelessWidget {
           label: 'Correct',
           color: Colors.blue,
           isSelected: selectedAction == feedback_model.FeedbackAction.correct,
-          onPressed: () => onActionSelected(feedback_model.FeedbackAction.correct),
+          onPressed: () =>
+              onActionSelected(feedback_model.FeedbackAction.correct),
           tooltip: 'I\'ll provide the correct transcription',
         ),
         _ActionButton(
@@ -257,7 +262,8 @@ class _FeedbackActionButtons extends StatelessWidget {
           label: 'Ignore',
           color: Colors.grey,
           isSelected: selectedAction == feedback_model.FeedbackAction.ignore,
-          onPressed: () => onActionSelected(feedback_model.FeedbackAction.ignore),
+          onPressed: () =>
+              onActionSelected(feedback_model.FeedbackAction.ignore),
           tooltip: 'Skip learning from this',
         ),
       ],

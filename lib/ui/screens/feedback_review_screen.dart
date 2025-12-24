@@ -23,7 +23,8 @@ class FeedbackReviewScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<FeedbackReviewScreen> createState() => _FeedbackReviewScreenState();
+  ConsumerState<FeedbackReviewScreen> createState() =>
+      _FeedbackReviewScreenState();
 }
 
 class _FeedbackReviewScreenState extends ConsumerState<FeedbackReviewScreen> {
@@ -86,7 +87,10 @@ class _FeedbackReviewScreenState extends ConsumerState<FeedbackReviewScreen> {
                           const SizedBox(width: 8),
                           Text(
                             'Learn from Feedback',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
                                   color: Colors.amber[900],
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -120,10 +124,12 @@ class _FeedbackReviewScreenState extends ConsumerState<FeedbackReviewScreen> {
                             ? const SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
                               )
                             : const Icon(Icons.psychology),
-                        label: Text(_isTraining ? 'Training...' : 'Train System'),
+                        label:
+                            Text(_isTraining ? 'Training...' : 'Train System'),
                       ),
                     ],
                   ),
@@ -223,7 +229,8 @@ class _FeedbackSection extends ConsumerWidget {
             children: [
               Container(
                 color: color.withOpacity(0.1),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   children: [
                     Container(

@@ -247,9 +247,7 @@ class MockFeedbackRepository implements FeedbackRepository {
 
   @override
   Future<List<Feedback>> findByTurn(String turnId) async {
-    return savedFeedback
-        .where((Feedback f) => f.turnId == turnId)
-        .toList();
+    return savedFeedback.where((Feedback f) => f.turnId == turnId).toList();
   }
 
   @override
@@ -269,16 +267,12 @@ class MockFeedbackRepository implements FeedbackRepository {
 
   @override
   Future<List<Feedback>> findAllConversational() async {
-    return savedFeedback
-        .where((Feedback f) => f.turnId != null)
-        .toList();
+    return savedFeedback.where((Feedback f) => f.turnId != null).toList();
   }
 
   @override
   Future<List<Feedback>> findAllBackground() async {
-    return savedFeedback
-        .where((Feedback f) => f.turnId == null)
-        .toList();
+    return savedFeedback.where((Feedback f) => f.turnId == null).toList();
   }
 
   @override
@@ -341,11 +335,14 @@ class MockLLMService extends LLMService {
 
       // Extract available namespaces from the message
       if (userMessage.contains('Available namespaces:')) {
-        final namespacePart = userMessage.split('Available namespaces:')[1].split('\n')[0];
-        final namespaces = namespacePart.split(',').map((s) => s.trim()).toList();
+        final namespacePart =
+            userMessage.split('Available namespaces:')[1].split('\n')[0];
+        final namespaces =
+            namespacePart.split(',').map((s) => s.trim()).toList();
 
         // If we have a mock selection and it's in the list, use it
-        if (mockNamespaceSelection != null && namespaces.contains(mockNamespaceSelection)) {
+        if (mockNamespaceSelection != null &&
+            namespaces.contains(mockNamespaceSelection)) {
           return LLMResponse(
             id: 'ns_select',
             content: mockNamespaceSelection,
@@ -651,8 +648,8 @@ void main() {
 
     // 2. Setup namespaces with semantic embeddings
     // Task namespace: embeddings based on task-related terms
-    final taskCentroid = embeddingService.mockEmbedding(
-        'create task todo list reminder add new ticket');
+    final taskCentroid = embeddingService
+        .mockEmbedding('create task todo list reminder add new ticket');
     final taskNs = domain.Namespace(
       name: 'task',
       description: 'Create and manage tasks, todos, and reminders',
@@ -729,8 +726,7 @@ void main() {
 
       final result = await contextManager.handleEvent(event);
 
-      final correct =
-          result.selectedNamespace == testCase.expectedNamespace;
+      final correct = result.selectedNamespace == testCase.expectedNamespace;
 
       results.add(TestResult(
         utterance: testCase.utterance,
@@ -758,8 +754,7 @@ void main() {
 
     final avgConfidenceIncorrect = incorrectResults.isEmpty
         ? 0.0
-        : incorrectResults.fold<double>(
-                0.0, (sum, r) => sum + r.confidence) /
+        : incorrectResults.fold<double>(0.0, (sum, r) => sum + r.confidence) /
             incorrectResults.length;
 
     // Print detailed results
@@ -771,8 +766,7 @@ void main() {
     print('Incorrect: ${totalTests - correctCount}');
     print('Accuracy: ${accuracy.toStringAsFixed(1)}%');
     print('\nConfidence Scores:');
-    print(
-        '  Correct predictions: ${avgConfidenceCorrect.toStringAsFixed(3)}');
+    print('  Correct predictions: ${avgConfidenceCorrect.toStringAsFixed(3)}');
     print(
         '  Incorrect predictions: ${avgConfidenceIncorrect.toStringAsFixed(3)}');
 
@@ -808,7 +802,8 @@ void main() {
 
     print('\n' + '=' * 80);
     print('\nNOTE: This is a PROOF test using deterministic mock embeddings.');
-    print('Production accuracy would be significantly higher with real embedding models.');
+    print(
+        'Production accuracy would be significantly higher with real embedding models.');
     print('=' * 80 + '\n');
 
     // PROOF TEST: Just verify the system runs and some cases pass
@@ -823,21 +818,23 @@ void main() {
 
     // Log final summary for manual review
     print('PROOF VERIFIED: Semantic routing executed successfully.');
-    print('Correct: $correctCount/${totalTests} (${accuracy.toStringAsFixed(1)}%)');
+    print(
+        'Correct: $correctCount/${totalTests} (${accuracy.toStringAsFixed(1)}%)');
     print('For production accuracy testing, use real embedding service.\n');
   });
 }
 
 /// Analyze why a test case failed
-String _analyzeFailure(TestResult result, MockEmbeddingService embeddingService) {
+String _analyzeFailure(
+    TestResult result, MockEmbeddingService embeddingService) {
   if (result.actualNamespace == null) {
     return 'No namespace selected (all below threshold)';
   }
 
   // Get embeddings for analysis
   final utteranceEmb = embeddingService.mockEmbedding(result.utterance);
-  final taskEmb = embeddingService.mockEmbedding(
-      'create task todo list reminder add new ticket');
+  final taskEmb = embeddingService
+      .mockEmbedding('create task todo list reminder add new ticket');
   final timerEmb =
       embeddingService.mockEmbedding('set timer alarm remind wake up in');
 

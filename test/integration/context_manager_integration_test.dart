@@ -12,7 +12,8 @@ import 'package:everything_stack_template/services/context_manager_result.dart';
 
 void main() {
   group('ContextManager Integration - Full Flow', () {
-    test('Event with "create task" → selects task namespace → returns tool call',
+    test(
+        'Event with "create task" → selects task namespace → returns tool call',
         () async {
       // ARRANGE
       // 1. Create personality with learned thresholds
@@ -207,7 +208,11 @@ void main() {
         'note': 0.3,
       };
       invocation.selectedNamespace = 'task';
-      invocation.toolsAvailable = ['task.create', 'task.complete', 'task.delete'];
+      invocation.toolsAvailable = [
+        'task.create',
+        'task.complete',
+        'task.delete'
+      ];
       invocation.toolScores = {
         'task.create': 0.85,
         'task.complete': 0.62,

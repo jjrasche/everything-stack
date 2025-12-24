@@ -38,9 +38,7 @@ class ContextManagerInvocationRepository
   Future<List<ContextManagerInvocation>> findByCorrelationId(
       String correlationId) async {
     final all = await findAll();
-    return all
-        .where((inv) => inv.correlationId == correlationId)
-        .toList()
+    return all.where((inv) => inv.correlationId == correlationId).toList()
       ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
   }
 
@@ -49,9 +47,7 @@ class ContextManagerInvocationRepository
   Future<List<ContextManagerInvocation>> findByPersonality(
       String personalityId) async {
     final all = await findAll();
-    return all
-        .where((inv) => inv.personalityId == personalityId)
-        .toList()
+    return all.where((inv) => inv.personalityId == personalityId).toList()
       ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
   }
 
@@ -66,9 +62,7 @@ class ContextManagerInvocationRepository
   /// Useful for debugging and failure analysis
   Future<List<ContextManagerInvocation>> findWithErrors() async {
     final all = await findAll();
-    return all
-        .where((inv) => inv.errorType != null)
-        .toList()
+    return all.where((inv) => inv.errorType != null).toList()
       ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
   }
 
@@ -80,9 +74,7 @@ class ContextManagerInvocationRepository
     for (final inv in all) {
       inv.loadAfterRead();
     }
-    return all
-        .where((inv) => inv.toolsCalled.contains(toolName))
-        .toList()
+    return all.where((inv) => inv.toolsCalled.contains(toolName)).toList()
       ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
   }
 
@@ -95,9 +87,7 @@ class ContextManagerInvocationRepository
     for (final inv in all) {
       inv.loadAfterRead();
     }
-    return all
-        .where((inv) => inv.toolsFiltered.contains(toolName))
-        .toList()
+    return all.where((inv) => inv.toolsFiltered.contains(toolName)).toList()
       ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
   }
 

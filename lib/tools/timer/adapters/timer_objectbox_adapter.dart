@@ -120,7 +120,6 @@ class TimerObjectBoxAdapter implements PersistenceAdapter<Timer> {
     }
   }
 
-
   @override
   Timer saveInTx(TransactionContext ctx, Timer entity, {bool touch = true}) {
     final obCtx = ctx as ObjectBoxTxContext;
@@ -223,7 +222,7 @@ class TimerObjectBoxAdapter implements PersistenceAdapter<Timer> {
     final query = _box
         .query(
           Timer_.fired.equals(false) &
-          Timer_.endsAt.greaterThan(now.millisecondsSinceEpoch),
+              Timer_.endsAt.greaterThan(now.millisecondsSinceEpoch),
         )
         .build();
     try {
@@ -239,7 +238,7 @@ class TimerObjectBoxAdapter implements PersistenceAdapter<Timer> {
     final query = _box
         .query(
           Timer_.fired.equals(false) &
-          Timer_.endsAt.lessOrEqual(now.millisecondsSinceEpoch),
+              Timer_.endsAt.lessOrEqual(now.millisecondsSinceEpoch),
         )
         .build();
     try {

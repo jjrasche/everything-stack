@@ -119,7 +119,8 @@ class InMemoryNarrativeRepo {
     for (final entry in _entries) {
       if (entry.isArchived || entry.embedding == null) continue;
 
-      final sim = DeterministicEmbedding.similarity(queryEmbedding, entry.embedding!);
+      final sim =
+          DeterministicEmbedding.similarity(queryEmbedding, entry.embedding!);
       if (sim >= threshold) {
         scored.add((entry, sim));
       }
@@ -155,8 +156,10 @@ class NarrativeThinker {
     // Dedup check
     for (final prev in previousNarratives) {
       final similarity = _semanticSimilarity(utterance, prev.content);
-      print('   [THINKER] Dedup check: similarity=${(similarity * 100).toStringAsFixed(1)}%');
-      if (similarity > 0.4) {  // Lowered threshold to catch more duplicates
+      print(
+          '   [THINKER] Dedup check: similarity=${(similarity * 100).toStringAsFixed(1)}%');
+      if (similarity > 0.4) {
+        // Lowered threshold to catch more duplicates
         print('   [THINKER] ⊘ DEDUP: Similar to existing');
         return [];
       }
@@ -197,7 +200,8 @@ class NarrativeThinker {
   double _semanticSimilarity(String a, String b) {
     final wordsA = a.toLowerCase().split(RegExp(r'\W+'));
     final wordsB = b.toLowerCase().split(RegExp(r'\W+'));
-    final common = wordsA.where((w) => wordsB.contains(w) && w.isNotEmpty).length;
+    final common =
+        wordsA.where((w) => wordsB.contains(w) && w.isNotEmpty).length;
     // Use intersection / union for better dedup (Jaccard similarity)
     final union = <String>{...wordsA, ...wordsB};
     return common / max(union.length, 1);
@@ -237,7 +241,8 @@ class TestRunner {
   }
 
   void assertEmpty(List list, String msg) {
-    if (list.isNotEmpty) throw AssertionError('$msg (list has ${list.length} items)');
+    if (list.isNotEmpty)
+      throw AssertionError('$msg (list has ${list.length} items)');
   }
 
   void assertTrue(bool value, String msg) {
@@ -268,7 +273,8 @@ Future<void> main() async {
   print_('${'═' * 70}\n');
 
   // TEST 1: Full flow
-  await runner.runTest('TEST 1: Utterance → Thinker → Save → Retrieve', () async {
+  await runner.runTest('TEST 1: Utterance → Thinker → Save → Retrieve',
+      () async {
     final repo = InMemoryNarrativeRepo();
     final thinker = NarrativeThinker(repo);
 
@@ -286,7 +292,8 @@ Future<void> main() async {
       previousNarratives: [],
     );
     runner.assertNotEmpty(extracted, 'Should extract entry');
-    runner.assertEquals(extracted.first.type, 'learning', 'Type should be learning');
+    runner.assertEquals(
+        extracted.first.type, 'learning', 'Type should be learning');
     print_('   ✓ Extracted 1 entry\n');
 
     print_('1.3: Verify entry saved to repository');
@@ -303,12 +310,14 @@ Future<void> main() async {
   });
 
   // TEST 2: Deduplication
-  await runner.runTest('TEST 2: Deduplication - Similar utterance returns empty', () async {
+  await runner.runTest(
+      'TEST 2: Deduplication - Similar utterance returns empty', () async {
     final repo = InMemoryNarrativeRepo();
     final thinker = NarrativeThinker(repo);
 
     print_('2.1: Extract first utterance');
-    const utterance1 = 'I want to learn Rust because memory safety is important';
+    const utterance1 =
+        'I want to learn Rust because memory safety is important';
     final intent = {'classification': 'learning', 'confidence': 0.95};
     final first = await thinker.extract(
       utterance: utterance1,
@@ -335,7 +344,8 @@ Future<void> main() async {
   });
 
   // TEST 3: Edge case - null intent
-  await runner.runTest('TEST 3: Edge case - Null intent handled gracefully', () async {
+  await runner.runTest('TEST 3: Edge case - Null intent handled gracefully',
+      () async {
     final repo = InMemoryNarrativeRepo();
     final thinker = NarrativeThinker(repo);
 

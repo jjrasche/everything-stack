@@ -28,7 +28,7 @@ class NarrativeRetriever {
   NarrativeRetriever({
     required NarrativeRepository narrativeRepo,
     EmbeddingService? embeddingService,
-  })  : _narrativeRepo = narrativeRepo;
+  }) : _narrativeRepo = narrativeRepo;
 
   /// Find narratives most relevant to current utterance/context.
   ///
@@ -107,7 +107,8 @@ class NarrativeRetriever {
       final entry = entries[i];
       final scope = entry.scope;
       final type = entry.type != null ? ' [${entry.type}]' : '';
-      buffer.writeln('${i + 1}. [${scope.toUpperCase()}]$type ${entry.content}');
+      buffer
+          .writeln('${i + 1}. [${scope.toUpperCase()}]$type ${entry.content}');
     }
     return buffer.toString();
   }

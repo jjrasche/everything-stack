@@ -254,7 +254,8 @@ class GoogleTTSService extends TTSService {
   @override
   Future<String> recordInvocation(dynamic invocation) async {
     if (invocation is! TTSInvocation) {
-      throw ArgumentError('Expected TTSInvocation, got ${invocation.runtimeType}');
+      throw ArgumentError(
+          'Expected TTSInvocation, got ${invocation.runtimeType}');
     }
     await _ttsInvocationRepository.save(invocation);
     return invocation.uuid;

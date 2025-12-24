@@ -14,7 +14,8 @@ import 'package:everything_stack_template/domain/personality.dart';
 void main() {
   group('Thresholds Actually Used Test', () {
     test('ContextManager uses updated thresholds on next call', () async {
-      print('\n═══════════════════════════════════════════════════════════════');
+      print(
+          '\n═══════════════════════════════════════════════════════════════');
       print('TEST 2: Does ContextManager actually USE updated thresholds?');
       print('═══════════════════════════════════════════════════════════════');
 
@@ -62,7 +63,8 @@ void main() {
       final utterance = 'set a timer for 5 minutes';
       print('\n📝 TEST UTTERANCE: "$utterance"');
 
-      print('\n📐 THRESHOLD FILTERING (how \_selectNamespace uses thresholds):');
+      print(
+          '\n📐 THRESHOLD FILTERING (how \_selectNamespace uses thresholds):');
       print('   1. Generate embedding for utterance');
       print('   2. Calculate semantic similarity to each namespace centroid');
       print('   3. Filter candidates where: similarity >= threshold');
@@ -86,7 +88,8 @@ void main() {
       expect(timerThresholdAfter < timerThresholdBefore, true,
           reason: 'timer threshold should be lowered');
 
-      print('\n═══════════════════════════════════════════════════════════════');
+      print(
+          '\n═══════════════════════════════════════════════════════════════');
       print('RESULT: Threshold mechanism verified ✓');
       print('═══════════════════════════════════════════════════════════════');
     });

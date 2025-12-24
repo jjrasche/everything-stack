@@ -53,8 +53,8 @@ class TaskRepository extends EntityRepository<Task> {
   Future<List<Task>> findCompleted() async {
     final all = await findAll();
     return all.where((task) => task.completed).toList()
-      ..sort((a, b) =>
-          (b.completedAt ?? b.updatedAt).compareTo(a.completedAt ?? a.updatedAt));
+      ..sort((a, b) => (b.completedAt ?? b.updatedAt)
+          .compareTo(a.completedAt ?? a.updatedAt));
   }
 
   /// Find overdue tasks
@@ -80,7 +80,9 @@ class TaskRepository extends EntityRepository<Task> {
   /// Find high priority tasks
   Future<List<Task>> findHighPriority() async {
     final all = await findAll();
-    return all.where((task) => task.isHighPriority && task.isIncomplete).toList();
+    return all
+        .where((task) => task.isHighPriority && task.isIncomplete)
+        .toList();
   }
 
   /// Find tasks by priority

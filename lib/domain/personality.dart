@@ -134,7 +134,8 @@ class Personality extends BaseEntity {
   }
 
   /// Set tool attention for a namespace
-  void setToolAttention(String namespaceId, ToolSelectionAdaptationState state) {
+  void setToolAttention(
+      String namespaceId, ToolSelectionAdaptationState state) {
     _loadToolAttentionIfNeeded();
     toolAttentionPerNamespace[namespaceId] = state;
     _saveToolAttention();
@@ -165,7 +166,8 @@ class Personality extends BaseEntity {
 
   void _loadNamespaceAttentionIfNeeded() {
     if (namespaceAttentionJson != '{}') {
-      final decoded = jsonDecode(namespaceAttentionJson) as Map<String, dynamic>;
+      final decoded =
+          jsonDecode(namespaceAttentionJson) as Map<String, dynamic>;
       namespaceAttention = NamespaceAdaptationState.fromJson(decoded);
     }
   }
@@ -237,8 +239,7 @@ class Personality extends BaseEntity {
     personality.isActive = json['isActive'] as bool? ?? false;
     personality.userPromptTemplate =
         json['userPromptTemplate'] as String? ?? '{input}';
-    personality.temperature =
-        (json['temperature'] as num?)?.toDouble() ?? 0.7;
+    personality.temperature = (json['temperature'] as num?)?.toDouble() ?? 0.7;
     personality.baseModel =
         json['baseModel'] as String? ?? 'llama-3.3-70b-versatile';
 
@@ -251,8 +252,8 @@ class Personality extends BaseEntity {
     if (json['toolAttentionPerNamespace'] != null) {
       personality.toolAttentionPerNamespace =
           (json['toolAttentionPerNamespace'] as Map<String, dynamic>).map(
-        (k, v) => MapEntry(
-            k, ToolSelectionAdaptationState.fromJson(v as Map<String, dynamic>)),
+        (k, v) => MapEntry(k,
+            ToolSelectionAdaptationState.fromJson(v as Map<String, dynamic>)),
       );
       personality._saveToolAttention();
     }

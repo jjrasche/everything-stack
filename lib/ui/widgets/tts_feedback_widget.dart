@@ -6,7 +6,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:everything_stack_template/domain/invocations.dart';
-import 'package:everything_stack_template/domain/feedback.dart' as feedback_model;
+import 'package:everything_stack_template/domain/feedback.dart'
+    as feedback_model;
 import 'package:everything_stack_template/ui/providers/trainable_providers.dart';
 
 class TTSFeedbackWidget extends ConsumerStatefulWidget {
@@ -76,8 +77,10 @@ class _TTSFeedbackWidgetState extends ConsumerState<TTSFeedbackWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _ParameterRow('Audio ID', widget.invocation.audioId.substring(0, 8)),
-              _ParameterRow('Status', widget.invocation.lastError == null ? 'OK' : 'Error'),
+              _ParameterRow(
+                  'Audio ID', widget.invocation.audioId.substring(0, 8)),
+              _ParameterRow('Status',
+                  widget.invocation.lastError == null ? 'OK' : 'Error'),
             ],
           ),
         ),
@@ -99,16 +102,20 @@ class _TTSFeedbackWidgetState extends ConsumerState<TTSFeedbackWidget> {
               icon: Icons.check_circle,
               label: 'Satisfied',
               color: Colors.green,
-              isSelected: _selectedAction == feedback_model.FeedbackAction.confirm,
-              onPressed: () => setState(() => _selectedAction = feedback_model.FeedbackAction.confirm),
+              isSelected:
+                  _selectedAction == feedback_model.FeedbackAction.confirm,
+              onPressed: () => setState(() =>
+                  _selectedAction = feedback_model.FeedbackAction.confirm),
               tooltip: 'Voice quality and speed are good',
             ),
             _ActionButton(
               icon: Icons.tune,
               label: 'Adjust Settings',
               color: Colors.blue,
-              isSelected: _selectedAction == feedback_model.FeedbackAction.correct,
-              onPressed: () => setState(() => _selectedAction = feedback_model.FeedbackAction.correct),
+              isSelected:
+                  _selectedAction == feedback_model.FeedbackAction.correct,
+              onPressed: () => setState(() =>
+                  _selectedAction = feedback_model.FeedbackAction.correct),
               tooltip: 'I want different voice or speed settings',
             ),
             _ActionButton(
@@ -116,15 +123,18 @@ class _TTSFeedbackWidgetState extends ConsumerState<TTSFeedbackWidget> {
               label: 'Unsatisfied',
               color: Colors.red,
               isSelected: _selectedAction == feedback_model.FeedbackAction.deny,
-              onPressed: () => setState(() => _selectedAction = feedback_model.FeedbackAction.deny),
+              onPressed: () => setState(
+                  () => _selectedAction = feedback_model.FeedbackAction.deny),
               tooltip: 'Voice quality or speed is poor',
             ),
             _ActionButton(
               icon: Icons.skip_next,
               label: 'Ignore',
               color: Colors.grey,
-              isSelected: _selectedAction == feedback_model.FeedbackAction.ignore,
-              onPressed: () => setState(() => _selectedAction = feedback_model.FeedbackAction.ignore),
+              isSelected:
+                  _selectedAction == feedback_model.FeedbackAction.ignore,
+              onPressed: () => setState(
+                  () => _selectedAction = feedback_model.FeedbackAction.ignore),
               tooltip: 'Skip learning from this',
             ),
           ],
@@ -196,7 +206,8 @@ class _TTSFeedbackWidgetState extends ConsumerState<TTSFeedbackWidget> {
         const SizedBox(height: 16),
 
         // Save button
-        if (_selectedAction != null && _selectedAction != feedback_model.FeedbackAction.ignore)
+        if (_selectedAction != null &&
+            _selectedAction != feedback_model.FeedbackAction.ignore)
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(

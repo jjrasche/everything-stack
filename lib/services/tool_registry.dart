@@ -45,7 +45,8 @@
 /// ```
 
 /// Tool handler function type
-typedef ToolHandler = Future<Map<String, dynamic>> Function(Map<String, dynamic> params);
+typedef ToolHandler = Future<Map<String, dynamic>> Function(
+    Map<String, dynamic> params);
 
 class ToolRegistry {
   final Map<String, ToolDefinition> _tools = {};
@@ -59,9 +60,7 @@ class ToolRegistry {
 
   /// Get all tools in a namespace
   List<ToolDefinition> getToolsInNamespace(String namespace) {
-    return _tools.values
-        .where((tool) => tool.namespace == namespace)
-        .toList();
+    return _tools.values.where((tool) => tool.namespace == namespace).toList();
   }
 
   /// Get tool definition by name
@@ -75,10 +74,7 @@ class ToolRegistry {
 
   /// Get all namespace names
   List<String> getAllNamespaces() {
-    return _tools.values
-        .map((tool) => tool.namespace)
-        .toSet()
-        .toList();
+    return _tools.values.map((tool) => tool.namespace).toSet().toList();
   }
 }
 

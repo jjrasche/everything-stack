@@ -200,7 +200,6 @@ abstract class EntityRepository<T extends BaseEntity> {
     return saved.id;
   }
 
-
   /// Save multiple entities to database.
   ///
   /// Uses handlers for each entity to manage pattern lifecycle.

@@ -62,8 +62,10 @@ Future<TestContext> initTestEnvironment() async {
   await blobStore.initialize();
 
   // Initialize repositories with adapters from factory (cast to correct types)
-  final versionRepo = VersionRepository(adapter: persistenceFactory.versionAdapter as dynamic);
-  final edgeRepo = EdgeRepository(adapter: persistenceFactory.edgeAdapter as dynamic);
+  final versionRepo =
+      VersionRepository(adapter: persistenceFactory.versionAdapter as dynamic);
+  final edgeRepo =
+      EdgeRepository(adapter: persistenceFactory.edgeAdapter as dynamic);
   final noteRepo = NoteRepository(
     adapter: persistenceFactory.noteAdapter as dynamic,
     embeddingService: embeddingService,

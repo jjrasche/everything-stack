@@ -87,8 +87,7 @@ void main() {
     });
 
     test('entity_versions object store has correct indexes', () async {
-      final txn =
-          db.transaction(ObjectStores.entityVersions, idbModeReadOnly);
+      final txn = db.transaction(ObjectStores.entityVersions, idbModeReadOnly);
       final store = txn.objectStore(ObjectStores.entityVersions);
 
       expect(store.keyPath, 'uuid');
@@ -408,9 +407,7 @@ void main() {
 
       // Index should be updated (empty results or no match)
       results = await noteAdapter.semanticSearch(queryVector);
-      expect(
-          results.where((n) => n.uuid == note1.uuid).isEmpty,
-          isTrue,
+      expect(results.where((n) => n.uuid == note1.uuid).isEmpty, isTrue,
           reason: 'Deleted note should not appear in search results');
     });
 

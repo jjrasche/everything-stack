@@ -34,9 +34,7 @@ class ToolRepository extends EntityRepository<Tool> {
   /// Find all tools in a namespace
   Future<List<Tool>> findByNamespace(String namespaceId) async {
     final all = await findAll();
-    return all
-        .where((tool) => tool.namespaceId == namespaceId)
-        .toList()
+    return all.where((tool) => tool.namespaceId == namespaceId).toList()
       ..sort((a, b) => a.name.compareTo(b.name));
   }
 

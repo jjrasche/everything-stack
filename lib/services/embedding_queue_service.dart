@@ -95,7 +95,8 @@ class EmbeddingQueueService {
       (_) => _processBatch(),
     );
 
-    print('EmbeddingQueueService started (batch=$batchSize, interval=${processingIntervalSeconds}s)');
+    print(
+        'EmbeddingQueueService started (batch=$batchSize, interval=${processingIntervalSeconds}s)');
   }
 
   /// Stop background processing.
@@ -124,7 +125,8 @@ class EmbeddingQueueService {
 
       iterations++;
       if (iterations > 100) {
-        throw StateError('Flush deadlock detected after $iterations iterations');
+        throw StateError(
+            'Flush deadlock detected after $iterations iterations');
       }
     }
 
@@ -161,7 +163,8 @@ class EmbeddingQueueService {
     );
 
     _taskBox.put(task);
-    print('Enqueued $entityType:$entityUuid (queue size: ${await _getPendingCount()})');
+    print(
+        'Enqueued $entityType:$entityUuid (queue size: ${await _getPendingCount()})');
 
     // If queue reached batch size, process immediately
     if (await _getPendingCount() >= batchSize) {
@@ -283,7 +286,8 @@ class EmbeddingQueueService {
 
   /// Save embedding to entity.
   /// Uses adapter directly (bypasses repository) with touch=false.
-  Future<void> _saveEmbedding(EmbeddingTask task, List<double> embedding) async {
+  Future<void> _saveEmbedding(
+      EmbeddingTask task, List<double> embedding) async {
     // Fetch latest entity state
     final note = await _noteAdapter.findByUuid(task.entityUuid);
 
@@ -316,13 +320,15 @@ class EmbeddingQueueService {
       _taskBox.put(task);
       _failedCount++;
 
-      print('✗ ${task.entityType}:${task.entityUuid} failed after $maxRetries retries: $error');
+      print(
+          '✗ ${task.entityType}:${task.entityUuid} failed after $maxRetries retries: $error');
     } else {
       // Retry on next cycle
       task.status = TaskStatus.pending;
       _taskBox.put(task);
 
-      print('⚠ ${task.entityType}:${task.entityUuid} failed (attempt ${task.retryCount}/$maxRetries), will retry: $error');
+      print(
+          '⚠ ${task.entityType}:${task.entityUuid} failed (attempt ${task.retryCount}/$maxRetries), will retry: $error');
 
       // Exponential backoff delay
       await Future.delayed(Duration(seconds: 2 * task.retryCount));

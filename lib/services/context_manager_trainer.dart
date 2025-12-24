@@ -160,9 +160,8 @@ class ContextManagerTrainer {
     final toolState = personality.getToolAttention(namespace);
 
     // Find which tool was actually selected
-    final selectedTool = invocation.toolsCalled.isNotEmpty
-        ? invocation.toolsCalled.first
-        : null;
+    final selectedTool =
+        invocation.toolsCalled.isNotEmpty ? invocation.toolsCalled.first : null;
 
     if (selectedTool == null) {
       print('WARNING: Invocation had no tools called');

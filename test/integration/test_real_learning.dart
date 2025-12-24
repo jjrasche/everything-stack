@@ -42,7 +42,8 @@ class SimpleFeedbackRepository implements FeedbackRepository {
   @override
   Future<List<Feedback>> findByInvocationId(String invocationId) async => [];
   @override
-  Future<List<Feedback>> findByInvocationIds(List<String> invocationIds) async =>
+  Future<List<Feedback>> findByInvocationIds(
+          List<String> invocationIds) async =>
       [];
   @override
   Future<List<Feedback>> findByTurn(String turnId) async => [];
@@ -66,7 +67,8 @@ void main() {
   group('Real Learning Test', () {
     test('trainFromFeedback() actually modifies personality thresholds',
         () async {
-      print('\n═══════════════════════════════════════════════════════════════');
+      print(
+          '\n═══════════════════════════════════════════════════════════════');
       print('TEST: Does trainFromFeedback() actually change state?');
       print('═══════════════════════════════════════════════════════════════');
 
@@ -116,12 +118,13 @@ void main() {
       print('\n🧠 CALLING trainFromFeedback() logic:');
 
       // This is what ContextManager.trainFromFeedback does internally:
-      final feedbackList =
-          await feedbackRepo.findByTurnAndComponent('turn_1', 'context_manager');
+      final feedbackList = await feedbackRepo.findByTurnAndComponent(
+          'turn_1', 'context_manager');
 
       if (feedbackList.isNotEmpty) {
         final feedback = feedbackList.first;
-        final corrected = jsonDecode(feedback.correctedData!) as Map<String, dynamic>;
+        final corrected =
+            jsonDecode(feedback.correctedData!) as Map<String, dynamic>;
 
         if (corrected['namespace'] is String) {
           final correctNamespace = corrected['namespace'] as String;
@@ -149,15 +152,18 @@ void main() {
       print('   timer namespace threshold: $timerThresholdAfter');
 
       // VERIFY: Did thresholds actually change?
-      print('\n═══════════════════════════════════════════════════════════════');
+      print(
+          '\n═══════════════════════════════════════════════════════════════');
       print('RESULTS:');
       print('═══════════════════════════════════════════════════════════════');
 
       final taskRaised = taskThresholdAfter > taskThresholdBefore;
       final timerLowered = timerThresholdAfter < timerThresholdBefore;
 
-      print('task threshold changed: $taskRaised (${taskThresholdBefore.toStringAsFixed(3)} → ${taskThresholdAfter.toStringAsFixed(3)})');
-      print('timer threshold changed: $timerLowered (${timerThresholdBefore.toStringAsFixed(3)} → ${timerThresholdAfter.toStringAsFixed(3)})');
+      print(
+          'task threshold changed: $taskRaised (${taskThresholdBefore.toStringAsFixed(3)} → ${taskThresholdAfter.toStringAsFixed(3)})');
+      print(
+          'timer threshold changed: $timerLowered (${timerThresholdBefore.toStringAsFixed(3)} → ${timerThresholdAfter.toStringAsFixed(3)})');
 
       if (taskRaised && timerLowered) {
         print('\n✅ SUCCESS: Learning infrastructure works!');

@@ -17,17 +17,13 @@ class FeedbackRepositoryImpl extends FeedbackRepository {
 
   @override
   Future<List<Feedback>> findByInvocationId(String invocationId) async {
-    return _store.values
-        .where((f) => f.invocationId == invocationId)
-        .toList();
+    return _store.values.where((f) => f.invocationId == invocationId).toList();
   }
 
   @override
   Future<List<Feedback>> findByInvocationIds(List<String> invocationIds) async {
     final set = invocationIds.toSet();
-    return _store.values
-        .where((f) => set.contains(f.invocationId))
-        .toList();
+    return _store.values.where((f) => set.contains(f.invocationId)).toList();
   }
 
   @override
@@ -80,9 +76,8 @@ class FeedbackRepositoryImpl extends FeedbackRepository {
 
   @override
   Future<int> deleteByTurn(String turnId) async {
-    final keys = _store.keys
-        .where((key) => _store[key]!.turnId == turnId)
-        .toList();
+    final keys =
+        _store.keys.where((key) => _store[key]!.turnId == turnId).toList();
     for (final key in keys) {
       _store.remove(key);
     }
