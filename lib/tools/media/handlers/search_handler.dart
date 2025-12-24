@@ -33,6 +33,8 @@
 
 import 'package:everything_stack_template/tools/media/repositories/channel_repository.dart';
 import 'package:everything_stack_template/tools/media/repositories/media_item_repository.dart';
+import 'package:everything_stack_template/services/embedding_service.dart';
+import 'package:everything_stack_template/patterns/embeddable.dart';
 
 import '../entities/media_item.dart';
 
@@ -61,8 +63,11 @@ class SearchHandler {
         };
       }
 
-      // Get downloaded media items
-      var results = await mediaRepo.findDownloaded();
+      // Use semantic search via embeddings to find relevant items
+      var results = await mediaRepo.semanticSearch(
+        query,
+        limit: limit,
+      );
 
       // Filter by format if provided
       if (format != null && format.isNotEmpty) {
@@ -78,41 +83,27 @@ class SearchHandler {
             results.where((item) => item.channelId == channelId).toList();
       }
 
-      // TODO: Use semantic search via embeddings service
-      // For now, do simple keyword matching as placeholder
-      final searchLower = query.toLowerCase();
-      final scored = results.map((item) {
-        final titleScore = _computeSimilarity(item.title, searchLower);
-        final descScore = _computeSimilarity(
-          item.description ?? '',
-          searchLower,
-        );
-        final maxScore = (titleScore + descScore) / 2;
-        return {
-          'item': item,
-          'score': maxScore,
-        };
-      }).toList();
+      final topResults = results;
 
-      // Sort by score descending
-      scored.sort((a, b) => (b['score'] as double).compareTo(a['score'] as double));
+      // Generate query embedding to calculate similarity scores
+      final queryEmbedding = await EmbeddingService.instance.generate(query);
 
-      // Take top N
-      final topResults = scored
-          .take(limit)
-          .where((r) => (r['score'] as double) > 0)
-          .toList();
-
-      // Build response
+      // Build response with similarity scores
       final formattedResults = <Map<String, dynamic>>[];
-      for (final result in topResults) {
-        final item = result['item'] as MediaItem;
-        final score = result['score'] as double;
+      for (final item in topResults) {
+        // Calculate similarity score for this item
+        double similarity = 0.0;
+        if (item is Embeddable && item.embedding != null && item.embedding!.isNotEmpty) {
+          similarity = EmbeddingService.cosineSimilarity(
+            queryEmbedding,
+            item.embedding!,
+          );
+        }
 
         // Get channel name if available
         String channelName = 'Unknown';
         if (item.channelId.isNotEmpty) {
-          final channel = await channelRepo.getByUuid(item.channelId);
+          final channel = await channelRepo.findByUuid(item.channelId);
           if (channel != null) {
             channelName = channel.name;
           }
@@ -123,7 +114,7 @@ class SearchHandler {
           'title': item.title,
           'channelName': channelName,
           'format': item.format,
-          'similarity': (score * 100).round() / 100, // Round to 2 decimals
+          'similarity': (similarity * 100).round() / 100, // Round to 2 decimals
           'downloadedAt': item.downloadedAt?.toIso8601String(),
           'description': item.description,
           'duration': item.durationSeconds,
@@ -135,8 +126,6 @@ class SearchHandler {
         'query': query,
         'results': formattedResults,
         'count': formattedResults.length,
-        'note':
-            'Results ranked by keyword similarity. Semantic search coming soon.',
       };
     } catch (e) {
       return {
@@ -146,20 +135,4 @@ class SearchHandler {
     }
   }
 
-  /// Simple similarity score based on keyword overlap (0-1)
-  double _computeSimilarity(String text, String query) {
-    if (text.isEmpty || query.isEmpty) return 0;
-
-    final textLower = text.toLowerCase();
-    final queryWords = query.split(' ');
-
-    int matches = 0;
-    for (final word in queryWords) {
-      if (word.isNotEmpty && textLower.contains(word)) {
-        matches++;
-      }
-    }
-
-    return matches / queryWords.length;
-  }
 }

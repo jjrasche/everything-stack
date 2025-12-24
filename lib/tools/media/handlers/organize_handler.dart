@@ -99,7 +99,7 @@ class OrganizeHandler {
                 'Cannot determine channel. Provide channelId, youtubeChannelId, or ensure mediaItem has channelId.',
           };
         }
-        channel = await channelRepo.getByUuid(mediaItem.channelId);
+        channel = await channelRepo.findByUuid(mediaItem.channelId);
       }
 
       if (channel == null) {

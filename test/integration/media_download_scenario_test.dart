@@ -23,6 +23,8 @@ import 'package:uuid/uuid.dart';
 import 'package:everything_stack_template/core/base_entity.dart';
 import 'package:everything_stack_template/core/persistence/persistence_adapter.dart';
 import 'package:everything_stack_template/core/persistence/transaction_context.dart';
+import 'package:everything_stack_template/patterns/embeddable.dart';
+import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/tools/media/handlers/download_handler.dart';
 import 'package:everything_stack_template/tools/media/repositories/download_repository.dart';
 import 'package:everything_stack_template/tools/media/repositories/media_item_repository.dart';
@@ -205,8 +207,29 @@ class InMemoryAdapter<T extends BaseEntity> implements PersistenceAdapter<T> {
     int limit = 10,
     double minSimilarity = 0.0,
   }) async {
-    // Not implemented for mock
-    return [];
+    // Get all entities with embeddings
+    final entities = _byId.values.where((e) {
+      if (e is! Embeddable) return false;
+      final embeddable = e as Embeddable;
+      return embeddable.embedding != null && embeddable.embedding!.isNotEmpty;
+    }).toList();
+
+    // Calculate similarity for each
+    final scored = entities.map((entity) {
+      final embeddable = entity as Embeddable;
+      final similarity = EmbeddingService.cosineSimilarity(
+        queryVector,
+        embeddable.embedding!,
+      );
+      return {'entity': entity, 'similarity': similarity};
+    }).where((s) => s['similarity'] as double >= minSimilarity).toList();
+
+    // Sort by similarity descending (highest first)
+    scored.sort((a, b) =>
+        (b['similarity'] as double).compareTo(a['similarity'] as double));
+
+    // Return top N
+    return scored.take(limit).map((s) => s['entity'] as T).toList();
   }
 
   @override
