@@ -112,3 +112,4 @@ nul
 *.pem
 *.key
 secrets/
+.vercel
