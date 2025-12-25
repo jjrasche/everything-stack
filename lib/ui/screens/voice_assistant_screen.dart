@@ -118,13 +118,24 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
 
   /// Process recognized text through Coordinator
   Future<void> _processRecognizedText(String text) async {
-    if (text.isEmpty) return;
+    print('\n=== VOICE ASSISTANT: _processRecognizedText START ===');
+    print('📥 Input text: "$text"');
+
+    if (text.isEmpty) {
+      print('❌ Text is empty, returning');
+      return;
+    }
 
     setState(() => _isProcessing = true);
+    print('🔄 Set _isProcessing = true');
 
     try {
+      final correlationId = '${DateTime.now().millisecondsSinceEpoch}';
+      print('🔗 Correlation ID: $correlationId');
+      print('📞 Calling coordinator.orchestrate()...');
+
       final result = await _coordinator.orchestrate(
-        correlationId: '${DateTime.now().millisecondsSinceEpoch}',
+        correlationId: correlationId,
         utterance: text,
         availableNamespaces: ['general'],
         toolsByNamespace: {
@@ -132,23 +143,46 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
         },
       );
 
+      print('✅ Coordinator returned!');
+      print('📊 Result: success=${result.success}, finalResponse="${result.finalResponse}"');
+      print('⏱️ Latency: ${result.latencyMs}ms');
+
+      if (!result.success) {
+        print('❌ Coordinator failed: ${result.errorMessage}');
+      }
+
       if (mounted) {
+        print('📱 Widget mounted, updating UI...');
         setState(() {
           _responseText = result.finalResponse;
           _isProcessing = false;
         });
+        print('💬 Updated response text: "${result.finalResponse}"');
 
         // Speak the response
-        await _speakResponse(result.finalResponse);
+        if (result.finalResponse.isNotEmpty) {
+          print('🔊 Calling _speakResponse()...');
+          await _speakResponse(result.finalResponse);
+          print('✅ TTS complete');
+        } else {
+          print('⚠️ No response text to speak');
+        }
+      } else {
+        print('⚠️ Widget not mounted, skipping UI update');
       }
+
+      print('=== VOICE ASSISTANT: _processRecognizedText END (success) ===\n');
     } catch (e) {
-      print('Coordinator error: $e');
+      print('❌ EXCEPTION in _processRecognizedText: $e');
+      print('Stack trace: ${StackTrace.current}');
+
       if (mounted) {
         setState(() => _isProcessing = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e')),
         );
       }
+      print('=== VOICE ASSISTANT: _processRecognizedText END (error) ===\n');
     }
   }
 

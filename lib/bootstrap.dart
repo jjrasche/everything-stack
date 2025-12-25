@@ -40,7 +40,6 @@ import 'services/file_service.dart';
 import 'services/sync_service.dart';
 import 'services/connectivity_service.dart';
 import 'services/embedding_service.dart';
-import 'services/jina_embedding_service_impl.dart';
 
 // Conditional import for EmbeddingQueueService (native platforms only)
 import 'services/embedding_queue_service.dart'
@@ -48,8 +47,8 @@ import 'services/embedding_queue_service.dart'
 import 'services/stt_service.dart';
 import 'services/tts_service.dart';
 import 'services/llm_service.dart';
-import 'services/groq_service.dart';
-import 'services/flutter_tts_service.dart';
+import 'services/service_registry.dart';
+import 'services/service_builders.dart';
 import 'services/coordinator.dart';
 import 'services/tool_executor.dart';
 import 'services/trainables/namespace_selector.dart';
@@ -63,8 +62,6 @@ import 'core/invocation_repository.dart';
 import 'core/adaptation_state_repository.dart';
 import 'core/feedback_repository.dart';
 import 'core/turn_repository.dart';
-import 'domain/llm_invocation_repository.dart';
-import 'domain/tts_invocation_repository.dart';
 import 'repositories/invocation_repository_impl.dart';
 import 'repositories/adaptation_state_repository_impl.dart';
 import 'repositories/feedback_repository_impl.dart';
@@ -112,6 +109,18 @@ class EverythingStackConfig {
   /// Groq API key for Groq LLM (optional - uses Claude if not provided)
   final String? groqApiKey;
 
+  /// LLM provider to use: 'groq', 'claude', 'local' (default: 'groq')
+  final String? llmProvider;
+
+  /// TTS provider to use: 'flutter', 'google', 'azure' (default: 'flutter')
+  final String? ttsProvider;
+
+  /// STT provider to use: 'deepgram', 'google', 'local' (default: 'deepgram')
+  final String? sttProvider;
+
+  /// Embedding provider to use: 'jina', 'gemini', 'local' (default: 'jina')
+  final String? embeddingProvider;
+
   /// Whether to use mock services (for testing)
   final bool useMocks;
 
@@ -124,6 +133,10 @@ class EverythingStackConfig {
     this.googleTtsApiKey,
     this.claudeApiKey,
     this.groqApiKey,
+    this.llmProvider,
+    this.ttsProvider,
+    this.sttProvider,
+    this.embeddingProvider,
     this.useMocks = false,
   });
 
@@ -250,6 +263,45 @@ PersistenceFactory get persistenceFactory {
 /// Returns null if not initialized (embeddings disabled).
 EmbeddingQueueService? get embeddingQueueService => _embeddingQueueService;
 
+/// DRY helper to initialize a service: create → initialize → register
+///
+/// Handles the common 3-step pattern for all services to avoid boilerplate.
+/// Supports optional initialization (e.g., EmbeddingService skips if Null).
+///
+/// Usage:
+/// ```dart
+/// await _initializeService<TTSService>(
+///   serviceName: 'tts',
+///   config: ttsConfig,
+///   setInstance: (service) { TTSService.instance = service; },
+///   shouldInitialize: (service) => true,
+///   getType: (service) => service.runtimeType,
+/// );
+/// ```
+Future<void> _initializeService<T>({
+  required String serviceName,
+  required ServiceConfig config,
+  required Function(T) setInstance,
+  required bool Function(T) shouldInitialize,
+  required Type Function(T) getType,
+}) async {
+  try {
+    final service = createService<T>(serviceName, config);
+    setInstance(service);
+
+    if (shouldInitialize(service)) {
+      await service.initialize();
+      print('✅ ${serviceName.toUpperCase()}: ${getType(service)}');
+    } else {
+      print('ℹ️ ${serviceName.toUpperCase()}: disabled');
+    }
+
+    ServiceRegistry.register<T>(serviceName, service);
+  } catch (e) {
+    print('⚠️ $serviceName init failed: $e');
+  }
+}
+
 Future<void> initializeEverythingStack({
   EverythingStackConfig? config,
 }) async {
@@ -302,34 +354,60 @@ Future<void> initializeEverythingStack({
   }
   // else: keeps MockSyncService default
 
-  // 6. Initialize EmbeddingService (optional - requires API key)
-  if (cfg.jinaApiKey != null && cfg.jinaApiKey!.isNotEmpty) {
-    EmbeddingService.instance = createJinaEmbeddingService(cfg.jinaApiKey!);
-  } else if (cfg.geminiApiKey != null && cfg.geminiApiKey!.isNotEmpty) {
-    EmbeddingService.instance = GeminiEmbeddingService(
-      apiKey: cfg.geminiApiKey,
-      httpClient: wrappedHttpClient,
-    );
-  }
-  // else: keeps NullEmbeddingService default (embeddings disabled)
-
-  // 7. EmbeddingQueueService deferred to Phase 1 (Note entity not yet implemented)
+  // 6. EmbeddingQueueService deferred to Phase 1 (Note entity not yet implemented)
 
   // 8-11. STT/TTS/LLM Services (platform-specific)
   // Web platform: Uses browser APIs (SpeechSynthesis for TTS, Web Speech API for STT)
   // Native platforms: Uses external APIs (Google Cloud TTS, Deepgram STT)
 
-  // Initialize TTS Service (cross-platform via flutter_tts)
-  try {
-    final invocationRepo = InvocationRepositoryImpl();
-    TTSService.instance = FlutterTtsService(
-      invocationRepository: invocationRepo,
-    );
-    await TTSService.instance.initialize();
-  } catch (e) {
-    print('Warning: TTS initialization failed: $e');
-    // Falls back to NullTTSService
-  }
+  // 9. Register invocation repository in service registry (shared by all services)
+  final invocationRepo = InvocationRepositoryImpl();
+  ServiceRegistry.register<InvocationRepository<domain_invocation.Invocation>>(
+    'invocation_repo',
+    invocationRepo,
+  );
+
+  // 10. Initialize TTS Service
+  final ttsConfig = ServiceConfig(
+    provider: cfg.ttsProvider ?? 'flutter',
+    credentials: cfg.googleTtsApiKey != null ? {'apiKey': cfg.googleTtsApiKey} : {},
+  );
+  await _initializeService<TTSService>(
+    serviceName: 'tts',
+    config: ttsConfig,
+    setInstance: (service) { TTSService.instance = service; },
+    shouldInitialize: (service) => true,
+    getType: (service) => service.runtimeType,
+  );
+
+  // 11. Initialize LLM Service
+  final llmConfig = ServiceConfig(
+    provider: cfg.llmProvider ?? 'groq',
+    credentials: {if (cfg.groqApiKey != null) 'apiKey': cfg.groqApiKey!},
+  );
+  await _initializeService<LLMService>(
+    serviceName: 'llm',
+    config: llmConfig,
+    setInstance: (service) { LLMService.instance = service; },
+    shouldInitialize: (service) => true,
+    getType: (service) => service.runtimeType,
+  );
+
+  // 12. Initialize Embedding Service
+  final embeddingConfig = ServiceConfig(
+    provider: cfg.embeddingProvider ?? 'jina',
+    credentials: {
+      if (cfg.jinaApiKey != null) 'apiKey': cfg.jinaApiKey!,
+      if (cfg.geminiApiKey != null) 'apiKey': cfg.geminiApiKey!,
+    },
+  );
+  await _initializeService<EmbeddingService>(
+    serviceName: 'embedding',
+    config: embeddingConfig,
+    setInstance: (service) { EmbeddingService.instance = service; },
+    shouldInitialize: (service) => service is! NullEmbeddingService,
+    getType: (service) => service.runtimeType,
+  );
 
   // Note: Domain repositories (Task, Timer, Personality, Namespace) are initialized
   // by the application layer, not bootstrap. This allows for platform-specific
@@ -340,7 +418,7 @@ Future<void> initializeEverythingStack({
   //
   // See: lib/providers/ for Riverpod provider setup with repositories
   // See: lib/main.dart for ContextManager initialization
-  print('Bootstrap complete: infrastructure services initialized');
+  print('\n✅ Bootstrap complete: infrastructure services initialized');
 }
 
 /// Wrap TimeoutHttpClient to match HttpClientFunction signature.
@@ -454,13 +532,6 @@ void setupServiceLocator() {
     TurnRepositoryImpl.inMemory(),  // In-memory for now (Phase 1: ObjectBox/IndexedDB)
   );
 
-  getIt.registerSingleton<LLMInvocationRepository>(
-    LLMInvocationRepositoryImpl.inMemory(),  // In-memory for now
-  );
-
-  getIt.registerSingleton<TTSInvocationRepository>(
-    TTSInvocationRepositoryImpl.inMemory(),  // In-memory for now
-  );
 
   // ========== Trainable Selectors (Real implementations) ==========
 
@@ -592,14 +663,6 @@ void setupServiceLocatorForTesting({
     TurnRepositoryImpl.inMemory(),  // In-memory for test speed
   );
 
-  getIt.registerSingleton<LLMInvocationRepository>(
-    LLMInvocationRepositoryImpl.inMemory(),  // In-memory for test speed
-  );
-
-  getIt.registerSingleton<TTSInvocationRepository>(
-    TTSInvocationRepositoryImpl.inMemory(),  // In-memory for test speed
-  );
-
   // ========== Trainable Selectors - Real implementations ==========
 
   getIt.registerSingleton<NamespaceSelector>(
@@ -681,6 +744,9 @@ void setupServiceLocatorForTesting({
 // ============================================================================
 
 class MockEmbeddingService implements EmbeddingService {
+  @override
+  Future<void> initialize() async {}
+
   @override
   Future<List<double>> generate(String text) async {
     return List.filled(384, 0.5);  // Mock embedding

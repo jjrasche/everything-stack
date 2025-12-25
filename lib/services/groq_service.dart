@@ -25,25 +25,25 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'llm_service.dart';
-import 'package:everything_stack_template/domain/invocations.dart';
-import 'package:everything_stack_template/domain/llm_invocation_repository.dart';
+import 'package:everything_stack_template/domain/invocation.dart';
+import 'package:everything_stack_template/core/invocation_repository.dart';
 
 class GroqService extends LLMService {
   final String apiKey;
   final String baseUrl;
   final Duration timeout;
   final int maxRetries;
-  final LLMInvocationRepository _llmInvocationRepository;
+  final InvocationRepository<Invocation> _invocationRepository;
 
   bool _isReady = false;
 
   GroqService({
     required this.apiKey,
-    required LLMInvocationRepository llmInvocationRepository,
+    required InvocationRepository<Invocation> invocationRepository,
     this.baseUrl = 'https://api.groq.com/openai/v1',
     this.timeout = const Duration(seconds: 30),
     this.maxRetries = 3,
-  }) : _llmInvocationRepository = llmInvocationRepository;
+  }) : _invocationRepository = invocationRepository;
 
   // ============================================================================
   // LLMService Implementation
@@ -117,11 +117,11 @@ class GroqService extends LLMService {
 
   @override
   Future<String> recordInvocation(dynamic invocation) async {
-    if (invocation is! LLMInvocation) {
+    if (invocation is! Invocation) {
       throw ArgumentError(
-          'Expected LLMInvocation, got ${invocation.runtimeType}');
+          'Expected Invocation, got ${invocation.runtimeType}');
     }
-    await _llmInvocationRepository.save(invocation);
+    await _invocationRepository.save(invocation);
     return invocation.uuid;
   }
 

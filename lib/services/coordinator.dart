@@ -126,23 +126,32 @@ class Coordinator {
     required List<String> availableNamespaces,
     required Map<String, List<String>> toolsByNamespace,
   }) async {
+    print('\n=== COORDINATOR: orchestrate START ===');
+    print('🔗 CorrelationId: $correlationId');
+    print('📝 Utterance: "$utterance"');
+
     final startTime = DateTime.now();
     final invocationIds = <String>[];
 
     try {
       // 1. Generate embedding
+      print('\n[1/6] Generating embedding...');
       final embedding = await embeddingService.generate(utterance);
+      print('✅ Embedding generated: ${embedding.isNotEmpty ? embedding.length : 0} dimensions');
 
       // 2. NamespaceSelector picks namespace
+      print('\n[2/6] Selecting namespace...');
       final selectedNamespace = await namespaceSelector.selectNamespace(
         correlationId: correlationId,
         utterance: utterance,
         embedding: embedding,
         availableNamespaces: availableNamespaces,
       );
+      print('✅ Selected namespace: "$selectedNamespace"');
       invocationIds.add('namespace_selector_invocation');
 
       // 3. ToolSelector picks tools
+      print('\n[3/6] Selecting tools...');
       final availableTools = toolsByNamespace[selectedNamespace] ?? [];
       final selectedTools = await toolSelector.selectTools(
         correlationId: correlationId,
@@ -151,25 +160,32 @@ class Coordinator {
         embedding: embedding,
         availableTools: availableTools,
       );
+      print('✅ Selected tools: ${selectedTools.isEmpty ? "none" : selectedTools.join(", ")}');
       invocationIds.add('tool_selector_invocation');
 
       // 4. ContextInjector injects context
+      print('\n[4/6] Injecting context...');
       final injectedContext = await contextInjector.injectContext(
         correlationId: correlationId,
         namespace: selectedNamespace,
       );
+      print('✅ Context injected: ${injectedContext.length} keys');
       invocationIds.add('context_injector_invocation');
 
       // 5. LLMConfigSelector picks config
+      print('\n[5/6] Selecting LLM config...');
       final llmConfig = await llmConfigSelector.selectConfig(
         correlationId: correlationId,
         utterance: utterance,
         namespace: selectedNamespace,
         tools: selectedTools,
       );
+      print('✅ LLM config: model=${llmConfig['model']}, temp=${llmConfig['temperature']}');
       invocationIds.add('llm_config_selector_invocation');
 
       // 6. Call LLM (MVP: no tool execution)
+      print('\n[6/6] Calling LLM service...');
+      print('📡 LLM call starting...');
       final llmResponse = await llmService.chatWithTools(
         model: llmConfig['model'] as String? ?? 'groq-mixtral',
         messages: [
@@ -186,11 +202,16 @@ class Coordinator {
         tools: _buildToolDefinitions(selectedTools),
         temperature: (llmConfig['temperature'] as num?)?.toDouble() ?? 0.7,
       );
+      print('✅ LLM response received');
+      print('📄 Response content: "${llmResponse.content}"');
+
       final finalResponse = llmResponse.content ?? 'No response generated';
       final toolCalls = <String>[];
       final iterations = 1;
+      print('💾 Final response set to: "$finalResponse"');
 
       // Record LLM orchestration invocation
+      print('\n📋 Recording LLM orchestration...');
       await llmOrchestrator.recordOrchestration(
         correlationId: correlationId,
         utterance: utterance,
@@ -202,16 +223,25 @@ class Coordinator {
         iterations: iterations,
         success: true,
       );
+      print('✅ LLM orchestration recorded');
       invocationIds.add('llm_orchestration_invocation');
 
       // 7. ResponseRenderer formats response
+      print('\n🎨 Rendering response...');
       final renderedResponse = await responseRenderer.renderResponse(
         correlationId: correlationId,
         llmResponse: finalResponse,
         namespace: selectedNamespace,
         tools: selectedTools,
       );
+      print('✅ Response rendered: "$renderedResponse"');
       invocationIds.add('response_renderer_invocation');
+
+      final latency = DateTime.now().difference(startTime).inMilliseconds;
+      print('\n✅ COORDINATOR: orchestrate SUCCESS');
+      print('⏱️ Total latency: ${latency}ms');
+      print('🔗 Invocation IDs: ${invocationIds.join(", ")}');
+      print('=== COORDINATOR: orchestrate END ===\n');
 
       return CoordinatorResult(
         turnId: correlationId,
@@ -222,9 +252,16 @@ class Coordinator {
         finalResponse: renderedResponse,
         invocationIds: invocationIds,
         success: true,
-        latencyMs: DateTime.now().difference(startTime).inMilliseconds,
+        latencyMs: latency,
       );
     } catch (e) {
+      print('\n❌ COORDINATOR: orchestrate ERROR');
+      print('🚨 Exception: $e');
+      print('📍 Stack trace: ${StackTrace.current}');
+      final latency = DateTime.now().difference(startTime).inMilliseconds;
+      print('⏱️ Latency before error: ${latency}ms');
+      print('=== COORDINATOR: orchestrate END (ERROR) ===\n');
+
       return CoordinatorResult(
         turnId: correlationId,
         selectedNamespace: '',
@@ -235,7 +272,7 @@ class Coordinator {
         invocationIds: invocationIds,
         success: false,
         errorMessage: e.toString(),
-        latencyMs: DateTime.now().difference(startTime).inMilliseconds,
+        latencyMs: latency,
       );
     }
   }

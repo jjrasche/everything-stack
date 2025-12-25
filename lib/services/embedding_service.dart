@@ -78,6 +78,11 @@ abstract class EmbeddingService {
   /// Defaults to NullEmbeddingService (embeddings disabled).
   static EmbeddingService instance = NullEmbeddingService();
 
+  /// Initialize the embedding service.
+  /// Called once at startup to set up resources.
+  /// Default is no-op; override if needed.
+  Future<void> initialize() async {}
+
   /// Generate embedding for a single text input.
   /// Returns vector of length [dimension].
   ///
