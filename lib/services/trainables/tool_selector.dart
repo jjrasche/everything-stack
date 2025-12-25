@@ -42,6 +42,7 @@ class ToolSelector implements Trainable {
   /// Select tools for namespace and utterance
   ///
   /// For now, returns all tools in namespace.
+  /// If no tools available, returns empty list (LLM-only mode).
   /// Will learn from feedback to filter irrelevant tools.
   Future<List<String>> selectTools({
     required String correlationId,
@@ -50,8 +51,10 @@ class ToolSelector implements Trainable {
     required List<double> embedding,
     required List<String> availableTools,
   }) async {
+    // No tools available - default to LLM-only (ambient AI mode)
     if (availableTools.isEmpty) {
-      throw ArgumentError('No tools available in namespace');
+      print('ℹ️ No tools available - LLM-only mode');
+      return [];
     }
 
     // For now, select all tools (will be filtered based on feedback)
