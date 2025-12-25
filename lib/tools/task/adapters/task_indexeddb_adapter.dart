@@ -13,10 +13,17 @@
 
 import 'package:idb_shim/idb.dart';
 import '../../../persistence/indexeddb/base_indexeddb_adapter.dart';
+import '../../../persistence/indexeddb/database_init.dart';
 import '../entities/task.dart';
 
 class TaskIndexedDBAdapter extends BaseIndexedDBAdapter<Task> {
   TaskIndexedDBAdapter(Database db) : super(db);
+
+  /// Factory constructor for lazy initialization on web platform
+  static Future<TaskIndexedDBAdapter> create() async {
+    final db = await openIndexedDatabase();
+    return TaskIndexedDBAdapter(db);
+  }
 
   @override
   String get objectStoreName => 'tasks';

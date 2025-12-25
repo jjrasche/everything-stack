@@ -51,11 +51,9 @@ import 'services/service_registry.dart';
 import 'services/service_builders.dart';
 import 'services/coordinator.dart';
 import 'services/tool_executor.dart';
-// Conditional import for Task tools (native platforms only)
-import 'tools/task/repositories/task_repository.dart'
-    if (dart.library.html) 'bootstrap/task_repository_stub.dart';
-import 'tools/task/adapters/task_objectbox_adapter.dart'
-    if (dart.library.html) 'bootstrap/task_adapter_stub.dart';
+import 'services/tool_registry.dart';
+import 'tools/task/repositories/task_repository.dart';
+import 'tools/task/task_tools.dart';
 import 'services/trainables/namespace_selector.dart';
 import 'services/trainables/tool_selector.dart';
 import 'services/trainables/context_injector.dart';
@@ -588,22 +586,24 @@ void setupServiceLocator() {
     ),
   );
 
-  // ========== Task Repository (Native platforms only) ==========
+  // ========== Tool Registry ==========
 
-  if (!kIsWeb) {
-    final persistenceFactory = getIt<PersistenceFactory>();
-    final store = persistenceFactory.store;
-    final adapter = TaskObjectBoxAdapter(store);
-    final taskRepository = TaskRepository(adapter: adapter);
-    getIt.registerSingleton<TaskRepository>(taskRepository);
-  }
+  getIt.registerSingleton<ToolRegistry>(ToolRegistry());
+
+  // ========== Task Repository (Owns adapter selection internally) ==========
+
+  final taskRepo = TaskRepository();
+  getIt.registerSingleton<TaskRepository>(taskRepo);
+
+  // Register task tools with registry
+  registerTaskTools(getIt<ToolRegistry>(), taskRepo);
 
   // ========== Tool Executor (Real agentic loop) ==========
 
   getIt.registerSingleton<ToolExecutor>(
     ToolExecutor(
       invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      taskRepository: kIsWeb ? null : getIt<TaskRepository>(),
+      toolRegistry: getIt<ToolRegistry>(),
     ),
   );
 
@@ -734,7 +734,7 @@ void setupServiceLocatorForTesting({
   getIt.registerSingleton<ToolExecutor>(
     ToolExecutor(
       invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      taskRepository: kIsWeb ? null : getIt<TaskRepository>(),
+      toolRegistry: getIt<ToolRegistry>(),
     ),
   );
 

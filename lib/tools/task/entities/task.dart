@@ -25,28 +25,28 @@
 /// task.complete();
 /// ```
 
-import 'package:objectbox/objectbox.dart';
-
 import '../../../core/base_entity.dart';
 import '../../../patterns/ownable.dart';
+import '../../../patterns/invocable.dart';
 
-@Entity()
-class Task extends BaseEntity with Ownable {
+/// Domain model for a user task/todo.
+///
+/// This is a pure Dart class with no ORM decorators.
+/// Platform-specific persistence is handled by adapters:
+/// - Native: TaskObjectBoxAdapter (uses @Entity decorators)
+/// - Web: TaskIndexedDBAdapter (uses native IndexedDB)
+class Task extends BaseEntity with Ownable, Invocable {
   // ============ BaseEntity field overrides ============
   @override
-  @Id()
   int id = 0;
 
   @override
-  @Unique()
   String uuid = '';
 
   @override
-  @Property(type: PropertyType.date)
   DateTime createdAt = DateTime.now();
 
   @override
-  @Property(type: PropertyType.date)
   DateTime updatedAt = DateTime.now();
 
   @override
@@ -58,7 +58,6 @@ class Task extends BaseEntity with Ownable {
   String title;
 
   /// Optional due date
-  @Property(type: PropertyType.date)
   DateTime? dueDate;
 
   /// Priority: 'high', 'medium', 'low'
@@ -71,7 +70,6 @@ class Task extends BaseEntity with Ownable {
   bool completed;
 
   /// When was it completed?
-  @Property(type: PropertyType.date)
   DateTime? completedAt;
 
   // ============ Ownable mixin fields (stored) ============
@@ -83,10 +81,9 @@ class Task extends BaseEntity with Ownable {
   List<String> sharedWith = [];
 
   @override
-  @Transient()
   Visibility visibility = Visibility.private;
 
-  /// Store visibility as int for ObjectBox
+  /// Store visibility as int for persistence layers
   int get visibilityIndex => visibility.index;
   set visibilityIndex(int value) => visibility = Visibility.values[value];
 
@@ -167,20 +164,23 @@ class Task extends BaseEntity with Ownable {
   // ============ Serialization ============
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'uuid': uuid,
-        'createdAt': createdAt.toIso8601String(),
-        'updatedAt': updatedAt.toIso8601String(),
-        'syncId': syncId,
-        'title': title,
-        'dueDate': dueDate?.toIso8601String(),
-        'priority': priority,
-        'description': description,
-        'completed': completed,
-        'completedAt': completedAt?.toIso8601String(),
-        'ownerId': ownerId,
-        'sharedWith': sharedWith,
-        'visibility': visibility.name,
+        ...{
+          'id': id,
+          'uuid': uuid,
+          'createdAt': createdAt.toIso8601String(),
+          'updatedAt': updatedAt.toIso8601String(),
+          'syncId': syncId,
+          'title': title,
+          'dueDate': dueDate?.toIso8601String(),
+          'priority': priority,
+          'description': description,
+          'completed': completed,
+          'completedAt': completedAt?.toIso8601String(),
+          'ownerId': ownerId,
+          'sharedWith': sharedWith,
+          'visibility': visibility.name,
+        },
+        ...invocableToJson(),
       };
 
   factory Task.fromJson(Map<String, dynamic> json) {
@@ -214,6 +214,7 @@ class Task extends BaseEntity with Ownable {
       (v) => v.name == json['visibility'],
       orElse: () => Visibility.private,
     );
+    task.invocableFromJson(json);
     return task;
   }
 }

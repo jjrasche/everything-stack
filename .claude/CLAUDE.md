@@ -112,10 +112,15 @@ Testing follows a 4-layer approach. All layers run in CI. All must pass before m
 
 - All entities extend `BaseEntity`
 - All repositories extend `EntityRepository`
+- **Entities are pure Dart classes with NO ORM-specific decorators** (@Entity, @Id, @Property, @Transient)
+  - ObjectBox decorators belong in adapters only, not domain entities
+  - This ensures web compilation succeeds (no dart:ffi imports in domain code)
+  - Same entity works with ObjectBox, IndexedDB, or other backends
 - File storage uses bytes-in-database pattern (no filesystem)
 - Offline-first with ObjectBox (native) + IndexedDB (web), sync via Supabase
 - Cross-platform code only - no platform-specific logic outside adapters
 - Dual persistence: adapters implement common interfaces, domain code is platform-agnostic
+- See `lib/tools/README.md` for tool domain architecture and ORM decorator separation
 
 ## Workflows (Phase 5D+)
 

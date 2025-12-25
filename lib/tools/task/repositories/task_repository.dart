@@ -2,34 +2,231 @@
 ///
 /// ## What it does
 /// Repository for Task entities. Manages user tasks/todos.
-///
-/// ## Usage
-/// ```dart
-/// final adapter = TaskObjectBoxAdapter(store);
-/// final repo = TaskRepository(adapter: adapter);
-///
-/// // Find incomplete tasks
-/// final incomplete = await repo.findIncomplete();
-///
-/// // Find tasks for a user
-/// final userTasks = await repo.findByOwner('user_123');
-/// ```
+/// Owns adapter selection - uses ObjectBox on native, IndexedDB on web.
+
+import 'package:flutter/foundation.dart';
+import 'package:get_it/get_it.dart';
 
 import '../../../core/entity_repository.dart';
 import '../../../core/persistence/persistence_adapter.dart';
+import '../../../core/persistence/transaction_context.dart';
 import '../../../services/embedding_service.dart';
-import '../entities/task.dart'
-    if (dart.library.html) '../../../bootstrap/task_stub.dart';
+import '../../../bootstrap/persistence_factory.dart';
+import '../entities/task.dart';
+import '../adapters/task_indexeddb_adapter.dart' as indexeddb;
+// Conditional import: real ObjectBox adapter on native, stub on web
+// This prevents Dart analyzer from analyzing `dart:ffi` code on web platforms
+import '../adapters/task_objectbox_adapter.dart'
+    if (dart.library.html) '../adapters/task_objectbox_adapter_stub.dart'
+    as objectbox;
 
 class TaskRepository extends EntityRepository<Task> {
-  TaskRepository({
-    required PersistenceAdapter<Task> adapter,
-    EmbeddingService? embeddingService,
-  }) : super(
-          adapter: adapter,
+  TaskRepository({EmbeddingService? embeddingService})
+      : super(
+          adapter: _createAdapter(),
           embeddingService: embeddingService ?? EmbeddingService.instance,
         );
 
+  /// Create appropriate adapter based on platform
+  static PersistenceAdapter<Task> _createAdapter() {
+    if (kIsWeb) {
+      // Web: IndexedDB (async lazy initialization)
+      return _WebTaskAdapter();
+    } else {
+      // Native: ObjectBox
+      final getIt = GetIt.instance;
+      final persistenceFactory = getIt<PersistenceFactory>();
+      return objectbox.TaskObjectBoxAdapter(persistenceFactory.store);
+    }
+  }
+}
+
+/// Stub adapter for web - delegates to IndexedDB on first use
+class _WebTaskAdapter implements PersistenceAdapter<Task> {
+  late PersistenceAdapter<Task> _delegate;
+  bool _initialized = false;
+
+  Future<void> _ensureInitialized() async {
+    if (!_initialized) {
+      _delegate = await indexeddb.TaskIndexedDBAdapter.create();
+      _initialized = true;
+    }
+  }
+
+  @override
+  Future<Task?> findById(int id) async {
+    await _ensureInitialized();
+    return _delegate.findById(id);
+  }
+
+  @override
+  Future<Task> getById(int id) async {
+    await _ensureInitialized();
+    return _delegate.getById(id);
+  }
+
+  @override
+  Future<Task?> findByUuid(String uuid) async {
+    await _ensureInitialized();
+    return _delegate.findByUuid(uuid);
+  }
+
+  @override
+  Future<Task> getByUuid(String uuid) async {
+    await _ensureInitialized();
+    return _delegate.getByUuid(uuid);
+  }
+
+  @override
+  Future<List<Task>> findAll() async {
+    await _ensureInitialized();
+    return _delegate.findAll();
+  }
+
+  @override
+  Future<Task> save(Task entity, {bool touch = true}) async {
+    await _ensureInitialized();
+    return _delegate.save(entity, touch: touch);
+  }
+
+  @override
+  Future<List<Task>> saveAll(List<Task> entities) async {
+    await _ensureInitialized();
+    return _delegate.saveAll(entities);
+  }
+
+  @override
+  Future<bool> delete(int id) async {
+    await _ensureInitialized();
+    return _delegate.delete(id);
+  }
+
+  @override
+  Future<bool> deleteByUuid(String uuid) async {
+    await _ensureInitialized();
+    return _delegate.deleteByUuid(uuid);
+  }
+
+  @override
+  Future<void> deleteAll(List<int> ids) async {
+    await _ensureInitialized();
+    return _delegate.deleteAll(ids);
+  }
+
+  @override
+  Future<void> close() async {
+    await _ensureInitialized();
+    return _delegate.close();
+  }
+
+  @override
+  Future<int> count() async {
+    await _ensureInitialized();
+    return _delegate.count();
+  }
+
+  @override
+  Future<List<Task>> findUnsynced() async {
+    await _ensureInitialized();
+    return _delegate.findUnsynced();
+  }
+
+  @override
+  int get indexSize {
+    // We can't ensure initialized in a getter, so return 0
+    // The caller should have called an async method first
+    return _delegate.indexSize;
+  }
+
+  @override
+  Future<void> rebuildIndex(
+    Future<List<double>?> Function(Task entity) generateEmbedding,
+  ) async {
+    await _ensureInitialized();
+    return _delegate.rebuildIndex(generateEmbedding);
+  }
+
+  @override
+  Future<List<Task>> semanticSearch(
+    List<double> queryVector, {
+    int limit = 10,
+    double minSimilarity = 0.0,
+  }) async {
+    await _ensureInitialized();
+    return _delegate.semanticSearch(
+      queryVector,
+      limit: limit,
+      minSimilarity: minSimilarity,
+    );
+  }
+
+  @override
+  Task? findByIdInTx(TransactionContext ctx, int id) {
+    // Can't lazily initialize in sync method
+    throw UnsupportedError(
+      'Transactions not supported in lazy-initialized web adapter. '
+      'Initialize the adapter first with an async call.',
+    );
+  }
+
+  @override
+  Task? findByUuidInTx(TransactionContext ctx, String uuid) {
+    throw UnsupportedError(
+      'Transactions not supported in lazy-initialized web adapter. '
+      'Initialize the adapter first with an async call.',
+    );
+  }
+
+  @override
+  List<Task> findAllInTx(TransactionContext ctx) {
+    throw UnsupportedError(
+      'Transactions not supported in lazy-initialized web adapter. '
+      'Initialize the adapter first with an async call.',
+    );
+  }
+
+  @override
+  Task saveInTx(TransactionContext ctx, Task entity, {bool touch = true}) {
+    throw UnsupportedError(
+      'Transactions not supported in lazy-initialized web adapter. '
+      'Initialize the adapter first with an async call.',
+    );
+  }
+
+  @override
+  List<Task> saveAllInTx(TransactionContext ctx, List<Task> entities) {
+    throw UnsupportedError(
+      'Transactions not supported in lazy-initialized web adapter. '
+      'Initialize the adapter first with an async call.',
+    );
+  }
+
+  @override
+  bool deleteInTx(TransactionContext ctx, int id) {
+    throw UnsupportedError(
+      'Transactions not supported in lazy-initialized web adapter. '
+      'Initialize the adapter first with an async call.',
+    );
+  }
+
+  @override
+  bool deleteByUuidInTx(TransactionContext ctx, String uuid) {
+    throw UnsupportedError(
+      'Transactions not supported in lazy-initialized web adapter. '
+      'Initialize the adapter first with an async call.',
+    );
+  }
+
+  @override
+  void deleteAllInTx(TransactionContext ctx, List<int> ids) {
+    throw UnsupportedError(
+      'Transactions not supported in lazy-initialized web adapter. '
+      'Initialize the adapter first with an async call.',
+    );
+  }
+}
+
+extension TaskRepositoryQueries on TaskRepository {
   // ============ Task-specific queries ============
 
   /// Find all incomplete tasks, ordered by due date
