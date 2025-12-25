@@ -66,10 +66,7 @@ class ToolRegistry {
   /// Get tool definition by name
   ToolDefinition? getDefinition(String name) => _tools[name];
 
-  /// Get tool handler by name
-  ToolHandler? getHandler(String name) => _handlers[name];
-
-  /// Get tool function by name (direct function, no wrapper)
+  /// Get tool function by name
   ToolHandler? getTool(String name) => _handlers[name];
 
   /// Get all tool definitions
