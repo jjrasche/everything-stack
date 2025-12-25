@@ -8,6 +8,8 @@
 ///
 /// Each implements domain-specific repository interface with in-memory storage.
 
+import 'package:everything_stack_template/core/invocation_repository.dart';
+import 'package:everything_stack_template/domain/invocation.dart';
 import 'package:everything_stack_template/domain/invocations.dart';
 import 'package:everything_stack_template/domain/stt_invocation_repository.dart';
 import 'package:everything_stack_template/domain/llm_invocation_repository.dart';
@@ -291,12 +293,6 @@ class ContextManagerInvocationRepositoryImpl {
       ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
   }
 
-  Future<List<ContextManagerInvocation>> findByPersonality(
-      String personalityId) async {
-    return _store.values.where((i) => i.personalityId == personalityId).toList()
-      ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
-  }
-
   Future<List<ContextManagerInvocation>> findRecent({int limit = 50}) async {
     final all = _store.values.toList();
     all.sort((a, b) => b.timestamp.compareTo(a.timestamp));
@@ -316,6 +312,97 @@ class ContextManagerInvocationRepositoryImpl {
 
   Future<bool> delete(String uuid) async {
     return _store.remove(uuid) != null;
+  }
+
+  Future<int> count() async {
+    return _store.length;
+  }
+
+  Future<int> deleteAll() async {
+    final count = _store.length;
+    _store.clear();
+    return count;
+  }
+
+  void clear() {
+    _store.clear();
+  }
+}
+
+// ============ Generic Invocation Repository ============
+
+class InvocationRepositoryImpl implements InvocationRepository<Invocation> {
+  final Map<String, Invocation> _store = {};
+
+  InvocationRepositoryImpl._();
+
+  factory InvocationRepositoryImpl() {
+    // TODO: Phase 1 - Replace with ObjectBox/IndexedDB per platform
+    // For now, in-memory is the only implementation
+    return InvocationRepositoryImpl._();
+  }
+
+  factory InvocationRepositoryImpl.inMemory() {
+    return InvocationRepositoryImpl._();
+  }
+
+  @override
+  Future<Invocation?> findById(String id) async {
+    return _store[id];
+  }
+
+  @override
+  Future<List<Invocation>> findByTurn(String turnId) async {
+    return _store.values.where((i) => i.correlationId == turnId).toList();
+  }
+
+  @override
+  Future<List<Invocation>> findByContextType(String contextType) async {
+    return _store.values.toList();
+  }
+
+  @override
+  Future<List<Invocation>> findByIds(List<String> ids) async {
+    return _store.values
+        .where((i) => ids.contains(i.uuid))
+        .toList();
+  }
+
+  @override
+  Future<int> deleteByTurn(String turnId) async {
+    final invocations =
+        _store.values.where((i) => i.correlationId == turnId).toList();
+    int count = 0;
+    for (final inv in invocations) {
+      if (_store.remove(inv.uuid) != null) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  @override
+  Future<List<Invocation>> findAll() async {
+    return _store.values.toList();
+  }
+
+  /// Find all invocations with the same correlationId (grouped event)
+  Future<List<Invocation>> findByCorrelationId(String correlationId) async {
+    return _store.values
+        .where((i) => i.correlationId == correlationId)
+        .toList()
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+  }
+
+  @override
+  Future<Invocation> save(Invocation invocation) async {
+    _store[invocation.uuid] = invocation;
+    return invocation;
+  }
+
+  @override
+  Future<bool> delete(String id) async {
+    return _store.remove(id) != null;
   }
 
   Future<int> count() async {

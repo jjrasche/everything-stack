@@ -9,10 +9,6 @@
 /// - Device may restart
 /// - Timer should still fire (or show elapsed) when app returns
 ///
-/// ## Invocable
-/// Timers are created by the timer.set tool.
-/// The Invocable mixin tracks which tool created it and with what parameters.
-///
 /// ## Usage
 /// ```dart
 /// final timer = Timer(
@@ -21,23 +17,14 @@
 ///   setAt: DateTime.now(),
 ///   endsAt: DateTime.now().add(Duration(seconds: 300)),
 /// );
-///
-/// // Mark creation by tool
-/// timer.recordInvocation(
-///   correlationId: event.correlationId,
-///   toolName: 'timer.set',
-///   params: {'label': '5 minute break', 'duration': 300},
-///   confidence: 0.95,
-/// );
 /// ```
 
 import 'package:objectbox/objectbox.dart';
 
 import '../../../core/base_entity.dart';
-import '../../../patterns/invocable.dart';
 
 @Entity()
-class Timer extends BaseEntity with Invocable {
+class Timer extends BaseEntity {
   // ============ BaseEntity field overrides ============
   @override
   @Id()
@@ -81,31 +68,6 @@ class Timer extends BaseEntity with Invocable {
   /// When did it fire? (null if not yet fired)
   @Property(type: PropertyType.date)
   DateTime? firedAt;
-
-  // ============ Invocable mixin fields (stored) ============
-
-  @override
-  String? invocationCorrelationId;
-
-  @override
-  @Property(type: PropertyType.date)
-  DateTime? invokedAt;
-
-  @override
-  String? invokedByTool;
-
-  @override
-  @Transient()
-  Map<String, dynamic>? invocationParams;
-
-  /// JSON string storage for invocationParams
-  String? invocationParamsJson;
-
-  @override
-  double? invocationConfidence;
-
-  @override
-  String? invocationStatus;
 
   // ============ Constructor ============
 
@@ -172,7 +134,6 @@ class Timer extends BaseEntity with Invocable {
         'endsAt': endsAt.toIso8601String(),
         'fired': fired,
         'firedAt': firedAt?.toIso8601String(),
-        ...invocableToJson(),
       };
 
   factory Timer.fromJson(Map<String, dynamic> json) {
@@ -195,7 +156,6 @@ class Timer extends BaseEntity with Invocable {
         ? DateTime.parse(json['updatedAt'] as String)
         : DateTime.now();
     timer.syncId = json['syncId'] as String?;
-    timer.invocableFromJson(json);
     return timer;
   }
 }

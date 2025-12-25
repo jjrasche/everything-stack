@@ -28,7 +28,10 @@ dependencies:
   
   # State management
   flutter_riverpod: ^2.4.0
-  
+
+  # Dependency injection
+  get_it: ^7.0.0
+
   # Utilities
   uuid: ^4.2.0
   path_provider: ^2.1.0
@@ -48,6 +51,10 @@ dependencies:
   just_audio: ^0.9.36
   file_picker: ^8.0.0
   image: ^4.1.0
+
+  # Speech recognition and synthesis
+  speech_to_text: ^6.6.0
+  flutter_tts: ^4.2.3
 
   # Web storage (IndexedDB)
   idb_shim: ^2.4.0

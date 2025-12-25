@@ -31,6 +31,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 
@@ -48,6 +49,7 @@ import 'services/stt_service.dart';
 import 'services/tts_service.dart';
 import 'services/llm_service.dart';
 import 'services/groq_service.dart';
+import 'services/flutter_tts_service.dart';
 import 'services/coordinator.dart';
 import 'services/tool_executor.dart';
 import 'services/trainables/namespace_selector.dart';
@@ -313,10 +315,21 @@ Future<void> initializeEverythingStack({
 
   // 7. EmbeddingQueueService deferred to Phase 1 (Note entity not yet implemented)
 
-  // 8-11. STT/TTS/LLM Services (native platforms only)
-  // These services require invocation repositories which depend on ObjectBox entities.
-  // On web, services use null implementations (see services/).
-  // TODO: Abstract invocation repositories from ObjectBox to support web.
+  // 8-11. STT/TTS/LLM Services (platform-specific)
+  // Web platform: Uses browser APIs (SpeechSynthesis for TTS, Web Speech API for STT)
+  // Native platforms: Uses external APIs (Google Cloud TTS, Deepgram STT)
+
+  // Initialize TTS Service (cross-platform via flutter_tts)
+  try {
+    final invocationRepo = InvocationRepositoryImpl();
+    TTSService.instance = FlutterTtsService(
+      invocationRepository: invocationRepo,
+    );
+    await TTSService.instance.initialize();
+  } catch (e) {
+    print('Warning: TTS initialization failed: $e');
+    // Falls back to NullTTSService
+  }
 
   // Note: Domain repositories (Task, Timer, Personality, Namespace) are initialized
   // by the application layer, not bootstrap. This allows for platform-specific

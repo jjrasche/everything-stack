@@ -1,134 +1,201 @@
 /// # ToolExecutor
 ///
 /// ## What it does
-/// Executes tool calls by invoking in-app handlers. Replaces MCPClient.
-/// Handles parallel execution and error reporting.
+/// Executes tools requested by the LLM.
+/// Handles tool invocation, parameter validation, and result formatting.
 ///
-/// ## Flow
-/// 1. Take List<ToolCall> from MCPExecutor
-/// 2. For each tool call:
-///    - Lookup handler via ToolRegistry
-///    - Invoke handler directly (Dart function call)
-///    - Catch any errors
-/// 3. Execute all calls in parallel
-/// 4. Return List<ToolResult> with successes/failures
+/// ## Tool Call Flow
+/// 1. LLM returns: {toolCalls: [{toolName: 'task.create', params: {title: 'Buy milk'}}]}
+/// 2. ToolExecutor validates and executes each tool
+/// 3. Returns: {results: [{toolName: 'task.create', success: true, data: {...}}]}
+/// 4. Results sent back to LLM for further action
 ///
-/// ## Usage
-/// ```dart
-/// final executor = ToolExecutor(
-///   registry: toolRegistry,
-///   timeout: Duration(seconds: 30),
-/// );
+/// ## Tool Registry
+/// Tools are discovered via:
+/// - Namespace -> available tools
+/// - Tool name -> handler function
 ///
-/// final results = await executor.executeToolCalls([
-///   ToolCall(toolName: 'task.create', params: {...}),
-///   ToolCall(toolName: 'timer.set', params: {...}),
-/// ]);
-///
-/// for (final result in results) {
-///   if (result.success) {
-///     print('Tool ${result.toolName} succeeded: ${result.data}');
-///   } else {
-///     print('Tool ${result.toolName} failed: ${result.error}');
-///   }
-/// }
-/// ```
+/// For now, tools are stubbed. Real implementations will be added later.
 
-import 'dart:async';
+import '../domain/invocation.dart';
+import '../core/invocation_repository.dart';
 
-import 'tool_registry.dart';
-import 'context_manager_result.dart';
-
-class ToolExecutor {
-  final ToolRegistry registry;
-  final Duration timeout;
-
-  ToolExecutor({
-    required this.registry,
-    this.timeout = const Duration(seconds: 30),
-  });
-
-  /// Execute multiple tool calls in parallel
-  ///
-  /// Returns results for all calls, even if some fail.
-  /// Failed calls have success=false and error message populated.
-  Future<List<ToolResult>> executeToolCalls(List<ToolCall> toolCalls) async {
-    // Execute all calls in parallel
-    final futures = toolCalls.map((call) => _executeSingleCall(call));
-    return Future.wait(futures);
-  }
-
-  /// Execute a single tool call
-  Future<ToolResult> _executeSingleCall(ToolCall toolCall) async {
-    try {
-      // Find handler for this tool
-      final handler = registry.getHandler(toolCall.toolName);
-      if (handler == null) {
-        return ToolResult(
-          toolName: toolCall.toolName,
-          callId: toolCall.callId,
-          success: false,
-          error: 'No handler registered for tool: ${toolCall.toolName}',
-          errorType: 'handler_not_found',
-        );
-      }
-
-      // Execute handler with timeout
-      final result = await handler(toolCall.params).timeout(timeout);
-
-      return ToolResult(
-        toolName: toolCall.toolName,
-        callId: toolCall.callId,
-        success: true,
-        data: result,
-      );
-    } on TimeoutException {
-      return ToolResult(
-        toolName: toolCall.toolName,
-        callId: toolCall.callId,
-        success: false,
-        error: 'Tool execution timeout after ${timeout.inSeconds}s',
-        errorType: 'timeout',
-      );
-    } catch (e, stackTrace) {
-      return ToolResult(
-        toolName: toolCall.toolName,
-        callId: toolCall.callId,
-        success: false,
-        error: 'Execution failed: $e',
-        errorType: 'execution_error',
-        errorDetails: stackTrace.toString(),
-      );
-    }
-  }
-}
-
-/// Result of executing a tool
-class ToolResult {
+/// Result of a single tool execution
+class ToolExecutionResult {
   final String toolName;
-  final String? callId;
   final bool success;
-  final Map<String, dynamic>? data;
+  final dynamic data; // Tool-specific result
   final String? error;
-  final String? errorType;
-  final String? errorDetails;
+  final int? latencyMs;
 
-  ToolResult({
+  ToolExecutionResult({
     required this.toolName,
-    this.callId,
     required this.success,
     this.data,
     this.error,
-    this.errorType,
-    this.errorDetails,
+    this.latencyMs,
   });
 
-  @override
-  String toString() {
-    if (success) {
-      return 'ToolResult($toolName: success, data: $data)';
-    } else {
-      return 'ToolResult($toolName: failed, error: $error)';
+  Map<String, dynamic> toJson() => {
+        'toolName': toolName,
+        'success': success,
+        'data': data,
+        'error': error,
+        'latencyMs': latencyMs,
+      };
+}
+
+/// Tool call request from LLM
+class ToolCall {
+  final String toolName;
+  final Map<String, dynamic> params;
+  final String callId;
+  final double confidence;
+
+  ToolCall({
+    required this.toolName,
+    required this.params,
+    required this.callId,
+    this.confidence = 1.0,
+  });
+
+  factory ToolCall.fromJson(Map<String, dynamic> json) {
+    return ToolCall(
+      toolName: json['toolName'] as String,
+      params: json['params'] as Map<String, dynamic>,
+      callId: json['callId'] as String? ?? '',
+      confidence: (json['confidence'] as num?)?.toDouble() ?? 1.0,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'toolName': toolName,
+        'params': params,
+        'callId': callId,
+        'confidence': confidence,
+      };
+}
+
+/// Executes LLM-requested tools
+class ToolExecutor {
+  final InvocationRepository<Invocation> invocationRepo;
+
+  // TODO: Inject actual tool handlers here
+  // For now, all tools are stubs
+
+  ToolExecutor({
+    required this.invocationRepo,
+  });
+
+  /// Execute a tool call
+  Future<ToolExecutionResult> executeTool(
+    ToolCall toolCall, {
+    required String correlationId,
+  }) async {
+    final startTime = DateTime.now();
+
+    try {
+      // Parse tool name (format: "namespace.toolName")
+      final parts = toolCall.toolName.split('.');
+      if (parts.length != 2) {
+        return ToolExecutionResult(
+          toolName: toolCall.toolName,
+          success: false,
+          error: 'Invalid tool name format',
+        );
+      }
+
+      final namespace = parts[0];
+      final toolName = parts[1];
+
+      // Execute based on namespace
+      final result = await _executeToolByNamespace(
+        namespace: namespace,
+        toolName: toolName,
+        params: toolCall.params,
+        callId: toolCall.callId,
+        correlationId: correlationId,
+      );
+
+      return ToolExecutionResult(
+        toolName: toolCall.toolName,
+        success: result.success,
+        data: result.data,
+        error: result.error,
+        latencyMs: DateTime.now().difference(startTime).inMilliseconds,
+      );
+    } catch (e) {
+      return ToolExecutionResult(
+        toolName: toolCall.toolName,
+        success: false,
+        error: e.toString(),
+        latencyMs: DateTime.now().difference(startTime).inMilliseconds,
+      );
     }
+  }
+
+  /// Execute multiple tool calls
+  Future<List<ToolExecutionResult>> executeTools(
+    List<ToolCall> toolCalls, {
+    required String correlationId,
+  }) async {
+    final results = <ToolExecutionResult>[];
+
+    for (final toolCall in toolCalls) {
+      final result = await executeTool(
+        toolCall,
+        correlationId: correlationId,
+      );
+      results.add(result);
+    }
+
+    return results;
+  }
+
+  /// Execute tool by namespace (stub implementations)
+  Future<ToolExecutionResult> _executeToolByNamespace({
+    required String namespace,
+    required String toolName,
+    required Map<String, dynamic> params,
+    required String callId,
+    required String correlationId,
+  }) async {
+    // TODO: Implement real tool handlers
+    // For now, all tools return stub success
+
+    // Example: if (namespace == 'task' && toolName == 'create') { ... }
+
+    return ToolExecutionResult(
+      toolName: '$namespace.$toolName',
+      success: true,
+      data: {
+        'message': 'Tool execution stubbed - implement real handler',
+        'params': params,
+        'callId': callId,
+      },
+    );
+  }
+
+  /// Record tool execution invocation
+  Future<void> recordToolExecution({
+    required String correlationId,
+    required ToolCall toolCall,
+    required ToolExecutionResult result,
+  }) async {
+    final invocation = Invocation(
+      correlationId: correlationId,
+      componentType: 'tool_executor',
+      success: result.success,
+      confidence: toolCall.confidence,
+      input: {
+        'toolName': toolCall.toolName,
+        'params': toolCall.params,
+      },
+      output: {
+        'result': result.toJson(),
+      },
+    );
+
+    await invocationRepo.save(invocation);
   }
 }

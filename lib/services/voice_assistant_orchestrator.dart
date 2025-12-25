@@ -1,21 +1,10 @@
-/// # VoiceAssistantOrchestrator
+/// # VoiceAssistantOrchestrator (DEPRECATED - Being refactored)
 ///
-/// ## What it does
-/// Wires the complete voice assistant pipeline:
-/// Audio bytes → STT → ContextManager → LLM → Tool Execution → TTS → Audio
+/// ## Status
+/// This orchestrator is being refactored to use the new Coordinator pattern
+/// with separate Trainable components.
 ///
-/// Records all invocations and links them via Turn entity.
-/// Handles error cases at each stage.
-///
-/// ## Flow
-/// 1. User provides audio bytes + correlationId
-/// 2. STT converts audio to text
-/// 3. ContextManager selects namespace/tools
-/// 4. LLM generates response + tool calls
-/// 5. MCPExecutor executes tools
-/// 6. TTS synthesizes response to audio
-/// 7. Turn created linking all invocations
-/// 8. VoiceAssistantResult returned with audio + metadata
+/// Will be replaced in Phase 5 of the architectural redesign.
 ///
 /// ## Usage
 /// ```dart
@@ -48,12 +37,10 @@ import '../domain/invocations.dart';
 import '../domain/stt_invocation_repository.dart';
 import '../domain/llm_invocation_repository.dart';
 import '../domain/tts_invocation_repository.dart';
-import 'context_manager.dart';
-import 'context_manager_result.dart';
+import 'coordinator.dart';
 import 'llm_service.dart';
 import 'stt_service.dart';
 import 'tts_service.dart';
-import 'mcp_executor.dart';
 
 /// Result of processing user audio through the full pipeline
 class VoiceAssistantResult {
@@ -103,7 +90,6 @@ class VoiceAssistantOrchestrator {
   final ContextManager contextManager;
   final LLMService llmService;
   final TTSService ttsService;
-  final MCPExecutor mcpExecutor;
 
   final TurnRepository turnRepo;
   final STTInvocationRepository sttInvocationRepo;
@@ -115,7 +101,6 @@ class VoiceAssistantOrchestrator {
     required this.contextManager,
     required this.llmService,
     required this.ttsService,
-    required this.mcpExecutor,
     required this.turnRepo,
     required this.sttInvocationRepo,
     required this.llmInvocationRepo,

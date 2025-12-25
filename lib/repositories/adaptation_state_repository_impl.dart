@@ -14,6 +14,7 @@
 
 import 'package:everything_stack_template/core/adaptation_state_repository.dart';
 import 'package:everything_stack_template/domain/adaptation_state.dart';
+import 'package:everything_stack_template/domain/adaptation_state_generic.dart';
 
 // ============ STT Adaptation State Repository ============
 
@@ -295,6 +296,89 @@ class TTSAdaptationStateRepositoryImpl
   @override
   TTSAdaptationState createDefault() {
     return TTSAdaptationState(scope: 'global');
+  }
+
+  void clear() {
+    _store.clear();
+  }
+}
+
+// ============ Generic Adaptation State Repository ============
+
+class AdaptationStateRepositoryImpl
+    extends AdaptationStateRepository<AdaptationState> {
+  final Map<String, AdaptationState> _store = {};
+
+  AdaptationStateRepositoryImpl._();
+
+  factory AdaptationStateRepositoryImpl() {
+    // TODO: Phase 1 - Replace with ObjectBox/IndexedDB per platform
+    // For now, in-memory is the only implementation
+    return AdaptationStateRepositoryImpl._();
+  }
+
+  factory AdaptationStateRepositoryImpl.inMemory() {
+    return AdaptationStateRepositoryImpl._();
+  }
+
+  @override
+  Future<AdaptationState> getCurrent({String? userId}) async {
+    // For now, return first state (Phase 0 - no user scoping yet)
+    if (_store.isEmpty) {
+      return createDefault();
+    }
+    return _store.values.first;
+  }
+
+  @override
+  Future<AdaptationState?> getUserState(String userId) async {
+    try {
+      return _store.values.firstWhere((s) => s.uuid == userId);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  Future<AdaptationState?> getGlobal() async {
+    if (_store.isEmpty) return null;
+    return _store.values.first;
+  }
+
+  @override
+  Future<bool> updateWithVersion(AdaptationState state) async {
+    final current = _store[state.uuid];
+    if (current == null || current.version != state.version) {
+      return false;
+    }
+    _store[state.uuid] = state;
+    return true;
+  }
+
+  @override
+  Future<AdaptationState> save(AdaptationState state) async {
+    _store[state.uuid] = state;
+    return state;
+  }
+
+  @override
+  Future<List<AdaptationState>> getHistory() async {
+    final states = _store.values.toList();
+    states.sort((a, b) => a.version.compareTo(b.version));
+    return states;
+  }
+
+  @override
+  Future<bool> delete(String id) async {
+    return _store.remove(id) != null;
+  }
+
+  @override
+  AdaptationState createDefault() {
+    return AdaptationState(
+      componentType: 'default',
+      data: {},
+    );
   }
 
   void clear() {

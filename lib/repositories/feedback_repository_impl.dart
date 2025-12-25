@@ -11,6 +11,12 @@ class FeedbackRepositoryImpl extends FeedbackRepository {
 
   FeedbackRepositoryImpl._();
 
+  factory FeedbackRepositoryImpl() {
+    // TODO: Phase 1 - Replace with ObjectBox/IndexedDB per platform
+    // For now, in-memory is the only implementation
+    return FeedbackRepositoryImpl._();
+  }
+
   factory FeedbackRepositoryImpl.inMemory() {
     return FeedbackRepositoryImpl._();
   }

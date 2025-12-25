@@ -42,26 +42,20 @@
 /// await ttsService.trainFromFeedback(turn.uuid);
 /// ```
 
-import 'package:objectbox/objectbox.dart';
 import '../core/base_entity.dart';
 
-@Entity()
 class Turn extends BaseEntity {
   // ============ BaseEntity field overrides ============
   @override
-  @Id()
   int id = 0;
 
   @override
-  @Unique()
   String uuid = '';
 
   @override
-  @Property(type: PropertyType.date)
   DateTime createdAt = DateTime.now();
 
   @override
-  @Property(type: PropertyType.date)
   DateTime updatedAt = DateTime.now();
 
   @override
@@ -74,7 +68,6 @@ class Turn extends BaseEntity {
   String correlationId;
 
   /// When this turn occurred
-  @Property(type: PropertyType.date)
   DateTime timestamp = DateTime.now();
 
   // ============ Invocation references ============
@@ -113,11 +106,9 @@ class Turn extends BaseEntity {
   bool markedForFeedback = false;
 
   /// When this turn was marked for feedback
-  @Property(type: PropertyType.date)
   DateTime? markedAt;
 
   /// When feedback was trained on this turn
-  @Property(type: PropertyType.date)
   DateTime? feedbackTrainedAt;
 
   // ============ Constructor ============

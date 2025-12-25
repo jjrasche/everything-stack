@@ -169,18 +169,26 @@ class Coordinator {
       );
       invocationIds.add('llm_config_selector_invocation');
 
-      // 6. Agentic loop: Call LLM, execute tools, repeat until done
-      final agenticLoopResult = await _agenticLoop(
-        correlationId: correlationId,
-        utterance: utterance,
-        namespace: selectedNamespace,
-        tools: selectedTools,
-        context: injectedContext,
-        config: llmConfig,
+      // 6. Call LLM (MVP: no tool execution)
+      final llmResponse = await llmService.chatWithTools(
+        model: llmConfig['model'] as String? ?? 'groq-mixtral',
+        messages: [
+          {
+            'role': 'system',
+            'content': _buildSystemPrompt(
+              namespace: selectedNamespace,
+              tools: selectedTools,
+              context: injectedContext,
+            ),
+          },
+          {'role': 'user', 'content': utterance},
+        ],
+        tools: _buildToolDefinitions(selectedTools),
+        temperature: (llmConfig['temperature'] as num?)?.toDouble() ?? 0.7,
       );
-      final finalResponse = agenticLoopResult['response'] as String;
-      final toolCalls = agenticLoopResult['toolCalls'] as List<String>;
-      final iterations = agenticLoopResult['iterations'] as int;
+      final finalResponse = llmResponse.content ?? 'No response generated';
+      final toolCalls = <String>[];
+      final iterations = 1;
 
       // Record LLM orchestration invocation
       await llmOrchestrator.recordOrchestration(
@@ -232,115 +240,6 @@ class Coordinator {
     }
   }
 
-  /// Agentic loop: LLM orchestration with tool execution
-  /// Returns map with 'response', 'toolCalls', and 'iterations' keys
-  Future<Map<String, dynamic>> _agenticLoop({
-    required String correlationId,
-    required String utterance,
-    required String namespace,
-    required List<String> tools,
-    required Map<String, dynamic> context,
-    required Map<String, dynamic> config,
-  }) async {
-    final systemPrompt = _buildSystemPrompt(
-      namespace: namespace,
-      tools: tools,
-      context: context,
-    );
-
-    final messages = <Map<String, dynamic>>[
-      {
-        'role': 'system',
-        'content': systemPrompt,
-      },
-      {
-        'role': 'user',
-        'content': utterance,
-      },
-    ];
-
-    final allToolCalls = <String>[];
-    var iteration = 0;
-    while (iteration < maxAgentLoopIterations) {
-      iteration++;
-
-      // Call LLM
-      final llmResponse = await llmService.chatWithTools(
-        model: config['model'] as String? ?? 'groq-mixtral',
-        messages: messages,
-        tools: _buildToolDefinitions(tools),
-        temperature: (config['temperature'] as num?)?.toDouble() ?? 0.7,
-      );
-
-      messages.add({
-        'role': 'assistant',
-        'content': llmResponse.content ?? '',
-      });
-
-      final toolCalls = llmResponse.toolCalls;
-
-      if (toolCalls.isEmpty) {
-        return {
-          'response': llmResponse.content ?? 'No response generated',
-          'toolCalls': allToolCalls,
-          'iterations': iteration,
-        };
-      }
-
-      // Track tool calls for recording
-      for (final toolCall in toolCalls) {
-        allToolCalls.add(toolCall.toolName);
-      }
-
-      final toolResults = <Map<String, dynamic>>[];
-      for (final toolCall in toolCalls) {
-        try {
-          final result = await toolExecutor.executeTool(
-            ToolCall(
-              toolName: toolCall.toolName,
-              params: toolCall.params,
-              callId: toolCall.id,
-            ),
-            correlationId: correlationId,
-          );
-
-          await toolExecutor.recordToolExecution(
-            correlationId: correlationId,
-            toolCall: ToolCall(
-              toolName: toolCall.toolName,
-              params: toolCall.params,
-              callId: toolCall.id,
-            ),
-            result: result,
-          );
-
-          toolResults.add({
-            'toolName': result.toolName,
-            'success': result.success,
-            'data': result.data,
-            'error': result.error,
-          });
-        } catch (e) {
-          toolResults.add({
-            'toolName': toolCall.toolName,
-            'success': false,
-            'error': e.toString(),
-          });
-        }
-      }
-
-      messages.add({
-        'role': 'user',
-        'content': 'Tool results:\n${_formatToolResults(toolResults)}',
-      });
-    }
-
-    return {
-      'response': 'Tool execution loop exceeded maximum iterations ($maxAgentLoopIterations)',
-      'toolCalls': allToolCalls,
-      'iterations': maxAgentLoopIterations,
-    };
-  }
 
   String _buildSystemPrompt({
     required String namespace,
@@ -375,10 +274,4 @@ class Coordinator {
         .toList();
   }
 
-  String _formatToolResults(List<Map<String, dynamic>> results) {
-    return results
-        .map((r) =>
-            '${r['toolName']}: ${r['success'] ? "Success - ${r['data']}" : "Failed - ${r['error']}"}')
-        .join('\n');
-  }
 }

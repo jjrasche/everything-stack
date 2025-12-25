@@ -1,34 +1,13 @@
-/// # ToolSelectionAdaptationState
+/// # ToolSelectionAdaptationState (DEPRECATED)
 ///
-/// ## What it does
-/// Stores learned weights for tool selection within a specific namespace.
-/// Statistical classifier: tracks success rates and keyword associations per tool.
-/// EMBEDDED inside Personality.toolAttentionPerNamespace[namespaceId].
+/// ## Status
+/// This class was previously embedded in the Personality entity.
+/// It's being migrated to the generic AdaptationState pattern with JSON storage.
 ///
-/// ## Two-hop architecture
-/// 1. LLM picks namespace (uses NamespaceAdaptationState thresholds)
-/// 2. Statistical classifier picks tool (uses THIS state)
+/// Use lib/domain/adaptation_state_generic.dart with componentType: 'tool_selector'
+/// instead of this class going forward.
 ///
-/// ## Key insight
-/// Once LLM says "this is a task request", the statistical classifier
-/// decides between task.create, task.complete, task.list, etc.
-/// This keeps the LLM call count low while allowing fine-grained tool selection.
-///
-/// ## Training
-/// When user feedback indicates wrong tool:
-/// - Decrease success rate for wrongly-selected tool
-/// - Increase success rate for correct tool
-/// - Update keyword weights to associate correction patterns
-///
-/// ## Usage
-/// ```dart
-/// // Access via Personality
-/// final personality = await personalityRepo.getActive();
-/// final taskState = personality.toolAttentionPerNamespace['task'];
-///
-/// // Score a tool
-/// final score = taskState.scoreTool('create', utteranceKeywords);
-/// ```
+/// KEEP THIS CLASS for backward compatibility only - existing code may still reference it.
 
 /// Embedded value object - NOT a separate @Entity
 class ToolSelectionAdaptationState {

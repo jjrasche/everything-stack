@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:everything_stack_template/domain/invocations.dart';
 import 'package:everything_stack_template/domain/feedback.dart'
     as feedback_model;
-import 'package:everything_stack_template/ui/providers/trainable_providers.dart';
+import 'package:everything_stack_template/services/service_locator.dart';
 
 class STTFeedbackWidget extends ConsumerStatefulWidget {
   final STTInvocation invocation;
@@ -190,7 +190,7 @@ class _STTFeedbackWidgetState extends ConsumerState<STTFeedbackWidget> {
             : null,
       );
 
-      final feedbackRepo = ref.read(feedbackRepositoryProvider);
+      final feedbackRepo = ServiceLocator.feedbackRepository;
       await feedbackRepo.save(feedback);
 
       if (mounted) {

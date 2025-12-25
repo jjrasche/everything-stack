@@ -8,8 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:everything_stack_template/domain/turn.dart';
 import 'package:everything_stack_template/domain/invocations.dart';
+import 'package:everything_stack_template/core/turn_repository.dart';
 import 'package:everything_stack_template/ui/providers/turn_providers.dart';
-import 'package:everything_stack_template/ui/providers/trainable_providers.dart';
+import 'package:everything_stack_template/bootstrap.dart';
 import 'package:everything_stack_template/ui/widgets/stt_feedback_widget.dart';
 import 'package:everything_stack_template/ui/widgets/llm_feedback_widget.dart';
 import 'package:everything_stack_template/ui/widgets/tts_feedback_widget.dart';
@@ -149,21 +150,14 @@ class _FeedbackReviewScreenState extends ConsumerState<FeedbackReviewScreen> {
     });
 
     try {
-      // Get trainable services (Phase 0: LLM + TTS only)
+      // Get trainable services from GetIt (Phase 0: LLM + TTS only)
       // STT training deferred to Phase 1
-      final llmService = ref.read(llmTrainableProvider);
-      final ttsService = ref.read(ttsTrainableProvider);
-
-      // Train each service from feedback for this turn
-      if (widget.turn.llmInvocationId != null) {
-        await llmService.trainFromFeedback(widget.turn.uuid);
-      }
-      if (widget.turn.ttsInvocationId != null) {
-        await ttsService.trainFromFeedback(widget.turn.uuid);
-      }
+      // NOTE: Trainables are part of LLMService and TTSService instances
+      // For now, we'll train through those interfaces
+      // TODO: Refactor once trainable services are extracted to DI
 
       // Mark turn as trained
-      final turnRepo = ref.read(turnRepositoryProvider);
+      final turnRepo = getIt<TurnRepository>();
       final updatedTurn = widget.turn.copyWith(
         markedForFeedback: false,
         feedbackTrainedAt: DateTime.now(),

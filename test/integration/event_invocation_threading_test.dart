@@ -1,405 +1,177 @@
-/// Event → Invocation Threading Integration Test
+/// Generic Invocation Threading Integration Test
 ///
-/// REAL integration test: Verifies that when an Event flows through the system,
-/// all invocations (STT, CM, LLM, TTS) are recorded with the same correlationId
-/// in the database.
+/// TRUE E2E integration test: Verifies that when an utterance flows through the Coordinator,
+/// all 6 trainable components record invocations with the same correlationId.
 ///
-/// This test will FAIL until Phase B is implemented (services don't record invocations yet).
-/// Use this as the spec for Phase B: implement whatever is needed to make this test pass.
+/// Tests the real Coordinator with real trainable components and mocked external APIs.
+/// This is true E2E testing: real internals, mock only external dependencies.
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:uuid/uuid.dart';
-import 'dart:io';
 
-import 'package:everything_stack_template/domain/event.dart';
-import 'package:everything_stack_template/domain/invocations.dart';
-import 'package:everything_stack_template/domain/context_manager_invocation.dart';
-import 'package:everything_stack_template/repositories/invocation_repository_impl.dart'
-    show
-        STTInvocationRepositoryImpl,
-        LLMInvocationRepositoryImpl,
-        TTSInvocationRepositoryImpl,
-        ContextManagerInvocationRepositoryImpl;
-import 'package:everything_stack_template/services/stt_service.dart';
-import 'package:everything_stack_template/services/groq_service.dart';
-import 'package:everything_stack_template/services/tts_service.dart';
+import 'package:everything_stack_template/domain/invocation.dart';
+import 'package:everything_stack_template/core/invocation_repository.dart';
+import 'package:everything_stack_template/services/coordinator.dart';
+import 'package:everything_stack_template/bootstrap.dart' show getIt, setupServiceLocatorForTesting;
 
 void main() {
-  group('Event → Invocation Threading (Phase B - Real Behavior)', () {
+  group('Coordinator E2E - Real Internals, Mock Externals Only', () {
     late String correlationId;
-    late _SimpleContextManagerStub contextManager;
-    late STTInvocationRepositoryImpl sttInvocationRepo;
-    late ContextManagerInvocationRepositoryImpl cmInvocationRepo;
-    late LLMInvocationRepositoryImpl llmInvocationRepo;
-    late TTSInvocationRepositoryImpl ttsInvocationRepo;
 
-    setUp(() async {
+    setUp(() {
       correlationId = 'evt_${const Uuid().v4()}';
-
-      // Create in-memory repositories for testing
-      sttInvocationRepo = STTInvocationRepositoryImpl.inMemory();
-      llmInvocationRepo = LLMInvocationRepositoryImpl.inMemory();
-      ttsInvocationRepo = TTSInvocationRepositoryImpl.inMemory();
-      cmInvocationRepo = ContextManagerInvocationRepositoryImpl.inMemory();
-
-      // For Phase D, we create a simplified stub ContextManager
-      // that just records invocations without calling real services
-      contextManager = _SimpleContextManagerStub(
-        cmInvocationRepo: cmInvocationRepo,
-        llmInvocationRepo: llmInvocationRepo,
-        ttsInvocationRepo: ttsInvocationRepo,
-      );
+      // setupServiceLocatorForTesting() handles all GetIt registration:
+      // - Real trainables (NamespaceSelector, ToolSelector, etc.)
+      // - Real repositories (in-memory for test speed)
+      // - Mock only external APIs (EmbeddingService, LLMService)
+      setupServiceLocatorForTesting();
     });
 
-    test('Services record invocations with recordInvocation()', () async {
-      // CRITICAL: Services must save invocations via recordInvocation()
-      // This test verifies the service → repository connection works
+    test('Generic Invocation records all components with same correlationId', () async {
+      // CRITICAL: All components must record generic Invocation with same correlationId
+      // This verifies the new generic invocation pattern works
 
-      // Create actual service instances with repositories wired
-      final sttService = DeepgramSTTService(
-        apiKey: 'test_key',
-        sttInvocationRepository: sttInvocationRepo,
-      );
+      final repo = getIt<InvocationRepository<Invocation>>();
 
-      final llmService = GroqService(
-        apiKey: 'test_key',
-        llmInvocationRepository: llmInvocationRepo,
-      );
-
-      final ttsService = GoogleTTSService(
-        apiKey: 'test_key',
-        ttsInvocationRepository: ttsInvocationRepo,
-      );
-
-      // Create invocations with correlationId
-      final sttInv = STTInvocation(
+      // Create invocations for each component type
+      final namespaceInv = Invocation(
         correlationId: correlationId,
-        audioId: 'audio_1',
-        output: 'set a timer for 5 minutes',
-        confidence: 0.95,
+        componentType: 'namespace_selector',
+        success: true,
+        confidence: 0.9,
+        input: {'utterance': 'set a timer'},
+        output: {'selectedNamespace': 'timer'},
       );
 
-      final llmInv = LLMInvocation(
+      final toolInv = Invocation(
         correlationId: correlationId,
-        systemPromptVersion: '1.0',
-        conversationHistoryLength: 1,
-        response: 'Setting timer',
-        tokenCount: 30,
+        componentType: 'tool_selector',
+        success: true,
+        confidence: 0.85,
+        input: {'namespace': 'timer'},
+        output: {'selectedTools': ['timer.set']},
       );
 
-      final ttsInv = TTSInvocation(
+      final llmInv = Invocation(
         correlationId: correlationId,
-        text: 'Setting timer',
-        audioId: 'audio_2',
+        componentType: 'llm_orchestrator',
+        success: true,
+        confidence: 1.0,
+        input: {'utterance': 'set a timer'},
+        output: {'response': 'Setting timer for 5 minutes'},
       );
 
-      // Services record invocations
-      final sttId = await sttService.recordInvocation(sttInv);
-      final llmId = await llmService.recordInvocation(llmInv);
-      final ttsId = await ttsService.recordInvocation(ttsInv);
+      // Save all invocations
+      await repo.save(namespaceInv);
+      await repo.save(toolInv);
+      await repo.save(llmInv);
 
-      expect(sttId, isNotEmpty);
-      expect(llmId, isNotEmpty);
-      expect(ttsId, isNotEmpty);
+      // VERIFY: Can query all invocations by correlationId
+      final allInvs = await repo.findByTurn(correlationId);
+      expect(allInvs.length, equals(3));
 
-      // VERIFY: Can query all 3 by correlationId through repositories
-      final sttInvs =
-          await sttInvocationRepo.findByCorrelationId(correlationId);
-      expect(sttInvs.length, equals(1));
-      expect(sttInvs.first.output, contains('timer'));
+      // VERIFY: Each invocation has correct componentType
+      final componentTypes = allInvs.map((i) => i.componentType).toSet();
+      expect(componentTypes, equals({'namespace_selector', 'tool_selector', 'llm_orchestrator'}));
 
-      final llmInvs =
-          await llmInvocationRepo.findByCorrelationId(correlationId);
-      expect(llmInvs.length, equals(1));
-      expect(llmInvs.first.response, contains('Setting'));
-
-      final ttsInvs =
-          await ttsInvocationRepo.findByCorrelationId(correlationId);
-      expect(ttsInvs.length, equals(1));
-      expect(ttsInvs.first.text, contains('Setting'));
-
-      // All must have same correlationId
-      expect(sttInvs.first.correlationId, equals(correlationId));
-      expect(llmInvs.first.correlationId, equals(correlationId));
-      expect(ttsInvs.first.correlationId, equals(correlationId));
+      // VERIFY: All have same correlationId
+      for (final inv in allInvs) {
+        expect(inv.correlationId, equals(correlationId));
+      }
     });
 
-    test(
-        'Phase D: REAL event pipeline - publishEvent() triggers all 4 services',
-        () async {
-      // REAL PHASE D TEST SPEC:
-      // When an Event is published to ContextManager via publishEvent(),
-      // the pipeline should:
-      // 1. Process event through ContextManager queue
-      // 2. Call LLMService (which records LLMInvocation)
-      // 3. Call TTSService (which records TTSInvocation)
-      // 4. ContextManager saves ContextManagerInvocation
-      // 5. All 4 invocations saved with same correlationId
-      //
-      // This tests REAL async pipeline behavior, not manual service calls.
+    test('Real Coordinator orchestrates and records 6 trainable invocations', () async {
+      // Test that real Coordinator with real trainables records all components
 
-      // Step 1: Pre-populate STT invocation (happens before event creation)
-      final sttService = DeepgramSTTService(
-        apiKey: 'test_key',
-        sttInvocationRepository: sttInvocationRepo,
-      );
-      final sttInvocation = STTInvocation(
-        correlationId: correlationId,
-        audioId: 'audio_001',
-        output: 'set a timer for 5 minutes',
-        confidence: 0.92,
-      );
-      await sttService.recordInvocation(sttInvocation);
+      final coordinator = getIt<Coordinator>();
+      final repo = getIt<InvocationRepository<Invocation>>();
 
-      // Step 2: Create Event (from STT transcription)
-      final event = Event(
+      // Call real Coordinator to process an utterance
+      // Real trainables execute, mock externals are called
+      final result = await coordinator.orchestrate(
         correlationId: correlationId,
-        source: 'user',
-        payload: {
-          'transcription': 'set a timer for 5 minutes',
-          'audioId': 'audio_001',
+        utterance: 'create a task to buy groceries',
+        availableNamespaces: ['task', 'timer', 'media'],
+        toolsByNamespace: {
+          'task': ['task.create', 'task.complete', 'task.list'],
+          'timer': ['timer.set', 'timer.cancel'],
+          'media': ['media.search', 'media.play'],
         },
       );
 
-      // Step 3: PUBLISH event to ContextManager (triggers async pipeline)
-      // This is the KEY difference from fake test - we publish, don't call services directly
-      await contextManager.publishEvent(event);
+      // VERIFY: Orchestration succeeded
+      expect(result.success, true,
+          reason: 'Coordinator should successfully orchestrate');
 
-      // Step 4: Wait for async processing
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      // Step 5: VERIFY all 4 invocations were created by the pipeline
-
-      // STT should exist (we created it)
-      final sttInvs =
-          await sttInvocationRepo.findByCorrelationId(correlationId);
-      expect(sttInvs.length, greaterThanOrEqualTo(1),
-          reason: 'STT invocation should exist');
-
-      // ContextManager should have recorded its invocation
-      final cmInvs = await cmInvocationRepo.findByCorrelationId(correlationId);
-      expect(cmInvs.length, greaterThanOrEqualTo(1),
-          reason: 'ContextManager invocation should exist');
-
-      // LLM should have recorded (via pipeline)
-      final llmInvs =
-          await llmInvocationRepo.findByCorrelationId(correlationId);
-      expect(llmInvs.length, greaterThanOrEqualTo(1),
-          reason: 'LLM invocation should exist (pipeline called)');
-
-      // TTS should have recorded (via pipeline)
-      final ttsInvs =
-          await ttsInvocationRepo.findByCorrelationId(correlationId);
-      expect(ttsInvs.length, greaterThanOrEqualTo(1),
-          reason: 'TTS invocation should exist (pipeline called)');
-
-      // All must have SAME correlationId
-      if (sttInvs.isNotEmpty) {
-        expect(sttInvs.first.correlationId, equals(correlationId));
-      }
-      if (cmInvs.isNotEmpty) {
-        expect(cmInvs.first.correlationId, equals(correlationId));
-      }
-      if (llmInvs.isNotEmpty) {
-        expect(llmInvs.first.correlationId, equals(correlationId));
-      }
-      if (ttsInvs.isNotEmpty) {
-        expect(ttsInvs.first.correlationId, equals(correlationId));
-      }
-    });
-
-    test('Phase D REAL: Event pipeline triggers LLM + TTS (NOW WIRED)',
-        () async {
-      // THIS TESTS THE STUB, NOT THE REAL PIPELINE
-      // The stub manually creates invocations without calling real services
-      // Real wiring: ContextManager.handleEvent() now calls ttsService.synthesize()
-
-      // Pre-populate STT invocation (happens before event)
-      final sttService = DeepgramSTTService(
-        apiKey: 'test_key',
-        sttInvocationRepository: sttInvocationRepo,
-      );
-      final sttInvocation = STTInvocation(
-        correlationId: correlationId,
-        audioId: 'audio_001',
-        output: 'set a timer for 5 minutes',
-        confidence: 0.92,
-      );
-      await sttService.recordInvocation(sttInvocation);
-
-      // Create event
-      final event = Event(
-        correlationId: correlationId,
-        source: 'user',
-        payload: {
-          'transcription': 'set a timer for 5 minutes',
-          'audioId': 'audio_001',
-        },
-      );
-
-      // Publish event to stub (triggers async pipeline)
-      await contextManager.publishEvent(event);
-
-      // Wait for async processing
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      // Verify invocations were created
-      final sttInvs =
-          await sttInvocationRepo.findByCorrelationId(correlationId);
-      final cmInvs = await cmInvocationRepo.findByCorrelationId(correlationId);
-      final llmInvs =
-          await llmInvocationRepo.findByCorrelationId(correlationId);
-      final ttsInvs =
-          await ttsInvocationRepo.findByCorrelationId(correlationId);
-
-      // STT exists (we created it)
-      expect(sttInvs.length, greaterThanOrEqualTo(1),
-          reason: 'STT invocation should exist');
-
-      // CM exists (stub creates it)
-      expect(cmInvs.length, greaterThanOrEqualTo(1),
-          reason: 'ContextManager invocation should exist');
-
-      // LLM exists (stub creates it)
-      expect(llmInvs.length, greaterThanOrEqualTo(1),
-          reason: 'LLM invocation should exist');
-
-      // THIS WILL FAIL - TTS is never called by the real pipeline
-      expect(ttsInvs.length, greaterThanOrEqualTo(1),
+      // VERIFY: All 6 trainable components recorded invocations
+      final allInvs = await repo.findByTurn(correlationId);
+      expect(allInvs.length, equals(6),
           reason:
-              'TTS invocation NOW RECORDED - ContextManager.handleEvent() now calls TTSService!');
-    });
+              'Should record 6 invocations: namespace_selector, tool_selector, context_injector, llm_config_selector, llm_orchestrator, response_renderer');
 
-    test('PROOF: ContextManager code includes TTS recording call', () async {
-      // PROOF TEST: Demonstrates that the ContextManager.handleEvent() source code
-      // contains the call to ttsService.recordInvocation()
-      //
-      // This test verifies the implementation exists by checking:
-      // 1. The source code shows the TTSInvocation creation
-      // 2. The source code shows the recordInvocation() call
-      // 3. The source code shows the correlationId is passed through
-
-      // Read the actual source file to verify the code exists
-      final contextManagerSource = await File(
-        'lib/services/context_manager.dart',
-      ).readAsString();
-
-      // PROOF #1: TTSInvocation is created in handleEvent
+      // VERIFY: Each invocation has correct componentType
+      final componentTypes = allInvs.map((i) => i.componentType).toSet();
+      expect(componentTypes.length, equals(6));
       expect(
-        contextManagerSource.contains('TTSInvocation('),
-        true,
-        reason:
-            'ContextManager must create TTSInvocation with correlationId from event',
+        componentTypes,
+        equals({
+          'namespace_selector',
+          'tool_selector',
+          'context_injector',
+          'llm_config_selector',
+          'llm_orchestrator',
+          'response_renderer',
+        }),
       );
 
-      // PROOF #2: recordInvocation is called explicitly
-      expect(
-        contextManagerSource.contains('ttsService.recordInvocation('),
-        true,
-        reason: 'ContextManager must call ttsService.recordInvocation()',
-      );
-
-      // PROOF #3: correlationId is passed from event to invocation
-      expect(
-        contextManagerSource.contains('correlationId: event.correlationId'),
-        true,
-        reason: 'TTSInvocation must use event.correlationId for tracing',
-      );
-
-      // PROOF #4: synthesize is called after recordInvocation
-      final afterRecord = contextManagerSource.split('recordInvocation(')[1];
-      expect(
-        afterRecord.contains('synthesize('),
-        true,
-        reason:
-            'After recording invocation, ContextManager must call synthesize()',
-      );
-
-      print(
-          '✓ PROOF: ContextManager.handleEvent() code contains TTS recording logic');
-      print('✓ TTSInvocation is created with event.correlationId');
-      print('✓ ttsService.recordInvocation() is called explicitly');
-      print('✓ ttsService.synthesize() is called after recording');
-    });
-  });
-}
-
-// ============ Simple Stub for Testing Queue Mechanism ============
-
-/// Simplified ContextManager stub for testing publishEvent() and queue processing
-/// This stub MANUALLY creates invocations without calling real services
-class _SimpleContextManagerStub {
-  final ContextManagerInvocationRepositoryImpl cmInvocationRepo;
-  final LLMInvocationRepositoryImpl llmInvocationRepo;
-  final TTSInvocationRepositoryImpl? ttsInvocationRepo;
-
-  final List<Event> _eventQueue = [];
-  bool _processingQueue = false;
-
-  _SimpleContextManagerStub({
-    required this.cmInvocationRepo,
-    required this.llmInvocationRepo,
-    this.ttsInvocationRepo,
-  });
-
-  /// Publish an event for async processing (mirrors real ContextManager.publishEvent)
-  Future<void> publishEvent(Event event) async {
-    _eventQueue.add(event);
-    if (!_processingQueue) {
-      _processQueue();
-    }
-  }
-
-  /// Process queued events asynchronously (mirrors real ContextManager._processQueue)
-  void _processQueue() async {
-    if (_processingQueue) return;
-    _processingQueue = true;
-
-    while (_eventQueue.isNotEmpty) {
-      final event = _eventQueue.removeAt(0);
-      try {
-        await _handleEvent(event);
-      } catch (e) {
-        print('Error processing event: $e');
+      // VERIFY: All have success=true
+      for (final inv in allInvs) {
+        expect(inv.success, true);
+        expect(inv.confidence, greaterThan(0));
       }
-    }
+    });
 
-    _processingQueue = false;
-  }
+    test('Multiple orchestrations maintain separate correlationIds', () async {
+      // Test that multiple orchestrations don't mix invocations
 
-  /// Handle event - simplified version that just records invocations
-  Future<void> _handleEvent(Event event) async {
-    // 1. Record ContextManager invocation
-    final cmInvocation = ContextManagerInvocation(
-      correlationId: event.correlationId,
-      eventPayloadJson: event.payload.toString(),
-    )
-      ..selectedNamespace = 'test'
-      ..confidence = 0.9
-      ..timestamp = DateTime.now();
+      final correlationId2 = 'evt_${const Uuid().v4()}';
+      final coordinator = getIt<Coordinator>();
+      final repo = getIt<InvocationRepository<Invocation>>();
 
-    await cmInvocationRepo.save(cmInvocation);
-
-    // 2. Record LLM invocation (simulating MCPExecutor call)
-    final llmInvocation = LLMInvocation(
-      correlationId: event.correlationId,
-      systemPromptVersion: '1.0',
-      conversationHistoryLength: 1,
-      response: 'Test LLM response',
-      tokenCount: 50,
-    );
-
-    await llmInvocationRepo.save(llmInvocation);
-
-    // 3. Record TTS invocation (simulating TTS call)
-    if (ttsInvocationRepo != null) {
-      final ttsInvocation = TTSInvocation(
-        correlationId: event.correlationId,
-        text: 'Test LLM response',
-        audioId: 'audio_synth_001',
+      // Process two separate orchestrations through real Coordinator
+      await coordinator.orchestrate(
+        correlationId: correlationId,
+        utterance: 'first utterance',
+        availableNamespaces: ['task'],
+        toolsByNamespace: {'task': ['task.create']},
       );
 
-      await ttsInvocationRepo!.save(ttsInvocation);
-    }
-  }
+      await coordinator.orchestrate(
+        correlationId: correlationId2,
+        utterance: 'second utterance',
+        availableNamespaces: ['timer'],
+        toolsByNamespace: {'timer': ['timer.set']},
+      );
+
+      // VERIFY: First event has 6 invocations
+      final invs1 = await repo.findByTurn(correlationId);
+      expect(invs1.length, equals(6),
+          reason: 'First orchestration should record 6 invocations');
+
+      // VERIFY: Second event has 6 invocations
+      final invs2 = await repo.findByTurn(correlationId2);
+      expect(invs2.length, equals(6),
+          reason: 'Second orchestration should record 6 invocations');
+
+      // VERIFY: No cross-contamination
+      for (final inv in invs1) {
+        expect(inv.correlationId, equals(correlationId),
+            reason: 'All invocations from first orchestration should have first correlationId');
+      }
+      for (final inv in invs2) {
+        expect(inv.correlationId, equals(correlationId2),
+            reason: 'All invocations from second orchestration should have second correlationId');
+      }
+    });
+  });
 }

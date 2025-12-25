@@ -37,13 +37,13 @@ import 'package:objectbox/objectbox.dart';
 import 'embedding_service.dart';
 import 'embedding_task.dart';
 import '../core/persistence/persistence_adapter.dart';
-import '../domain/note.dart';
+// import '../domain/note.dart'; // TODO: Phase 1 - Re-enable when Note entity is implemented
 import '../objectbox.g.dart'; // Generated ObjectBox query builders
 
 class EmbeddingQueueService {
   final Store _store;
   final EmbeddingService _embeddingService;
-  final PersistenceAdapter<Note> _noteAdapter;
+  // final PersistenceAdapter<Note> _noteAdapter; // TODO: Phase 1 - Re-enable with Note entity
 
   late final Box<EmbeddingTask> _taskBox;
   Timer? _processingTimer;
@@ -62,13 +62,13 @@ class EmbeddingQueueService {
   EmbeddingQueueService({
     required Store store,
     required EmbeddingService embeddingService,
-    required PersistenceAdapter<Note> noteAdapter,
+    // required PersistenceAdapter<Note> noteAdapter, // TODO: Phase 1 - Re-enable with Note entity
     this.batchSize = 10,
     this.processingIntervalSeconds = 2,
     this.maxRetries = 3,
   })  : _store = store,
-        _embeddingService = embeddingService,
-        _noteAdapter = noteAdapter {
+        _embeddingService = embeddingService {
+        // _noteAdapter = noteAdapter, // TODO: Phase 1 - Re-enable with Note entity
     _taskBox = _store.box<EmbeddingTask>();
   }
 
@@ -286,27 +286,32 @@ class EmbeddingQueueService {
 
   /// Save embedding to entity.
   /// Uses adapter directly (bypasses repository) with touch=false.
+  /// TODO: Phase 1 - Re-enable when Note entity is implemented
   Future<void> _saveEmbedding(
       EmbeddingTask task, List<double> embedding) async {
     // Fetch latest entity state
-    final note = await _noteAdapter.findByUuid(task.entityUuid);
+    // final note = await _noteAdapter.findByUuid(task.entityUuid);
+    //
+    // if (note == null) {
+    //   // Entity was deleted - not a failure, just skip
+    //   task.status = TaskStatus.completed;
+    //   _taskBox.put(task);
+    //   print('Entity ${task.entityUuid} was deleted, skipping embedding');
+    //   return;
+    // }
+    //
+    // // Apply embedding
+    // note.embedding = embedding;
+    //
+    // // Save with touch=false to preserve updatedAt timestamp
+    // // This is a background side-effect, not a user edit
+    // await _noteAdapter.save(note, touch: false);
+    //
+    // print('Saved embedding for ${task.entityType}:${task.entityUuid}');
 
-    if (note == null) {
-      // Entity was deleted - not a failure, just skip
-      task.status = TaskStatus.completed;
-      _taskBox.put(task);
-      print('Entity ${task.entityUuid} was deleted, skipping embedding');
-      return;
-    }
-
-    // Apply embedding
-    note.embedding = embedding;
-
-    // Save with touch=false to preserve updatedAt timestamp
-    // This is a background side-effect, not a user edit
-    await _noteAdapter.save(note, touch: false);
-
-    print('Saved embedding for ${task.entityType}:${task.entityUuid}');
+    // For now, just mark as completed
+    task.status = TaskStatus.completed;
+    _taskBox.put(task);
   }
 
   /// Handle task failure with retry logic.

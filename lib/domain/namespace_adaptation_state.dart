@@ -1,40 +1,13 @@
-/// # NamespaceAdaptationState
+/// # NamespaceAdaptationState (DEPRECATED)
 ///
-/// ## What it does
-/// Stores learned attention patterns for namespace selection.
-/// Controls which namespaces get noticed (LOW threshold = high attention).
-/// EMBEDDED inside Personality - when you switch personalities, attention changes.
+/// ## Status
+/// This class was previously embedded in the Personality entity.
+/// It's being migrated to the generic AdaptationState pattern with JSON storage.
 ///
-/// ## Key insight
-/// Different personalities pay attention to different things.
-/// A Medical personality has LOW threshold for health namespace.
-/// A Task Planner has LOW threshold for task namespace.
-/// Training shifts these thresholds based on feedback.
+/// Use lib/domain/adaptation_state_generic.dart with componentType: 'namespace_selector'
+/// instead of this class going forward.
 ///
-/// ## Embedding pattern
-/// This is NOT a separate entity. It's a value object embedded in Personality.
-/// Personality stores this as JSON string, deserializes on load.
-/// Single save = Personality + all its adaptation states atomically.
-///
-/// ## Training
-/// When user feedback indicates namespace was wrong:
-/// - Increase threshold for wrongly-selected namespace (make it harder to trigger)
-/// - Decrease threshold for correct namespace (make it easier to trigger)
-/// - Update centroid via moving average toward user's utterance embedding
-///
-/// ## Usage
-/// ```dart
-/// // Access via Personality
-/// final personality = await personalityRepo.getActive();
-/// final state = personality.namespaceAttention;
-///
-/// // Check if namespace should trigger
-/// final score = cosineSimilarity(utteranceEmbedding, state.getCentroid('task')!);
-/// final threshold = state.getThreshold('task');
-/// if (score >= threshold) {
-///   // Task namespace is triggered
-/// }
-/// ```
+/// KEEP THIS CLASS for backward compatibility only - existing code may still reference it.
 
 /// Embedded value object - NOT a separate @Entity
 class NamespaceAdaptationState {

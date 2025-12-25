@@ -37,27 +37,20 @@
 
 import 'dart:convert';
 
-import 'package:objectbox/objectbox.dart';
-
 import '../core/base_entity.dart';
 
-@Entity()
 class ContextManagerInvocation extends BaseEntity {
   // ============ BaseEntity field overrides ============
   @override
-  @Id()
   int id = 0;
 
   @override
-  @Unique()
   String uuid = '';
 
   @override
-  @Property(type: PropertyType.date)
   DateTime createdAt = DateTime.now();
 
   @override
-  @Property(type: PropertyType.date)
   DateTime updatedAt = DateTime.now();
 
   @override
@@ -77,7 +70,6 @@ class ContextManagerInvocation extends BaseEntity {
   String eventPayloadJson = '{}';
 
   /// Embedding of the user utterance (for training analysis)
-  @Transient()
   List<double> eventEmbedding = [];
 
   /// JSON storage for eventEmbedding
@@ -92,7 +84,6 @@ class ContextManagerInvocation extends BaseEntity {
   // ============ Namespace Selection (hop 1) ============
 
   /// Which namespaces were considered
-  @Transient()
   List<String> namespacesConsidered = [];
   String namespacesConsideredJson = '[]';
 
@@ -100,48 +91,46 @@ class ContextManagerInvocation extends BaseEntity {
   String? selectedNamespace;
 
   /// Semantic scores for each namespace
-  @Transient()
   Map<String, double> namespaceScores = {};
   String namespaceScoresJson = '{}';
 
   // ============ Tool Filtering (hop 2) ============
 
   /// All tools available in the selected namespace
-  @Transient()
   List<String> toolsAvailable = [];
   String toolsAvailableJson = '[]';
 
   /// Tools filtered out (didn't pass threshold)
-  @Transient()
+
   List<String> toolsFiltered = [];
   String toolsFilteredJson = '[]';
 
   /// Tools that made it to LLM
-  @Transient()
+
   List<String> toolsPassedToLLM = [];
   String toolsPassedToLLMJson = '[]';
 
   /// Semantic/statistical scores per tool
-  @Transient()
+
   Map<String, double> toolScores = {};
   String toolScoresJson = '{}';
 
   // ============ LLM Decision ============
 
   /// Which tools did the LLM actually call
-  @Transient()
+
   List<String> toolsCalled = [];
   String toolsCalledJson = '[]';
 
   // ============ Context Assembly ============
 
   /// How many items of each type were included in context
-  @Transient()
+
   Map<String, int> contextItemCounts = {};
   String contextItemCountsJson = '{}';
 
   /// IDs of context items (for replay)
-  @Transient()
+
   List<String> contextItemIds = [];
   String contextItemIdsJson = '[]';
 
@@ -151,7 +140,7 @@ class ContextManagerInvocation extends BaseEntity {
   double confidence = 0.0;
 
   /// When this invocation occurred
-  @Property(type: PropertyType.date)
+
   DateTime timestamp = DateTime.now();
 
   /// How long did this decision take (ms)

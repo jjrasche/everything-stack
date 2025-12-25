@@ -42,15 +42,6 @@ class ContextManagerInvocationRepository
       ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
   }
 
-  /// Find invocations by personality
-  /// Useful for training analysis per personality
-  Future<List<ContextManagerInvocation>> findByPersonality(
-      String personalityId) async {
-    final all = await findAll();
-    return all.where((inv) => inv.personalityId == personalityId).toList()
-      ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
-  }
-
   /// Find recent invocations for training review
   Future<List<ContextManagerInvocation>> findRecent({int limit = 50}) async {
     final all = await findAll();

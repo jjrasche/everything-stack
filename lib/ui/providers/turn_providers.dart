@@ -1,15 +1,20 @@
 /// # Turn Providers
 ///
 /// Riverpod providers for managing turns and feedback state.
+/// Repositories are accessed via ServiceLocator, not Riverpod providers.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:everything_stack_template/domain/turn.dart';
 import 'package:everything_stack_template/domain/feedback.dart';
-import 'package:everything_stack_template/ui/providers/trainable_providers.dart';
+import 'package:everything_stack_template/core/turn_repository.dart';
+import 'package:everything_stack_template/core/feedback_repository.dart';
+import 'package:everything_stack_template/domain/llm_invocation_repository.dart';
+import 'package:everything_stack_template/domain/tts_invocation_repository.dart';
+import 'package:everything_stack_template/bootstrap.dart';
 
 /// Fetch all turns marked for feedback
 final turnsForFeedbackProvider = FutureProvider<List<Turn>>((ref) async {
-  final turnRepo = ref.watch(turnRepositoryProvider);
+  final turnRepo = getIt<TurnRepository>();
   final turns = await turnRepo.findMarkedForFeedbackByConversation('default');
   return turns;
 });
@@ -17,7 +22,7 @@ final turnsForFeedbackProvider = FutureProvider<List<Turn>>((ref) async {
 /// Fetch a specific turn by ID
 final turnByIdProvider =
     FutureProvider.family<Turn?, String>((ref, turnId) async {
-  final turnRepo = ref.watch(turnRepositoryProvider);
+  final turnRepo = getIt<TurnRepository>();
   return await turnRepo.findById(turnId);
 });
 
@@ -34,7 +39,7 @@ final correctedDataProvider = StateProvider<Map<String, dynamic>>((ref) => {});
 /// Fetch feedback for a specific turn and component
 final turnFeedbackProvider =
     FutureProvider.family<List<Feedback>, String>((ref, turnId) async {
-  final feedbackRepo = ref.watch(feedbackRepositoryProvider);
+  final feedbackRepo = getIt<FeedbackRepository>();
   final allFeedback = await feedbackRepo.findByTurn(turnId);
   return allFeedback;
 });
@@ -46,10 +51,10 @@ final invocationByIdProvider =
 
   switch (componentType) {
     case 'llm':
-      final repo = ref.watch(llmInvocationRepositoryProvider);
+      final repo = getIt<LLMInvocationRepository>();
       return await repo.findByUuid(invocationId);
     case 'tts':
-      final repo = ref.watch(ttsInvocationRepositoryProvider);
+      final repo = getIt<TTSInvocationRepository>();
       return await repo.findByUuid(invocationId);
     default:
       return null;

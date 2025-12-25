@@ -3,14 +3,12 @@
 /// ## What it does
 /// Represents a user task/todo with due date and priority.
 /// Can be owned by a user and shared with others (Ownable).
-/// Tracks how it was created by tools (Invocable).
 ///
 /// ## Key features
 /// - Priority levels: high, medium, low
 /// - Optional due date
 /// - Completion tracking
 /// - Multi-user ownership via Ownable
-/// - Tool invocation tracking via Invocable
 ///
 /// ## Usage
 /// ```dart
@@ -23,14 +21,6 @@
 /// // Set ownership
 /// task.ownerId = currentUser.id;
 ///
-/// // Mark creation by tool
-/// task.recordInvocation(
-///   correlationId: event.correlationId,
-///   toolName: 'task.create',
-///   params: {'title': 'Buy groceries', 'priority': 'medium'},
-///   confidence: 0.92,
-/// );
-///
 /// // Complete the task
 /// task.complete();
 /// ```
@@ -38,11 +28,10 @@
 import 'package:objectbox/objectbox.dart';
 
 import '../../../core/base_entity.dart';
-import '../../../patterns/invocable.dart';
 import '../../../patterns/ownable.dart';
 
 @Entity()
-class Task extends BaseEntity with Invocable, Ownable {
+class Task extends BaseEntity with Ownable {
   // ============ BaseEntity field overrides ============
   @override
   @Id()
@@ -100,31 +89,6 @@ class Task extends BaseEntity with Invocable, Ownable {
   /// Store visibility as int for ObjectBox
   int get visibilityIndex => visibility.index;
   set visibilityIndex(int value) => visibility = Visibility.values[value];
-
-  // ============ Invocable mixin fields (stored) ============
-
-  @override
-  String? invocationCorrelationId;
-
-  @override
-  @Property(type: PropertyType.date)
-  DateTime? invokedAt;
-
-  @override
-  String? invokedByTool;
-
-  @override
-  @Transient()
-  Map<String, dynamic>? invocationParams;
-
-  /// JSON string storage for invocationParams
-  String? invocationParamsJson;
-
-  @override
-  double? invocationConfidence;
-
-  @override
-  String? invocationStatus;
 
   // ============ Constructor ============
 
@@ -217,7 +181,6 @@ class Task extends BaseEntity with Invocable, Ownable {
         'ownerId': ownerId,
         'sharedWith': sharedWith,
         'visibility': visibility.name,
-        ...invocableToJson(),
       };
 
   factory Task.fromJson(Map<String, dynamic> json) {
@@ -251,7 +214,6 @@ class Task extends BaseEntity with Invocable, Ownable {
       (v) => v.name == json['visibility'],
       orElse: () => Visibility.private,
     );
-    task.invocableFromJson(json);
     return task;
   }
 }

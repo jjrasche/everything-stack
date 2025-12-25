@@ -116,3 +116,49 @@ Testing follows a 4-layer approach. All layers run in CI. All must pass before m
 - Offline-first with ObjectBox (native) + IndexedDB (web), sync via Supabase
 - Cross-platform code only - no platform-specific logic outside adapters
 - Dual persistence: adapters implement common interfaces, domain code is platform-agnostic
+
+## Workflows (Phase 5D+)
+
+**Definition:** Automated grouping of tasks with conditional logic and decision points. Inherently trainable, triggered by user, LLM selection, or system automation.
+
+**Key Pattern:**
+```
+Workflow = Sequence of Tasks + Decision Logic + Trainable Aspects
+```
+
+**Integration with Coordinator:**
+- Workflows appear as tools in ToolSelector
+- LLM can select: individual tasks OR workflow.invoke_workflow_name
+- Each task in workflow creates Invocation (same as individual tool)
+- Conditional branches log as workflow_decision invocations
+- Feedback on workflow success/failure trains future selection
+
+**Tool Selection Logging (Trainable):**
+When LLM chooses tools (including workflows), log:
+```dart
+Invocation(
+  componentType: 'tool_selector',
+  output: {
+    'selected_tools': [
+      {
+        'tool': 'workflow.prepare_meeting',
+        'confidence': 0.92,
+        'reasoning': 'User asked to prepare meeting - handles all prep tasks'
+      }
+    ]
+  },
+)
+```
+
+**Invocation Types in Workflows:**
+- `workflow_task` - individual task execution
+- `workflow_decision` - conditional branch taken
+- `tool_selector` - LLM chose this workflow (includes reasoning)
+
+**Trainable Aspects:**
+- Task ordering (feedback: "too slow" → parallelize)
+- Task selection (feedback: "didn't need this task" → adjust conditional)
+- Conditional thresholds (feedback: "send agenda for longer meetings" → adjust threshold)
+- LLM tool selection (feedback: "wrong workflow" → lower confidence)
+
+**NOT Self-Modifying:** Workflows improve through user feedback only, no autonomous self-training.
