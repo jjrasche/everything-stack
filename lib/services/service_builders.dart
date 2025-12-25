@@ -104,7 +104,6 @@ TTSService createTTSService(ServiceConfig config) {
   return switch (config.provider.toLowerCase()) {
     'flutter' => _buildFlutterTTS(config),
     'google' => _buildGoogleTTS(config),
-    'azure' => _buildAzureTTS(config),
     _ => NullTTSService(),
   };
 }
@@ -129,17 +128,6 @@ TTSService _buildGoogleTTS(ServiceConfig config) {
   }
   // TODO: Implement Google TTS
   print('⚠️ Google TTS not yet implemented');
-  return _buildFlutterTTS(config);
-}
-
-TTSService _buildAzureTTS(ServiceConfig config) {
-  final apiKey = config.credentials['apiKey'] as String?;
-  if (apiKey == null || apiKey.isEmpty) {
-    print('⚠️ Azure TTS API key missing, falling back to Flutter');
-    return _buildFlutterTTS(config);
-  }
-  // TODO: Implement Azure TTS
-  print('⚠️ Azure TTS not yet implemented');
   return _buildFlutterTTS(config);
 }
 

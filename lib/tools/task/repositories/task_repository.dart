@@ -18,7 +18,8 @@
 import '../../../core/entity_repository.dart';
 import '../../../core/persistence/persistence_adapter.dart';
 import '../../../services/embedding_service.dart';
-import '../entities/task.dart';
+import '../entities/task.dart'
+    if (dart.library.html) '../../../bootstrap/task_stub.dart';
 
 class TaskRepository extends EntityRepository<Task> {
   TaskRepository({

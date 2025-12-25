@@ -19,6 +19,10 @@
 
 import '../domain/invocation.dart';
 import '../core/invocation_repository.dart';
+import '../tools/task/repositories/task_repository.dart'
+    if (dart.library.html) '../bootstrap/task_repository_stub.dart';
+import '../tools/task/entities/task.dart'
+    if (dart.library.html) '../bootstrap/task_stub.dart';
 
 /// Result of a single tool execution
 class ToolExecutionResult {
@@ -79,12 +83,11 @@ class ToolCall {
 /// Executes LLM-requested tools
 class ToolExecutor {
   final InvocationRepository<Invocation> invocationRepo;
-
-  // TODO: Inject actual tool handlers here
-  // For now, all tools are stubs
+  final TaskRepository? taskRepository;
 
   ToolExecutor({
     required this.invocationRepo,
+    this.taskRepository,
   });
 
   /// Execute a tool call
@@ -229,17 +232,47 @@ class ToolExecutor {
       );
     }
 
-    return ToolExecutionResult(
-      toolName: 'task.create',
-      success: true,
-      data: {
-        'taskId': 'task_${DateTime.now().millisecondsSinceEpoch}',
-        'title': title,
-        'status': 'created',
-        'priority': params['priority'] ?? 'medium',
-        'dueDate': params['dueDate'],
-      },
-    );
+    if (taskRepository == null) {
+      return ToolExecutionResult(
+        toolName: 'task.create',
+        success: false,
+        error: 'Task repository not available',
+      );
+    }
+
+    try {
+      final task = Task(
+        title: title,
+        priority: params['priority'] as String? ?? 'medium',
+        dueDate: params['dueDate'] != null
+            ? DateTime.parse(params['dueDate'] as String)
+            : null,
+        description: params['description'] as String?,
+      );
+
+      final savedTask = await taskRepository!.save(task);
+
+      return ToolExecutionResult(
+        toolName: 'task.create',
+        success: true,
+        data: {
+          'taskId': savedTask.uuid,
+          'id': savedTask.id,
+          'title': savedTask.title,
+          'priority': savedTask.priority,
+          'dueDate': savedTask.dueDate?.toIso8601String(),
+          'description': savedTask.description,
+          'completed': savedTask.completed,
+          'createdAt': savedTask.createdAt.toIso8601String(),
+        },
+      );
+    } catch (e) {
+      return ToolExecutionResult(
+        toolName: 'task.create',
+        success: false,
+        error: 'Failed to create task: $e',
+      );
+    }
   }
 
   Future<ToolExecutionResult> _handleTaskComplete(
@@ -255,15 +288,45 @@ class ToolExecutor {
       );
     }
 
-    return ToolExecutionResult(
-      toolName: 'task.complete',
-      success: true,
-      data: {
-        'taskId': taskId,
-        'status': 'completed',
-        'completedAt': DateTime.now().toIso8601String(),
-      },
-    );
+    if (taskRepository == null) {
+      return ToolExecutionResult(
+        toolName: 'task.complete',
+        success: false,
+        error: 'Task repository not available',
+      );
+    }
+
+    try {
+      final task = await taskRepository!.findByUuid(taskId);
+      if (task == null) {
+        return ToolExecutionResult(
+          toolName: 'task.complete',
+          success: false,
+          error: 'Task not found: $taskId',
+        );
+      }
+
+      task.complete();
+      final updatedTask = await taskRepository!.save(task);
+
+      return ToolExecutionResult(
+        toolName: 'task.complete',
+        success: true,
+        data: {
+          'taskId': updatedTask.uuid,
+          'id': updatedTask.id,
+          'title': updatedTask.title,
+          'completed': updatedTask.completed,
+          'completedAt': updatedTask.completedAt?.toIso8601String(),
+        },
+      );
+    } catch (e) {
+      return ToolExecutionResult(
+        toolName: 'task.complete',
+        success: false,
+        error: 'Failed to complete task: $e',
+      );
+    }
   }
 
   Future<ToolExecutionResult> _handleTaskList(
@@ -272,22 +335,65 @@ class ToolExecutor {
   ) async {
     final filter = params['filter'] ?? 'all'; // all, incomplete, completed
 
-    return ToolExecutionResult(
-      toolName: 'task.list',
-      success: true,
-      data: {
-        'filter': filter,
-        'tasks': [
-          {
-            'id': 'task_1',
-            'title': 'Example task',
-            'priority': 'high',
-            'status': 'incomplete'
-          },
-        ],
-        'count': 1,
-      },
-    );
+    if (taskRepository == null) {
+      return ToolExecutionResult(
+        toolName: 'task.list',
+        success: false,
+        error: 'Task repository not available',
+      );
+    }
+
+    try {
+      final List<Task> tasks;
+
+      switch (filter) {
+        case 'incomplete':
+          tasks = await taskRepository!.findIncomplete();
+          break;
+        case 'completed':
+          tasks = await taskRepository!.findCompleted();
+          break;
+        case 'overdue':
+          tasks = await taskRepository!.findOverdue();
+          break;
+        case 'today':
+          tasks = await taskRepository!.findDueToday();
+          break;
+        case 'soon':
+          tasks = await taskRepository!.findDueSoon();
+          break;
+        default: // 'all'
+          tasks = await taskRepository!.findAll();
+      }
+
+      return ToolExecutionResult(
+        toolName: 'task.list',
+        success: true,
+        data: {
+          'filter': filter,
+          'tasks': tasks
+              .map((task) => {
+                    'id': task.id,
+                    'uuid': task.uuid,
+                    'title': task.title,
+                    'priority': task.priority,
+                    'dueDate': task.dueDate?.toIso8601String(),
+                    'description': task.description,
+                    'completed': task.completed,
+                    'completedAt': task.completedAt?.toIso8601String(),
+                    'createdAt': task.createdAt.toIso8601String(),
+                  })
+              .toList(),
+          'count': tasks.length,
+        },
+      );
+    } catch (e) {
+      return ToolExecutionResult(
+        toolName: 'task.list',
+        success: false,
+        error: 'Failed to list tasks: $e',
+      );
+    }
   }
 
   // ============ Timer Tool Handlers ============
