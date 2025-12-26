@@ -3,7 +3,7 @@
 library;
 
 import 'package:idb_shim/idb_client_memory.dart';
-import 'package:everything_stack_template/bootstrap/persistence_factory.dart';
+// import 'package:everything_stack_template/bootstrap/persistence_factory.dart'; // Deleted in Phase 1
 import 'package:everything_stack_template/persistence/indexeddb/database_init.dart';
 import 'package:everything_stack_template/persistence/indexeddb/media_item_indexeddb_adapter.dart';
 import 'package:everything_stack_template/persistence/indexeddb/channel_indexeddb_adapter.dart';

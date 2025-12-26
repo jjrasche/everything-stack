@@ -3,7 +3,7 @@
 /// implementations via conditional imports.
 library;
 
-import 'package:everything_stack_template/bootstrap/persistence_factory.dart';
+// import 'package:everything_stack_template/bootstrap/persistence_factory.dart'; // Deleted in Phase 1
 
 /// Platform detection - stub always throws
 bool detectWebPlatform() {

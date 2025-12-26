@@ -11,7 +11,6 @@ import '../../../core/entity_repository.dart';
 import '../../../core/persistence/persistence_adapter.dart';
 import '../../../core/persistence/transaction_context.dart';
 import '../../../services/embedding_service.dart';
-import '../../../bootstrap/persistence_factory.dart';
 import '../entities/task.dart';
 import '../adapters/task_indexeddb_adapter.dart' as indexeddb;
 // Conditional import: real ObjectBox adapter on native, stub on web
@@ -21,23 +20,164 @@ import '../adapters/task_objectbox_adapter.dart'
     as objectbox;
 
 class TaskRepository extends EntityRepository<Task> {
+  late final PersistenceAdapter<Task> _adapter;
+
   TaskRepository({EmbeddingService? embeddingService})
       : super(
-          adapter: _createAdapter(),
+          adapter: _PlatformAdapterProxy(),
           embeddingService: embeddingService ?? EmbeddingService.instance,
         );
 
-  /// Create appropriate adapter based on platform
-  static PersistenceAdapter<Task> _createAdapter() {
+  static PersistenceAdapter<Task> createAdapter() {
     if (kIsWeb) {
-      // Web: IndexedDB (async lazy initialization)
       return _WebTaskAdapter();
     } else {
-      // Native: ObjectBox
-      final getIt = GetIt.instance;
-      final persistenceFactory = getIt<PersistenceFactory>();
-      return objectbox.TaskObjectBoxAdapter(persistenceFactory.store);
+      // ObjectBox adapter will be created when store becomes available
+      // For now, use lazy proxy
+      return _ObjectBoxLazyProxy();
     }
+  }
+}
+
+/// Platform-agnostic proxy that delegates to the right adapter
+class _PlatformAdapterProxy implements PersistenceAdapter<Task> {
+  late PersistenceAdapter<Task> _delegate;
+
+  _PlatformAdapterProxy() {
+    if (kIsWeb) {
+      _delegate = _WebTaskAdapter();
+    } else {
+      _delegate = _ObjectBoxLazyProxy();
+    }
+  }
+
+  @override
+  Future<Task?> findById(int id) => _delegate.findById(id);
+
+  @override
+  Future<Task> getById(int id) => _delegate.getById(id);
+
+  @override
+  Future<Task?> findByUuid(String uuid) => _delegate.findByUuid(uuid);
+
+  @override
+  Future<List<Task>> findAll() => _delegate.findAll();
+
+  @override
+  Future<Task> save(Task task) => _delegate.save(task);
+
+  @override
+  Future<List<Task>> saveAll(List<Task> items) => _delegate.saveAll(items);
+
+  @override
+  Future<bool> delete(Task task) => _delegate.delete(task);
+
+  @override
+  Future<int> deleteAll(List<Task> items) => _delegate.deleteAll(items);
+
+  @override
+  Future<void> clear() => _delegate.clear();
+
+  @override
+  Future<List<Task>> query(
+      {required int offset,
+      required int limit,
+      String? sortBy,
+      bool descending = false}) =>
+      _delegate.query(
+          offset: offset,
+          limit: limit,
+          sortBy: sortBy,
+          descending: descending);
+}
+
+/// Lazy proxy for ObjectBox that defers store access
+class _ObjectBoxLazyProxy implements PersistenceAdapter<Task> {
+  PersistenceAdapter<Task>? _delegate;
+
+  Future<PersistenceAdapter<Task>> _getDelegate() async {
+    if (_delegate != null) return _delegate!;
+
+    // Try to get store from GetIt
+    try {
+      final getIt = GetIt.instance;
+      // Note: actual type will be Store when bootstrap registers it
+      final store = getIt.get(instanceName: 'objectBoxStore');
+      _delegate = objectbox.TaskObjectBoxAdapter(store as dynamic);
+    } catch (e) {
+      throw StateError(
+        'ObjectBox store not found in GetIt. Call initializeEverythingStack() first.',
+      );
+    }
+    return _delegate!;
+  }
+
+  @override
+  Future<Task?> findById(int id) async {
+    final delegate = await _getDelegate();
+    return delegate.findById(id);
+  }
+
+  @override
+  Future<Task> getById(int id) async {
+    final delegate = await _getDelegate();
+    return delegate.getById(id);
+  }
+
+  @override
+  Future<Task?> findByUuid(String uuid) async {
+    final delegate = await _getDelegate();
+    return delegate.findByUuid(uuid);
+  }
+
+  @override
+  Future<List<Task>> findAll() async {
+    final delegate = await _getDelegate();
+    return delegate.findAll();
+  }
+
+  @override
+  Future<Task> save(Task task) async {
+    final delegate = await _getDelegate();
+    return delegate.save(task);
+  }
+
+  @override
+  Future<List<Task>> saveAll(List<Task> items) async {
+    final delegate = await _getDelegate();
+    return delegate.saveAll(items);
+  }
+
+  @override
+  Future<bool> delete(Task task) async {
+    final delegate = await _getDelegate();
+    return delegate.delete(task);
+  }
+
+  @override
+  Future<int> deleteAll(List<Task> items) async {
+    final delegate = await _getDelegate();
+    return delegate.deleteAll(items);
+  }
+
+  @override
+  Future<void> clear() async {
+    final delegate = await _getDelegate();
+    return delegate.clear();
+  }
+
+  @override
+  Future<List<Task>> query(
+      {required int offset,
+      required int limit,
+      String? sortBy,
+      bool descending = false}) async {
+    final delegate = await _getDelegate();
+    return delegate.query(
+        offset: offset,
+        limit: limit,
+        sortBy: sortBy,
+        descending: descending);
   }
 }
 

@@ -3,7 +3,7 @@
 library;
 
 import 'dart:io';
-import 'package:everything_stack_template/bootstrap/persistence_factory.dart';
+// import 'package:everything_stack_template/bootstrap/persistence_factory.dart'; // Deleted in Phase 1
 import 'package:everything_stack_template/objectbox.g.dart';
 import 'package:everything_stack_template/persistence/objectbox/media_item_objectbox_adapter.dart';
 import 'package:everything_stack_template/persistence/objectbox/channel_objectbox_adapter.dart';

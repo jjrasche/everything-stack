@@ -12,7 +12,9 @@
 /// await harness.dispose();
 /// ```
 
-import 'package:everything_stack_template/bootstrap/persistence_factory.dart';
+// NOTE: PersistenceFactory deleted in refactoring Phase 1
+// Test harness will be refactored in Phase 9
+//import 'package:everything_stack_template/bootstrap/persistence_factory.dart';
 
 // Conditional import for platform-specific persistence
 import 'test_persistence_stub.dart'
@@ -20,11 +22,13 @@ import 'test_persistence_stub.dart'
     if (dart.library.html) 'test_persistence_web.dart' as persistence;
 
 /// Test harness for persistence layer
+/// TODO: Refactor to not depend on deleted PersistenceFactory
 class PersistenceTestHarness {
-  PersistenceFactory? _factory;
+  dynamic _factory;
 
   /// Get the initialized persistence factory
-  PersistenceFactory get factory {
+  /// TODO: Type this properly once bootstrap refactoring complete
+  dynamic get factory {
     if (_factory == null) {
       throw StateError(
           'PersistenceTestHarness not initialized. Call initialize() first.');

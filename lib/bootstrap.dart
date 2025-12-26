@@ -62,7 +62,6 @@ import 'services/trainables/llm_orchestrator.dart';
 import 'services/trainables/response_renderer.dart';
 import 'domain/invocation.dart' as domain_invocation;
 import 'core/invocation_repository.dart';
-import 'core/invocation_repository_impl.dart';
 import 'core/adaptation_state_repository.dart';
 import 'core/feedback_repository.dart';
 import 'core/turn_repository.dart';
@@ -73,14 +72,8 @@ import 'bootstrap/blob_store_factory_stub.dart'
     if (dart.library.io) 'bootstrap/blob_store_factory_io.dart'
     if (dart.library.html) 'bootstrap/blob_store_factory_web.dart';
 
-// Conditional import for platform-specific Persistence
-import 'bootstrap/persistence_factory_stub.dart'
-    if (dart.library.io) 'bootstrap/persistence_factory_io.dart'
-    if (dart.library.html) 'bootstrap/persistence_factory_web.dart';
-
 import 'bootstrap/http_client.dart';
 import 'bootstrap/timeout_http_client.dart';
-import 'bootstrap/persistence_factory.dart';
 import 'bootstrap/test_config.dart';
 import 'package:http/http.dart' as http;
 
