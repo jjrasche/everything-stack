@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'streaming_service.dart';
 import 'trainable.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:everything_stack_template/domain/invocations.dart';
-import 'package:everything_stack_template/domain/stt_invocation_repository.dart';
+import 'package:everything_stack_template/core/invocation_repository.dart';
+import 'package:everything_stack_template/domain/invocation.dart';
 
 /// Speech-to-text service contract.
 ///
@@ -150,7 +150,7 @@ class DeepgramSTTService extends STTService {
   final String apiKey;
   final String model;
   final String language;
-  final STTInvocationRepository _sttInvocationRepository;
+  final InvocationRepository<Invocation> _invocationRepository;
 
   bool _isReady = false;
   WebSocketChannel? _ws;
@@ -159,10 +159,10 @@ class DeepgramSTTService extends STTService {
 
   DeepgramSTTService({
     required this.apiKey,
-    required STTInvocationRepository sttInvocationRepository,
+    required InvocationRepository<Invocation> invocationRepository,
     this.model = 'nova-2',
     this.language = 'en-US',
-  }) : _sttInvocationRepository = sttInvocationRepository;
+  }) : _invocationRepository = invocationRepository;
 
   @override
   Future<void> initialize() async {
@@ -357,11 +357,11 @@ class DeepgramSTTService extends STTService {
 
   @override
   Future<String> recordInvocation(dynamic invocation) async {
-    if (invocation is! STTInvocation) {
+    if (invocation is! Invocation) {
       throw ArgumentError(
-          'Expected STTInvocation, got ${invocation.runtimeType}');
+          'Expected Invocation, got ${invocation.runtimeType}');
     }
-    await _sttInvocationRepository.save(invocation);
+    await _invocationRepository.save(invocation);
     return invocation.uuid;
   }
 

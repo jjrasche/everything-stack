@@ -34,7 +34,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:everything_stack_template/services/trainable.dart';
-import 'package:everything_stack_template/domain/invocations.dart';
+import 'package:everything_stack_template/domain/invocation.dart';
 import 'package:everything_stack_template/domain/feedback.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
 import 'package:everything_stack_template/core/feedback_repository.dart';
@@ -42,7 +42,7 @@ import 'package:everything_stack_template/core/adaptation_state_repository.dart'
 import 'package:everything_stack_template/domain/adaptation_state.dart';
 
 class STTService implements Trainable {
-  final InvocationRepository<STTInvocation> _invocationRepository;
+  final InvocationRepository<Invocation> _invocationRepository;
   final FeedbackRepository _feedbackRepository;
   final AdaptationStateRepository<STTAdaptationState>
       _adaptationStateRepository;
@@ -51,7 +51,7 @@ class STTService implements Trainable {
   STTAdaptationState? _currentState;
 
   STTService({
-    required InvocationRepository<STTInvocation> invocationRepository,
+    required InvocationRepository<Invocation> invocationRepository,
     required FeedbackRepository feedbackRepository,
     required AdaptationStateRepository<STTAdaptationState>
         adaptationStateRepository,
@@ -63,9 +63,9 @@ class STTService implements Trainable {
 
   @override
   Future<String> recordInvocation(dynamic invocation) async {
-    if (invocation is! STTInvocation) {
+    if (invocation is! Invocation) {
       throw ArgumentError(
-          'Expected STTInvocation, got ${invocation.runtimeType}');
+          'Expected Invocation, got ${invocation.runtimeType}');
     }
 
     final saved = await _invocationRepository.save(invocation);
@@ -186,12 +186,12 @@ class STTService implements Trainable {
   // ============ STT-Specific Methods ============
 
   /// Get a specific STT invocation for display/debugging
-  Future<STTInvocation?> getInvocation(String invocationId) async {
+  Future<Invocation?> getInvocation(String invocationId) async {
     return await _invocationRepository.findById(invocationId);
   }
 
   /// Get all STT invocations for a context type
-  Future<List<STTInvocation>> getInvocationsByContextType(
+  Future<List<Invocation>> getInvocationsByContextType(
       String contextType) async {
     return await _invocationRepository.findByContextType(contextType);
   }

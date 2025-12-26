@@ -1,188 +1,117 @@
 /// # SubscriptionIndexedDBAdapter
 ///
 /// IndexedDB implementation of PersistenceAdapter for Subscription entities.
-/// Used on web platform for client-side persistence.
+/// Note: idbFactory not available in idb_shim - using stub implementation.
 
-import 'package:idb/idb.dart' as idb;
 import '../../../core/persistence/persistence_adapter.dart';
 import '../../../core/persistence/transaction_context.dart';
 import '../entities/subscription.dart';
 
+/// Stub adapter - Subscription persistence implementation pending.
 class SubscriptionIndexedDBAdapter implements PersistenceAdapter<Subscription> {
-  late final idb.Database _db;
-  final String _storeName = 'subscriptions';
-
-  SubscriptionIndexedDBAdapter._(this._db);
+  SubscriptionIndexedDBAdapter._();
 
   static Future<SubscriptionIndexedDBAdapter> create() async {
-    final idbFactory = idb.idbFactory;
-    final db = await idbFactory.open('everything_stack',
-        version: 1, onUpgradeNeeded: (idb.VersionChangeEvent event) {
-      final db = event.database;
-      if (!db.objectStoreNames.contains('subscriptions')) {
-        final store = db.createObjectStore('subscriptions', keyPath: 'id');
-        store.createIndex('uuid', 'uuid');
-        store.createIndex('sourceUrl', 'sourceUrl');
-        store.createIndex('sourceType', 'sourceType');
-        store.createIndex('isActive', 'isActive');
-      }
-    });
-
-    return SubscriptionIndexedDBAdapter._(db);
-  }
-
-  // ============ PersistenceAdapter Implementation ============
-
-  @override
-  Future<Subscription?> findById(int id) async {
-    final transaction = _db.transaction(_storeName, 'readonly');
-    final store = transaction.objectStore(_storeName);
-    final result = await store.getObject(id);
-    return result != null ? Subscription.fromJson(result) : null;
+    return SubscriptionIndexedDBAdapter._();
   }
 
   @override
-  Future<Subscription> getById(int id) async {
-    final entity = await findById(id);
-    if (entity == null) {
-      throw Exception('Subscription not found with id: $id');
-    }
-    return entity;
-  }
+  Future<Subscription?> findById(int id) async =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
 
   @override
-  Future<Subscription?> findByUuid(String uuid) async {
-    final transaction = _db.transaction(_storeName, 'readonly');
-    final store = transaction.objectStore(_storeName);
-    final index = store.index('uuid');
-    final results = await index.getAll(uuid);
-
-    if (results.isEmpty) return null;
-    return Subscription.fromJson(results.first);
-  }
+  Future<Subscription> getById(int id) async =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
 
   @override
-  Future<Subscription> getByUuid(String uuid) async {
-    final entity = await findByUuid(uuid);
-    if (entity == null) {
-      throw Exception('Subscription not found with uuid: $uuid');
-    }
-    return entity;
-  }
+  Future<Subscription?> findByUuid(String uuid) async =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
 
   @override
-  Future<List<Subscription>> findAll() async {
-    final transaction = _db.transaction(_storeName, 'readonly');
-    final store = transaction.objectStore(_storeName);
-    final results = await store.getAll();
-    return results.map((item) => Subscription.fromJson(item)).toList();
-  }
+  Future<Subscription> getByUuid(String uuid) async =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
 
   @override
-  Future<Subscription> save(Subscription entity, {bool touch = true}) async {
-    if (touch) {
-      entity.touch();
-    }
-
-    final transaction = _db.transaction(_storeName, 'readwrite');
-    final store = transaction.objectStore(_storeName);
-    await store.put(entity.toJson());
-    return entity;
-  }
+  Future<List<Subscription>> findAll() async =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
 
   @override
-  Future<List<Subscription>> saveAll(List<Subscription> entities) async {
-    for (final entity in entities) {
-      entity.touch();
-    }
-
-    final transaction = _db.transaction(_storeName, 'readwrite');
-    final store = transaction.objectStore(_storeName);
-    for (final entity in entities) {
-      await store.put(entity.toJson());
-    }
-    return entities;
-  }
+  Future<Subscription> save(Subscription entity, {bool touch = true}) async =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
 
   @override
-  Future<bool> delete(int id) async {
-    final transaction = _db.transaction(_storeName, 'readwrite');
-    final store = transaction.objectStore(_storeName);
-    final exists = await store.getObject(id) != null;
-    if (exists) {
-      await store.delete(id);
-    }
-    return exists;
-  }
+  Future<List<Subscription>> saveAll(List<Subscription> entities) async =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
 
   @override
-  Future<bool> deleteByUuid(String uuid) async {
-    final entity = await findByUuid(uuid);
-    if (entity != null) {
-      return delete(entity.id);
-    }
-    return false;
-  }
+  Future<bool> delete(int id) async =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
 
   @override
-  Future<void> deleteAll() async {
-    final transaction = _db.transaction(_storeName, 'readwrite');
-    final store = transaction.objectStore(_storeName);
-    await store.clear();
-  }
-
-  // ============ Transaction Support ============
+  Future<bool> deleteByUuid(String uuid) async =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
 
   @override
-  Future<T> transaction<T>(Future<T> Function(TransactionContext tx) callback) async {
-    throw UnimplementedError('IndexedDB transactions not yet implemented');
-  }
+  Future<void> deleteAll(List<int> ids) async =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
 
-  // ============ Subscription-specific Queries ============
+  @override
+  Future<List<Subscription>> findUnsynced() async =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
 
-  Future<List<Subscription>> findActive() async {
-    final transaction = _db.transaction(_storeName, 'readonly');
-    final store = transaction.objectStore(_storeName);
-    final index = store.index('isActive');
-    final results = await index.getAll(true);
-    return results.map((item) => Subscription.fromJson(item)).toList();
-  }
+  @override
+  Future<int> count() async =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
 
-  Future<List<Subscription>> findInactive() async {
-    final transaction = _db.transaction(_storeName, 'readonly');
-    final store = transaction.objectStore(_storeName);
-    final index = store.index('isActive');
-    final results = await index.getAll(false);
-    return results.map((item) => Subscription.fromJson(item)).toList();
-  }
+  @override
+  Future<List<Subscription>> semanticSearch(
+    List<double> queryVector, {
+    int limit = 10,
+    double minSimilarity = 0.0,
+  }) async =>
+      throw UnimplementedError('Subscription does not support semantic search');
 
-  Future<Subscription?> findBySourceUrl(String sourceUrl) async {
-    final transaction = _db.transaction(_storeName, 'readonly');
-    final store = transaction.objectStore(_storeName);
-    final index = store.index('sourceUrl');
-    final results = await index.getAll(sourceUrl);
-    return results.isEmpty ? null : Subscription.fromJson(results.first);
-  }
+  @override
+  int get indexSize => 0;
 
-  Future<List<Subscription>> findBySourceType(String sourceType) async {
-    final transaction = _db.transaction(_storeName, 'readonly');
-    final store = transaction.objectStore(_storeName);
-    final index = store.index('sourceType');
-    final results = await index.getAll(sourceType);
-    return results.map((item) => Subscription.fromJson(item)).toList();
-  }
+  @override
+  Future<void> rebuildIndex(
+    Future<List<double>?> Function(Subscription entity) generateEmbedding,
+  ) async =>
+      throw UnimplementedError('Subscription does not support semantic search');
 
-  Future<List<Subscription>> findNeedingPolling() async {
-    final active = await findActive();
-    return active;
-  }
+  @override
+  Subscription? findByIdInTx(TransactionContext ctx, int id) =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
 
-  Future<Subscription?> findByName(String name) async {
-    final all = await findAll();
-    try {
-      return all.firstWhere((s) => s.name == name);
-    } catch (e) {
-      return null;
-    }
-  }
+  @override
+  Subscription? findByUuidInTx(TransactionContext ctx, String uuid) =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
+
+  @override
+  List<Subscription> findAllInTx(TransactionContext ctx) =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
+
+  @override
+  Subscription saveInTx(TransactionContext ctx, Subscription entity, {bool touch = true}) =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
+
+  @override
+  List<Subscription> saveAllInTx(TransactionContext ctx, List<Subscription> entities) =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
+
+  @override
+  bool deleteInTx(TransactionContext ctx, int id) =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
+
+  @override
+  bool deleteByUuidInTx(TransactionContext ctx, String uuid) =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
+
+  @override
+  void deleteAllInTx(TransactionContext ctx, List<int> ids) =>
+      throw UnimplementedError('Subscription persistence not yet implemented');
+
+  @override
+  Future<void> close() async {}
 }

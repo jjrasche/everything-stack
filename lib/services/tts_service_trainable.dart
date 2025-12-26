@@ -4,16 +4,16 @@
 /// Learns from user feedback on voice settings and speech rate.
 
 import 'package:flutter/material.dart';
+import 'package:everything_stack_template/core/invocation_repository.dart';
 import 'package:everything_stack_template/services/trainable.dart';
-import 'package:everything_stack_template/domain/invocations.dart';
+import 'package:everything_stack_template/domain/invocation.dart';
 import 'package:everything_stack_template/domain/feedback.dart';
-import 'package:everything_stack_template/domain/tts_invocation_repository.dart';
 import 'package:everything_stack_template/core/feedback_repository.dart';
 import 'package:everything_stack_template/core/adaptation_state_repository.dart';
 import 'package:everything_stack_template/domain/adaptation_state.dart';
 
 class TTSServiceTrainable implements Trainable {
-  final TTSInvocationRepository _invocationRepository;
+  final InvocationRepository<Invocation> _invocationRepository;
   final FeedbackRepository _feedbackRepository;
   final AdaptationStateRepository<TTSAdaptationState>
       _adaptationStateRepository;
@@ -21,7 +21,7 @@ class TTSServiceTrainable implements Trainable {
   TTSAdaptationState? _currentState;
 
   TTSServiceTrainable({
-    required TTSInvocationRepository invocationRepository,
+    required InvocationRepository<Invocation> invocationRepository,
     required FeedbackRepository feedbackRepository,
     required AdaptationStateRepository<TTSAdaptationState>
         adaptationStateRepository,
@@ -31,9 +31,9 @@ class TTSServiceTrainable implements Trainable {
 
   @override
   Future<String> recordInvocation(dynamic invocation) async {
-    if (invocation is! TTSInvocation) {
+    if (invocation is! Invocation) {
       throw ArgumentError(
-          'Expected TTSInvocation, got ${invocation.runtimeType}');
+          'Expected Invocation, got ${invocation.runtimeType}');
     }
 
     await _invocationRepository.save(invocation);

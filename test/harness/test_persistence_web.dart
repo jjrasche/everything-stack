@@ -9,6 +9,7 @@ import 'package:everything_stack_template/persistence/indexeddb/media_item_index
 import 'package:everything_stack_template/persistence/indexeddb/channel_indexeddb_adapter.dart';
 import 'package:everything_stack_template/persistence/indexeddb/edge_indexeddb_adapter.dart';
 import 'package:everything_stack_template/persistence/indexeddb/entity_version_indexeddb_adapter.dart';
+import 'package:everything_stack_template/persistence/indexeddb/invocation_indexeddb_adapter.dart';
 
 var _idbFactory = newIdbFactoryMemory();
 dynamic _db; // Database type
@@ -29,15 +30,18 @@ Future<PersistenceFactory> initializeTestPersistence() async {
   final channelAdapter = ChannelIndexedDBAdapter(_db);
   final edgeAdapter = EdgeIndexedDBAdapter(_db);
   final versionAdapter = EntityVersionIndexedDBAdapter(_db);
+  final invocationAdapter = InvocationIndexedDBAdapter(_db);
 
   // Initialize HNSW indexes
   await mediaItemAdapter.initialize();
 
   return PersistenceFactory(
+    noteAdapter: null,
     mediaItemAdapter: mediaItemAdapter,
     channelAdapter: channelAdapter,
     edgeAdapter: edgeAdapter,
     versionAdapter: versionAdapter,
+    invocationAdapter: invocationAdapter,
     handle: _db,
   );
 }

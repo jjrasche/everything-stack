@@ -8,8 +8,8 @@ import 'package:everything_stack_template/domain/turn.dart';
 import 'package:everything_stack_template/domain/feedback.dart';
 import 'package:everything_stack_template/core/turn_repository.dart';
 import 'package:everything_stack_template/core/feedback_repository.dart';
-import 'package:everything_stack_template/domain/llm_invocation_repository.dart';
-import 'package:everything_stack_template/domain/tts_invocation_repository.dart';
+import 'package:everything_stack_template/core/invocation_repository.dart';
+import 'package:everything_stack_template/domain/invocation.dart';
 import 'package:everything_stack_template/bootstrap.dart';
 
 /// Fetch all turns marked for feedback
@@ -44,19 +44,9 @@ final turnFeedbackProvider =
   return allFeedback;
 });
 
-/// Fetch a specific invocation (polymorphic - type determined by string)
+/// Fetch a specific invocation by ID
 final invocationByIdProvider =
-    FutureProvider.family<dynamic, (String, String)>((ref, args) async {
-  final (invocationId, componentType) = args;
-
-  switch (componentType) {
-    case 'llm':
-      final repo = getIt<LLMInvocationRepository>();
-      return await repo.findByUuid(invocationId);
-    case 'tts':
-      final repo = getIt<TTSInvocationRepository>();
-      return await repo.findByUuid(invocationId);
-    default:
-      return null;
-  }
+    FutureProvider.family<Invocation?, String>((ref, invocationId) async {
+  final repo = getIt<InvocationRepository<Invocation>>();
+  return await repo.findById(invocationId);
 });

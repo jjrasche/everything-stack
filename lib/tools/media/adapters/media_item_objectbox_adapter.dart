@@ -1,231 +1,118 @@
 /// # MediaItemObjectBoxAdapter
 ///
-/// ObjectBox implementation of PersistenceAdapter for MediaItem entities.
+/// Stub implementation for ObjectBox on mobile/desktop platforms.
+/// Full implementation pending: MediaItem entities need @Entity decorators.
 ///
-/// ## Usage
-/// ```dart
-/// final store = await openStore();
-/// final adapter = MediaItemObjectBoxAdapter(store);
-/// final repo = MediaItemRepository(adapter: adapter);
-/// ```
+/// Use MediaItemIndexedDBAdapter on web platform for full functionality.
 
 import 'package:objectbox/objectbox.dart';
 import '../../../core/persistence/persistence_adapter.dart';
 import '../../../core/persistence/transaction_context.dart';
-import '../../../core/persistence/objectbox_tx_context.dart';
 import '../entities/media_item.dart';
-import '../../../objectbox.g.dart';
 
+/// Stub adapter - MediaItem persistence not yet available on native platforms.
 class MediaItemObjectBoxAdapter implements PersistenceAdapter<MediaItem> {
   final Store _store;
-  late final Box<MediaItem> _box;
 
-  MediaItemObjectBoxAdapter(this._store) {
-    _box = _store.box<MediaItem>();
-  }
-
-  Box<MediaItem> get box => _box;
-
-  // ============ PersistenceAdapter Implementation ============
+  MediaItemObjectBoxAdapter(this._store);
 
   @override
-  Future<MediaItem?> findById(int id) async {
-    return _box.get(id);
-  }
+  Future<MediaItem?> findById(int id) async =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  Future<MediaItem> getById(int id) async {
-    final entity = await findById(id);
-    if (entity == null) {
-      throw Exception('MediaItem not found with id: $id');
-    }
-    return entity;
-  }
+  Future<MediaItem> getById(int id) async =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  Future<MediaItem?> findByUuid(String uuid) async {
-    final query = _box.query(MediaItem_.uuid.equals(uuid)).build();
-    try {
-      return query.findFirst();
-    } finally {
-      query.close();
-    }
-  }
+  Future<MediaItem?> findByUuid(String uuid) async =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  Future<MediaItem> getByUuid(String uuid) async {
-    final entity = await findByUuid(uuid);
-    if (entity == null) {
-      throw Exception('MediaItem not found with uuid: $uuid');
-    }
-    return entity;
-  }
+  Future<MediaItem> getByUuid(String uuid) async =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  Future<List<MediaItem>> findAll() async {
-    return _box.getAll();
-  }
+  Future<List<MediaItem>> findAll() async =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  Future<MediaItem> save(MediaItem entity, {bool touch = true}) async {
-    if (touch) {
-      entity.touch();
-    }
-    _box.put(entity);
-    return entity;
-  }
+  Future<MediaItem> save(MediaItem entity, {bool touch = true}) async =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  Future<List<MediaItem>> saveAll(List<MediaItem> entities) async {
-    for (final entity in entities) {
-      entity.touch();
-    }
-    _box.putMany(entities);
-    return entities;
-  }
+  Future<List<MediaItem>> saveAll(List<MediaItem> entities) async =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  Future<bool> delete(int id) async {
-    return _box.remove(id);
-  }
+  Future<bool> delete(int id) async =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  Future<bool> deleteByUuid(String uuid) async {
-    final entity = await findByUuid(uuid);
-    if (entity != null) {
-      return _box.remove(entity.id);
-    }
-    return false;
-  }
+  Future<bool> deleteByUuid(String uuid) async =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  Future<void> deleteAll() async {
-    _box.removeAll();
-  }
-
-  // ============ Transaction Support ============
+  Future<void> deleteAll(List<int> ids) async =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  Future<T> transaction<T>(Future<T> Function(TransactionContext tx) callback) async {
-    return _store.runAsync((store) async {
-      final tx = ObjectBoxTransactionContext(store);
-      return callback(tx);
-    }) as Future<T>;
-  }
+  Future<List<MediaItem>> findUnsynced() async =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
-  // ============ Media-specific Queries ============
+  @override
+  Future<int> count() async =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
-  Future<List<MediaItem>> findByChannel(String channelId) async {
-    final query = _box.query(MediaItem_.channelId.equals(channelId)).build();
-    try {
-      return query.find();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  Future<List<MediaItem>> semanticSearch(
+    List<double> queryVector, {
+    int limit = 10,
+    double minSimilarity = 0.0,
+  }) async =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
-  Future<List<MediaItem>> findDownloaded() async {
-    final query = _box
-        .query(MediaItem_.downloadStatus.equals('completed'))
-        .order(MediaItem_.downloadedAt, flags: Order.descending)
-        .build();
-    try {
-      return query.find();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  int get indexSize => 0;
 
-  Future<List<MediaItem>> findPending() async {
-    final query = _box
-        .query(MediaItem_.downloadStatus
-            .equals('pending')
-            .or(MediaItem_.downloadStatus.equals('downloading')))
-        .build();
-    try {
-      return query.find();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  Future<void> rebuildIndex(
+    Future<List<double>?> Function(MediaItem entity) generateEmbedding,
+  ) async =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
-  Future<List<MediaItem>> findByFormat(String format) async {
-    final query = _box.query(MediaItem_.format.equals(format)).build();
-    try {
-      return query.find();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  MediaItem? findByIdInTx(TransactionContext ctx, int id) =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
-  Future<List<MediaItem>> findAudio() async {
-    return findByFormat('mp3');
-  }
+  @override
+  MediaItem? findByUuidInTx(TransactionContext ctx, String uuid) =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
-  Future<List<MediaItem>> findVideo() async {
-    final query = _box
-        .query(MediaItem_.format.notEquals('mp3'))
-        .order(MediaItem_.createdAt, flags: Order.descending)
-        .build();
-    try {
-      return query.find();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  List<MediaItem> findAllInTx(TransactionContext ctx) =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
-  Future<MediaItem?> findByYoutubeId(String youtubeVideoId) async {
-    final query =
-        _box.query(MediaItem_.youtubeVideoId.equals(youtubeVideoId)).build();
-    try {
-      return query.findFirst();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  MediaItem saveInTx(TransactionContext ctx, MediaItem entity, {bool touch = true}) =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
-  Future<MediaItem?> findByUrl(String youtubeUrl) async {
-    final query = _box.query(MediaItem_.youtubeUrl.equals(youtubeUrl)).build();
-    try {
-      return query.findFirst();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  List<MediaItem> saveAllInTx(TransactionContext ctx, List<MediaItem> entities) =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
-  Future<List<MediaItem>> findRecentlyDownloaded({int limit = 10}) async {
-    final query = _box
-        .query(MediaItem_.downloadStatus.equals('completed'))
-        .order(MediaItem_.downloadedAt, flags: Order.descending)
-        .build();
-    try {
-      return query.find().take(limit).toList();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  bool deleteInTx(TransactionContext ctx, int id) =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
-  Future<int> getTotalDownloadedSize() async {
-    final downloaded = await findDownloaded();
-    return downloaded.fold<int>(
-      0,
-      (sum, item) => sum + item.fileSizeBytes,
-    );
-  }
+  @override
+  bool deleteByUuidInTx(TransactionContext ctx, String uuid) =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
-  Future<Map<String, dynamic>> getStats() async {
-    final all = await findAll();
-    final downloadedCount =
-        all.where((m) => m.downloadStatus == 'completed').length;
-    final totalSize = await getTotalDownloadedSize();
-    final audioCount = all.where((m) => m.format == 'mp3').length;
+  @override
+  void deleteAllInTx(TransactionContext ctx, List<int> ids) =>
+      throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
-    return {
-      'totalMediaItems': all.length,
-      'downloadedCount': downloadedCount,
-      'totalDownloadedSizeBytes': totalSize,
-      'audioCount': audioCount,
-      'videoCount': all.length - audioCount,
-    };
-  }
+  @override
+  Future<void> close() async {}
 }

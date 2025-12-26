@@ -2,6 +2,7 @@
 
 import 'package:objectbox/objectbox.dart';
 import '../../domain/turn.dart';
+import '../../objectbox.g.dart';
 import 'base_objectbox_adapter.dart';
 import 'wrappers/turn_ob.dart';
 
@@ -20,5 +21,5 @@ class TurnObjectBoxAdapter extends BaseObjectBoxAdapter<Turn, TurnOB> {
 
   @override
   Condition<TurnOB> syncStatusLocalCondition() =>
-      TurnOB_.syncId.isNotNull();
+      TurnOB_.syncId.notNull();
 }

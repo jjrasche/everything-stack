@@ -1,7 +1,7 @@
 /// # FeedbackOB - ObjectBox Wrapper
 
 import 'package:objectbox/objectbox.dart';
-import '../../domain/feedback.dart';
+import 'package:everything_stack_template/domain/feedback.dart';
 
 @Entity()
 class FeedbackOB {

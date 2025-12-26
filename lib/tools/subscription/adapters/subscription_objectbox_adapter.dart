@@ -1,176 +1,116 @@
 /// # SubscriptionObjectBoxAdapter
 ///
-/// ObjectBox implementation of PersistenceAdapter for Subscription entities.
-///
-/// ## Usage
-/// ```dart
-/// final store = await openStore();
-/// final adapter = SubscriptionObjectBoxAdapter(store);
-/// final repo = SubscriptionRepository(adapter: adapter);
-/// ```
+/// Stub implementation for ObjectBox on mobile/desktop platforms.
+/// Full implementation pending: Subscription entities need @Entity decorators.
 
 import 'package:objectbox/objectbox.dart';
 import '../../../core/persistence/persistence_adapter.dart';
 import '../../../core/persistence/transaction_context.dart';
-import '../../../core/persistence/objectbox_tx_context.dart';
 import '../entities/subscription.dart';
-import '../../../objectbox.g.dart';
 
+/// Stub adapter - Subscription persistence available on web via IndexedDB only.
 class SubscriptionObjectBoxAdapter implements PersistenceAdapter<Subscription> {
   final Store _store;
-  late final Box<Subscription> _box;
 
-  SubscriptionObjectBoxAdapter(this._store) {
-    _box = _store.box<Subscription>();
-  }
-
-  Box<Subscription> get box => _box;
-
-  // ============ PersistenceAdapter Implementation ============
+  SubscriptionObjectBoxAdapter(this._store);
 
   @override
-  Future<Subscription?> findById(int id) async {
-    return _box.get(id);
-  }
+  Future<Subscription?> findById(int id) async =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  Future<Subscription> getById(int id) async {
-    final entity = await findById(id);
-    if (entity == null) {
-      throw Exception('Subscription not found with id: $id');
-    }
-    return entity;
-  }
+  Future<Subscription> getById(int id) async =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  Future<Subscription?> findByUuid(String uuid) async {
-    final query = _box.query(Subscription_.uuid.equals(uuid)).build();
-    try {
-      return query.findFirst();
-    } finally {
-      query.close();
-    }
-  }
+  Future<Subscription?> findByUuid(String uuid) async =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  Future<Subscription> getByUuid(String uuid) async {
-    final entity = await findByUuid(uuid);
-    if (entity == null) {
-      throw Exception('Subscription not found with uuid: $uuid');
-    }
-    return entity;
-  }
+  Future<Subscription> getByUuid(String uuid) async =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  Future<List<Subscription>> findAll() async {
-    return _box.getAll();
-  }
+  Future<List<Subscription>> findAll() async =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  Future<Subscription> save(Subscription entity, {bool touch = true}) async {
-    if (touch) {
-      entity.touch();
-    }
-    _box.put(entity);
-    return entity;
-  }
+  Future<Subscription> save(Subscription entity, {bool touch = true}) async =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  Future<List<Subscription>> saveAll(List<Subscription> entities) async {
-    for (final entity in entities) {
-      entity.touch();
-    }
-    _box.putMany(entities);
-    return entities;
-  }
+  Future<List<Subscription>> saveAll(List<Subscription> entities) async =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  Future<bool> delete(int id) async {
-    return _box.remove(id);
-  }
+  Future<bool> delete(int id) async =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  Future<bool> deleteByUuid(String uuid) async {
-    final entity = await findByUuid(uuid);
-    if (entity != null) {
-      return _box.remove(entity.id);
-    }
-    return false;
-  }
+  Future<bool> deleteByUuid(String uuid) async =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  Future<void> deleteAll() async {
-    _box.removeAll();
-  }
-
-  // ============ Transaction Support ============
+  Future<void> deleteAll(List<int> ids) async =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  Future<T> transaction<T>(Future<T> Function(TransactionContext tx) callback) async {
-    return _store.runAsync((store) async {
-      final tx = ObjectBoxTransactionContext(store);
-      return callback(tx);
-    }) as Future<T>;
-  }
+  Future<List<Subscription>> findUnsynced() async =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
-  // ============ Subscription-specific Queries ============
+  @override
+  Future<int> count() async =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
-  Future<List<Subscription>> findActive() async {
-    final query = _box.query(Subscription_.isActive.equals(true)).build();
-    try {
-      return query.find();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  Future<List<Subscription>> semanticSearch(
+    List<double> queryVector, {
+    int limit = 10,
+    double minSimilarity = 0.0,
+  }) async =>
+      throw UnimplementedError('Subscription does not support semantic search');
 
-  Future<List<Subscription>> findInactive() async {
-    final query = _box.query(Subscription_.isActive.equals(false)).build();
-    try {
-      return query.find();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  int get indexSize => 0;
 
-  Future<Subscription?> findBySourceUrl(String sourceUrl) async {
-    final query =
-        _box.query(Subscription_.sourceUrl.equals(sourceUrl)).build();
-    try {
-      return query.findFirst();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  Future<void> rebuildIndex(
+    Future<List<double>?> Function(Subscription entity) generateEmbedding,
+  ) async =>
+      throw UnimplementedError('Subscription does not support semantic search');
 
-  Future<List<Subscription>> findBySourceType(String sourceType) async {
-    final query =
-        _box.query(Subscription_.sourceType.equals(sourceType)).build();
-    try {
-      return query.find();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  Subscription? findByIdInTx(TransactionContext ctx, int id) =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
-  Future<List<Subscription>> findNeedingPolling() async {
-    final query = _box
-        .query(Subscription_.isActive.equals(true))
-        .order(Subscription_.lastCheckedAt)
-        .build();
-    try {
-      return query.find();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  Subscription? findByUuidInTx(TransactionContext ctx, String uuid) =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
-  Future<Subscription?> findByName(String name) async {
-    final query = _box.query(Subscription_.name.equals(name)).build();
-    try {
-      return query.findFirst();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  List<Subscription> findAllInTx(TransactionContext ctx) =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
+
+  @override
+  Subscription saveInTx(TransactionContext ctx, Subscription entity, {bool touch = true}) =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
+
+  @override
+  List<Subscription> saveAllInTx(TransactionContext ctx, List<Subscription> entities) =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
+
+  @override
+  bool deleteInTx(TransactionContext ctx, int id) =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
+
+  @override
+  bool deleteByUuidInTx(TransactionContext ctx, String uuid) =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
+
+  @override
+  void deleteAllInTx(TransactionContext ctx, List<int> ids) =>
+      throw UnimplementedError('Subscription persistence not yet available on native platforms');
+
+  @override
+  Future<void> close() async {}
 }

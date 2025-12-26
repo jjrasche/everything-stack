@@ -1,7 +1,7 @@
 /// # AdaptationStateOB - ObjectBox Wrapper
 
 import 'package:objectbox/objectbox.dart';
-import '../../domain/adaptation_state_generic.dart';
+import 'package:everything_stack_template/domain/adaptation_state_generic.dart';
 
 @Entity()
 class AdaptationStateOB {

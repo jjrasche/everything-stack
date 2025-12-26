@@ -41,7 +41,7 @@ import 'trainables/llm_orchestrator.dart';
 import 'trainables/response_renderer.dart';
 import 'embedding_service.dart';
 import 'llm_service.dart';
-import 'tool_executor.dart' show ToolExecutor, ToolCall;
+import 'tool_executor.dart' show ToolExecutor;
 
 /// Result of coordinator orchestration
 class CoordinatorResult {

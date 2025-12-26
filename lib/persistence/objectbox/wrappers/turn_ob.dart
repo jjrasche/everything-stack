@@ -1,7 +1,7 @@
 /// # TurnOB - ObjectBox Wrapper
 
 import 'package:objectbox/objectbox.dart';
-import '../../domain/turn.dart';
+import 'package:everything_stack_template/domain/turn.dart';
 
 @Entity()
 class TurnOB {

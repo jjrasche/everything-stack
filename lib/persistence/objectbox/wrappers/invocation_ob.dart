@@ -4,7 +4,7 @@
 /// Contains all ObjectBox decorators (@Entity, @Id, @Property, etc.)
 
 import 'package:objectbox/objectbox.dart';
-import '../../domain/invocation.dart';
+import 'package:everything_stack_template/domain/invocation.dart' as domain_invocation;
 
 @Entity()
 class InvocationOB {
@@ -49,7 +49,7 @@ class InvocationOB {
   // ============ Conversion Methods ============
 
   /// Convert from domain Invocation to ObjectBox wrapper
-  factory InvocationOB.fromInvocation(Invocation invocation) {
+  factory InvocationOB.fromInvocation(domain_invocation.Invocation invocation) {
     return InvocationOB(
       correlationId: invocation.correlationId,
       componentType: invocation.componentType,
@@ -67,8 +67,8 @@ class InvocationOB {
   }
 
   /// Convert from ObjectBox wrapper back to domain Invocation
-  Invocation toInvocation() {
-    return Invocation(
+  domain_invocation.Invocation toInvocation() {
+    return domain_invocation.Invocation(
       correlationId: correlationId,
       componentType: componentType,
       success: success,

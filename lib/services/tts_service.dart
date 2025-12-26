@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'timeout_config.dart';
 import 'trainable.dart';
-import 'package:everything_stack_template/domain/invocations.dart';
-import 'package:everything_stack_template/domain/tts_invocation_repository.dart';
+import 'package:everything_stack_template/core/invocation_repository.dart';
+import 'package:everything_stack_template/domain/invocation.dart';
 
 /// Text-to-speech service contract.
 ///
@@ -142,17 +142,17 @@ class GoogleTTSService extends TTSService {
   final String apiKey;
   final String defaultVoice;
   final String audioEncoding;
-  final TTSInvocationRepository _ttsInvocationRepository;
+  final InvocationRepository<Invocation> _invocationRepository;
 
   bool _isReady = false;
   final http.Client _httpClient = http.Client();
 
   GoogleTTSService({
     required this.apiKey,
-    required TTSInvocationRepository ttsInvocationRepository,
+    required InvocationRepository<Invocation> invocationRepository,
     this.defaultVoice = 'en-US-Neural2-A',
     this.audioEncoding = 'LINEAR16',
-  }) : _ttsInvocationRepository = ttsInvocationRepository;
+  }) : _invocationRepository = invocationRepository;
 
   @override
   Future<void> initialize() async {
@@ -253,11 +253,11 @@ class GoogleTTSService extends TTSService {
 
   @override
   Future<String> recordInvocation(dynamic invocation) async {
-    if (invocation is! TTSInvocation) {
+    if (invocation is! Invocation) {
       throw ArgumentError(
-          'Expected TTSInvocation, got ${invocation.runtimeType}');
+          'Expected Invocation, got ${invocation.runtimeType}');
     }
-    await _ttsInvocationRepository.save(invocation);
+    await _invocationRepository.save(invocation);
     return invocation.uuid;
   }
 

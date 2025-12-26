@@ -9,6 +9,7 @@ import 'package:everything_stack_template/persistence/objectbox/media_item_objec
 import 'package:everything_stack_template/persistence/objectbox/channel_objectbox_adapter.dart';
 import 'package:everything_stack_template/persistence/objectbox/edge_objectbox_adapter.dart';
 import 'package:everything_stack_template/persistence/objectbox/entity_version_objectbox_adapter.dart';
+import 'package:everything_stack_template/persistence/objectbox/invocation_objectbox_adapter.dart';
 
 Directory? _testDir;
 Store? _store;
@@ -29,12 +30,15 @@ Future<PersistenceFactory> initializeTestPersistence() async {
   final channelAdapter = ChannelObjectBoxAdapter(_store!);
   final edgeAdapter = EdgeObjectBoxAdapter(_store!);
   final versionAdapter = EntityVersionObjectBoxAdapter(_store!);
+  final invocationAdapter = InvocationObjectBoxAdapter(_store!);
 
   return PersistenceFactory(
+    noteAdapter: null,
     mediaItemAdapter: mediaItemAdapter,
     channelAdapter: channelAdapter,
     edgeAdapter: edgeAdapter,
     versionAdapter: versionAdapter,
+    invocationAdapter: invocationAdapter,
     handle: _store,
   );
 }

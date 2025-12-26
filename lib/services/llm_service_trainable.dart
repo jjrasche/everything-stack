@@ -4,16 +4,16 @@
 /// Learns from user corrections to LLM responses.
 
 import 'package:flutter/material.dart';
+import 'package:everything_stack_template/core/invocation_repository.dart';
 import 'package:everything_stack_template/services/trainable.dart';
-import 'package:everything_stack_template/domain/invocations.dart';
+import 'package:everything_stack_template/domain/invocation.dart';
 import 'package:everything_stack_template/domain/feedback.dart';
-import 'package:everything_stack_template/domain/llm_invocation_repository.dart';
 import 'package:everything_stack_template/core/feedback_repository.dart';
 import 'package:everything_stack_template/core/adaptation_state_repository.dart';
 import 'package:everything_stack_template/domain/adaptation_state.dart';
 
 class LLMServiceTrainable implements Trainable {
-  final LLMInvocationRepository _invocationRepository;
+  final InvocationRepository<Invocation> _invocationRepository;
   final FeedbackRepository _feedbackRepository;
   final AdaptationStateRepository<LLMAdaptationState>
       _adaptationStateRepository;
@@ -21,7 +21,7 @@ class LLMServiceTrainable implements Trainable {
   LLMAdaptationState? _currentState;
 
   LLMServiceTrainable({
-    required LLMInvocationRepository invocationRepository,
+    required InvocationRepository<Invocation> invocationRepository,
     required FeedbackRepository feedbackRepository,
     required AdaptationStateRepository<LLMAdaptationState>
         adaptationStateRepository,
@@ -31,9 +31,9 @@ class LLMServiceTrainable implements Trainable {
 
   @override
   Future<String> recordInvocation(dynamic invocation) async {
-    if (invocation is! LLMInvocation) {
+    if (invocation is! Invocation) {
       throw ArgumentError(
-          'Expected LLMInvocation, got ${invocation.runtimeType}');
+          'Expected Invocation, got ${invocation.runtimeType}');
     }
 
     await _invocationRepository.save(invocation);

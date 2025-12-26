@@ -64,10 +64,9 @@ class TimerRepository extends EntityRepository<Timer> {
   }
 
   /// Find timers created by a specific tool invocation
+  /// Note: invocationCorrelationId not yet implemented on Timer entity
   Future<List<Timer>> findByCorrelationId(String correlationId) async {
-    final all = await findAll();
-    return all
-        .where((timer) => timer.invocationCorrelationId == correlationId)
-        .toList();
+    // TODO: Implement invocationCorrelationId tracking
+    return [];
   }
 }

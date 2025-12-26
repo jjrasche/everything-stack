@@ -15,10 +15,6 @@ dependencies:
     sdk: flutter
 
   # Local database (offline-first)
-  # Isar - being replaced by ObjectBox
-  isar: ^3.1.0
-  isar_flutter_libs: ^3.1.0
-
   # ObjectBox - native platforms (Android, iOS, desktop)
   objectbox: ^4.0.3
   objectbox_flutter_libs: ^4.0.3
@@ -68,8 +64,7 @@ dev_dependencies:
   integration_test:
     sdk: flutter
 
-  # Code generation for Isar and JSON serialization
-  isar_generator: ^3.1.0
+  # Code generation for JSON serialization
   json_serializable: ^6.7.0
   build_runner: ^2.4.0
 

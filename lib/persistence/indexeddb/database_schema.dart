@@ -47,6 +47,11 @@ class ObjectStores {
   static const String edges = 'edges';
   static const String entityVersions = 'entity_versions';
   static const String hnswIndex = '_hnsw_index'; // Metadata store for HNSW
+  static const String adaptation_state = 'adaptation_state';
+  static const String events = 'events';
+  static const String feedback = 'feedback';
+  static const String invocations = 'invocations';
+  static const String turns = 'turns';
 }
 
 /// Index names for each object store
@@ -85,6 +90,33 @@ class Indexes {
   static const String versionsSyncStatus = 'dbSyncStatus';
   static const String versionsEntityUuid = 'entityUuid';
   static const String versionsEntityType = 'entityType';
+
+  // AdaptationState indexes
+  static const String adaptationStateId = 'id';
+  static const String adaptationStateUuid = 'uuid';
+  static const String adaptationStateSyncStatus = 'dbSyncStatus';
+
+  // Events indexes
+  static const String eventsId = 'id';
+  static const String eventsUuid = 'uuid';
+  static const String eventsSyncStatus = 'dbSyncStatus';
+  static const String eventsCorrelationId = 'correlationId';
+
+  // Feedback indexes
+  static const String feedbackId = 'id';
+  static const String feedbackUuid = 'uuid';
+  static const String feedbackSyncStatus = 'dbSyncStatus';
+
+  // Invocations indexes
+  static const String invocationsId = 'id';
+  static const String invocationsUuid = 'uuid';
+  static const String invocationsSyncStatus = 'dbSyncStatus';
+  static const String invocationsCorrelationId = 'correlationId';
+
+  // Turns indexes
+  static const String turnsId = 'id';
+  static const String turnsUuid = 'uuid';
+  static const String turnsSyncStatus = 'dbSyncStatus';
 }
 
 /// Schema definition for notes object store
@@ -283,6 +315,141 @@ class EntityVersionsStoreSchema {
   ];
 }
 
+/// Schema definition for adaptationState object store
+class AdaptationStateStoreSchema {
+  static const String storeName = ObjectStores.adaptation_state;
+  static const String keyPath = 'uuid';
+  static const bool autoIncrement = false;
+
+  static const List<IndexDefinition> indexes = [
+    IndexDefinition(
+      name: Indexes.adaptationStateId,
+      keyPath: 'id',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.adaptationStateUuid,
+      keyPath: 'uuid',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.adaptationStateSyncStatus,
+      keyPath: 'dbSyncStatus',
+      unique: false,
+    ),
+  ];
+}
+
+/// Schema definition for events object store
+class EventsStoreSchema {
+  static const String storeName = ObjectStores.events;
+  static const String keyPath = 'uuid';
+  static const bool autoIncrement = false;
+
+  static const List<IndexDefinition> indexes = [
+    IndexDefinition(
+      name: Indexes.eventsId,
+      keyPath: 'id',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.eventsUuid,
+      keyPath: 'uuid',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.eventsSyncStatus,
+      keyPath: 'dbSyncStatus',
+      unique: false,
+    ),
+    IndexDefinition(
+      name: Indexes.eventsCorrelationId,
+      keyPath: 'correlationId',
+      unique: false,
+    ),
+  ];
+}
+
+/// Schema definition for feedback object store
+class FeedbackStoreSchema {
+  static const String storeName = ObjectStores.feedback;
+  static const String keyPath = 'uuid';
+  static const bool autoIncrement = false;
+
+  static const List<IndexDefinition> indexes = [
+    IndexDefinition(
+      name: Indexes.feedbackId,
+      keyPath: 'id',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.feedbackUuid,
+      keyPath: 'uuid',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.feedbackSyncStatus,
+      keyPath: 'dbSyncStatus',
+      unique: false,
+    ),
+  ];
+}
+
+/// Schema definition for invocations object store
+class InvocationsStoreSchema {
+  static const String storeName = ObjectStores.invocations;
+  static const String keyPath = 'uuid';
+  static const bool autoIncrement = false;
+
+  static const List<IndexDefinition> indexes = [
+    IndexDefinition(
+      name: Indexes.invocationsId,
+      keyPath: 'id',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.invocationsUuid,
+      keyPath: 'uuid',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.invocationsSyncStatus,
+      keyPath: 'dbSyncStatus',
+      unique: false,
+    ),
+    IndexDefinition(
+      name: Indexes.invocationsCorrelationId,
+      keyPath: 'correlationId',
+      unique: false,
+    ),
+  ];
+}
+
+/// Schema definition for turns object store
+class TurnsStoreSchema {
+  static const String storeName = ObjectStores.turns;
+  static const String keyPath = 'uuid';
+  static const bool autoIncrement = false;
+
+  static const List<IndexDefinition> indexes = [
+    IndexDefinition(
+      name: Indexes.turnsId,
+      keyPath: 'id',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.turnsUuid,
+      keyPath: 'uuid',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.turnsSyncStatus,
+      keyPath: 'dbSyncStatus',
+      unique: false,
+    ),
+  ];
+}
+
 /// Schema definition for HNSW index metadata store
 class HnswIndexStoreSchema {
   static const String storeName = ObjectStores.hnswIndex;
@@ -357,6 +524,36 @@ class DatabaseSchema {
       keyPath: HnswIndexStoreSchema.keyPath,
       autoIncrement: HnswIndexStoreSchema.autoIncrement,
       indexes: HnswIndexStoreSchema.indexes,
+    ),
+    ObjectStoreDefinition(
+      name: AdaptationStateStoreSchema.storeName,
+      keyPath: AdaptationStateStoreSchema.keyPath,
+      autoIncrement: AdaptationStateStoreSchema.autoIncrement,
+      indexes: AdaptationStateStoreSchema.indexes,
+    ),
+    ObjectStoreDefinition(
+      name: EventsStoreSchema.storeName,
+      keyPath: EventsStoreSchema.keyPath,
+      autoIncrement: EventsStoreSchema.autoIncrement,
+      indexes: EventsStoreSchema.indexes,
+    ),
+    ObjectStoreDefinition(
+      name: FeedbackStoreSchema.storeName,
+      keyPath: FeedbackStoreSchema.keyPath,
+      autoIncrement: FeedbackStoreSchema.autoIncrement,
+      indexes: FeedbackStoreSchema.indexes,
+    ),
+    ObjectStoreDefinition(
+      name: InvocationsStoreSchema.storeName,
+      keyPath: InvocationsStoreSchema.keyPath,
+      autoIncrement: InvocationsStoreSchema.autoIncrement,
+      indexes: InvocationsStoreSchema.indexes,
+    ),
+    ObjectStoreDefinition(
+      name: TurnsStoreSchema.storeName,
+      keyPath: TurnsStoreSchema.keyPath,
+      autoIncrement: TurnsStoreSchema.autoIncrement,
+      indexes: TurnsStoreSchema.indexes,
     ),
   ];
 }

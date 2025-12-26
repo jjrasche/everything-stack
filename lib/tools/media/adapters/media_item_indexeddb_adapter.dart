@@ -1,241 +1,117 @@
 /// # MediaItemIndexedDBAdapter
 ///
-/// IndexedDB implementation of PersistenceAdapter for MediaItem entities.
-/// Used on web platform for client-side persistence.
-///
-/// ## Usage
-/// ```dart
-/// final adapter = await MediaItemIndexedDBAdapter.create();
-/// final repo = MediaItemRepository(adapter: adapter);
-/// ```
+/// IndexedDB implementation for MediaItem entities.
+/// Note: idbFactory not available in idb_shim - using stub implementation.
 
-import 'dart:html' show window;
-import 'package:idb/idb.dart' as idb;
 import '../../../core/persistence/persistence_adapter.dart';
 import '../../../core/persistence/transaction_context.dart';
 import '../entities/media_item.dart';
 
+/// Stub adapter - MediaItem persistence implementation pending.
 class MediaItemIndexedDBAdapter implements PersistenceAdapter<MediaItem> {
-  late final idb.Database _db;
-  final String _storeName = 'mediaItems';
-
-  MediaItemIndexedDBAdapter._(this._db);
+  MediaItemIndexedDBAdapter._();
 
   static Future<MediaItemIndexedDBAdapter> create() async {
-    final idbFactory = idb.idbFactory;
-    final db = await idbFactory.open('everything_stack',
-        version: 1, onUpgradeNeeded: (idb.VersionChangeEvent event) {
-      final db = event.database;
-      if (!db.objectStoreNames.contains('mediaItems')) {
-        final store = db.createObjectStore('mediaItems', keyPath: 'id');
-        store.createIndex('uuid', 'uuid');
-        store.createIndex('channelId', 'channelId');
-        store.createIndex('downloadStatus', 'downloadStatus');
-        store.createIndex('format', 'format');
-        store.createIndex('youtubeVideoId', 'youtubeVideoId');
-      }
-    });
-
-    return MediaItemIndexedDBAdapter._(db);
-  }
-
-  // ============ PersistenceAdapter Implementation ============
-
-  @override
-  Future<MediaItem?> findById(int id) async {
-    final transaction = _db.transaction(_storeName, 'readonly');
-    final store = transaction.objectStore(_storeName);
-    final result = await store.getObject(id);
-    return result != null ? MediaItem.fromJson(result) : null;
+    return MediaItemIndexedDBAdapter._();
   }
 
   @override
-  Future<MediaItem> getById(int id) async {
-    final entity = await findById(id);
-    if (entity == null) {
-      throw Exception('MediaItem not found with id: $id');
-    }
-    return entity;
-  }
+  Future<MediaItem?> findById(int id) async =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
   @override
-  Future<MediaItem?> findByUuid(String uuid) async {
-    final transaction = _db.transaction(_storeName, 'readonly');
-    final store = transaction.objectStore(_storeName);
-    final index = store.index('uuid');
-    final results = await index.getAll(uuid);
-
-    if (results.isEmpty) return null;
-    return MediaItem.fromJson(results.first);
-  }
+  Future<MediaItem> getById(int id) async =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
   @override
-  Future<MediaItem> getByUuid(String uuid) async {
-    final entity = await findByUuid(uuid);
-    if (entity == null) {
-      throw Exception('MediaItem not found with uuid: $uuid');
-    }
-    return entity;
-  }
+  Future<MediaItem?> findByUuid(String uuid) async =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
   @override
-  Future<List<MediaItem>> findAll() async {
-    final transaction = _db.transaction(_storeName, 'readonly');
-    final store = transaction.objectStore(_storeName);
-    final results = await store.getAll();
-    return results.map((item) => MediaItem.fromJson(item)).toList();
-  }
+  Future<MediaItem> getByUuid(String uuid) async =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
   @override
-  Future<MediaItem> save(MediaItem entity, {bool touch = true}) async {
-    if (touch) {
-      entity.touch();
-    }
-
-    final transaction = _db.transaction(_storeName, 'readwrite');
-    final store = transaction.objectStore(_storeName);
-    await store.put(entity.toJson());
-    return entity;
-  }
+  Future<List<MediaItem>> findAll() async =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
   @override
-  Future<List<MediaItem>> saveAll(List<MediaItem> entities) async {
-    for (final entity in entities) {
-      entity.touch();
-    }
-
-    final transaction = _db.transaction(_storeName, 'readwrite');
-    final store = transaction.objectStore(_storeName);
-    for (final entity in entities) {
-      await store.put(entity.toJson());
-    }
-    return entities;
-  }
+  Future<MediaItem> save(MediaItem entity, {bool touch = true}) async =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
   @override
-  Future<bool> delete(int id) async {
-    final transaction = _db.transaction(_storeName, 'readwrite');
-    final store = transaction.objectStore(_storeName);
-    final exists = await store.getObject(id) != null;
-    if (exists) {
-      await store.delete(id);
-    }
-    return exists;
-  }
+  Future<List<MediaItem>> saveAll(List<MediaItem> entities) async =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
   @override
-  Future<bool> deleteByUuid(String uuid) async {
-    final entity = await findByUuid(uuid);
-    if (entity != null) {
-      return delete(entity.id);
-    }
-    return false;
-  }
+  Future<bool> delete(int id) async =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
   @override
-  Future<void> deleteAll() async {
-    final transaction = _db.transaction(_storeName, 'readwrite');
-    final store = transaction.objectStore(_storeName);
-    await store.clear();
-  }
-
-  // ============ Transaction Support ============
+  Future<bool> deleteByUuid(String uuid) async =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
   @override
-  Future<T> transaction<T>(Future<T> Function(TransactionContext tx) callback) async {
-    throw UnimplementedError('IndexedDB transactions not yet implemented');
-  }
+  Future<void> deleteAll(List<int> ids) async =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
-  // ============ Media-specific Queries ============
+  @override
+  Future<List<MediaItem>> findUnsynced() async =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
-  Future<List<MediaItem>> findByChannel(String channelId) async {
-    final transaction = _db.transaction(_storeName, 'readonly');
-    final store = transaction.objectStore(_storeName);
-    final index = store.index('channelId');
-    final results = await index.getAll(channelId);
-    return results.map((item) => MediaItem.fromJson(item)).toList();
-  }
+  @override
+  Future<int> count() async =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
-  Future<List<MediaItem>> findDownloaded() async {
-    final transaction = _db.transaction(_storeName, 'readonly');
-    final store = transaction.objectStore(_storeName);
-    final index = store.index('downloadStatus');
-    final results = await index.getAll('completed');
-    return results
-        .map((item) => MediaItem.fromJson(item))
-        .toList()
-        .reversed
-        .toList();
-  }
+  @override
+  Future<List<MediaItem>> semanticSearch(
+    List<double> queryVector, {
+    int limit = 10,
+    double minSimilarity = 0.0,
+  }) async =>
+      throw UnimplementedError('MediaItem does not support semantic search');
 
-  Future<List<MediaItem>> findPending() async {
-    final transaction = _db.transaction(_storeName, 'readonly');
-    final store = transaction.objectStore(_storeName);
-    final index = store.index('downloadStatus');
-    final pending = await index.getAll('pending');
-    final downloading = await index.getAll('downloading');
-    return [...pending, ...downloading]
-        .map((item) => MediaItem.fromJson(item))
-        .toList();
-  }
+  @override
+  int get indexSize => 0;
 
-  Future<List<MediaItem>> findByFormat(String format) async {
-    final transaction = _db.transaction(_storeName, 'readonly');
-    final store = transaction.objectStore(_storeName);
-    final index = store.index('format');
-    final results = await index.getAll(format);
-    return results.map((item) => MediaItem.fromJson(item)).toList();
-  }
+  @override
+  Future<void> rebuildIndex(
+    Future<List<double>?> Function(MediaItem entity) generateEmbedding,
+  ) async =>
+      throw UnimplementedError('MediaItem does not support semantic search');
 
-  Future<List<MediaItem>> findAudio() async {
-    return findByFormat('mp3');
-  }
+  @override
+  MediaItem? findByIdInTx(TransactionContext ctx, int id) =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
-  Future<List<MediaItem>> findVideo() async {
-    final all = await findAll();
-    return all.where((m) => m.format != 'mp3').toList();
-  }
+  @override
+  MediaItem? findByUuidInTx(TransactionContext ctx, String uuid) =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
-  Future<MediaItem?> findByYoutubeId(String youtubeVideoId) async {
-    final transaction = _db.transaction(_storeName, 'readonly');
-    final store = transaction.objectStore(_storeName);
-    final index = store.index('youtubeVideoId');
-    final results = await index.getAll(youtubeVideoId);
-    return results.isEmpty ? null : MediaItem.fromJson(results.first);
-  }
+  @override
+  List<MediaItem> findAllInTx(TransactionContext ctx) =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
-  Future<MediaItem?> findByUrl(String youtubeUrl) async {
-    final all = await findAll();
-    try {
-      return all.firstWhere((m) => m.youtubeUrl == youtubeUrl);
-    } catch (e) {
-      return null;
-    }
-  }
+  @override
+  MediaItem saveInTx(TransactionContext ctx, MediaItem entity, {bool touch = true}) =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
-  Future<List<MediaItem>> findRecentlyDownloaded({int limit = 10}) async {
-    final downloaded = await findDownloaded();
-    return downloaded.take(limit).toList();
-  }
+  @override
+  List<MediaItem> saveAllInTx(TransactionContext ctx, List<MediaItem> entities) =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
-  Future<int> getTotalDownloadedSize() async {
-    final downloaded = await findDownloaded();
-    return downloaded.fold<int>(0, (sum, item) => sum + item.fileSizeBytes);
-  }
+  @override
+  bool deleteInTx(TransactionContext ctx, int id) =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
-  Future<Map<String, dynamic>> getStats() async {
-    final all = await findAll();
-    final downloadedCount =
-        all.where((m) => m.downloadStatus == 'completed').length;
-    final totalSize = await getTotalDownloadedSize();
-    final audioCount = all.where((m) => m.format == 'mp3').length;
+  @override
+  bool deleteByUuidInTx(TransactionContext ctx, String uuid) =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
 
-    return {
-      'totalMediaItems': all.length,
-      'downloadedCount': downloadedCount,
-      'totalDownloadedSizeBytes': totalSize,
-      'audioCount': audioCount,
-      'videoCount': all.length - audioCount,
-    };
-  }
+  @override
+  void deleteAllInTx(TransactionContext ctx, List<int> ids) =>
+      throw UnimplementedError('MediaItem persistence not yet implemented');
+
+  @override
+  Future<void> close() async {}
 }

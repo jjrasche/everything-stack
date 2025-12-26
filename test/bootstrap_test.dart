@@ -1,7 +1,7 @@
 /// Tests for bootstrap initialization.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:everything_stack_template/bootstrap.dart';
+import 'package:everything_stack_template/bootstrap.dart' as bootstrap;
 import 'package:everything_stack_template/services/blob_store.dart';
 import 'package:everything_stack_template/services/file_service.dart';
 import 'package:everything_stack_template/services/sync_service.dart';
@@ -21,8 +21,8 @@ void main() {
 
     test('initializeEverythingStack with mocks initializes all services',
         () async {
-      await initializeEverythingStack(
-        config: const EverythingStackConfig(useMocks: true),
+      await bootstrap.initializeEverythingStack(
+        config: const bootstrap.EverythingStackConfig(useMocks: true),
       );
 
       // All services should be mock implementations
@@ -34,17 +34,17 @@ void main() {
     });
 
     test('EverythingStackConfig.hasSyncConfig checks both url and key', () {
-      const noConfig = EverythingStackConfig();
+      const noConfig = bootstrap.EverythingStackConfig();
       expect(noConfig.hasSyncConfig, isFalse);
 
       const urlOnly =
-          EverythingStackConfig(supabaseUrl: 'https://x.supabase.co');
+          bootstrap.EverythingStackConfig(supabaseUrl: 'https://x.supabase.co');
       expect(urlOnly.hasSyncConfig, isFalse);
 
-      const keyOnly = EverythingStackConfig(supabaseAnonKey: 'key');
+      const keyOnly = bootstrap.EverythingStackConfig(supabaseAnonKey: 'key');
       expect(keyOnly.hasSyncConfig, isFalse);
 
-      const both = EverythingStackConfig(
+      const both = bootstrap.EverythingStackConfig(
         supabaseUrl: 'https://x.supabase.co',
         supabaseAnonKey: 'key',
       );
@@ -52,23 +52,23 @@ void main() {
     });
 
     test('EverythingStackConfig.hasEmbeddingConfig checks api keys', () {
-      const noConfig = EverythingStackConfig();
+      const noConfig = bootstrap.EverythingStackConfig();
       expect(noConfig.hasEmbeddingConfig, isFalse);
 
-      const jina = EverythingStackConfig(jinaApiKey: 'jina-key');
+      const jina = bootstrap.EverythingStackConfig(jinaApiKey: 'jina-key');
       expect(jina.hasEmbeddingConfig, isTrue);
 
-      const gemini = EverythingStackConfig(geminiApiKey: 'gemini-key');
+      const gemini = bootstrap.EverythingStackConfig(geminiApiKey: 'gemini-key');
       expect(gemini.hasEmbeddingConfig, isTrue);
     });
 
     test('disposeEverythingStack cleans up services', () async {
-      await initializeEverythingStack(
-        config: const EverythingStackConfig(useMocks: true),
+      await bootstrap.initializeEverythingStack(
+        config: const bootstrap.EverythingStackConfig(useMocks: true),
       );
 
       // Should not throw
-      await disposeEverythingStack();
+      await bootstrap.disposeEverythingStack();
     });
   });
 }

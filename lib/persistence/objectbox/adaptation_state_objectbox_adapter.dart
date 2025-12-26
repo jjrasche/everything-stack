@@ -2,6 +2,7 @@
 
 import 'package:objectbox/objectbox.dart';
 import '../../domain/adaptation_state_generic.dart';
+import '../../objectbox.g.dart';
 import 'base_objectbox_adapter.dart';
 import 'wrappers/adaptation_state_ob.dart';
 
@@ -23,5 +24,5 @@ class AdaptationStateObjectBoxAdapter
 
   @override
   Condition<AdaptationStateOB> syncStatusLocalCondition() =>
-      AdaptationStateOB_.syncId.isNotNull();
+      AdaptationStateOB_.syncId.notNull();
 }

@@ -62,13 +62,10 @@ import 'services/trainables/llm_orchestrator.dart';
 import 'services/trainables/response_renderer.dart';
 import 'domain/invocation.dart' as domain_invocation;
 import 'core/invocation_repository.dart';
+import 'core/invocation_repository_impl.dart';
 import 'core/adaptation_state_repository.dart';
 import 'core/feedback_repository.dart';
 import 'core/turn_repository.dart';
-import 'repositories/invocation_repository_impl.dart';
-import 'repositories/adaptation_state_repository_impl.dart';
-import 'repositories/feedback_repository_impl.dart';
-import 'repositories/turn_repository_impl.dart';
 import 'domain/adaptation_state_generic.dart';
 
 // Conditional import for platform-specific BlobStore
@@ -84,6 +81,7 @@ import 'bootstrap/persistence_factory_stub.dart'
 import 'bootstrap/http_client.dart';
 import 'bootstrap/timeout_http_client.dart';
 import 'bootstrap/persistence_factory.dart';
+import 'bootstrap/test_config.dart';
 import 'package:http/http.dart' as http;
 
 /// Configuration for Everything Stack initialization.
@@ -319,9 +317,17 @@ Future<void> initializeEverythingStack({
 
   final cfg = config ?? EverythingStackConfig.fromEnvironment();
 
+  // Check if running integration tests
+  const isIntegrationTest =
+      String.fromEnvironment('INTEGRATION_TEST', defaultValue: 'false') == 'true';
+
   if (cfg.useMocks) {
     await _initializeMocks();
     return;
+  }
+
+  if (isIntegrationTest) {
+    print('🧪 [INTEGRATION TEST MODE] Using mock external services');
   }
 
   // 0. Create timeout-wrapped HTTP client (Layer 1 defense)
@@ -364,53 +370,70 @@ Future<void> initializeEverythingStack({
   // Native platforms: Uses external APIs (Google Cloud TTS, Deepgram STT)
 
   // 9. Register invocation repository in service registry (shared by all services)
-  final invocationRepo = InvocationRepositoryImpl();
+  final invocationRepo = InvocationRepositoryImpl(
+    adapter: _persistenceFactory!.invocationAdapter as dynamic,
+  );
   ServiceRegistry.register<InvocationRepository<domain_invocation.Invocation>>(
     'invocation_repo',
     invocationRepo,
   );
 
   // 10. Initialize TTS Service
-  final ttsConfig = ServiceConfig(
-    provider: cfg.ttsProvider ?? 'flutter',
-    credentials: cfg.googleTtsApiKey != null ? {'apiKey': cfg.googleTtsApiKey} : {},
-  );
-  await _initializeService<TTSService>(
-    serviceName: 'tts',
-    config: ttsConfig,
-    setInstance: (service) { TTSService.instance = service; },
-    shouldInitialize: (service) => true,
-    getType: (service) => service.runtimeType,
-  );
+  if (isIntegrationTest) {
+    print('🔊 [TEST] Using mock TTS service');
+    TTSService.instance = MockTTSServiceForTests();
+  } else {
+    final ttsConfig = ServiceConfig(
+      provider: cfg.ttsProvider ?? 'flutter',
+      credentials: cfg.googleTtsApiKey != null ? {'apiKey': cfg.googleTtsApiKey} : {},
+    );
+    await _initializeService<TTSService>(
+      serviceName: 'tts',
+      config: ttsConfig,
+      setInstance: (service) { TTSService.instance = service; },
+      shouldInitialize: (service) => true,
+      getType: (service) => service.runtimeType,
+    );
+  }
 
   // 11. Initialize LLM Service
-  final llmConfig = ServiceConfig(
-    provider: cfg.llmProvider ?? 'groq',
-    credentials: {if (cfg.groqApiKey != null) 'apiKey': cfg.groqApiKey!},
-  );
-  await _initializeService<LLMService>(
-    serviceName: 'llm',
-    config: llmConfig,
-    setInstance: (service) { LLMService.instance = service; },
-    shouldInitialize: (service) => true,
-    getType: (service) => service.runtimeType,
-  );
+  if (isIntegrationTest) {
+    print('🤖 [TEST] Using mock LLM service');
+    LLMService.instance = MockLLMServiceForTests();
+  } else {
+    final llmConfig = ServiceConfig(
+      provider: cfg.llmProvider ?? 'groq',
+      credentials: {if (cfg.groqApiKey != null) 'apiKey': cfg.groqApiKey!},
+    );
+    await _initializeService<LLMService>(
+      serviceName: 'llm',
+      config: llmConfig,
+      setInstance: (service) { LLMService.instance = service; },
+      shouldInitialize: (service) => true,
+      getType: (service) => service.runtimeType,
+    );
+  }
 
   // 12. Initialize Embedding Service
-  final embeddingConfig = ServiceConfig(
-    provider: cfg.embeddingProvider ?? 'jina',
-    credentials: {
-      if (cfg.jinaApiKey != null) 'apiKey': cfg.jinaApiKey!,
-      if (cfg.geminiApiKey != null) 'apiKey': cfg.geminiApiKey!,
-    },
-  );
-  await _initializeService<EmbeddingService>(
-    serviceName: 'embedding',
-    config: embeddingConfig,
-    setInstance: (service) { EmbeddingService.instance = service; },
-    shouldInitialize: (service) => service is! NullEmbeddingService,
-    getType: (service) => service.runtimeType,
-  );
+  if (isIntegrationTest) {
+    print('📊 [TEST] Using mock embedding service');
+    EmbeddingService.instance = MockEmbeddingServiceForTests();
+  } else {
+    final embeddingConfig = ServiceConfig(
+      provider: cfg.embeddingProvider ?? 'jina',
+      credentials: {
+        if (cfg.jinaApiKey != null) 'apiKey': cfg.jinaApiKey!,
+        if (cfg.geminiApiKey != null) 'apiKey': cfg.geminiApiKey!,
+      },
+    );
+    await _initializeService<EmbeddingService>(
+      serviceName: 'embedding',
+      config: embeddingConfig,
+      setInstance: (service) { EmbeddingService.instance = service; },
+      shouldInitialize: (service) => service is! NullEmbeddingService,
+      getType: (service) => service.runtimeType,
+    );
+  }
 
   // Note: Domain repositories (Task, Timer, Personality, Namespace) are initialized
   // by the application layer, not bootstrap. This allows for platform-specific
@@ -520,71 +543,78 @@ void setupServiceLocator() {
   // ========== Domain Repositories (Real, not in-memory for app) ==========
 
   getIt.registerSingleton<InvocationRepository<domain_invocation.Invocation>>(
-    InvocationRepositoryImpl(),  // Real implementation (ObjectBox/IndexedDB, Phase 1)
+    InvocationRepositoryImpl(
+      adapter: _persistenceFactory!.invocationAdapter as dynamic,
+    ),  // Real implementation (ObjectBox/IndexedDB)
   );
 
-  getIt.registerSingleton<AdaptationStateRepository<AdaptationState>>(
-    AdaptationStateRepositoryImpl(),  // Real implementation (ObjectBox/IndexedDB, Phase 1)
-  );
+  // TODO: Uncomment when AdaptationStateRepository and FeedbackRepository are implemented
+  // These were deleted in the Invocation refactoring and need proper implementations
+  // For now, Trainable selectors are disabled to get the build working
 
-  getIt.registerSingleton<FeedbackRepository>(
-    FeedbackRepositoryImpl(),  // Real implementation (ObjectBox/IndexedDB, Phase 1)
-  );
+  // getIt.registerSingleton<AdaptationStateRepository<AdaptationState>>(
+  //   AdaptationStateRepositoryImpl(),  // Real implementation (ObjectBox/IndexedDB, Phase 1)
+  // );
 
-  getIt.registerSingleton<TurnRepository>(
-    TurnRepositoryImpl.inMemory(),  // In-memory for now (Phase 1: ObjectBox/IndexedDB)
-  );
+  // getIt.registerSingleton<FeedbackRepository>(
+  //   FeedbackRepositoryImpl(),  // Real implementation (ObjectBox/IndexedDB, Phase 1)
+  // );
+
+  // getIt.registerSingleton<TurnRepository>(
+  //   TurnRepositoryImpl.inMemory(),  // In-memory for now (Phase 1: ObjectBox/IndexedDB)
+  // );
 
 
-  // ========== Trainable Selectors (Real implementations) ==========
+  // // ========== Trainable Selectors (Real implementations) ==========
+  // // Disabled until repositories are implemented
 
-  getIt.registerSingleton<NamespaceSelector>(
-    NamespaceSelector(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    ),
-  );
+  // getIt.registerSingleton<NamespaceSelector>(
+  //   NamespaceSelector(
+  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
+  //     feedbackRepo: getIt<FeedbackRepository>(),
+  //   ),
+  // );
 
-  getIt.registerSingleton<ToolSelector>(
-    ToolSelector(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    ),
-  );
+  // getIt.registerSingleton<ToolSelector>(
+  //   ToolSelector(
+  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
+  //     feedbackRepo: getIt<FeedbackRepository>(),
+  //   ),
+  // );
 
-  getIt.registerSingleton<ContextInjector>(
-    ContextInjector(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    ),
-  );
+  // getIt.registerSingleton<ContextInjector>(
+  //   ContextInjector(
+  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
+  //     feedbackRepo: getIt<FeedbackRepository>(),
+  //   ),
+  // );
 
-  getIt.registerSingleton<LLMConfigSelector>(
-    LLMConfigSelector(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    ),
-  );
+  // getIt.registerSingleton<LLMConfigSelector>(
+  //   LLMConfigSelector(
+  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
+  //     feedbackRepo: getIt<FeedbackRepository>(),
+  //   ),
+  // );
 
-  getIt.registerSingleton<LLMOrchestrator>(
-    LLMOrchestrator(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    ),
-  );
+  // getIt.registerSingleton<LLMOrchestrator>(
+  //   LLMOrchestrator(
+  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
+  //     feedbackRepo: getIt<FeedbackRepository>(),
+  //   ),
+  // );
 
-  getIt.registerSingleton<ResponseRenderer>(
-    ResponseRenderer(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    ),
-  );
+  // getIt.registerSingleton<ResponseRenderer>(
+  //   ResponseRenderer(
+  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
+  //     feedbackRepo: getIt<FeedbackRepository>(),
+  //   ),
+  // );
 
   // ========== Tool Registry ==========
 
@@ -661,73 +691,75 @@ void setupServiceLocatorForTesting({
     llmService ?? MockLLMService(),
   );
 
-  // ========== Domain Repositories - Real (in-memory for speed) ==========
+  // ========== Domain Repositories - In-Memory for Testing ==========
 
   getIt.registerSingleton<InvocationRepository<domain_invocation.Invocation>>(
-    InvocationRepositoryImpl.inMemory(),  // In-memory for test speed
+    InvocationRepositoryImpl.inMemory(),  // In-memory for mock speed
   );
 
-  getIt.registerSingleton<AdaptationStateRepository<AdaptationState>>(
-    AdaptationStateRepositoryImpl.inMemory(),  // In-memory for test speed
-  );
+  // TODO: Uncomment when AdaptationStateRepository and FeedbackRepository are implemented
+  // getIt.registerSingleton<AdaptationStateRepository<AdaptationState>>(
+  //   AdaptationStateRepositoryImpl.inMemory(),  // In-memory for test speed
+  // );
 
-  getIt.registerSingleton<FeedbackRepository>(
-    FeedbackRepositoryImpl.inMemory(),  // In-memory for test speed
-  );
+  // getIt.registerSingleton<FeedbackRepository>(
+  //   FeedbackRepositoryImpl.inMemory(),  // In-memory for test speed
+  // );
 
-  getIt.registerSingleton<TurnRepository>(
-    TurnRepositoryImpl.inMemory(),  // In-memory for test speed
-  );
+  // getIt.registerSingleton<TurnRepository>(
+  //   TurnRepositoryImpl.inMemory(),  // In-memory for test speed
+  // );
 
-  // ========== Trainable Selectors - Real implementations ==========
+  // // ========== Trainable Selectors - Real implementations ==========
+  // // Disabled until repositories are implemented
 
-  getIt.registerSingleton<NamespaceSelector>(
-    NamespaceSelector(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    ),
-  );
+  // getIt.registerSingleton<NamespaceSelector>(
+  //   NamespaceSelector(
+  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
+  //     feedbackRepo: getIt<FeedbackRepository>(),
+  //   ),
+  // );
 
-  getIt.registerSingleton<ToolSelector>(
-    ToolSelector(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    ),
-  );
+  // getIt.registerSingleton<ToolSelector>(
+  //   ToolSelector(
+  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
+  //     feedbackRepo: getIt<FeedbackRepository>(),
+  //   ),
+  // );
 
-  getIt.registerSingleton<ContextInjector>(
-    ContextInjector(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    ),
-  );
+  // getIt.registerSingleton<ContextInjector>(
+  //   ContextInjector(
+  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
+  //     feedbackRepo: getIt<FeedbackRepository>(),
+  //   ),
+  // );
 
-  getIt.registerSingleton<LLMConfigSelector>(
-    LLMConfigSelector(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    ),
-  );
+  // getIt.registerSingleton<LLMConfigSelector>(
+  //   LLMConfigSelector(
+  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
+  //     feedbackRepo: getIt<FeedbackRepository>(),
+  //   ),
+  // );
 
-  getIt.registerSingleton<LLMOrchestrator>(
-    LLMOrchestrator(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    ),
-  );
+  // getIt.registerSingleton<LLMOrchestrator>(
+  //   LLMOrchestrator(
+  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
+  //     feedbackRepo: getIt<FeedbackRepository>(),
+  //   ),
+  // );
 
-  getIt.registerSingleton<ResponseRenderer>(
-    ResponseRenderer(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    ),
-  );
+  // getIt.registerSingleton<ResponseRenderer>(
+  //   ResponseRenderer(
+  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
+  //     feedbackRepo: getIt<FeedbackRepository>(),
+  //   ),
+  // );
 
   // ========== Tool Executor - Real ==========
 

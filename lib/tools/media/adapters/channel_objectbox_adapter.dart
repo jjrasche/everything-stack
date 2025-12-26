@@ -1,166 +1,118 @@
 /// # ChannelObjectBoxAdapter
 ///
-/// ObjectBox implementation of PersistenceAdapter for Channel entities.
+/// Stub implementation for ObjectBox on mobile/desktop platforms.
+/// Full implementation pending: Channel entities need @Entity decorators.
 ///
-/// ## Usage
-/// ```dart
-/// final store = await openStore();
-/// final adapter = ChannelObjectBoxAdapter(store);
-/// final repo = ChannelRepository(adapter: adapter);
-/// ```
+/// Use ChannelIndexedDBAdapter on web platform for full functionality.
 
 import 'package:objectbox/objectbox.dart';
 import '../../../core/persistence/persistence_adapter.dart';
 import '../../../core/persistence/transaction_context.dart';
-import '../../../core/persistence/objectbox_tx_context.dart';
 import '../entities/channel.dart';
-import '../../../objectbox.g.dart';
 
+/// Stub adapter - Channel persistence not yet available on native platforms.
 class ChannelObjectBoxAdapter implements PersistenceAdapter<Channel> {
   final Store _store;
-  late final Box<Channel> _box;
 
-  ChannelObjectBoxAdapter(this._store) {
-    _box = _store.box<Channel>();
-  }
-
-  Box<Channel> get box => _box;
-
-  // ============ PersistenceAdapter Implementation ============
+  ChannelObjectBoxAdapter(this._store);
 
   @override
-  Future<Channel?> findById(int id) async {
-    return _box.get(id);
-  }
+  Future<Channel?> findById(int id) async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
-  Future<Channel> getById(int id) async {
-    final entity = await findById(id);
-    if (entity == null) {
-      throw Exception('Channel not found with id: $id');
-    }
-    return entity;
-  }
+  Future<Channel> getById(int id) async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
-  Future<Channel?> findByUuid(String uuid) async {
-    final query = _box.query(Channel_.uuid.equals(uuid)).build();
-    try {
-      return query.findFirst();
-    } finally {
-      query.close();
-    }
-  }
+  Future<Channel?> findByUuid(String uuid) async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
-  Future<Channel> getByUuid(String uuid) async {
-    final entity = await findByUuid(uuid);
-    if (entity == null) {
-      throw Exception('Channel not found with uuid: $uuid');
-    }
-    return entity;
-  }
+  Future<Channel> getByUuid(String uuid) async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
-  Future<List<Channel>> findAll() async {
-    return _box.getAll();
-  }
+  Future<List<Channel>> findAll() async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
-  Future<Channel> save(Channel entity, {bool touch = true}) async {
-    if (touch) {
-      entity.touch();
-    }
-    _box.put(entity);
-    return entity;
-  }
+  Future<Channel> save(Channel entity, {bool touch = true}) async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
-  Future<List<Channel>> saveAll(List<Channel> entities) async {
-    for (final entity in entities) {
-      entity.touch();
-    }
-    _box.putMany(entities);
-    return entities;
-  }
+  Future<List<Channel>> saveAll(List<Channel> entities) async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
-  Future<bool> delete(int id) async {
-    return _box.remove(id);
-  }
+  Future<bool> delete(int id) async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
-  Future<bool> deleteByUuid(String uuid) async {
-    final entity = await findByUuid(uuid);
-    if (entity != null) {
-      return _box.remove(entity.id);
-    }
-    return false;
-  }
+  Future<bool> deleteByUuid(String uuid) async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
-  Future<void> deleteAll() async {
-    _box.removeAll();
-  }
-
-  // ============ Transaction Support ============
+  Future<void> deleteAll(List<int> ids) async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
-  Future<T> transaction<T>(Future<T> Function(TransactionContext tx) callback) async {
-    return _store.runAsync((store) async {
-      final tx = ObjectBoxTransactionContext(store);
-      return callback(tx);
-    }) as Future<T>;
-  }
+  Future<List<Channel>> findUnsynced() async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
-  // ============ Channel-specific Queries ============
+  @override
+  Future<int> count() async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
-  Future<List<Channel>> findSubscribed() async {
-    final query = _box.query(Channel_.isSubscribed.equals(true)).build();
-    try {
-      return query.find();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  Future<List<Channel>> semanticSearch(
+    List<double> queryVector, {
+    int limit = 10,
+    double minSimilarity = 0.0,
+  }) async =>
+      throw UnimplementedError('Channel does not support semantic search');
 
-  Future<List<Channel>> findUnsubscribed() async {
-    final query = _box.query(Channel_.isSubscribed.equals(false)).build();
-    try {
-      return query.find();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  int get indexSize => 0;
 
-  Future<Channel?> findByYoutubeChannelId(String youtubeChannelId) async {
-    final query =
-        _box.query(Channel_.youtubeChannelId.equals(youtubeChannelId)).build();
-    try {
-      return query.findFirst();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  Future<void> rebuildIndex(
+    Future<List<double>?> Function(Channel entity) generateEmbedding,
+  ) async =>
+      throw UnimplementedError('Channel does not support semantic search');
 
-  Future<Channel?> findByUrl(String youtubeUrl) async {
-    final query = _box.query(Channel_.youtubeUrl.equals(youtubeUrl)).build();
-    try {
-      return query.findFirst();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  Channel? findByIdInTx(TransactionContext ctx, int id) =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
-  Future<List<Channel>> findNeedingCheck() async {
-    final query = _box
-        .query(Channel_.shouldCheckForNew.equals(true))
-        .order(Channel_.lastCheckedAt)
-        .build();
-    try {
-      return query.find();
-    } finally {
-      query.close();
-    }
-  }
+  @override
+  Channel? findByUuidInTx(TransactionContext ctx, String uuid) =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
+
+  @override
+  List<Channel> findAllInTx(TransactionContext ctx) =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
+
+  @override
+  Channel saveInTx(TransactionContext ctx, Channel entity, {bool touch = true}) =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
+
+  @override
+  List<Channel> saveAllInTx(TransactionContext ctx, List<Channel> entities) =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
+
+  @override
+  bool deleteInTx(TransactionContext ctx, int id) =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
+
+  @override
+  bool deleteByUuidInTx(TransactionContext ctx, String uuid) =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
+
+  @override
+  void deleteAllInTx(TransactionContext ctx, List<int> ids) =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
+
+  @override
+  Future<void> close() async {}
 }

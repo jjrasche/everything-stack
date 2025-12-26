@@ -10,6 +10,7 @@ import '../persistence/objectbox/media_item_objectbox_adapter.dart';
 import '../persistence/objectbox/channel_objectbox_adapter.dart';
 import '../persistence/objectbox/edge_objectbox_adapter.dart';
 import '../persistence/objectbox/entity_version_objectbox_adapter.dart';
+import '../persistence/objectbox/invocation_objectbox_adapter.dart';
 
 /// Initialize ObjectBox persistence layer for native platforms.
 ///
@@ -28,6 +29,7 @@ Future<PersistenceFactory> initializePersistence() async {
   final channelAdapter = ChannelObjectBoxAdapter(store);
   final edgeAdapter = EdgeObjectBoxAdapter(store);
   final versionAdapter = EntityVersionObjectBoxAdapter(store);
+  final invocationAdapter = InvocationObjectBoxAdapter(store);
 
   return PersistenceFactory(
     noteAdapter: null, // Notes removed - use media search on web
@@ -35,6 +37,7 @@ Future<PersistenceFactory> initializePersistence() async {
     channelAdapter: channelAdapter,
     edgeAdapter: edgeAdapter,
     versionAdapter: versionAdapter,
+    invocationAdapter: invocationAdapter,
     handle: store,
   );
 }

@@ -75,11 +75,10 @@ class SubscriptionRepository extends EntityRepository<Subscription> {
   }
 
   /// Find subscriptions created by a specific tool invocation
+  /// Note: invocationCorrelationId not yet implemented on Subscription entity
   Future<List<Subscription>> findByCorrelationId(String correlationId) async {
-    final all = await findAll();
-    return all
-        .where((sub) => sub.invocationCorrelationId == correlationId)
-        .toList();
+    // TODO: Implement invocationCorrelationId tracking
+    return [];
   }
 
   /// Find subscriptions by name (partial match)

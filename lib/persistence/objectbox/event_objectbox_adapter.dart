@@ -2,6 +2,7 @@
 
 import 'package:objectbox/objectbox.dart';
 import '../../domain/event.dart';
+import '../../objectbox.g.dart';
 import 'base_objectbox_adapter.dart';
 import 'wrappers/event_ob.dart';
 
@@ -20,5 +21,5 @@ class EventObjectBoxAdapter extends BaseObjectBoxAdapter<Event, EventOB> {
 
   @override
   Condition<EventOB> syncStatusLocalCondition() =>
-      EventOB_.syncId.isNotNull();
+      EventOB_.syncId.notNull();
 }

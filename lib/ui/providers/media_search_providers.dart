@@ -3,7 +3,6 @@
 /// Riverpod providers for semantic media search functionality.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:everything_stack_template/tools/media/handlers/search_handler.dart';
 
 /// Media search result
 class SearchResult {
@@ -73,9 +72,7 @@ class SearchState {
 
 /// Search state notifier
 class SearchNotifier extends StateNotifier<SearchState> {
-  final SearchHandler? _searchHandler;
-
-  SearchNotifier(this._searchHandler) : super(SearchState());
+  SearchNotifier() : super(SearchState());
 
   /// Perform semantic search
   Future<void> search(
@@ -94,48 +91,11 @@ class SearchNotifier extends StateNotifier<SearchState> {
       return;
     }
 
-    if (_searchHandler == null) {
-      state = state.copyWith(
-        error: 'Search not available. Media repositories not yet exposed via Riverpod.',
-        isLoading: false,
-      );
-      return;
-    }
-
-    state = state.copyWith(isLoading: true, error: null);
-
-    try {
-      final result = await _searchHandler!({
-        'query': query,
-        'limit': limit,
-        if (format != null) 'format': format,
-        if (channelId != null) 'channelId': channelId,
-      });
-
-      if (result['success'] == true) {
-        final results = (result['results'] as List?)
-                ?.map((item) => SearchResult.fromJson(item as Map<String, dynamic>))
-                .toList() ??
-            [];
-
-        state = state.copyWith(
-          results: results,
-          error: null,
-          lastQuery: query,
-          isLoading: false,
-        );
-      } else {
-        state = state.copyWith(
-          error: result['error'] as String? ?? 'Unknown error',
-          isLoading: false,
-        );
-      }
-    } catch (e) {
-      state = state.copyWith(
-        error: e.toString(),
-        isLoading: false,
-      );
-    }
+    // Search handler not yet implemented - Phase 2
+    state = state.copyWith(
+      error: 'Search not available. Media repositories not yet exposed via Riverpod.',
+      isLoading: false,
+    );
   }
 
   /// Clear search results
@@ -150,5 +110,5 @@ class SearchNotifier extends StateNotifier<SearchState> {
 /// In Phase 2, integrate with bootstrap's service registry.
 final mediaSearchProvider =
     StateNotifierProvider<SearchNotifier, SearchState>((ref) {
-  return SearchNotifier(null); // TODO: Get handler from bootstrap in Phase 2
+  return SearchNotifier(); // TODO: Get handler from bootstrap in Phase 2
 });

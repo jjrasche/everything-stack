@@ -1,7 +1,8 @@
 /// # EventOB - ObjectBox Wrapper
 
+import 'dart:convert';
 import 'package:objectbox/objectbox.dart';
-import '../../domain/event.dart';
+import 'package:everything_stack_template/domain/event.dart';
 
 @Entity()
 class EventOB {
@@ -24,15 +25,16 @@ class EventOB {
   String source;
 
   @Property(type: PropertyType.date)
-  DateTime timestamp = DateTime.now();
+  DateTime timestamp;
 
-  String payloadJson = '{}';
+  // Store payload as JSON string for ObjectBox
+  String payloadJson;
 
   EventOB({
     required this.correlationId,
     required this.source,
+    required this.timestamp,
     this.parentEventId,
-    this.timestamp,
     this.payloadJson = '{}',
   });
 
@@ -40,9 +42,9 @@ class EventOB {
     return EventOB(
       correlationId: event.correlationId,
       source: event.source,
-      parentEventId: event.parentEventId,
       timestamp: event.timestamp,
-      payloadJson: event.payloadJson ?? '{}',
+      parentEventId: event.parentEventId,
+      payloadJson: jsonEncode(event.payload),
     )
       ..id = event.id
       ..uuid = event.uuid
@@ -52,9 +54,11 @@ class EventOB {
   }
 
   Event toEvent() {
+    final payload = jsonDecode(payloadJson) as Map<String, dynamic>;
     return Event(
       correlationId: correlationId,
       source: source,
+      payload: payload,
       parentEventId: parentEventId,
       timestamp: timestamp,
     )

@@ -2,6 +2,7 @@
 
 import 'package:objectbox/objectbox.dart';
 import '../../domain/feedback.dart';
+import '../../objectbox.g.dart';
 import 'base_objectbox_adapter.dart';
 import 'wrappers/feedback_ob.dart';
 
@@ -20,5 +21,5 @@ class FeedbackObjectBoxAdapter extends BaseObjectBoxAdapter<Feedback, FeedbackOB
 
   @override
   Condition<FeedbackOB> syncStatusLocalCondition() =>
-      FeedbackOB_.syncId.isNotNull();
+      FeedbackOB_.syncId.notNull();
 }

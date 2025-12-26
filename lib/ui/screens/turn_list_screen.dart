@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:everything_stack_template/domain/turn.dart';
 import 'package:everything_stack_template/ui/providers/turn_providers.dart';
-import 'package:everything_stack_template/ui/screens/feedback_review_screen.dart';
 
 class TurnListScreen extends ConsumerWidget {
   const TurnListScreen({super.key});
@@ -55,10 +54,13 @@ class TurnListScreen extends ConsumerWidget {
               return _TurnListItem(
                 turn: turn,
                 onTap: () {
+                  // Select turn for feedback review
+                  // Note: FeedbackReviewScreen was removed in recent refactoring
+                  // TODO: Implement feedback review UI in Phase 2
                   ref.read(selectedTurnProvider.notifier).state = turn;
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => FeedbackReviewScreen(turn: turn),
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Turn selected. Feedback review UI coming soon.'),
                     ),
                   );
                 },
