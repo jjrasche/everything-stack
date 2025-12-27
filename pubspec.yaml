@@ -66,7 +66,7 @@ dev_dependencies:
   # Code generation for JSON serialization
   json_serializable: ^6.7.0
   build_runner: ^2.4.0
-  source_gen: ^4.1.0
+  analyzer: ^5.13.0
 
   # ObjectBox code generation
   objectbox_generator: ^4.0.3
