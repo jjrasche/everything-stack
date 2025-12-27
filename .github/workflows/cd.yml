@@ -1,0 +1,115 @@
+name: CD - Deploy to Firebase
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  # ============ Build Web ============
+  build-web:
+    name: Build Web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build Web
+        run: flutter build web --release
+          --dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}
+          --dart-define=DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }}
+          --dart-define=JINA_API_KEY=${{ secrets.JINA_API_KEY }}
+          --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Deploy Web to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          projectId: everything-stack-prod
+
+  # ============ Build Android APK ============
+  build-android:
+    name: Build & Distribute Android
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build APK
+        run: flutter build apk --release
+          --dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}
+          --dart-define=DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }}
+          --dart-define=JINA_API_KEY=${{ secrets.JINA_API_KEY }}
+          --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Upload to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          serviceAccountJsonPlaintext: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          file: build/app/outputs/flutter-apk/app-release.apk
+          groups: testers
+          releaseNotes: "Latest Android build from main branch"
+          firebaseAppId: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
+
+  # ============ Build iOS IPA ============
+  build-ios:
+    name: Build & Distribute iOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build iOS (no codesign)
+        run: flutter build ios --release --no-codesign
+          --dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}
+          --dart-define=DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }}
+          --dart-define=JINA_API_KEY=${{ secrets.JINA_API_KEY }}
+          --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Upload to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          serviceAccountJsonPlaintext: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          file: build/ios/ipa/everything_stack_template.ipa
+          groups: testers
+          releaseNotes: "Latest iOS build from main branch"
+          firebaseAppId: ${{ secrets.FIREBASE_IOS_APP_ID }}
