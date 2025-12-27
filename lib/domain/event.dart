@@ -1,45 +1,69 @@
 /// # Event
 ///
 /// ## What it does
-/// Represents a triggering event in the system.
-/// Events flow through the Context Manager for processing.
+/// Represents a triggering event in the system that requires processing.
+/// Events flow through the Coordinator's event queue for processing.
 ///
-/// ## Key Design
-/// - correlationId: Links all operations in a synchronous chain
-/// - parentEventId: Links async chains (e.g., timer fires hours later)
-/// - source: Who triggered this event ('user', 'timer', 'system')
-/// - payload: The event data (transcription, timer fire, etc.)
+/// ## Event Types
+/// - 'voice': User voice input (processed immediately, skips queue)
+/// - 'tts': Text-to-speech request (queued for serialization)
+/// - '{provider}_webhook': External webhook (teams_webhook, gitlab_webhook, etc.)
+/// - 'create_task': Spawned event from tool processing
+/// - 'timer_fire': Timer expiration event
 ///
-/// ## Chain Tracking
-/// Synchronous chain: All operations share same correlationId
-/// - User speaks → STT → Context Manager → LLM → TTS (same correlationId)
+/// ## Event Lifecycle
+/// 1. Created (status: pending)
+/// 2. Queued in EventRepository
+/// 3. Claimed by Coordinator (status: processing)
+/// 4. Processed by tool/handler
+/// 5. Completed (status: completed) OR Failed (status: failed)
+/// 6. If failed: retry based on retryPolicy
 ///
-/// Async chain: New correlationId, linked via parentEventId
-/// - Timer fires → new correlationId, parentEventId = original event
+/// ## Correlation Chain
+/// - Root event: correlationId = null
+/// - Spawned event: correlationId = parent_event.uuid
+/// - Invocations: correlationId = event.uuid (what triggered them)
 ///
 /// ## Usage
 /// ```dart
-/// // User input event
+/// // Root webhook event
 /// final event = Event(
-///   correlationId: 'corr_001',
-///   source: 'user',
-///   payload: {'transcription': 'set a timer for 5 minutes'},
+///   correlationId: null,  // No parent
+///   type: 'teams_webhook',
+///   source: 'teams',
+///   payload: {'meeting_id': 123, 'title': 'Q4 Planning'},
+///   retryPolicy: RetryPolicy.exponentialBackoff,
+///   maxRetries: 3,
 /// );
+/// await eventRepo.save(event);
 ///
-/// // Timer fire event (async, linked)
-/// final timerEvent = Event(
-///   correlationId: 'corr_002',  // New chain
-///   parentEventId: 'corr_001',   // Linked to original
-///   source: 'timer',
-///   payload: {'timerId': 'timer_001', 'label': '5 minute timer'},
+/// // Spawned TTS event
+/// final ttsEvent = Event(
+///   correlationId: event.uuid,  // Links to parent
+///   type: 'tts',
+///   source: 'teams_tool',
+///   payload: {'text': 'Meeting scheduled'},
 /// );
+/// await eventRepo.save(ttsEvent);
 /// ```
-///
-/// ## Note
-/// Events flow through the system, not persisted long-term for MVP.
-/// ContextManagerInvocation captures the decision log.
 
 import '../core/base_entity.dart';
+
+/// Event processing status
+enum EventStatus {
+  pending,      // Not yet processed
+  processing,   // Currently being processed
+  completed,    // Successfully processed
+  failed,       // Failed and exhausted retries
+  retrying,     // Failed but will retry
+}
+
+/// Retry policy for failed events
+enum RetryPolicy {
+  none,                   // No retries
+  exponentialBackoff,     // 1s, 10s, 100s (capped at 5min)
+  linearBackoff,          // 1s, 2s, 3s (capped at 5min)
+}
 
 class Event extends BaseEntity {
   // ============ BaseEntity field overrides ============
@@ -58,33 +82,70 @@ class Event extends BaseEntity {
   @override
   String? syncId;
 
-  // ============ Event fields ============
+  // ============ Event Identity ============
 
-  /// Links all operations in this synchronous chain
-  String correlationId;
+  /// Links to parent event (for spawned events)
+  /// Root events have correlationId = null
+  /// Spawned events have correlationId = parent_event.uuid
+  String? correlationId;
 
-  /// Links async chains (e.g., timer fires later)
-  /// Null for root events (user-initiated)
-  String? parentEventId;
+  /// Event type ('voice', 'tts', 'teams_webhook', 'create_task', etc.)
+  String type;
 
-  /// Who triggered this event: 'user', 'timer', 'system'
+  /// Event source (who created this: 'teams', 'gitlab', 'voice', 'teams_tool', etc.)
   String source;
 
-  /// When this event occurred
-  DateTime timestamp;
+  // ============ Event Payload (JSON storage) ============
 
-  /// Event payload (transcription, timer data, etc.)
+  /// Event payload (stored as JSON)
   Map<String, dynamic> payload;
+
+  /// JSON string storage for payload (persistence)
+  String? payloadJson;
+
+  // ============ Processing State ============
+
+  /// Current processing status
+  EventStatus status;
+
+  /// Number of retry attempts
+  int retryCount;
+
+  /// Retry strategy
+  RetryPolicy retryPolicy;
+
+  /// Maximum retry attempts before marking as failed
+  int maxRetries;
+
+  /// Unix timestamp for next retry (null if not retrying)
+  int? nextRetryAt;
+
+  /// When processing completed (null until done)
+  DateTime? processedAt;
+
+  /// Error message if status = failed
+  String? errorMessage;
+
+  /// Target device ID (for multi-device routing)
+  /// null = all devices, 'broadcast' = all devices, specific ID = one device
+  String? targetDeviceId;
 
   // ============ Constructor ============
 
   Event({
-    required this.correlationId,
+    required this.type,
     required this.source,
     required this.payload,
-    this.parentEventId,
-    DateTime? timestamp,
-  }) : timestamp = timestamp ?? DateTime.now() {
+    this.correlationId,
+    this.status = EventStatus.pending,
+    this.retryCount = 0,
+    this.retryPolicy = RetryPolicy.exponentialBackoff,
+    this.maxRetries = 3,
+    this.nextRetryAt,
+    this.processedAt,
+    this.errorMessage,
+    this.targetDeviceId,
+  }) {
     if (uuid.isEmpty) {
       uuid = super.uuid;
     }
@@ -99,21 +160,37 @@ class Event extends BaseEntity {
         'updatedAt': updatedAt.toIso8601String(),
         'syncId': syncId,
         'correlationId': correlationId,
-        'parentEventId': parentEventId,
+        'type': type,
         'source': source,
-        'timestamp': timestamp.toIso8601String(),
         'payload': payload,
+        'status': status.name,
+        'retryCount': retryCount,
+        'retryPolicy': retryPolicy.name,
+        'maxRetries': maxRetries,
+        'nextRetryAt': nextRetryAt,
+        'processedAt': processedAt?.toIso8601String(),
+        'errorMessage': errorMessage,
+        'targetDeviceId': targetDeviceId,
       };
 
   factory Event.fromJson(Map<String, dynamic> json) {
     final event = Event(
-      correlationId: json['correlationId'] as String,
+      type: json['type'] as String,
       source: json['source'] as String,
       payload: Map<String, dynamic>.from(json['payload'] as Map? ?? {}),
-      parentEventId: json['parentEventId'] as String?,
-      timestamp: json['timestamp'] != null
-          ? DateTime.parse(json['timestamp'] as String)
+      correlationId: json['correlationId'] as String?,
+      status: EventStatus.values.byName(json['status'] as String? ?? 'pending'),
+      retryCount: json['retryCount'] as int? ?? 0,
+      retryPolicy: RetryPolicy.values.byName(
+        json['retryPolicy'] as String? ?? 'exponentialBackoff',
+      ),
+      maxRetries: json['maxRetries'] as int? ?? 3,
+      nextRetryAt: json['nextRetryAt'] as int?,
+      processedAt: json['processedAt'] != null
+          ? DateTime.parse(json['processedAt'] as String)
           : null,
+      errorMessage: json['errorMessage'] as String?,
+      targetDeviceId: json['targetDeviceId'] as String?,
     );
     event.id = json['id'] as int? ?? 0;
     event.uuid = json['uuid'] as String? ?? '';

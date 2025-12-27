@@ -9,6 +9,7 @@ import '../persistence/indexeddb/channel_indexeddb_adapter.dart';
 import '../persistence/indexeddb/edge_indexeddb_adapter.dart';
 import '../persistence/indexeddb/entity_version_indexeddb_adapter.dart';
 import '../persistence/indexeddb/invocation_indexeddb_adapter.dart';
+import '../persistence/indexeddb/event_indexeddb_adapter.dart';
 
 /// Initialize IndexedDB persistence layer for web platform.
 ///
@@ -24,6 +25,7 @@ Future<PersistenceFactory> initializePersistence() async {
   final edgeAdapter = EdgeIndexedDBAdapter(db);
   final versionAdapter = EntityVersionIndexedDBAdapter(db);
   final invocationAdapter = InvocationIndexedDBAdapter(db);
+  final eventAdapter = EventIndexedDBAdapter(db);
 
   // Initialize HNSW indexes from IndexedDB storage
   await mediaItemAdapter.initialize();
@@ -35,6 +37,7 @@ Future<PersistenceFactory> initializePersistence() async {
     edgeAdapter: edgeAdapter,
     versionAdapter: versionAdapter,
     invocationAdapter: invocationAdapter,
+    eventAdapter: eventAdapter,
     handle: db,
   );
 }

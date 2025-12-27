@@ -360,6 +360,31 @@ Future<void> initializeEverythingStack({
     );
     await syncService.initialize();
     SyncService.instance = syncService;
+
+    // TODO: Initialize Supabase Realtime subscription for event queue
+    // This will be implemented in Phase 1B once event infrastructure is complete
+    //
+    // final deviceId = await _getDeviceId();
+    // final eventRepo = EventRepository(
+    //   adapter: _persistenceFactory!.eventAdapter as dynamic,
+    // );
+    //
+    // final channel = supabase.channel('events');
+    // channel.on(
+    //   RealtimeListenTypes.postgresChanges,
+    //   ChangeFilter(
+    //     event: 'INSERT',
+    //     schema: 'public',
+    //     table: 'events',
+    //     filter: 'targetDeviceId=eq.$deviceId,targetDeviceId=is.null,targetDeviceId=eq.broadcast'
+    //   ),
+    //   (payload) async {
+    //     final eventJson = payload['new'] as Map<String, dynamic>;
+    //     final event = Event.fromJson(eventJson);
+    //     await eventRepo.save(event);
+    //     print('Event received via Realtime: ${event.uuid}');
+    //   }
+    // ).subscribe();
   }
   // else: keeps MockSyncService default
 

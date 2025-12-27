@@ -23,6 +23,9 @@ class PersistenceFactory {
   /// Invocation adapter - cast to PersistenceAdapter<Invocation> at usage
   final dynamic invocationAdapter;
 
+  /// Event adapter - cast to PersistenceAdapter<Event> at usage
+  final dynamic eventAdapter;
+
   /// Platform-specific close handle (Store for ObjectBox, Database for IndexedDB).
   /// Used by background services (e.g., EmbeddingQueueService) that need direct access.
   final dynamic _handle;
@@ -38,6 +41,7 @@ class PersistenceFactory {
     required this.edgeAdapter,
     required this.versionAdapter,
     required this.invocationAdapter,
+    required this.eventAdapter,
     required dynamic handle,
   }) : _handle = handle;
 
@@ -51,6 +55,7 @@ class PersistenceFactory {
     await (edgeAdapter as dynamic).close();
     await (versionAdapter as dynamic).close();
     await (invocationAdapter as dynamic).close();
+    await (eventAdapter as dynamic).close();
 
     // Platform-specific cleanup happens in adapter.close()
     // The handle is kept for future use if needed

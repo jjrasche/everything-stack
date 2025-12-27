@@ -31,7 +31,11 @@
 /// 5. LLM responds again (may call more tools or finish)
 /// 6. Repeat until LLM produces final_response (no tool calls)
 
+import 'dart:async';
 import '../domain/invocation.dart';
+import '../domain/event.dart';
+import '../domain/event_repository.dart';
+import '../domain/event_retry_utils.dart';
 import '../core/invocation_repository.dart';
 import 'trainables/namespace_selector.dart';
 import 'trainables/tool_selector.dart';
@@ -102,9 +106,17 @@ class Coordinator {
   final ToolExecutor toolExecutor;
 
   final InvocationRepository<Invocation> invocationRepo;
+  final EventRepository eventRepository;
+
+  // Event loop control
+  Timer? _eventLoopTimer;
+  bool _isProcessingEvent = false;
 
   // Agentic loop control
   static const int maxAgentLoopIterations = 10;
+
+  // Event loop interval (100ms)
+  static const Duration eventLoopInterval = Duration(milliseconds: 100);
 
   Coordinator({
     required this.namespaceSelector,
@@ -117,6 +129,7 @@ class Coordinator {
     required this.llmService,
     required this.toolExecutor,
     required this.invocationRepo,
+    required this.eventRepository,
   });
 
   /// Orchestrate voice assistant pipeline
@@ -309,6 +322,127 @@ class Coordinator {
               },
             ))
         .toList();
+  }
+
+  // ============ Event Loop Management ============
+
+  /// Start the event processing loop
+  ///
+  /// Runs a Timer.periodic that checks for pending events every 100ms.
+  /// Non-blocking - safe for Flutter UI thread.
+  void startEventLoop() {
+    if (_eventLoopTimer != null && _eventLoopTimer!.isActive) {
+      print('Event loop already running');
+      return;
+    }
+
+    print('Starting event loop (interval: ${eventLoopInterval.inMilliseconds}ms)');
+    _eventLoopTimer = Timer.periodic(eventLoopInterval, (_) async {
+      await _processNextEvent();
+    });
+  }
+
+  /// Stop the event processing loop
+  void stopEventLoop() {
+    if (_eventLoopTimer != null) {
+      _eventLoopTimer!.cancel();
+      _eventLoopTimer = null;
+      print('Event loop stopped');
+    }
+  }
+
+  /// Process next pending or retryable event
+  ///
+  /// Called by Timer.periodic every 100ms.
+  /// Skips if already processing to prevent concurrent processing.
+  Future<void> _processNextEvent() async {
+    // Skip if already processing an event
+    if (_isProcessingEvent) {
+      return;
+    }
+
+    _isProcessingEvent = true;
+
+    try {
+      // 1. Check for pending events first (FIFO)
+      Event? event = await eventRepository.dequeueAndClaim();
+
+      // 2. If no pending events, check for retry-ready events
+      if (event == null) {
+        final retryable = await eventRepository.getEventsReadyForRetry();
+        if (retryable.isNotEmpty) {
+          event = retryable.first;
+          // Claim by updating status
+          event.status = EventStatus.processing;
+          await eventRepository.save(event);
+        }
+      }
+
+      // 3. If found an event, process it
+      if (event != null) {
+        await _processEvent(event);
+      }
+    } catch (e, stackTrace) {
+      print('Error in event loop: $e');
+      print('Stack trace: $stackTrace');
+    } finally {
+      _isProcessingEvent = false;
+    }
+  }
+
+  /// Process a single event
+  ///
+  /// Routes event to appropriate tool handler based on event.type.
+  /// Handles success, failure, and retry logic.
+  Future<void> _processEvent(Event event) async {
+    print('Processing event: uuid=${event.uuid}, type=${event.type}, source=${event.source}');
+
+    try {
+      // Route based on event type
+      // For now, we just mark as completed
+      // TODO: Wire up tool execution based on event.type
+      //
+      // Example routing:
+      // if (event.type == 'tts') {
+      //   await toolExecutor.executeTool('tts', event.payload);
+      // } else if (event.type == 'teams_webhook') {
+      //   await toolExecutor.executeTool('teams_webhook_handler', event.payload);
+      // }
+
+      // Mark as completed
+      await eventRepository.markCompleted(event);
+      print('Event completed: uuid=${event.uuid}');
+    } catch (e) {
+      print('Event processing failed: uuid=${event.uuid}, error=$e');
+
+      // Decide: retry or mark failed?
+      final shouldRetryEvent = shouldRetry(
+        retryPolicy: event.retryPolicy,
+        retryCount: event.retryCount,
+        maxRetries: event.maxRetries,
+      );
+
+      if (shouldRetryEvent) {
+        // Schedule retry
+        final nextRetryAt = calculateNextRetryAt(
+          retryPolicy: event.retryPolicy,
+          retryCount: event.retryCount,
+        );
+
+        if (nextRetryAt != null) {
+          await eventRepository.scheduleRetry(event, nextRetryAt);
+          print('Event scheduled for retry: uuid=${event.uuid}, retryCount=${event.retryCount}, nextRetryAt=$nextRetryAt');
+        } else {
+          // No retry (policy is 'none')
+          await eventRepository.markFailed(event, e.toString());
+          print('Event failed (no retry policy): uuid=${event.uuid}');
+        }
+      } else {
+        // Retries exhausted
+        await eventRepository.markFailed(event, e.toString());
+        print('Event failed (retries exhausted): uuid=${event.uuid}');
+      }
+    }
   }
 
 }
