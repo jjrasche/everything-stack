@@ -320,10 +320,19 @@ Future<void> initializeEverythingStack({
       debugPrint('🔍 [Bootstrap] File exists: ${envFile.existsSync()}');
 
       if (envFile.existsSync()) {
-        await dotenv.load(fileName: envFilePath);
-        final loaded = dotenv.maybeGet('GROQ_API_KEY');
-        if (loaded != null) {
-          debugPrint('✅ [Bootstrap] Loaded .env with real API keys');
+        try {
+          await dotenv.load(fileName: envFilePath);
+          debugPrint('✅ [Bootstrap] dotenv.load() completed');
+          final loaded = dotenv.maybeGet('GROQ_API_KEY');
+          debugPrint('🔍 [Bootstrap] GROQ_API_KEY from dotenv: $loaded');
+          if (loaded != null) {
+            debugPrint('✅ [Bootstrap] Loaded .env with real API keys');
+          } else {
+            debugPrint('⚠️ [Bootstrap] dotenv.load() succeeded but GROQ_API_KEY is null');
+            debugPrint('🔍 [Bootstrap] All dotenv keys: ${dotenv.env}');
+          }
+        } catch (eLoad) {
+          debugPrint('❌ [Bootstrap] dotenv.load() failed: $eLoad');
         }
       } else {
         // Fallback to .env.example for fresh clones
