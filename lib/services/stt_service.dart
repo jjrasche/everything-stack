@@ -390,7 +390,8 @@ class DeepgramSTTService extends STTService {
 // Null STT Service (Fallback)
 // ============================================================================
 
-/// No-op implementation when API key is not configured.
+/// No-op fallback when API key is not configured.
+/// Production mode - requires real Deepgram API key for STT to work.
 class NullSTTService extends STTService {
   @override
   Future<void> initialize() async {}
@@ -403,7 +404,15 @@ class NullSTTService extends STTService {
     required void Function(Object) onError,
     void Function()? onDone,
   }) {
-    // Return empty stream subscription
+    debugPrint('⚠️ [STT] API key missing - STT disabled (add DEEPGRAM_API_KEY to .env.local)');
+
+    // Drain input stream but don't process it
+    input.listen(
+      onError: onError,
+      onDone: onDone,
+    );
+
+    // Return empty stream
     return Stream<String>.empty().listen(
       onData,
       onError: onError,
@@ -428,7 +437,7 @@ class NullSTTService extends STTService {
 
   @override
   Widget buildFeedbackUI(String invocationId) {
-    return Center(child: Text('STT not configured'));
+    return Center(child: Text('STT disabled - configure DEEPGRAM_API_KEY'));
   }
 }
 

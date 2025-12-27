@@ -153,16 +153,51 @@ class MockSTTServiceForTests extends STTService {
     void Function()? onDone,
   }) {
     debugPrint('🎤 [TEST] MockSTTService.stream called');
-    // Drain the input stream and return empty string stream for testing
+
+    // Track audio received
+    int totalBytes = 0;
+
+    // Listen to audio stream and count bytes
     input.listen(
       (audioBytes) {
-        debugPrint('🎤 [TEST] Received ${audioBytes.length} audio bytes');
+        totalBytes += audioBytes.length;
+        debugPrint('🎤 [TEST] Received ${audioBytes.length} audio bytes (total: $totalBytes)');
       },
       onError: (e) => onError(STTException('Test error: $e')),
-      onDone: () => onDone?.call(),
+      onDone: () {
+        debugPrint('🎤 [TEST] Audio stream done ($totalBytes bytes total)');
+        onDone?.call();
+      },
     );
-    // Return empty stream subscription
-    return Stream<String>.empty().listen(
+
+    // Return a stream that yields test transcript after a short delay
+    final controller = StreamController<String>();
+
+    Future.delayed(const Duration(milliseconds: 500), () async {
+      try {
+        // Yield interim transcript
+        const testTranscript = 'hello this is a test message';
+        debugPrint('🎤 [TEST] Yielding test transcript: "$testTranscript"');
+        controller.add(testTranscript);
+        transcripts.add(testTranscript);
+        onData(testTranscript);
+
+        // Signal utterance end
+        await Future.delayed(const Duration(milliseconds: 300));
+        debugPrint('🎤 [TEST] Signaling utterance_end');
+        onUtteranceEnd?.call();
+
+        // Close stream after utterance
+        await Future.delayed(const Duration(milliseconds: 100));
+        controller.close();
+      } catch (e) {
+        debugPrint('🎤 [TEST] Error in mock stream: $e');
+        onError(STTException('Mock error: $e'));
+        controller.close();
+      }
+    });
+
+    return controller.stream.listen(
       (text) => onData(text),
       onError: onError,
       onDone: onDone,
