@@ -50,7 +50,7 @@ class LLMConfigSelector implements Trainable {
   }) async {
     // Default LLM config
     final config = <String, dynamic>{
-      'model': 'groq-mixtral',
+      'model': 'llama-3.1-8b-instant',
       'temperature': 0.7,
       'maxTokens': 2048,
       'topP': 0.95,

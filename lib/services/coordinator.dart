@@ -187,7 +187,7 @@ class Coordinator {
       print('\n[6/6] Calling LLM service...');
       print('📡 LLM call starting...');
       final llmResponse = await llmService.chatWithTools(
-        model: llmConfig['model'] as String? ?? 'groq-mixtral',
+        model: llmConfig['model'] as String? ?? 'llama-3.1-8b-instant',
         messages: [
           {
             'role': 'system',
