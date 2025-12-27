@@ -227,25 +227,29 @@ class DeepgramSTTService extends STTService {
             // Parse Deepgram response
             try {
               final json = jsonDecode(message);
+              debugPrint('📨 [Deepgram] Raw response: ${json['type']}');
+              if (json['type'] == 'Results') {
+                debugPrint('📨 [Deepgram] Full JSON: $json');
+              }
 
               // Extract transcript from response
               if (json['type'] == 'Results') {
-                final results = json['result']?['results'] as List?;
-                if (results != null && results.isNotEmpty) {
-                  final alternatives = results[0]['alternatives'] as List?;
+                // Deepgram v3 API structure: channel.alternatives[0].transcript
+                final channel = json['channel'] as Map?;
+                if (channel != null) {
+                  final alternatives = channel['alternatives'] as List?;
                   if (alternatives != null && alternatives.isNotEmpty) {
                     final transcript = alternatives[0]['transcript'] as String?;
+                    debugPrint('📨 [Deepgram] Transcript: "$transcript"');
                     if (transcript != null && transcript.isNotEmpty) {
                       onData(transcript);
                     }
                   }
 
-                  // Check speech_final flag for interim finalization
-                  final speechFinal =
-                      results[0]['speech_final'] as bool? ?? false;
+                  // Check speech_final flag for turn detection
+                  final speechFinal = json['speech_final'] as bool? ?? false;
                   if (speechFinal) {
-                    // Optional: Signal interim finalization
-                    print('Speech finalized');
+                    debugPrint('🔊 [Deepgram] Speech final');
                   }
                 }
               }
