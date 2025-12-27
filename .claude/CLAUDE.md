@@ -96,17 +96,23 @@ Testing follows a 4-layer approach. All layers run in CI. All must pass before m
 
 ### Local Development
 ```bash
-# Create .env with API keys (not in git)
-GROQ_API_KEY=xxx
-DEEPGRAM_API_KEY=xxx
+# 1. Create .env from template
+cp .env.example .env
 
-# Run on any platform
+# 2. Edit .env with your actual API keys
+# GROQ_API_KEY=your_actual_groq_key
+# DEEPGRAM_API_KEY=your_actual_deepgram_key
+# JINA_API_KEY=your_actual_jina_key
+
+# 3. Run on any platform (loads .env in debug mode)
 flutter run -d windows  # Windows
 flutter run -d macos    # macOS
 flutter run -d ios      # iOS simulator
 flutter run -d android  # Android emulator
 flutter run -d chrome   # Web
 ```
+
+**Note:** `.env` file is loaded **only in debug mode** via `flutter_dotenv`. Fallback chain: `.env` → `.env.example` → compile-time env vars.
 
 ### Testing
 ```bash
@@ -131,11 +137,18 @@ flutter build web --dart-define=...   # Web
 ```
 
 ### Environment Variables (Priority Order)
-1. `.env` file (local dev - runtime)
-2. OS env vars (CI/CD - runtime)
-3. `--dart-define` (build-time)
 
-**CI/CD:** Set secrets in GitHub → use in workflow as `${{ secrets.GROQ_API_KEY }}`
+**Debug Mode (Local Development):**
+1. `.env` file (runtime, debug only)
+2. `.env.example` fallback (if .env missing)
+3. `--dart-define` (compile-time)
+4. OS env vars (CI/CD agents)
+
+**Release Mode (Production):**
+- `--dart-define` only (compile-time, baked into binary)
+- NO file-based loading (prevents accidental secret commits)
+
+**CI/CD:** Set secrets in GitHub → pass to build as `--dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}`
 
 ## Permissions
 

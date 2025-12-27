@@ -308,13 +308,25 @@ Future<void> _initializeService<T>({
 Future<void> initializeEverythingStack({
   EverythingStackConfig? config,
 }) async {
-  // Load .env file (runtime environment variables)
-  try {
-    await dotenv.load(fileName: '.env');
-  } catch (e) {
-    // .env file is optional - may fail on web or when file not found
-    // Fall back to compile-time environment variables
-    // Silently ignore errors as we'll use compile-time env vars instead
+  // Load .env file (debug mode only - local development)
+  if (kDebugMode) {
+    try {
+      // Try .env first (developer's actual keys)
+      await dotenv.load(fileName: '.env');
+      final loaded = dotenv.maybeGet('GROQ_API_KEY');
+      if (loaded != null) {
+        debugPrint('✅ [Bootstrap] Loaded .env file with API keys');
+      }
+    } catch (e) {
+      try {
+        // Fallback to .env.example for fresh clones
+        await dotenv.load(fileName: '.env.example');
+        debugPrint('ℹ️ [Bootstrap] Loaded .env.example (dummy keys)');
+        debugPrint('   For local dev with real keys: cp .env.example .env && edit .env');
+      } catch (e2) {
+        debugPrint('ℹ️ [Bootstrap] .env/.env.example not found (using compile-time or OS env vars)');
+      }
+    }
   }
 
   final cfg = config ?? EverythingStackConfig.fromEnvironment();

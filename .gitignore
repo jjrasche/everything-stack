@@ -25,6 +25,7 @@ download/
 # Claude Code
 .claude/
 .claude/**/*
+!.claude/CLAUDE.md
 
 # IDE
 .idea/
