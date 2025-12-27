@@ -32,6 +32,13 @@ jobs:
           --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }}
           --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
 
+      - name: Upload Web as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: build/web/
+          retention-days: 30
+
       - name: Deploy Web to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
@@ -70,6 +77,13 @@ jobs:
           --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }}
           --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
 
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
+
       - name: Upload to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
@@ -104,6 +118,13 @@ jobs:
           --dart-define=JINA_API_KEY=${{ secrets.JINA_API_KEY }}
           --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }}
           --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Upload IPA as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: build/ios/ipa/everything_stack_template.ipa
+          retention-days: 30
 
       - name: Upload to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
