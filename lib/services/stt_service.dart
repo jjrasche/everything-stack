@@ -199,13 +199,14 @@ class DeepgramSTTService extends STTService {
             '&interim_results=true'
             '&endpointing=true'
             '&vad_events=true'
-            '&utterance_end_ms=1000'
-            '&api_key=$apiKey';
-        final url = Uri.parse(urlString);
+            '&utterance_end_ms=1000';
 
-        // Connect with timeout
+        // Connect with timeout and Authorization header
         try {
-          _ws = WebSocketChannel.connect(url);
+          _ws = WebSocketChannel.connect(
+            Uri.parse(urlString),
+            headers: {'Authorization': 'Token $apiKey'},
+          );
         } catch (e) {
           throw STTException('Failed to connect to Deepgram', cause: e);
         }
