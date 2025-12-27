@@ -311,8 +311,12 @@ Future<void> initializeEverythingStack({
   // Load .env file (debug mode only - local development)
   if (kDebugMode) {
     try {
+      // Debug: print actual working directory
+      debugPrint('🔍 [Bootstrap] Current working directory: ${Directory.current.path}');
+
       // Use absolute path to find .env from project root (fixes Windows working directory issue)
       final envFile = File('${Directory.current.path}/.env');
+      debugPrint('🔍 [Bootstrap] Looking for .env at: ${envFile.absolute.path}');
       if (envFile.existsSync()) {
         await dotenv.load(fileName: envFile.absolute.path);
         final loaded = dotenv.maybeGet('GROQ_API_KEY');
