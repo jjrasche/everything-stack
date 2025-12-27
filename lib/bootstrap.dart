@@ -64,6 +64,8 @@ import 'services/trainables/llm_config_selector.dart';
 import 'services/trainables/llm_orchestrator.dart';
 import 'services/trainables/response_renderer.dart';
 import 'domain/invocation.dart' as domain_invocation;
+import 'domain/feedback.dart' as domain_feedback;
+import 'domain/turn.dart';
 import 'core/invocation_repository.dart';
 import 'core/adaptation_state_repository.dart';
 import 'core/feedback_repository.dart';
@@ -490,30 +492,6 @@ Future<void> initializeEverythingStack({
   debugPrint('\n✅ Bootstrap complete: infrastructure services initialized');
 }
 
-/// Wrap TimeoutHttpClient to match HttpClientFunction signature.
-///
-/// This adapts the package:http Client to the HttpClientFunction type
-/// expected by embedding services.
-HttpClientFunction _wrapHttpClientWithTimeout(http.Client client) {
-  return (String url, Map<String, String> headers, String body) async {
-    final response = await client.post(
-      Uri.parse(url),
-      headers: headers,
-      body: body,
-    );
-
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return response.body;
-    }
-
-    throw HttpClientException(
-      'HTTP ${response.statusCode}: ${response.reasonPhrase}',
-      statusCode: response.statusCode,
-      body: response.body,
-    );
-  };
-}
-
 /// Initialize with mock services (for testing).
 Future<void> _initializeMocks() async {
   final mockBlobStore = MockBlobStore();
@@ -575,7 +553,7 @@ final getIt = GetIt.instance;
 /// }
 /// ```
 void setupServiceLocator() {
-  print('[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION');
+  debugPrint('[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION');
   debugPrint('🚀 [setupServiceLocator] Starting service registration...');
 
   try {
@@ -733,77 +711,63 @@ void setupServiceLocatorForTesting({
     llmService ?? MockLLMService(),
   );
 
-  // ========== Domain Repositories - In-Memory for Testing ==========
-  // TODO: Create mock/in-memory adapters for testing
-  // For now, repositories are not registered in test mode.
-  // Tests should create their own mock repositories or use real adapters with in-memory stores.
-  //
-  // getIt.registerSingleton<InvocationRepository<domain_invocation.Invocation>>(
-  //   MockInvocationRepository(),  // In-memory mock for test speed
-  // );
-  //
-  // getIt.registerSingleton<AdaptationStateRepository>(
-  //   MockAdaptationStateRepository(),  // In-memory mock for test speed
-  // );
-  //
-  // getIt.registerSingleton<FeedbackRepository>(
-  //   MockFeedbackRepository(),  // In-memory mock for test speed
-  // );
-  //
-  // getIt.registerSingleton<TurnRepository>(
-  //   MockTurnRepository(),  // In-memory mock for test speed
-  // );
+  // ========== Domain Repositories (Real implementations) ==========
+  // Already registered in initializeEverythingStack() based on platform
+  // No need to re-register here
 
-  // // ========== Trainable Selectors - Real implementations ==========
-  // // Disabled until repositories are implemented
+  // ========== Trainable Selectors - Real implementations ==========
 
-  // getIt.registerSingleton<NamespaceSelector>(
-  //   NamespaceSelector(
-  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-  //     feedbackRepo: getIt<FeedbackRepository>(),
-  //   ),
-  // );
+  getIt.registerSingleton<NamespaceSelector>(
+    NamespaceSelector(
+      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+      adaptationStateRepo: getIt<AdaptationStateRepository>(),
+      feedbackRepo: getIt<FeedbackRepository>(),
+    ),
+  );
 
-  // getIt.registerSingleton<ToolSelector>(
-  //   ToolSelector(
-  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-  //     feedbackRepo: getIt<FeedbackRepository>(),
-  //   ),
-  // );
+  getIt.registerSingleton<ToolSelector>(
+    ToolSelector(
+      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+      adaptationStateRepo: getIt<AdaptationStateRepository>(),
+      feedbackRepo: getIt<FeedbackRepository>(),
+    ),
+  );
 
-  // getIt.registerSingleton<ContextInjector>(
-  //   ContextInjector(
-  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-  //     feedbackRepo: getIt<FeedbackRepository>(),
-  //   ),
-  // );
+  getIt.registerSingleton<ContextInjector>(
+    ContextInjector(
+      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+      adaptationStateRepo: getIt<AdaptationStateRepository>(),
+      feedbackRepo: getIt<FeedbackRepository>(),
+    ),
+  );
 
-  // getIt.registerSingleton<LLMConfigSelector>(
-  //   LLMConfigSelector(
-  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-  //     feedbackRepo: getIt<FeedbackRepository>(),
-  //   ),
-  // );
+  getIt.registerSingleton<LLMConfigSelector>(
+    LLMConfigSelector(
+      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+      adaptationStateRepo: getIt<AdaptationStateRepository>(),
+      feedbackRepo: getIt<FeedbackRepository>(),
+    ),
+  );
 
-  // getIt.registerSingleton<LLMOrchestrator>(
-  //   LLMOrchestrator(
-  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-  //     feedbackRepo: getIt<FeedbackRepository>(),
-  //   ),
-  // );
+  getIt.registerSingleton<LLMOrchestrator>(
+    LLMOrchestrator(
+      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+      adaptationStateRepo: getIt<AdaptationStateRepository>(),
+      feedbackRepo: getIt<FeedbackRepository>(),
+    ),
+  );
 
-  // getIt.registerSingleton<ResponseRenderer>(
-  //   ResponseRenderer(
-  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-  //     feedbackRepo: getIt<FeedbackRepository>(),
-  //   ),
-  // );
+  getIt.registerSingleton<ResponseRenderer>(
+    ResponseRenderer(
+      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+      adaptationStateRepo: getIt<AdaptationStateRepository>(),
+      feedbackRepo: getIt<FeedbackRepository>(),
+    ),
+  );
+
+  // ========== Tool Registry ==========
+
+  getIt.registerSingleton<ToolRegistry>(ToolRegistry());
 
   // ========== Tool Executor - Real ==========
 
@@ -815,24 +779,21 @@ void setupServiceLocatorForTesting({
   );
 
   // ========== Coordinator - Real (real trainables, mocked externals) ==========
-  // TODO: Uncomment after Phase 6 refactoring
-  // The trainable selectors need to be updated to use GetIt late binding
-  // instead of constructor injection before Coordinator can be instantiated.
-  //
-  // getIt.registerSingleton<Coordinator>(
-  //   Coordinator(
-  //     namespaceSelector: getIt<NamespaceSelector>(),
-  //     toolSelector: getIt<ToolSelector>(),
-  //     contextInjector: getIt<ContextInjector>(),
-  //     llmConfigSelector: getIt<LLMConfigSelector>(),
-  //     llmOrchestrator: getIt<LLMOrchestrator>(),
-  //     responseRenderer: getIt<ResponseRenderer>(),
-  //     embeddingService: getIt<EmbeddingService>(),
-  //     llmService: getIt<LLMService>(),
-  //     toolExecutor: getIt<ToolExecutor>(),
-  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-  //   ),
-  // );
+
+  getIt.registerSingleton<Coordinator>(
+    Coordinator(
+      namespaceSelector: getIt<NamespaceSelector>(),
+      toolSelector: getIt<ToolSelector>(),
+      contextInjector: getIt<ContextInjector>(),
+      llmConfigSelector: getIt<LLMConfigSelector>(),
+      llmOrchestrator: getIt<LLMOrchestrator>(),
+      responseRenderer: getIt<ResponseRenderer>(),
+      embeddingService: getIt<EmbeddingService>(),
+      llmService: getIt<LLMService>(),
+      toolExecutor: getIt<ToolExecutor>(),
+      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+    ),
+  );
 }
 
 // ============================================================================
@@ -908,3 +869,4 @@ class MockLLMService implements LLMService {
     throw UnimplementedError();
   }
 }
+

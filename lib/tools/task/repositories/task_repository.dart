@@ -6,6 +6,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:objectbox/objectbox.dart';
 
 import '../../../core/entity_repository.dart';
 import '../../../core/persistence/persistence_adapter.dart';
@@ -36,9 +37,9 @@ class TaskRepository extends EntityRepository<Task> {
       // Store is registered in bootstrap.dart
       final getIt = GetIt.instance;
       // ignore: avoid_dynamic_calls
-      final store = getIt(instanceName: 'objectBoxStore');
+      final store = getIt<Store>(instanceName: 'objectBoxStore');
       // ignore: unsafe_html
-      return objectbox.TaskObjectBoxAdapter(store as dynamic);
+      return objectbox.TaskObjectBoxAdapter(store);
     }
   }
 }

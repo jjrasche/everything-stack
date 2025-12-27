@@ -3,7 +3,9 @@
 /// Single point for IndexedDB initialization.
 /// Called by bootstrap on web platform.
 
-import 'package:idb_shim/idb.dart';
+library;
+
+import 'package:flutter/foundation.dart';
 import 'package:idb_shim/idb_browser.dart';
 import '../persistence/indexeddb/database_schema.dart';
 
@@ -29,10 +31,10 @@ Future<Database> openIndexedDB() async {
       },
     );
 
-    print('✅ IndexedDB initialized');
+    debugPrint('✅ IndexedDB initialized');
     return db;
   } catch (e) {
-    print('❌ IndexedDB initialization failed: $e');
+    debugPrint('❌ IndexedDB initialization failed: $e');
     rethrow;
   }
 }
