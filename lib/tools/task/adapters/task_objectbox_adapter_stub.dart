@@ -22,16 +22,18 @@ class TaskObjectBoxAdapter implements PersistenceAdapter<Task> {
   }
 
   @override
-  Future<Task?> findById(int id) => throw UnsupportedError('Native only');
+  Future<Task?> findById(String uuid) => throw UnsupportedError('Native only');
 
   @override
-  Future<Task> getById(int id) => throw UnsupportedError('Native only');
+  Future<Task> getById(String uuid) => throw UnsupportedError('Native only');
 
   @override
-  Future<Task?> findByUuid(String uuid) => throw UnsupportedError('Native only');
+  @deprecated
+  Future<Task?> findByIntId(int id) => throw UnsupportedError('Native only');
 
   @override
-  Future<Task> getByUuid(String uuid) => throw UnsupportedError('Native only');
+  @deprecated
+  Future<Task> getByIntId(int id) => throw UnsupportedError('Native only');
 
   @override
   Future<List<Task>> findAll() => throw UnsupportedError('Native only');
@@ -45,14 +47,14 @@ class TaskObjectBoxAdapter implements PersistenceAdapter<Task> {
       throw UnsupportedError('Native only');
 
   @override
-  Future<bool> delete(int id) => throw UnsupportedError('Native only');
+  Future<bool> delete(String uuid) => throw UnsupportedError('Native only');
 
   @override
-  Future<bool> deleteByUuid(String uuid) =>
-      throw UnsupportedError('Native only');
+  @deprecated
+  Future<bool> deleteByIntId(int id) => throw UnsupportedError('Native only');
 
   @override
-  Future<void> deleteAll(List<int> ids) => throw UnsupportedError('Native only');
+  Future<void> deleteAll(List<String> uuids) => throw UnsupportedError('Native only');
 
   @override
   Future<void> close() => throw UnsupportedError('Native only');
@@ -81,11 +83,12 @@ class TaskObjectBoxAdapter implements PersistenceAdapter<Task> {
       throw UnsupportedError('Native only');
 
   @override
-  Task? findByIdInTx(TransactionContext ctx, int id) =>
+  Task? findByIdInTx(TransactionContext ctx, String uuid) =>
       throw UnsupportedError('Native only');
 
   @override
-  Task? findByUuidInTx(TransactionContext ctx, String uuid) =>
+  @deprecated
+  Task? findByIntIdInTx(TransactionContext ctx, int id) =>
       throw UnsupportedError('Native only');
 
   @override
@@ -101,14 +104,15 @@ class TaskObjectBoxAdapter implements PersistenceAdapter<Task> {
       throw UnsupportedError('Native only');
 
   @override
-  bool deleteInTx(TransactionContext ctx, int id) =>
+  bool deleteInTx(TransactionContext ctx, String uuid) =>
       throw UnsupportedError('Native only');
 
   @override
-  bool deleteByUuidInTx(TransactionContext ctx, String uuid) =>
+  @deprecated
+  bool deleteByIntIdInTx(TransactionContext ctx, int id) =>
       throw UnsupportedError('Native only');
 
   @override
-  void deleteAllInTx(TransactionContext ctx, List<int> ids) =>
+  void deleteAllInTx(TransactionContext ctx, List<String> uuids) =>
       throw UnsupportedError('Native only');
 }

@@ -20,168 +20,30 @@ import '../adapters/task_objectbox_adapter.dart'
     as objectbox;
 
 class TaskRepository extends EntityRepository<Task> {
-  late final PersistenceAdapter<Task> _adapter;
-
   TaskRepository({EmbeddingService? embeddingService})
       : super(
-          adapter: _PlatformAdapterProxy(),
+          adapter: _createAdapter(),
           embeddingService: embeddingService ?? EmbeddingService.instance,
         );
 
-  static PersistenceAdapter<Task> createAdapter() {
+  /// Create appropriate adapter based on platform
+  static PersistenceAdapter<Task> _createAdapter() {
     if (kIsWeb) {
+      // Web: IndexedDB
       return _WebTaskAdapter();
     } else {
-      // ObjectBox adapter will be created when store becomes available
-      // For now, use lazy proxy
-      return _ObjectBoxLazyProxy();
-    }
-  }
-}
-
-/// Platform-agnostic proxy that delegates to the right adapter
-class _PlatformAdapterProxy implements PersistenceAdapter<Task> {
-  late PersistenceAdapter<Task> _delegate;
-
-  _PlatformAdapterProxy() {
-    if (kIsWeb) {
-      _delegate = _WebTaskAdapter();
-    } else {
-      _delegate = _ObjectBoxLazyProxy();
-    }
-  }
-
-  @override
-  Future<Task?> findById(int id) => _delegate.findById(id);
-
-  @override
-  Future<Task> getById(int id) => _delegate.getById(id);
-
-  @override
-  Future<Task?> findByUuid(String uuid) => _delegate.findByUuid(uuid);
-
-  @override
-  Future<List<Task>> findAll() => _delegate.findAll();
-
-  @override
-  Future<Task> save(Task task) => _delegate.save(task);
-
-  @override
-  Future<List<Task>> saveAll(List<Task> items) => _delegate.saveAll(items);
-
-  @override
-  Future<bool> delete(Task task) => _delegate.delete(task);
-
-  @override
-  Future<int> deleteAll(List<Task> items) => _delegate.deleteAll(items);
-
-  @override
-  Future<void> clear() => _delegate.clear();
-
-  @override
-  Future<List<Task>> query(
-      {required int offset,
-      required int limit,
-      String? sortBy,
-      bool descending = false}) =>
-      _delegate.query(
-          offset: offset,
-          limit: limit,
-          sortBy: sortBy,
-          descending: descending);
-}
-
-/// Lazy proxy for ObjectBox that defers store access
-class _ObjectBoxLazyProxy implements PersistenceAdapter<Task> {
-  PersistenceAdapter<Task>? _delegate;
-
-  Future<PersistenceAdapter<Task>> _getDelegate() async {
-    if (_delegate != null) return _delegate!;
-
-    // Try to get store from GetIt
-    try {
+      // Native: ObjectBox
+      // Store is registered in bootstrap.dart
       final getIt = GetIt.instance;
-      // Note: actual type will be Store when bootstrap registers it
-      final store = getIt.get(instanceName: 'objectBoxStore');
-      _delegate = objectbox.TaskObjectBoxAdapter(store as dynamic);
-    } catch (e) {
-      throw StateError(
-        'ObjectBox store not found in GetIt. Call initializeEverythingStack() first.',
-      );
+      // ignore: avoid_dynamic_calls
+      final store = getIt(instanceName: 'objectBoxStore');
+      // ignore: unsafe_html
+      return objectbox.TaskObjectBoxAdapter(store as dynamic);
     }
-    return _delegate!;
-  }
-
-  @override
-  Future<Task?> findById(int id) async {
-    final delegate = await _getDelegate();
-    return delegate.findById(id);
-  }
-
-  @override
-  Future<Task> getById(int id) async {
-    final delegate = await _getDelegate();
-    return delegate.getById(id);
-  }
-
-  @override
-  Future<Task?> findByUuid(String uuid) async {
-    final delegate = await _getDelegate();
-    return delegate.findByUuid(uuid);
-  }
-
-  @override
-  Future<List<Task>> findAll() async {
-    final delegate = await _getDelegate();
-    return delegate.findAll();
-  }
-
-  @override
-  Future<Task> save(Task task) async {
-    final delegate = await _getDelegate();
-    return delegate.save(task);
-  }
-
-  @override
-  Future<List<Task>> saveAll(List<Task> items) async {
-    final delegate = await _getDelegate();
-    return delegate.saveAll(items);
-  }
-
-  @override
-  Future<bool> delete(Task task) async {
-    final delegate = await _getDelegate();
-    return delegate.delete(task);
-  }
-
-  @override
-  Future<int> deleteAll(List<Task> items) async {
-    final delegate = await _getDelegate();
-    return delegate.deleteAll(items);
-  }
-
-  @override
-  Future<void> clear() async {
-    final delegate = await _getDelegate();
-    return delegate.clear();
-  }
-
-  @override
-  Future<List<Task>> query(
-      {required int offset,
-      required int limit,
-      String? sortBy,
-      bool descending = false}) async {
-    final delegate = await _getDelegate();
-    return delegate.query(
-        offset: offset,
-        limit: limit,
-        sortBy: sortBy,
-        descending: descending);
   }
 }
 
-/// Stub adapter for web - delegates to IndexedDB on first use
+/// Lazy adapter for web - delegates to IndexedDB on first use
 class _WebTaskAdapter implements PersistenceAdapter<Task> {
   late PersistenceAdapter<Task> _delegate;
   bool _initialized = false;
@@ -194,27 +56,29 @@ class _WebTaskAdapter implements PersistenceAdapter<Task> {
   }
 
   @override
-  Future<Task?> findById(int id) async {
+  Future<Task?> findById(String uuid) async {
     await _ensureInitialized();
-    return _delegate.findById(id);
+    return _delegate.findById(uuid);
   }
 
   @override
-  Future<Task> getById(int id) async {
+  Future<Task> getById(String uuid) async {
     await _ensureInitialized();
-    return _delegate.getById(id);
+    return _delegate.getById(uuid);
   }
 
   @override
-  Future<Task?> findByUuid(String uuid) async {
+  @deprecated
+  Future<Task?> findByIntId(int id) async {
     await _ensureInitialized();
-    return _delegate.findByUuid(uuid);
+    return _delegate.findByIntId(id);
   }
 
   @override
-  Future<Task> getByUuid(String uuid) async {
+  @deprecated
+  Future<Task> getByIntId(int id) async {
     await _ensureInitialized();
-    return _delegate.getByUuid(uuid);
+    return _delegate.getByIntId(id);
   }
 
   @override
@@ -236,33 +100,22 @@ class _WebTaskAdapter implements PersistenceAdapter<Task> {
   }
 
   @override
-  Future<bool> delete(int id) async {
+  Future<bool> delete(String uuid) async {
     await _ensureInitialized();
-    return _delegate.delete(id);
+    return _delegate.delete(uuid);
   }
 
   @override
-  Future<bool> deleteByUuid(String uuid) async {
+  @deprecated
+  Future<bool> deleteByIntId(int id) async {
     await _ensureInitialized();
-    return _delegate.deleteByUuid(uuid);
+    return _delegate.deleteByIntId(id);
   }
 
   @override
-  Future<void> deleteAll(List<int> ids) async {
+  Future<void> deleteAll(List<String> uuids) async {
     await _ensureInitialized();
-    return _delegate.deleteAll(ids);
-  }
-
-  @override
-  Future<void> close() async {
-    await _ensureInitialized();
-    return _delegate.close();
-  }
-
-  @override
-  Future<int> count() async {
-    await _ensureInitialized();
-    return _delegate.count();
+    return _delegate.deleteAll(uuids);
   }
 
   @override
@@ -272,10 +125,26 @@ class _WebTaskAdapter implements PersistenceAdapter<Task> {
   }
 
   @override
+  Future<int> count() async {
+    await _ensureInitialized();
+    return _delegate.count();
+  }
+
+  @override
+  Future<List<Task>> semanticSearch(
+    List<double> queryVector, {
+    int limit = 10,
+    double minSimilarity = 0.0,
+  }) async {
+    await _ensureInitialized();
+    return _delegate.semanticSearch(queryVector,
+        limit: limit, minSimilarity: minSimilarity);
+  }
+
+  @override
   int get indexSize {
-    // We can't ensure initialized in a getter, so return 0
-    // The caller should have called an async method first
-    return _delegate.indexSize;
+    // Not available before initialization
+    return 0;
   }
 
   @override
@@ -287,167 +156,50 @@ class _WebTaskAdapter implements PersistenceAdapter<Task> {
   }
 
   @override
-  Future<List<Task>> semanticSearch(
-    List<double> queryVector, {
-    int limit = 10,
-    double minSimilarity = 0.0,
-  }) async {
-    await _ensureInitialized();
-    return _delegate.semanticSearch(
-      queryVector,
-      limit: limit,
-      minSimilarity: minSimilarity,
-    );
+  Task? findByIdInTx(TransactionContext ctx, String uuid) {
+    throw UnsupportedError('Transaction methods not supported in web adapter');
   }
 
   @override
-  Task? findByIdInTx(TransactionContext ctx, int id) {
-    // Can't lazily initialize in sync method
-    throw UnsupportedError(
-      'Transactions not supported in lazy-initialized web adapter. '
-      'Initialize the adapter first with an async call.',
-    );
-  }
-
-  @override
-  Task? findByUuidInTx(TransactionContext ctx, String uuid) {
-    throw UnsupportedError(
-      'Transactions not supported in lazy-initialized web adapter. '
-      'Initialize the adapter first with an async call.',
-    );
+  @deprecated
+  Task? findByIntIdInTx(TransactionContext ctx, int id) {
+    throw UnsupportedError('Transaction methods not supported in web adapter');
   }
 
   @override
   List<Task> findAllInTx(TransactionContext ctx) {
-    throw UnsupportedError(
-      'Transactions not supported in lazy-initialized web adapter. '
-      'Initialize the adapter first with an async call.',
-    );
+    throw UnsupportedError('Transaction methods not supported in web adapter');
   }
 
   @override
   Task saveInTx(TransactionContext ctx, Task entity, {bool touch = true}) {
-    throw UnsupportedError(
-      'Transactions not supported in lazy-initialized web adapter. '
-      'Initialize the adapter first with an async call.',
-    );
+    throw UnsupportedError('Transaction methods not supported in web adapter');
   }
 
   @override
   List<Task> saveAllInTx(TransactionContext ctx, List<Task> entities) {
-    throw UnsupportedError(
-      'Transactions not supported in lazy-initialized web adapter. '
-      'Initialize the adapter first with an async call.',
-    );
+    throw UnsupportedError('Transaction methods not supported in web adapter');
   }
 
   @override
-  bool deleteInTx(TransactionContext ctx, int id) {
-    throw UnsupportedError(
-      'Transactions not supported in lazy-initialized web adapter. '
-      'Initialize the adapter first with an async call.',
-    );
+  bool deleteInTx(TransactionContext ctx, String uuid) {
+    throw UnsupportedError('Transaction methods not supported in web adapter');
   }
 
   @override
-  bool deleteByUuidInTx(TransactionContext ctx, String uuid) {
-    throw UnsupportedError(
-      'Transactions not supported in lazy-initialized web adapter. '
-      'Initialize the adapter first with an async call.',
-    );
+  @deprecated
+  bool deleteByIntIdInTx(TransactionContext ctx, int id) {
+    throw UnsupportedError('Transaction methods not supported in web adapter');
   }
 
   @override
-  void deleteAllInTx(TransactionContext ctx, List<int> ids) {
-    throw UnsupportedError(
-      'Transactions not supported in lazy-initialized web adapter. '
-      'Initialize the adapter first with an async call.',
-    );
-  }
-}
-
-extension TaskRepositoryQueries on TaskRepository {
-  // ============ Task-specific queries ============
-
-  /// Find all incomplete tasks, ordered by due date
-  Future<List<Task>> findIncomplete() async {
-    final all = await findAll();
-    final incomplete = all.where((task) => task.isIncomplete).toList();
-    incomplete.sort((a, b) {
-      // High priority first
-      if (a.isHighPriority != b.isHighPriority) {
-        return a.isHighPriority ? -1 : 1;
-      }
-      // Then by due date (nulls last)
-      if (a.dueDate == null && b.dueDate == null) return 0;
-      if (a.dueDate == null) return 1;
-      if (b.dueDate == null) return -1;
-      return a.dueDate!.compareTo(b.dueDate!);
-    });
-    return incomplete;
+  void deleteAllInTx(TransactionContext ctx, List<String> uuids) {
+    throw UnsupportedError('Transaction methods not supported in web adapter');
   }
 
-  /// Find completed tasks
-  Future<List<Task>> findCompleted() async {
-    final all = await findAll();
-    return all.where((task) => task.completed).toList()
-      ..sort((a, b) => (b.completedAt ?? b.updatedAt)
-          .compareTo(a.completedAt ?? a.updatedAt));
-  }
-
-  /// Find overdue tasks
-  Future<List<Task>> findOverdue() async {
-    final all = await findAll();
-    return all.where((task) => task.isOverdue).toList()
-      ..sort((a, b) => a.dueDate!.compareTo(b.dueDate!));
-  }
-
-  /// Find tasks due today
-  Future<List<Task>> findDueToday() async {
-    final all = await findAll();
-    return all.where((task) => task.isDueToday).toList();
-  }
-
-  /// Find tasks due soon (within 24 hours)
-  Future<List<Task>> findDueSoon() async {
-    final all = await findAll();
-    return all.where((task) => task.isDueSoon).toList()
-      ..sort((a, b) => a.dueDate!.compareTo(b.dueDate!));
-  }
-
-  /// Find high priority tasks
-  Future<List<Task>> findHighPriority() async {
-    final all = await findAll();
-    return all
-        .where((task) => task.isHighPriority && task.isIncomplete)
-        .toList();
-  }
-
-  /// Find tasks by priority
-  Future<List<Task>> findByPriority(String priority) async {
-    final all = await findAll();
-    return all
-        .where((task) => task.priority == priority && task.isIncomplete)
-        .toList();
-  }
-
-  /// Find tasks owned by a user
-  Future<List<Task>> findByOwner(String userId) async {
-    final all = await findAll();
-    return all.where((task) => task.ownerId == userId).toList();
-  }
-
-  /// Find tasks accessible to a user (owned or shared)
-  Future<List<Task>> findAccessibleBy(String userId) async {
-    final all = await findAll();
-    return all.where((task) => task.isAccessibleBy(userId)).toList();
-  }
-
-  /// Find tasks created by a specific tool invocation
-  Future<List<Task>> findByCorrelationId(String correlationId) async {
-    final all = await findAll();
-    return all
-        .where((task) => task.invocationCorrelationId == correlationId)
-        .toList();
+  @override
+  Future<void> close() async {
+    await _ensureInitialized();
+    return _delegate.close();
   }
 }

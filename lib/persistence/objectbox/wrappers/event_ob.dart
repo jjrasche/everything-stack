@@ -44,7 +44,7 @@ class EventOB {
       source: event.source,
       timestamp: event.timestamp,
       parentEventId: event.parentEventId,
-      payloadJson: jsonEncode(event.payload),
+      payloadJson: event.payloadJson,
     )
       ..id = event.id
       ..uuid = event.uuid
@@ -54,11 +54,10 @@ class EventOB {
   }
 
   Event toEvent() {
-    final payload = jsonDecode(payloadJson) as Map<String, dynamic>;
     return Event(
       correlationId: correlationId,
       source: source,
-      payload: payload,
+      payloadJson: payloadJson,
       parentEventId: parentEventId,
       timestamp: timestamp,
     )

@@ -1,30 +1,75 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:everything_stack_template/domain/adaptation_state.dart';
+import 'package:everything_stack_template/core/adaptation_state.dart';
+
+// Factory functions for component-specific adaptation states
+AdaptationState STTAdaptationState({
+  String scope = 'global',
+  String? userId,
+}) =>
+    AdaptationState(
+      componentType: 'stt',
+      scope: scope,
+      userId: userId,
+      data: {
+        'confidenceThreshold': 0.65,
+        'minFeedbackCount': 10,
+      },
+    );
+
+AdaptationState LLMAdaptationState({
+  String scope = 'global',
+  String? userId,
+}) =>
+    AdaptationState(
+      componentType: 'llm',
+      scope: scope,
+      userId: userId,
+      data: {
+        'systemPromptVariant': 'default',
+        'temperature': 0.7,
+      },
+    );
+
+AdaptationState TTSAdaptationState({
+  String scope = 'global',
+  String? userId,
+}) =>
+    AdaptationState(
+      componentType: 'tts',
+      scope: scope,
+      userId: userId,
+      data: {
+        'speechRate': 1.0,
+        'voiceId': 'default',
+      },
+    );
 
 void main() {
-  group('STTAdaptationState', () {
-    test('creates global state with defaults', () {
-      final state = STTAdaptationState(scope: 'global');
+  group('AdaptationState (Generic)', () {
+    test('creates state with componentType', () {
+      final state = AdaptationState(componentType: 'stt');
 
-      expect(state.scope, 'global');
-      expect(state.userId, null);
-      expect(state.confidenceThreshold, 0.65);
-      expect(state.minFeedbackCount, 10);
+      expect(state.componentType, 'stt');
+      expect(state.dataJson, '{}');
       expect(state.version, 0);
     });
 
-    test('creates user-scoped state', () {
-      final state = STTAdaptationState(
-        scope: 'user',
-        userId: 'user_123',
+    test('stores and retrieves data as JSON', () {
+      final state = AdaptationState(
+        componentType: 'stt',
+        data: {
+          'confidenceThreshold': 0.65,
+          'minFeedbackCount': 10,
+        },
       );
 
-      expect(state.scope, 'user');
-      expect(state.userId, 'user_123');
+      expect(state.data['confidenceThreshold'], 0.65);
+      expect(state.data['minFeedbackCount'], 10);
+      expect(state.dataJson.contains('confidenceThreshold'), true);
     });
 
     test('tracks version for optimistic locking', () {
-      final state = STTAdaptationState(scope: 'global');
+      final state = AdaptationState(componentType: 'stt');
 
       state.version = 0;
       expect(state.version, 0);
@@ -48,15 +93,15 @@ void main() {
       final state = LLMAdaptationState(scope: 'global');
 
       expect(state.scope, 'global');
-      expect(state.systemPromptVariant, 'default');
-      expect(state.temperature, 0.7);
+      expect(state.data['systemPromptVariant'], 'default');
+      expect(state.data['temperature'], 0.7);
     });
 
     test('updates temperature tuning', () {
       final state = LLMAdaptationState(scope: 'global');
 
-      state.temperature = 0.5;
-      expect(state.temperature, 0.5);
+      state.data['temperature'] = 0.5;
+      expect(state.data['temperature'], 0.5);
     });
   });
 
@@ -65,47 +110,47 @@ void main() {
       final state = TTSAdaptationState(scope: 'global');
 
       expect(state.scope, 'global');
-      expect(state.speechRate, 1.0);
-      expect(state.voiceId, 'default');
+      expect(state.data['speechRate'], 1.0);
+      expect(state.data['voiceId'], 'default');
     });
 
     test('updates voice settings', () {
       final state = TTSAdaptationState(scope: 'global');
 
-      state.voiceId = 'voice_female_001';
-      state.speechRate = 1.1;
+      state.data['voiceId'] = 'voice_female_001';
+      state.data['speechRate'] = 1.1;
 
-      expect(state.voiceId, 'voice_female_001');
-      expect(state.speechRate, 1.1);
+      expect(state.data['voiceId'], 'voice_female_001');
+      expect(state.data['speechRate'], 1.1);
     });
   });
 
   group('Multi-scope state management', () {
     test('global state is shared baseline', () {
       final global = STTAdaptationState(scope: 'global');
-      global.confidenceThreshold = 0.65;
+      global.data['confidenceThreshold'] = 0.65;
 
       final user = STTAdaptationState(
         scope: 'user',
         userId: 'user_123',
       );
-      user.confidenceThreshold = global.confidenceThreshold;
+      user.data['confidenceThreshold'] = global.data['confidenceThreshold'];
 
-      expect(user.confidenceThreshold, global.confidenceThreshold);
+      expect(user.data['confidenceThreshold'], global.data['confidenceThreshold']);
     });
 
     test('user state can diverge from global', () {
       final global = STTAdaptationState(scope: 'global');
-      global.confidenceThreshold = 0.65;
+      global.data['confidenceThreshold'] = 0.65;
 
       final user = STTAdaptationState(
         scope: 'user',
         userId: 'user_123',
       );
-      user.confidenceThreshold = 0.55;
+      user.data['confidenceThreshold'] = 0.55;
 
-      expect(global.confidenceThreshold, 0.65);
-      expect(user.confidenceThreshold, 0.55);
+      expect(global.data['confidenceThreshold'], 0.65);
+      expect(user.data['confidenceThreshold'], 0.55);
     });
   });
 }

@@ -16,19 +16,21 @@ class ChannelIndexedDBAdapter implements PersistenceAdapter<Channel> {
   }
 
   @override
-  Future<Channel?> findById(int id) async =>
+  Future<Channel?> findById(String uuid) async =>
       throw UnimplementedError('Channel persistence not yet implemented');
 
   @override
-  Future<Channel> getById(int id) async =>
+  Future<Channel> getById(String uuid) async =>
       throw UnimplementedError('Channel persistence not yet implemented');
 
   @override
-  Future<Channel?> findByUuid(String uuid) async =>
+  @deprecated
+  Future<Channel?> findByIntId(int id) async =>
       throw UnimplementedError('Channel persistence not yet implemented');
 
   @override
-  Future<Channel> getByUuid(String uuid) async =>
+  @deprecated
+  Future<Channel> getByIntId(int id) async =>
       throw UnimplementedError('Channel persistence not yet implemented');
 
   @override
@@ -44,15 +46,16 @@ class ChannelIndexedDBAdapter implements PersistenceAdapter<Channel> {
       throw UnimplementedError('Channel persistence not yet implemented');
 
   @override
-  Future<bool> delete(int id) async =>
+  Future<bool> delete(String uuid) async =>
       throw UnimplementedError('Channel persistence not yet implemented');
 
   @override
-  Future<bool> deleteByUuid(String uuid) async =>
+  @deprecated
+  Future<bool> deleteByIntId(int id) async =>
       throw UnimplementedError('Channel persistence not yet implemented');
 
   @override
-  Future<void> deleteAll(List<int> ids) async =>
+  Future<void> deleteAll(List<String> uuids) async =>
       throw UnimplementedError('Channel persistence not yet implemented');
 
   @override
@@ -81,11 +84,12 @@ class ChannelIndexedDBAdapter implements PersistenceAdapter<Channel> {
       throw UnimplementedError('Channel does not support semantic search');
 
   @override
-  Channel? findByIdInTx(TransactionContext ctx, int id) =>
+  Channel? findByIdInTx(TransactionContext ctx, String uuid) =>
       throw UnimplementedError('Channel persistence not yet implemented');
 
   @override
-  Channel? findByUuidInTx(TransactionContext ctx, String uuid) =>
+  @deprecated
+  Channel? findByIntIdInTx(TransactionContext ctx, int id) =>
       throw UnimplementedError('Channel persistence not yet implemented');
 
   @override
@@ -101,15 +105,16 @@ class ChannelIndexedDBAdapter implements PersistenceAdapter<Channel> {
       throw UnimplementedError('Channel persistence not yet implemented');
 
   @override
-  bool deleteInTx(TransactionContext ctx, int id) =>
+  bool deleteInTx(TransactionContext ctx, String uuid) =>
       throw UnimplementedError('Channel persistence not yet implemented');
 
   @override
-  bool deleteByUuidInTx(TransactionContext ctx, String uuid) =>
+  @deprecated
+  bool deleteByIntIdInTx(TransactionContext ctx, int id) =>
       throw UnimplementedError('Channel persistence not yet implemented');
 
   @override
-  void deleteAllInTx(TransactionContext ctx, List<int> ids) =>
+  void deleteAllInTx(TransactionContext ctx, List<String> uuids) =>
       throw UnimplementedError('Channel persistence not yet implemented');
 
   @override

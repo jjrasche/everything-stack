@@ -22,19 +22,9 @@ import 'test_persistence_stub.dart'
     if (dart.library.html) 'test_persistence_web.dart' as persistence;
 
 /// Test harness for persistence layer
-/// TODO: Refactor to not depend on deleted PersistenceFactory
+/// Note: PersistenceFactory deleted in Phase 1 refactoring
 class PersistenceTestHarness {
-  dynamic _factory;
-
-  /// Get the initialized persistence factory
-  /// TODO: Type this properly once bootstrap refactoring complete
-  dynamic get factory {
-    if (_factory == null) {
-      throw StateError(
-          'PersistenceTestHarness not initialized. Call initialize() first.');
-    }
-    return _factory!;
-  }
+  bool _initialized = false;
 
   /// Detect if running on web platform
   /// Note: This is a compile-time check based on conditional imports.
@@ -48,14 +38,15 @@ class PersistenceTestHarness {
 
   /// Initialize persistence layer
   Future<void> initialize() async {
-    _factory = await persistence.initializeTestPersistence();
+    await persistence.initializeTestPersistence();
+    _initialized = true;
   }
 
   /// Clean up and close persistence layer
   Future<void> dispose() async {
-    if (_factory != null) {
-      await _factory!.close();
-      _factory = null;
+    if (_initialized) {
+      await persistence.cleanupTestPersistence();
+      _initialized = false;
     }
   }
 }

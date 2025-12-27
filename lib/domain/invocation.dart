@@ -35,9 +35,11 @@
 /// 2. User provides Feedback on the Invocation
 /// 3. Trainer uses Invocation + Feedback to update AdaptationState
 
+import 'package:everything_stack_template/patterns/embeddable.dart';
+
 import '../core/base_entity.dart';
 
-class Invocation extends BaseEntity {
+class Invocation extends BaseEntity with Embeddable {
   // ============ BaseEntity field overrides ============
   @override
   int id = 0;
@@ -62,6 +64,9 @@ class Invocation extends BaseEntity {
   /// Which component executed this invocation?
   /// Examples: 'stt', 'llm', 'tts', 'context_manager', 'namespace_selector', 'tool_selector'
   String componentType;
+
+  /// FK to Turn - links invocation to conversation turn (null for background/test invocations)
+  String? turnId;
 
   /// Did the component succeed?
   bool success;
@@ -100,6 +105,7 @@ class Invocation extends BaseEntity {
     required this.componentType,
     required this.success,
     required this.confidence,
+    this.turnId,
     this.input,
     this.output,
     this.metadata,
@@ -119,6 +125,7 @@ class Invocation extends BaseEntity {
         'syncId': syncId,
         'correlationId': correlationId,
         'componentType': componentType,
+        'turnId': turnId,
         'success': success,
         'confidence': confidence,
         'input': input,
@@ -132,6 +139,7 @@ class Invocation extends BaseEntity {
       componentType: json['componentType'] as String,
       success: json['success'] as bool,
       confidence: (json['confidence'] as num).toDouble(),
+      turnId: json['turnId'] as String?,
       input: json['input'] != null
           ? Map<String, dynamic>.from(json['input'] as Map)
           : null,
@@ -152,5 +160,27 @@ class Invocation extends BaseEntity {
         : DateTime.now();
     inv.syncId = json['syncId'] as String?;
     return inv;
+  }
+
+  // ============ Embeddable Implementation ============
+
+  /// Extract embeddable text for semantic search.
+  /// Returns component output text for STT/LLM, empty for others.
+  @override
+  String toEmbeddingInput() {
+    if (output == null || output!.isEmpty) return '';
+
+    // STT: return transcription
+    if (componentType == 'stt') {
+      return output!['transcription'] as String? ?? '';
+    }
+
+    // LLM: return response text
+    if (componentType == 'llm') {
+      return output!['response'] as String? ?? '';
+    }
+
+    // Other components: no embedding
+    return '';
   }
 }

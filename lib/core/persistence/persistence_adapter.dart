@@ -45,28 +45,29 @@ import 'transaction_context.dart';
 abstract class PersistenceAdapter<T extends BaseEntity> {
   // ============ CRUD ============
 
-  /// Find entity by internal database ID.
-  /// Returns null if not found.
-  Future<T?> findById(int id);
-
-  /// Get entity by internal database ID.
-  /// Throws EntityNotFoundException if not found.
-  ///
-  /// Use this when the entity MUST exist (e.g., loading for update).
-  /// Use findById() when the entity is optional.
-  Future<T> getById(int id);
-
   /// Find entity by UUID (universal identifier).
   /// Returns null if not found.
-  /// Implementations should use an index for O(1) lookup.
-  Future<T?> findByUuid(String uuid);
+  /// All entities use UUID as primary key - this is the primary lookup method.
+  Future<T?> findById(String uuid);
 
   /// Get entity by UUID (universal identifier).
   /// Throws EntityNotFoundException if not found.
   ///
   /// Use this when the entity MUST exist (e.g., loading for update).
-  /// Use findByUuid() when the entity is optional.
-  Future<T> getByUuid(String uuid);
+  /// Use findById() when the entity is optional.
+  Future<T> getById(String uuid);
+
+  /// Find entity by internal database ID (legacy).
+  /// Returns null if not found.
+  /// Use findById(uuid) instead - this is for backwards compatibility only.
+  @deprecated
+  Future<T?> findByIntId(int id);
+
+  /// Get entity by internal database ID (legacy).
+  /// Throws EntityNotFoundException if not found.
+  /// Use getById(uuid) instead - this is for backwards compatibility only.
+  @deprecated
+  Future<T> getByIntId(int id);
 
   /// Get all entities of this type.
   Future<List<T>> findAll();
@@ -86,19 +87,21 @@ abstract class PersistenceAdapter<T extends BaseEntity> {
   /// Returns entities with ids assigned.
   Future<List<T>> saveAll(List<T> entities);
 
-  /// Delete entity by internal database ID.
-  /// Returns true if entity was deleted, false if not found.
-  /// Also removes from vector index if applicable.
-  Future<bool> delete(int id);
-
   /// Delete entity by UUID.
   /// Returns true if entity was deleted, false if not found.
   /// Also removes from vector index if applicable.
-  Future<bool> deleteByUuid(String uuid);
+  Future<bool> delete(String uuid);
 
-  /// Batch delete entities by internal IDs.
+  /// Delete entity by internal database ID (legacy).
+  /// Returns true if entity was deleted, false if not found.
   /// Also removes from vector index if applicable.
-  Future<void> deleteAll(List<int> ids);
+  /// Use delete(uuid) instead - this is for backwards compatibility only.
+  @deprecated
+  Future<bool> deleteByIntId(int id);
+
+  /// Batch delete entities by UUIDs.
+  /// Also removes from vector index if applicable.
+  Future<void> deleteAll(List<String> uuids);
 
   // ============ Queries ============
 
@@ -151,17 +154,18 @@ abstract class PersistenceAdapter<T extends BaseEntity> {
   // They receive a TransactionContext which platform implementations cast
   // to their specific type (ObjectBoxTxContext, IndexedDBTxContext).
 
-  /// Find entity by ID within a transaction (synchronous).
-  ///
-  /// Must be called within TransactionManager.transaction() callback.
-  /// Returns null if not found.
-  T? findByIdInTx(TransactionContext ctx, int id);
-
   /// Find entity by UUID within a transaction (synchronous).
   ///
   /// Must be called within TransactionManager.transaction() callback.
   /// Returns null if not found.
-  T? findByUuidInTx(TransactionContext ctx, String uuid);
+  T? findByIdInTx(TransactionContext ctx, String uuid);
+
+  /// Find entity by int ID within a transaction (synchronous, deprecated).
+  ///
+  /// Must be called within TransactionManager.transaction() callback.
+  /// Returns null if not found.
+  @deprecated
+  T? findByIntIdInTx(TransactionContext ctx, int id);
 
   /// Find all entities within a transaction (synchronous).
   ///
@@ -186,22 +190,23 @@ abstract class PersistenceAdapter<T extends BaseEntity> {
   /// Returns entities with ids assigned.
   List<T> saveAllInTx(TransactionContext ctx, List<T> entities);
 
-  /// Delete entity by ID within a transaction (synchronous).
-  ///
-  /// Must be called within TransactionManager.transaction() callback.
-  /// Returns true if deleted, false if not found.
-  bool deleteInTx(TransactionContext ctx, int id);
-
   /// Delete entity by UUID within a transaction (synchronous).
   ///
   /// Must be called within TransactionManager.transaction() callback.
   /// Returns true if deleted, false if not found.
-  bool deleteByUuidInTx(TransactionContext ctx, String uuid);
+  bool deleteInTx(TransactionContext ctx, String uuid);
 
-  /// Batch delete entities by IDs within a transaction (synchronous).
+  /// Delete entity by int ID within a transaction (synchronous, deprecated).
   ///
   /// Must be called within TransactionManager.transaction() callback.
-  void deleteAllInTx(TransactionContext ctx, List<int> ids);
+  /// Returns true if deleted, false if not found.
+  @deprecated
+  bool deleteByIntIdInTx(TransactionContext ctx, int id);
+
+  /// Batch delete entities by UUIDs within a transaction (synchronous).
+  ///
+  /// Must be called within TransactionManager.transaction() callback.
+  void deleteAllInTx(TransactionContext ctx, List<String> uuids);
 
   // ============ Lifecycle ============
 

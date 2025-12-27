@@ -18,32 +18,18 @@ dynamic _db; // Database type
 bool detectWebPlatform() => true;
 
 /// Initialize IndexedDB test persistence in-memory.
-Future<PersistenceFactory> initializeTestPersistence() async {
+/// Note: PersistenceFactory was removed in Phase 1 refactoring
+Future<void> initializeTestPersistence() async {
   // Use in-memory IndexedDB for testing
   _idbFactory = newIdbFactoryMemory();
 
   // Open IndexedDB database
   _db = await openIndexedDatabase(idbFactory: _idbFactory);
 
-  // Create adapters
-  final mediaItemAdapter = MediaItemIndexedDBAdapter(_db);
-  final channelAdapter = ChannelIndexedDBAdapter(_db);
-  final edgeAdapter = EdgeIndexedDBAdapter(_db);
-  final versionAdapter = EntityVersionIndexedDBAdapter(_db);
-  final invocationAdapter = InvocationIndexedDBAdapter(_db);
-
-  // Initialize HNSW indexes
-  await mediaItemAdapter.initialize();
-
-  return PersistenceFactory(
-    noteAdapter: null,
-    mediaItemAdapter: mediaItemAdapter,
-    channelAdapter: channelAdapter,
-    edgeAdapter: edgeAdapter,
-    versionAdapter: versionAdapter,
-    invocationAdapter: invocationAdapter,
-    handle: _db,
-  );
+  // Adapters can be created directly from _db when needed:
+  // final mediaItemAdapter = MediaItemIndexedDBAdapter(_db);
+  // final edgeAdapter = EdgeIndexedDBAdapter(_db);
+  // final versionAdapter = EntityVersionIndexedDBAdapter(_db);
 }
 
 /// Cleanup test persistence (close and delete database).

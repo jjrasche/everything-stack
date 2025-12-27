@@ -15,19 +15,21 @@ class TaskObjectBoxAdapter implements PersistenceAdapter<Task> {
   TaskObjectBoxAdapter(this._store);
 
   @override
-  Future<Task?> findById(int id) async =>
+  Future<Task?> findById(String uuid) async =>
       throw UnimplementedError('Task persistence not yet available on native platforms');
 
   @override
-  Future<Task> getById(int id) async =>
+  Future<Task> getById(String uuid) async =>
       throw UnimplementedError('Task persistence not yet available on native platforms');
 
   @override
-  Future<Task?> findByUuid(String uuid) async =>
+  @deprecated
+  Future<Task?> findByIntId(int id) async =>
       throw UnimplementedError('Task persistence not yet available on native platforms');
 
   @override
-  Future<Task> getByUuid(String uuid) async =>
+  @deprecated
+  Future<Task> getByIntId(int id) async =>
       throw UnimplementedError('Task persistence not yet available on native platforms');
 
   @override
@@ -43,15 +45,16 @@ class TaskObjectBoxAdapter implements PersistenceAdapter<Task> {
       throw UnimplementedError('Task persistence not yet available on native platforms');
 
   @override
-  Future<bool> delete(int id) async =>
+  Future<bool> delete(String uuid) async =>
       throw UnimplementedError('Task persistence not yet available on native platforms');
 
   @override
-  Future<bool> deleteByUuid(String uuid) async =>
+  @deprecated
+  Future<bool> deleteByIntId(int id) async =>
       throw UnimplementedError('Task persistence not yet available on native platforms');
 
   @override
-  Future<void> deleteAll(List<int> ids) async =>
+  Future<void> deleteAll(List<String> uuids) async =>
       throw UnimplementedError('Task persistence not yet available on native platforms');
 
   @override
@@ -80,11 +83,12 @@ class TaskObjectBoxAdapter implements PersistenceAdapter<Task> {
       throw UnimplementedError('Task does not support semantic search');
 
   @override
-  Task? findByIdInTx(TransactionContext ctx, int id) =>
+  Task? findByIdInTx(TransactionContext ctx, String uuid) =>
       throw UnimplementedError('Task persistence not yet available on native platforms');
 
   @override
-  Task? findByUuidInTx(TransactionContext ctx, String uuid) =>
+  @deprecated
+  Task? findByIntIdInTx(TransactionContext ctx, int id) =>
       throw UnimplementedError('Task persistence not yet available on native platforms');
 
   @override
@@ -100,15 +104,16 @@ class TaskObjectBoxAdapter implements PersistenceAdapter<Task> {
       throw UnimplementedError('Task persistence not yet available on native platforms');
 
   @override
-  bool deleteInTx(TransactionContext ctx, int id) =>
+  bool deleteInTx(TransactionContext ctx, String uuid) =>
       throw UnimplementedError('Task persistence not yet available on native platforms');
 
   @override
-  bool deleteByUuidInTx(TransactionContext ctx, String uuid) =>
+  @deprecated
+  bool deleteByIntIdInTx(TransactionContext ctx, int id) =>
       throw UnimplementedError('Task persistence not yet available on native platforms');
 
   @override
-  void deleteAllInTx(TransactionContext ctx, List<int> ids) =>
+  void deleteAllInTx(TransactionContext ctx, List<String> uuids) =>
       throw UnimplementedError('Task persistence not yet available on native platforms');
 
   @override

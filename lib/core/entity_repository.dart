@@ -97,15 +97,16 @@ abstract class EntityRepository<T extends BaseEntity> {
 
   // ============ CRUD ============
 
-  /// Find entity by internal database ID.
+  /// Find entity by internal database ID (legacy).
+  @deprecated
   Future<T?> findById(int id) async {
-    return adapter.findById(id);
+    return adapter.findByIntId(id);
   }
 
   /// Find entity by its UUID (the universal identifier).
   /// Delegates to adapter which uses indexed lookup.
   Future<T?> findByUuid(String uuid) async {
-    return adapter.findByUuid(uuid);
+    return adapter.findById(uuid);
   }
 
   /// Get all entities.
@@ -213,10 +214,11 @@ abstract class EntityRepository<T extends BaseEntity> {
     }
   }
 
-  /// Delete entity from database.
+  /// Delete entity from database by ID (legacy).
   /// Adapter handles removing from vector index.
+  @deprecated
   Future<bool> delete(int id) async {
-    return adapter.delete(id);
+    return adapter.deleteByIntId(id);
   }
 
   /// Delete entity by UUID from database.
@@ -255,7 +257,7 @@ abstract class EntityRepository<T extends BaseEntity> {
       );
     } else {
       // Non-transactional delete
-      return adapter.deleteByUuid(entity.uuid);
+      return adapter.delete(entity.uuid);
     }
   }
 
@@ -274,7 +276,7 @@ abstract class EntityRepository<T extends BaseEntity> {
     }
 
     // Phase 3: Delete entity
-    final deleted = adapter.deleteByUuidInTx(ctx, entity.uuid);
+    final deleted = adapter.deleteInTx(ctx, entity.uuid);
 
     // Phase 4: afterDeleteInTransaction hooks (sync, inside tx)
     for (final handler in handlers) {
@@ -284,10 +286,10 @@ abstract class EntityRepository<T extends BaseEntity> {
     return deleted;
   }
 
-  /// Delete multiple entities from database.
+  /// Delete multiple entities from database by UUIDs.
   /// Adapter handles removing from vector index.
-  Future<void> deleteAll(List<int> ids) async {
-    await adapter.deleteAll(ids);
+  Future<void> deleteAll(List<String> uuids) async {
+    await adapter.deleteAll(uuids);
   }
 
   // ============ Semantic Search ============

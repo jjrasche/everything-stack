@@ -4,19 +4,17 @@
 /// Represents a single user interaction turn (one speech → audio cycle).
 /// Links together all the invocations from that turn:
 /// - STTInvocation (speech → text)
-/// - ContextManagerInvocation (text → namespace/tool selection)
 /// - LLMInvocation (context → response + tool calls)
 /// - TTSInvocation (response → audio)
 ///
 /// ## Turn Lifecycle
 /// 1. User speaks (correlationId generated)
 /// 2. STT processes audio → STTInvocation created
-/// 3. ContextManager processes utterance → ContextManagerInvocation created
-/// 4. LLM generates response → LLMInvocation created
-/// 5. TTS synthesizes audio → TTSInvocation created
-/// 6. Turn created, linking all 4 invocations
-/// 7. User provides feedback (Feedback entities created)
-/// 8. trainFromFeedback() called on each component
+/// 3. LLM generates response → LLMInvocation created
+/// 4. TTS synthesizes audio → TTSInvocation created
+/// 5. Turn created, linking all 3 invocations
+/// 6. User provides feedback (Feedback entities created)
+/// 7. trainFromFeedback() called on each component
 ///
 /// ## Feedback Loop
 /// All feedback for a Turn has turnId = this Turn's uuid.
@@ -28,7 +26,6 @@
 /// final turn = Turn(
 ///   correlationId: event.correlationId,
 ///   sttInvocationId: sttInv.uuid,
-///   contextManagerInvocationId: cmInv.uuid,
 ///   llmInvocationId: llmInv.uuid,
 ///   ttsInvocationId: ttsInv.uuid,
 ///   result: 'success',
@@ -37,7 +34,6 @@
 ///
 /// // Later, after user provides feedback:
 /// await sttService.trainFromFeedback(turn.uuid);
-/// await contextManager.trainFromFeedback(turn.uuid);
 /// await llmService.trainFromFeedback(turn.uuid);
 /// await ttsService.trainFromFeedback(turn.uuid);
 /// ```
@@ -67,6 +63,9 @@ class Turn extends BaseEntity {
   /// Same as the Event.correlationId that triggered the turn
   String correlationId;
 
+  /// FK to Conversation - which conversation is this turn part of?
+  String conversationId;
+
   /// When this turn occurred
   DateTime timestamp = DateTime.now();
 
@@ -75,10 +74,6 @@ class Turn extends BaseEntity {
   /// The STT invocation that transcribed the audio
   /// FK to STTInvocation.uuid
   String? sttInvocationId;
-
-  /// The ContextManager invocation that selected namespace/tools
-  /// FK to ContextManagerInvocation.uuid
-  String? contextManagerInvocationId;
 
   /// The LLM invocation that generated response
   /// FK to LLMInvocation.uuid
@@ -115,8 +110,8 @@ class Turn extends BaseEntity {
 
   Turn({
     required this.correlationId,
+    required this.conversationId,
     this.sttInvocationId,
-    this.contextManagerInvocationId,
     this.llmInvocationId,
     this.ttsInvocationId,
     this.result = 'success',
@@ -140,7 +135,6 @@ class Turn extends BaseEntity {
   int get invocationCount {
     int count = 0;
     if (sttInvocationId != null) count++;
-    if (contextManagerInvocationId != null) count++;
     if (llmInvocationId != null) count++;
     if (ttsInvocationId != null) count++;
     return count;
@@ -150,7 +144,6 @@ class Turn extends BaseEntity {
   List<String> getInvocationIds() {
     return [
       if (sttInvocationId != null) sttInvocationId!,
-      if (contextManagerInvocationId != null) contextManagerInvocationId!,
       if (llmInvocationId != null) llmInvocationId!,
       if (ttsInvocationId != null) ttsInvocationId!,
     ];
@@ -166,9 +159,9 @@ class Turn extends BaseEntity {
       'updatedAt': updatedAt.toIso8601String(),
       'syncId': syncId,
       'correlationId': correlationId,
+      'conversationId': conversationId,
       'timestamp': timestamp.toIso8601String(),
       'sttInvocationId': sttInvocationId,
-      'contextManagerInvocationId': contextManagerInvocationId,
       'llmInvocationId': llmInvocationId,
       'ttsInvocationId': ttsInvocationId,
       'result': result,
@@ -184,8 +177,8 @@ class Turn extends BaseEntity {
   factory Turn.fromJson(Map<String, dynamic> json) {
     return Turn(
       correlationId: json['correlationId'] as String,
+      conversationId: json['conversationId'] as String,
       sttInvocationId: json['sttInvocationId'] as String?,
-      contextManagerInvocationId: json['contextManagerInvocationId'] as String?,
       llmInvocationId: json['llmInvocationId'] as String?,
       ttsInvocationId: json['ttsInvocationId'] as String?,
       result: json['result'] as String? ?? 'success',
@@ -217,8 +210,8 @@ class Turn extends BaseEntity {
   /// Create a copy of this Turn with optional field overrides
   Turn copyWith({
     String? correlationId,
+    String? conversationId,
     String? sttInvocationId,
-    String? contextManagerInvocationId,
     String? llmInvocationId,
     String? ttsInvocationId,
     String? result,
@@ -231,9 +224,8 @@ class Turn extends BaseEntity {
   }) {
     return Turn(
       correlationId: correlationId ?? this.correlationId,
+      conversationId: conversationId ?? this.conversationId,
       sttInvocationId: sttInvocationId ?? this.sttInvocationId,
-      contextManagerInvocationId:
-          contextManagerInvocationId ?? this.contextManagerInvocationId,
       llmInvocationId: llmInvocationId ?? this.llmInvocationId,
       ttsInvocationId: ttsInvocationId ?? this.ttsInvocationId,
       result: result ?? this.result,

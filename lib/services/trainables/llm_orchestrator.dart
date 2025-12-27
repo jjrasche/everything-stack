@@ -26,13 +26,13 @@ import '../trainable.dart';
 import '../../domain/invocation.dart';
 import '../../core/invocation_repository.dart';
 import '../../core/adaptation_state_repository.dart';
-import '../../domain/adaptation_state_generic.dart';
+import '../../core/adaptation_state.dart';
 import '../../core/feedback_repository.dart';
 import 'dart:convert';
 
 class LLMOrchestrator implements Trainable {
   final InvocationRepository<Invocation> invocationRepo;
-  final AdaptationStateRepository<AdaptationState> adaptationStateRepo;
+  final AdaptationStateRepository adaptationStateRepo;
   final FeedbackRepository feedbackRepo;
 
   LLMOrchestrator({

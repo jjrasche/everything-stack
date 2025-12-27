@@ -99,7 +99,7 @@ class EdgeRepository {
     final edge = await _findEdge(sourceUuid, targetUuid, edgeType);
     if (edge == null) return false;
 
-    return _adapter.delete(edge.id);
+    return _adapter.delete(edge.uuid);
   }
 
   // ============ Queries ============
@@ -275,7 +275,7 @@ class EdgeRepository {
 
   /// Find edge by UUID using indexed field - O(1) lookup
   Future<Edge?> findByUuid(String uuid) async {
-    return _adapter.findByUuid(uuid);
+    return _adapter.findById(uuid);
   }
 
   /// Find all unsynced edges (for sync service)
@@ -311,25 +311,25 @@ class EdgeRepository {
 
   // ============ Cascade Delete ============
 
-  /// Collect edge IDs for an entity (for cascade delete).
+  /// Collect edge UUIDs for an entity (for cascade delete).
   /// Queries for all edges where entityUuid is source or target.
-  /// Returns list of edge IDs to delete.
+  /// Returns list of edge UUIDs to delete.
   ///
-  /// Use this from handlers to collect IDs before transaction.
+  /// Use this from handlers to collect UUIDs before transaction.
   /// This enables atomic deletion within EntityRepository transaction.
-  Future<List<int>> getEdgeIdsForEntity(String entityUuid) async {
+  Future<List<String>> getEdgeIdsForEntity(String entityUuid) async {
     final outgoing = await findBySource(entityUuid);
     final incoming = await findByTarget(entityUuid);
 
-    final edgeIds = <int>[];
+    final edgeUuids = <String>[];
     for (final edge in outgoing) {
-      edgeIds.add(edge.id);
+      edgeUuids.add(edge.uuid);
     }
     for (final edge in incoming) {
-      edgeIds.add(edge.id);
+      edgeUuids.add(edge.uuid);
     }
 
-    return edgeIds;
+    return edgeUuids;
   }
 
   /// Delete edges by IDs within a transaction (synchronous, atomic).
@@ -337,10 +337,10 @@ class EdgeRepository {
   ///
   /// [ctx] - TransactionContext for deletion within transaction
   /// [edgeIds] - List of edge IDs to delete (pre-computed before transaction)
-  int deleteEdgesInTx(TransactionContext ctx, List<int> edgeIds) {
+  int deleteEdgesInTx(TransactionContext ctx, List<String> edgeUuids) {
     int count = 0;
-    for (final edgeId in edgeIds) {
-      if (_adapter.deleteInTx(ctx, edgeId)) {
+    for (final edgeUuid in edgeUuids) {
+      if (_adapter.deleteInTx(ctx, edgeUuid)) {
         count++;
       }
     }

@@ -39,7 +39,7 @@
 /// ```
 
 import 'dart:convert';
-import '../core/base_entity.dart';
+import 'base_entity.dart';
 
 class AdaptationState extends BaseEntity {
   // ============ BaseEntity field overrides ============
@@ -58,11 +58,20 @@ class AdaptationState extends BaseEntity {
   @override
   String? syncId;
 
-  // ============ Identity ============
+  // ============ Identity & Scoping ============
 
   /// Which component does this state belong to?
   /// Examples: 'stt', 'llm', 'tts', 'namespace_selector', 'tool_selector'
   String componentType;
+
+  /// Scope of the adaptation state: 'global' or 'user'
+  /// 'global': Applies to all users
+  /// 'user': Personalized to a specific user (see userId)
+  String scope = 'global';
+
+  /// If scope='user', this is the user ID for personalized adaptation
+  /// If scope='global', this is null
+  String? userId;
 
   // ============ Learned Parameters (Generic JSON) ============
 
@@ -91,6 +100,8 @@ class AdaptationState extends BaseEntity {
 
   AdaptationState({
     required this.componentType,
+    this.scope = 'global',
+    this.userId,
     Map<String, dynamic>? data,
   }) {
     if (uuid.isEmpty) {
@@ -134,6 +145,8 @@ class AdaptationState extends BaseEntity {
         'updatedAt': updatedAt.toIso8601String(),
         'syncId': syncId,
         'componentType': componentType,
+        'scope': scope,
+        'userId': userId,
         'data': data,
         'version': version,
         'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
@@ -144,6 +157,8 @@ class AdaptationState extends BaseEntity {
   factory AdaptationState.fromJson(Map<String, dynamic> json) {
     final state = AdaptationState(
       componentType: json['componentType'] as String,
+      scope: json['scope'] as String? ?? 'global',
+      userId: json['userId'] as String?,
       data: json['data'] != null
           ? Map<String, dynamic>.from(json['data'] as Map)
           : null,

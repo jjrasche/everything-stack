@@ -73,15 +73,15 @@ class Event extends BaseEntity {
   /// When this event occurred
   DateTime timestamp;
 
-  /// Event payload (transcription, timer data, etc.)
-  Map<String, dynamic> payload;
+  /// Event payload (transcription, timer data, etc.) stored as JSON string
+  String payloadJson;
 
   // ============ Constructor ============
 
   Event({
     required this.correlationId,
     required this.source,
-    required this.payload,
+    required this.payloadJson,
     this.parentEventId,
     DateTime? timestamp,
   }) : timestamp = timestamp ?? DateTime.now() {
@@ -102,14 +102,14 @@ class Event extends BaseEntity {
         'parentEventId': parentEventId,
         'source': source,
         'timestamp': timestamp.toIso8601String(),
-        'payload': payload,
+        'payloadJson': payloadJson,
       };
 
   factory Event.fromJson(Map<String, dynamic> json) {
     final event = Event(
       correlationId: json['correlationId'] as String,
       source: json['source'] as String,
-      payload: Map<String, dynamic>.from(json['payload'] as Map? ?? {}),
+      payloadJson: json['payloadJson'] as String? ?? '{}',
       parentEventId: json['parentEventId'] as String?,
       timestamp: json['timestamp'] != null
           ? DateTime.parse(json['timestamp'] as String)

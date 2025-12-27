@@ -15,19 +15,21 @@ class SubscriptionObjectBoxAdapter implements PersistenceAdapter<Subscription> {
   SubscriptionObjectBoxAdapter(this._store);
 
   @override
-  Future<Subscription?> findById(int id) async =>
+  Future<Subscription?> findById(String uuid) async =>
       throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  Future<Subscription> getById(int id) async =>
+  Future<Subscription> getById(String uuid) async =>
       throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  Future<Subscription?> findByUuid(String uuid) async =>
+  @deprecated
+  Future<Subscription?> findByIntId(int id) async =>
       throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  Future<Subscription> getByUuid(String uuid) async =>
+  @deprecated
+  Future<Subscription> getByIntId(int id) async =>
       throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
@@ -43,15 +45,16 @@ class SubscriptionObjectBoxAdapter implements PersistenceAdapter<Subscription> {
       throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  Future<bool> delete(int id) async =>
+  Future<bool> delete(String uuid) async =>
       throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  Future<bool> deleteByUuid(String uuid) async =>
+  @deprecated
+  Future<bool> deleteByIntId(int id) async =>
       throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  Future<void> deleteAll(List<int> ids) async =>
+  Future<void> deleteAll(List<String> uuids) async =>
       throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
@@ -80,11 +83,12 @@ class SubscriptionObjectBoxAdapter implements PersistenceAdapter<Subscription> {
       throw UnimplementedError('Subscription does not support semantic search');
 
   @override
-  Subscription? findByIdInTx(TransactionContext ctx, int id) =>
+  Subscription? findByIdInTx(TransactionContext ctx, String uuid) =>
       throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  Subscription? findByUuidInTx(TransactionContext ctx, String uuid) =>
+  @deprecated
+  Subscription? findByIntIdInTx(TransactionContext ctx, int id) =>
       throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
@@ -100,15 +104,16 @@ class SubscriptionObjectBoxAdapter implements PersistenceAdapter<Subscription> {
       throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  bool deleteInTx(TransactionContext ctx, int id) =>
+  bool deleteInTx(TransactionContext ctx, String uuid) =>
       throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  bool deleteByUuidInTx(TransactionContext ctx, String uuid) =>
+  @deprecated
+  bool deleteByIntIdInTx(TransactionContext ctx, int id) =>
       throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override
-  void deleteAllInTx(TransactionContext ctx, List<int> ids) =>
+  void deleteAllInTx(TransactionContext ctx, List<String> uuids) =>
       throw UnimplementedError('Subscription persistence not yet available on native platforms');
 
   @override

@@ -1,11 +1,12 @@
-/// # AdaptationStateRepository Base Class
+/// # AdaptationStateRepository
 ///
 /// ## What it does
-/// Abstract base for adaptation state repositories.
-/// Each component (STT, Intent, LLM, TTS) has its own repo.
+/// Repository for the single generic AdaptationState entity.
+/// Stores adaptation state for all components (STT, LLM, TTS, selectors, etc.)
+/// Each state has componentType field to identify which component it belongs to.
 ///
 /// ## Query Strategy: Fallback Chain
-/// getCurrent() implements:
+/// getForComponent() implements:
 /// 1. Check user-scoped state (if userId provided)
 /// 2. Fall back to global state
 /// 3. Create default if neither exists
@@ -14,8 +15,10 @@
 /// Uses optimistic locking with version numbers.
 /// updateWithVersion() only succeeds if version matches.
 
-abstract class AdaptationStateRepository<T> {
-  /// Get current adaptation state with fallback chain
+import 'adaptation_state.dart';
+
+abstract class AdaptationStateRepository {
+  /// Find or create adaptation state for a component.
   ///
   /// Strategy:
   /// 1. If userId provided, try to get user-scoped state
@@ -23,23 +26,58 @@ abstract class AdaptationStateRepository<T> {
   /// 3. Create and return default if neither exists
   ///
   /// Parameters:
-  /// - [userId] Optional: get user-scoped state
+  /// - [componentType] Which component (e.g., 'stt', 'llm', 'namespace_selector')
+  /// - [userId] Optional: get user-scoped state; if null, get global
   ///
-  /// Returns: Current state (global, user, or default)
-  Future<T> getCurrent({String? userId});
+  /// Returns: Current state (global, user-scoped, or default)
+  Future<AdaptationState> getForComponent(
+    String componentType, {
+    String? userId,
+  });
+
+  /// Get current adaptation state with optional component type.
+  ///
+  /// Convenience method: if componentType is null, uses global state.
+  /// Otherwise equivalent to getForComponent().
+  ///
+  /// Parameters:
+  /// - [componentType] Optional: which component. If null, uses global state
+  /// - [userId] Optional: user ID for user-scoped state
+  ///
+  /// Returns: Current state
+  Future<AdaptationState> getCurrent({
+    String? componentType,
+    String? userId,
+  });
+
 
   /// Get user-scoped state (doesn't fall back to global)
   ///
   /// Parameters:
+  /// - [componentType] Which component
   /// - [userId] Which user
   ///
   /// Returns: User state or null if doesn't exist
-  Future<T?> getUserState(String userId);
+  Future<AdaptationState?> getUserState(
+    String componentType,
+    String userId,
+  );
 
   /// Get global state (doesn't fall back to user)
   ///
+  /// Parameters:
+  /// - [componentType] Which component
+  ///
   /// Returns: Global state or null if doesn't exist
-  Future<T?> getGlobal();
+  Future<AdaptationState?> getGlobal(String componentType);
+
+  /// Find all states for a component (all users + global)
+  ///
+  /// Parameters:
+  /// - [componentType] Which component
+  ///
+  /// Returns: All states for that component (global + all users)
+  Future<List<AdaptationState>> findByComponent(String componentType);
 
   /// Save state with version check (optimistic locking)
   ///
@@ -51,7 +89,7 @@ abstract class AdaptationStateRepository<T> {
   ///
   /// Returns: true if update succeeded, false if version conflict
   /// Throws: Exception if state not found
-  Future<bool> updateWithVersion(T state);
+  Future<bool> updateWithVersion(AdaptationState state);
 
   /// Save or create state
   ///
@@ -61,14 +99,17 @@ abstract class AdaptationStateRepository<T> {
   /// - [state] State to save
   ///
   /// Returns: Saved state
-  Future<T> save(T state);
+  Future<AdaptationState> save(AdaptationState state);
 
-  /// Get state history (all versions)
+  /// Get state history for a component (all versions, all scopes)
   ///
   /// Useful for auditing how state evolved.
   ///
+  /// Parameters:
+  /// - [componentType] Which component
+  ///
   /// Returns: All versions ordered by version (ascending)
-  Future<List<T>> getHistory();
+  Future<List<AdaptationState>> getHistory(String componentType);
 
   /// Delete state
   ///
@@ -78,8 +119,17 @@ abstract class AdaptationStateRepository<T> {
   /// Returns: true if deleted, false if not found
   Future<bool> delete(String id);
 
-  /// Create default state
+  /// Create default state for component
+  ///
+  /// Parameters:
+  /// - [componentType] Which component
+  /// - [scope] Scope: 'global' or 'user'
+  /// - [userId] Optional: user ID if scope is 'user'
   ///
   /// Returns: New state with default tunable parameters
-  T createDefault();
+  AdaptationState createDefault(
+    String componentType, {
+    String scope = 'global',
+    String? userId,
+  });
 }

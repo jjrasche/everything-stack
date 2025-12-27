@@ -26,6 +26,7 @@ class InvocationOB {
 
   String correlationId;
   String componentType;
+  String? turnId;
   bool success;
   double confidence;
 
@@ -41,6 +42,7 @@ class InvocationOB {
     required this.componentType,
     required this.success,
     required this.confidence,
+    this.turnId,
     this.inputJson,
     this.outputJson,
     this.metadataJson,
@@ -55,6 +57,7 @@ class InvocationOB {
       componentType: invocation.componentType,
       success: invocation.success,
       confidence: invocation.confidence,
+      turnId: invocation.turnId,
       inputJson: invocation.inputJson,
       outputJson: invocation.outputJson,
       metadataJson: invocation.metadataJson,
@@ -73,6 +76,7 @@ class InvocationOB {
       componentType: componentType,
       success: success,
       confidence: confidence,
+      turnId: turnId,
     )
       ..id = id
       ..uuid = uuid

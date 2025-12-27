@@ -220,23 +220,24 @@ class MockNoteAdapter extends PersistenceAdapter<TestNote> {
   }
 
   @override
-  Future<TestNote?> findByUuid(String uuid) async {
+  Future<TestNote> getById(String uuid) async {
+    final note = _store[uuid];
+    if (note == null) throw Exception('Not found: $uuid');
+    return note;
+  }
+
+  @override
+  @deprecated
+  Future<TestNote> getByIntId(int id) async => throw UnimplementedError();
+
+  @override
+  Future<TestNote?> findById(String uuid) async {
     return _store[uuid];
   }
 
   @override
-  Future<bool> deleteByUuid(String uuid) async {
-    return _store.remove(uuid) != null;
-  }
-
-  @override
-  Future<TestNote> getById(int id) async => throw UnimplementedError();
-
-  @override
-  Future<TestNote> getByUuid(String uuid) async => throw UnimplementedError();
-
-  @override
-  Future<TestNote?> findById(int id) async => null;
+  @deprecated
+  Future<TestNote?> findByIntId(int id) async => null;
 
   @override
   Future<List<TestNote>> findAll() async => [];
@@ -250,10 +251,20 @@ class MockNoteAdapter extends PersistenceAdapter<TestNote> {
   }
 
   @override
-  Future<bool> delete(int id) async => false;
+  Future<bool> delete(String uuid) async {
+    return _store.remove(uuid) != null;
+  }
 
   @override
-  Future<void> deleteAll(List<int> ids) async {}
+  @deprecated
+  Future<bool> deleteByIntId(int id) async => false;
+
+  @override
+  Future<void> deleteAll(List<String> uuids) async {
+    for (final uuid in uuids) {
+      _store.remove(uuid);
+    }
+  }
 
   @override
   int get indexSize => 0;
@@ -282,9 +293,12 @@ class MockNoteAdapter extends PersistenceAdapter<TestNote> {
 
   Future<void> close() async {}
 
-  TestNote? findByIdInTx(dynamic ctx, int id) => null;
+  @override
+  TestNote? findByIdInTx(dynamic ctx, String uuid) => _store[uuid];
 
-  TestNote? findByUuidInTx(dynamic ctx, String uuid) => _store[uuid];
+  @override
+  @deprecated
+  TestNote? findByIntIdInTx(dynamic ctx, int id) => null;
 
   @override
   List<TestNote> findAllInTx(dynamic ctx) => _store.values.toList();
@@ -307,14 +321,19 @@ class MockNoteAdapter extends PersistenceAdapter<TestNote> {
   }
 
   @override
-  bool deleteInTx(dynamic ctx, int id) => false;
-
-  @override
-  bool deleteByUuidInTx(dynamic ctx, String uuid) =>
+  bool deleteInTx(dynamic ctx, String uuid) =>
       _store.remove(uuid) != null;
 
   @override
-  void deleteAllInTx(dynamic ctx, List<int> ids) {}
+  @deprecated
+  bool deleteByIntIdInTx(dynamic ctx, int id) => false;
+
+  @override
+  void deleteAllInTx(dynamic ctx, List<String> uuids) {
+    for (final uuid in uuids) {
+      _store.remove(uuid);
+    }
+  }
 }
 
 // ============ Repository Mock ============

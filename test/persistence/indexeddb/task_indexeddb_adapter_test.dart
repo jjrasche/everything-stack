@@ -59,7 +59,7 @@ void main() {
       await adapter.save(task);
 
       // Retrieve
-      final retrieved = await adapter.findByUuid(task.uuid);
+      final retrieved = await adapter.findById(task.uuid);
 
       // Verify
       expect(retrieved, isNotNull);
@@ -82,7 +82,7 @@ void main() {
       await adapter.save(task);
 
       // Retrieve and verify
-      final retrieved = await adapter.findByUuid(task.uuid);
+      final retrieved = await adapter.findById(task.uuid);
       expect(retrieved!.title, 'Updated title');
       expect(retrieved.priority, 'high');
       expect(retrieved.description, 'New description');
@@ -94,13 +94,13 @@ void main() {
       await adapter.save(task);
 
       // Verify exists
-      expect(await adapter.findByUuid(task.uuid), isNotNull);
+      expect(await adapter.findById(task.uuid), isNotNull);
 
       // Delete
-      await adapter.deleteByUuid(task.uuid);
+      await adapter.delete(task.uuid);
 
       // Verify removed
-      expect(await adapter.findByUuid(task.uuid), isNull);
+      expect(await adapter.findById(task.uuid), isNull);
     });
 
     test('findAll returns all tasks', () async {

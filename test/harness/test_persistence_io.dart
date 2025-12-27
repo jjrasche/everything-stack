@@ -18,29 +18,18 @@ Store? _store;
 bool detectWebPlatform() => false;
 
 /// Initialize ObjectBox test persistence in temporary directory.
-Future<PersistenceFactory> initializeTestPersistence() async {
+/// Note: PersistenceFactory was removed in Phase 1 refactoring
+Future<void> initializeTestPersistence() async {
   // Create temporary directory for ObjectBox store
   _testDir = await Directory.systemTemp.createTemp('objectbox_test_');
 
   // Open ObjectBox store
   _store = await openStore(directory: _testDir!.path);
 
-  // Create adapters
-  final mediaItemAdapter = MediaItemObjectBoxAdapter(_store!);
-  final channelAdapter = ChannelObjectBoxAdapter(_store!);
-  final edgeAdapter = EdgeObjectBoxAdapter(_store!);
-  final versionAdapter = EntityVersionObjectBoxAdapter(_store!);
-  final invocationAdapter = InvocationObjectBoxAdapter(_store!);
-
-  return PersistenceFactory(
-    noteAdapter: null,
-    mediaItemAdapter: mediaItemAdapter,
-    channelAdapter: channelAdapter,
-    edgeAdapter: edgeAdapter,
-    versionAdapter: versionAdapter,
-    invocationAdapter: invocationAdapter,
-    handle: _store,
-  );
+  // Adapters can be created directly from _store when needed:
+  // final mediaItemAdapter = MediaItemObjectBoxAdapter(_store!);
+  // final edgeAdapter = EdgeObjectBoxAdapter(_store!);
+  // final versionAdapter = EntityVersionObjectBoxAdapter(_store!);
 }
 
 /// Cleanup test persistence (close store, delete temp directory).

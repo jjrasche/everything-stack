@@ -11,15 +11,14 @@ import 'test_persistence_stub.dart'
     if (dart.library.html) 'test_persistence_web.dart' as persistence;
 
 /// Test context containing all initialized services and repositories.
+/// Note: PersistenceFactory was removed in Phase 1 refactoring
 class TestContext {
-  final PersistenceFactory persistence;
   final EdgeRepository edgeRepo;
   final VersionRepository versionRepo;
   final MockEmbeddingService embeddingService;
   final MockBlobStore blobStore;
 
   TestContext({
-    required this.persistence,
     required this.edgeRepo,
     required this.versionRepo,
     required this.embeddingService,
@@ -28,7 +27,6 @@ class TestContext {
 
   /// Close all resources
   Future<void> dispose() async {
-    await persistence.close();
     blobStore.dispose();
   }
 }
@@ -50,26 +48,18 @@ class TestContext {
 /// });
 /// ```
 Future<TestContext> initTestEnvironment() async {
-  // Initialize platform-specific persistence
-  final persistenceFactory = await persistence.initializeTestPersistence();
+  // NOTE: PersistenceFactory was deleted in Phase 1 refactoring
+  // Test infrastructure needs to be updated to use platform-specific adapters directly
+  // For now, this is a stub implementation
 
   // Initialize services
   final embeddingService = MockEmbeddingService();
   final blobStore = MockBlobStore();
   await blobStore.initialize();
 
-  // Initialize repositories with adapters from factory (cast to correct types)
-  final versionRepo =
-      VersionRepository(adapter: persistenceFactory.versionAdapter as dynamic);
-  final edgeRepo =
-      EdgeRepository(adapter: persistenceFactory.edgeAdapter as dynamic);
-
-  return TestContext(
-    persistence: persistenceFactory,
-    edgeRepo: edgeRepo,
-    versionRepo: versionRepo,
-    embeddingService: embeddingService,
-    blobStore: blobStore,
+  throw UnimplementedError(
+    'Test environment initialization requires platform-specific adapter setup. '
+    'Use MockNoteAdapter or other test doubles directly in tests.',
   );
 }
 

@@ -102,7 +102,7 @@ class GenericHandlerFactory<T extends BaseEntity>
       handlerList.add(
         VersionableHandler<T>(
           versionRepository: versionRepository,
-          findByUuidSync: (ctx, uuid) => adapter.findByUuidInTx(ctx, uuid),
+          findByUuidSync: (ctx, uuid) => adapter.findByIdInTx(ctx, uuid),
           getLatestVersionNumberSync: (ctx, entityUuid) =>
               versionRepository.getLatestVersionNumberInTx(ctx, entityUuid) ??
               0,

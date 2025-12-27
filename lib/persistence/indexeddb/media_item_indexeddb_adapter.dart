@@ -171,7 +171,7 @@ class MediaItemIndexedDBAdapter extends BaseIndexedDBAdapter<MediaItem> {
       final similarity = 1.0 - resultItem.distance;
       if (similarity >= minSimilarity) {
         // resultItem.item is the UUID string
-        final item = await findByUuid(resultItem.item);
+        final item = await findById(resultItem.item);
         if (item != null) {
           items.add(item);
         }
@@ -287,7 +287,7 @@ class MediaItemIndexedDBAdapter extends BaseIndexedDBAdapter<MediaItem> {
   }
 
   @override
-  Future<bool> deleteByUuid(String uuid) async {
+  Future<bool> delete(String uuid) async {
     // Delete from HNSW index first
     if (_hnswIndex != null) {
       // delete() takes the value type (String = UUID), not LocalHnswItem
@@ -296,14 +296,14 @@ class MediaItemIndexedDBAdapter extends BaseIndexedDBAdapter<MediaItem> {
     }
 
     // Delete entity
-    return await super.deleteByUuid(uuid);
+    return await super.delete(uuid);
   }
 
   @override
-  Future<void> deleteAll(List<int> ids) async {
+  Future<void> deleteAll(List<String> uuids) async {
     // Delete from HNSW index
     if (_hnswIndex != null) {
-      final entities = await Future.wait(ids.map((id) => findById(id)));
+      final entities = await Future.wait(uuids.map((uuid) => findById(uuid)));
       for (final entity in entities) {
         if (entity != null) {
           // delete() takes the value type (String = UUID)
@@ -314,7 +314,7 @@ class MediaItemIndexedDBAdapter extends BaseIndexedDBAdapter<MediaItem> {
     }
 
     // Delete entities
-    await super.deleteAll(ids);
+    await super.deleteAll(uuids);
   }
 
   /// Mark index as dirty and serialize if threshold reached.

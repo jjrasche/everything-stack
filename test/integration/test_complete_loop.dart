@@ -192,7 +192,10 @@ void main() {
 
       // Create Turn
       final llmInvocationId1 = const Uuid().v4();
-      final turn1 = Turn(correlationId: correlationId1);
+      final turn1 = Turn(
+        correlationId: correlationId1,
+        conversationId: 'conv_001',
+      );
       turn1.llmInvocationId = llmInvocationId1;
       await turnRepo.save(turn1);
       print('✓ Turn 1 created: ${turn1.uuid}');
@@ -229,7 +232,10 @@ void main() {
       print('📌 CorrelationId: $correlationId2');
 
       final llmInvocationId2 = const Uuid().v4();
-      final turn2 = Turn(correlationId: correlationId2);
+      final turn2 = Turn(
+        correlationId: correlationId2,
+        conversationId: 'conv_001',
+      );
       turn2.llmInvocationId = llmInvocationId2;
       await turnRepo.save(turn2);
       print('✓ Turn 2 created: ${turn2.uuid}');
@@ -294,7 +300,10 @@ void main() {
       print('\n🏗️ Running sanity check on loop structure...');
 
       // Can we create and save turns?
-      final turn = Turn(correlationId: 'test_123');
+      final turn = Turn(
+        correlationId: 'test_123',
+        conversationId: 'conv_test',
+      );
       await turnRepo.save(turn);
       expect(turn.uuid, isNotEmpty);
       print('✓ Turns can be created and saved');

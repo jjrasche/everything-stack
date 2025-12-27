@@ -31,21 +31,7 @@ class TimerObjectBoxAdapter implements PersistenceAdapter<Timer> {
   // ============ PersistenceAdapter Implementation ============
 
   @override
-  Future<Timer?> findById(int id) async {
-    return _box.get(id);
-  }
-
-  @override
-  Future<Timer> getById(int id) async {
-    final entity = await findById(id);
-    if (entity == null) {
-      throw Exception('Timer not found with id: $id');
-    }
-    return entity;
-  }
-
-  @override
-  Future<Timer?> findByUuid(String uuid) async {
+  Future<Timer?> findById(String uuid) async {
     final query = _box.query(Timer_.uuid.equals(uuid)).build();
     try {
       return query.findFirst();
@@ -55,10 +41,26 @@ class TimerObjectBoxAdapter implements PersistenceAdapter<Timer> {
   }
 
   @override
-  Future<Timer> getByUuid(String uuid) async {
-    final entity = await findByUuid(uuid);
+  Future<Timer> getById(String uuid) async {
+    final entity = await findById(uuid);
     if (entity == null) {
       throw Exception('Timer not found with uuid: $uuid');
+    }
+    return entity;
+  }
+
+  @override
+  @deprecated
+  Future<Timer?> findByIntId(int id) async {
+    return _box.get(id);
+  }
+
+  @override
+  @deprecated
+  Future<Timer> getByIntId(int id) async {
+    final entity = await findByIntId(id);
+    if (entity == null) {
+      throw Exception('Timer not found with id: $id');
     }
     return entity;
   }
@@ -87,13 +89,8 @@ class TimerObjectBoxAdapter implements PersistenceAdapter<Timer> {
   }
 
   @override
-  Future<bool> delete(int id) async {
-    return _box.remove(id);
-  }
-
-  @override
-  Future<bool> deleteByUuid(String uuid) async {
-    final entity = await findByUuid(uuid);
+  Future<bool> delete(String uuid) async {
+    final entity = await findById(uuid);
     if (entity != null) {
       return _box.remove(entity.id);
     }
@@ -101,8 +98,19 @@ class TimerObjectBoxAdapter implements PersistenceAdapter<Timer> {
   }
 
   @override
-  Future<void> deleteAll(List<int> ids) async {
-    _box.removeMany(ids);
+  @deprecated
+  Future<bool> deleteByIntId(int id) async {
+    return _box.remove(id);
+  }
+
+  @override
+  Future<void> deleteAll(List<String> uuids) async {
+    for (final uuid in uuids) {
+      final entity = await findById(uuid);
+      if (entity != null) {
+        _box.remove(entity.id);
+      }
+    }
   }
 
   @override
@@ -132,15 +140,8 @@ class TimerObjectBoxAdapter implements PersistenceAdapter<Timer> {
   }
 
   @override
-  bool deleteInTx(TransactionContext ctx, int id) {
-    final obCtx = ctx as ObjectBoxTxContext;
-    final box = obCtx.store.box<Timer>();
-    return box.remove(id);
-  }
-
-  @override
-  bool deleteByUuidInTx(TransactionContext ctx, String uuid) {
-    final entity = findByUuidInTx(ctx, uuid);
+  bool deleteInTx(TransactionContext ctx, String uuid) {
+    final entity = findByIdInTx(ctx, uuid);
     if (entity != null) {
       final obCtx = ctx as ObjectBoxTxContext;
       final box = obCtx.store.box<Timer>();
@@ -150,14 +151,27 @@ class TimerObjectBoxAdapter implements PersistenceAdapter<Timer> {
   }
 
   @override
-  void deleteAllInTx(TransactionContext ctx, List<int> ids) {
+  @deprecated
+  bool deleteByIntIdInTx(TransactionContext ctx, int id) {
     final obCtx = ctx as ObjectBoxTxContext;
     final box = obCtx.store.box<Timer>();
-    box.removeMany(ids);
+    return box.remove(id);
   }
 
   @override
-  Timer? findByUuidInTx(TransactionContext ctx, String uuid) {
+  void deleteAllInTx(TransactionContext ctx, List<String> uuids) {
+    for (final uuid in uuids) {
+      final entity = findByIdInTx(ctx, uuid);
+      if (entity != null) {
+        final obCtx = ctx as ObjectBoxTxContext;
+        final box = obCtx.store.box<Timer>();
+        box.remove(entity.id);
+      }
+    }
+  }
+
+  @override
+  Timer? findByIdInTx(TransactionContext ctx, String uuid) {
     final obCtx = ctx as ObjectBoxTxContext;
     final box = obCtx.store.box<Timer>();
     final query = box.query(Timer_.uuid.equals(uuid)).build();
@@ -169,7 +183,8 @@ class TimerObjectBoxAdapter implements PersistenceAdapter<Timer> {
   }
 
   @override
-  Timer? findByIdInTx(TransactionContext ctx, int id) {
+  @deprecated
+  Timer? findByIntIdInTx(TransactionContext ctx, int id) {
     final obCtx = ctx as ObjectBoxTxContext;
     final box = obCtx.store.box<Timer>();
     return box.get(id);

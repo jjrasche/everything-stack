@@ -62,7 +62,7 @@ void main() {
       await adapter.save(timer);
 
       // Retrieve
-      final retrieved = await adapter.findByUuid(timer.uuid);
+      final retrieved = await adapter.findById(timer.uuid);
 
       // Verify
       expect(retrieved, isNotNull);
@@ -89,7 +89,7 @@ void main() {
       await adapter.save(timer);
 
       // Retrieve and verify
-      final retrieved = await adapter.findByUuid(timer.uuid);
+      final retrieved = await adapter.findById(timer.uuid);
       expect(retrieved!.label, 'Updated label');
       expect(retrieved.fired, true);
       expect(retrieved.firedAt, isNotNull);
@@ -107,13 +107,13 @@ void main() {
       await adapter.save(timer);
 
       // Verify exists
-      expect(await adapter.findByUuid(timer.uuid), isNotNull);
+      expect(await adapter.findById(timer.uuid), isNotNull);
 
       // Delete
-      await adapter.deleteByUuid(timer.uuid);
+      await adapter.delete(timer.uuid);
 
       // Verify removed
-      expect(await adapter.findByUuid(timer.uuid), isNull);
+      expect(await adapter.findById(timer.uuid), isNull);
     });
 
     test('findAll returns all timers', () async {
@@ -357,7 +357,7 @@ void main() {
       await Future.delayed(Duration(milliseconds: 2200));
 
       // Now expired but not fired
-      final retrieved = await adapter.findByUuid(timer.uuid);
+      final retrieved = await adapter.findById(timer.uuid);
       expect(retrieved!.isActive, false);
       expect(retrieved.hasExpired, true);
       expect(retrieved.fired, false);
@@ -367,7 +367,7 @@ void main() {
       await adapter.save(retrieved);
 
       // Now fired
-      final firedTimer = await adapter.findByUuid(timer.uuid);
+      final firedTimer = await adapter.findById(timer.uuid);
       expect(firedTimer!.fired, true);
       expect(firedTimer.firedAt, isNotNull);
     });
@@ -387,7 +387,7 @@ void main() {
       await adapter.save(timer);
 
       // Verify cancelled state
-      final retrieved = await adapter.findByUuid(timer.uuid);
+      final retrieved = await adapter.findById(timer.uuid);
       expect(retrieved!.fired, true);
       expect(retrieved.firedAt, isNull);
       expect(retrieved.wasCancelled, true);

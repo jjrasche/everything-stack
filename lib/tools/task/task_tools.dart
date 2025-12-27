@@ -52,6 +52,23 @@ Future<Map<String, dynamic>> taskComplete(
   return task.toJson();
 }
 
+/// Helper: check if date is today
+bool _isToday(DateTime? date) {
+  if (date == null) return false;
+  final now = DateTime.now();
+  return date.year == now.year &&
+      date.month == now.month &&
+      date.day == now.day;
+}
+
+/// Helper: check if date is within next 7 days
+bool _isDueSoon(DateTime? date) {
+  if (date == null) return false;
+  final now = DateTime.now();
+  final soon = now.add(const Duration(days: 7));
+  return date.isAfter(now) && date.isBefore(soon);
+}
+
 /// List tasks with optional filter
 Future<Map<String, dynamic>> taskList(
   Map<String, dynamic> params,
@@ -59,14 +76,23 @@ Future<Map<String, dynamic>> taskList(
 ) async {
   final filter = params['filter'] as String? ?? 'all';
 
+  // TODO: Implement specialized query methods (findIncomplete, findCompleted, etc.)
+  // For now, return all tasks regardless of filter
+  final allTasks = await repo.findAll();
   final tasks = switch (filter) {
-    'incomplete' => await repo.findIncomplete(),
-    'completed' => await repo.findCompleted(),
-    'overdue' => await repo.findOverdue(),
-    'today' => await repo.findDueToday(),
-    'soon' => await repo.findDueSoon(),
-    'high_priority' => await repo.findHighPriority(),
-    _ => await repo.findAll(),
+    'incomplete' => allTasks.where((t) => !t.completed).toList(),
+    'completed' => allTasks.where((t) => t.completed).toList(),
+    'overdue' => allTasks
+        .where((t) => !t.completed && (t.dueDate?.isBefore(DateTime.now()) ?? false))
+        .toList(),
+    'today' => allTasks
+        .where((t) => !t.completed && _isToday(t.dueDate))
+        .toList(),
+    'soon' => allTasks
+        .where((t) => !t.completed && _isDueSoon(t.dueDate))
+        .toList(),
+    'high_priority' => allTasks.where((t) => !t.completed && t.priority == 'high').toList(),
+    _ => allTasks,
   };
 
   return {

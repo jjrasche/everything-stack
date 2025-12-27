@@ -3,6 +3,7 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:get_it/get_it.dart';
 import 'package:everything_stack_template/services/coordinator.dart';
 import 'package:everything_stack_template/services/tts_service.dart';
+import 'package:everything_stack_template/services/embedding_service.dart';
 
 /// Voice Assistant Screen
 ///
@@ -33,7 +34,17 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   void initState() {
     super.initState();
     _speechToText = stt.SpeechToText();
-    _coordinator = GetIt.instance<Coordinator>();
+
+    // Get Coordinator from GetIt - required service
+    debugPrint('🔍 [initState] Getting Coordinator from GetIt...');
+    try {
+      _coordinator = GetIt.instance<Coordinator>();
+      debugPrint('✅ [initState] Coordinator successfully retrieved');
+    } catch (e) {
+      debugPrint('❌ [initState] FAILED TO GET COORDINATOR: $e');
+      debugPrint('This error means setupServiceLocator() was not called or failed in main()');
+      rethrow;
+    }
     _ttsService = TTSService.instance;
     _initializeSpeechToText();
   }
@@ -43,18 +54,18 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
     try {
       final available = await _speechToText.initialize(
         onError: (error) {
-          print('STT Error: $error');
+          debugPrint('STT Error: $error');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Speech recognition error: $error')),
           );
         },
         onStatus: (status) {
-          print('STT Status: $status');
+          debugPrint('STT Status: $status');
         },
       );
 
       if (!available) {
-        print('Speech recognition not available');
+        debugPrint('Speech recognition not available');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -64,14 +75,14 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
         }
       }
     } catch (e) {
-      print('Failed to initialize speech recognition: $e');
+      debugPrint('Failed to initialize speech recognition: $e');
     }
   }
 
   /// Start listening for voice input
   Future<void> _startListening() async {
     if (!_speechToText.isAvailable) {
-      print('Speech recognition not available');
+      debugPrint('Speech recognition not available');
       return;
     }
 
@@ -98,7 +109,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
         localeId: 'en_US',
       );
     } catch (e) {
-      print('Error starting speech recognition: $e');
+      debugPrint('Error starting speech recognition: $e');
       setState(() => _isListening = false);
     }
   }
@@ -118,21 +129,21 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
 
   /// Process recognized text through Coordinator
   Future<void> _processRecognizedText(String text) async {
-    print('\n=== VOICE ASSISTANT: _processRecognizedText START ===');
-    print('📥 Input text: "$text"');
+    debugPrint('\n=== VOICE ASSISTANT: _processRecognizedText START ===');
+    debugPrint('📥 Input text: "$text"');
 
     if (text.isEmpty) {
-      print('❌ Text is empty, returning');
+      debugPrint('❌ Text is empty, returning');
       return;
     }
 
     setState(() => _isProcessing = true);
-    print('🔄 Set _isProcessing = true');
+    debugPrint('🔄 Set _isProcessing = true');
 
     try {
       final correlationId = '${DateTime.now().millisecondsSinceEpoch}';
-      print('🔗 Correlation ID: $correlationId');
-      print('📞 Calling coordinator.orchestrate()...');
+      debugPrint('🔗 Correlation ID: $correlationId');
+      debugPrint('📞 Calling coordinator.orchestrate()...');
 
       final result = await _coordinator.orchestrate(
         correlationId: correlationId,
@@ -143,38 +154,38 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
         },
       );
 
-      print('✅ Coordinator returned!');
-      print('📊 Result: success=${result.success}, finalResponse="${result.finalResponse}"');
-      print('⏱️ Latency: ${result.latencyMs}ms');
+      debugPrint('✅ Coordinator returned!');
+      debugPrint('📊 Result: success=${result.success}, finalResponse="${result.finalResponse}"');
+      debugPrint('⏱️ Latency: ${result.latencyMs}ms');
 
       if (!result.success) {
-        print('❌ Coordinator failed: ${result.errorMessage}');
+        debugPrint('❌ Coordinator failed: ${result.errorMessage}');
       }
 
       if (mounted) {
-        print('📱 Widget mounted, updating UI...');
+        debugPrint('📱 Widget mounted, updating UI...');
         setState(() {
           _responseText = result.finalResponse;
           _isProcessing = false;
         });
-        print('💬 Updated response text: "${result.finalResponse}"');
+        debugPrint('💬 Updated response text: "${result.finalResponse}"');
 
         // Speak the response
         if (result.finalResponse.isNotEmpty) {
-          print('🔊 Calling _speakResponse()...');
+          debugPrint('🔊 Calling _speakResponse()...');
           await _speakResponse(result.finalResponse);
-          print('✅ TTS complete');
+          debugPrint('✅ TTS complete');
         } else {
-          print('⚠️ No response text to speak');
+          debugPrint('⚠️ No response text to speak');
         }
       } else {
-        print('⚠️ Widget not mounted, skipping UI update');
+        debugPrint('⚠️ Widget not mounted, skipping UI update');
       }
 
-      print('=== VOICE ASSISTANT: _processRecognizedText END (success) ===\n');
+      debugPrint('=== VOICE ASSISTANT: _processRecognizedText END (success) ===\n');
     } catch (e) {
-      print('❌ EXCEPTION in _processRecognizedText: $e');
-      print('Stack trace: ${StackTrace.current}');
+      debugPrint('❌ EXCEPTION in _processRecognizedText: $e');
+      debugPrint('Stack trace: ${StackTrace.current}');
 
       if (mounted) {
         setState(() => _isProcessing = false);
@@ -182,7 +193,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
           SnackBar(content: Text('Error: $e')),
         );
       }
-      print('=== VOICE ASSISTANT: _processRecognizedText END (error) ===\n');
+      debugPrint('=== VOICE ASSISTANT: _processRecognizedText END (error) ===\n');
     }
   }
 
@@ -197,7 +208,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
         // Stream completes when speech is done
       }
     } catch (e) {
-      print('TTS error: $e');
+      debugPrint('TTS error: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('TTS error: $e')),

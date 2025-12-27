@@ -194,22 +194,7 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity, OB>
   // ============ CRUD (with automatic wrapper conversion) ============
 
   @override
-  Future<T?> findById(int id) async {
-    final ob = _box.get(id);
-    return ob != null ? fromOB(ob) : null;
-  }
-
-  @override
-  Future<T> getById(int id) async {
-    final entity = await findById(id);
-    if (entity == null) {
-      throw EntityNotFoundException(T.toString(), id: id);
-    }
-    return entity;
-  }
-
-  @override
-  Future<T?> findByUuid(String uuid) async {
+  Future<T?> findById(String uuid) async {
     final query = _box.query(uuidEqualsCondition(uuid)).build();
     return _executeQuery(query, (q) {
       final ob = q.findFirst();
@@ -218,10 +203,27 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity, OB>
   }
 
   @override
-  Future<T> getByUuid(String uuid) async {
-    final entity = await findByUuid(uuid);
+  Future<T> getById(String uuid) async {
+    final entity = await findById(uuid);
     if (entity == null) {
       throw EntityNotFoundException(T.toString(), uuid: uuid);
+    }
+    return entity;
+  }
+
+  @override
+  @deprecated
+  Future<T?> findByIntId(int id) async {
+    final ob = _box.get(id);
+    return ob != null ? fromOB(ob) : null;
+  }
+
+  @override
+  @deprecated
+  Future<T> getByIntId(int id) async {
+    final entity = await findByIntId(id);
+    if (entity == null) {
+      throw EntityNotFoundException(T.toString(), id: id);
     }
     return entity;
   }
@@ -264,20 +266,30 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity, OB>
   }
 
   @override
-  Future<bool> delete(int id) async {
-    return _box.remove(id);
-  }
-
-  @override
-  Future<bool> deleteByUuid(String uuid) async {
-    final entity = await findByUuid(uuid);
+  Future<bool> delete(String uuid) async {
+    final entity = await findById(uuid);
     if (entity == null) return false;
     return _box.remove(entity.id);
   }
 
   @override
-  Future<void> deleteAll(List<int> ids) async {
-    _box.removeMany(ids);
+  @deprecated
+  Future<bool> deleteByIntId(int id) async {
+    return _box.remove(id);
+  }
+
+  @override
+  Future<void> deleteAll(List<String> uuids) async {
+    final entities = await Future.wait(uuids.map((uuid) => findById(uuid)));
+    final ids = <int>[];
+    for (final entity in entities) {
+      if (entity != null) {
+        ids.add(entity.id);
+      }
+    }
+    if (ids.isNotEmpty) {
+      _box.removeMany(ids);
+    }
   }
 
   // ============ Queries ============
@@ -321,20 +333,23 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity, OB>
   // ============ Transaction Operations ============
 
   @override
-  T? findByIdInTx(TransactionContext ctx, int id) {
-    final box = _getBox(ctx);
-    final ob = box.get(id);
-    return ob != null ? fromOB(ob) : null;
+  T? findByIdInTx(TransactionContext ctx, String uuid) {
+    return _executeWithExceptionHandling(() {
+      final box = _getBox(ctx);
+      final query = box.query(uuidEqualsCondition(uuid)).build();
+      return _executeQuery(query, (q) {
+        final ob = q.findFirst();
+        return ob != null ? fromOB(ob) : null;
+      });
+    });
   }
 
   @override
-  T? findByUuidInTx(TransactionContext ctx, String uuid) {
+  @deprecated
+  T? findByIntIdInTx(TransactionContext ctx, int id) {
     final box = _getBox(ctx);
-    final query = box.query(uuidEqualsCondition(uuid)).build();
-    return _executeQuery(query, (q) {
-      final ob = q.findFirst();
-      return ob != null ? fromOB(ob) : null;
-    });
+    final ob = box.get(id);
+    return ob != null ? fromOB(ob) : null;
   }
 
   @override
@@ -378,15 +393,7 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity, OB>
   }
 
   @override
-  bool deleteInTx(TransactionContext ctx, int id) {
-    return _executeWithExceptionHandling(() {
-      final box = _getBox(ctx);
-      return box.remove(id);
-    });
-  }
-
-  @override
-  bool deleteByUuidInTx(TransactionContext ctx, String uuid) {
+  bool deleteInTx(TransactionContext ctx, String uuid) {
     return _executeWithExceptionHandling(() {
       final box = _getBox(ctx);
       final query = box.query(uuidEqualsCondition(uuid)).build();
@@ -401,10 +408,29 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity, OB>
   }
 
   @override
-  void deleteAllInTx(TransactionContext ctx, List<int> ids) {
+  @deprecated
+  bool deleteByIntIdInTx(TransactionContext ctx, int id) {
+    return _executeWithExceptionHandling(() {
+      final box = _getBox(ctx);
+      return box.remove(id);
+    });
+  }
+
+  @override
+  void deleteAllInTx(TransactionContext ctx, List<String> uuids) {
     _executeWithExceptionHandling(() {
       final box = _getBox(ctx);
-      box.removeMany(ids);
+      for (final uuid in uuids) {
+        final query = box.query(uuidEqualsCondition(uuid)).build();
+        _executeQuery(query, (q) {
+          final ob = q.findFirst();
+          if (ob != null) {
+            final entity = fromOB(ob);
+            box.remove(entity.id);
+          }
+          return null;
+        });
+      }
     });
   }
 

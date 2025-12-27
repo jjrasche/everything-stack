@@ -35,6 +35,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 
+import 'package:objectbox/objectbox.dart';
+import 'package:idb_shim/idb.dart';
+
 import 'services/blob_store.dart';
 import 'services/file_service.dart';
 import 'services/sync_service.dart';
@@ -65,7 +68,17 @@ import 'core/invocation_repository.dart';
 import 'core/adaptation_state_repository.dart';
 import 'core/feedback_repository.dart';
 import 'core/turn_repository.dart';
-import 'domain/adaptation_state_generic.dart';
+import 'core/adaptation_state.dart';
+import 'persistence/objectbox/invocation_objectbox_adapter.dart';
+import 'persistence/objectbox/adaptation_state_objectbox_adapter.dart';
+import 'persistence/objectbox/feedback_objectbox_adapter.dart';
+import 'persistence/objectbox/turn_objectbox_adapter.dart';
+import 'persistence/indexeddb/invocation_indexeddb_adapter.dart';
+import 'persistence/indexeddb/adaptation_state_indexeddb_adapter.dart';
+import 'persistence/indexeddb/feedback_indexeddb_adapter.dart';
+import 'persistence/indexeddb/turn_indexeddb_adapter.dart';
+import 'bootstrap/objectbox_store_factory.dart';
+import 'bootstrap/indexeddb_factory.dart';
 
 // Conditional import for platform-specific BlobStore
 import 'bootstrap/blob_store_factory_stub.dart'
@@ -234,24 +247,9 @@ class EverythingStackConfig {
 ///   ),
 /// );
 /// ```
-/// Global persistence factory instance.
-/// Initialized by initializeEverythingStack() and used by repositories.
-PersistenceFactory? _persistenceFactory;
-
 /// Global embedding queue service instance.
 /// Initialized by initializeEverythingStack() and used by NoteRepository.
 EmbeddingQueueService? _embeddingQueueService;
-
-/// Get the initialized persistence factory.
-/// Throws if initializeEverythingStack() hasn't been called.
-PersistenceFactory get persistenceFactory {
-  if (_persistenceFactory == null) {
-    throw StateError(
-      'PersistenceFactory not initialized. Call initializeEverythingStack() first.',
-    );
-  }
-  return _persistenceFactory!;
-}
 
 /// Get the initialized embedding queue service.
 /// Returns null if not initialized (embeddings disabled).
@@ -285,14 +283,14 @@ Future<void> _initializeService<T>({
 
     if (shouldInitialize(service)) {
       await service.initialize();
-      print('✅ ${serviceName.toUpperCase()}: ${getType(service)}');
+      debugPrint('✅ ${serviceName.toUpperCase()}: ${getType(service)}');
     } else {
-      print('ℹ️ ${serviceName.toUpperCase()}: disabled');
+      debugPrint('ℹ️ ${serviceName.toUpperCase()}: disabled');
     }
 
     ServiceRegistry.register<T>(serviceName, service);
   } catch (e) {
-    print('⚠️ $serviceName init failed: $e');
+    debugPrint('⚠️ $serviceName init failed: $e');
   }
 }
 
@@ -320,15 +318,67 @@ Future<void> initializeEverythingStack({
   }
 
   if (isIntegrationTest) {
-    print('🧪 [INTEGRATION TEST MODE] Using mock external services');
+    debugPrint('🧪 [INTEGRATION TEST MODE] Using mock external services');
   }
 
   // 0. Create timeout-wrapped HTTP client (Layer 1 defense)
-  final timeoutClient = TimeoutHttpClient(http.Client());
-  final wrappedHttpClient = _wrapHttpClientWithTimeout(timeoutClient);
+  // Note: Currently unused. Will be used for embedding service HTTP client in future phases.
+  // final timeoutClient = TimeoutHttpClient(http.Client());
+  // final wrappedHttpClient = _wrapHttpClientWithTimeout(timeoutClient);
 
   // 1. Initialize Persistence (platform-specific: ObjectBox or IndexedDB)
-  _persistenceFactory = await initializePersistence();
+  if (kIsWeb) {
+    // Web: IndexedDB
+    debugPrint('💾 Initializing IndexedDB for web platform...');
+    final db = await openIndexedDB();
+
+    // Create and register adapters
+    final invocationAdapter = InvocationIndexedDBAdapter(db);
+    final adaptationStateAdapter = AdaptationStateIndexedDBAdapter(db);
+    final feedbackAdapter = FeedbackIndexedDBAdapter(db);
+    final turnAdapter = TurnIndexedDBAdapter(db);
+
+    // Register repositories in GetIt
+    getIt.registerSingleton<InvocationRepository<domain_invocation.Invocation>>(
+      invocationAdapter,
+    );
+    getIt.registerSingleton<AdaptationStateRepository>(
+      adaptationStateAdapter,
+    );
+    getIt.registerSingleton<FeedbackRepository>(
+      feedbackAdapter,
+    );
+    getIt.registerSingleton<TurnRepository>(
+      turnAdapter,
+    );
+  } else {
+    // Native: ObjectBox
+    debugPrint('💾 Initializing ObjectBox for native platform...');
+    final store = await openObjectBoxStore();
+
+    // Register store for direct access (TaskRepository needs it)
+    getIt.registerSingleton<Store>(store, instanceName: 'objectBoxStore');
+
+    // Create and register adapters
+    final invocationAdapter = InvocationObjectBoxAdapter(store);
+    final adaptationStateAdapter = AdaptationStateObjectBoxAdapter(store);
+    final feedbackAdapter = FeedbackObjectBoxAdapter(store);
+    final turnAdapter = TurnObjectBoxAdapter(store);
+
+    // Register repositories in GetIt
+    getIt.registerSingleton<InvocationRepository<domain_invocation.Invocation>>(
+      invocationAdapter,
+    );
+    getIt.registerSingleton<AdaptationStateRepository>(
+      adaptationStateAdapter,
+    );
+    getIt.registerSingleton<FeedbackRepository>(
+      feedbackAdapter,
+    );
+    getIt.registerSingleton<TurnRepository>(
+      turnAdapter,
+    );
+  }
 
   // 2. Initialize BlobStore (platform-specific)
   final blobStore = createPlatformBlobStore();
@@ -363,9 +413,9 @@ Future<void> initializeEverythingStack({
   // Native platforms: Uses external APIs (Google Cloud TTS, Deepgram STT)
 
   // 9. Register invocation repository in service registry (shared by all services)
-  final invocationRepo = InvocationRepositoryImpl(
-    adapter: _persistenceFactory!.invocationAdapter as dynamic,
-  );
+  // Note: Repository is already registered as singleton in GetIt above.
+  // This registers it in the old ServiceRegistry for backward compatibility.
+  final invocationRepo = getIt<InvocationRepository<domain_invocation.Invocation>>();
   ServiceRegistry.register<InvocationRepository<domain_invocation.Invocation>>(
     'invocation_repo',
     invocationRepo,
@@ -373,7 +423,7 @@ Future<void> initializeEverythingStack({
 
   // 10. Initialize TTS Service
   if (isIntegrationTest) {
-    print('🔊 [TEST] Using mock TTS service');
+    debugPrint('🔊 [TEST] Using mock TTS service');
     TTSService.instance = MockTTSServiceForTests();
   } else {
     final ttsConfig = ServiceConfig(
@@ -391,7 +441,7 @@ Future<void> initializeEverythingStack({
 
   // 11. Initialize LLM Service
   if (isIntegrationTest) {
-    print('🤖 [TEST] Using mock LLM service');
+    debugPrint('🤖 [TEST] Using mock LLM service');
     LLMService.instance = MockLLMServiceForTests();
   } else {
     final llmConfig = ServiceConfig(
@@ -409,7 +459,7 @@ Future<void> initializeEverythingStack({
 
   // 12. Initialize Embedding Service
   if (isIntegrationTest) {
-    print('📊 [TEST] Using mock embedding service');
+    debugPrint('📊 [TEST] Using mock embedding service');
     EmbeddingService.instance = MockEmbeddingServiceForTests();
   } else {
     final embeddingConfig = ServiceConfig(
@@ -437,7 +487,7 @@ Future<void> initializeEverythingStack({
   //
   // See: lib/providers/ for Riverpod provider setup with repositories
   // See: lib/main.dart for ContextManager initialization
-  print('\n✅ Bootstrap complete: infrastructure services initialized');
+  debugPrint('\n✅ Bootstrap complete: infrastructure services initialized');
 }
 
 /// Wrap TimeoutHttpClient to match HttpClientFunction signature.
@@ -492,7 +542,11 @@ Future<void> disposeEverythingStack() async {
   LLMService.instance.dispose();
 
   // Dispose other services
-  await _persistenceFactory?.close();
+  // Note: ObjectBox Store can be safely disposed, IndexedDB cleanup is handled by browser
+  if (!kIsWeb) {
+    final store = getIt<Store>();
+    store.close();  // Store.close() is synchronous, no await needed
+  }
   FileService.instance.dispose();
   BlobStore.instance.dispose();
   ConnectivityService.instance.dispose();
@@ -521,131 +575,126 @@ final getIt = GetIt.instance;
 /// }
 /// ```
 void setupServiceLocator() {
-  // ========== External APIs (Abstraction-Respecting) ==========
+  print('[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION');
+  debugPrint('🚀 [setupServiceLocator] Starting service registration...');
 
-  // EmbeddingService - loaded from config, respects abstraction
-  getIt.registerSingleton<EmbeddingService>(
-    EmbeddingService.instance,  // Already initialized by bootstrap
-  );
+  try {
+    // ========== External APIs (Abstraction-Respecting) ==========
 
-  // LLMService - loaded from config, respects abstraction
-  getIt.registerSingleton<LLMService>(
-    LLMService.instance,  // Already initialized by bootstrap
-  );
+    // EmbeddingService - loaded from config, respects abstraction
+    getIt.registerSingleton<EmbeddingService>(
+      EmbeddingService.instance,  // Already initialized by bootstrap
+    );
+    debugPrint('✅ [setupServiceLocator] EmbeddingService registered');
 
-  // ========== Domain Repositories (Real, not in-memory for app) ==========
+    // LLMService - loaded from config, respects abstraction
+    getIt.registerSingleton<LLMService>(
+      LLMService.instance,  // Already initialized by bootstrap
+    );
+    debugPrint('✅ [setupServiceLocator] LLMService registered');
 
-  getIt.registerSingleton<InvocationRepository<domain_invocation.Invocation>>(
-    InvocationRepositoryImpl(
-      adapter: _persistenceFactory!.invocationAdapter as dynamic,
-    ),  // Real implementation (ObjectBox/IndexedDB)
-  );
+    // ========== Domain Repositories (Already registered in initializeEverythingStack) ==========
+    // InvocationRepository, AdaptationStateRepository, FeedbackRepository, TurnRepository
+    // are already registered as singletons in initializeEverythingStack().
+    // They don't need to be re-registered here.
 
-  // TODO: Uncomment when AdaptationStateRepository and FeedbackRepository are implemented
-  // These were deleted in the Invocation refactoring and need proper implementations
-  // For now, Trainable selectors are disabled to get the build working
+    // ========== Trainable Selectors (Real implementations) ==========
+    // Repositories are already registered in initializeEverythingStack()
 
-  // getIt.registerSingleton<AdaptationStateRepository<AdaptationState>>(
-  //   AdaptationStateRepositoryImpl(),  // Real implementation (ObjectBox/IndexedDB, Phase 1)
-  // );
+    debugPrint('🔍 [setupServiceLocator] Registering NamespaceSelector...');
+    getIt.registerSingleton<NamespaceSelector>(
+      NamespaceSelector(
+        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        adaptationStateRepo: getIt<AdaptationStateRepository>(),
+        feedbackRepo: getIt<FeedbackRepository>(),
+      ),
+    );
+    debugPrint('✅ [setupServiceLocator] NamespaceSelector registered');
 
-  // getIt.registerSingleton<FeedbackRepository>(
-  //   FeedbackRepositoryImpl(),  // Real implementation (ObjectBox/IndexedDB, Phase 1)
-  // );
+    getIt.registerSingleton<ToolSelector>(
+      ToolSelector(
+        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        adaptationStateRepo: getIt<AdaptationStateRepository>(),
+        feedbackRepo: getIt<FeedbackRepository>(),
+      ),
+    );
 
-  // getIt.registerSingleton<TurnRepository>(
-  //   TurnRepositoryImpl.inMemory(),  // In-memory for now (Phase 1: ObjectBox/IndexedDB)
-  // );
+    getIt.registerSingleton<ContextInjector>(
+      ContextInjector(
+        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        adaptationStateRepo: getIt<AdaptationStateRepository>(),
+        feedbackRepo: getIt<FeedbackRepository>(),
+      ),
+    );
 
+    getIt.registerSingleton<LLMConfigSelector>(
+      LLMConfigSelector(
+        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        adaptationStateRepo: getIt<AdaptationStateRepository>(),
+        feedbackRepo: getIt<FeedbackRepository>(),
+      ),
+    );
 
-  // // ========== Trainable Selectors (Real implementations) ==========
-  // // Disabled until repositories are implemented
+    getIt.registerSingleton<LLMOrchestrator>(
+      LLMOrchestrator(
+        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        adaptationStateRepo: getIt<AdaptationStateRepository>(),
+        feedbackRepo: getIt<FeedbackRepository>(),
+      ),
+    );
 
-  // getIt.registerSingleton<NamespaceSelector>(
-  //   NamespaceSelector(
-  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-  //     feedbackRepo: getIt<FeedbackRepository>(),
-  //   ),
-  // );
+    getIt.registerSingleton<ResponseRenderer>(
+      ResponseRenderer(
+        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        adaptationStateRepo: getIt<AdaptationStateRepository>(),
+        feedbackRepo: getIt<FeedbackRepository>(),
+      ),
+    );
 
-  // getIt.registerSingleton<ToolSelector>(
-  //   ToolSelector(
-  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-  //     feedbackRepo: getIt<FeedbackRepository>(),
-  //   ),
-  // );
+    // ========== Tool Registry ==========
 
-  // getIt.registerSingleton<ContextInjector>(
-  //   ContextInjector(
-  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-  //     feedbackRepo: getIt<FeedbackRepository>(),
-  //   ),
-  // );
+    getIt.registerSingleton<ToolRegistry>(ToolRegistry());
 
-  // getIt.registerSingleton<LLMConfigSelector>(
-  //   LLMConfigSelector(
-  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-  //     feedbackRepo: getIt<FeedbackRepository>(),
-  //   ),
-  // );
+    // ========== Task Repository (Owns adapter selection internally) ==========
 
-  // getIt.registerSingleton<LLMOrchestrator>(
-  //   LLMOrchestrator(
-  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-  //     feedbackRepo: getIt<FeedbackRepository>(),
-  //   ),
-  // );
+    final taskRepo = TaskRepository();
+    getIt.registerSingleton<TaskRepository>(taskRepo);
 
-  // getIt.registerSingleton<ResponseRenderer>(
-  //   ResponseRenderer(
-  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-  //     adaptationStateRepo: getIt<AdaptationStateRepository<AdaptationState>>(),
-  //     feedbackRepo: getIt<FeedbackRepository>(),
-  //   ),
-  // );
+    // Register task tools with registry
+    registerTaskTools(getIt<ToolRegistry>(), taskRepo);
 
-  // ========== Tool Registry ==========
+    // ========== Tool Executor (Real agentic loop) ==========
 
-  getIt.registerSingleton<ToolRegistry>(ToolRegistry());
+    getIt.registerSingleton<ToolExecutor>(
+      ToolExecutor(
+        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        toolRegistry: getIt<ToolRegistry>(),
+      ),
+    );
 
-  // ========== Task Repository (Owns adapter selection internally) ==========
-
-  final taskRepo = TaskRepository();
-  getIt.registerSingleton<TaskRepository>(taskRepo);
-
-  // Register task tools with registry
-  registerTaskTools(getIt<ToolRegistry>(), taskRepo);
-
-  // ========== Tool Executor (Real agentic loop) ==========
-
-  getIt.registerSingleton<ToolExecutor>(
-    ToolExecutor(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      toolRegistry: getIt<ToolRegistry>(),
-    ),
-  );
-
-  // ========== Coordinator (Orchestrates all components) ==========
-
-  getIt.registerSingleton<Coordinator>(
-    Coordinator(
-      namespaceSelector: getIt<NamespaceSelector>(),
-      toolSelector: getIt<ToolSelector>(),
-      contextInjector: getIt<ContextInjector>(),
-      llmConfigSelector: getIt<LLMConfigSelector>(),
-      llmOrchestrator: getIt<LLMOrchestrator>(),
-      responseRenderer: getIt<ResponseRenderer>(),
-      embeddingService: getIt<EmbeddingService>(),
-      llmService: getIt<LLMService>(),
-      toolExecutor: getIt<ToolExecutor>(),
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-    ),
-  );
+    // ========== Coordinator (Orchestrates all components) ==========
+    debugPrint('🔍 [setupServiceLocator] Registering Coordinator...');
+    getIt.registerSingleton<Coordinator>(
+      Coordinator(
+        namespaceSelector: getIt<NamespaceSelector>(),
+        toolSelector: getIt<ToolSelector>(),
+        contextInjector: getIt<ContextInjector>(),
+        llmConfigSelector: getIt<LLMConfigSelector>(),
+        llmOrchestrator: getIt<LLMOrchestrator>(),
+        responseRenderer: getIt<ResponseRenderer>(),
+        embeddingService: getIt<EmbeddingService>(),
+        llmService: getIt<LLMService>(),
+        toolExecutor: getIt<ToolExecutor>(),
+        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+      ),
+    );
+    debugPrint('✅ [setupServiceLocator] Coordinator registered');
+    debugPrint('🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY');
+  } catch (e, st) {
+    debugPrint('❌ [setupServiceLocator] ERROR: $e');
+    debugPrint('Stack trace: $st');
+    rethrow;
+  }
 }
 
 /// Setup GetIt for integration testing.
@@ -685,22 +734,24 @@ void setupServiceLocatorForTesting({
   );
 
   // ========== Domain Repositories - In-Memory for Testing ==========
-
-  getIt.registerSingleton<InvocationRepository<domain_invocation.Invocation>>(
-    InvocationRepositoryImpl.inMemory(),  // In-memory for mock speed
-  );
-
-  // TODO: Uncomment when AdaptationStateRepository and FeedbackRepository are implemented
-  // getIt.registerSingleton<AdaptationStateRepository<AdaptationState>>(
-  //   AdaptationStateRepositoryImpl.inMemory(),  // In-memory for test speed
+  // TODO: Create mock/in-memory adapters for testing
+  // For now, repositories are not registered in test mode.
+  // Tests should create their own mock repositories or use real adapters with in-memory stores.
+  //
+  // getIt.registerSingleton<InvocationRepository<domain_invocation.Invocation>>(
+  //   MockInvocationRepository(),  // In-memory mock for test speed
   // );
-
+  //
+  // getIt.registerSingleton<AdaptationStateRepository>(
+  //   MockAdaptationStateRepository(),  // In-memory mock for test speed
+  // );
+  //
   // getIt.registerSingleton<FeedbackRepository>(
-  //   FeedbackRepositoryImpl.inMemory(),  // In-memory for test speed
+  //   MockFeedbackRepository(),  // In-memory mock for test speed
   // );
-
+  //
   // getIt.registerSingleton<TurnRepository>(
-  //   TurnRepositoryImpl.inMemory(),  // In-memory for test speed
+  //   MockTurnRepository(),  // In-memory mock for test speed
   // );
 
   // // ========== Trainable Selectors - Real implementations ==========
@@ -764,21 +815,24 @@ void setupServiceLocatorForTesting({
   );
 
   // ========== Coordinator - Real (real trainables, mocked externals) ==========
-
-  getIt.registerSingleton<Coordinator>(
-    Coordinator(
-      namespaceSelector: getIt<NamespaceSelector>(),
-      toolSelector: getIt<ToolSelector>(),
-      contextInjector: getIt<ContextInjector>(),
-      llmConfigSelector: getIt<LLMConfigSelector>(),
-      llmOrchestrator: getIt<LLMOrchestrator>(),
-      responseRenderer: getIt<ResponseRenderer>(),
-      embeddingService: getIt<EmbeddingService>(),
-      llmService: getIt<LLMService>(),
-      toolExecutor: getIt<ToolExecutor>(),
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-    ),
-  );
+  // TODO: Uncomment after Phase 6 refactoring
+  // The trainable selectors need to be updated to use GetIt late binding
+  // instead of constructor injection before Coordinator can be instantiated.
+  //
+  // getIt.registerSingleton<Coordinator>(
+  //   Coordinator(
+  //     namespaceSelector: getIt<NamespaceSelector>(),
+  //     toolSelector: getIt<ToolSelector>(),
+  //     contextInjector: getIt<ContextInjector>(),
+  //     llmConfigSelector: getIt<LLMConfigSelector>(),
+  //     llmOrchestrator: getIt<LLMOrchestrator>(),
+  //     responseRenderer: getIt<ResponseRenderer>(),
+  //     embeddingService: getIt<EmbeddingService>(),
+  //     llmService: getIt<LLMService>(),
+  //     toolExecutor: getIt<ToolExecutor>(),
+  //     invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+  //   ),
+  // );
 }
 
 // ============================================================================

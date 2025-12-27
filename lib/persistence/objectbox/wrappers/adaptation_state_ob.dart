@@ -1,7 +1,7 @@
 /// # AdaptationStateOB - ObjectBox Wrapper
 
 import 'package:objectbox/objectbox.dart';
-import 'package:everything_stack_template/domain/adaptation_state_generic.dart';
+import 'package:everything_stack_template/core/adaptation_state.dart';
 
 @Entity()
 class AdaptationStateOB {
@@ -20,16 +20,26 @@ class AdaptationStateOB {
   String? syncId;
 
   String componentType;
+  String scope = 'global';
+  String? userId;
   String dataJson = '{}';
   int version = 0;
   DateTime lastUpdatedAt = DateTime.now();
   String lastUpdateReason = '';
   int feedbackCountApplied = 0;
 
-  AdaptationStateOB({required this.componentType});
+  AdaptationStateOB({
+    required this.componentType,
+    this.scope = 'global',
+    this.userId,
+  });
 
   factory AdaptationStateOB.fromAdaptationState(AdaptationState state) {
-    return AdaptationStateOB(componentType: state.componentType)
+    return AdaptationStateOB(
+      componentType: state.componentType,
+      scope: state.scope,
+      userId: state.userId,
+    )
       ..id = state.id
       ..uuid = state.uuid
       ..createdAt = state.createdAt
@@ -43,7 +53,11 @@ class AdaptationStateOB {
   }
 
   AdaptationState toAdaptationState() {
-    return AdaptationState(componentType: componentType)
+    return AdaptationState(
+      componentType: componentType,
+      scope: scope,
+      userId: userId,
+    )
       ..id = id
       ..uuid = uuid
       ..createdAt = createdAt

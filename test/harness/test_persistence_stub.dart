@@ -14,7 +14,8 @@ bool detectWebPlatform() {
 
 /// Initialize platform-specific test persistence.
 /// This stub throws - real implementations in _io.dart and _web.dart.
-Future<PersistenceFactory> initializeTestPersistence() {
+/// Note: PersistenceFactory was removed in Phase 1 refactoring
+Future<void> initializeTestPersistence() {
   throw UnsupportedError(
     'Cannot initialize test persistence without dart:io or dart:html',
   );

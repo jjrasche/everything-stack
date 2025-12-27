@@ -17,19 +17,21 @@ class MediaItemObjectBoxAdapter implements PersistenceAdapter<MediaItem> {
   MediaItemObjectBoxAdapter(this._store);
 
   @override
-  Future<MediaItem?> findById(int id) async =>
+  Future<MediaItem?> findById(String uuid) async =>
       throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  Future<MediaItem> getById(int id) async =>
+  Future<MediaItem> getById(String uuid) async =>
       throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  Future<MediaItem?> findByUuid(String uuid) async =>
+  @deprecated
+  Future<MediaItem?> findByIntId(int id) async =>
       throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  Future<MediaItem> getByUuid(String uuid) async =>
+  @deprecated
+  Future<MediaItem> getByIntId(int id) async =>
       throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
@@ -45,15 +47,16 @@ class MediaItemObjectBoxAdapter implements PersistenceAdapter<MediaItem> {
       throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  Future<bool> delete(int id) async =>
+  Future<bool> delete(String uuid) async =>
       throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  Future<bool> deleteByUuid(String uuid) async =>
+  @deprecated
+  Future<bool> deleteByIntId(int id) async =>
       throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  Future<void> deleteAll(List<int> ids) async =>
+  Future<void> deleteAll(List<String> uuids) async =>
       throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
@@ -82,11 +85,12 @@ class MediaItemObjectBoxAdapter implements PersistenceAdapter<MediaItem> {
       throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  MediaItem? findByIdInTx(TransactionContext ctx, int id) =>
+  MediaItem? findByIdInTx(TransactionContext ctx, String uuid) =>
       throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  MediaItem? findByUuidInTx(TransactionContext ctx, String uuid) =>
+  @deprecated
+  MediaItem? findByIntIdInTx(TransactionContext ctx, int id) =>
       throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
@@ -102,15 +106,16 @@ class MediaItemObjectBoxAdapter implements PersistenceAdapter<MediaItem> {
       throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  bool deleteInTx(TransactionContext ctx, int id) =>
+  bool deleteInTx(TransactionContext ctx, String uuid) =>
       throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  bool deleteByUuidInTx(TransactionContext ctx, String uuid) =>
+  @deprecated
+  bool deleteByIntIdInTx(TransactionContext ctx, int id) =>
       throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override
-  void deleteAllInTx(TransactionContext ctx, List<int> ids) =>
+  void deleteAllInTx(TransactionContext ctx, List<String> uuids) =>
       throw UnimplementedError('MediaItem persistence not yet available on native platforms');
 
   @override

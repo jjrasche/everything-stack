@@ -1,24 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'dart:convert';
+import 'dart:io';
 
 import 'bootstrap.dart';
 import 'domain/event.dart';
 import 'services/coordinator.dart';
+import 'services/embedding_service.dart';
 import 'ui/screens/voice_assistant_screen.dart';
 
 enum InputModality { text, voice }
 enum OutputModality { text, voice }
 
+bool _bootstrapInitialized = false;
+
+/// Ensure bootstrap has been initialized
+/// This is called from both main() and MyApp.build() to handle cases where
+/// the app is started through integration tests (which bypass main())
+Future<void> _ensureInitialized() async {
+  if (_bootstrapInitialized) {
+    // Already initialized, verify services are still available
+    try {
+      getIt<Coordinator>();
+      return; // All good
+    } catch (e) {
+      debugPrint('⚠️ Bootstrap flag set but services missing, reinitializing...');
+      // Services were cleared, continue with reinitialization below
+    }
+  }
+
+  debugPrint('🔧 [_ensureInitialized] Initializing bootstrap...');
+
+  // Check if Coordinator already exists (avoid double initialization)
+  bool needsInitialization = false;
+  try {
+    getIt<Coordinator>();
+    debugPrint('   Coordinator already registered, skipping bootstrap');
+    return;
+  } catch (e) {
+    needsInitialization = true;
+  }
+
+  if (needsInitialization) {
+    await initializeEverythingStack();
+    setupServiceLocator();
+    _bootstrapInitialized = true;
+    debugPrint('✅ [_ensureInitialized] Bootstrap initialization complete');
+  }
+}
+
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize all Everything Stack services
-  // Configure via --dart-define or pass EverythingStackConfig
-  await initializeEverythingStack();
-
-  // Setup GetIt service locator with all application services
-  setupServiceLocator();
-
-  runApp(const MyApp());
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    await _ensureInitialized();
+    runApp(const MyApp());
+  } catch (e, st) {
+    debugPrint('❌ FATAL ERROR in main(): $e');
+    debugPrint('Stack trace: $st');
+    rethrow;
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -32,7 +72,22 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const VoiceAssistantScreen(),
+      home: FutureBuilder<void>(
+        future: _ensureInitialized(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          if (snapshot.hasError) {
+            return Scaffold(
+              body: Center(child: Text('Initialization error: ${snapshot.error}')),
+            );
+          }
+          return const VoiceAssistantScreen();
+        },
+      ),
     );
   }
 }
@@ -84,20 +139,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
     try {
       // Create event and send to ContextManager
+      final payloadMap = {
+        'prompt': input,
+        'input_modality': _inputModality.toString(),
+        'output_modality': _outputModality.toString(),
+      };
       final event = Event(
         correlationId: 'user_${DateTime.now().millisecondsSinceEpoch}',
         source: 'user',
-        payload: {
-          'prompt': input,
-          'input_modality': _inputModality.toString(),
-          'output_modality': _outputModality.toString(),
-        },
+        payloadJson: jsonEncode(payloadMap),
       );
 
       // Publish event for async processing
       // TODO: Uncomment when Coordinator is initialized
       // _coordinator.orchestrate(...);
-      print('Would publish event: ${event.payload}');
+      print('Would publish event: ${event.payloadJson}');
 
       _inputController.clear();
       if (mounted) setState(() {});

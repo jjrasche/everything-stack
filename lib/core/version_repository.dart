@@ -199,11 +199,11 @@ class VersionRepository {
     final oldestKeptSnapshot = snapshotsToKeep.first;
 
     // Delete all versions older than oldest kept snapshot
-    final idsToDelete = allVersions
+    final uuidsToDelete = allVersions
         .where((v) => v.versionNumber < oldestKeptSnapshot.versionNumber)
-        .map((v) => v.id)
+        .map((v) => v.uuid)
         .toList();
-    await _adapter.deleteAll(idsToDelete);
+    await _adapter.deleteAll(uuidsToDelete);
   }
 
   // ============ Sync Methods ============
@@ -221,7 +221,7 @@ class VersionRepository {
 
   /// Mark version as synced (for sync service)
   Future<void> markSynced(String uuid) async {
-    final version = await _adapter.findByUuid(uuid);
+    final version = await _adapter.findById(uuid);
     if (version != null) {
       version.syncStatus = SyncStatus.synced;
       await _adapter.save(version);

@@ -186,8 +186,30 @@ abstract class BaseIndexedDBAdapter<T extends BaseEntity>
   // ============ CRUD ============
 
   @override
-  Future<T?> findById(int id) async {
-    // Use id index for efficient lookup
+  Future<T?> findById(String uuid) async {
+    // Primary lookup by UUID (entities use uuid as keyPath)
+    final store = _getStore(mode: idbModeReadOnly);
+    final value = await store.getObject(uuid);
+    if (value == null) return null;
+    return fromJson(value as Map<String, dynamic>);
+  }
+
+  @override
+  Future<T> getById(String uuid) async {
+    final entity = await findById(uuid);
+    if (entity == null) {
+      throw EntityNotFoundException(
+        T.toString(),
+        uuid: uuid,
+      );
+    }
+    return entity;
+  }
+
+  @override
+  @deprecated
+  Future<T?> findByIntId(int id) async {
+    // Legacy: Find by integer ID index
     final txn = db.transaction(objectStoreName, idbModeReadOnly);
     final store = txn.objectStore(objectStoreName);
     final index = store.index('id');
@@ -199,32 +221,13 @@ abstract class BaseIndexedDBAdapter<T extends BaseEntity>
   }
 
   @override
-  Future<T> getById(int id) async {
-    final entity = await findById(id);
+  @deprecated
+  Future<T> getByIntId(int id) async {
+    final entity = await findByIntId(id);
     if (entity == null) {
       throw EntityNotFoundException(
         T.toString(),
         id: id,
-      );
-    }
-    return entity;
-  }
-
-  @override
-  Future<T?> findByUuid(String uuid) async {
-    final store = _getStore(mode: idbModeReadOnly);
-    final value = await store.getObject(uuid);
-    if (value == null) return null;
-    return fromJson(value as Map<String, dynamic>);
-  }
-
-  @override
-  Future<T> getByUuid(String uuid) async {
-    final entity = await findByUuid(uuid);
-    if (entity == null) {
-      throw EntityNotFoundException(
-        T.toString(),
-        uuid: uuid,
       );
     }
     return entity;
@@ -283,31 +286,34 @@ abstract class BaseIndexedDBAdapter<T extends BaseEntity>
   }
 
   @override
-  Future<bool> delete(int id) async {
-    // Less efficient - need to find uuid first
-    final entity = await findById(id);
-    if (entity == null) return false;
-    final store = _getStore();
-    await store.delete(entity.uuid);
-    return true;
-  }
-
-  @override
-  Future<bool> deleteByUuid(String uuid) async {
+  Future<bool> delete(String uuid) async {
     final store = _getStore();
     await store.delete(uuid);
     return true;
   }
 
   @override
-  Future<void> deleteAll(List<int> ids) async {
-    // Need to find uuids for all ids first
-    final entities = await Future.wait(ids.map((id) => findById(id)));
+  @deprecated
+  Future<bool> deleteByIntId(int id) async {
+    // Legacy: Find by integer ID index and delete
+    final txn = db.transaction(objectStoreName, idbModeReadWrite);
+    final store = txn.objectStore(objectStoreName);
+    final index = store.index('id');
+
+    final value = await index.get(id);
+    if (value == null) return false;
+
+    final json = value as Map<String, dynamic>;
+    final uuid = json['uuid'] as String;
+    await store.delete(uuid);
+    return true;
+  }
+
+  @override
+  Future<void> deleteAll(List<String> uuids) async {
     final store = _getStore();
-    for (final entity in entities) {
-      if (entity != null) {
-        await store.delete(entity.uuid);
-      }
+    for (final uuid in uuids) {
+      await store.delete(uuid);
     }
   }
 
@@ -366,7 +372,7 @@ abstract class BaseIndexedDBAdapter<T extends BaseEntity>
   // ============ Transaction Operations ============
 
   @override
-  T? findByIdInTx(TransactionContext ctx, int id) {
+  T? findByIdInTx(TransactionContext ctx, String uuid) {
     // IndexedDB transactions are async - can't do sync lookups
     // This is a limitation of IndexedDB vs ObjectBox
     throw UnsupportedError(
@@ -376,11 +382,12 @@ abstract class BaseIndexedDBAdapter<T extends BaseEntity>
   }
 
   @override
-  T? findByUuidInTx(TransactionContext ctx, String uuid) {
-    // IndexedDB transactions are async - can't do sync lookups
+  @deprecated
+  T? findByIntIdInTx(TransactionContext ctx, int id) {
+    // Deprecated: use findByIdInTx with UUID instead
     throw UnsupportedError(
-      'Synchronous findByUuidInTx not supported in IndexedDB. '
-      'Use async methods instead.',
+      'Synchronous findByIntIdInTx not supported in IndexedDB. '
+      'Use async methods with UUID instead.',
     );
   }
 
@@ -423,16 +430,7 @@ abstract class BaseIndexedDBAdapter<T extends BaseEntity>
   }
 
   @override
-  bool deleteInTx(TransactionContext ctx, int id) {
-    // Can't do sync lookup in IndexedDB
-    throw UnsupportedError(
-      'deleteInTx by id not supported in IndexedDB. '
-      'Use deleteByUuidInTx instead.',
-    );
-  }
-
-  @override
-  bool deleteByUuidInTx(TransactionContext ctx, String uuid) {
+  bool deleteInTx(TransactionContext ctx, String uuid) {
     return _executeWithExceptionHandling(() {
       final store = _getStoreInTx(ctx);
       store.delete(uuid);
@@ -441,11 +439,24 @@ abstract class BaseIndexedDBAdapter<T extends BaseEntity>
   }
 
   @override
-  void deleteAllInTx(TransactionContext ctx, List<int> ids) {
+  @deprecated
+  bool deleteByIntIdInTx(TransactionContext ctx, int id) {
+    // Deprecated: use deleteInTx with UUID instead
     throw UnsupportedError(
-      'deleteAllInTx by ids not supported in IndexedDB. '
-      'Use deleteByUuidInTx for each entity instead.',
+      'Synchronous deleteByIntIdInTx not supported in IndexedDB. '
+      'Use async methods with UUID instead.',
     );
+  }
+
+  @override
+  void deleteAllInTx(TransactionContext ctx, List<String> uuids) {
+    _executeWithExceptionHandling(() {
+      final store = _getStoreInTx(ctx);
+      for (final uuid in uuids) {
+        store.delete(uuid);
+      }
+      return null;
+    });
   }
 
   // ============ Lifecycle ============

@@ -49,9 +49,9 @@ class EdgeCascadeDeleteHandler<T extends BaseEntity>
     extends RepositoryPatternHandler<T> {
   final EdgeRepository edgeRepository;
 
-  /// Cached edge IDs for the current delete operation.
+  /// Cached edge UUIDs for the current delete operation.
   /// Set in beforeDelete, used in beforeDeleteInTransaction.
-  List<int>? _edgeIdsToDelete;
+  List<String>? _edgeIdsToDelete;
 
   EdgeCascadeDeleteHandler({
     required this.edgeRepository,

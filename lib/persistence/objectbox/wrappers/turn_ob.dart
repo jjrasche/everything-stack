@@ -20,12 +20,12 @@ class TurnOB {
   String? syncId;
 
   String correlationId;
+  String conversationId;
 
   @Property(type: PropertyType.date)
   DateTime timestamp = DateTime.now();
 
   String? sttInvocationId;
-  String? contextManagerInvocationId;
   String? llmInvocationId;
   String? ttsInvocationId;
 
@@ -41,10 +41,16 @@ class TurnOB {
   @Property(type: PropertyType.date)
   DateTime? feedbackTrainedAt;
 
-  TurnOB({required this.correlationId});
+  TurnOB({
+    required this.correlationId,
+    required this.conversationId,
+  });
 
   factory TurnOB.fromTurn(Turn turn) {
-    return TurnOB(correlationId: turn.correlationId)
+    return TurnOB(
+      correlationId: turn.correlationId,
+      conversationId: turn.conversationId,
+    )
       ..id = turn.id
       ..uuid = turn.uuid
       ..createdAt = turn.createdAt
@@ -52,7 +58,6 @@ class TurnOB {
       ..syncId = turn.syncId
       ..timestamp = turn.timestamp
       ..sttInvocationId = turn.sttInvocationId
-      ..contextManagerInvocationId = turn.contextManagerInvocationId
       ..llmInvocationId = turn.llmInvocationId
       ..ttsInvocationId = turn.ttsInvocationId
       ..result = turn.result
@@ -65,7 +70,10 @@ class TurnOB {
   }
 
   Turn toTurn() {
-    return Turn(correlationId: correlationId)
+    return Turn(
+      correlationId: correlationId,
+      conversationId: conversationId,
+    )
       ..id = id
       ..uuid = uuid
       ..createdAt = createdAt
@@ -73,7 +81,6 @@ class TurnOB {
       ..syncId = syncId
       ..timestamp = timestamp
       ..sttInvocationId = sttInvocationId
-      ..contextManagerInvocationId = contextManagerInvocationId
       ..llmInvocationId = llmInvocationId
       ..ttsInvocationId = ttsInvocationId
       ..result = result
