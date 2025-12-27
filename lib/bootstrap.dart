@@ -37,7 +37,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:objectbox/objectbox.dart';
-import 'package:idb_shim/idb.dart';
 
 import 'services/blob_store.dart';
 import 'services/file_service.dart';
@@ -66,13 +65,10 @@ import 'services/trainables/llm_config_selector.dart';
 import 'services/trainables/llm_orchestrator.dart';
 import 'services/trainables/response_renderer.dart';
 import 'domain/invocation.dart' as domain_invocation;
-import 'domain/feedback.dart' as domain_feedback;
-import 'domain/turn.dart';
 import 'core/invocation_repository.dart';
 import 'core/adaptation_state_repository.dart';
 import 'core/feedback_repository.dart';
 import 'core/turn_repository.dart';
-import 'core/adaptation_state.dart';
 import 'persistence/objectbox/invocation_objectbox_adapter.dart';
 import 'persistence/objectbox/adaptation_state_objectbox_adapter.dart';
 import 'persistence/objectbox/feedback_objectbox_adapter.dart';
@@ -89,10 +85,7 @@ import 'bootstrap/blob_store_factory_stub.dart'
     if (dart.library.io) 'bootstrap/blob_store_factory_io.dart'
     if (dart.library.html) 'bootstrap/blob_store_factory_web.dart';
 
-import 'bootstrap/http_client.dart';
-import 'bootstrap/timeout_http_client.dart';
 import 'bootstrap/test_config.dart';
-import 'package:http/http.dart' as http;
 
 /// Configuration for Everything Stack initialization.
 class EverythingStackConfig {
