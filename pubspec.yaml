@@ -48,8 +48,7 @@ dependencies:
   file_picker: ^8.0.0
   image: ^4.1.0
 
-  # Speech recognition and synthesis
-  speech_to_text: ^6.6.0
+  # Text-to-speech synthesis (STT is via Deepgram API, not local plugin)
   flutter_tts: ^4.2.3
 
   # Web storage (IndexedDB)
