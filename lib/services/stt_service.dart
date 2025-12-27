@@ -387,6 +387,52 @@ class DeepgramSTTService extends STTService {
 }
 
 // ============================================================================
+// Null STT Service (Fallback)
+// ============================================================================
+
+/// No-op implementation when API key is not configured.
+class NullSTTService extends STTService {
+  @override
+  Future<void> initialize() async {}
+
+  @override
+  StreamSubscription<String> stream({
+    required Stream<Uint8List> input,
+    required void Function(String) onData,
+    void Function()? onUtteranceEnd,
+    required void Function(Object) onError,
+    void Function()? onDone,
+  }) {
+    // Return empty stream subscription
+    return Stream<String>.empty().listen(
+      onData,
+      onError: onError,
+      onDone: onDone,
+    );
+  }
+
+  @override
+  void dispose() {}
+
+  @override
+  bool get isReady => false;
+
+  @override
+  Future<String> recordInvocation(dynamic invocation) async => '';
+
+  @override
+  Future<void> trainFromFeedback(String turnId, {String? userId}) async {}
+
+  @override
+  Future<Map<String, dynamic>> getAdaptationState({String? userId}) async => {};
+
+  @override
+  Widget buildFeedbackUI(String invocationId) {
+    return Center(child: Text('STT not configured'));
+  }
+}
+
+// ============================================================================
 // Exceptions
 // ============================================================================
 

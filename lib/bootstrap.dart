@@ -507,6 +507,7 @@ Future<void> initializeEverythingStack({
     } else {
       debugPrint('⚠️ Deepgram API key missing');
       debugPrint('ℹ️ STT: disabled');
+      STTService.instance = NullSTTService();
     }
   }
 

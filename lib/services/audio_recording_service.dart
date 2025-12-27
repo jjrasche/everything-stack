@@ -56,17 +56,26 @@ class RecordAudioRecordingService implements AudioRecordingService {
     _recorder.startStream(config).then((stream) {
       stream.listen(
         (chunk) {
-          _audioStreamController?.add(Uint8List.fromList(chunk));
+          // Only add if controller is still open
+          if (_audioStreamController != null && !_audioStreamController!.isClosed) {
+            _audioStreamController?.add(Uint8List.fromList(chunk));
+          }
         },
         onError: (error) {
-          _audioStreamController?.addError(error);
+          if (_audioStreamController != null && !_audioStreamController!.isClosed) {
+            _audioStreamController?.addError(error);
+          }
         },
         onDone: () {
-          _audioStreamController?.close();
+          if (_audioStreamController != null && !_audioStreamController!.isClosed) {
+            _audioStreamController?.close();
+          }
         },
       );
     }).catchError((error) {
-      _audioStreamController?.addError(error);
+      if (_audioStreamController != null && !_audioStreamController!.isClosed) {
+        _audioStreamController?.addError(error);
+      }
     });
 
     return _audioStreamController!.stream;
