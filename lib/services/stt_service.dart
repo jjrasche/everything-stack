@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'streaming_service.dart';
 import 'trainable.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/io.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
 import 'package:everything_stack_template/domain/invocation.dart';
 
@@ -203,7 +204,7 @@ class DeepgramSTTService extends STTService {
 
         // Connect with timeout and Authorization header
         try {
-          _ws = WebSocketChannel.connect(
+          _ws = IOWebSocketChannel.connect(
             Uri.parse(urlString),
             headers: {'Authorization': 'Token $apiKey'},
           );
