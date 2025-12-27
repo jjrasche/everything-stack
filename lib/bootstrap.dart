@@ -79,6 +79,7 @@ import 'persistence/indexeddb/feedback_indexeddb_adapter.dart';
 import 'persistence/indexeddb/turn_indexeddb_adapter.dart';
 import 'bootstrap/objectbox_store_factory.dart';
 import 'bootstrap/indexeddb_factory.dart';
+import 'bootstrap/test_config.dart';
 
 // Conditional import for platform-specific BlobStore
 import 'bootstrap/blob_store_factory_stub.dart'
@@ -747,7 +748,7 @@ void setupServiceLocatorForTesting({
   );
 
   getIt.registerSingleton<LLMService>(
-    llmService ?? MockLLMService(),
+    llmService ?? MockLLMServiceForTests(),
   );
 
   // ========== Domain Repositories (Real implementations) ==========
@@ -838,74 +839,4 @@ void setupServiceLocatorForTesting({
 // ============================================================================
 // Mock Services for Testing
 // ============================================================================
-
-class MockEmbeddingService implements EmbeddingService {
-  @override
-  Future<void> initialize() async {}
-
-  @override
-  Future<List<double>> generate(String text) async {
-    return List.filled(384, 0.5);  // Mock embedding
-  }
-
-  @override
-  Future<List<List<double>>> generateBatch(List<String> texts) async {
-    return texts.map((_) => List.filled(384, 0.5)).toList();  // Mock batch embeddings
-  }
-}
-
-class MockLLMService implements LLMService {
-  @override
-  Future<void> initialize() async {}
-
-  @override
-  bool get isReady => true;
-
-  @override
-  void dispose() {}
-
-  @override
-  Stream<String> chat({
-    required List<Message> history,
-    required String userMessage,
-    String? systemPrompt,
-    int? maxTokens,
-  }) async* {
-    yield 'Mock response';
-  }
-
-  @override
-  Future<LLMResponse> chatWithTools({
-    required String model,
-    required List<Map<String, dynamic>> messages,
-    List<LLMTool>? tools,
-    double temperature = 0.7,
-    int? maxTokens,
-  }) async {
-    return LLMResponse(
-      id: 'mock_123',
-      content: 'Task created successfully',
-      toolCalls: [],
-      tokensUsed: 100,
-    );
-  }
-
-  @override
-  Future<String> recordInvocation(dynamic invocation) async {
-    return 'mock_invocation';
-  }
-
-  @override
-  Future<void> trainFromFeedback(String turnId, {String? userId}) async {}
-
-  @override
-  Future<Map<String, dynamic>> getAdaptationState({String? userId}) async {
-    return {'status': 'baseline'};
-  }
-
-  @override
-  Widget buildFeedbackUI(String invocationId) {
-    throw UnimplementedError();
-  }
-}
 
