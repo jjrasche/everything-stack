@@ -92,6 +92,51 @@ Testing follows a 4-layer approach. All layers run in CI. All must pass before m
 
 **Read:** `docs/testing/TESTING_APPROACH.md` (formerly BDD_APPROACH.md) for complete guidance and examples
 
+## Build and Run
+
+### Local Development
+```bash
+# Create .env with API keys (not in git)
+GROQ_API_KEY=xxx
+DEEPGRAM_API_KEY=xxx
+
+# Run on any platform
+flutter run -d windows  # Windows
+flutter run -d macos    # macOS
+flutter run -d ios      # iOS simulator
+flutter run -d android  # Android emulator
+flutter run -d chrome   # Web
+```
+
+### Testing
+```bash
+flutter test                           # All tests (uses mocks, no API keys)
+flutter test integration_test/ -d ios  # Platform verification
+```
+
+### Building for Deployment
+```bash
+# Pass API keys as --dart-define (keys baked into binary)
+flutter build apk \
+  --dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }} \
+  --dart-define=DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }}
+
+flutter build ipa \
+  --dart-define=GROQ_API_KEY=xxx \
+  --dart-define=DEEPGRAM_API_KEY=xxx
+
+flutter build macos --dart-define=... # macOS
+flutter build windows --dart-define=... # Windows
+flutter build web --dart-define=...   # Web
+```
+
+### Environment Variables (Priority Order)
+1. `.env` file (local dev - runtime)
+2. OS env vars (CI/CD - runtime)
+3. `--dart-define` (build-time)
+
+**CI/CD:** Set secrets in GitHub → use in workflow as `${{ secrets.GROQ_API_KEY }}`
+
 ## Permissions
 
 **Run without asking:**
