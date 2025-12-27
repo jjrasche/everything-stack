@@ -73,11 +73,11 @@ jobs:
       - name: Upload to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
-          serviceAccountJsonPlaintext: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           file: build/app/outputs/flutter-apk/app-release.apk
           groups: testers
           releaseNotes: "Latest Android build from main branch"
-          firebaseAppId: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
+          appId: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
 
   # ============ Build iOS IPA ============
   build-ios:
@@ -108,8 +108,8 @@ jobs:
       - name: Upload to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
-          serviceAccountJsonPlaintext: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           file: build/ios/ipa/everything_stack_template.ipa
           groups: testers
           releaseNotes: "Latest iOS build from main branch"
-          firebaseAppId: ${{ secrets.FIREBASE_IOS_APP_ID }}
+          appId: ${{ secrets.FIREBASE_IOS_APP_ID }}
