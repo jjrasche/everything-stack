@@ -314,7 +314,7 @@ Future<void> initializeEverythingStack({
       // Use absolute path to find .env from project root (fixes Windows working directory issue)
       final envFile = File('${Directory.current.path}/.env');
       if (envFile.existsSync()) {
-        await dotenv.load(filePath: envFile.absolute.path);
+        await dotenv.load(fileName: envFile.absolute.path);
         final loaded = dotenv.maybeGet('GROQ_API_KEY');
         if (loaded != null) {
           debugPrint('✅ [Bootstrap] Loaded .env with real API keys');
@@ -323,7 +323,7 @@ Future<void> initializeEverythingStack({
         // Fallback to .env.example for fresh clones
         try {
           final exampleFile = File('${Directory.current.path}/.env.example');
-          await dotenv.load(filePath: exampleFile.absolute.path);
+          await dotenv.load(fileName: exampleFile.absolute.path);
           debugPrint('ℹ️ [Bootstrap] .env not found, loaded .env.example (dummy keys)');
           debugPrint('   For real keys: cp .env.example .env && edit with your API keys');
         } catch (e2) {
