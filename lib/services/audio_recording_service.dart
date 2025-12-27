@@ -76,7 +76,8 @@ class RecordAudioRecordingService implements AudioRecordingService {
   Future<void> stopRecording() async {
     _isRecording = false;
     await _recorder.stop();
-    await _audioStreamController?.close();
+    // Don't close the controller here - let the stream listener close it
+    // Closing here causes "Cannot add event after closing" errors
   }
 
   @override

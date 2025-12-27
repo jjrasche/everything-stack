@@ -190,19 +190,18 @@ class DeepgramSTTService extends STTService {
       try {
         // Build WebSocket URL with parameters and API key
         // Turn detection enabled via utterance_end_ms parameter
-        final url = Uri.parse(
-          'wss://api.deepgram.com/v1/listen'
-          '?model=$model'
-          '&language=$language'
-          '&encoding=linear16'
-          '&sample_rate=16000'
-          '&channels=1'
-          '&interim_results=true'
-          '&endpointing=true'
-          '&vad_events=true'
-          '&utterance_end_ms=1000'
-          '&api_key=$apiKey',
-        );
+        final urlString = 'wss://api.deepgram.com/v1/listen'
+            '?model=$model'
+            '&language=$language'
+            '&encoding=linear16'
+            '&sample_rate=16000'
+            '&channels=1'
+            '&interim_results=true'
+            '&endpointing=true'
+            '&vad_events=true'
+            '&utterance_end_ms=1000'
+            '&api_key=$apiKey';
+        final url = Uri.parse(urlString);
 
         // Connect with timeout
         try {
