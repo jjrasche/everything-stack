@@ -35,7 +35,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
-import 'package:path/path.dart' as path;
 
 import 'package:objectbox/objectbox.dart';
 import 'package:idb_shim/idb.dart';
@@ -309,48 +308,14 @@ Future<void> _initializeService<T>({
 Future<void> initializeEverythingStack({
   EverythingStackConfig? config,
 }) async {
-  // Load .env file (debug mode only - local development)
-  if (kDebugMode) {
-    try {
-      // Use proper path.join to handle Windows path separators
-      final envFilePath = path.join(Directory.current.path, '.env');
-      final envFile = File(envFilePath);
-
-      debugPrint('🔍 [Bootstrap] Looking for .env at: $envFilePath');
-      debugPrint('🔍 [Bootstrap] File exists: ${envFile.existsSync()}');
-
-      if (envFile.existsSync()) {
-        try {
-          await dotenv.load(fileName: envFilePath);
-          debugPrint('✅ [Bootstrap] dotenv.load() completed');
-          final loaded = dotenv.maybeGet('GROQ_API_KEY');
-          debugPrint('🔍 [Bootstrap] GROQ_API_KEY from dotenv: $loaded');
-          if (loaded != null) {
-            debugPrint('✅ [Bootstrap] Loaded .env with real API keys');
-          } else {
-            debugPrint('⚠️ [Bootstrap] dotenv.load() succeeded but GROQ_API_KEY is null');
-            debugPrint('🔍 [Bootstrap] All dotenv keys: ${dotenv.env}');
-          }
-        } catch (eLoad) {
-          debugPrint('❌ [Bootstrap] dotenv.load() failed: $eLoad');
-        }
-      } else {
-        // Fallback to .env.example for fresh clones
-        try {
-          final exampleFilePath = path.join(Directory.current.path, '.env.example');
-          final exampleFile = File(exampleFilePath);
-          if (exampleFile.existsSync()) {
-            await dotenv.load(fileName: exampleFilePath);
-            debugPrint('ℹ️ [Bootstrap] .env not found, loaded .env.example (dummy keys)');
-            debugPrint('   For real keys: cp .env.example .env && edit with your API keys');
-          }
-        } catch (e2) {
-          debugPrint('ℹ️ [Bootstrap] .env/.env.example not found (using OS env vars or --dart-define)');
-        }
-      }
-    } catch (e) {
-      debugPrint('⚠️ [Bootstrap] Error loading environment files: $e');
-    }
+  // Load .env file for local development (bundled as asset in pubspec.yaml)
+  // In .gitignore so it won't be committed to git
+  try {
+    await dotenv.load(fileName: '.env');
+    debugPrint('✅ [Bootstrap] Loaded .env with API keys');
+  } catch (e) {
+    // .env file is optional - may not exist on fresh clone
+    debugPrint('ℹ️ [Bootstrap] .env not found, falling back to compile-time env vars');
   }
 
   final cfg = config ?? EverythingStackConfig.fromEnvironment();
