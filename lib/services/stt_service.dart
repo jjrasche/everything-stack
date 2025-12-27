@@ -148,7 +148,7 @@ class DeepgramSTTService extends STTService {
   final InvocationRepository<Invocation> _invocationRepository;
 
   bool _isReady = false;
-  WebSocketChannel? _ws;
+  IOWebSocketChannel? _ws;
   StreamSubscription<dynamic>? _wsSubscription;
   Timer? _idleTimer;
 
