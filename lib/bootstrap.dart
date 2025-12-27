@@ -543,7 +543,6 @@ Future<void> _initializeMocks() async {
   STTService.instance = MockSTTServiceForTests();
   TTSService.instance = MockTTSServiceForTests();
   LLMService.instance = MockLLMServiceForTests();
-  AudioRecordingService.instance = MockAudioRecordingServiceForTests();
 }
 
 /// Dispose all services (call on app shutdown if needed).
