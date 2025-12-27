@@ -30,6 +30,7 @@
 
 library;
 
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -178,7 +179,8 @@ class EverythingStackConfig {
   static const _groqApiKey = String.fromEnvironment('GROQ_API_KEY');
 
   static String? _envOrNull(String key) {
-    // Try .env file first (runtime), then fall back to compile-time
+    // Try sources in order:
+    // 1. .env file (local development)
     String? runtimeValue;
     try {
       runtimeValue = dotenv.maybeGet(key);
@@ -190,7 +192,13 @@ class EverythingStackConfig {
       return runtimeValue;
     }
 
-    // Fall back to compile-time environment
+    // 2. OS environment variables (CI/CD pipelines)
+    final osValue = Platform.environment[key];
+    if (osValue != null && osValue.isNotEmpty) {
+      return osValue;
+    }
+
+    // 3. Compile-time environment (--dart-define)
     switch (key) {
       case 'SUPABASE_URL':
         return _supabaseUrl.isEmpty ? null : _supabaseUrl;
