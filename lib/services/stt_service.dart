@@ -41,14 +41,8 @@ import 'package:everything_stack_template/domain/invocation.dart';
 /// - **No automatic retry**: Caller must reconnect on timeout
 abstract class STTService extends StreamingService<Uint8List, String>
     implements Trainable {
-  /// Global instance (default: NullSTTService)
-  ///
-  /// Replace with DeepgramSTTService in bootstrap:
-  /// ```dart
-  /// STTService.instance = DeepgramSTTService(apiKey: '...');
-  /// await STTService.instance.initialize();
-  /// ```
-  static STTService instance = NullSTTService();
+  /// Global instance - configured in bootstrap.dart
+  static late STTService instance;
 
   /// Stream audio bytes, receive transcript chunks.
   ///
@@ -384,59 +378,6 @@ class DeepgramSTTService extends STTService {
     // TODO: Implement STT feedback UI
     // For MVP: placeholder - full implementation in Phase 3
     return Center(child: Text('STT Feedback UI (TODO)'));
-  }
-}
-
-// ============================================================================
-// Null STT Service (Safe Fallback)
-// ============================================================================
-
-/// Null Object implementation for STT service.
-///
-/// Used when STT is not configured.
-/// Fails gracefully without crashing the app.
-class NullSTTService extends STTService {
-  @override
-  Future<void> initialize() async {
-    print('Warning: STTService not configured (using NullSTTService)');
-  }
-
-  @override
-  StreamSubscription<String> stream({
-    required Stream<Uint8List> input,
-    required void Function(String) onData,
-    void Function()? onUtteranceEnd,
-    required void Function(Object) onError,
-    void Function()? onDone,
-  }) {
-    onError(STTException('STT not configured'));
-    return Stream<String>.empty().listen(null);
-  }
-
-  @override
-  void dispose() {}
-
-  @override
-  bool get isReady => false;
-
-  @override
-  Future<String> recordInvocation(dynamic invocation) async {
-    throw STTException('STT not configured');
-  }
-
-  @override
-  Future<void> trainFromFeedback(String turnId, {String? userId}) async {
-    throw STTException('STT not configured');
-  }
-
-  @override
-  Future<Map<String, dynamic>> getAdaptationState({String? userId}) async {
-    throw STTException('STT not configured');
-  }
-
-  @override
-  Widget buildFeedbackUI(String invocationId) {
-    return Center(child: Text('STT not configured'));
   }
 }
 

@@ -1,8 +1,11 @@
+import 'dart:async';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:get_it/get_it.dart';
 import 'package:everything_stack_template/services/coordinator.dart';
 import 'package:everything_stack_template/services/tts_service.dart';
+import 'package:everything_stack_template/services/stt_service.dart';
+import 'package:everything_stack_template/services/audio_recording_service.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
 
 /// Voice Assistant Screen
@@ -20,9 +23,10 @@ class VoiceAssistantScreen extends StatefulWidget {
 }
 
 class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
-  late stt.SpeechToText _speechToText;
   late Coordinator _coordinator;
   late TTSService _ttsService;
+  late STTService _sttService;
+  late AudioRecordingService _audioService;
 
   String _recognizedText = '';
   String _responseText = '';
@@ -30,12 +34,13 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   bool _isProcessing = false;
   bool _isSpeaking = false;
 
+  StreamSubscription<String>? _sttSubscription;
+
   @override
   void initState() {
     super.initState();
-    _speechToText = stt.SpeechToText();
 
-    // Get Coordinator from GetIt - required service
+    // Get services from GetIt/singletons
     debugPrint('🔍 [initState] Getting Coordinator from GetIt...');
     try {
       _coordinator = GetIt.instance<Coordinator>();
@@ -46,47 +51,43 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
       rethrow;
     }
     _ttsService = TTSService.instance;
-    _initializeSpeechToText();
+    _sttService = STTService.instance;
+    _audioService = AudioRecordingService.instance;
+
+    debugPrint('✅ [initState] All services initialized');
+    debugPrint('  - Coordinator: OK');
+    debugPrint('  - TTS: ${_ttsService.isReady ? "ready" : "not ready"}');
+    debugPrint('  - STT: ${_sttService.isReady ? "ready" : "not ready"}');
+    debugPrint('  - Audio: initialized');
   }
 
-  /// Initialize speech-to-text service
-  Future<void> _initializeSpeechToText() async {
-    try {
-      final available = await _speechToText.initialize(
-        onError: (error) {
-          debugPrint('STT Error: $error');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Speech recognition error: $error')),
-          );
-        },
-        onStatus: (status) {
-          debugPrint('STT Status: $status');
-        },
-      );
+  /// Start listening for voice input via microphone
+  Future<void> _startListening() async {
+    if (_isListening) return;
 
-      if (!available) {
-        debugPrint('Speech recognition not available');
+    debugPrint('🎤 [_startListening] Starting audio capture...');
+
+    // Request microphone permission
+    try {
+      final hasPermission = await _audioService.requestPermission();
+      if (!hasPermission) {
+        debugPrint('❌ Microphone permission denied');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Speech recognition not available on this device'),
-            ),
+            const SnackBar(content: Text('Microphone permission required')),
           );
         }
+        return;
       }
     } catch (e) {
-      debugPrint('Failed to initialize speech recognition: $e');
-    }
-  }
-
-  /// Start listening for voice input
-  Future<void> _startListening() async {
-    if (!_speechToText.isAvailable) {
-      debugPrint('Speech recognition not available');
+      debugPrint('⚠️ Permission error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Permission error: $e')),
+        );
+      }
       return;
     }
-
-    if (_isListening) return;
 
     setState(() {
       _isListening = true;
@@ -94,32 +95,76 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
     });
 
     try {
-      await _speechToText.listen(
-        onResult: (result) {
-          setState(() {
-            _recognizedText = result.recognizedWords;
-          });
+      debugPrint('🎤 [_startListening] Getting audio stream from microphone...');
 
-          // Auto-send when final result
-          if (result.finalResult) {
-            _isListening = false;
-            _processRecognizedText(_recognizedText);
+      // Get audio stream from microphone (PCM/16kHz/mono)
+      final audioStream = _audioService.startRecording();
+
+      debugPrint('🎤 [_startListening] Starting STT transcription via Deepgram...');
+
+      // Pass audio to STT service and handle transcripts
+      _sttSubscription = _sttService.transcribe(
+        audio: audioStream,
+        onTranscript: (transcript) {
+          debugPrint('📝 [STT] Interim transcript: "$transcript"');
+          if (mounted) {
+            setState(() {
+              _recognizedText = transcript;
+            });
           }
         },
-        localeId: 'en_US',
+        onUtteranceEnd: () {
+          debugPrint('✅ [STT] Speech ended (utterance_end)');
+          // Speech has ended, process the transcript
+          if (_isListening && _recognizedText.isNotEmpty) {
+            _stopListening();
+          }
+        },
+        onError: (error) {
+          debugPrint('❌ [STT] Error: $error');
+          if (mounted) {
+            setState(() => _isListening = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('STT error: $error')),
+            );
+          }
+        },
+        onDone: () {
+          debugPrint('🏁 [STT] Transcription stream closed');
+          if (mounted) {
+            setState(() => _isListening = false);
+          }
+        },
       );
+
+      debugPrint('✅ [_startListening] Listening started');
     } catch (e) {
-      debugPrint('Error starting speech recognition: $e');
+      debugPrint('❌ Error starting listening: $e');
       setState(() => _isListening = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
     }
   }
 
-  /// Stop listening
+  /// Stop listening and process recognized text
   Future<void> _stopListening() async {
     if (!_isListening) return;
 
-    await _speechToText.stop();
+    debugPrint('🛑 [_stopListening] Stopping audio capture and STT...');
+
+    // Cancel STT subscription
+    await _sttSubscription?.cancel();
+    _sttSubscription = null;
+
+    // Stop audio recording
+    await _audioService.stopRecording();
+
     setState(() => _isListening = false);
+
+    debugPrint('✅ [_stopListening] Stopped. Text: "$_recognizedText"');
 
     // Process the recognized text
     if (_recognizedText.isNotEmpty) {
@@ -223,7 +268,9 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
 
   @override
   void dispose() {
-    _speechToText.cancel();
+    debugPrint('🧹 [dispose] Cleaning up VoiceAssistantScreen...');
+    _sttSubscription?.cancel();
+    _audioService.stopRecording();
     super.dispose();
   }
 

@@ -47,6 +47,7 @@ import 'services/embedding_service.dart';
 // Conditional import for EmbeddingQueueService (native platforms only)
 import 'services/embedding_queue_service.dart'
     if (dart.library.html) 'bootstrap/embedding_queue_service_web_stub.dart';
+import 'services/audio_recording_service.dart';
 import 'services/stt_service.dart';
 import 'services/tts_service.dart';
 import 'services/llm_service.dart';
@@ -480,6 +481,35 @@ Future<void> initializeEverythingStack({
     );
   }
 
+  // 13. Initialize Audio Recording Service (Microphone Input)
+  try {
+    await AudioRecordingService.instance.initialize();
+    debugPrint('✅ Audio: AudioRecordingService');
+  } catch (e) {
+    debugPrint('⚠️ Audio recording service init failed: $e');
+  }
+
+  // 14. Initialize STT Service (Speech-to-Text)
+  if (isIntegrationTest) {
+    debugPrint('🎤 [TEST] Using mock STT service');
+    // For testing, we use a mock that doesn't require actual speech input
+    STTService.instance = MockSTTServiceForTests();
+  } else {
+    if (cfg.deepgramApiKey != null && cfg.deepgramApiKey!.isNotEmpty) {
+      debugPrint('🎤 [STT] Initializing DeepgramSTTService');
+      final sttService = DeepgramSTTService(
+        apiKey: cfg.deepgramApiKey!,
+        invocationRepository: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+      );
+      await sttService.initialize();
+      STTService.instance = sttService;
+      debugPrint('✅ STT: DeepgramSTTService');
+    } else {
+      debugPrint('⚠️ Deepgram API key missing');
+      debugPrint('ℹ️ STT: disabled');
+    }
+  }
+
   // Note: Domain repositories (Task, Timer, Personality, Namespace) are initialized
   // by the application layer, not bootstrap. This allows for platform-specific
   // persistence handling and dependency injection.
@@ -518,6 +548,7 @@ Future<void> disposeEverythingStack() async {
   STTService.instance.dispose();
   TTSService.instance.dispose();
   LLMService.instance.dispose();
+  AudioRecordingService.instance.dispose();
 
   // Dispose other services
   // Note: ObjectBox Store can be safely disposed, IndexedDB cleanup is handled by browser

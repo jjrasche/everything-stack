@@ -5,12 +5,14 @@
 
 library;
 
+import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:everything_stack_template/services/llm_service.dart';
 import 'package:everything_stack_template/services/tts_service.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
+import 'package:everything_stack_template/services/stt_service.dart';
 
 /// Mock LLM Service for testing
 class MockLLMServiceForTests implements LLMService {
@@ -129,4 +131,62 @@ class MockEmbeddingServiceForTests implements EmbeddingService {
     // Return dummy embeddings for each text
     return List.generate(texts.length, (_) => List.filled(384, 0.1));
   }
+}
+
+/// Mock STT Service for testing
+class MockSTTServiceForTests extends STTService {
+  final List<String> transcripts = [];
+  bool _isReady = false;
+
+  @override
+  Future<void> initialize() async {
+    debugPrint('🎤 [TEST] MockSTTService initialized');
+    _isReady = true;
+  }
+
+  @override
+  StreamSubscription<String> stream({
+    required Stream<Uint8List> input,
+    required void Function(String) onData,
+    void Function()? onUtteranceEnd,
+    required void Function(Object) onError,
+    void Function()? onDone,
+  }) {
+    debugPrint('🎤 [TEST] MockSTTService.stream called');
+    // Drain the input stream and return empty string stream for testing
+    input.listen(
+      (audioBytes) {
+        debugPrint('🎤 [TEST] Received ${audioBytes.length} audio bytes');
+      },
+      onError: (e) => onError(STTException('Test error: $e')),
+      onDone: () => onDone?.call(),
+    );
+    // Return empty stream subscription
+    return Stream<String>.empty().listen(
+      (text) => onData(text),
+      onError: onError,
+      onDone: onDone,
+    );
+  }
+
+  @override
+  void dispose() {
+    debugPrint('🎤 [TEST] MockSTTService disposed');
+  }
+
+  @override
+  bool get isReady => _isReady;
+
+  @override
+  Future<String> recordInvocation(dynamic invocation) async => 'test-stt-id';
+
+  @override
+  Future<void> trainFromFeedback(String turnId, {String? userId}) async {}
+
+  @override
+  Future<Map<String, dynamic>> getAdaptationState({String? userId}) async =>
+      {'status': 'baseline'};
+
+  @override
+  Widget buildFeedbackUI(String invocationId) => const SizedBox();
 }
