@@ -408,6 +408,7 @@ class NullSTTService extends STTService {
 
     // Drain input stream but don't process it
     input.listen(
+      (_) {},  // Ignore audio data
       onError: onError,
       onDone: onDone,
     );
