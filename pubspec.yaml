@@ -24,7 +24,7 @@ dependencies:
 
   # Crash reporting
   firebase_core: ^3.0.0
-  firebase_crashlytics: ^4.0.0
+  firebase_crashlytics: ^4.1.0
 
   # State management
   flutter_riverpod: ^2.4.0
