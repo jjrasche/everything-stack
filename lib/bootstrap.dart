@@ -617,8 +617,12 @@ Future<void> disposeEverythingStack() async {
   // Dispose other services
   // Note: ObjectBox Store can be safely disposed, IndexedDB cleanup is handled by browser
   if (!kIsWeb) {
-    final store = getIt<Store>();
-    store.close();  // Store.close() is synchronous, no await needed
+    try {
+      final store = getIt<Store>(instanceName: 'objectBoxStore');
+      store.close();  // Store.close() is synchronous, no await needed
+    } catch (e) {
+      debugPrint('⚠️ Store not registered in GetIt, skipping disposal');
+    }
   }
   FileService.instance.dispose();
   BlobStore.instance.dispose();
