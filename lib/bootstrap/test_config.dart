@@ -238,13 +238,15 @@ class InMemoryInvocationRepository<T extends domain_invocation.Invocation>
   final Map<String, T> _store = {};
 
   @override
-  Future<void> create(T entity) async => _store[entity.id] = entity;
+  Future<void> create(T entity) async =>
+      _store[entity.id.toString()] = entity;
 
   @override
   Future<T?> read(String id) async => _store[id];
 
   @override
-  Future<void> update(T entity) async => _store[entity.id] = entity;
+  Future<void> update(T entity) async =>
+      _store[entity.id.toString()] = entity;
 
   @override
   Future<void> delete(String id) async => _store.remove(id);
@@ -284,7 +286,8 @@ class InMemoryInvocationRepository<T extends domain_invocation.Invocation>
   Future<List<T>> findByContextType(String contextType) async => [];
 
   @override
-  Future<void> save(T entity) async => _store[entity.id] = entity;
+  Future<void> save(T entity) async =>
+      _store[entity.id.toString()] = entity;
 }
 
 /// In-memory Adaptation State Repository for testing
@@ -365,13 +368,15 @@ class InMemoryTurnRepository implements TurnRepository {
   final Map<String, Turn> _store = {};
 
   @override
-  Future<void> create(Turn entity) async => _store[entity.id] = entity;
+  Future<void> create(Turn entity) async =>
+      _store[entity.id.toString()] = entity;
 
   @override
   Future<Turn?> read(String id) async => _store[id];
 
   @override
-  Future<void> update(Turn entity) async => _store[entity.id] = entity;
+  Future<void> update(Turn entity) async =>
+      _store[entity.id.toString()] = entity;
 
   @override
   Future<void> delete(String id) async => _store.remove(id);
