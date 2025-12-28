@@ -167,3 +167,57 @@ jobs:
           releaseNotes: "Latest Android build from main branch"
           appId: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
 
+  # ============ Check Crashes ============
+  check-crashes:
+    name: Check Crashlytics for Recent Crashes
+    runs-on: ubuntu-latest
+    needs: [build-android, build-web]
+    if: success() || failure()  # Run even if builds fail
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup Firebase Service Account
+        run: |
+          mkdir -p .firebase
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > .firebase/service-account-key.json
+
+      - name: Check Android Crashes
+        run: |
+          ANDROID_CRASHES=$(node scripts/fetch-crashes.js --platform=android 2>&1 | tail -1)
+          CRASH_COUNT=$(echo "$ANDROID_CRASHES" | jq 'length' 2>/dev/null || echo 0)
+
+          echo "📱 Android Crashes: $CRASH_COUNT"
+
+          if [ "$CRASH_COUNT" -gt 0 ]; then
+            echo "⚠️  Recent Android crashes detected:"
+            echo "$ANDROID_CRASHES" | jq '.' 2>/dev/null || echo "$ANDROID_CRASHES"
+          fi
+
+      - name: Check iOS Crashes
+        run: |
+          IOS_CRASHES=$(node scripts/fetch-crashes.js --platform=ios 2>&1 | tail -1)
+          CRASH_COUNT=$(echo "$IOS_CRASHES" | jq 'length' 2>/dev/null || echo 0)
+
+          echo "🍎 iOS Crashes: $CRASH_COUNT"
+
+          if [ "$CRASH_COUNT" -gt 0 ]; then
+            echo "⚠️  Recent iOS crashes detected:"
+            echo "$IOS_CRASHES" | jq '.' 2>/dev/null || echo "$IOS_CRASHES"
+          fi
+
+      - name: Check Web Crashes
+        run: |
+          WEB_CRASHES=$(node scripts/fetch-crashes.js --platform=web 2>&1 | tail -1)
+          CRASH_COUNT=$(echo "$WEB_CRASHES" | jq 'length' 2>/dev/null || echo 0)
+
+          echo "🌐 Web Crashes: $CRASH_COUNT"
+
+          if [ "$CRASH_COUNT" -gt 0 ]; then
+            echo "⚠️  Recent Web crashes detected:"
+            echo "$WEB_CRASHES" | jq '.' 2>/dev/null || echo "$WEB_CRASHES"
+          fi
+
