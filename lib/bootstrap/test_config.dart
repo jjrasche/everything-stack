@@ -13,6 +13,14 @@ import 'package:everything_stack_template/services/llm_service.dart';
 import 'package:everything_stack_template/services/tts_service.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/stt_service.dart';
+import 'package:everything_stack_template/core/invocation_repository.dart';
+import 'package:everything_stack_template/core/adaptation_state_repository.dart';
+import 'package:everything_stack_template/core/feedback_repository.dart';
+import 'package:everything_stack_template/core/turn_repository.dart';
+import 'package:everything_stack_template/domain/invocation.dart' as domain_invocation;
+import 'package:everything_stack_template/domain/adaptation_state.dart';
+import 'package:everything_stack_template/domain/feedback_correction.dart';
+import 'package:everything_stack_template/domain/turn.dart';
 
 /// Mock LLM Service for testing
 class MockLLMServiceForTests implements LLMService {
@@ -224,4 +232,142 @@ class MockSTTServiceForTests extends STTService {
 
   @override
   Widget buildFeedbackUI(String invocationId) => const SizedBox();
+}
+
+/// In-memory Invocation Repository for testing
+class InMemoryInvocationRepository<T extends domain_invocation.Invocation>
+    implements InvocationRepository<T> {
+  final Map<String, T> _store = {};
+
+  @override
+  Future<void> create(T entity) async => _store[entity.id] = entity;
+
+  @override
+  Future<T?> read(String id) async => _store[id];
+
+  @override
+  Future<void> update(T entity) async => _store[entity.id] = entity;
+
+  @override
+  Future<void> delete(String id) async => _store.remove(id);
+
+  @override
+  Future<List<T>> readAll() async => _store.values.toList();
+
+  @override
+  Future<void> initialize() async {}
+
+  @override
+  Future<void> dispose() async {}
+
+  @override
+  Stream<T?> watchEntity(String id) => Stream.value(_store[id]);
+
+  @override
+  Stream<List<T>> watchAll() => Stream.value(_store.values.toList());
+}
+
+/// In-memory Adaptation State Repository for testing
+class InMemoryAdaptationStateRepository
+    implements AdaptationStateRepository {
+  final Map<String, AdaptationState> _store = {};
+
+  @override
+  Future<void> create(AdaptationState entity) async =>
+      _store[entity.id] = entity;
+
+  @override
+  Future<AdaptationState?> read(String id) async => _store[id];
+
+  @override
+  Future<void> update(AdaptationState entity) async =>
+      _store[entity.id] = entity;
+
+  @override
+  Future<void> delete(String id) async => _store.remove(id);
+
+  @override
+  Future<List<AdaptationState>> readAll() async => _store.values.toList();
+
+  @override
+  Future<void> initialize() async {}
+
+  @override
+  Future<void> dispose() async {}
+
+  @override
+  Stream<AdaptationState?> watchEntity(String id) =>
+      Stream.value(_store[id]);
+
+  @override
+  Stream<List<AdaptationState>> watchAll() =>
+      Stream.value(_store.values.toList());
+}
+
+/// In-memory Feedback Repository for testing
+class InMemoryFeedbackRepository implements FeedbackRepository {
+  final Map<String, FeedbackCorrection> _store = {};
+
+  @override
+  Future<void> create(FeedbackCorrection entity) async =>
+      _store[entity.id] = entity;
+
+  @override
+  Future<FeedbackCorrection?> read(String id) async => _store[id];
+
+  @override
+  Future<void> update(FeedbackCorrection entity) async =>
+      _store[entity.id] = entity;
+
+  @override
+  Future<void> delete(String id) async => _store.remove(id);
+
+  @override
+  Future<List<FeedbackCorrection>> readAll() async => _store.values.toList();
+
+  @override
+  Future<void> initialize() async {}
+
+  @override
+  Future<void> dispose() async {}
+
+  @override
+  Stream<FeedbackCorrection?> watchEntity(String id) =>
+      Stream.value(_store[id]);
+
+  @override
+  Stream<List<FeedbackCorrection>> watchAll() =>
+      Stream.value(_store.values.toList());
+}
+
+/// In-memory Turn Repository for testing
+class InMemoryTurnRepository implements TurnRepository {
+  final Map<String, Turn> _store = {};
+
+  @override
+  Future<void> create(Turn entity) async => _store[entity.id] = entity;
+
+  @override
+  Future<Turn?> read(String id) async => _store[id];
+
+  @override
+  Future<void> update(Turn entity) async => _store[entity.id] = entity;
+
+  @override
+  Future<void> delete(String id) async => _store.remove(id);
+
+  @override
+  Future<List<Turn>> readAll() async => _store.values.toList();
+
+  @override
+  Future<void> initialize() async {}
+
+  @override
+  Future<void> dispose() async {}
+
+  @override
+  Stream<Turn?> watchEntity(String id) => Stream.value(_store[id]);
+
+  @override
+  Stream<List<Turn>> watchAll() => Stream.value(_store.values.toList());
 }

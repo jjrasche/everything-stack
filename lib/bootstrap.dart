@@ -32,7 +32,6 @@ library;
 
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 
@@ -85,8 +84,6 @@ import 'bootstrap/test_config.dart';
 import 'bootstrap/blob_store_factory_stub.dart'
     if (dart.library.io) 'bootstrap/blob_store_factory_io.dart'
     if (dart.library.html) 'bootstrap/blob_store_factory_web.dart';
-
-import 'bootstrap/test_config.dart';
 
 /// Configuration for Everything Stack initialization.
 class EverythingStackConfig {
@@ -751,9 +748,17 @@ void setupServiceLocatorForTesting({
     llmService ?? MockLLMServiceForTests(),
   );
 
-  // ========== Domain Repositories (Real implementations) ==========
-  // Already registered in initializeEverythingStack() based on platform
-  // No need to re-register here
+  // ========== Domain Repositories (In-memory mocks for testing) ==========
+  // Use in-memory implementations for unit tests
+  final mockInvocationRepo = InMemoryInvocationRepository<domain_invocation.Invocation>();
+  final mockAdaptationStateRepo = InMemoryAdaptationStateRepository();
+  final mockFeedbackRepo = InMemoryFeedbackRepository();
+  final mockTurnRepo = InMemoryTurnRepository();
+
+  getIt.registerSingleton<InvocationRepository<domain_invocation.Invocation>>(mockInvocationRepo);
+  getIt.registerSingleton<AdaptationStateRepository>(mockAdaptationStateRepo);
+  getIt.registerSingleton<FeedbackRepository>(mockFeedbackRepo);
+  getIt.registerSingleton<TurnRepository>(mockTurnRepo);
 
   // ========== Trainable Selectors - Real implementations ==========
 
