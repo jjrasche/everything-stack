@@ -309,6 +309,10 @@ Future<void> _initializeService<T>({
 Future<void> initializeEverythingStack({
   EverythingStackConfig? config,
 }) async {
+  debugPrint('═══════════════════════════════════════════════════════');
+  debugPrint('🚀 [Bootstrap] Starting Everything Stack initialization');
+  debugPrint('═══════════════════════════════════════════════════════');
+
   // Load .env file for local development (bundled as asset in pubspec.yaml)
   // In .gitignore so it won't be committed to git
   try {
@@ -319,7 +323,19 @@ Future<void> initializeEverythingStack({
     debugPrint('ℹ️ [Bootstrap] .env not found, falling back to compile-time env vars');
   }
 
-  final cfg = config ?? EverythingStackConfig.fromEnvironment();
+  try {
+    final cfg = config ?? EverythingStackConfig.fromEnvironment();
+    debugPrint('✅ [Bootstrap] Configuration loaded successfully');
+    return _initializeServices(cfg);
+  } catch (e, st) {
+    debugPrint('❌ [Bootstrap] FATAL ERROR during initialization: $e');
+    debugPrint('Stack trace: $st');
+    rethrow;
+  }
+}
+
+Future<void> _initializeServices(EverythingStackConfig cfg) async {
+  try {
 
   // Check if running integration tests
   const isIntegrationTest =
@@ -531,6 +547,12 @@ Future<void> initializeEverythingStack({
   // See: lib/providers/ for Riverpod provider setup with repositories
   // See: lib/main.dart for ContextManager initialization
   debugPrint('\n✅ Bootstrap complete: infrastructure services initialized');
+  } catch (e, st) {
+    debugPrint('❌ [Bootstrap] FATAL ERROR during service initialization: $e');
+    debugPrint('Stack trace:\n$st');
+    debugPrint('═══════════════════════════════════════════════════════');
+    rethrow;
+  }
 }
 
 /// Initialize with mock services (for testing).
