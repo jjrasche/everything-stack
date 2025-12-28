@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "695005425106",
+    "project_id": "everything-stack-5a842",
+    "storage_bucket": "everything-stack-5a842.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:695005425106:android:d16559ef358c56db632c0b",
+        "android_client_info": {
+          "package_name": "everything.stack.me"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeleEnWf5wm6JOUhIzOUclwI293mZ63uU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
