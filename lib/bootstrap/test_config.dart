@@ -18,8 +18,6 @@ import 'package:everything_stack_template/core/adaptation_state_repository.dart'
 import 'package:everything_stack_template/core/feedback_repository.dart';
 import 'package:everything_stack_template/core/turn_repository.dart';
 import 'package:everything_stack_template/domain/invocation.dart' as domain_invocation;
-import 'package:everything_stack_template/domain/adaptation_state.dart';
-import 'package:everything_stack_template/domain/feedback_correction.dart';
 import 'package:everything_stack_template/domain/turn.dart';
 
 /// Mock LLM Service for testing
@@ -270,24 +268,24 @@ class InMemoryInvocationRepository<T extends domain_invocation.Invocation>
 /// In-memory Adaptation State Repository for testing
 class InMemoryAdaptationStateRepository
     implements AdaptationStateRepository {
-  final Map<String, AdaptationState> _store = {};
+  final Map<String, dynamic> _store = {};
 
   @override
-  Future<void> create(AdaptationState entity) async =>
+  Future<void> create(dynamic entity) async =>
       _store[entity.id] = entity;
 
   @override
-  Future<AdaptationState?> read(String id) async => _store[id];
+  Future<dynamic> read(String id) async => _store[id];
 
   @override
-  Future<void> update(AdaptationState entity) async =>
+  Future<void> update(dynamic entity) async =>
       _store[entity.id] = entity;
 
   @override
   Future<void> delete(String id) async => _store.remove(id);
 
   @override
-  Future<List<AdaptationState>> readAll() async => _store.values.toList();
+  Future<List<dynamic>> readAll() async => _store.values.toList();
 
   @override
   Future<void> initialize() async {}
@@ -296,34 +294,34 @@ class InMemoryAdaptationStateRepository
   Future<void> dispose() async {}
 
   @override
-  Stream<AdaptationState?> watchEntity(String id) =>
+  Stream<dynamic> watchEntity(String id) =>
       Stream.value(_store[id]);
 
   @override
-  Stream<List<AdaptationState>> watchAll() =>
+  Stream<List<dynamic>> watchAll() =>
       Stream.value(_store.values.toList());
 }
 
 /// In-memory Feedback Repository for testing
 class InMemoryFeedbackRepository implements FeedbackRepository {
-  final Map<String, FeedbackCorrection> _store = {};
+  final Map<String, dynamic> _store = {};
 
   @override
-  Future<void> create(FeedbackCorrection entity) async =>
+  Future<void> create(dynamic entity) async =>
       _store[entity.id] = entity;
 
   @override
-  Future<FeedbackCorrection?> read(String id) async => _store[id];
+  Future<dynamic> read(String id) async => _store[id];
 
   @override
-  Future<void> update(FeedbackCorrection entity) async =>
+  Future<void> update(dynamic entity) async =>
       _store[entity.id] = entity;
 
   @override
   Future<void> delete(String id) async => _store.remove(id);
 
   @override
-  Future<List<FeedbackCorrection>> readAll() async => _store.values.toList();
+  Future<List<dynamic>> readAll() async => _store.values.toList();
 
   @override
   Future<void> initialize() async {}
@@ -332,11 +330,11 @@ class InMemoryFeedbackRepository implements FeedbackRepository {
   Future<void> dispose() async {}
 
   @override
-  Stream<FeedbackCorrection?> watchEntity(String id) =>
+  Stream<dynamic> watchEntity(String id) =>
       Stream.value(_store[id]);
 
   @override
-  Stream<List<FeedbackCorrection>> watchAll() =>
+  Stream<List<dynamic>> watchAll() =>
       Stream.value(_store.values.toList());
 }
 
@@ -366,8 +364,8 @@ class InMemoryTurnRepository implements TurnRepository {
   Future<void> dispose() async {}
 
   @override
-  Stream<Turn?> watchEntity(String id) => Stream.value(_store[id]);
+  Stream<Turn?> watchEntity(String id) => Stream.value(_store[id] as Turn?);
 
   @override
-  Stream<List<Turn>> watchAll() => Stream.value(_store.values.toList());
+  Stream<List<Turn>> watchAll() => Stream.value(_store.values.toList() as List<Turn>);
 }
