@@ -1,15 +1,69 @@
-name: CD - Deploy to Firebase
+name: Build & Test & Deploy
 
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
+  # ============ Analysis ============
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+
+      - name: Format check
+        run: dart format --set-exit-if-changed .
+
+  # ============ Unit Tests ============
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Run unit and integration tests
+        run: flutter test --coverage
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: coverage/lcov.info
+
+  # ============ Builds (only if tests pass) ============
   # ============ Build Web ============
   build-web:
     name: Build Web
     runs-on: ubuntu-latest
+    needs: [analyze, test]
     steps:
       - uses: actions/checkout@v4
 
@@ -50,6 +104,7 @@ jobs:
   build-android:
     name: Build & Distribute Android
     runs-on: ubuntu-latest
+    needs: [analyze, test]
     steps:
       - uses: actions/checkout@v4
 
@@ -97,6 +152,7 @@ jobs:
   build-ios:
     name: Build & Distribute iOS
     runs-on: macos-latest
+    needs: [analyze, test]
     steps:
       - uses: actions/checkout@v4
 
