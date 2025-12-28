@@ -36,7 +36,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 
-import 'package:objectbox/objectbox.dart';
+// Conditional import for ObjectBox (native platforms only)
+import 'package:objectbox/objectbox.dart'
+    if (dart.library.html) 'bootstrap/objectbox_stub.dart';
 
 import 'services/blob_store.dart';
 import 'services/file_service.dart';
@@ -69,15 +71,22 @@ import 'core/invocation_repository.dart';
 import 'core/adaptation_state_repository.dart';
 import 'core/feedback_repository.dart';
 import 'core/turn_repository.dart';
-import 'persistence/objectbox/invocation_objectbox_adapter.dart';
-import 'persistence/objectbox/adaptation_state_objectbox_adapter.dart';
-import 'persistence/objectbox/feedback_objectbox_adapter.dart';
-import 'persistence/objectbox/turn_objectbox_adapter.dart';
+// Conditional imports for ObjectBox adapters (native platforms only)
+import 'persistence/objectbox/invocation_objectbox_adapter.dart'
+    if (dart.library.html) 'persistence/objectbox/invocation_objectbox_adapter_stub.dart';
+import 'persistence/objectbox/adaptation_state_objectbox_adapter.dart'
+    if (dart.library.html) 'persistence/objectbox/adaptation_state_objectbox_adapter_stub.dart';
+import 'persistence/objectbox/feedback_objectbox_adapter.dart'
+    if (dart.library.html) 'persistence/objectbox/feedback_objectbox_adapter_stub.dart';
+import 'persistence/objectbox/turn_objectbox_adapter.dart'
+    if (dart.library.html) 'persistence/objectbox/turn_objectbox_adapter_stub.dart';
 import 'persistence/indexeddb/invocation_indexeddb_adapter.dart';
 import 'persistence/indexeddb/adaptation_state_indexeddb_adapter.dart';
 import 'persistence/indexeddb/feedback_indexeddb_adapter.dart';
 import 'persistence/indexeddb/turn_indexeddb_adapter.dart';
-import 'bootstrap/objectbox_store_factory.dart';
+// Conditional import for ObjectBox factory (native platforms only)
+import 'bootstrap/objectbox_store_factory.dart'
+    if (dart.library.html) 'bootstrap/objectbox_store_factory_stub.dart';
 import 'bootstrap/indexeddb_factory.dart';
 import 'bootstrap/test_config.dart';
 
