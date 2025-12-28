@@ -263,6 +263,28 @@ class InMemoryInvocationRepository<T extends domain_invocation.Invocation>
 
   @override
   Stream<List<T>> watchAll() => Stream.value(_store.values.toList());
+
+  @override
+  Future<T?> findById(String id) async => _store[id];
+
+  @override
+  Future<List<T>> findByIds(List<String> ids) async =>
+      ids.map((id) => _store[id]).whereType<T>().toList();
+
+  @override
+  Future<List<T>> findAll() async => _store.values.toList();
+
+  @override
+  Future<List<T>> findByTurn(String turnId) async => [];
+
+  @override
+  Future<int> deleteByTurn(String turnId) async => 0;
+
+  @override
+  Future<List<T>> findByContextType(String contextType) async => [];
+
+  @override
+  Future<void> save(T entity) async => _store[entity.id] = entity;
 }
 
 /// In-memory Adaptation State Repository for testing
