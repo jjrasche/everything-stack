@@ -21,8 +21,8 @@ const path = require('path');
 // App ID mapping
 const APP_IDS = {
   android: '1:695005425106:android:d16559ef358c56db632c0b',
-  // TODO: ios: 'TBD - get from Firebase Console',
-  // TODO: web: 'TBD - get from Firebase Console'
+  ios: '1:695005425106:ios:4b9b4ac054b859ae632c0b',
+  web: '1:695005425106:web:292b1cd29d85817b632c0b',
 };
 
 const PROJECT_ID = 'everything-stack-5a842';
