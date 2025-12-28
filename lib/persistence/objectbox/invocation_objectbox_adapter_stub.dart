@@ -17,16 +17,17 @@ class InvocationObjectBoxAdapter implements InvocationRepository<domain_invocati
   InvocationObjectBoxAdapter(this.store);
 
   @override
-  Future<void> delete(String uuid) async {}
+  Future<bool> delete(String id) async => false;
 
   @override
-  Future<domain_invocation.Invocation?> findByUuid(String uuid) async => null;
+  Future<domain_invocation.Invocation?> findById(String id) async => null;
 
   @override
   Future<List<domain_invocation.Invocation>> findAll() async => [];
 
   @override
-  Future<String> save(domain_invocation.Invocation entity) async => entity.uuid;
+  Future<domain_invocation.Invocation> save(domain_invocation.Invocation invocation) async =>
+      invocation;
 
   @override
   Future<List<domain_invocation.Invocation>> findByTurn(String turnId) async => [];

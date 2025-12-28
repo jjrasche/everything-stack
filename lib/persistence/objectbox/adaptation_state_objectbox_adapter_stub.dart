@@ -47,13 +47,9 @@ class AdaptationStateObjectBoxAdapter implements AdaptationStateRepository {
   @override
   AdaptationState createDefault(String componentType, {String scope = 'global', String? userId}) =>
       AdaptationState(
-        uuid: '${DateTime.now().millisecondsSinceEpoch}',
         componentType: componentType,
         scope: scope,
         userId: userId,
-        tunables: {},
-        version: 1,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        data: {},
       );
 }
