@@ -749,97 +749,23 @@ void setupServiceLocatorForTesting({
     llmService ?? MockLLMServiceForTests(),
   );
 
-  // ========== Domain Repositories (In-memory mocks for testing) ==========
-  // Use in-memory implementations for unit tests
-  final mockInvocationRepo = InMemoryInvocationRepository<domain_invocation.Invocation>();
-  final mockAdaptationStateRepo = InMemoryAdaptationStateRepository();
-  final mockFeedbackRepo = InMemoryFeedbackRepository();
-  final mockTurnRepo = InMemoryTurnRepository();
+  // ========== Domain Repositories ==========
+  // Note: Repository registrations are handled by setupEverythingStack()
+  // Test classes that need repositories should use setupEverythingStack() or mock them separately
 
-  getIt.registerSingleton<InvocationRepository<domain_invocation.Invocation>>(mockInvocationRepo);
-  getIt.registerSingleton<AdaptationStateRepository>(mockAdaptationStateRepo);
-  getIt.registerSingleton<FeedbackRepository>(mockFeedbackRepo);
-  getIt.registerSingleton<TurnRepository>(mockTurnRepo);
-
-  // ========== Trainable Selectors - Real implementations ==========
-
-  getIt.registerSingleton<NamespaceSelector>(
-    NamespaceSelector(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    ),
-  );
-
-  getIt.registerSingleton<ToolSelector>(
-    ToolSelector(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    ),
-  );
-
-  getIt.registerSingleton<ContextInjector>(
-    ContextInjector(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    ),
-  );
-
-  getIt.registerSingleton<LLMConfigSelector>(
-    LLMConfigSelector(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    ),
-  );
-
-  getIt.registerSingleton<LLMOrchestrator>(
-    LLMOrchestrator(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    ),
-  );
-
-  getIt.registerSingleton<ResponseRenderer>(
-    ResponseRenderer(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    ),
-  );
+  // ========== Trainable Selectors - Skipped for test setup ==========
+  // These require repositories which are not available in test mode
+  // Tests should either:
+  // 1. Use setupEverythingStack() for full integration
+  // 2. Mock these selectors individually if needed
 
   // ========== Tool Registry ==========
 
   getIt.registerSingleton<ToolRegistry>(ToolRegistry());
 
-  // ========== Tool Executor - Real ==========
-
-  getIt.registerSingleton<ToolExecutor>(
-    ToolExecutor(
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      toolRegistry: getIt<ToolRegistry>(),
-    ),
-  );
-
-  // ========== Coordinator - Real (real trainables, mocked externals) ==========
-
-  getIt.registerSingleton<Coordinator>(
-    Coordinator(
-      namespaceSelector: getIt<NamespaceSelector>(),
-      toolSelector: getIt<ToolSelector>(),
-      contextInjector: getIt<ContextInjector>(),
-      llmConfigSelector: getIt<LLMConfigSelector>(),
-      llmOrchestrator: getIt<LLMOrchestrator>(),
-      responseRenderer: getIt<ResponseRenderer>(),
-      embeddingService: getIt<EmbeddingService>(),
-      llmService: getIt<LLMService>(),
-      toolExecutor: getIt<ToolExecutor>(),
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-    ),
-  );
+  // ========== Tool Executor & Coordinator - Skipped for test setup ==========
+  // These require repositories and selectors which are not available in test mode
+  // Tests should use setupEverythingStack() for full integration testing
 }
 
 // ============================================================================
