@@ -35,6 +35,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 // Conditional import for ObjectBox (native platforms only)
 import 'package:objectbox/objectbox.dart'
@@ -350,12 +352,36 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
     debugPrint('🧪 [INTEGRATION TEST MODE] Using mock external services');
   }
 
-  // 0. Create timeout-wrapped HTTP client (Layer 1 defense)
+  // 0. Initialize Firebase Crashlytics (cross-platform: Android, iOS, Web)
+  try {
+    // Initialize Firebase (auto-config on native, web uses default project)
+    await Firebase.initializeApp();
+    debugPrint('✅ Firebase Core initialized');
+
+    // Enable Crashlytics crash reporting
+    // This catches all uncaught exceptions and sends them to Firebase
+    FlutterError.onError = (errorDetails) {
+      FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
+    };
+
+    // Also capture async errors
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+
+    debugPrint('✅ Crashlytics enabled - crashes will be reported to Firebase');
+  } catch (e) {
+    debugPrint('⚠️ Firebase/Crashlytics initialization failed: $e');
+    debugPrint('   Continuing without crash reporting...');
+  }
+
+  // 1. Create timeout-wrapped HTTP client (Layer 1 defense)
   // Note: Currently unused. Will be used for embedding service HTTP client in future phases.
   // final timeoutClient = TimeoutHttpClient(http.Client());
   // final wrappedHttpClient = _wrapHttpClientWithTimeout(timeoutClient);
 
-  // 1. Initialize Persistence (platform-specific: ObjectBox or IndexedDB)
+  // 2. Initialize Persistence (platform-specific: ObjectBox or IndexedDB)
   if (kIsWeb) {
     // Web: IndexedDB
     debugPrint('💾 Initializing IndexedDB for web platform...');
