@@ -687,9 +687,12 @@ Future<void> setupServiceLocator() async {
     debugPrint('✅ [setupServiceLocator] EmbeddingService registered');
 
     // LLMService - loaded from config, respects abstraction
-    getIt.registerSingleton<LLMService>(
-      LLMService.instance,  // Already initialized by bootstrap
-    );
+    // Skip if already registered (e.g., by tests with mocks)
+    if (!getIt.isRegistered<LLMService>()) {
+      getIt.registerSingleton<LLMService>(
+        LLMService.instance,  // Already initialized by bootstrap
+      );
+    }
     debugPrint('✅ [setupServiceLocator] LLMService registered');
 
     // ========== Domain Repositories (Already registered in initializeEverythingStack) ==========
