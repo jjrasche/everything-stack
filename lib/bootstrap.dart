@@ -60,7 +60,14 @@ import 'services/service_builders.dart';
 import 'services/coordinator.dart';
 import 'services/tool_executor.dart';
 import 'services/tool_registry.dart';
+import 'services/event_bus.dart';
+import 'services/event_bus_impl.dart';
 import 'tools/task/repositories/task_repository.dart';
+import 'core/event_repository.dart';
+import 'persistence/event_repository_in_memory.dart';
+import 'persistence/objectbox/system_event_objectbox_adapter.dart'
+    if (dart.library.html) 'persistence/event_repository_in_memory.dart';
+import 'persistence/indexeddb/system_event_indexeddb_adapter.dart';
 import 'tools/task/task_tools.dart';
 import 'services/trainables/namespace_selector.dart';
 import 'services/trainables/tool_selector.dart';
@@ -608,6 +615,21 @@ Future<void> disposeEverythingStack() async {
     await _embeddingQueueService!.stop(flushPending: true);
   }
 
+  // Dispose Coordinator and EventBus
+  try {
+    final coordinator = getIt<Coordinator>();
+    coordinator.dispose();
+  } catch (e) {
+    debugPrint('⚠️ Coordinator not registered, skipping disposal');
+  }
+
+  try {
+    final eventBus = getIt<EventBus>();
+    eventBus.dispose();
+  } catch (e) {
+    debugPrint('⚠️ EventBus not registered, skipping disposal');
+  }
+
   // Dispose streaming services
   STTService.instance.dispose();
   TTSService.instance.dispose();
@@ -651,7 +673,7 @@ final getIt = GetIt.instance;
 ///   runApp(MyApp());
 /// }
 /// ```
-void setupServiceLocator() {
+Future<void> setupServiceLocator() async {
   debugPrint('[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION');
   debugPrint('🚀 [setupServiceLocator] Starting service registration...');
 
@@ -740,6 +762,26 @@ void setupServiceLocator() {
     // Register task tools with registry
     registerTaskTools(getIt<ToolRegistry>(), taskRepo);
 
+    // ========== Event Bus (Write-through persistence + pub/sub) ==========
+    debugPrint('🔍 [setupServiceLocator] Initializing EventBus...');
+
+    // Create platform-specific EventRepository
+    late EventRepository eventRepository;
+    if (kIsWeb) {
+      debugPrint('📝 EventBus: Using IndexedDB adapter (web)');
+      eventRepository = SystemEventRepositoryIndexedDBAdapter(await openIndexedDB());
+    } else {
+      debugPrint('📝 EventBus: Using ObjectBox adapter (native)');
+      final store = await openObjectBoxStore();
+      eventRepository = SystemEventRepositoryObjectBoxAdapter(store);
+    }
+    getIt.registerSingleton<EventRepository>(eventRepository);
+
+    // Create EventBus with repository
+    final eventBus = EventBusImpl(repository: eventRepository);
+    getIt.registerSingleton<EventBus>(eventBus);
+    debugPrint('✅ [setupServiceLocator] EventBus registered');
+
     // ========== Tool Executor (Real agentic loop) ==========
 
     getIt.registerSingleton<ToolExecutor>(
@@ -751,21 +793,24 @@ void setupServiceLocator() {
 
     // ========== Coordinator (Orchestrates all components) ==========
     debugPrint('🔍 [setupServiceLocator] Registering Coordinator...');
-    getIt.registerSingleton<Coordinator>(
-      Coordinator(
-        namespaceSelector: getIt<NamespaceSelector>(),
-        toolSelector: getIt<ToolSelector>(),
-        contextInjector: getIt<ContextInjector>(),
-        llmConfigSelector: getIt<LLMConfigSelector>(),
-        llmOrchestrator: getIt<LLMOrchestrator>(),
-        responseRenderer: getIt<ResponseRenderer>(),
-        embeddingService: getIt<EmbeddingService>(),
-        llmService: getIt<LLMService>(),
-        toolExecutor: getIt<ToolExecutor>(),
-        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      ),
+    final coordinator = Coordinator(
+      namespaceSelector: getIt<NamespaceSelector>(),
+      toolSelector: getIt<ToolSelector>(),
+      contextInjector: getIt<ContextInjector>(),
+      llmConfigSelector: getIt<LLMConfigSelector>(),
+      llmOrchestrator: getIt<LLMOrchestrator>(),
+      responseRenderer: getIt<ResponseRenderer>(),
+      embeddingService: getIt<EmbeddingService>(),
+      llmService: getIt<LLMService>(),
+      toolExecutor: getIt<ToolExecutor>(),
+      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+      eventBus: getIt<EventBus>(),
     );
-    debugPrint('✅ [setupServiceLocator] Coordinator registered');
+    getIt.registerSingleton<Coordinator>(coordinator);
+
+    // Initialize Coordinator event listeners
+    coordinator.initialize();
+    debugPrint('✅ [setupServiceLocator] Coordinator registered and initialized');
     debugPrint('🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY');
   } catch (e, st) {
     debugPrint('❌ [setupServiceLocator] ERROR: $e');

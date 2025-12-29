@@ -31,6 +31,7 @@
 /// 5. LLM responds again (may call more tools or finish)
 /// 6. Repeat until LLM produces final_response (no tool calls)
 
+import 'dart:async';
 import '../domain/invocation.dart';
 import '../core/invocation_repository.dart';
 import 'trainables/namespace_selector.dart';
@@ -42,6 +43,9 @@ import 'trainables/response_renderer.dart';
 import 'embedding_service.dart';
 import 'llm_service.dart';
 import 'tool_executor.dart' show ToolExecutor;
+import 'event_bus.dart';
+import 'events/transcription_complete.dart';
+import 'events/error_occurred.dart';
 
 /// Result of coordinator orchestration
 class CoordinatorResult {
@@ -102,6 +106,10 @@ class Coordinator {
   final ToolExecutor toolExecutor;
 
   final InvocationRepository<Invocation> invocationRepo;
+  final EventBus eventBus;
+
+  // Event listener subscription
+  late StreamSubscription<TranscriptionComplete> _transcriptionSubscription;
 
   // Agentic loop control
   static const int maxAgentLoopIterations = 10;
@@ -117,7 +125,37 @@ class Coordinator {
     required this.llmService,
     required this.toolExecutor,
     required this.invocationRepo,
+    required this.eventBus,
   });
+
+  /// Initialize Coordinator: register event listeners
+  ///
+  /// Called during bootstrap after Coordinator is registered in GetIt.
+  /// Subscribes to TranscriptionComplete events from STTService.
+  void initialize() {
+    print('\n🔧 [Coordinator.initialize] Wiring event listener');
+    _transcriptionSubscription = eventBus.subscribe<TranscriptionComplete>().listen(
+      (event) async {
+        print('\n📡 [Coordinator] Heard TranscriptionComplete: "${event.transcript}"');
+        // Coordinator now listens for transcription events and can trigger orchestration
+        // This enables event-driven flow: STT → EventBus → Coordinator
+        // TODO: In full implementation, trigger orchestration here
+        // For MVP, just log that we received it
+        print('✅ [Coordinator] Event listener working');
+      },
+      onError: (error) {
+        print('⚠️ [Coordinator] Event listener error: $error');
+      },
+    );
+    print('✅ [Coordinator.initialize] Event listener registered');
+  }
+
+  /// Dispose: cleanup event listeners
+  void dispose() {
+    print('🛑 [Coordinator.dispose] Cleaning up event listener');
+    _transcriptionSubscription.cancel();
+    print('✅ [Coordinator.dispose] Disposed');
+  }
 
   /// Orchestrate voice assistant pipeline
   Future<CoordinatorResult> orchestrate({
@@ -254,13 +292,25 @@ class Coordinator {
         success: true,
         latencyMs: latency,
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
       print('\n❌ COORDINATOR: orchestrate ERROR');
       print('🚨 Exception: $e');
       print('📍 Stack trace: ${StackTrace.current}');
       final latency = DateTime.now().difference(startTime).inMilliseconds;
       print('⏱️ Latency before error: ${latency}ms');
       print('=== COORDINATOR: orchestrate END (ERROR) ===\n');
+
+      // Publish error event (for monitoring and testing)
+      final errorEvent = ErrorOccurred(
+        source: 'coordinator',
+        message: e.toString(),
+        errorType: e.runtimeType.toString(),
+        correlationId: correlationId,
+        stackTrace: stackTrace.toString(),
+        severity: 'error',
+      );
+      await eventBus.publish(errorEvent);
+      print('📤 ErrorOccurred event published');
 
       return CoordinatorResult(
         turnId: correlationId,

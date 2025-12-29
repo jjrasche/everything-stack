@@ -43,7 +43,7 @@ Future<void> _ensureInitialized() async {
 
   if (needsInitialization) {
     await initializeEverythingStack();
-    setupServiceLocator();
+    await setupServiceLocator();
     _bootstrapInitialized = true;
     debugPrint('✅ [_ensureInitialized] Bootstrap initialization complete');
   }
