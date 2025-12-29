@@ -184,6 +184,9 @@ class Coordinator {
     required List<String> availableNamespaces,
     required Map<String, List<String>> toolsByNamespace,
   }) async {
+    // TEMPORARY TEST: Uncomment to verify test catches failures
+    // throw Exception('TEST FAILURE: Coordinator.orchestrate() intentionally broken');
+
     print('\n=== COORDINATOR: orchestrate START ===');
     print('🔗 CorrelationId: $correlationId');
     print('📝 Utterance: "$utterance"');
