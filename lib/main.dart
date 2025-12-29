@@ -54,6 +54,11 @@ void main() async {
     WidgetsFlutterBinding.ensureInitialized();
     await _ensureInitialized();
     runApp(const MyApp());
+
+    // TEST: Intentional crash to verify Firebase Crashlytics integration
+    Future.delayed(const Duration(seconds: 3), () {
+      throw Exception('🧪 TEST CRASH - Firebase Crashlytics Verification');
+    });
   } catch (e, st) {
     debugPrint('❌ FATAL ERROR in main(): $e');
     debugPrint('Stack trace: $st');
