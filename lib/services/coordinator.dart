@@ -132,16 +132,36 @@ class Coordinator {
   ///
   /// Called during bootstrap after Coordinator is registered in GetIt.
   /// Subscribes to TranscriptionComplete events from STTService.
+  /// Automatically triggers orchestration on each transcription event.
   void initialize() {
     print('\n🔧 [Coordinator.initialize] Wiring event listener');
     _transcriptionSubscription = eventBus.subscribe<TranscriptionComplete>().listen(
       (event) async {
         print('\n📡 [Coordinator] Heard TranscriptionComplete: "${event.transcript}"');
-        // Coordinator now listens for transcription events and can trigger orchestration
-        // This enables event-driven flow: STT → EventBus → Coordinator
-        // TODO: In full implementation, trigger orchestration here
-        // For MVP, just log that we received it
-        print('✅ [Coordinator] Event listener working');
+
+        try {
+          // Orchestrate on transcription complete event
+          // This enables event-driven flow: STT → EventBus → Coordinator → Orchestrate
+          print('🚀 [Coordinator] Starting orchestration from event...');
+
+          final result = await orchestrate(
+            correlationId: event.correlationId,
+            utterance: event.transcript,
+            availableNamespaces: ['general', 'productivity', 'entertainment'],
+            toolsByNamespace: {
+              'general': [],
+              'productivity': [],
+              'entertainment': [],
+            },
+          );
+
+          print('✅ [Coordinator] Orchestration complete: ${result.success ? "SUCCESS" : "FAILED"}');
+          if (!result.success) {
+            print('⚠️ Error: ${result.errorMessage}');
+          }
+        } catch (e) {
+          print('❌ [Coordinator] Failed to orchestrate from event: $e');
+        }
       },
       onError: (error) {
         print('⚠️ [Coordinator] Event listener error: $error');
