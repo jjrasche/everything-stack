@@ -97,7 +97,6 @@ import 'persistence/indexeddb/turn_indexeddb_adapter.dart';
 import 'bootstrap/objectbox_store_factory.dart'
     if (dart.library.html) 'bootstrap/objectbox_store_factory_stub.dart';
 import 'bootstrap/indexeddb_factory.dart';
-import 'bootstrap/test_config.dart';
 
 // Conditional import for platform-specific BlobStore
 import 'bootstrap/blob_store_factory_stub.dart'
@@ -346,19 +345,6 @@ Future<void> initializeEverythingStack({
 Future<void> _initializeServices(EverythingStackConfig cfg) async {
   try {
 
-  // Check if running integration tests
-  const isIntegrationTest =
-      String.fromEnvironment('INTEGRATION_TEST', defaultValue: 'false') == 'true';
-
-  if (cfg.useMocks) {
-    await _initializeMocks();
-    return;
-  }
-
-  if (isIntegrationTest) {
-    debugPrint('🧪 [INTEGRATION TEST MODE] Using mock external services');
-  }
-
   // 0. Initialize Firebase Crashlytics (cross-platform: Android, iOS, Web)
   try {
     // Initialize Firebase (auto-config on native, web uses default project)
@@ -484,61 +470,46 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
   );
 
   // 10. Initialize TTS Service
-  if (isIntegrationTest) {
-    debugPrint('🔊 [TEST] Using mock TTS service');
-    TTSService.instance = MockTTSServiceForTests();
-  } else {
-    final ttsConfig = ServiceConfig(
-      provider: cfg.ttsProvider ?? 'flutter',
-      credentials: cfg.googleTtsApiKey != null ? {'apiKey': cfg.googleTtsApiKey} : {},
-    );
-    await _initializeService<TTSService>(
-      serviceName: 'tts',
-      config: ttsConfig,
-      setInstance: (service) { TTSService.instance = service; },
-      shouldInitialize: (service) => true,
-      getType: (service) => service.runtimeType,
-    );
-  }
+  final ttsConfig = ServiceConfig(
+    provider: cfg.ttsProvider ?? 'flutter',
+    credentials: cfg.googleTtsApiKey != null ? {'apiKey': cfg.googleTtsApiKey} : {},
+  );
+  await _initializeService<TTSService>(
+    serviceName: 'tts',
+    config: ttsConfig,
+    setInstance: (service) { TTSService.instance = service; },
+    shouldInitialize: (service) => true,
+    getType: (service) => service.runtimeType,
+  );
 
   // 11. Initialize LLM Service
-  if (isIntegrationTest) {
-    debugPrint('🤖 [TEST] Using mock LLM service');
-    LLMService.instance = MockLLMServiceForTests();
-  } else {
-    final llmConfig = ServiceConfig(
-      provider: cfg.llmProvider ?? 'groq',
-      credentials: {if (cfg.groqApiKey != null) 'apiKey': cfg.groqApiKey!},
-    );
-    await _initializeService<LLMService>(
-      serviceName: 'llm',
-      config: llmConfig,
-      setInstance: (service) { LLMService.instance = service; },
-      shouldInitialize: (service) => true,
-      getType: (service) => service.runtimeType,
-    );
-  }
+  final llmConfig = ServiceConfig(
+    provider: cfg.llmProvider ?? 'groq',
+    credentials: {if (cfg.groqApiKey != null) 'apiKey': cfg.groqApiKey!},
+  );
+  await _initializeService<LLMService>(
+    serviceName: 'llm',
+    config: llmConfig,
+    setInstance: (service) { LLMService.instance = service; },
+    shouldInitialize: (service) => true,
+    getType: (service) => service.runtimeType,
+  );
 
   // 12. Initialize Embedding Service
-  if (isIntegrationTest) {
-    debugPrint('📊 [TEST] Using mock embedding service');
-    EmbeddingService.instance = MockEmbeddingServiceForTests();
-  } else {
-    final embeddingConfig = ServiceConfig(
-      provider: cfg.embeddingProvider ?? 'jina',
-      credentials: {
-        if (cfg.jinaApiKey != null) 'apiKey': cfg.jinaApiKey!,
-        if (cfg.geminiApiKey != null) 'apiKey': cfg.geminiApiKey!,
-      },
-    );
-    await _initializeService<EmbeddingService>(
-      serviceName: 'embedding',
-      config: embeddingConfig,
-      setInstance: (service) { EmbeddingService.instance = service; },
-      shouldInitialize: (service) => service is! NullEmbeddingService,
-      getType: (service) => service.runtimeType,
-    );
-  }
+  final embeddingConfig = ServiceConfig(
+    provider: cfg.embeddingProvider ?? 'jina',
+    credentials: {
+      if (cfg.jinaApiKey != null) 'apiKey': cfg.jinaApiKey!,
+      if (cfg.geminiApiKey != null) 'apiKey': cfg.geminiApiKey!,
+    },
+  );
+  await _initializeService<EmbeddingService>(
+    serviceName: 'embedding',
+    config: embeddingConfig,
+    setInstance: (service) { EmbeddingService.instance = service; },
+    shouldInitialize: (service) => service is! NullEmbeddingService,
+    getType: (service) => service.runtimeType,
+  );
 
   // 13. Initialize Audio Recording Service (Microphone Input)
   try {
@@ -549,25 +520,19 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
   }
 
   // 14. Initialize STT Service (Speech-to-Text)
-  if (isIntegrationTest) {
-    debugPrint('🎤 [TEST] Using mock STT service');
-    // For testing, we use a mock that doesn't require actual speech input
-    STTService.instance = MockSTTServiceForTests();
+  if (cfg.deepgramApiKey != null && cfg.deepgramApiKey!.isNotEmpty) {
+    debugPrint('🎤 [STT] Initializing DeepgramSTTService');
+    final sttService = DeepgramSTTService(
+      apiKey: cfg.deepgramApiKey!,
+      invocationRepository: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+    );
+    await sttService.initialize();
+    STTService.instance = sttService;
+    debugPrint('✅ STT: DeepgramSTTService');
   } else {
-    if (cfg.deepgramApiKey != null && cfg.deepgramApiKey!.isNotEmpty) {
-      debugPrint('🎤 [STT] Initializing DeepgramSTTService');
-      final sttService = DeepgramSTTService(
-        apiKey: cfg.deepgramApiKey!,
-        invocationRepository: getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      );
-      await sttService.initialize();
-      STTService.instance = sttService;
-      debugPrint('✅ STT: DeepgramSTTService');
-    } else {
-      debugPrint('⚠️ Deepgram API key missing');
-      debugPrint('ℹ️ STT: disabled');
-      STTService.instance = NullSTTService();
-    }
+    debugPrint('⚠️ Deepgram API key missing');
+    debugPrint('ℹ️ STT: disabled');
+    STTService.instance = NullSTTService();
   }
 
   // Note: Domain repositories (Task, Timer, Personality, Namespace) are initialized
@@ -586,26 +551,6 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
     debugPrint('═══════════════════════════════════════════════════════');
     rethrow;
   }
-}
-
-/// Initialize with mock services (for testing).
-Future<void> _initializeMocks() async {
-  final mockBlobStore = MockBlobStore();
-  await mockBlobStore.initialize();
-  BlobStore.instance = mockBlobStore;
-
-  final mockFileService = MockFileService(blobStore: mockBlobStore);
-  await mockFileService.initialize();
-  FileService.instance = mockFileService;
-
-  ConnectivityService.instance = MockConnectivityService();
-  SyncService.instance = MockSyncService();
-  EmbeddingService.instance = MockEmbeddingService();
-
-  // Initialize streaming services for tests
-  STTService.instance = MockSTTServiceForTests();
-  TTSService.instance = MockTTSServiceForTests();
-  LLMService.instance = MockLLMServiceForTests();
 }
 
 /// Dispose all services (call on app shutdown if needed).
@@ -821,63 +766,3 @@ Future<void> setupServiceLocator() async {
     rethrow;
   }
 }
-
-/// Setup GetIt for integration testing.
-///
-/// Registers real internal components but mocks external APIs.
-/// Call this in test setUp() to create a test-specific GetIt instance.
-///
-/// Example:
-/// ```dart
-/// void main() {
-///   group('Coordinator E2E', () {
-///     setUp(() {
-///       setupServiceLocatorForTesting();
-///     });
-///
-///     test('Real orchestration with mocked externals', () async {
-///       final coordinator = getIt<Coordinator>();
-///       // ...
-///     });
-///   });
-/// }
-/// ```
-void setupServiceLocatorForTesting({
-  EmbeddingService? embeddingService,
-  LLMService? llmService,
-}) {
-  getIt.reset();
-
-  // ========== External APIs - Mocked for testing ==========
-
-  getIt.registerSingleton<EmbeddingService>(
-    embeddingService ?? MockEmbeddingService(),
-  );
-
-  getIt.registerSingleton<LLMService>(
-    llmService ?? MockLLMServiceForTests(),
-  );
-
-  // ========== Domain Repositories ==========
-  // Note: Repository registrations are handled by setupEverythingStack()
-  // Test classes that need repositories should use setupEverythingStack() or mock them separately
-
-  // ========== Trainable Selectors - Skipped for test setup ==========
-  // These require repositories which are not available in test mode
-  // Tests should either:
-  // 1. Use setupEverythingStack() for full integration
-  // 2. Mock these selectors individually if needed
-
-  // ========== Tool Registry ==========
-
-  getIt.registerSingleton<ToolRegistry>(ToolRegistry());
-
-  // ========== Tool Executor & Coordinator - Skipped for test setup ==========
-  // These require repositories and selectors which are not available in test mode
-  // Tests should use setupEverythingStack() for full integration testing
-}
-
-// ============================================================================
-// Mock Services for Testing
-// ============================================================================
-
