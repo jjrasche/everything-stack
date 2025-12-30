@@ -5,6 +5,7 @@
 
 library;
 
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../objectbox.g.dart';
 
@@ -24,10 +25,21 @@ Future<Store> openObjectBoxStore() async {
   }
 
   try {
-    final store = await openStore();
-    _globalStore = store;
-    debugPrint('✅ ObjectBox Store initialized');
-    return store;
+    // Use test-specific directory in test mode to avoid polluting dev data
+    final isTest = Platform.environment.containsKey('FLUTTER_TEST');
+    if (isTest) {
+      debugPrint('ℹ️ ObjectBox: Using test database directory (isolated from production)');
+      final testDbDir = Directory.systemTemp.createTempSync('objectbox_test_');
+      final store = await openStore(directory: testDbDir.path);
+      _globalStore = store;
+      debugPrint('✅ ObjectBox Store initialized (test mode)');
+      return store;
+    } else {
+      final store = await openStore();
+      _globalStore = store;
+      debugPrint('✅ ObjectBox Store initialized');
+      return store;
+    }
   } catch (e) {
     // Handle ObjectBox schema mismatch errors (code 10001)
     // This can happen after schema changes (like UUID migration in Phase 6)
