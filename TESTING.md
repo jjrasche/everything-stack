@@ -159,6 +159,32 @@ flutter test integration_test/ -d chrome --headed
 
 ---
 
+## Smoke Tests (Pre-Release Validation)
+
+Smoke tests validate **real API integrations** before release. Same test logic as E2E tests, but with real services instead of mocks.
+
+**Why both?**
+- **E2E tests (CI):** Mocked, fast (~1s), catch regressions
+- **Smoke tests (manual):** Real APIs, slower (~3-5s), catch production issues
+
+**Running:**
+```bash
+flutter test test/smoke/
+```
+
+**Requirements:**
+- `.env` file with valid `GROQ_API_KEY` and `DEEPGRAM_API_KEY`
+- Network connection
+
+**Test validates:**
+- API integrations work (Groq, Deepgram)
+- Real latency acceptable
+- Invocation logging with real data
+
+Smoke tests and E2E tests share identical test logic (via `test/support/audio_pipeline_test_shared.dart`). Only service registration differs. Zero duplication.
+
+---
+
 ## How Tests Generate Learning Data
 
 Every E2E test creates real Invocations:

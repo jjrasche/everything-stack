@@ -346,27 +346,32 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
   try {
 
   // 0. Initialize Firebase Crashlytics (cross-platform: Android, iOS, Web)
-  try {
-    // Initialize Firebase (auto-config on native, web uses default project)
-    await Firebase.initializeApp();
-    debugPrint('✅ Firebase Core initialized');
+  // Skip Firebase in test environment (FLUTTER_TEST env var is set during flutter test)
+  if (Platform.environment.containsKey('FLUTTER_TEST')) {
+    debugPrint('⚠️ Skipping Firebase initialization (test environment detected)');
+  } else {
+    try {
+      // Initialize Firebase (auto-config on native, web uses default project)
+      await Firebase.initializeApp();
+      debugPrint('✅ Firebase Core initialized');
 
-    // Enable Crashlytics crash reporting
-    // This catches all uncaught exceptions and sends them to Firebase
-    FlutterError.onError = (errorDetails) {
-      FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
-    };
+      // Enable Crashlytics crash reporting
+      // This catches all uncaught exceptions and sends them to Firebase
+      FlutterError.onError = (errorDetails) {
+        FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
+      };
 
-    // Also capture async errors
-    PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      return true;
-    };
+      // Also capture async errors
+      PlatformDispatcher.instance.onError = (error, stack) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        return true;
+      };
 
-    debugPrint('✅ Crashlytics enabled - crashes will be reported to Firebase');
-  } catch (e) {
-    debugPrint('⚠️ Firebase/Crashlytics initialization failed: $e');
-    debugPrint('   Continuing without crash reporting...');
+      debugPrint('✅ Crashlytics enabled - crashes will be reported to Firebase');
+    } catch (e) {
+      debugPrint('⚠️ Firebase/Crashlytics initialization failed: $e');
+      debugPrint('   Continuing without crash reporting...');
+    }
   }
 
   // 1. Create timeout-wrapped HTTP client (Layer 1 defense)
