@@ -259,11 +259,29 @@ void main() {
       print('\n🚀 Publishing event to EventBus...');
       await eventBus.publish(transcriptionEvent);
 
-      // ========== WAIT: Let Coordinator listener process event ==========
-      print('⏳ Waiting for Coordinator listener to process event (3 seconds)...');
-      await Future.delayed(const Duration(seconds: 3));
+      // ========== WAIT: Poll for orchestration to complete ==========
+      // Don't use fixed delay - poll until invocations appear or timeout
+      print('⏳ Polling for orchestration completion (max 5 seconds)...');
+      final stopwatch = Stopwatch()..start();
+      bool orchestrationComplete = false;
 
-      print('✅ Event processing complete');
+      while (stopwatch.elapsedMilliseconds < 5000) {
+        final invs = await invocationRepo.findAll();
+        final testInvs = invs.where((inv) => inv.correlationId == testCorrelationId).toList();
+
+        if (testInvs.isNotEmpty) {
+          print('✅ Orchestration complete after ${stopwatch.elapsedMilliseconds}ms');
+          orchestrationComplete = true;
+          break;
+        }
+
+        // Wait before polling again
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
+
+      if (!orchestrationComplete) {
+        throw 'Orchestration did not complete within 5 seconds';
+      }
 
       // ========== ASSERT: Verify orchestration was triggered ==========
       print('\n✅ Starting assertions...');
