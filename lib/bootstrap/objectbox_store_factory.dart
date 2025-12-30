@@ -25,19 +25,28 @@ Future<Store> openObjectBoxStore() async {
   }
 
   try {
-    // Use test-specific directory in test mode to avoid polluting dev data
-    final isTest = Platform.environment.containsKey('FLUTTER_TEST');
+    // Use test-specific directory when explicitly running tests
+    // Tests MUST be run with --dart-define=TEST_MODE=true to get isolated database
+    // This prevents tests from accumulating data in production database
+    //
+    // Run tests with:
+    //   flutter test integration_test/... --dart-define=TEST_MODE=true -d windows
+    const isTest = bool.fromEnvironment('TEST_MODE', defaultValue: false);
+    debugPrint('🔍 [ObjectBox] Test mode: TEST_MODE=$isTest (compile-time constant)');
+
     if (isTest) {
       debugPrint('ℹ️ ObjectBox: Using test database directory (isolated from production)');
       final testDbDir = Directory.systemTemp.createTempSync('objectbox_test_');
+      debugPrint('ℹ️ ObjectBox test directory: ${testDbDir.path}');
       final store = await openStore(directory: testDbDir.path);
       _globalStore = store;
       debugPrint('✅ ObjectBox Store initialized (test mode)');
       return store;
     } else {
+      debugPrint('ℹ️ ObjectBox: Using production database directory');
       final store = await openStore();
       _globalStore = store;
-      debugPrint('✅ ObjectBox Store initialized');
+      debugPrint('✅ ObjectBox Store initialized (production mode)');
       return store;
     }
   } catch (e) {

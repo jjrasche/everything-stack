@@ -346,9 +346,10 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
   try {
 
   // 0. Initialize Firebase Crashlytics (cross-platform: Android, iOS, Web)
-  // Skip Firebase in test environment (FLUTTER_TEST env var is set during flutter test)
-  if (Platform.environment.containsKey('FLUTTER_TEST')) {
-    debugPrint('⚠️ Skipping Firebase initialization (test environment detected)');
+  // Skip Firebase in test environment (TEST_MODE dart-define flag set when running tests)
+  const isTestMode = bool.fromEnvironment('TEST_MODE', defaultValue: false);
+  if (isTestMode) {
+    debugPrint('⚠️ Skipping Firebase initialization (TEST_MODE=true)');
   } else {
     try {
       // Initialize Firebase (auto-config on native, web uses default project)

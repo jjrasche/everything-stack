@@ -181,15 +181,19 @@ test/support/audio_pipeline_test_shared.dart ← runAudioPipelineTest() function
 └─ integration_test/audio_pipeline_smoke_test.dart     ← Smoke: uses real services
 ```
 
-**Critical: Run as integration tests with device targets**
+**Critical: Run as integration tests with device targets and TEST_MODE flag**
+
+Tests MUST include `--dart-define=TEST_MODE=true` to get isolated database (separate from development data):
 
 ```bash
 # E2E (CI): Mocked services on any platform
-flutter test integration_test/audio_pipeline_e2e_test.dart -d chrome
+flutter test integration_test/audio_pipeline_e2e_test.dart --dart-define=TEST_MODE=true -d chrome
 
 # Smoke (pre-release): Real services, manual only
-flutter test integration_test/audio_pipeline_smoke_test.dart -d windows
+flutter test integration_test/audio_pipeline_smoke_test.dart --dart-define=TEST_MODE=true -d windows
 ```
+
+**Important: Without `--dart-define=TEST_MODE=true`, tests will use your production ObjectBox database and accumulate data**
 
 **Why device targets matter:**
 - Widget tests (`flutter test test/`) = Headless Dart VM, no native platform → ObjectBox hangs
