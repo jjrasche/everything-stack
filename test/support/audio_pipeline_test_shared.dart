@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -47,18 +48,32 @@ Future<void> runAudioPipelineTest(WidgetTester tester) async {
   // This tests the REAL streaming layer, not just event routing
   print('\n📡 Streaming audio to STT service...');
 
-  final testUtterance = 'What is the weather today?';
+  final testUtterance = 'one plus one'; // Matches the actual audio file content
   final testCorrelationId = 'test_${DateTime.now().millisecondsSinceEpoch}';
 
-  // Create synthetic audio bytes (simulate microphone input)
-  // In reality, these would come from mic, but for testing we use dummy data
-  final audioBytes = Uint8List.fromList(
-    List<int>.generate(16000 * 2, (i) => i % 256), // 2 seconds @ 16kHz, 16-bit
-  );
+  // Load real audio from test fixture file
+  // File: test_fixtures/audio/1_plus_1.wav (converted from M4A, 2.38 seconds @ 16kHz)
+  final audioFixturePath =
+      'test_fixtures/audio/1_plus_1.wav'; // Relative to project root
+  final audioFile = File(audioFixturePath);
+
+  Uint8List audioBytes;
+  if (await audioFile.exists()) {
+    print('📂 Loading real audio fixture: $audioFixturePath');
+    audioBytes = await audioFile.readAsBytes();
+  } else {
+    print('⚠️  Audio fixture not found: $audioFixturePath');
+    print('   Falling back to synthetic audio for testing');
+    // Fallback: synthetic audio if file not found
+    audioBytes = Uint8List.fromList(
+      List<int>.generate(16000 * 2, (i) => i % 256), // 2 seconds @ 16kHz
+    );
+  }
 
   print('📤 Audio stream setup:');
+  print('  - Audio source: ${await audioFile.exists() ? "Real WAV file" : "Synthetic"}');
   print('  - Audio size: ${audioBytes.length} bytes');
-  print('  - Duration: ~2 seconds (simulated 16kHz audio)');
+  print('  - Duration: ~2.38 seconds @ 16kHz stereo');
   print('  - Expected transcript: "$testUtterance"');
   print('  - CorrelationId: $testCorrelationId');
 

@@ -40,9 +40,10 @@ void main() {
 
       // Use EnhancedMockSTTService to test actual stream handling
       // This verifies audio is properly streamed to STT service
+      // The transcript matches the real audio fixture (1_plus_1.wav: "one plus one")
       GetIt.instance.registerSingleton<STTService>(
         EnhancedMockSTTService(
-          transcriptToEmit: 'What is the weather today?',
+          transcriptToEmit: 'one plus one',
           processingDelay: const Duration(milliseconds: 100),
         ),
       );
