@@ -1,105 +1,205 @@
 # Everything Stack
 
-**One template. Every platform. Zero architectural decisions.**
+**A semantic layer for execution and learning.**
 
-Everything Stack is complete application infrastructure for autonomous software development. Small language models adjust domain logic - not architecture, not persistence, not platform abstractions. If ANY application might need a capability, this template provides it.
+Everything Stack is complete application infrastructure that decouples WHERE code runs from WHAT the system learns. You write your logic once. The system decides where it lives based on what works. Every execution is logged. The system learns which execution choices led to better results. Over time, architecture adapts itself.
 
-## Core Philosophy
+## Three Core Properties
 
-**Infrastructure completeness over simplicity.** The complexity of dual persistence (ObjectBox + IndexedDB), multi-platform blob storage, vector search, and offline-first sync is paid ONCE in this template. Every application built on it inherits that infrastructure without thinking about it.
+### Execution Fungible
+Services don't care where they run. Embedding extraction runs on-device one day, server the next. The Invocation log captures both. Learning treats them the same.
 
-**All platforms are first-class.** Android, iOS, macOS, Windows, Linux, Web. Not "native-first with web as afterthought." Every platform works completely, or the template is incomplete.
+### Learning Persistent
+Every execution logged: what happened, why we think it happened, what the user thought. Feedback flows back. System learns which execution choices → better results. Over time, architecture reshapes itself.
 
-**AI models write domain logic only.** When a small model builds an app on Everything Stack, it defines entities, writes business logic, and creates BDD scenarios. It never chooses between databases, designs sync protocols, or solves platform-specific storage.
+### Self-Adapting
+System observes its own performance, gets feedback, adapts. Not randomly. Empirically. You don't pre-decide "embeddings run server-side." You experiment. Logs show tradeoffs. System learns them.
 
-**Core beliefs:**
-- One codebase across all platforms reduces what AI must manage
-- Opinionated choices eliminate decision fatigue
-- Patterns solve common problems once, dormant until needed
-- Documentation lives in code, co-located with implementation
-- BDD scenarios are the contract between human intent and AI implementation
+---
 
-## What's Inside
+## Current Implementation Status
 
-**Infrastructure (use as-is):**
-- `lib/core/` - Base entity and repository patterns
-- `lib/patterns/` - Opt-in mixins (embeddings, temporal, ownership, versioning, location, edges)
-- `lib/services/` - Embedding generation, sync management
-- `test/harness/` - Parameterized test infrastructure
+### ✅ What Works
+- **Dual persistence:** ObjectBox (native) + IndexedDB (web) with identical schemas
+- **Semantic search:** HNSW vector indexing, 8-12ms queries
+- **Offline-first:** Changes persist locally, sync when online
+- **All platforms:** iOS, Android, macOS, Windows, Linux, Web
+- **Version history:** Reconstruct past state from deltas
+- **Graph relationships:** Link entities, multi-hop queries
+- **372 integration tests passing**
 
-**Templates (fill in per project):**
-- `docs/templates/VISION_TEMPLATE.md` - Discover why this project exists
-- `docs/templates/ARCHITECTURE_TEMPLATE.md` - Define what gets built
+### ⚠️ Partial
+- **Narrative services:** Core extraction working (3 tests), ObjectBox integration pending
+- **Phase 6 trainable components:** Migration underway (~60% done), mixin-based pattern
+- **Execution fungibility plugins:** Blueprint exists, not yet implemented
+- **Learning adaptation loop:** AdaptationState model defined, training not yet active
 
-**Guidance (read, don't modify):**
-- `docs/asd/` - Principles, workflow, checkpoints
-- `docs/testing/` - BDD approach and testing philosophy
+### ❌ Not Started
+- **Remote execution:** Service plugin selection not yet trainable
+- **Multi-device sync:** v2 roadmap
+- **Team collaboration:** v3 roadmap
 
-**Example (delete after understanding):**
-- `lib/example/` - One entity showing all patterns
-- `test/scenarios/example_scenarios.dart` - One complete BDD cycle
+---
 
 ## Quick Start
 
-1. Clone this repo
-2. Read `.claude/CLAUDE.md` for initialization instructions
-3. Complete `docs/templates/VISION_TEMPLATE.md` with Claude AI (conversational)
-4. Complete `docs/templates/ARCHITECTURE_TEMPLATE.md` with Claude AI
-5. Tell Claude Code: "Initialize this as [your project name]"
-6. Build features following ASD workflow
+```bash
+# 1. Clone
+git clone <repo>
+
+# 2. Create environment
+cp .env.example .env
+# Edit .env with your Groq API key, etc.
+
+# 3. Run on any platform
+flutter run -d android    # Android emulator
+flutter run -d ios        # iOS simulator
+flutter run -d chrome     # Web browser
+flutter run -d macos      # macOS desktop
+flutter run -d windows    # Windows desktop
+flutter run -d linux      # Linux desktop
+
+# 4. Run tests
+flutter test              # All tests (uses mocks)
+flutter test integration_test/ -d chrome  # E2E on web
+```
+
+---
+
+## How It Works
+
+### For AI Models
+When a small model builds an app on Everything Stack:
+1. Define entities (lib/domain/)
+2. Write E2E tests (integration_test/)
+3. Implement features until tests pass
+4. Never choose databases, design sync, or solve platform problems
+5. Application works on all platforms
+
+### For the System
+Every execution creates an Invocation:
+- Component that ran (service name)
+- Input/output (what it did)
+- Execution context (local vs remote)
+- User feedback (what they thought)
+- Next time: AdaptationState guides decisions
+
+See ARCHITECTURE.md for complete entity model.
+
+---
 
 ## Stack
 
 | Layer | Choice |
 |-------|--------|
 | Language | Dart |
-| Framework | Flutter (mobile, web, desktop, embedded) |
-| Local DB | ObjectBox (native) + IndexedDB (web) |
-| Cloud DB | Supabase (self-hosted or cloud) |
-| Vector Search | HNSW (native via ObjectBox, pure Dart for web) |
-| AI Coder | Claude Code |
+| Framework | Flutter (mobile, web, desktop) |
+| Native DB | ObjectBox |
+| Web DB | IndexedDB |
+| Sync | Supabase |
+| Vector Search | HNSW (semantic) |
+| AI Services | Groq (LLM), Deepgram (speech), Jina (embeddings) |
+| Testing | Flutter (unit/integration/E2E) |
 | CI | GitHub Actions |
-| CD | Firebase App Distribution + Hosting |
 
-## Platform Targets
+---
 
-- iOS / Android (mobile)
-- Web (browser)
-- macOS / Windows / Linux (desktop)
-- Raspberry Pi / embedded Linux (IoT, kiosk)
+## Documentation
 
-Same codebase. Same tests. Platform-specific code isolated to thin adaptation layers.
+**Foundation Documents:**
+- **README.md** (you are here) - What is this, current status, quick start
+- **ARCHITECTURE.md** - How it works: semantic layer, invocations, adaptation, execution fungibility
+- **PATTERNS.md** - How to build: entities, services, testing, plugins, examples
+- **TESTING.md** - How to test: E2E approach, platforms, debugging
+- **.claude/CLAUDE.md** - Project initialization, permissions, build commands
+
+**For New Projects:**
+- **docs/templates/VISION_TEMPLATE.md** - Discover why your project exists
+- **docs/templates/ARCHITECTURE_TEMPLATE.md** - Define what gets built
+
+---
 
 ## Testing
 
-Tests follow a 4-layer approach. All layers run in CI.
+Test your code through real E2E execution. No mocks. What you test is what ships.
 
-**Unit Tests** - Service interfaces, mocks, algorithms
-```bash
-flutter test test/services/
-```
+E2E tests generate real Invocation logs that feed the learning system. Mocks generate fake signals.
 
-**Integration Tests** - Cross-service workflows on Dart VM
-```bash
-flutter test test/integration/
-```
-
-**BDD Scenarios** - User-facing behavior (Gherkin format)
-```bash
-flutter test test/scenarios/
-```
-
-**Platform Verification** - Actual platform implementations
+**All Platforms:**
 ```bash
 flutter test integration_test/ -d android   # Android emulator
+flutter test integration_test/ -d ios       # iOS simulator
 flutter test integration_test/ -d chrome    # Web browser
-flutter test integration_test/ -d macos     # Desktop
+flutter test integration_test/ -d macos     # macOS desktop
+flutter test integration_test/ -d windows   # Windows desktop
+flutter test integration_test/ -d linux     # Linux desktop
 ```
 
-**Run all tests (CI):**
-```bash
-flutter test                    # Unit + integration + scenarios
-flutter test integration_test/  # Platform verification (actual devices)
-```
+See TESTING.md for complete E2E testing patterns.
 
-See `docs/testing/TESTING_APPROACH.md` for complete testing philosophy and patterns.
+---
+
+## Core Philosophy
+
+**Infrastructure completeness over simplicity.** Dual persistence, multi-platform abstractions, vector search, offline sync - complexity is paid ONCE in this template. Every application built on it inherits that infrastructure.
+
+**All platforms are first-class.** Android, iOS, macOS, Windows, Linux, Web. Not native-first with web later. Complete or don't build it.
+
+**Domain logic only.** When a small model builds an app, it defines entities and writes business logic. It never chooses databases, designs sync, or solves platform problems. Those are already solved.
+
+---
+
+## Why This Matters
+
+Traditional architectures are static. You design once. It stays that way.
+
+Everything Stack makes architecture a first-class learnable thing. The system observes its own performance, gets feedback, reshapes itself. Not randomly. Empirically.
+
+The power isn't in any single layer. It's in the loop:
+**execute → log → learn → adapt → execute (better next time)**
+
+---
+
+## Recent Changes
+
+**Phase 6: Trainable Components** - Migrating from interface-based to mixin-based pattern
+- Services now support pluggable implementations (local vs remote)
+- Feedback collection automatic
+- Next: Train plugin selection based on performance
+
+**Consolidated Documentation** - Reduced from 41 files to 6 core docs
+- Removed 4-layer testing pyramid (E2E only)
+- Made execution fungibility explicit
+- Added learning architecture overview
+
+---
+
+## Getting Started
+
+1. Read ARCHITECTURE.md (understand how it works)
+2. Read PATTERNS.md (learn how to build with it)
+3. Read TESTING.md (understand E2E approach)
+4. Run a test: `flutter test integration_test/ -d chrome`
+5. Clone this as a new project: `git clone <repo> my-app`
+6. Replace this README with project-specific content
+7. Delete lib/example/ and test/scenarios/example_scenarios.dart
+8. Add your entities to lib/domain/
+9. Add your E2E tests to integration_test/
+10. Implement until tests pass
+
+See .claude/CLAUDE.md for project initialization checklist.
+
+---
+
+## License
+
+MIT - Use as template for your own applications.
+
+---
+
+## Questions?
+
+See ARCHITECTURE.md for how execution fungibility works.
+See PATTERNS.md for service and entity patterns.
+See TESTING.md for testing approach.
+See .claude/CLAUDE.md for initialization and build commands.

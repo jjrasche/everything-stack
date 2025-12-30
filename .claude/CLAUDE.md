@@ -16,10 +16,11 @@ Everything Stack template - Dart/Flutter cross-platform application
 4. **No platform shortcuts.** "Just for Android" or "web can come later" is not acceptable. Universal or don't build it.
 
 ## Foundation Documents
-- Vision: `docs/templates/VISION_TEMPLATE.md` (complete before building)
-- Architecture: `docs/templates/ARCHITECTURE_TEMPLATE.md` (complete before building)
-- Patterns: `lib/patterns/` (read structured comments before using)
-- ASD Workflow: `docs/asd/WORKFLOW.md` (follow for all features)
+- What is Everything Stack: `README.md` (overview + current status)
+- How it works: `ARCHITECTURE.md` (semantic layer, execution fungibility, learning)
+- How to build: `PATTERNS.md` (entities, services, adaptation, examples)
+- How to test: `TESTING.md` (E2E testing, platforms, learning signals)
+- Templates for new projects: `docs/templates/` (VISION_TEMPLATE.md, ARCHITECTURE_TEMPLATE.md)
 
 ## Project Initialization
 
@@ -65,32 +66,25 @@ Patterns are opt-in. Add `with PatternName` to entity only if needed.
 
 ## Testing Requirements
 
-Testing follows a 4-layer approach. All layers run in CI. All must pass before merge.
+Test your code through real E2E execution. No mocks. What you test is what ships.
 
-**Layer 1: Unit Tests (test/services/)**
-- Service interfaces, mocks, algorithms
-- Every service needs mock + real stub implementation
-- Run on Dart VM
+E2E tests generate real Invocation logs that feed the learning system. The system learns from what it actually does, not from mock behavior.
 
-**Layer 2: Integration Tests (test/integration/)**
-- Cross-service workflows
-- How services work together
-- Still use mocks, run on Dart VM
-- Only when unit tests don't cover the interaction
+**What to test:**
+- ✅ Every user-facing feature (message, rating, action)
+- ✅ Every end result (entity created, updated, deleted)
+- ✅ Every adaptation loop (feedback → system learns)
+- ✅ Every platform (iOS, Android, Web, macOS, Windows, Linux)
 
-**Layer 3: BDD Scenarios (test/scenarios/)**
-- User-facing behavior only
-- Gherkin format (Given/When/Then)
-- Parameterized test data
-- Only for features with UI or user interactions
+**How to test:**
+- Real components, real services, real persistence
+- No test doubles or mocks
+- Run on actual device or emulator
+- Every test generates an Invocation log
 
-**Layer 4: Platform Verification (integration_test/)**
-- Platform-specific implementations on actual platforms
-- Android emulator, iOS simulator, Chrome browser, desktop
-- NOT BDD - technical validation only
-- Minimal tests - just prove the abstraction works
+**Command:** `flutter test integration_test/ -d {platform}`
 
-**Read:** `docs/testing/TESTING_APPROACH.md` (formerly BDD_APPROACH.md) for complete guidance and examples
+**Read:** `TESTING.md` for complete guidance on E2E testing patterns and platform setup
 
 ## Build and Run
 
@@ -179,6 +173,32 @@ flutter build web --dart-define=...   # Web
 - Cross-platform code only - no platform-specific logic outside adapters
 - Dual persistence: adapters implement common interfaces, domain code is platform-agnostic
 - See `lib/tools/README.md` for tool domain architecture and ORM decorator separation
+
+## Current Work
+
+This section tracks active development, blockers, and work in progress. It changes daily. **When a feature is finished, delete it from this section.** If the work is architecturally significant, document the decision in DECISIONS.md instead.
+
+### Active Development
+- Trainable component migration (9 components to mixin pattern, ~60% done)
+- ContextManager service integration
+- Invocation logging wired throughout pipeline
+
+### Blockers
+- ContextManager blueprint exists (.claude/ARCHITECTURE_TRANSITION.md), implementation pending
+- Plugin selection training: Invocation logs captured, feedback training loop not yet active
+- Multi-device sync: requires Supabase schema updates + conflict resolution
+
+### What's Working
+- Event/Invocation/Turn entity model (typed, no dynamic fields)
+- Dual persistence (ObjectBox native, IndexedDB web) with identical schemas
+- Semantic search (HNSW, 8-12ms queries)
+- Offline-first architecture with Supabase sync
+- Trainable mixin pattern for feedback collection
+- Plugin pattern for execution fungibility (local vs remote, not yet trainable)
+- All 6 platforms (iOS, Android, macOS, Windows, Linux, Web)
+- 372 integration tests passing, E2E approach
+
+---
 
 ## Workflows (Phase 5D+)
 
