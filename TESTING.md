@@ -164,24 +164,47 @@ flutter test integration_test/ -d chrome --headed
 Smoke tests validate **real API integrations** before release. Same test logic as E2E tests, but with real services instead of mocks.
 
 **Why both?**
-- **E2E tests (CI):** Mocked, fast (~1s), catch regressions
-- **Smoke tests (manual):** Real APIs, slower (~3-5s), catch production issues
+- **E2E tests (CI):** Mocked services, fast (~10s), catch regressions, no secrets needed
+- **Smoke tests (manual):** Real APIs, slower (~10s), catch production issues, requires .env keys
 
-**Running:**
-```bash
-flutter test test/smoke/
+**Architecture: Parameterized Test Pattern**
+
+Both tests use identical test logic via shared function `runAudioPipelineTest()`:
+- Different service injection (mocks vs real)
+- Zero code duplication
+- Same assertions, different execution context
+
+```
+test/support/mock_services.dart           ← MockLLMService, MockSTTService
+test/support/audio_pipeline_test_shared.dart ← runAudioPipelineTest() function
+├─ integration_test/audio_pipeline_e2e_test.dart       ← E2E: registers mocks
+└─ integration_test/audio_pipeline_smoke_test.dart     ← Smoke: uses real services
 ```
 
-**Requirements:**
-- `.env` file with valid `GROQ_API_KEY` and `DEEPGRAM_API_KEY`
-- Network connection
+**Critical: Run as integration tests with device targets**
 
-**Test validates:**
+```bash
+# E2E (CI): Mocked services on any platform
+flutter test integration_test/audio_pipeline_e2e_test.dart -d chrome
+
+# Smoke (pre-release): Real services, manual only
+flutter test integration_test/audio_pipeline_smoke_test.dart -d windows
+```
+
+**Why device targets matter:**
+- Widget tests (`flutter test test/`) = Headless Dart VM, no native platform → ObjectBox hangs
+- Integration tests (`flutter test integration_test/ -d device`) = Real platform, full native support → ObjectBox works
+
+**Smoke test requirements:**
+- `.env` file with valid `GROQ_API_KEY` and `DEEPGRAM_API_KEY`
+- Network connection (for real API calls)
+- Real device or emulator (Windows, Chrome, iOS, Android, etc.)
+
+**Smoke test validates:**
 - API integrations work (Groq, Deepgram)
 - Real latency acceptable
 - Invocation logging with real data
-
-Smoke tests and E2E tests share identical test logic (via `test/support/audio_pipeline_test_shared.dart`). Only service registration differs. Zero duplication.
+- Event-driven pipeline under real conditions
 
 ---
 
