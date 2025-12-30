@@ -35,15 +35,23 @@ void main() {
     setUpAll(() async {
       // Register mock services BEFORE app builds
       // This ensures bootstrap uses mocks instead of real services
-      print('📝 Using MOCK services (CI mode)');
+      print('📝 Using ENHANCED MOCK services (streaming integration)');
       GetIt.instance.registerSingleton<LLMService>(MockLLMService());
-      GetIt.instance.registerSingleton<STTService>(MockSTTService());
+
+      // Use EnhancedMockSTTService to test actual stream handling
+      // This verifies audio is properly streamed to STT service
+      GetIt.instance.registerSingleton<STTService>(
+        EnhancedMockSTTService(
+          transcriptToEmit: 'What is the weather today?',
+          processingDelay: const Duration(milliseconds: 100),
+        ),
+      );
       print('✅ Mock services registered');
     });
 
-    testWidgets('E2E: Event-driven flow with mocked services',
+    testWidgets('E2E: Stream audio → STT → Orchestration → Components',
         (WidgetTester tester) async {
-      // Shared test logic - works with mocked services
+      // Shared test logic - now tests real streaming integration
       await runAudioPipelineTest(tester);
     });
   });
