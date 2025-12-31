@@ -296,6 +296,15 @@ class DeepgramSTTService extends STTService {
                   if (speechFinal && !speechHasFinal) {
                     speechHasFinal = true;
                     print('🔊 [Deepgram] Speech final detected - waiting for UtteranceEnd...');
+                    // Timeout fallback: if UtteranceEnd doesn't arrive in 2 seconds, complete anyway
+                    finalCompleteTimer = Timer(const Duration(seconds: 2), () {
+                      if (isActive && speechHasFinal) {
+                        print('🏁 [Deepgram] No UtteranceEnd received - completing STT stream via timeout');
+                        _publishTranscriptionEvent();
+                        onDone?.call();
+                        _cleanup();
+                      }
+                    });
                   }
                 }
               }
@@ -423,7 +432,7 @@ class DeepgramSTTService extends STTService {
               'encoding': 'linear16',
               'sampleRate': 16000,
               'channels': 2,
-              'language': model,
+              'language': language,
             },
             output: {
               'transcript': _lastTranscript,
