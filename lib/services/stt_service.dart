@@ -159,13 +159,13 @@ class DeepgramSTTService extends STTService {
   double _transcriptConfidence = 0.0; // Actual Deepgram confidence
   double _audioDuration = 0.0;
   int _wordCount = 0;
-  String _deepgramModel = 'flux-general-en'; // Deepgram Flux - optimized for voice agents with turn detection
+  String _deepgramModel = 'nova-2'; // Deepgram Nova-2 - reliable model with turn detection
   Map<String, dynamic> _deepgramMetadata = {}; // Capture Deepgram response metadata
 
   DeepgramSTTService({
     required this.apiKey,
     required InvocationRepository<Invocation> invocationRepository,
-    this.model = 'flux-general-en', // Flux has better turn detection for voice agents
+    this.model = 'nova-2', // Stable model with reliable turn detection
     this.language = 'en-US',
   }) : _invocationRepository = invocationRepository;
 
