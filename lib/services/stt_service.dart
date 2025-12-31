@@ -159,7 +159,7 @@ class DeepgramSTTService extends STTService {
   double _transcriptConfidence = 0.0; // Actual Deepgram confidence
   double _audioDuration = 0.0;
   int _wordCount = 0;
-  String _deepgramModel = 'nova-2'; // TEMPORARY: Switch back to nova-2 (v1) to test audio quality
+  String _deepgramModel = 'flux-general-en'; // Deepgram Flux v2 - superior turn detection for voice agents
   Map<String, dynamic> _deepgramMetadata = {}; // Capture Deepgram response metadata
 
   // ============ Flux v2 Turn Detection Data ============
@@ -212,10 +212,13 @@ class DeepgramSTTService extends STTService {
         // Build WebSocket URL with parameters and API key
         // Flux v2: Minimal params only - NO channels, interim_results, endpointing, vad_events, utterance_end_ms
         // These v1 params break v2 (causes HTTP 400)
-        final urlString = 'wss://api.deepgram.com/v1/listen'
-            '?model=nova-2'
+        final urlString = 'wss://api.deepgram.com/v2/listen'
+            '?model=flux-general-en'
             '&encoding=linear16'
-            '&sample_rate=16000';
+            '&sample_rate=16000'
+            '&eager_eot_threshold=0.5'
+            '&eot_threshold=0.5'
+            '&eot_timeout_ms=3000';
 
         // Connect with timeout and Authorization header
         try {
