@@ -646,6 +646,15 @@ Future<void> setupServiceLocator() async {
     }
     debugPrint('✅ [setupServiceLocator] LLMService registered');
 
+    // TTSService - loaded from config, respects abstraction
+    // Skip if already registered (e.g., by tests with mocks)
+    if (!getIt.isRegistered<TTSService>()) {
+      getIt.registerSingleton<TTSService>(
+        TTSService.instance,  // Already initialized by bootstrap
+      );
+    }
+    debugPrint('✅ [setupServiceLocator] TTSService registered');
+
     // ========== Domain Repositories (Already registered in initializeEverythingStack) ==========
     // InvocationRepository, AdaptationStateRepository, FeedbackRepository, TurnRepository
     // are already registered as singletons in initializeEverythingStack().
@@ -756,6 +765,7 @@ Future<void> setupServiceLocator() async {
       responseRenderer: getIt<ResponseRenderer>(),
       embeddingService: getIt<EmbeddingService>(),
       llmService: getIt<LLMService>(),
+      ttsService: getIt<TTSService>(),
       toolExecutor: getIt<ToolExecutor>(),
       invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
       eventBus: getIt<EventBus>(),

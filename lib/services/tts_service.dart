@@ -82,6 +82,25 @@ abstract class TTSService implements Trainable {
     String? languageCode,
   });
 
+  /// Synthesize text and automatically record invocation (trainable pattern)
+  ///
+  /// This is the method used by Coordinator. It:
+  /// 1. Synthesizes the text to speech
+  /// 2. Consumes audio chunks (sends to player)
+  /// 3. Records invocation with correlationId for training
+  /// 4. Handles errors gracefully (doesn't crash orchestration)
+  ///
+  /// ## Parameters
+  /// - [text]: Text to synthesize
+  /// - [correlationId]: Conversation turn ID for linking to orchestration
+  ///
+  /// ## Returns
+  /// Completes when synthesis is done and invocation is recorded.
+  Future<void> synthesizeAndLog({
+    required String text,
+    required String correlationId,
+  });
+
   /// Cleanup resources.
   ///
   /// Always call this when done with the service.
@@ -247,6 +266,17 @@ class GoogleTTSService extends TTSService {
   @override
   bool get isReady => _isReady;
 
+  @override
+  Future<void> synthesizeAndLog({
+    required String text,
+    required String correlationId,
+  }) async {
+    // TODO: Implement synthesizeAndLog for GoogleTTSService
+    // For MVP: delegate to synthesize() and consume audio stream
+    // Then record invocation with correlationId
+    print('GoogleTTSService.synthesizeAndLog() - TODO');
+  }
+
   // ============================================================================
   // Trainable Implementation
   // ============================================================================
@@ -305,6 +335,16 @@ class NullTTSService extends TTSService {
   }) async* {
     print('Warning: TTS unavailable - using NullTTSService');
     throw TTSException('TTS not configured');
+  }
+
+  @override
+  Future<void> synthesizeAndLog({
+    required String text,
+    required String correlationId,
+  }) async {
+    print('⚠️  [NullTTSService] TTS not configured - skipping synthesis for: "$text"');
+    // No-op: TTS not configured, so we don't do anything
+    // This allows orchestration to continue without crashing
   }
 
   @override

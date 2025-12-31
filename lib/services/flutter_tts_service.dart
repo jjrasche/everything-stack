@@ -114,6 +114,64 @@ class FlutterTtsService extends TTSService {
   @override
   bool get isReady => _isReady;
 
+  @override
+  Future<void> synthesizeAndLog({
+    required String text,
+    required String correlationId,
+  }) async {
+    print('🔊 [FlutterTtsService] Synthesizing: "$text" (correlationId=$correlationId)');
+
+    final startTime = DateTime.now();
+
+    try {
+      if (!_isReady) {
+        throw TTSException('FlutterTtsService not initialized');
+      }
+
+      if (text.isEmpty) {
+        throw TTSException('Synthesis text cannot be empty');
+      }
+
+      // Synthesize and consume audio chunks
+      var audioChunkCount = 0;
+      await for (final chunk in synthesize(text)) {
+        audioChunkCount++;
+      }
+
+      // Record successful invocation
+      final invocation = Invocation(
+        correlationId: correlationId,
+        componentType: 'tts',
+        success: true,
+        confidence: 1.0,
+        input: {'text': text},
+        output: {'chunks': audioChunkCount},
+      );
+
+      await _invocationRepository.save(invocation);
+      print('✅ [FlutterTtsService] TTS synthesis complete and logged');
+    } catch (e) {
+      print('⚠️  [FlutterTtsService] TTS synthesis failed: $e');
+
+      // Record failed invocation but don't rethrow - let orchestration continue
+      try {
+        final failureInvocation = Invocation(
+          correlationId: correlationId,
+          componentType: 'tts',
+          success: false,
+          confidence: 0.0,
+          input: {'text': text},
+          output: {'error': e.toString()},
+        );
+        await _invocationRepository.save(failureInvocation);
+      } catch (logError) {
+        print('⚠️  [FlutterTtsService] Failed to log TTS invocation: $logError');
+      }
+
+      // Don't rethrow - orchestration should continue even if TTS fails
+    }
+  }
+
   // ============================================================================
   // Trainable Implementation
   // ============================================================================

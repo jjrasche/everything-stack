@@ -2,25 +2,28 @@
 ///
 /// ## What it does
 /// Central orchestrator for the voice assistant pipeline.
-/// Chains together 5 Trainable decision components:
-/// 1. NamespaceSelector - picks namespace
-/// 2. ToolSelector - picks tools within namespace
-/// 3. ContextInjector - injects relevant context
-/// 4. LLMConfigSelector - picks LLM parameters
-/// 5. Orchestrates LLM call + tool execution (agentic loop)
-/// 6. ResponseRenderer - formats response for user
+/// Chains together trainable decision components + text-to-speech:
+/// 1. Embedding generation (semantic representation)
+/// 2. NamespaceSelector - picks namespace
+/// 3. ToolSelector - picks tools within namespace
+/// 4. ContextInjector - injects relevant context
+/// 5. LLMConfigSelector - picks LLM parameters
+/// 6. LLMOrchestrator - calls LLM + handles agentic loop
+/// 7. ResponseRenderer - formats response for user
+/// 8. TTSService - synthesizes response to speech (NEW)
 ///
-/// ## Flow
-/// 1. User provides utterance + embedding
-/// 2. NamespaceSelector picks namespace
-/// 3. ToolSelector picks tools in namespace
-/// 4. ContextInjector injects context (tasks, timers, etc.)
-/// 5. LLMConfigSelector picks LLM config (temperature, etc.)
-/// 6. Call LLM with tools available
-/// 7. If tools called: execute them, send results back to LLM
-/// 8. Repeat 6-7 until LLM says done (max iterations)
-/// 9. ResponseRenderer formats final response
-/// 10. Return result with all invocations recorded
+/// ## Flow (Audio In → Audio Out)
+/// 1. STT publishes TranscriptionComplete event
+/// 2. Coordinator.orchestrate() triggered by event listener
+/// 3. Generate embedding of utterance
+/// 4. NamespaceSelector picks namespace
+/// 5. ToolSelector picks tools in namespace
+/// 6. ContextInjector injects context (tasks, timers, etc.)
+/// 7. LLMConfigSelector picks LLM config (temperature, etc.)
+/// 8. Call LLM with tools available (agentic loop with tool execution)
+/// 9. ResponseRenderer formats final response for user
+/// 10. TTSService synthesizes response → audio bytes → speaker
+/// 11. Record all invocations for training
 ///
 /// ## Agentic Loop
 /// The LLM has tools available. If it requests tool calls:
@@ -42,6 +45,7 @@ import 'trainables/llm_orchestrator.dart';
 import 'trainables/response_renderer.dart';
 import 'embedding_service.dart';
 import 'llm_service.dart';
+import 'tts_service.dart';
 import 'tool_executor.dart' show ToolExecutor;
 import 'event_bus.dart';
 import 'events/transcription_complete.dart';
@@ -103,6 +107,7 @@ class Coordinator {
   final ResponseRenderer responseRenderer;
   final EmbeddingService embeddingService;
   final LLMService llmService;
+  final TTSService ttsService;
   final ToolExecutor toolExecutor;
 
   final InvocationRepository<Invocation> invocationRepo;
@@ -123,6 +128,7 @@ class Coordinator {
     required this.responseRenderer,
     required this.embeddingService,
     required this.llmService,
+    required this.ttsService,
     required this.toolExecutor,
     required this.invocationRepo,
     required this.eventBus,
@@ -297,6 +303,14 @@ class Coordinator {
       );
       print('✅ Response rendered: "$renderedResponse"');
       invocationIds.add('response_renderer_invocation');
+
+      // 8. TTS synthesizes and plays response
+      print('\n🔊 Synthesizing response to speech...');
+      await ttsService.synthesizeAndLog(
+        text: renderedResponse,
+        correlationId: correlationId,
+      );
+      invocationIds.add('tts_synthesis_invocation');
 
       final latency = DateTime.now().difference(startTime).inMilliseconds;
       print('\n✅ COORDINATOR: orchestrate SUCCESS');
