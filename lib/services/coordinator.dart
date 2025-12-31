@@ -207,48 +207,59 @@ class Coordinator {
       print('✅ Embedding generated: ${embedding.isNotEmpty ? embedding.length : 0} dimensions');
 
       // 2. NamespaceSelector picks namespace
-      print('\n[2/6] Selecting namespace...');
-      final selectedNamespace = await namespaceSelector.selectNamespace(
-        correlationId: correlationId,
-        utterance: utterance,
-        embedding: embedding,
-        availableNamespaces: availableNamespaces,
-      );
-      print('✅ Selected namespace: "$selectedNamespace"');
-      invocationIds.add('namespace_selector_invocation');
+      // COMMENTED OUT: Focus on LLM + TTS data for learning
+      // print('\n[2/6] Selecting namespace...');
+      // final selectedNamespace = await namespaceSelector.selectNamespace(
+      //   correlationId: correlationId,
+      //   utterance: utterance,
+      //   embedding: embedding,
+      //   availableNamespaces: availableNamespaces,
+      // );
+      final selectedNamespace = 'general'; // Default
+      // print('✅ Selected namespace: "$selectedNamespace"');
+      // invocationIds.add('namespace_selector_invocation');
 
       // 3. ToolSelector picks tools
-      print('\n[3/6] Selecting tools...');
-      final availableTools = toolsByNamespace[selectedNamespace] ?? [];
-      final selectedTools = await toolSelector.selectTools(
-        correlationId: correlationId,
-        namespace: selectedNamespace,
-        utterance: utterance,
-        embedding: embedding,
-        availableTools: availableTools,
-      );
-      print('✅ Selected tools: ${selectedTools.isEmpty ? "none" : selectedTools.join(", ")}');
-      invocationIds.add('tool_selector_invocation');
+      // COMMENTED OUT: Focus on LLM + TTS data for learning
+      // print('\n[3/6] Selecting tools...');
+      // final availableTools = toolsByNamespace[selectedNamespace] ?? [];
+      // final selectedTools = await toolSelector.selectTools(
+      //   correlationId: correlationId,
+      //   namespace: selectedNamespace,
+      //   utterance: utterance,
+      //   embedding: embedding,
+      //   availableTools: availableTools,
+      // );
+      final selectedTools = <String>[]; // No tools
+      // print('✅ Selected tools: ${selectedTools.isEmpty ? "none" : selectedTools.join(", ")}');
+      // invocationIds.add('tool_selector_invocation');
 
       // 4. ContextInjector injects context
-      print('\n[4/6] Injecting context...');
-      final injectedContext = await contextInjector.injectContext(
-        correlationId: correlationId,
-        namespace: selectedNamespace,
-      );
-      print('✅ Context injected: ${injectedContext.length} keys');
-      invocationIds.add('context_injector_invocation');
+      // COMMENTED OUT: Focus on LLM + TTS data for learning
+      // print('\n[4/6] Injecting context...');
+      // final injectedContext = await contextInjector.injectContext(
+      //   correlationId: correlationId,
+      //   namespace: selectedNamespace,
+      // );
+      final injectedContext = <String, dynamic>{}; // No context
+      // print('✅ Context injected: ${injectedContext.length} keys');
+      // invocationIds.add('context_injector_invocation');
 
       // 5. LLMConfigSelector picks config
-      print('\n[5/6] Selecting LLM config...');
-      final llmConfig = await llmConfigSelector.selectConfig(
-        correlationId: correlationId,
-        utterance: utterance,
-        namespace: selectedNamespace,
-        tools: selectedTools,
-      );
-      print('✅ LLM config: model=${llmConfig['model']}, temp=${llmConfig['temperature']}');
-      invocationIds.add('llm_config_selector_invocation');
+      // COMMENTED OUT: Focus on LLM + TTS data for learning
+      // print('\n[5/6] Selecting LLM config...');
+      // final llmConfig = await llmConfigSelector.selectConfig(
+      //   correlationId: correlationId,
+      //   utterance: utterance,
+      //   namespace: selectedNamespace,
+      //   tools: selectedTools,
+      // );
+      final llmConfig = {
+        'model': 'llama-3.1-8b-instant',
+        'temperature': 0.7,
+      }; // Default config
+      // print('✅ LLM config: model=${llmConfig['model']}, temp=${llmConfig['temperature']}');
+      // invocationIds.add('llm_config_selector_invocation');
 
       // 6. Call LLM (MVP: no tool execution)
       print('\n[6/6] Calling LLM service...');
@@ -279,6 +290,7 @@ class Coordinator {
 
       // Record LLM orchestration invocation
       print('\n📋 Recording LLM orchestration...');
+      print('DEBUG: About to call llmOrchestrator.recordOrchestration');
       await llmOrchestrator.recordOrchestration(
         correlationId: correlationId,
         utterance: utterance,
@@ -294,15 +306,17 @@ class Coordinator {
       invocationIds.add('llm_orchestration_invocation');
 
       // 7. ResponseRenderer formats response
-      print('\n🎨 Rendering response...');
-      final renderedResponse = await responseRenderer.renderResponse(
-        correlationId: correlationId,
-        llmResponse: finalResponse,
-        namespace: selectedNamespace,
-        tools: selectedTools,
-      );
-      print('✅ Response rendered: "$renderedResponse"');
-      invocationIds.add('response_renderer_invocation');
+      // COMMENTED OUT: Focus on LLM + TTS data for learning
+      // print('\n🎨 Rendering response...');
+      // final renderedResponse = await responseRenderer.renderResponse(
+      //   correlationId: correlationId,
+      //   llmResponse: finalResponse,
+      //   namespace: selectedNamespace,
+      //   tools: selectedTools,
+      // );
+      final renderedResponse = finalResponse; // Use LLM response as-is
+      // print('✅ Response rendered: "$renderedResponse"');
+      // invocationIds.add('response_renderer_invocation');
 
       // 8. TTS synthesizes and plays response
       print('\n🔊 Synthesizing response to speech...');

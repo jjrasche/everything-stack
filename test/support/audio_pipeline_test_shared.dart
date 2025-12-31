@@ -90,24 +90,30 @@ Future<void> runAudioPipelineTest(WidgetTester tester) async {
   var utteranceEnded = false;
 
   // Stream audio and wait for transcript + utterance end
+  final sttStartTime = DateTime.now();
+  print('⏱️ [Test] STT process starting at ${sttStartTime.toIso8601String()}');
   sttService.transcribe(
     audio: audioStream,
     onTranscript: (transcript) {
-      print('   📨 Transcript received: "$transcript"');
+      final elapsed = DateTime.now().difference(sttStartTime).inMilliseconds;
+      print('   📨 Transcript received at ${elapsed}ms: "$transcript"');
       transcriptReceived = transcript;
     },
     onUtteranceEnd: () {
-      print('   🔊 Utterance end signaled');
+      final elapsed = DateTime.now().difference(sttStartTime).inMilliseconds;
+      print('   🔊 Utterance end signaled at ${elapsed}ms');
       utteranceEnded = true;
     },
     onError: (error) {
-      print('   ❌ STT error: $error');
+      final elapsed = DateTime.now().difference(sttStartTime).inMilliseconds;
+      print('   ❌ STT error at ${elapsed}ms: $error');
       if (!sttDoneCompleter.isCompleted) {
         sttDoneCompleter.completeError(error);
       }
     },
     onDone: () {
-      print('   ✅ STT stream completed');
+      final elapsed = DateTime.now().difference(sttStartTime).inMilliseconds;
+      print('   ✅ STT stream completed at ${elapsed}ms');
       if (!sttDoneCompleter.isCompleted) {
         sttDoneCompleter.complete();
       }
@@ -115,37 +121,49 @@ Future<void> runAudioPipelineTest(WidgetTester tester) async {
   );
 
   // Wait for STT processing to complete (max 5 seconds)
-  print('⏳ Waiting for STT processing...');
+  print('⏳ Waiting for STT processing (max 5 seconds)...');
   await sttDoneCompleter.future.timeout(
     const Duration(seconds: 5),
-    onTimeout: () => throw TimeoutException('STT processing timeout'),
+    onTimeout: () {
+      final elapsed = DateTime.now().difference(sttStartTime).inMilliseconds;
+      print('❌ [Test] STT timeout after ${elapsed}ms');
+      throw TimeoutException('STT processing timeout after ${elapsed}ms');
+    },
   );
 
   print('✅ STT processing complete - transcript: "$transcriptReceived"');
 
   // ========== WAIT: Poll for orchestration to complete ==========
-  // Poll until invocations appear (may use different correlation ID from STT)
-  print('⏳ Polling for orchestration completion (max 15 seconds)...');
+  // Poll until TTS invocations appear (this proves the full pipeline completed)
+  print('⏳ Polling for TTS invocations (max 15 seconds)...');
   final stopwatch = Stopwatch()..start();
   List<Invocation> testInvs = [];
+  String? actualCorrelationId;
 
   while (stopwatch.elapsedMilliseconds < 15000) {
     final allInvs = await invocationRepo.findAll();
-    // Look for invocations from recent orchestrations
-    // These will have the STT-generated correlation ID, not testCorrelationId
-    testInvs = allInvs
+
+    // Look for TTS invocations from recent orchestrations
+    final ttsInvocations = allInvs
         .where((inv) =>
-            inv.componentType != 'stt' &&
+            inv.componentType == 'tts' &&
             inv.createdAt.isAfter(
                 DateTime.now().subtract(const Duration(seconds: 5))))
         .toList();
 
-    if (testInvs.isNotEmpty) {
-      // Extract the actual correlation ID used
-      final actualCorrelationId = testInvs.first.correlationId;
+    if (ttsInvocations.isNotEmpty) {
+      // Found TTS - full pipeline completed
+      actualCorrelationId = ttsInvocations.first.correlationId;
       print(
-          '✅ Orchestration complete after ${stopwatch.elapsedMilliseconds}ms');
+          '✅ TTS invocation found after ${stopwatch.elapsedMilliseconds}ms');
       print('   (Using correlation ID from event: $actualCorrelationId)');
+
+      // Now get ALL invocations for this orchestration
+      testInvs = allInvs
+          .where((inv) =>
+              inv.correlationId == actualCorrelationId &&
+              inv.componentType != 'stt')
+          .toList();
       break;
     }
 
@@ -154,8 +172,81 @@ Future<void> runAudioPipelineTest(WidgetTester tester) async {
   }
 
   if (testInvs.isEmpty) {
-    throw 'Orchestration did not complete within 15 seconds';
+    print('⚠️  No TTS invocations found in 15 seconds');
+    print('   Getting all recent invocations instead...');
+    final allInvs = await invocationRepo.findAll();
+    testInvs = allInvs
+        .where((inv) =>
+            inv.componentType != 'stt' &&
+            inv.createdAt.isAfter(
+                DateTime.now().subtract(const Duration(seconds: 10))))
+        .toList();
+    if (testInvs.isNotEmpty) {
+      actualCorrelationId = testInvs.first.correlationId;
+    }
   }
+
+  if (testInvs.isEmpty) {
+    throw 'Orchestration did not complete within 15 seconds (no invocations found)';
+  }
+
+  // ========== DEBUG: Dump invocation details ==========
+  print('\n' + '═' * 100);
+  print('🔍 DETAILED INVOCATION DATA FOR CORRELATION ID: $actualCorrelationId');
+  print('═' * 100);
+
+  final detailedInvocations = await invocationRepo.findAll();
+  final correlatedInvs = detailedInvocations
+      .where((inv) => inv.correlationId == actualCorrelationId)
+      .toList();
+
+  // Sort by component execution order
+  final componentOrder = {
+    'namespace_selector': 1,
+    'tool_selector': 2,
+    'context_injector': 3,
+    'llm_config_selector': 4,
+    'llm_orchestrator': 5,
+    'response_renderer': 6,
+    'tts': 7,
+  };
+
+  correlatedInvs.sort((a, b) {
+    final orderA = componentOrder[a.componentType] ?? 999;
+    final orderB = componentOrder[b.componentType] ?? 999;
+    return orderA.compareTo(orderB);
+  });
+
+  for (final inv in correlatedInvs) {
+    print('\n📋 [${inv.componentType.toUpperCase()}]');
+    print('   ✓ Success: ${inv.success}');
+    print('   ✓ Confidence: ${inv.confidence}');
+
+    if (inv.input != null && inv.input!.isNotEmpty) {
+      print('   📥 INPUT:');
+      for (final key in inv.input!.keys) {
+        print('      - $key: ${inv.input![key]}');
+      }
+    } else {
+      print('   📥 INPUT: (empty)');
+    }
+
+    if (inv.output != null && inv.output!.isNotEmpty) {
+      print('   📤 OUTPUT:');
+      for (final key in inv.output!.keys) {
+        final val = inv.output![key];
+        // Truncate long outputs for readability
+        final displayVal = val.toString().length > 80
+            ? val.toString().substring(0, 80) + '...'
+            : val;
+        print('      - $key: $displayVal');
+      }
+    } else {
+      print('   📤 OUTPUT: (empty)');
+    }
+  }
+
+  print('\n' + '═' * 100);
 
   // ========== ASSERT: Verify orchestration was triggered ==========
   print('\n✅ Starting assertions...');
@@ -186,8 +277,7 @@ Future<void> runAudioPipelineTest(WidgetTester tester) async {
     throw 'No invocations found - Coordinator listener may not have fired';
   }
 
-  // Extract correlation ID and group invocations by it
-  final actualCorrelationId = testInvs.first.correlationId;
+  // Use correlation ID from TTS polling
   final testInvocations = testInvs
       .where((inv) => inv.correlationId == actualCorrelationId)
       .toList();

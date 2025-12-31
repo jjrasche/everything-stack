@@ -35,6 +35,7 @@
 /// 2. User provides Feedback on the Invocation
 /// 3. Trainer uses Invocation + Feedback to update AdaptationState
 
+import 'dart:convert';
 import 'package:everything_stack_template/patterns/embeddable.dart';
 
 import '../core/base_entity.dart';
@@ -112,6 +113,29 @@ class Invocation extends BaseEntity with Embeddable {
   }) {
     if (uuid.isEmpty) {
       uuid = super.uuid;
+    }
+    // Serialize input/output maps to JSON strings for ObjectBox storage
+    if (input != null && inputJson == null) {
+      inputJson = jsonEncode(input);
+    }
+    if (output != null && outputJson == null) {
+      outputJson = jsonEncode(output);
+    }
+    if (metadata != null && metadataJson == null) {
+      metadataJson = jsonEncode(metadata);
+    }
+  }
+
+  /// Ensure JSON fields are populated from Map fields before saving
+  void ensureSerialized() {
+    if (input != null && inputJson == null) {
+      inputJson = jsonEncode(input);
+    }
+    if (output != null && outputJson == null) {
+      outputJson = jsonEncode(output);
+    }
+    if (metadata != null && metadataJson == null) {
+      metadataJson = jsonEncode(metadata);
     }
   }
 

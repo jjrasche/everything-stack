@@ -334,6 +334,8 @@ Future<void> initializeEverythingStack({
   try {
     final cfg = config ?? EverythingStackConfig.fromEnvironment();
     debugPrint('✅ [Bootstrap] Configuration loaded successfully');
+    debugPrint('🔑 Config loaded - Deepgram key present: ${cfg.deepgramApiKey != null}');
+    debugPrint('🔑 Config loaded - Groq key present: ${cfg.groqApiKey != null}');
     return _initializeServices(cfg);
   } catch (e, st) {
     debugPrint('❌ [Bootstrap] FATAL ERROR during initialization: $e');
@@ -654,6 +656,15 @@ Future<void> setupServiceLocator() async {
       );
     }
     debugPrint('✅ [setupServiceLocator] TTSService registered');
+
+    // STTService - loaded from config, respects abstraction
+    // Skip if already registered (e.g., by tests with mocks)
+    if (!getIt.isRegistered<STTService>()) {
+      getIt.registerSingleton<STTService>(
+        STTService.instance,  // Already initialized by bootstrap
+      );
+    }
+    debugPrint('✅ [setupServiceLocator] STTService registered');
 
     // ========== Domain Repositories (Already registered in initializeEverythingStack) ==========
     // InvocationRepository, AdaptationStateRepository, FeedbackRepository, TurnRepository
