@@ -159,8 +159,10 @@ class DeepgramSTTService extends STTService {
   double _transcriptConfidence = 0.0; // Actual Deepgram confidence
   double _audioDuration = 0.0;
   int _wordCount = 0;
-  String _deepgramModel = 'flux-general-en'; // Deepgram Flux v2 - superior turn detection for voice agents
-  Map<String, dynamic> _deepgramMetadata = {}; // Capture Deepgram response metadata
+  String _deepgramModel =
+      'flux-general-en'; // Deepgram Flux v2 - superior turn detection for voice agents
+  Map<String, dynamic> _deepgramMetadata =
+      {}; // Capture Deepgram response metadata
 
   // ============ Flux v2 Turn Detection Data ============
   double _endOfTurnConfidence = 0.0; // How confident Flux is turn ended
@@ -173,7 +175,8 @@ class DeepgramSTTService extends STTService {
   DeepgramSTTService({
     required this.apiKey,
     required InvocationRepository<Invocation> invocationRepository,
-    this.model = 'flux-general-en', // Deepgram Flux v2 with superior turn detection
+    this.model =
+        'flux-general-en', // Deepgram Flux v2 with superior turn detection
     this.language = 'en-US',
   }) : _invocationRepository = invocationRepository;
 
@@ -228,7 +231,8 @@ class DeepgramSTTService extends STTService {
             Uri.parse(urlString),
             headers: {'Authorization': 'Token $apiKey'},
           );
-          final connectTime = DateTime.now().difference(connectStart).inMilliseconds;
+          final connectTime =
+              DateTime.now().difference(connectStart).inMilliseconds;
           print('✅ [Deepgram] Connected in ${connectTime}ms');
         } catch (e) {
           print('❌ [Deepgram] Connection failed: $e');
@@ -252,7 +256,8 @@ class DeepgramSTTService extends STTService {
 
             // Parse Deepgram response
             try {
-              print('📨 [Deepgram] Message received at ${DateTime.now().toIso8601String()}');
+              print(
+                  '📨 [Deepgram] Message received at ${DateTime.now().toIso8601String()}');
               final json = jsonDecode(message);
               print('📨 [Deepgram] Message type: ${json['type']}');
               debugPrint('📨 [Deepgram] Raw response: ${json['type']}');
@@ -260,13 +265,16 @@ class DeepgramSTTService extends STTService {
               // ============ Flux v2: Results Event (transcript chunks) ============
               if (json['type'] == 'Results') {
                 // Save correlation ID for event publishing
-                _correlationIdForEvent = json['request_id'] ?? json['metadata']?['request_id'] ?? 'unknown';
+                _correlationIdForEvent = json['request_id'] ??
+                    json['metadata']?['request_id'] ??
+                    'unknown';
 
                 // Capture metadata for training
                 if (json['metadata'] != null) {
                   _deepgramMetadata = {
                     'requestId': json['metadata']['request_id'],
-                    'model': json['metadata']['model_info']?['name'] ?? 'unknown',
+                    'model':
+                        json['metadata']['model_info']?['name'] ?? 'unknown',
                     'modelVersion': json['metadata']['model_info']?['version'],
                     'modelArch': json['metadata']['model_info']?['arch'],
                   };
@@ -278,7 +286,9 @@ class DeepgramSTTService extends STTService {
                   final alternatives = channel['alternatives'] as List?;
                   if (alternatives != null && alternatives.isNotEmpty) {
                     final transcript = alternatives[0]['transcript'] as String?;
-                    final confidence = (alternatives[0]['confidence'] as num?)?.toDouble() ?? 0.0;
+                    final confidence =
+                        (alternatives[0]['confidence'] as num?)?.toDouble() ??
+                            0.0;
                     final words = alternatives[0]['words'] as List? ?? [];
 
                     debugPrint('📨 [Deepgram] Transcript: "$transcript"');
@@ -296,11 +306,13 @@ class DeepgramSTTService extends STTService {
                   final speechFinal = json['speech_final'] as bool? ?? false;
                   if (speechFinal && !speechHasFinal) {
                     speechHasFinal = true;
-                    print('🔊 [Deepgram] Speech final detected - waiting for UtteranceEnd...');
+                    print(
+                        '🔊 [Deepgram] Speech final detected - waiting for UtteranceEnd...');
                     // Timeout fallback: if UtteranceEnd doesn't arrive in 2 seconds, complete anyway
                     finalCompleteTimer = Timer(const Duration(seconds: 2), () {
                       if (isActive && speechHasFinal) {
-                        print('🏁 [Deepgram] No UtteranceEnd received - completing STT stream via timeout');
+                        print(
+                            '🏁 [Deepgram] No UtteranceEnd received - completing STT stream via timeout');
                         _publishTranscriptionEvent();
                         onDone?.call();
                         _cleanup();
@@ -312,7 +324,8 @@ class DeepgramSTTService extends STTService {
               // ============ v1: UtteranceEnd Event (turn detection) ============
               else if (json['type'] == 'UtteranceEnd') {
                 final lastWordEnd = json['last_word_end'] as double?;
-                print('🏁 [Deepgram/v1] UtteranceEnd received at ${lastWordEnd}s - turn is over');
+                print(
+                    '🏁 [Deepgram/v1] UtteranceEnd received at ${lastWordEnd}s - turn is over');
                 // For v1, set event type to EndOfTurn for consistency with v2 invocation format
                 _eventType = 'EndOfTurn';
                 _audioWindowEnd = lastWordEnd ?? _audioDuration;
@@ -320,7 +333,8 @@ class DeepgramSTTService extends STTService {
                 finalCompleteTimer?.cancel();
                 onUtteranceEnd?.call();
                 if (isActive) {
-                  print('✅ [Deepgram] Turn complete - publishing event and closing stream');
+                  print(
+                      '✅ [Deepgram] Turn complete - publishing event and closing stream');
                   _publishTranscriptionEvent();
                   onDone?.call();
                   _cleanup();
@@ -329,14 +343,19 @@ class DeepgramSTTService extends STTService {
               // ============ Flux v2: TurnInfo Event (turn detection) ============
               else if (json['type'] == 'TurnInfo') {
                 final eventType = json['event'] as String? ?? '';
-                final endOfTurnConfidence = (json['end_of_turn_confidence'] as num?)?.toDouble() ?? 0.0;
-                final audioWindowStart = (json['audio_window_start'] as num?)?.toDouble() ?? 0.0;
-                final audioWindowEnd = (json['audio_window_end'] as num?)?.toDouble() ?? 0.0;
+                final endOfTurnConfidence =
+                    (json['end_of_turn_confidence'] as num?)?.toDouble() ?? 0.0;
+                final audioWindowStart =
+                    (json['audio_window_start'] as num?)?.toDouble() ?? 0.0;
+                final audioWindowEnd =
+                    (json['audio_window_end'] as num?)?.toDouble() ?? 0.0;
                 final turnIndex = json['turn_index'] as int? ?? 0;
-                final turnTranscript = json['transcript'] as String? ?? _lastTranscript;
+                final turnTranscript =
+                    json['transcript'] as String? ?? _lastTranscript;
                 final turnWords = json['words'] as List? ?? [];
 
-                print('🏁 [Deepgram/Flux] TurnInfo: event=$eventType, confidence=$endOfTurnConfidence, timing=${audioWindowStart}s-${audioWindowEnd}s, transcript="${turnTranscript.isEmpty ? "(empty)" : turnTranscript}"');
+                print(
+                    '🏁 [Deepgram/Flux] TurnInfo: event=$eventType, confidence=$endOfTurnConfidence, timing=${audioWindowStart}s-${audioWindowEnd}s, transcript="${turnTranscript.isEmpty ? "(empty)" : turnTranscript}"');
 
                 // Store turn detection data for training
                 _eventType = eventType;
@@ -349,13 +368,17 @@ class DeepgramSTTService extends STTService {
                   _wordDetails = turnWords.cast<Map<String, dynamic>>();
                   _wordCount = turnWords.length;
                 }
-                if (turnTranscript.isNotEmpty && turnTranscript != _lastTranscript) {
+                if (turnTranscript.isNotEmpty &&
+                    turnTranscript != _lastTranscript) {
                   _lastTranscript = turnTranscript;
                 }
 
                 // DEBUG: For first Update, log full JSON to understand structure
-                if (eventType == 'Update' && _lastTranscript.isEmpty && _wordDetails.isEmpty) {
-                  print('🔍 [Deepgram/Flux] First Update - Full JSON structure:');
+                if (eventType == 'Update' &&
+                    _lastTranscript.isEmpty &&
+                    _wordDetails.isEmpty) {
+                  print(
+                      '🔍 [Deepgram/Flux] First Update - Full JSON structure:');
                   print('   ${jsonEncode(json)}');
                   print('   Available fields: ${json.keys.join(", ")}');
                 }
@@ -365,7 +388,8 @@ class DeepgramSTTService extends STTService {
                   finalCompleteTimer?.cancel();
                   onUtteranceEnd?.call();
                   if (isActive) {
-                    print('✅ [Deepgram/Flux] Turn complete ($eventType) - publishing event');
+                    print(
+                        '✅ [Deepgram/Flux] Turn complete ($eventType) - publishing event');
                     _publishTranscriptionEvent();
                     onDone?.call();
                     _cleanup();
@@ -374,9 +398,11 @@ class DeepgramSTTService extends STTService {
                   // Flux Update: reschedule timeout on each Update
                   // When Updates stop coming = turn complete (audio ended, Flux done processing)
                   finalCompleteTimer?.cancel();
-                  finalCompleteTimer = Timer(const Duration(milliseconds: 500), () {
+                  finalCompleteTimer =
+                      Timer(const Duration(milliseconds: 500), () {
                     if (isActive) {
-                      print('🏁 [Deepgram/Flux] No Updates for 500ms - turn complete');
+                      print(
+                          '🏁 [Deepgram/Flux] No Updates for 500ms - turn complete');
                       onUtteranceEnd?.call();
                       _publishTranscriptionEvent();
                       onDone?.call();
@@ -384,12 +410,14 @@ class DeepgramSTTService extends STTService {
                     }
                   });
                 } else if (eventType == 'TurnResumed') {
-                  print('↩️  [Deepgram/Flux] Turn resumed - listening for more audio');
+                  print(
+                      '↩️  [Deepgram/Flux] Turn resumed - listening for more audio');
                 }
               }
               // ============ Flux v2: FatalError Event ============
               else if (json['type'] == 'FatalError') {
-                final errorMessage = json['message'] as String? ?? 'Unknown error';
+                final errorMessage =
+                    json['message'] as String? ?? 'Unknown error';
                 print('❌ [Deepgram/Flux] FatalError: $errorMessage');
                 if (isActive) {
                   onError(STTException('Deepgram Fatal Error: $errorMessage'));
@@ -416,7 +444,8 @@ class DeepgramSTTService extends STTService {
             }
           },
         );
-        print('✅ [Deepgram] Listener attached - subscription: $_wsSubscription');
+        print(
+            '✅ [Deepgram] Listener attached - subscription: $_wsSubscription');
 
         // Send audio from input stream
         int totalAudioBytes = 0;
@@ -427,7 +456,8 @@ class DeepgramSTTService extends STTService {
               try {
                 audioChunkCount++;
                 totalAudioBytes += audioBytes.length;
-                print('📤 [Deepgram] Sending audio chunk #$audioChunkCount: ${audioBytes.length} bytes (total: $totalAudioBytes bytes)');
+                print(
+                    '📤 [Deepgram] Sending audio chunk #$audioChunkCount: ${audioBytes.length} bytes (total: $totalAudioBytes bytes)');
                 _ws!.sink.add(audioBytes);
               } catch (e) {
                 if (isActive) {
@@ -447,17 +477,20 @@ class DeepgramSTTService extends STTService {
           },
           onDone: () {
             if (isActive) {
-              print('✅ [Deepgram] Audio stream completed - sent $totalAudioBytes bytes in $audioChunkCount chunks');
+              print(
+                  '✅ [Deepgram] Audio stream completed - sent $totalAudioBytes bytes in $audioChunkCount chunks');
               // Send CloseStream to explicitly signal end of audio
               // This tells Flux v2 to trigger turn detection logic (eot_threshold, eot_timeout_ms, etc.)
               try {
                 final closeStreamMessage = jsonEncode({'type': 'CloseStream'});
                 _ws!.sink.add(closeStreamMessage);
-                print('📤 [Deepgram] Sent CloseStream message to signal end of audio');
+                print(
+                    '📤 [Deepgram] Sent CloseStream message to signal end of audio');
               } catch (e) {
                 print('⚠️  [Deepgram] Failed to send CloseStream: $e');
               }
-              print('ℹ️  [Deepgram] Waiting for Flux v2 turn detection response...');
+              print(
+                  'ℹ️  [Deepgram] Waiting for Flux v2 turn detection response...');
               // IMPORTANT: Don't close WebSocket immediately - Deepgram might still be sending responses
               // The idle timeout (30s) will handle cleanup if no response comes
               // Only close if explicitly told to (via isActive = false in _cleanup())
@@ -502,7 +535,8 @@ class DeepgramSTTService extends STTService {
           correlationId: _correlationIdForEvent,
         );
         await eventBus.publish(event);
-        print('📡 [Deepgram] Published TranscriptionComplete event: "$_lastTranscript"');
+        print(
+            '📡 [Deepgram] Published TranscriptionComplete event: "$_lastTranscript"');
 
         // Record STT invocation for training/learning
         try {
@@ -524,7 +558,8 @@ class DeepgramSTTService extends STTService {
               'wordCount': _wordCount,
               'audioDuration': _audioDuration,
               // ============ Flux v2 Turn Detection Data (for training) ============
-              'endOfTurnConfidence': _endOfTurnConfidence, // Critical for turn detection quality
+              'endOfTurnConfidence':
+                  _endOfTurnConfidence, // Critical for turn detection quality
               'audioWindowStart': _audioWindowStart,
               'audioWindowEnd': _audioWindowEnd,
               'turnIndex': _turnIndex,
@@ -575,8 +610,7 @@ class DeepgramSTTService extends STTService {
   @override
   Future<String> recordInvocation(dynamic invocation) async {
     if (invocation is! Invocation) {
-      throw ArgumentError(
-          'Expected Invocation, got ${invocation.runtimeType}');
+      throw ArgumentError('Expected Invocation, got ${invocation.runtimeType}');
     }
     await _invocationRepository.save(invocation);
     return invocation.uuid;
@@ -622,11 +656,12 @@ class NullSTTService extends STTService {
     required void Function(Object) onError,
     void Function()? onDone,
   }) {
-    debugPrint('⚠️ [STT] API key missing - STT disabled (add DEEPGRAM_API_KEY to .env.local)');
+    debugPrint(
+        '⚠️ [STT] API key missing - STT disabled (add DEEPGRAM_API_KEY to .env.local)');
 
     // Drain input stream but don't process it
     input.listen(
-      (_) {},  // Ignore audio data
+      (_) {}, // Ignore audio data
       onError: onError,
       onDone: onDone,
     );
