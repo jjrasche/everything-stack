@@ -159,13 +159,21 @@ class DeepgramSTTService extends STTService {
   double _transcriptConfidence = 0.0; // Actual Deepgram confidence
   double _audioDuration = 0.0;
   int _wordCount = 0;
-  String _deepgramModel = 'nova-2'; // Deepgram Nova-2 - reliable model with turn detection
+  String _deepgramModel = 'nova-2'; // Testing v2 endpoint - Flux model TBD
   Map<String, dynamic> _deepgramMetadata = {}; // Capture Deepgram response metadata
+
+  // ============ Flux v2 Turn Detection Data ============
+  double _endOfTurnConfidence = 0.0; // How confident Flux is turn ended
+  double _audioWindowStart = 0.0; // When turn started (seconds)
+  double _audioWindowEnd = 0.0; // When turn ended (seconds)
+  int _turnIndex = 0; // Which turn in conversation
+  String _eventType = ''; // EndOfTurn, EagerEndOfTurn, TurnResumed
+  List<Map<String, dynamic>> _wordDetails = []; // Per-word confidence data
 
   DeepgramSTTService({
     required this.apiKey,
     required InvocationRepository<Invocation> invocationRepository,
-    this.model = 'nova-2', // Stable model with reliable turn detection
+    this.model = 'nova-2', // v2 endpoint with turn detection via TurnInfo
     this.language = 'en-US',
   }) : _invocationRepository = invocationRepository;
 
@@ -202,7 +210,8 @@ class DeepgramSTTService extends STTService {
     Future<void> connect() async {
       try {
         // Build WebSocket URL with parameters and API key
-        // Turn detection enabled via utterance_end_ms parameter
+        // v1 endpoint - v2 requires API access we may not have
+        // Still captures TurnInfo events and turn detection data for training
         final urlString = 'wss://api.deepgram.com/v1/listen'
             '?model=$model'
             '&language=$language'
@@ -250,14 +259,11 @@ class DeepgramSTTService extends STTService {
               final json = jsonDecode(message);
               print('📨 [Deepgram] Message type: ${json['type']}');
               debugPrint('📨 [Deepgram] Raw response: ${json['type']}');
-              if (json['type'] == 'Results') {
-                debugPrint('📨 [Deepgram] Full JSON: $json');
-              }
 
-              // Extract transcript from response
+              // ============ Flux v2: Results Event (transcript chunks) ============
               if (json['type'] == 'Results') {
                 // Save correlation ID for event publishing
-                _correlationIdForEvent = json['metadata']?['request_id'] ?? 'unknown';
+                _correlationIdForEvent = json['request_id'] ?? json['metadata']?['request_id'] ?? 'unknown';
 
                 // Capture metadata for training
                 if (json['metadata'] != null) {
@@ -269,7 +275,7 @@ class DeepgramSTTService extends STTService {
                   };
                 }
 
-                // Deepgram v3 API structure: channel.alternatives[0].transcript
+                // Flux v2: Result structure: channel.alternatives[0]
                 final channel = json['channel'] as Map?;
                 if (channel != null) {
                   final alternatives = channel['alternatives'] as List?;
@@ -283,15 +289,13 @@ class DeepgramSTTService extends STTService {
                       _lastTranscript = transcript;
                       _transcriptConfidence = confidence;
                       _wordCount = words.length;
+                      // Capture word details for training
+                      _wordDetails = words.cast<Map<String, dynamic>>();
                       onData(transcript);
                     }
                   }
 
-                  // Capture audio metadata
-                  _audioDuration = (json['duration'] as num?)?.toDouble() ?? 0.0;
-
-                  // Note: Don't publish event on speech_final
-                  // Wait for actual UtteranceEnd from Deepgram
+                  // Check for speech_final - fallback if UtteranceEnd doesn't arrive
                   final speechFinal = json['speech_final'] as bool? ?? false;
                   if (speechFinal && !speechHasFinal) {
                     speechHasFinal = true;
@@ -308,16 +312,70 @@ class DeepgramSTTService extends STTService {
                   }
                 }
               }
-              // NEW: Handle UtteranceEnd event (turn detection)
+              // ============ v1: UtteranceEnd Event (turn detection) ============
               else if (json['type'] == 'UtteranceEnd') {
                 final lastWordEnd = json['last_word_end'] as double?;
-                print('🏁 [Deepgram] UtteranceEnd received at ${lastWordEnd}s - turn is over');
+                print('🏁 [Deepgram/v1] UtteranceEnd received at ${lastWordEnd}s - turn is over');
+                // For v1, set event type to EndOfTurn for consistency with v2 invocation format
+                _eventType = 'EndOfTurn';
+                _audioWindowEnd = lastWordEnd ?? _audioDuration;
+
                 finalCompleteTimer?.cancel();
                 onUtteranceEnd?.call();
                 if (isActive) {
                   print('✅ [Deepgram] Turn complete - publishing event and closing stream');
                   _publishTranscriptionEvent();
                   onDone?.call();
+                  _cleanup();
+                }
+              }
+              // ============ Flux v2: TurnInfo Event (turn detection - future) ============
+              else if (json['type'] == 'TurnInfo') {
+                final eventType = json['event'] as String? ?? '';
+                final endOfTurnConfidence = (json['end_of_turn_confidence'] as num?)?.toDouble() ?? 0.0;
+                final audioWindowStart = (json['audio_window_start'] as num?)?.toDouble() ?? 0.0;
+                final audioWindowEnd = (json['audio_window_end'] as num?)?.toDouble() ?? 0.0;
+                final turnIndex = json['turn_index'] as int? ?? 0;
+                final turnTranscript = json['transcript'] as String? ?? _lastTranscript;
+                final turnWords = json['words'] as List? ?? [];
+
+                print('🏁 [Deepgram/Flux] TurnInfo: event=$eventType, confidence=$endOfTurnConfidence, timing=${audioWindowStart}s-${audioWindowEnd}s');
+
+                // Store turn detection data for training
+                _eventType = eventType;
+                _endOfTurnConfidence = endOfTurnConfidence;
+                _audioWindowStart = audioWindowStart;
+                _audioWindowEnd = audioWindowEnd;
+                _turnIndex = turnIndex;
+                _audioDuration = audioWindowEnd - audioWindowStart;
+                if (turnWords.isNotEmpty) {
+                  _wordDetails = turnWords.cast<Map<String, dynamic>>();
+                  _wordCount = turnWords.length;
+                }
+                if (turnTranscript.isNotEmpty && turnTranscript != _lastTranscript) {
+                  _lastTranscript = turnTranscript;
+                }
+
+                // Handle turn end events
+                if (eventType == 'EndOfTurn' || eventType == 'EagerEndOfTurn') {
+                  finalCompleteTimer?.cancel();
+                  onUtteranceEnd?.call();
+                  if (isActive) {
+                    print('✅ [Deepgram/Flux] Turn complete ($eventType) - publishing event');
+                    _publishTranscriptionEvent();
+                    onDone?.call();
+                    _cleanup();
+                  }
+                } else if (eventType == 'TurnResumed') {
+                  print('↩️  [Deepgram/Flux] Turn resumed - listening for more audio');
+                }
+              }
+              // ============ Flux v2: FatalError Event ============
+              else if (json['type'] == 'FatalError') {
+                final errorMessage = json['message'] as String? ?? 'Unknown error';
+                print('❌ [Deepgram/Flux] FatalError: $errorMessage');
+                if (isActive) {
+                  onError(STTException('Deepgram Fatal Error: $errorMessage'));
                   _cleanup();
                 }
               }
@@ -439,6 +497,13 @@ class DeepgramSTTService extends STTService {
               'confidence': _transcriptConfidence,
               'wordCount': _wordCount,
               'audioDuration': _audioDuration,
+              // ============ Flux v2 Turn Detection Data (for training) ============
+              'endOfTurnConfidence': _endOfTurnConfidence, // Critical for turn detection quality
+              'audioWindowStart': _audioWindowStart,
+              'audioWindowEnd': _audioWindowEnd,
+              'turnIndex': _turnIndex,
+              'eventType': _eventType,
+              'words': _wordDetails, // Per-word confidence array
               'success': true,
             },
             metadata: {
