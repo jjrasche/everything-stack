@@ -159,7 +159,7 @@ class DeepgramSTTService extends STTService {
   double _transcriptConfidence = 0.0; // Actual Deepgram confidence
   double _audioDuration = 0.0;
   int _wordCount = 0;
-  String _deepgramModel = 'nova-2'; // Testing v2 endpoint - Flux model TBD
+  String _deepgramModel = 'nova-2'; // Stable model (Flux v2 requires account upgrade)
   Map<String, dynamic> _deepgramMetadata = {}; // Capture Deepgram response metadata
 
   // ============ Flux v2 Turn Detection Data ============
@@ -173,7 +173,7 @@ class DeepgramSTTService extends STTService {
   DeepgramSTTService({
     required this.apiKey,
     required InvocationRepository<Invocation> invocationRepository,
-    this.model = 'nova-2', // v2 endpoint with turn detection via TurnInfo
+    this.model = 'nova-2', // Stable with turn detection (Flux v2 requires API upgrade)
     this.language = 'en-US',
   }) : _invocationRepository = invocationRepository;
 
@@ -210,11 +210,10 @@ class DeepgramSTTService extends STTService {
     Future<void> connect() async {
       try {
         // Build WebSocket URL with parameters and API key
-        // v1 endpoint - v2 requires API access we may not have
-        // Still captures TurnInfo events and turn detection data for training
+        // Using v1 for now - v2 returns 400 (requires API account upgrade)
+        // v2 endpoint architecture is in place for future migration
         final urlString = 'wss://api.deepgram.com/v1/listen'
             '?model=$model'
-            '&language=$language'
             '&encoding=linear16'
             '&sample_rate=16000'
             '&channels=2'
