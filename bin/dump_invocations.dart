@@ -5,6 +5,7 @@
 import 'dart:convert';
 import 'package:everything_stack_template/core/invocation_repository.dart';
 import 'package:everything_stack_template/domain/invocation.dart';
+import 'package:everything_stack_template/objectbox.g.dart';
 import 'package:get_it/get_it.dart';
 import 'package:objectbox/objectbox.dart';
 
