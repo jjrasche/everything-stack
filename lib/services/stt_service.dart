@@ -159,7 +159,7 @@ class DeepgramSTTService extends STTService {
   double _transcriptConfidence = 0.0; // Actual Deepgram confidence
   double _audioDuration = 0.0;
   int _wordCount = 0;
-  String _deepgramModel = 'nova-2'; // Stable model (Flux v2 requires account upgrade)
+  String _deepgramModel = 'flux-general-en'; // Deepgram Flux v2 - superior turn detection
   Map<String, dynamic> _deepgramMetadata = {}; // Capture Deepgram response metadata
 
   // ============ Flux v2 Turn Detection Data ============
@@ -173,7 +173,7 @@ class DeepgramSTTService extends STTService {
   DeepgramSTTService({
     required this.apiKey,
     required InvocationRepository<Invocation> invocationRepository,
-    this.model = 'nova-2', // Stable with turn detection (Flux v2 requires API upgrade)
+    this.model = 'flux-general-en', // Deepgram Flux v2 with superior turn detection
     this.language = 'en-US',
   }) : _invocationRepository = invocationRepository;
 
@@ -210,17 +210,15 @@ class DeepgramSTTService extends STTService {
     Future<void> connect() async {
       try {
         // Build WebSocket URL with parameters and API key
-        // Using v1 for now - v2 returns 400 (requires API account upgrade)
-        // v2 endpoint architecture is in place for future migration
-        final urlString = 'wss://api.deepgram.com/v1/listen'
+        // Flux v2: Minimal params only - NO channels, interim_results, endpointing, vad_events, utterance_end_ms
+        // These v1 params break v2 (causes HTTP 400)
+        final urlString = 'wss://api.deepgram.com/v2/listen'
             '?model=$model'
             '&encoding=linear16'
             '&sample_rate=16000'
-            '&channels=2'
-            '&interim_results=true'
-            '&endpointing=true'
-            '&vad_events=true'
-            '&utterance_end_ms=1000';
+            '&eager_eot_threshold=0.5'
+            '&eot_threshold=0.5'
+            '&eot_timeout_ms=3000';
 
         // Connect with timeout and Authorization header
         try {
@@ -328,7 +326,7 @@ class DeepgramSTTService extends STTService {
                   _cleanup();
                 }
               }
-              // ============ Flux v2: TurnInfo Event (turn detection - future) ============
+              // ============ Flux v2: TurnInfo Event (turn detection) ============
               else if (json['type'] == 'TurnInfo') {
                 final eventType = json['event'] as String? ?? '';
                 final endOfTurnConfidence = (json['end_of_turn_confidence'] as num?)?.toDouble() ?? 0.0;
@@ -338,7 +336,7 @@ class DeepgramSTTService extends STTService {
                 final turnTranscript = json['transcript'] as String? ?? _lastTranscript;
                 final turnWords = json['words'] as List? ?? [];
 
-                print('🏁 [Deepgram/Flux] TurnInfo: event=$eventType, confidence=$endOfTurnConfidence, timing=${audioWindowStart}s-${audioWindowEnd}s');
+                print('🏁 [Deepgram/Flux] TurnInfo: event=$eventType, confidence=$endOfTurnConfidence, timing=${audioWindowStart}s-${audioWindowEnd}s, transcript="${turnTranscript.isEmpty ? "(empty)" : turnTranscript}"');
 
                 // Store turn detection data for training
                 _eventType = eventType;
@@ -355,6 +353,13 @@ class DeepgramSTTService extends STTService {
                   _lastTranscript = turnTranscript;
                 }
 
+                // DEBUG: For first Update, log full JSON to understand structure
+                if (eventType == 'Update' && _lastTranscript.isEmpty && _wordDetails.isEmpty) {
+                  print('🔍 [Deepgram/Flux] First Update - Full JSON structure:');
+                  print('   ${jsonEncode(json)}');
+                  print('   Available fields: ${json.keys.join(", ")}');
+                }
+
                 // Handle turn end events
                 if (eventType == 'EndOfTurn' || eventType == 'EagerEndOfTurn') {
                   finalCompleteTimer?.cancel();
@@ -365,6 +370,19 @@ class DeepgramSTTService extends STTService {
                     onDone?.call();
                     _cleanup();
                   }
+                } else if (eventType == 'Update') {
+                  // Flux Update: reschedule timeout on each Update
+                  // When Updates stop coming = turn complete (audio ended, Flux done processing)
+                  finalCompleteTimer?.cancel();
+                  finalCompleteTimer = Timer(const Duration(milliseconds: 500), () {
+                    if (isActive) {
+                      print('🏁 [Deepgram/Flux] No Updates for 500ms - turn complete');
+                      onUtteranceEnd?.call();
+                      _publishTranscriptionEvent();
+                      onDone?.call();
+                      _cleanup();
+                    }
+                  });
                 } else if (eventType == 'TurnResumed') {
                   print('↩️  [Deepgram/Flux] Turn resumed - listening for more audio');
                 }
@@ -430,7 +448,16 @@ class DeepgramSTTService extends STTService {
           onDone: () {
             if (isActive) {
               print('✅ [Deepgram] Audio stream completed - sent $totalAudioBytes bytes in $audioChunkCount chunks');
-              print('ℹ️  [Deepgram] Waiting for WebSocket responses before closing...');
+              // Send CloseStream to explicitly signal end of audio
+              // This tells Flux v2 to trigger turn detection logic (eot_threshold, eot_timeout_ms, etc.)
+              try {
+                final closeStreamMessage = jsonEncode({'type': 'CloseStream'});
+                _ws!.sink.add(closeStreamMessage);
+                print('📤 [Deepgram] Sent CloseStream message to signal end of audio');
+              } catch (e) {
+                print('⚠️  [Deepgram] Failed to send CloseStream: $e');
+              }
+              print('ℹ️  [Deepgram] Waiting for Flux v2 turn detection response...');
               // IMPORTANT: Don't close WebSocket immediately - Deepgram might still be sending responses
               // The idle timeout (30s) will handle cleanup if no response comes
               // Only close if explicitly told to (via isActive = false in _cleanup())
