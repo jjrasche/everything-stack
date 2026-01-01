@@ -50,7 +50,6 @@ abstract class AdaptationStateRepository {
     String? userId,
   });
 
-
   /// Get user-scoped state (doesn't fall back to global)
   ///
   /// Parameters:

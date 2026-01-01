@@ -60,7 +60,8 @@ class TurnListScreen extends ConsumerWidget {
                   ref.read(selectedTurnProvider.notifier).state = turn;
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Turn selected. Feedback review UI coming soon.'),
+                      content: Text(
+                          'Turn selected. Feedback review UI coming soon.'),
                     ),
                   );
                 },

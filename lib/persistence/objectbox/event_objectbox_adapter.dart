@@ -20,6 +20,5 @@ class EventObjectBoxAdapter extends BaseObjectBoxAdapter<Event, EventOB> {
       EventOB_.uuid.equals(uuid);
 
   @override
-  Condition<EventOB> syncStatusLocalCondition() =>
-      EventOB_.syncId.notNull();
+  Condition<EventOB> syncStatusLocalCondition() => EventOB_.syncId.notNull();
 }

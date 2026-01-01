@@ -19,8 +19,7 @@ class InvocationObjectBoxAdapter
       InvocationOB.fromInvocation(entity);
 
   @override
-  domain_invocation.Invocation fromOB(InvocationOB ob) =>
-      ob.toInvocation();
+  domain_invocation.Invocation fromOB(InvocationOB ob) => ob.toInvocation();
 
   @override
   Condition<InvocationOB> uuidEqualsCondition(String uuid) =>
@@ -49,9 +48,8 @@ class InvocationObjectBoxAdapter
   @override
   Future<List<domain_invocation.Invocation>> findByContextType(
       String contextType) async {
-    final query = box
-        .query(InvocationOB_.componentType.equals(contextType))
-        .build();
+    final query =
+        box.query(InvocationOB_.componentType.equals(contextType)).build();
     try {
       final obList = query.find();
       return obList.map((ob) => fromOB(ob)).toList();
@@ -61,8 +59,7 @@ class InvocationObjectBoxAdapter
   }
 
   @override
-  Future<List<domain_invocation.Invocation>> findByIds(
-      List<String> ids) async {
+  Future<List<domain_invocation.Invocation>> findByIds(List<String> ids) async {
     final allInvocations = await findAll();
     return allInvocations.where((inv) => ids.contains(inv.uuid)).toList();
   }

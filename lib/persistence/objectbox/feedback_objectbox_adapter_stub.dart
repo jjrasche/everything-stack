@@ -5,7 +5,8 @@
 
 library;
 
-import '../../bootstrap/objectbox_stub.dart' if (dart.library.io) 'package:objectbox/objectbox.dart';
+import '../../bootstrap/objectbox_stub.dart'
+    if (dart.library.io) 'package:objectbox/objectbox.dart';
 import '../../core/feedback_repository.dart';
 import '../../domain/feedback.dart';
 
@@ -19,13 +20,17 @@ class FeedbackObjectBoxAdapter implements FeedbackRepository {
   Future<List<Feedback>> findByInvocationId(String invocationId) async => [];
 
   @override
-  Future<List<Feedback>> findByInvocationIds(List<String> invocationIds) async => [];
+  Future<List<Feedback>> findByInvocationIds(
+          List<String> invocationIds) async =>
+      [];
 
   @override
   Future<List<Feedback>> findByTurn(String turnId) async => [];
 
   @override
-  Future<List<Feedback>> findByTurnAndComponent(String turnId, String componentType) async => [];
+  Future<List<Feedback>> findByTurnAndComponent(
+          String turnId, String componentType) async =>
+      [];
 
   @override
   Future<List<Feedback>> findByContextType(String contextType) async => [];

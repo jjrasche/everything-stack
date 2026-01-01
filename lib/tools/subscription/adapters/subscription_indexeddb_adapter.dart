@@ -97,11 +97,13 @@ class SubscriptionIndexedDBAdapter implements PersistenceAdapter<Subscription> {
       throw UnimplementedError('Subscription persistence not yet implemented');
 
   @override
-  Subscription saveInTx(TransactionContext ctx, Subscription entity, {bool touch = true}) =>
+  Subscription saveInTx(TransactionContext ctx, Subscription entity,
+          {bool touch = true}) =>
       throw UnimplementedError('Subscription persistence not yet implemented');
 
   @override
-  List<Subscription> saveAllInTx(TransactionContext ctx, List<Subscription> entities) =>
+  List<Subscription> saveAllInTx(
+          TransactionContext ctx, List<Subscription> entities) =>
       throw UnimplementedError('Subscription persistence not yet implemented');
 
   @override

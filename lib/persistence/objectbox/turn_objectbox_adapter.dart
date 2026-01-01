@@ -22,8 +22,7 @@ class TurnObjectBoxAdapter extends BaseObjectBoxAdapter<Turn, TurnOB>
       TurnOB_.uuid.equals(uuid);
 
   @override
-  Condition<TurnOB> syncStatusLocalCondition() =>
-      TurnOB_.syncId.notNull();
+  Condition<TurnOB> syncStatusLocalCondition() => TurnOB_.syncId.notNull();
 
   // ============ TurnRepository Implementation ============
 
@@ -45,7 +44,8 @@ class TurnObjectBoxAdapter extends BaseObjectBoxAdapter<Turn, TurnOB>
   Future<List<Turn>> findMarkedForFeedbackByConversation(
       String conversationId) async {
     final query = box
-        .query(TurnOB_.conversationId.equals(conversationId)
+        .query(TurnOB_.conversationId
+            .equals(conversationId)
             .and(TurnOB_.markedForFeedback.equals(true)))
         .order(TurnOB_.markedAt, flags: Order.descending)
         .build();
@@ -61,15 +61,15 @@ class TurnObjectBoxAdapter extends BaseObjectBoxAdapter<Turn, TurnOB>
   Future<Turn?> findByInvocationId(String invocationId) async {
     final allTurns = await findAll();
     return allTurns.firstWhere(
-      (turn) =>
-          turn.getInvocationIds().contains(invocationId),
+      (turn) => turn.getInvocationIds().contains(invocationId),
       orElse: () => null as dynamic,
     ) as Turn?;
   }
 
   @override
   Future<int> deleteByConversation(String conversationId) async {
-    final query = box.query(TurnOB_.conversationId.equals(conversationId)).build();
+    final query =
+        box.query(TurnOB_.conversationId.equals(conversationId)).build();
     try {
       return query.remove();
     } finally {

@@ -18,26 +18,28 @@ import '../../tools/media/entities/media_item.dart';
 
 /// Stub adapter - MediaItem persistence not yet available on native platforms.
 /// Use web platform for semantic search.
-class MediaItemObjectBoxAdapter extends BaseObjectBoxAdapter<MediaItem, dynamic> {
+class MediaItemObjectBoxAdapter
+    extends BaseObjectBoxAdapter<MediaItem, dynamic> {
   MediaItemObjectBoxAdapter(Store store) : super(store);
 
   @override
   dynamic toOB(MediaItem entity) => throw UnimplementedError(
-    'MediaItem persistence not yet available on native platforms. Use web (IndexedDB) instead.',
-  );
+        'MediaItem persistence not yet available on native platforms. Use web (IndexedDB) instead.',
+      );
 
   @override
   MediaItem fromOB(dynamic ob) => throw UnimplementedError(
-    'MediaItem persistence not yet available on native platforms. Use web (IndexedDB) instead.',
-  );
+        'MediaItem persistence not yet available on native platforms. Use web (IndexedDB) instead.',
+      );
 
   @override
-  Condition<dynamic> uuidEqualsCondition(String uuid) => throw UnimplementedError(
-    'MediaItem persistence not yet available on native platforms. Use web (IndexedDB) instead.',
-  );
+  Condition<dynamic> uuidEqualsCondition(String uuid) =>
+      throw UnimplementedError(
+        'MediaItem persistence not yet available on native platforms. Use web (IndexedDB) instead.',
+      );
 
   @override
   Condition<dynamic> syncStatusLocalCondition() => throw UnimplementedError(
-    'MediaItem persistence not yet available on native platforms. Use web (IndexedDB) instead.',
-  );
+        'MediaItem persistence not yet available on native platforms. Use web (IndexedDB) instead.',
+      );
 }

@@ -65,9 +65,7 @@ class SystemEventRepositoryObjectBoxAdapter implements EventRepository {
   Future<List<SystemEvent>> getSince(DateTime timestamp) async {
     // Get all and filter by timestamp
     final all = _box.getAll();
-    final filtered = all
-        .where((ob) => ob.createdAt.isAfter(timestamp))
-        .toList()
+    final filtered = all.where((ob) => ob.createdAt.isAfter(timestamp)).toList()
       ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
     return filtered.map(_obToSystemEvent).toList();
   }

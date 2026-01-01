@@ -28,10 +28,10 @@ abstract class SystemEvent {
 
   /// Convert to JSON for persistence
   Map<String, dynamic> toJson() => {
-    'correlationId': correlationId,
-    'createdAt': createdAt.toIso8601String(),
-    'eventType': eventType,
-  };
+        'correlationId': correlationId,
+        'createdAt': createdAt.toIso8601String(),
+        'eventType': eventType,
+      };
 
   @override
   String toString() =>

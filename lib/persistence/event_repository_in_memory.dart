@@ -28,24 +28,17 @@ class InMemoryEventRepository implements EventRepository {
 
   @override
   Future<List<SystemEvent>> getByCorrelationId(String correlationId) async {
-    return _events
-        .where((e) => e.correlationId == correlationId)
-        .toList();
+    return _events.where((e) => e.correlationId == correlationId).toList();
   }
 
   @override
   Future<List<T>> getByType<T extends SystemEvent>() async {
-    return _events
-        .where((e) => e.runtimeType == T)
-        .cast<T>()
-        .toList();
+    return _events.where((e) => e.runtimeType == T).cast<T>().toList();
   }
 
   @override
   Future<List<SystemEvent>> getSince(DateTime timestamp) async {
-    return _events
-        .where((e) => e.createdAt.isAfter(timestamp))
-        .toList();
+    return _events.where((e) => e.createdAt.isAfter(timestamp)).toList();
   }
 
   @override

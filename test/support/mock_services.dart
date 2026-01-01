@@ -1,6 +1,8 @@
 // Export base service types for GetIt registration
-export 'package:everything_stack_template/services/llm_service.dart' show LLMService, Message, LLMResponse, LLMTool;
-export 'package:everything_stack_template/services/stt_service.dart' show STTService, STTException;
+export 'package:everything_stack_template/services/llm_service.dart'
+    show LLMService, Message, LLMResponse, LLMTool;
+export 'package:everything_stack_template/services/stt_service.dart'
+    show STTService, STTException;
 
 import 'dart:async';
 import 'dart:typed_data';
@@ -37,7 +39,8 @@ class MockLLMService extends LLMService {
     print('🤖 MockLLMService: Returning mock response (no API call)');
     return LLMResponse(
       id: 'mock_response_${DateTime.now().millisecondsSinceEpoch}',
-      content: 'This is a mock LLM response generated without calling any external API.',
+      content:
+          'This is a mock LLM response generated without calling any external API.',
       toolCalls: [],
       tokensUsed: 42,
     );
@@ -51,7 +54,8 @@ class MockLLMService extends LLMService {
 
   // Implement Trainable interface
   @override
-  Future<String> recordInvocation(dynamic invocation) async => 'mock_invocation_id';
+  Future<String> recordInvocation(dynamic invocation) async =>
+      'mock_invocation_id';
 
   @override
   Future<void> trainFromFeedback(String turnId, {String? userId}) async {}
@@ -130,7 +134,8 @@ class MockSTTService extends STTService {
 
   // Implement Trainable interface
   @override
-  Future<String> recordInvocation(dynamic invocation) async => 'mock_invocation_id';
+  Future<String> recordInvocation(dynamic invocation) async =>
+      'mock_invocation_id';
 
   @override
   Future<void> trainFromFeedback(String turnId, {String? userId}) async {}
@@ -250,7 +255,8 @@ class EnhancedMockSTTService extends STTService {
               print(
                   '   📡 Publishing TranscriptionComplete event to EventBus (correlationId: $correlationId)');
               await eventBus.publish(event);
-              print('   ✅ Event published - Coordinator listener should trigger');
+              print(
+                  '   ✅ Event published - Coordinator listener should trigger');
             } catch (e) {
               print('   ⚠️ Failed to publish event: $e');
               // Don't fail - the onData callback already happened
@@ -288,7 +294,8 @@ class EnhancedMockSTTService extends STTService {
 
   // Implement Trainable interface
   @override
-  Future<String> recordInvocation(dynamic invocation) async => 'enhanced_mock_invocation_id';
+  Future<String> recordInvocation(dynamic invocation) async =>
+      'enhanced_mock_invocation_id';
 
   @override
   Future<void> trainFromFeedback(String turnId, {String? userId}) async {}

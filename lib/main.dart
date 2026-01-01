@@ -10,6 +10,7 @@ import 'services/embedding_service.dart';
 import 'ui/screens/voice_assistant_screen.dart';
 
 enum InputModality { text, voice }
+
 enum OutputModality { text, voice }
 
 bool _bootstrapInitialized = false;
@@ -24,7 +25,8 @@ Future<void> _ensureInitialized() async {
       getIt<Coordinator>();
       return; // All good
     } catch (e) {
-      debugPrint('⚠️ Bootstrap flag set but services missing, reinitializing...');
+      debugPrint(
+          '⚠️ Bootstrap flag set but services missing, reinitializing...');
       // Services were cleared, continue with reinitialization below
     }
   }
@@ -82,7 +84,8 @@ class MyApp extends StatelessWidget {
           }
           if (snapshot.hasError) {
             return Scaffold(
-              body: Center(child: Text('Initialization error: ${snapshot.error}')),
+              body: Center(
+                  child: Text('Initialization error: ${snapshot.error}')),
             );
           }
           return const VoiceAssistantScreen();
@@ -122,7 +125,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // For now, this will fail if actually called, but the structure is ready
     try {
       // _coordinator = Coordinator(...);
-      print('Coordinator initialization not yet implemented - awaiting bootstrap setup');
+      print(
+          'Coordinator initialization not yet implemented - awaiting bootstrap setup');
     } catch (e) {
       print('Failed to initialize Coordinator: $e');
     }
@@ -239,13 +243,15 @@ class _MyHomePageState extends State<MyHomePage> {
                             ? InputModality.voice
                             : InputModality.text;
                       }),
-                      icon: Text(_inputModality == InputModality.text ? '⌨️' : '🎤'),
-                      label: Text(_inputModality == InputModality.text ? 'Type' : 'Speak'),
+                      icon: Text(
+                          _inputModality == InputModality.text ? '⌨️' : '🎤'),
+                      label: Text(_inputModality == InputModality.text
+                          ? 'Type'
+                          : 'Speak'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            _inputModality == InputModality.voice
-                                ? Colors.red
-                                : Colors.grey[700],
+                        backgroundColor: _inputModality == InputModality.voice
+                            ? Colors.red
+                            : Colors.grey[700],
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -255,13 +261,15 @@ class _MyHomePageState extends State<MyHomePage> {
                             ? OutputModality.voice
                             : OutputModality.text;
                       }),
-                      icon: Text(_outputModality == OutputModality.text ? '📝' : '🔊'),
-                      label: Text(_outputModality == OutputModality.text ? 'Read' : 'Listen'),
+                      icon: Text(
+                          _outputModality == OutputModality.text ? '📝' : '🔊'),
+                      label: Text(_outputModality == OutputModality.text
+                          ? 'Read'
+                          : 'Listen'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            _outputModality == OutputModality.voice
-                                ? Colors.blue
-                                : Colors.grey[700],
+                        backgroundColor: _outputModality == OutputModality.voice
+                            ? Colors.blue
+                            : Colors.grey[700],
                       ),
                     ),
                   ],
@@ -318,9 +326,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         onPressed:
                             _isRecording ? _stopRecording : _startRecording,
                         icon: Icon(_isRecording ? Icons.stop : Icons.mic),
-                        label: Text(_isRecording ? 'Stop Recording' : 'Click to Record'),
+                        label: Text(_isRecording
+                            ? 'Stop Recording'
+                            : 'Click to Record'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: _isRecording ? Colors.red : Colors.blue,
+                          backgroundColor:
+                              _isRecording ? Colors.red : Colors.blue,
                           minimumSize: const Size(double.infinity, 48),
                         ),
                       ),

@@ -22,21 +22,22 @@ class ChannelObjectBoxAdapter extends BaseObjectBoxAdapter<Channel, dynamic> {
 
   @override
   dynamic toOB(Channel entity) => throw UnimplementedError(
-    'Channel persistence not yet available on native platforms. Use web (IndexedDB) instead.',
-  );
+        'Channel persistence not yet available on native platforms. Use web (IndexedDB) instead.',
+      );
 
   @override
   Channel fromOB(dynamic ob) => throw UnimplementedError(
-    'Channel persistence not yet available on native platforms. Use web (IndexedDB) instead.',
-  );
+        'Channel persistence not yet available on native platforms. Use web (IndexedDB) instead.',
+      );
 
   @override
-  Condition<dynamic> uuidEqualsCondition(String uuid) => throw UnimplementedError(
-    'Channel persistence not yet available on native platforms. Use web (IndexedDB) instead.',
-  );
+  Condition<dynamic> uuidEqualsCondition(String uuid) =>
+      throw UnimplementedError(
+        'Channel persistence not yet available on native platforms. Use web (IndexedDB) instead.',
+      );
 
   @override
   Condition<dynamic> syncStatusLocalCondition() => throw UnimplementedError(
-    'Channel persistence not yet available on native platforms. Use web (IndexedDB) instead.',
-  );
+        'Channel persistence not yet available on native platforms. Use web (IndexedDB) instead.',
+      );
 }

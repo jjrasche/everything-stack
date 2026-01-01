@@ -128,9 +128,7 @@ class Download extends BaseEntity {
 
   /// Is download currently active?
   bool get isActive =>
-      status == 'queued' ||
-      status == 'downloading' ||
-      status == 'processing';
+      status == 'queued' || status == 'downloading' || status == 'processing';
 
   /// Is download complete?
   bool get isComplete => status == 'completed';
@@ -181,7 +179,8 @@ class Download extends BaseEntity {
     progressPercent = percent.clamp(0, 100);
     if (bytesDownloaded != null) downloadedBytes = bytesDownloaded;
     if (totalSize != null) totalBytes = totalSize;
-    if (speedBytesPerSec != null) downloadSpeedBytesPerSecond = speedBytesPerSec;
+    if (speedBytesPerSec != null)
+      downloadSpeedBytesPerSecond = speedBytesPerSec;
     if (secondsRemaining != null) estimatedSecondsRemaining = secondsRemaining;
     touch();
   }
@@ -259,10 +258,8 @@ class Download extends BaseEntity {
       status: json['status'] as String? ?? 'queued',
       progressPercent: json['progressPercent'] as int? ?? 0,
       errorMessage: json['errorMessage'] as String?,
-      estimatedSecondsRemaining:
-          json['estimatedSecondsRemaining'] as int?,
-      downloadSpeedBytesPerSecond:
-          json['downloadSpeedBytesPerSecond'] as int?,
+      estimatedSecondsRemaining: json['estimatedSecondsRemaining'] as int?,
+      downloadSpeedBytesPerSecond: json['downloadSpeedBytesPerSecond'] as int?,
       downloadedBytes: json['downloadedBytes'] as int? ?? 0,
       totalBytes: json['totalBytes'] as int?,
       startedAt: json['startedAt'] != null

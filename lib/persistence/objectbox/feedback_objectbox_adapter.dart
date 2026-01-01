@@ -7,7 +7,8 @@ import '../../objectbox.g.dart';
 import 'base_objectbox_adapter.dart';
 import 'wrappers/feedback_ob.dart';
 
-class FeedbackObjectBoxAdapter extends BaseObjectBoxAdapter<Feedback, FeedbackOB>
+class FeedbackObjectBoxAdapter
+    extends BaseObjectBoxAdapter<Feedback, FeedbackOB>
     implements FeedbackRepository {
   FeedbackObjectBoxAdapter(Store store) : super(store);
 
@@ -29,9 +30,8 @@ class FeedbackObjectBoxAdapter extends BaseObjectBoxAdapter<Feedback, FeedbackOB
 
   @override
   Future<List<Feedback>> findByInvocationId(String invocationId) async {
-    final query = box
-        .query(FeedbackOB_.invocationId.equals(invocationId))
-        .build();
+    final query =
+        box.query(FeedbackOB_.invocationId.equals(invocationId)).build();
     try {
       final obList = query.find();
       return obList.map((ob) => fromOB(ob)).toList();
@@ -50,9 +50,7 @@ class FeedbackObjectBoxAdapter extends BaseObjectBoxAdapter<Feedback, FeedbackOB
 
   @override
   Future<List<Feedback>> findByTurn(String turnId) async {
-    final query = box
-        .query(FeedbackOB_.turnId.equals(turnId))
-        .build();
+    final query = box.query(FeedbackOB_.turnId.equals(turnId)).build();
     try {
       final obList = query.find();
       return obList.map((ob) => fromOB(ob)).toList();
@@ -67,7 +65,8 @@ class FeedbackObjectBoxAdapter extends BaseObjectBoxAdapter<Feedback, FeedbackOB
     String componentType,
   ) async {
     final query = box
-        .query(FeedbackOB_.turnId.equals(turnId)
+        .query(FeedbackOB_.turnId
+            .equals(turnId)
             .and(FeedbackOB_.componentType.equals(componentType)))
         .build();
     try {
@@ -80,9 +79,8 @@ class FeedbackObjectBoxAdapter extends BaseObjectBoxAdapter<Feedback, FeedbackOB
 
   @override
   Future<List<Feedback>> findByContextType(String contextType) async {
-    final query = box
-        .query(FeedbackOB_.componentType.equals(contextType))
-        .build();
+    final query =
+        box.query(FeedbackOB_.componentType.equals(contextType)).build();
     try {
       final obList = query.find();
       return obList.map((ob) => fromOB(ob)).toList();

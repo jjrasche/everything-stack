@@ -141,9 +141,11 @@ class Coordinator {
   /// Automatically triggers orchestration on each transcription event.
   void initialize() {
     print('\n🔧 [Coordinator.initialize] Wiring event listener');
-    _transcriptionSubscription = eventBus.subscribe<TranscriptionComplete>().listen(
+    _transcriptionSubscription =
+        eventBus.subscribe<TranscriptionComplete>().listen(
       (event) async {
-        print('\n📡 [Coordinator] Heard TranscriptionComplete: "${event.transcript}"');
+        print(
+            '\n📡 [Coordinator] Heard TranscriptionComplete: "${event.transcript}"');
 
         try {
           // Orchestrate on transcription complete event
@@ -161,7 +163,8 @@ class Coordinator {
             },
           );
 
-          print('✅ [Coordinator] Orchestration complete: ${result.success ? "SUCCESS" : "FAILED"}');
+          print(
+              '✅ [Coordinator] Orchestration complete: ${result.success ? "SUCCESS" : "FAILED"}');
           if (!result.success) {
             print('⚠️ Error: ${result.errorMessage}');
           }
@@ -204,7 +207,8 @@ class Coordinator {
       // 1. Generate embedding
       print('\n[1/6] Generating embedding...');
       final embedding = await embeddingService.generate(utterance);
-      print('✅ Embedding generated: ${embedding.isNotEmpty ? embedding.length : 0} dimensions');
+      print(
+          '✅ Embedding generated: ${embedding.isNotEmpty ? embedding.length : 0} dimensions');
 
       // 2. NamespaceSelector picks namespace
       // COMMENTED OUT: Focus on LLM + TTS data for learning
@@ -378,7 +382,6 @@ class Coordinator {
     }
   }
 
-
   String _buildSystemPrompt({
     required String namespace,
     required List<String> tools,
@@ -411,5 +414,4 @@ class Coordinator {
             ))
         .toList();
   }
-
 }

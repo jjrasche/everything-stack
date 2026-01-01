@@ -54,7 +54,8 @@ class TaskObjectBoxAdapter implements PersistenceAdapter<Task> {
   Future<bool> deleteByIntId(int id) => throw UnsupportedError('Native only');
 
   @override
-  Future<void> deleteAll(List<String> uuids) => throw UnsupportedError('Native only');
+  Future<void> deleteAll(List<String> uuids) =>
+      throw UnsupportedError('Native only');
 
   @override
   Future<void> close() => throw UnsupportedError('Native only');

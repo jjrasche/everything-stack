@@ -58,8 +58,7 @@ class AdaptationStateIndexedDBAdapter
   Future<AdaptationState?> getGlobal(String componentType) async {
     final allItems = await findAll();
     return allItems.firstWhere(
-      (item) =>
-          item.componentType == componentType && item.scope == 'global',
+      (item) => item.componentType == componentType && item.scope == 'global',
       orElse: () => null as dynamic,
     ) as AdaptationState?;
   }
@@ -67,7 +66,9 @@ class AdaptationStateIndexedDBAdapter
   @override
   Future<List<AdaptationState>> findByComponent(String componentType) async {
     final allItems = await findAll();
-    return allItems.where((item) => item.componentType == componentType).toList();
+    return allItems
+        .where((item) => item.componentType == componentType)
+        .toList();
   }
 
   @override
@@ -92,9 +93,8 @@ class AdaptationStateIndexedDBAdapter
   @override
   Future<List<AdaptationState>> getHistory(String componentType) async {
     final allItems = await findAll();
-    final filtered = allItems
-        .where((item) => item.componentType == componentType)
-        .toList();
+    final filtered =
+        allItems.where((item) => item.componentType == componentType).toList();
     filtered.sort((a, b) => a.version.compareTo(b.version));
     return filtered;
   }

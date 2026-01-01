@@ -20,7 +20,8 @@ Store? _globalStore;
 Future<Store> openObjectBoxStore() async {
   // Return existing store if already initialized
   if (_globalStore != null) {
-    debugPrint('ℹ️ ObjectBox Store already initialized, returning existing instance');
+    debugPrint(
+        'ℹ️ ObjectBox Store already initialized, returning existing instance');
     return _globalStore!;
   }
 
@@ -32,10 +33,12 @@ Future<Store> openObjectBoxStore() async {
     // Run tests with:
     //   flutter test integration_test/... --dart-define=TEST_MODE=true -d windows
     const isTest = bool.fromEnvironment('TEST_MODE', defaultValue: false);
-    debugPrint('🔍 [ObjectBox] Test mode: TEST_MODE=$isTest (compile-time constant)');
+    debugPrint(
+        '🔍 [ObjectBox] Test mode: TEST_MODE=$isTest (compile-time constant)');
 
     if (isTest) {
-      debugPrint('ℹ️ ObjectBox: Using test database directory (isolated from production)');
+      debugPrint(
+          'ℹ️ ObjectBox: Using test database directory (isolated from production)');
       final testDbDir = Directory.systemTemp.createTempSync('objectbox_test_');
       debugPrint('ℹ️ ObjectBox test directory: ${testDbDir.path}');
       final store = await openStore(directory: testDbDir.path);
@@ -55,7 +58,8 @@ Future<Store> openObjectBoxStore() async {
     if (e.toString().contains('10001') || e.toString().contains('index')) {
       debugPrint('⚠️ ObjectBox schema mismatch detected');
       debugPrint('   This typically happens after database schema changes');
-      debugPrint('   Delete the ObjectBox database directory and restart the app');
+      debugPrint(
+          '   Delete the ObjectBox database directory and restart the app');
       debugPrint('   Location: ~/Documents/objectbox/ or %APPDATA%/objectbox/');
     }
 

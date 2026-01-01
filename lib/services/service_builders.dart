@@ -72,7 +72,9 @@ LLMService _buildGroqLLM(ServiceConfig config) {
     return NullLLMService();
   }
 
-  final invocationRepo = ServiceRegistry.getOrNull<InvocationRepository<Invocation>>('invocation_repo');
+  final invocationRepo =
+      ServiceRegistry.getOrNull<InvocationRepository<Invocation>>(
+          'invocation_repo');
   if (invocationRepo == null) {
     print('⚠️ Invocation repository not registered');
     return NullLLMService();
@@ -109,7 +111,9 @@ TTSService createTTSService(ServiceConfig config) {
 }
 
 TTSService _buildFlutterTTS(ServiceConfig config) {
-  final invocationRepo = ServiceRegistry.getOrNull<InvocationRepository<Invocation>>('invocation_repo');
+  final invocationRepo =
+      ServiceRegistry.getOrNull<InvocationRepository<Invocation>>(
+          'invocation_repo');
   if (invocationRepo == null) {
     print('⚠️ Invocation repository not registered');
     return NullTTSService();
@@ -160,7 +164,8 @@ EmbeddingService _buildJinaEmbedding(ServiceConfig config) {
         body: body,
       );
       if (response.statusCode != 200) {
-        throw Exception('Jina API error: ${response.statusCode} ${response.body}');
+        throw Exception(
+            'Jina API error: ${response.statusCode} ${response.body}');
       }
       return response.body;
     },

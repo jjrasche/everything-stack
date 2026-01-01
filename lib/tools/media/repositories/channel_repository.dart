@@ -14,9 +14,9 @@ class ChannelRepository extends EntityRepository<Channel> {
     required PersistenceAdapter<Channel> adapter,
     EmbeddingService? embeddingService,
   }) : super(
-    adapter: adapter,
-    embeddingService: embeddingService ?? EmbeddingService.instance,
-  );
+          adapter: adapter,
+          embeddingService: embeddingService ?? EmbeddingService.instance,
+        );
 
   /// Get all subscribed channels
   Future<List<Channel>> findSubscribed() async {
@@ -73,13 +73,11 @@ class ChannelRepository extends EntityRepository<Channel> {
     final all = await findAll();
     final subscribed = all.where((c) => c.isSubscribed).length;
     final unsubscribed = all.where((c) => !c.isSubscribed).length;
-    final needsCheck =
-        all.where((c) => c.shouldCheckForNew).length;
+    final needsCheck = all.where((c) => c.shouldCheckForNew).length;
     final lastWeek = all
         .where((c) =>
             c.subscribedAt != null &&
-            c.subscribedAt!
-                .isAfter(DateTime.now().subtract(Duration(days: 7))))
+            c.subscribedAt!.isAfter(DateTime.now().subtract(Duration(days: 7))))
         .length;
 
     return {

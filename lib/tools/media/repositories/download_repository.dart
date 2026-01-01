@@ -14,9 +14,9 @@ class DownloadRepository extends EntityRepository<Download> {
     required PersistenceAdapter<Download> adapter,
     EmbeddingService? embeddingService,
   }) : super(
-    adapter: adapter,
-    embeddingService: embeddingService ?? EmbeddingService.instance,
-  );
+          adapter: adapter,
+          embeddingService: embeddingService ?? EmbeddingService.instance,
+        );
 
   /// Get all active downloads (queued, downloading, processing)
   Future<List<Download>> findActive() async {
@@ -74,8 +74,8 @@ class DownloadRepository extends EntityRepository<Download> {
   Future<List<Download>> findByFormat(String format) async {
     final all = await findAll();
     return all
-        .where((download) =>
-            download.format.toLowerCase() == format.toLowerCase())
+        .where(
+            (download) => download.format.toLowerCase() == format.toLowerCase())
         .toList();
   }
 
@@ -116,9 +116,8 @@ class DownloadRepository extends EntityRepository<Download> {
     final failed = await findFailed();
     if (failed.length > maxCount) {
       // Sort by finishedAt descending (newest first)
-      failed.sort((a, b) =>
-          (b.finishedAt ?? DateTime.now())
-              .compareTo(a.finishedAt ?? DateTime.now()));
+      failed.sort((a, b) => (b.finishedAt ?? DateTime.now())
+          .compareTo(a.finishedAt ?? DateTime.now()));
 
       // Delete oldest ones beyond keepDays
       final cutoff = DateTime.now().subtract(Duration(days: keepDays));

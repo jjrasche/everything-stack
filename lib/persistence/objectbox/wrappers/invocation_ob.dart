@@ -5,7 +5,8 @@
 
 import 'dart:convert';
 import 'package:objectbox/objectbox.dart';
-import 'package:everything_stack_template/domain/invocation.dart' as domain_invocation;
+import 'package:everything_stack_template/domain/invocation.dart'
+    as domain_invocation;
 
 @Entity()
 class InvocationOB {

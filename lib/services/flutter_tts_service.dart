@@ -119,7 +119,8 @@ class FlutterTtsService extends TTSService {
     required String text,
     required String correlationId,
   }) async {
-    print('🔊 [FlutterTtsService] Synthesizing: "$text" (correlationId=$correlationId)');
+    print(
+        '🔊 [FlutterTtsService] Synthesizing: "$text" (correlationId=$correlationId)');
 
     final startTime = DateTime.now();
 
@@ -165,7 +166,8 @@ class FlutterTtsService extends TTSService {
         );
         await _invocationRepository.save(failureInvocation);
       } catch (logError) {
-        print('⚠️  [FlutterTtsService] Failed to log TTS invocation: $logError');
+        print(
+            '⚠️  [FlutterTtsService] Failed to log TTS invocation: $logError');
       }
 
       // Don't rethrow - orchestration should continue even if TTS fails

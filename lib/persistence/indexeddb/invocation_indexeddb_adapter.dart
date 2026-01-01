@@ -14,17 +14,14 @@ class InvocationIndexedDBAdapter extends BaseIndexedDBAdapter<Invocation>
   String get objectStoreName => ObjectStores.invocations;
 
   @override
-  Invocation fromJson(Map<String, dynamic> json) =>
-      Invocation.fromJson(json);
+  Invocation fromJson(Map<String, dynamic> json) => Invocation.fromJson(json);
 
   // ============ InvocationRepository Implementation ============
 
   @override
   Future<List<Invocation>> findByTurn(String turnId) async {
     final allInvocations = await findAll();
-    return allInvocations
-        .where((inv) => inv.turnId == turnId)
-        .toList()
+    return allInvocations.where((inv) => inv.turnId == turnId).toList()
       ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
   }
 
