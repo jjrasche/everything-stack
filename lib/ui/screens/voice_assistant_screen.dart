@@ -22,10 +22,10 @@ class VoiceAssistantScreen extends StatefulWidget {
 
 // Conversation session states
 enum ConversationState {
-  idle,        // Not in conversation
-  listening,   // Capturing user speech
-  thinking,    // Processing with LLM
-  speaking,    // Playing TTS response
+  idle, // Not in conversation
+  listening, // Capturing user speech
+  thinking, // Processing with LLM
+  speaking, // Playing TTS response
 }
 
 class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
@@ -34,8 +34,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   late STTService _sttService;
   late AudioRecordingService _audioService;
 
-  String _interimText = '';      // Gray, updating text
-  String _finalText = '';        // Black, locked text
+  String _interimText = ''; // Gray, updating text
+  String _finalText = ''; // Black, locked text
   String _responseText = '';
   ConversationState _conversationState = ConversationState.idle;
 
@@ -56,7 +56,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
       debugPrint('✅ [initState] Coordinator successfully retrieved');
     } catch (e) {
       debugPrint('❌ [initState] FAILED TO GET COORDINATOR: $e');
-      debugPrint('This error means setupServiceLocator() was not called or failed in main()');
+      debugPrint(
+          'This error means setupServiceLocator() was not called or failed in main()');
       rethrow;
     }
     _ttsService = TTSService.instance;
@@ -74,8 +75,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   Future<void> _startConversation() async {
     if (_conversationState != ConversationState.idle) return;
 
-    debugPrint(
-        '🎤 [_startConversation] Starting conversation session...');
+    debugPrint('🎤 [_startConversation] Starting conversation session...');
 
     // Request microphone permission
     try {
@@ -263,16 +263,15 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
 
   /// Session idle timer - 30 seconds of silence closes conversation
   void _startSessionIdleTimer() {
-    _sessionIdleTimer = Timer(const Duration(milliseconds: SESSION_TIMEOUT_MS),
-        () {
+    _sessionIdleTimer =
+        Timer(const Duration(milliseconds: SESSION_TIMEOUT_MS), () {
       debugPrint(
           '⏲️ [Session Timeout] 30 seconds of idle time - ending conversation');
       _endConversation();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content:
-                  Text('Session ended due to 30 seconds of silence')),
+              content: Text('Session ended due to 30 seconds of silence')),
         );
       }
     });
@@ -313,7 +312,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
       );
 
       debugPrint('✅ Coordinator returned!');
-      debugPrint('📊 Result: success=${result.success}, finalResponse="${result.finalResponse}"');
+      debugPrint(
+          '📊 Result: success=${result.success}, finalResponse="${result.finalResponse}"');
       debugPrint('⏱️ Latency: ${result.latencyMs}ms');
 
       if (!result.success) {
@@ -339,7 +339,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
         debugPrint('⚠️ Widget not mounted, skipping UI update');
       }
 
-      debugPrint('=== VOICE ASSISTANT: _processRecognizedText END (success) ===\n');
+      debugPrint(
+          '=== VOICE ASSISTANT: _processRecognizedText END (success) ===\n');
     } catch (e) {
       debugPrint('❌ EXCEPTION in _processRecognizedText: $e');
       debugPrint('Stack trace: ${StackTrace.current}');
@@ -349,7 +350,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
           SnackBar(content: Text('Error: $e')),
         );
       }
-      debugPrint('=== VOICE ASSISTANT: _processRecognizedText END (error) ===\n');
+      debugPrint(
+          '=== VOICE ASSISTANT: _processRecognizedText END (error) ===\n');
     }
   }
 
