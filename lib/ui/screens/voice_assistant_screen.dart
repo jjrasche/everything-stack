@@ -40,6 +40,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   ConversationState _conversationState = ConversationState.idle;
 
   StreamSubscription<String>? _sttSubscription;
+  StreamSubscription<dynamic>? _ttsSubscription;
   Timer? _sessionIdleTimer;
 
   static const int SESSION_TIMEOUT_MS = 30000;
@@ -234,6 +235,32 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
     debugPrint('✅ [_endConversation] Conversation ended');
   }
 
+  /// Stop everything immediately (interrupt mid-response)
+  Future<void> _stopEverything() async {
+    debugPrint('⏹️ [_stopEverything] INTERRUPTING - stopping all services...');
+
+    _cancelSessionIdleTimer();
+
+    // Stop STT (if listening)
+    await _sttSubscription?.cancel();
+    _sttSubscription = null;
+    await _audioService.stopRecording();
+
+    // Stop TTS (if speaking)
+    await _ttsSubscription?.cancel();
+    _ttsSubscription = null;
+
+    // Reset state
+    setState(() {
+      _conversationState = ConversationState.idle;
+      _interimText = '';
+      _finalText = '';
+      _responseText = '';
+    });
+
+    debugPrint('✅ [_stopEverything] All services stopped');
+  }
+
   /// Session idle timer - 30 seconds of silence closes conversation
   void _startSessionIdleTimer() {
     _sessionIdleTimer = Timer(const Duration(milliseconds: SESSION_TIMEOUT_MS),
@@ -331,11 +358,30 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
     if (text.isEmpty) return;
 
     try {
-      await for (final _ in _ttsService.synthesize(text)) {
-        // Stream completes when speech is done
-      }
+      // Use subscription instead of await for so we can cancel mid-play
+      final completer = Completer<void>();
+      _ttsSubscription = _ttsService.synthesize(text).listen(
+        (_) {
+          // Stream chunk received (audio being played)
+        },
+        onError: (e) {
+          debugPrint('TTS error: $e');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('TTS error: $e')),
+            );
+          }
+          if (!completer.isCompleted) completer.completeError(e);
+        },
+        onDone: () {
+          _ttsSubscription = null;
+          if (!completer.isCompleted) completer.complete();
+        },
+      );
+
+      await completer.future;
     } catch (e) {
-      debugPrint('TTS error: $e');
+      debugPrint('TTS error in _speakResponse: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('TTS error: $e')),
@@ -349,6 +395,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
     debugPrint('🧹 [dispose] Cleaning up VoiceAssistantScreen...');
     _cancelSessionIdleTimer();
     _sttSubscription?.cancel();
+    _ttsSubscription?.cancel();
     _audioService.stopRecording();
     super.dispose();
   }
@@ -495,7 +542,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
                 FloatingActionButton.extended(
                   onPressed: _conversationState == ConversationState.idle
                       ? _startConversation
-                      : _endConversation,
+                      : _stopEverything,
                   label: Text(_conversationState == ConversationState.idle
                       ? '🎤 Start Conversation'
                       : '⏹️ Stop'),
