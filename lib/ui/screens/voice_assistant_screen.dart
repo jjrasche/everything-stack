@@ -34,7 +34,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   late STTService _sttService;
   late AudioRecordingService _audioService;
 
-  String _recognizedText = '';
+  String _interimText = '';      // Gray, updating text
+  String _finalText = '';        // Black, locked text
   String _responseText = '';
   ConversationState _conversationState = ConversationState.idle;
 
@@ -99,7 +100,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
 
     setState(() {
       _conversationState = ConversationState.listening;
-      _recognizedText = '';
+      _interimText = '';
+      _finalText = '';
       _responseText = '';
     });
 
@@ -132,17 +134,24 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
         onTranscript: (transcript) {
           debugPrint('📝 [STT] Interim transcript: "$transcript"');
           if (mounted) {
-            setState(() => _recognizedText = transcript);
+            setState(() => _interimText = transcript);
           }
           // Reset idle timer on new speech
           _resetSessionIdleTimer();
         },
         onUtteranceEnd: () {
           debugPrint('✅ [STT] Utterance ended - user stopped talking');
+          // Lock interim text as final
+          if (mounted) {
+            setState(() {
+              _finalText = _interimText;
+              _interimText = '';
+            });
+          }
           // Don't stop listening, instead process this utterance
           if (_conversationState == ConversationState.listening &&
-              _recognizedText.isNotEmpty) {
-            _processUtterance(_recognizedText);
+              _finalText.isNotEmpty) {
+            _processUtterance(_finalText);
           }
         },
         onError: (error) {
@@ -385,26 +394,58 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
 
                 const SizedBox(height: 24),
 
-                // Recognized text
-                if (_recognizedText.isNotEmpty) ...[
-                  Text(
-                    'You said:',
-                    style: Theme.of(context).textTheme.bodySmall,
+                // Final (locked) transcription - black, bold
+                if (_finalText.isNotEmpty)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'You said:',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          _finalText,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      _recognizedText,
-                      style: const TextStyle(fontSize: 16),
-                    ),
+
+                // Interim (updating) transcription - gray, italic
+                if (_interimText.isNotEmpty)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          _interimText,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
                   ),
-                  const SizedBox(height: 24),
-                ],
 
                 // Processing indicator
                 if (_conversationState == ConversationState.thinking)
@@ -473,7 +514,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
                   TextButton.icon(
                     onPressed: () {
                       setState(() {
-                        _recognizedText = '';
+                        _interimText = '';
+                        _finalText = '';
                         _responseText = '';
                       });
                     },
