@@ -143,20 +143,17 @@ class NamespaceSelector implements Trainable {
 
       if (corrected['namespace'] is String) {
         final correctNamespace = corrected['namespace'] as String;
-        final selectedNamespace =
-            invocation.output?['selectedNamespace'] as String?;
+        final selectedNamespace = invocation.output?['selectedNamespace'] as String?;
 
         // Update state data (increment feedback count for correct namespace)
         Map<String, dynamic> data = state.data;
-        if (selectedNamespace != null &&
-            selectedNamespace != correctNamespace) {
+        if (selectedNamespace != null && selectedNamespace != correctNamespace) {
           // Track wrong selections
           data['wrongSelections'] = (data['wrongSelections'] as int? ?? 0) + 1;
         }
 
         // Track correct selections
-        data['correctSelections'] =
-            (data['correctSelections'] as int? ?? 0) + 1;
+        data['correctSelections'] = (data['correctSelections'] as int? ?? 0) + 1;
 
         state.data = data;
         state.version++;

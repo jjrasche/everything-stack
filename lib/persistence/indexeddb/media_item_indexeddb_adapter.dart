@@ -90,8 +90,7 @@ class MediaItemIndexedDBAdapter extends BaseIndexedDBAdapter<MediaItem> {
     final entityCount = data['entityCount'] as int;
     final version = data['version'] as int;
 
-    print(
-        'Deserializing MediaItem HNSW index: v$version, $entityCount entities');
+    print('Deserializing MediaItem HNSW index: v$version, $entityCount entities');
 
     // Deserialize HNSW index from JSON
     final jsonStr = utf8.decode(bytes);
@@ -118,8 +117,7 @@ class MediaItemIndexedDBAdapter extends BaseIndexedDBAdapter<MediaItem> {
     print('Serializing MediaItem HNSW index...');
 
     // Serialize to JSON then encode to bytes
-    final json =
-        _hnswIndex!.save(encodeItem: (item) => item); // item is UUID string
+    final json = _hnswIndex!.save(encodeItem: (item) => item); // item is UUID string
     final jsonStr = jsonEncode(json);
     final bytes = Uint8List.fromList(utf8.encode(jsonStr));
 

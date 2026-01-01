@@ -68,7 +68,7 @@ class EmbeddingQueueService {
     this.maxRetries = 3,
   })  : _store = store,
         _embeddingService = embeddingService {
-    // _noteAdapter = noteAdapter, // TODO: Phase 1 - Re-enable with Note entity
+        // _noteAdapter = noteAdapter, // TODO: Phase 1 - Re-enable with Note entity
     _taskBox = _store.box<EmbeddingTask>();
   }
 

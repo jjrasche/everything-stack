@@ -97,8 +97,7 @@ class ChannelIndexedDBAdapter implements PersistenceAdapter<Channel> {
       throw UnimplementedError('Channel persistence not yet implemented');
 
   @override
-  Channel saveInTx(TransactionContext ctx, Channel entity,
-          {bool touch = true}) =>
+  Channel saveInTx(TransactionContext ctx, Channel entity, {bool touch = true}) =>
       throw UnimplementedError('Channel persistence not yet implemented');
 
   @override

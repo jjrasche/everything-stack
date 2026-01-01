@@ -92,7 +92,9 @@ class Subscription extends BaseEntity {
 
   /// How long ago was this subscription last checked?
   Duration? get timeSinceLastCheck =>
-      lastCheckedAt != null ? DateTime.now().difference(lastCheckedAt!) : null;
+      lastCheckedAt != null
+          ? DateTime.now().difference(lastCheckedAt!)
+          : null;
 
   // ============ Actions ============
 

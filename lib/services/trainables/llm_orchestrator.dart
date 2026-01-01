@@ -122,8 +122,7 @@ class LLMOrchestrator implements Trainable {
 
         switch (quality) {
           case 'good':
-            data['successfulLoops'] =
-                (data['successfulLoops'] as int? ?? 0) + 1;
+            data['successfulLoops'] = (data['successfulLoops'] as int? ?? 0) + 1;
             break;
           case 'poor':
             data['poorLoops'] = (data['poorLoops'] as int? ?? 0) + 1;

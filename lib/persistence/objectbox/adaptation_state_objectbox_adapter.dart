@@ -17,7 +17,8 @@ class AdaptationStateObjectBoxAdapter
       AdaptationStateOB.fromAdaptationState(entity);
 
   @override
-  AdaptationState fromOB(AdaptationStateOB ob) => ob.toAdaptationState();
+  AdaptationState fromOB(AdaptationStateOB ob) =>
+      ob.toAdaptationState();
 
   @override
   Condition<AdaptationStateOB> uuidEqualsCondition(String uuid) =>
@@ -54,8 +55,7 @@ class AdaptationStateObjectBoxAdapter
     String userId,
   ) async {
     final query = box
-        .query(AdaptationStateOB_.componentType
-            .equals(componentType)
+        .query(AdaptationStateOB_.componentType.equals(componentType)
             .and(AdaptationStateOB_.scope.equals('user'))
             .and(AdaptationStateOB_.userId.equals(userId)))
         .build();
@@ -70,8 +70,7 @@ class AdaptationStateObjectBoxAdapter
   @override
   Future<AdaptationState?> getGlobal(String componentType) async {
     final query = box
-        .query(AdaptationStateOB_.componentType
-            .equals(componentType)
+        .query(AdaptationStateOB_.componentType.equals(componentType)
             .and(AdaptationStateOB_.scope.equals('global')))
         .build();
     try {

@@ -32,11 +32,11 @@ class TranscriptionComplete extends SystemEvent {
 
   @override
   Map<String, dynamic> toJson() => {
-        ...super.toJson(),
-        'transcript': transcript,
-        'durationMs': durationMs,
-        'confidence': confidence,
-      };
+    ...super.toJson(),
+    'transcript': transcript,
+    'durationMs': durationMs,
+    'confidence': confidence,
+  };
 
   factory TranscriptionComplete.fromJson(Map<String, dynamic> json) {
     return TranscriptionComplete(

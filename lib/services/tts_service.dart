@@ -284,7 +284,8 @@ class GoogleTTSService extends TTSService {
   @override
   Future<String> recordInvocation(dynamic invocation) async {
     if (invocation is! Invocation) {
-      throw ArgumentError('Expected Invocation, got ${invocation.runtimeType}');
+      throw ArgumentError(
+          'Expected Invocation, got ${invocation.runtimeType}');
     }
     await _invocationRepository.save(invocation);
     return invocation.uuid;
@@ -341,8 +342,7 @@ class NullTTSService extends TTSService {
     required String text,
     required String correlationId,
   }) async {
-    print(
-        '⚠️  [NullTTSService] TTS not configured - skipping synthesis for: "$text"');
+    print('⚠️  [NullTTSService] TTS not configured - skipping synthesis for: "$text"');
     // No-op: TTS not configured, so we don't do anything
     // This allows orchestration to continue without crashing
   }

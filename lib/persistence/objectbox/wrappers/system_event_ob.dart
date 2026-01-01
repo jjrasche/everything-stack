@@ -32,11 +32,11 @@ class SystemEventOB {
 
   /// Serialize to JSON for storage
   Map<String, dynamic> toJson() => {
-        'eventType': eventType,
-        'correlationId': correlationId,
-        'createdAt': createdAt.toIso8601String(),
-        'jsonData': jsonData,
-      };
+    'eventType': eventType,
+    'correlationId': correlationId,
+    'createdAt': createdAt.toIso8601String(),
+    'jsonData': jsonData,
+  };
 
   /// Deserialize from JSON
   factory SystemEventOB.fromJson(Map<String, dynamic> json) {

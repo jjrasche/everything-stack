@@ -85,18 +85,15 @@ mixin class Trainable<D extends AdaptationData> {
 
   /// Component identifier: 'stt', 'llm', 'tts', 'namespace_selector', etc.
   /// Must be overridden by implementing classes
-  String get componentType =>
-      throw UnimplementedError('componentType must be implemented');
+  String get componentType => throw UnimplementedError('componentType must be implemented');
 
   /// Create default adaptation data (new component with no training)
   /// Must be overridden by implementing classes
-  D createDefaultData() =>
-      throw UnimplementedError('createDefaultData must be implemented');
+  D createDefaultData() => throw UnimplementedError('createDefaultData must be implemented');
 
   /// Deserialize adaptation data from JSON string
   /// Must be overridden by implementing classes
-  D deserializeData(String json) =>
-      throw UnimplementedError('deserializeData must be implemented');
+  D deserializeData(String json) => throw UnimplementedError('deserializeData must be implemented');
 
   /// Retrieve or create adaptation state for this component.
   /// userId: if provided, get user-scoped state; if null, get global state

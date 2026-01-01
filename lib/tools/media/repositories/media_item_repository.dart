@@ -14,9 +14,9 @@ class MediaItemRepository extends EntityRepository<MediaItem> {
     required PersistenceAdapter<MediaItem> adapter,
     EmbeddingService? embeddingService,
   }) : super(
-          adapter: adapter,
-          embeddingService: embeddingService ?? EmbeddingService.instance,
-        );
+    adapter: adapter,
+    embeddingService: embeddingService ?? EmbeddingService.instance,
+  );
 
   /// Get all media items in a channel
   Future<List<MediaItem>> findByChannel(String channelId) async {
@@ -28,8 +28,8 @@ class MediaItemRepository extends EntityRepository<MediaItem> {
   Future<List<MediaItem>> findDownloaded() async {
     final all = await findAll();
     return all
-        .where(
-            (item) => item.downloadStatus == 'completed' && item.blobId != null)
+        .where((item) =>
+            item.downloadStatus == 'completed' && item.blobId != null)
         .toList();
   }
 
@@ -54,7 +54,8 @@ class MediaItemRepository extends EntityRepository<MediaItem> {
   /// Find by YouTube video ID
   Future<MediaItem?> findByYoutubeId(String videoId) async {
     final all = await findAll();
-    final items = all.where((item) => item.youtubeVideoId == videoId).toList();
+    final items =
+        all.where((item) => item.youtubeVideoId == videoId).toList();
     return items.isNotEmpty ? items.first : null;
   }
 
@@ -81,7 +82,8 @@ class MediaItemRepository extends EntityRepository<MediaItem> {
   Future<List<MediaItem>> findByFormat(String format) async {
     final all = await findAll();
     return all
-        .where((item) => item.format.toLowerCase() == format.toLowerCase())
+        .where((item) =>
+            item.format.toLowerCase() == format.toLowerCase())
         .toList();
   }
 

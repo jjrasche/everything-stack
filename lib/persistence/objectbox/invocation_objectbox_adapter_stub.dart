@@ -6,14 +6,12 @@
 
 library;
 
-import '../../bootstrap/objectbox_stub.dart'
-    if (dart.library.io) 'package:objectbox/objectbox.dart';
+import '../../bootstrap/objectbox_stub.dart' if (dart.library.io) 'package:objectbox/objectbox.dart';
 import '../../core/invocation_repository.dart';
 import '../../domain/invocation.dart' as domain_invocation;
 
 /// Stub InvocationObjectBoxAdapter for Web platform
-class InvocationObjectBoxAdapter
-    implements InvocationRepository<domain_invocation.Invocation> {
+class InvocationObjectBoxAdapter implements InvocationRepository<domain_invocation.Invocation> {
   final Store store;
 
   InvocationObjectBoxAdapter(this.store);
@@ -28,23 +26,17 @@ class InvocationObjectBoxAdapter
   Future<List<domain_invocation.Invocation>> findAll() async => [];
 
   @override
-  Future<domain_invocation.Invocation> save(
-          domain_invocation.Invocation invocation) async =>
+  Future<domain_invocation.Invocation> save(domain_invocation.Invocation invocation) async =>
       invocation;
 
   @override
-  Future<List<domain_invocation.Invocation>> findByTurn(String turnId) async =>
-      [];
+  Future<List<domain_invocation.Invocation>> findByTurn(String turnId) async => [];
 
   @override
-  Future<List<domain_invocation.Invocation>> findByContextType(
-          String contextType) async =>
-      [];
+  Future<List<domain_invocation.Invocation>> findByContextType(String contextType) async => [];
 
   @override
-  Future<List<domain_invocation.Invocation>> findByIds(
-          List<String> ids) async =>
-      [];
+  Future<List<domain_invocation.Invocation>> findByIds(List<String> ids) async => [];
 
   @override
   Future<int> deleteByTurn(String turnId) async => 0;

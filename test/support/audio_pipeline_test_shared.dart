@@ -23,8 +23,7 @@ import 'package:everything_stack_template/services/stt_service.dart';
 /// Tests the complete flow:
 /// TranscriptionComplete event → EventBus → Coordinator listener → orchestrate() → 6 components
 Future<void> runAudioPipelineTest(WidgetTester tester) async {
-  print(
-      '\n🚀 [Audio Pipeline Test] Starting event-driven audio pipeline test...');
+  print('\n🚀 [Audio Pipeline Test] Starting event-driven audio pipeline test...');
 
   // ========== SETUP: Build app and initialize ==========
   print('🏗️ Building MyApp...');
@@ -72,8 +71,7 @@ Future<void> runAudioPipelineTest(WidgetTester tester) async {
   }
 
   print('📤 Audio stream setup:');
-  print(
-      '  - Audio source: ${await audioFile.exists() ? "Real WAV file" : "Synthetic"}');
+  print('  - Audio source: ${await audioFile.exists() ? "Real WAV file" : "Synthetic"}');
   print('  - Audio size: ${audioBytes.length} bytes');
   print('  - Duration: ~2.38 seconds @ 16kHz stereo');
   print('  - Expected transcript: "$testUtterance"');
@@ -149,14 +147,15 @@ Future<void> runAudioPipelineTest(WidgetTester tester) async {
     final ttsInvocations = allInvs
         .where((inv) =>
             inv.componentType == 'tts' &&
-            inv.createdAt
-                .isAfter(DateTime.now().subtract(const Duration(seconds: 5))))
+            inv.createdAt.isAfter(
+                DateTime.now().subtract(const Duration(seconds: 5))))
         .toList();
 
     if (ttsInvocations.isNotEmpty) {
       // Found TTS - full pipeline completed
       actualCorrelationId = ttsInvocations.first.correlationId;
-      print('✅ TTS invocation found after ${stopwatch.elapsedMilliseconds}ms');
+      print(
+          '✅ TTS invocation found after ${stopwatch.elapsedMilliseconds}ms');
       print('   (Using correlation ID from event: $actualCorrelationId)');
 
       // Now get ALL invocations for this orchestration
@@ -179,8 +178,8 @@ Future<void> runAudioPipelineTest(WidgetTester tester) async {
     testInvs = allInvs
         .where((inv) =>
             inv.componentType != 'stt' &&
-            inv.createdAt
-                .isAfter(DateTime.now().subtract(const Duration(seconds: 10))))
+            inv.createdAt.isAfter(
+                DateTime.now().subtract(const Duration(seconds: 10))))
         .toList();
     if (testInvs.isNotEmpty) {
       actualCorrelationId = testInvs.first.correlationId;
@@ -260,7 +259,8 @@ Future<void> runAudioPipelineTest(WidgetTester tester) async {
   final transcriptionEvents = allEvents.whereType<TranscriptionComplete>();
   if (transcriptionEvents.isNotEmpty) {
     final latestEvent = transcriptionEvents.last;
-    print('  ✓ TranscriptionComplete event found (most recent)');
+    print(
+        '  ✓ TranscriptionComplete event found (most recent)');
     print('    - Transcript: "${latestEvent.transcript}"');
     print('    - CorrelationId: ${latestEvent.correlationId}');
   } else {
@@ -283,28 +283,26 @@ Future<void> runAudioPipelineTest(WidgetTester tester) async {
       .toList();
 
   print('  Invocations for this test (correlationId=$actualCorrelationId):');
-  final componentTypes =
-      testInvocations.map((inv) => inv.componentType).toSet();
+  final componentTypes = testInvocations.map((inv) => inv.componentType).toSet();
   print('  Components executed: ${componentTypes.join(", ")}');
 
   final successfulCount = testInvocations.where((inv) => inv.success).length;
   if (successfulCount > 0) {
-    print(
-        '  ✓ ${testInvocations.length} invocations recorded (${successfulCount} successful)');
+    print('  ✓ ${testInvocations.length} invocations recorded (${successfulCount} successful)');
   } else {
     throw 'All invocations failed - orchestration did not complete successfully';
   }
 
   // Assert 3: Verify event-driven flow (not direct call)
   print('🔗 Assert: Orchestration was event-driven...');
-  print(
-      '  ✓ Proof: STT.stream() → transcript → EventBus → Coordinator listener → orchestrate()');
+  print('  ✓ Proof: STT.stream() → transcript → EventBus → Coordinator listener → orchestrate()');
   print('  ✓ CorrelationId threading verified');
 
   // Assert 4: Verify TTS involvement (when ResponseRenderer is trainable)
   print('\n📢 Assert: TTS service integration...');
-  final ttsInvocations =
-      testInvocations.where((inv) => inv.componentType == 'tts').toList();
+  final ttsInvocations = testInvocations
+      .where((inv) => inv.componentType == 'tts')
+      .toList();
 
   if (ttsInvocations.isNotEmpty) {
     print('  ✓ TTS was invoked ${ttsInvocations.length} time(s)');

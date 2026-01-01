@@ -93,8 +93,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
 
     // Search handler not yet implemented - Phase 2
     state = state.copyWith(
-      error:
-          'Search not available. Media repositories not yet exposed via Riverpod.',
+      error: 'Search not available. Media repositories not yet exposed via Riverpod.',
       isLoading: false,
     );
   }

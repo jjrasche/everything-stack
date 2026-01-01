@@ -12,6 +12,5 @@ class EventIndexedDBAdapter extends BaseIndexedDBAdapter<domain_event.Event> {
   String get objectStoreName => ObjectStores.events;
 
   @override
-  domain_event.Event fromJson(Map<String, dynamic> json) =>
-      domain_event.Event.fromJson(json);
+  domain_event.Event fromJson(Map<String, dynamic> json) => domain_event.Event.fromJson(json);
 }

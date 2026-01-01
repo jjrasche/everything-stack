@@ -5,8 +5,7 @@
 
 library;
 
-import '../../bootstrap/objectbox_stub.dart'
-    if (dart.library.io) 'package:objectbox/objectbox.dart';
+import '../../bootstrap/objectbox_stub.dart' if (dart.library.io) 'package:objectbox/objectbox.dart';
 import '../../core/turn_repository.dart';
 import '../../domain/turn.dart';
 
@@ -23,9 +22,7 @@ class TurnObjectBoxAdapter implements TurnRepository {
   Future<List<Turn>> findByConversation(String conversationId) async => [];
 
   @override
-  Future<List<Turn>> findMarkedForFeedbackByConversation(
-          String conversationId) async =>
-      [];
+  Future<List<Turn>> findMarkedForFeedbackByConversation(String conversationId) async => [];
 
   @override
   Future<Turn?> findByInvocationId(String invocationId) async => null;

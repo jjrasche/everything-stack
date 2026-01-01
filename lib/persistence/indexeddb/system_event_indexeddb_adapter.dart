@@ -215,8 +215,7 @@ class SystemEventRepositoryIndexedDBAdapter implements EventRepository {
         throw UnsupportedError('Unknown event type: $eventType');
       }
     } catch (e) {
-      throw StateError(
-          'Failed to deserialize event: $e (type: $eventType, data: $jsonData)');
+      throw StateError('Failed to deserialize event: $e (type: $eventType, data: $jsonData)');
     }
   }
 }

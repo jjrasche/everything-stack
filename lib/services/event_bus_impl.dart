@@ -86,8 +86,7 @@ class EventBusImpl implements EventBus {
         _getStream<T>().add(event as SystemEvent);
         debugPrint('📤 EventBus: Published ${event.eventType}');
       } catch (e) {
-        debugPrint(
-            '⚠️ EventBus: Error notifying listeners for ${event.eventType}: $e');
+        debugPrint('⚠️ EventBus: Error notifying listeners for ${event.eventType}: $e');
         // Don't rethrow - event is already persisted
       }
     } catch (e) {
@@ -210,11 +209,9 @@ class EventBusImpl implements EventBus {
 
     try {
       await completer.future.timeout(timeout);
-      debugPrint(
-          '✅ EventBus: waitForChain complete for $correlationId after ${stopwatch.elapsedMilliseconds}ms');
+      debugPrint('✅ EventBus: waitForChain complete for $correlationId after ${stopwatch.elapsedMilliseconds}ms');
     } catch (e) {
-      debugPrint(
-          '❌ EventBus: waitForChain timeout for $correlationId (received: $receivedSet, expected: $expectedSet)');
+      debugPrint('❌ EventBus: waitForChain timeout for $correlationId (received: $receivedSet, expected: $expectedSet)');
       rethrow;
     } finally {
       for (final sub in subscriptions) {

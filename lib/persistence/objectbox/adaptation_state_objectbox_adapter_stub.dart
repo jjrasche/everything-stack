@@ -5,8 +5,7 @@
 
 library;
 
-import '../../bootstrap/objectbox_stub.dart'
-    if (dart.library.io) 'package:objectbox/objectbox.dart';
+import '../../bootstrap/objectbox_stub.dart' if (dart.library.io) 'package:objectbox/objectbox.dart';
 import '../../core/adaptation_state.dart';
 import '../../core/adaptation_state_repository.dart';
 
@@ -17,26 +16,21 @@ class AdaptationStateObjectBoxAdapter implements AdaptationStateRepository {
   AdaptationStateObjectBoxAdapter(this.store);
 
   @override
-  Future<AdaptationState> getForComponent(String componentType,
-          {String? userId}) async =>
+  Future<AdaptationState> getForComponent(String componentType, {String? userId}) async =>
       createDefault(componentType, userId: userId);
 
   @override
-  Future<AdaptationState> getCurrent(
-          {String? componentType, String? userId}) async =>
+  Future<AdaptationState> getCurrent({String? componentType, String? userId}) async =>
       createDefault(componentType ?? 'global', userId: userId);
 
   @override
-  Future<AdaptationState?> getUserState(
-          String componentType, String userId) async =>
-      null;
+  Future<AdaptationState?> getUserState(String componentType, String userId) async => null;
 
   @override
   Future<AdaptationState?> getGlobal(String componentType) async => null;
 
   @override
-  Future<List<AdaptationState>> findByComponent(String componentType) async =>
-      [];
+  Future<List<AdaptationState>> findByComponent(String componentType) async => [];
 
   @override
   Future<bool> updateWithVersion(AdaptationState state) async => false;
@@ -51,8 +45,7 @@ class AdaptationStateObjectBoxAdapter implements AdaptationStateRepository {
   Future<bool> delete(String id) async => false;
 
   @override
-  AdaptationState createDefault(String componentType,
-          {String scope = 'global', String? userId}) =>
+  AdaptationState createDefault(String componentType, {String scope = 'global', String? userId}) =>
       AdaptationState(
         componentType: componentType,
         scope: scope,

@@ -44,13 +44,13 @@ class ErrorOccurred extends SystemEvent {
 
   @override
   Map<String, dynamic> toJson() => {
-        ...super.toJson(),
-        'source': source,
-        'message': message,
-        'errorType': errorType,
-        'stackTrace': stackTrace,
-        'severity': severity,
-      };
+    ...super.toJson(),
+    'source': source,
+    'message': message,
+    'errorType': errorType,
+    'stackTrace': stackTrace,
+    'severity': severity,
+  };
 
   factory ErrorOccurred.fromJson(Map<String, dynamic> json) {
     return ErrorOccurred(

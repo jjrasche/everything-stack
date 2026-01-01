@@ -29,13 +29,10 @@ void main() async {
 
     // Sort groups by most recent
     final sortedGroups = grouped.entries.toList()
-      ..sort(
-          (a, b) => b.value.first.createdAt.compareTo(a.value.first.createdAt));
+      ..sort((a, b) => b.value.first.createdAt.compareTo(a.value.first.createdAt));
 
     // Show top 3 correlation groups
-    for (var i = 0;
-        i < (sortedGroups.length > 3 ? 3 : sortedGroups.length);
-        i++) {
+    for (var i = 0; i < (sortedGroups.length > 3 ? 3 : sortedGroups.length); i++) {
       final entry = sortedGroups[i];
       final correlationId = entry.key;
       final invs = entry.value;
@@ -70,24 +67,21 @@ void main() async {
 
         if (inv.input != null && inv.input!.isNotEmpty) {
           print('   INPUT:');
-          print(
-              '   ${const JsonEncoder.withIndent('     ').convert(inv.input)}');
+          print('   ${const JsonEncoder.withIndent('     ').convert(inv.input)}');
         } else {
           print('   INPUT: (empty)');
         }
 
         if (inv.output != null && inv.output!.isNotEmpty) {
           print('   OUTPUT:');
-          print(
-              '   ${const JsonEncoder.withIndent('     ').convert(inv.output)}');
+          print('   ${const JsonEncoder.withIndent('     ').convert(inv.output)}');
         } else {
           print('   OUTPUT: (empty)');
         }
 
         if (inv.metadata != null && inv.metadata!.isNotEmpty) {
           print('   METADATA:');
-          print(
-              '   ${const JsonEncoder.withIndent('     ').convert(inv.metadata)}');
+          print('   ${const JsonEncoder.withIndent('     ').convert(inv.metadata)}');
         }
       }
     }
@@ -99,8 +93,7 @@ void main() async {
 
     final componentCounts = <String, int>{};
     for (final inv in allInvocations) {
-      componentCounts[inv.componentType] =
-          (componentCounts[inv.componentType] ?? 0) + 1;
+      componentCounts[inv.componentType] = (componentCounts[inv.componentType] ?? 0) + 1;
     }
 
     final sortedComponents = componentCounts.entries.toList()

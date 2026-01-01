@@ -17,57 +17,55 @@ class ChannelObjectBoxAdapter implements PersistenceAdapter<Channel> {
   ChannelObjectBoxAdapter(this._store);
 
   @override
-  Future<Channel?> findById(String uuid) async => throw UnimplementedError(
-      'Channel persistence not yet available on native platforms');
+  Future<Channel?> findById(String uuid) async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
-  Future<Channel> getById(String uuid) async => throw UnimplementedError(
-      'Channel persistence not yet available on native platforms');
-
-  @override
-  @deprecated
-  Future<Channel?> findByIntId(int id) async => throw UnimplementedError(
-      'Channel persistence not yet available on native platforms');
+  Future<Channel> getById(String uuid) async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
   @deprecated
-  Future<Channel> getByIntId(int id) async => throw UnimplementedError(
-      'Channel persistence not yet available on native platforms');
+  Future<Channel?> findByIntId(int id) async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
-  Future<List<Channel>> findAll() async => throw UnimplementedError(
-      'Channel persistence not yet available on native platforms');
+  @deprecated
+  Future<Channel> getByIntId(int id) async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
+
+  @override
+  Future<List<Channel>> findAll() async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
   Future<Channel> save(Channel entity, {bool touch = true}) async =>
-      throw UnimplementedError(
-          'Channel persistence not yet available on native platforms');
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
   Future<List<Channel>> saveAll(List<Channel> entities) async =>
-      throw UnimplementedError(
-          'Channel persistence not yet available on native platforms');
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
-  Future<bool> delete(String uuid) async => throw UnimplementedError(
-      'Channel persistence not yet available on native platforms');
+  Future<bool> delete(String uuid) async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
   @deprecated
-  Future<bool> deleteByIntId(int id) async => throw UnimplementedError(
-      'Channel persistence not yet available on native platforms');
+  Future<bool> deleteByIntId(int id) async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
-  Future<void> deleteAll(List<String> uuids) async => throw UnimplementedError(
-      'Channel persistence not yet available on native platforms');
+  Future<void> deleteAll(List<String> uuids) async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
-  Future<List<Channel>> findUnsynced() async => throw UnimplementedError(
-      'Channel persistence not yet available on native platforms');
+  Future<List<Channel>> findUnsynced() async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
-  Future<int> count() async => throw UnimplementedError(
-      'Channel persistence not yet available on native platforms');
+  Future<int> count() async =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
   Future<List<Channel>> semanticSearch(
@@ -88,45 +86,37 @@ class ChannelObjectBoxAdapter implements PersistenceAdapter<Channel> {
 
   @override
   Channel? findByIdInTx(TransactionContext ctx, String uuid) =>
-      throw UnimplementedError(
-          'Channel persistence not yet available on native platforms');
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
   @deprecated
   Channel? findByIntIdInTx(TransactionContext ctx, int id) =>
-      throw UnimplementedError(
-          'Channel persistence not yet available on native platforms');
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
-  List<Channel> findAllInTx(TransactionContext ctx) => throw UnimplementedError(
-      'Channel persistence not yet available on native platforms');
+  List<Channel> findAllInTx(TransactionContext ctx) =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
-  Channel saveInTx(TransactionContext ctx, Channel entity,
-          {bool touch = true}) =>
-      throw UnimplementedError(
-          'Channel persistence not yet available on native platforms');
+  Channel saveInTx(TransactionContext ctx, Channel entity, {bool touch = true}) =>
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
   List<Channel> saveAllInTx(TransactionContext ctx, List<Channel> entities) =>
-      throw UnimplementedError(
-          'Channel persistence not yet available on native platforms');
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
   bool deleteInTx(TransactionContext ctx, String uuid) =>
-      throw UnimplementedError(
-          'Channel persistence not yet available on native platforms');
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
   @deprecated
   bool deleteByIntIdInTx(TransactionContext ctx, int id) =>
-      throw UnimplementedError(
-          'Channel persistence not yet available on native platforms');
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
   void deleteAllInTx(TransactionContext ctx, List<String> uuids) =>
-      throw UnimplementedError(
-          'Channel persistence not yet available on native platforms');
+      throw UnimplementedError('Channel persistence not yet available on native platforms');
 
   @override
   Future<void> close() async {}

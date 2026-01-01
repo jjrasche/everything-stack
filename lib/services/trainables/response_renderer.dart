@@ -131,8 +131,7 @@ class ResponseRenderer implements Trainable {
             data['preferredDetail'] = 'detailed';
             break;
           case 'too-technical':
-            data['tooTechnicalCount'] =
-                (data['tooTechnicalCount'] as int? ?? 0) + 1;
+            data['tooTechnicalCount'] = (data['tooTechnicalCount'] as int? ?? 0) + 1;
             data['preferredTone'] = 'simple';
             break;
           case 'perfect':

@@ -97,13 +97,11 @@ class MediaItemIndexedDBAdapter implements PersistenceAdapter<MediaItem> {
       throw UnimplementedError('MediaItem persistence not yet implemented');
 
   @override
-  MediaItem saveInTx(TransactionContext ctx, MediaItem entity,
-          {bool touch = true}) =>
+  MediaItem saveInTx(TransactionContext ctx, MediaItem entity, {bool touch = true}) =>
       throw UnimplementedError('MediaItem persistence not yet implemented');
 
   @override
-  List<MediaItem> saveAllInTx(
-          TransactionContext ctx, List<MediaItem> entities) =>
+  List<MediaItem> saveAllInTx(TransactionContext ctx, List<MediaItem> entities) =>
       throw UnimplementedError('MediaItem persistence not yet implemented');
 
   @override

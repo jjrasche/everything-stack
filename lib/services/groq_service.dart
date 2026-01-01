@@ -118,7 +118,8 @@ class GroqService extends LLMService {
   @override
   Future<String> recordInvocation(dynamic invocation) async {
     if (invocation is! Invocation) {
-      throw ArgumentError('Expected Invocation, got ${invocation.runtimeType}');
+      throw ArgumentError(
+          'Expected Invocation, got ${invocation.runtimeType}');
     }
     await _invocationRepository.save(invocation);
     return invocation.uuid;

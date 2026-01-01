@@ -14,15 +14,17 @@ class TurnIndexedDBAdapter extends BaseIndexedDBAdapter<Turn>
   String get objectStoreName => ObjectStores.turns;
 
   @override
-  Turn fromJson(Map<String, dynamic> json) => Turn.fromJson(json);
+  Turn fromJson(Map<String, dynamic> json) =>
+      Turn.fromJson(json);
 
   // ============ TurnRepository Implementation ============
 
   @override
   Future<List<Turn>> findByConversation(String conversationId) async {
     final allTurns = await findAll();
-    final filtered =
-        allTurns.where((t) => t.conversationId == conversationId).toList();
+    final filtered = allTurns
+        .where((t) => t.conversationId == conversationId)
+        .toList();
     filtered.sort((a, b) => a.createdAt.compareTo(b.createdAt));
     return filtered;
   }
@@ -32,7 +34,8 @@ class TurnIndexedDBAdapter extends BaseIndexedDBAdapter<Turn>
       String conversationId) async {
     final allTurns = await findAll();
     final filtered = allTurns
-        .where((t) => t.conversationId == conversationId && t.markedForFeedback)
+        .where((t) =>
+            t.conversationId == conversationId && t.markedForFeedback)
         .toList();
     filtered.sort((a, b) {
       final aMarked = a.markedAt ?? DateTime.now();
@@ -46,7 +49,8 @@ class TurnIndexedDBAdapter extends BaseIndexedDBAdapter<Turn>
   Future<Turn?> findByInvocationId(String invocationId) async {
     final allTurns = await findAll();
     return allTurns.firstWhere(
-      (turn) => turn.getInvocationIds().contains(invocationId),
+      (turn) =>
+          turn.getInvocationIds().contains(invocationId),
       orElse: () => null as dynamic,
     ) as Turn?;
   }
@@ -54,8 +58,9 @@ class TurnIndexedDBAdapter extends BaseIndexedDBAdapter<Turn>
   @override
   Future<int> deleteByConversation(String conversationId) async {
     final allTurns = await findAll();
-    final toDelete =
-        allTurns.where((t) => t.conversationId == conversationId).toList();
+    final toDelete = allTurns
+        .where((t) => t.conversationId == conversationId)
+        .toList();
     int deletedCount = 0;
     for (final turn in toDelete) {
       if (await delete(turn.uuid)) {

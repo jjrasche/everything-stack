@@ -328,17 +328,14 @@ Future<void> initializeEverythingStack({
     debugPrint('✅ [Bootstrap] Loaded .env with API keys');
   } catch (e) {
     // .env file is optional - may not exist on fresh clone
-    debugPrint(
-        'ℹ️ [Bootstrap] .env not found, falling back to compile-time env vars');
+    debugPrint('ℹ️ [Bootstrap] .env not found, falling back to compile-time env vars');
   }
 
   try {
     final cfg = config ?? EverythingStackConfig.fromEnvironment();
     debugPrint('✅ [Bootstrap] Configuration loaded successfully');
-    debugPrint(
-        '🔑 Config loaded - Deepgram key present: ${cfg.deepgramApiKey != null}');
-    debugPrint(
-        '🔑 Config loaded - Groq key present: ${cfg.groqApiKey != null}');
+    debugPrint('🔑 Config loaded - Deepgram key present: ${cfg.deepgramApiKey != null}');
+    debugPrint('🔑 Config loaded - Groq key present: ${cfg.groqApiKey != null}');
     return _initializeServices(cfg);
   } catch (e, st) {
     debugPrint('❌ [Bootstrap] FATAL ERROR during initialization: $e');
@@ -349,225 +346,213 @@ Future<void> initializeEverythingStack({
 
 Future<void> _initializeServices(EverythingStackConfig cfg) async {
   try {
-    // 0. Initialize Firebase Crashlytics (cross-platform: Android, iOS, Web)
-    // Skip Firebase in test environment (TEST_MODE dart-define flag set when running tests)
-    const isTestMode = bool.fromEnvironment('TEST_MODE', defaultValue: false);
-    if (isTestMode) {
-      debugPrint('⚠️ Skipping Firebase initialization (TEST_MODE=true)');
-    } else {
-      try {
-        // Initialize Firebase (auto-config on native, web uses default project)
-        await Firebase.initializeApp();
-        debugPrint('✅ Firebase Core initialized');
 
-        // Enable Crashlytics crash reporting
-        // This catches all uncaught exceptions and sends them to Firebase
-        FlutterError.onError = (errorDetails) {
-          FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
-        };
-
-        // Also capture async errors
-        PlatformDispatcher.instance.onError = (error, stack) {
-          FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-          return true;
-        };
-
-        debugPrint(
-            '✅ Crashlytics enabled - crashes will be reported to Firebase');
-      } catch (e) {
-        debugPrint('⚠️ Firebase/Crashlytics initialization failed: $e');
-        debugPrint('   Continuing without crash reporting...');
-      }
-    }
-
-    // 1. Create timeout-wrapped HTTP client (Layer 1 defense)
-    // Note: Currently unused. Will be used for embedding service HTTP client in future phases.
-    // final timeoutClient = TimeoutHttpClient(http.Client());
-    // final wrappedHttpClient = _wrapHttpClientWithTimeout(timeoutClient);
-
-    // 2. Initialize Persistence (platform-specific: ObjectBox or IndexedDB)
-    if (kIsWeb) {
-      // Web: IndexedDB
-      debugPrint('💾 Initializing IndexedDB for web platform...');
-      final db = await openIndexedDB();
-
-      // Create and register adapters
-      final invocationAdapter = InvocationIndexedDBAdapter(db);
-      final adaptationStateAdapter = AdaptationStateIndexedDBAdapter(db);
-      final feedbackAdapter = FeedbackIndexedDBAdapter(db);
-      final turnAdapter = TurnIndexedDBAdapter(db);
-
-      // Register repositories in GetIt
-      getIt.registerSingleton<
-          InvocationRepository<domain_invocation.Invocation>>(
-        invocationAdapter,
-      );
-      getIt.registerSingleton<AdaptationStateRepository>(
-        adaptationStateAdapter,
-      );
-      getIt.registerSingleton<FeedbackRepository>(
-        feedbackAdapter,
-      );
-      getIt.registerSingleton<TurnRepository>(
-        turnAdapter,
-      );
-    } else {
-      // Native: ObjectBox
-      debugPrint('💾 Initializing ObjectBox for native platform...');
-      final store = await openObjectBoxStore();
-
-      // Register store for direct access (TaskRepository needs it)
-      getIt.registerSingleton<Store>(store, instanceName: 'objectBoxStore');
-
-      // Create and register adapters
-      final invocationAdapter = InvocationObjectBoxAdapter(store);
-      final adaptationStateAdapter = AdaptationStateObjectBoxAdapter(store);
-      final feedbackAdapter = FeedbackObjectBoxAdapter(store);
-      final turnAdapter = TurnObjectBoxAdapter(store);
-
-      // Register repositories in GetIt
-      getIt.registerSingleton<
-          InvocationRepository<domain_invocation.Invocation>>(
-        invocationAdapter,
-      );
-      getIt.registerSingleton<AdaptationStateRepository>(
-        adaptationStateAdapter,
-      );
-      getIt.registerSingleton<FeedbackRepository>(
-        feedbackAdapter,
-      );
-      getIt.registerSingleton<TurnRepository>(
-        turnAdapter,
-      );
-    }
-
-    // 2. Initialize BlobStore (platform-specific)
-    final blobStore = createPlatformBlobStore();
-    await blobStore.initialize();
-    BlobStore.instance = blobStore;
-
-    // 3. Initialize FileService (depends on BlobStore)
-    final fileService = RealFileService(blobStore: blobStore);
-    await fileService.initialize();
-    FileService.instance = fileService;
-
-    // 4. Initialize ConnectivityService
-    final connectivityService = ConnectivityPlusService();
-    await connectivityService.initialize();
-    ConnectivityService.instance = connectivityService;
-
-    // 5. Initialize SyncService (optional - requires Supabase config)
-    if (cfg.hasSyncConfig) {
-      final syncService = SupabaseSyncService(
-        supabaseUrl: cfg.supabaseUrl!,
-        supabaseAnonKey: cfg.supabaseAnonKey!,
-      );
-      await syncService.initialize();
-      SyncService.instance = syncService;
-    }
-    // else: keeps MockSyncService default
-
-    // 6. EmbeddingQueueService deferred to Phase 1 (Note entity not yet implemented)
-
-    // 8-11. STT/TTS/LLM Services (platform-specific)
-    // Web platform: Uses browser APIs (SpeechSynthesis for TTS, Web Speech API for STT)
-    // Native platforms: Uses external APIs (Google Cloud TTS, Deepgram STT)
-
-    // 9. Register invocation repository in service registry (shared by all services)
-    // Note: Repository is already registered as singleton in GetIt above.
-    // This registers it in the old ServiceRegistry for backward compatibility.
-    final invocationRepo =
-        getIt<InvocationRepository<domain_invocation.Invocation>>();
-    ServiceRegistry.register<
-        InvocationRepository<domain_invocation.Invocation>>(
-      'invocation_repo',
-      invocationRepo,
-    );
-
-    // 10. Initialize TTS Service
-    final ttsConfig = ServiceConfig(
-      provider: cfg.ttsProvider ?? 'flutter',
-      credentials:
-          cfg.googleTtsApiKey != null ? {'apiKey': cfg.googleTtsApiKey} : {},
-    );
-    await _initializeService<TTSService>(
-      serviceName: 'tts',
-      config: ttsConfig,
-      setInstance: (service) {
-        TTSService.instance = service;
-      },
-      shouldInitialize: (service) => true,
-      getType: (service) => service.runtimeType,
-    );
-
-    // 11. Initialize LLM Service
-    final llmConfig = ServiceConfig(
-      provider: cfg.llmProvider ?? 'groq',
-      credentials: {if (cfg.groqApiKey != null) 'apiKey': cfg.groqApiKey!},
-    );
-    await _initializeService<LLMService>(
-      serviceName: 'llm',
-      config: llmConfig,
-      setInstance: (service) {
-        LLMService.instance = service;
-      },
-      shouldInitialize: (service) => true,
-      getType: (service) => service.runtimeType,
-    );
-
-    // 12. Initialize Embedding Service
-    final embeddingConfig = ServiceConfig(
-      provider: cfg.embeddingProvider ?? 'jina',
-      credentials: {
-        if (cfg.jinaApiKey != null) 'apiKey': cfg.jinaApiKey!,
-        if (cfg.geminiApiKey != null) 'apiKey': cfg.geminiApiKey!,
-      },
-    );
-    await _initializeService<EmbeddingService>(
-      serviceName: 'embedding',
-      config: embeddingConfig,
-      setInstance: (service) {
-        EmbeddingService.instance = service;
-      },
-      shouldInitialize: (service) => service is! NullEmbeddingService,
-      getType: (service) => service.runtimeType,
-    );
-
-    // 13. Initialize Audio Recording Service (Microphone Input)
+  // 0. Initialize Firebase Crashlytics (cross-platform: Android, iOS, Web)
+  // Skip Firebase in test environment (TEST_MODE dart-define flag set when running tests)
+  const isTestMode = bool.fromEnvironment('TEST_MODE', defaultValue: false);
+  if (isTestMode) {
+    debugPrint('⚠️ Skipping Firebase initialization (TEST_MODE=true)');
+  } else {
     try {
-      await AudioRecordingService.instance.initialize();
-      debugPrint('✅ Audio: AudioRecordingService');
+      // Initialize Firebase (auto-config on native, web uses default project)
+      await Firebase.initializeApp();
+      debugPrint('✅ Firebase Core initialized');
+
+      // Enable Crashlytics crash reporting
+      // This catches all uncaught exceptions and sends them to Firebase
+      FlutterError.onError = (errorDetails) {
+        FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
+      };
+
+      // Also capture async errors
+      PlatformDispatcher.instance.onError = (error, stack) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        return true;
+      };
+
+      debugPrint('✅ Crashlytics enabled - crashes will be reported to Firebase');
     } catch (e) {
-      debugPrint('⚠️ Audio recording service init failed: $e');
+      debugPrint('⚠️ Firebase/Crashlytics initialization failed: $e');
+      debugPrint('   Continuing without crash reporting...');
     }
+  }
 
-    // 14. Initialize STT Service (Speech-to-Text)
-    if (cfg.deepgramApiKey != null && cfg.deepgramApiKey!.isNotEmpty) {
-      debugPrint('🎤 [STT] Initializing DeepgramSTTService');
-      final sttService = DeepgramSTTService(
-        apiKey: cfg.deepgramApiKey!,
-        invocationRepository:
-            getIt<InvocationRepository<domain_invocation.Invocation>>(),
-      );
-      await sttService.initialize();
-      STTService.instance = sttService;
-      debugPrint('✅ STT: DeepgramSTTService');
-    } else {
-      debugPrint('⚠️ Deepgram API key missing');
-      debugPrint('ℹ️ STT: disabled');
-      STTService.instance = NullSTTService();
-    }
+  // 1. Create timeout-wrapped HTTP client (Layer 1 defense)
+  // Note: Currently unused. Will be used for embedding service HTTP client in future phases.
+  // final timeoutClient = TimeoutHttpClient(http.Client());
+  // final wrappedHttpClient = _wrapHttpClientWithTimeout(timeoutClient);
 
-    // Note: Domain repositories (Task, Timer, Personality, Namespace) are initialized
-    // by the application layer, not bootstrap. This allows for platform-specific
-    // persistence handling and dependency injection.
-    //
-    // Bootstrap sets up infrastructure services (Persistence, BlobStore, Sync, etc).
-    // Application layer creates domain repositories and ContextManager.
-    //
-    // See: lib/providers/ for Riverpod provider setup with repositories
-    // See: lib/main.dart for ContextManager initialization
-    debugPrint('\n✅ Bootstrap complete: infrastructure services initialized');
+  // 2. Initialize Persistence (platform-specific: ObjectBox or IndexedDB)
+  if (kIsWeb) {
+    // Web: IndexedDB
+    debugPrint('💾 Initializing IndexedDB for web platform...');
+    final db = await openIndexedDB();
+
+    // Create and register adapters
+    final invocationAdapter = InvocationIndexedDBAdapter(db);
+    final adaptationStateAdapter = AdaptationStateIndexedDBAdapter(db);
+    final feedbackAdapter = FeedbackIndexedDBAdapter(db);
+    final turnAdapter = TurnIndexedDBAdapter(db);
+
+    // Register repositories in GetIt
+    getIt.registerSingleton<InvocationRepository<domain_invocation.Invocation>>(
+      invocationAdapter,
+    );
+    getIt.registerSingleton<AdaptationStateRepository>(
+      adaptationStateAdapter,
+    );
+    getIt.registerSingleton<FeedbackRepository>(
+      feedbackAdapter,
+    );
+    getIt.registerSingleton<TurnRepository>(
+      turnAdapter,
+    );
+  } else {
+    // Native: ObjectBox
+    debugPrint('💾 Initializing ObjectBox for native platform...');
+    final store = await openObjectBoxStore();
+
+    // Register store for direct access (TaskRepository needs it)
+    getIt.registerSingleton<Store>(store, instanceName: 'objectBoxStore');
+
+    // Create and register adapters
+    final invocationAdapter = InvocationObjectBoxAdapter(store);
+    final adaptationStateAdapter = AdaptationStateObjectBoxAdapter(store);
+    final feedbackAdapter = FeedbackObjectBoxAdapter(store);
+    final turnAdapter = TurnObjectBoxAdapter(store);
+
+    // Register repositories in GetIt
+    getIt.registerSingleton<InvocationRepository<domain_invocation.Invocation>>(
+      invocationAdapter,
+    );
+    getIt.registerSingleton<AdaptationStateRepository>(
+      adaptationStateAdapter,
+    );
+    getIt.registerSingleton<FeedbackRepository>(
+      feedbackAdapter,
+    );
+    getIt.registerSingleton<TurnRepository>(
+      turnAdapter,
+    );
+  }
+
+  // 2. Initialize BlobStore (platform-specific)
+  final blobStore = createPlatformBlobStore();
+  await blobStore.initialize();
+  BlobStore.instance = blobStore;
+
+  // 3. Initialize FileService (depends on BlobStore)
+  final fileService = RealFileService(blobStore: blobStore);
+  await fileService.initialize();
+  FileService.instance = fileService;
+
+  // 4. Initialize ConnectivityService
+  final connectivityService = ConnectivityPlusService();
+  await connectivityService.initialize();
+  ConnectivityService.instance = connectivityService;
+
+  // 5. Initialize SyncService (optional - requires Supabase config)
+  if (cfg.hasSyncConfig) {
+    final syncService = SupabaseSyncService(
+      supabaseUrl: cfg.supabaseUrl!,
+      supabaseAnonKey: cfg.supabaseAnonKey!,
+    );
+    await syncService.initialize();
+    SyncService.instance = syncService;
+  }
+  // else: keeps MockSyncService default
+
+  // 6. EmbeddingQueueService deferred to Phase 1 (Note entity not yet implemented)
+
+  // 8-11. STT/TTS/LLM Services (platform-specific)
+  // Web platform: Uses browser APIs (SpeechSynthesis for TTS, Web Speech API for STT)
+  // Native platforms: Uses external APIs (Google Cloud TTS, Deepgram STT)
+
+  // 9. Register invocation repository in service registry (shared by all services)
+  // Note: Repository is already registered as singleton in GetIt above.
+  // This registers it in the old ServiceRegistry for backward compatibility.
+  final invocationRepo = getIt<InvocationRepository<domain_invocation.Invocation>>();
+  ServiceRegistry.register<InvocationRepository<domain_invocation.Invocation>>(
+    'invocation_repo',
+    invocationRepo,
+  );
+
+  // 10. Initialize TTS Service
+  final ttsConfig = ServiceConfig(
+    provider: cfg.ttsProvider ?? 'flutter',
+    credentials: cfg.googleTtsApiKey != null ? {'apiKey': cfg.googleTtsApiKey} : {},
+  );
+  await _initializeService<TTSService>(
+    serviceName: 'tts',
+    config: ttsConfig,
+    setInstance: (service) { TTSService.instance = service; },
+    shouldInitialize: (service) => true,
+    getType: (service) => service.runtimeType,
+  );
+
+  // 11. Initialize LLM Service
+  final llmConfig = ServiceConfig(
+    provider: cfg.llmProvider ?? 'groq',
+    credentials: {if (cfg.groqApiKey != null) 'apiKey': cfg.groqApiKey!},
+  );
+  await _initializeService<LLMService>(
+    serviceName: 'llm',
+    config: llmConfig,
+    setInstance: (service) { LLMService.instance = service; },
+    shouldInitialize: (service) => true,
+    getType: (service) => service.runtimeType,
+  );
+
+  // 12. Initialize Embedding Service
+  final embeddingConfig = ServiceConfig(
+    provider: cfg.embeddingProvider ?? 'jina',
+    credentials: {
+      if (cfg.jinaApiKey != null) 'apiKey': cfg.jinaApiKey!,
+      if (cfg.geminiApiKey != null) 'apiKey': cfg.geminiApiKey!,
+    },
+  );
+  await _initializeService<EmbeddingService>(
+    serviceName: 'embedding',
+    config: embeddingConfig,
+    setInstance: (service) { EmbeddingService.instance = service; },
+    shouldInitialize: (service) => service is! NullEmbeddingService,
+    getType: (service) => service.runtimeType,
+  );
+
+  // 13. Initialize Audio Recording Service (Microphone Input)
+  try {
+    await AudioRecordingService.instance.initialize();
+    debugPrint('✅ Audio: AudioRecordingService');
+  } catch (e) {
+    debugPrint('⚠️ Audio recording service init failed: $e');
+  }
+
+  // 14. Initialize STT Service (Speech-to-Text)
+  if (cfg.deepgramApiKey != null && cfg.deepgramApiKey!.isNotEmpty) {
+    debugPrint('🎤 [STT] Initializing DeepgramSTTService');
+    final sttService = DeepgramSTTService(
+      apiKey: cfg.deepgramApiKey!,
+      invocationRepository: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+    );
+    await sttService.initialize();
+    STTService.instance = sttService;
+    debugPrint('✅ STT: DeepgramSTTService');
+  } else {
+    debugPrint('⚠️ Deepgram API key missing');
+    debugPrint('ℹ️ STT: disabled');
+    STTService.instance = NullSTTService();
+  }
+
+  // Note: Domain repositories (Task, Timer, Personality, Namespace) are initialized
+  // by the application layer, not bootstrap. This allows for platform-specific
+  // persistence handling and dependency injection.
+  //
+  // Bootstrap sets up infrastructure services (Persistence, BlobStore, Sync, etc).
+  // Application layer creates domain repositories and ContextManager.
+  //
+  // See: lib/providers/ for Riverpod provider setup with repositories
+  // See: lib/main.dart for ContextManager initialization
+  debugPrint('\n✅ Bootstrap complete: infrastructure services initialized');
   } catch (e, st) {
     debugPrint('❌ [Bootstrap] FATAL ERROR during service initialization: $e');
     debugPrint('Stack trace:\n$st');
@@ -609,7 +594,7 @@ Future<void> disposeEverythingStack() async {
   if (!kIsWeb) {
     try {
       final store = getIt<Store>(instanceName: 'objectBoxStore');
-      store.close(); // Store.close() is synchronous, no await needed
+      store.close();  // Store.close() is synchronous, no await needed
     } catch (e) {
       debugPrint('⚠️ Store not registered in GetIt, skipping disposal');
     }
@@ -642,8 +627,7 @@ final getIt = GetIt.instance;
 /// }
 /// ```
 Future<void> setupServiceLocator() async {
-  debugPrint(
-      '[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION');
+  debugPrint('[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION');
   debugPrint('🚀 [setupServiceLocator] Starting service registration...');
 
   try {
@@ -651,7 +635,7 @@ Future<void> setupServiceLocator() async {
 
     // EmbeddingService - loaded from config, respects abstraction
     getIt.registerSingleton<EmbeddingService>(
-      EmbeddingService.instance, // Already initialized by bootstrap
+      EmbeddingService.instance,  // Already initialized by bootstrap
     );
     debugPrint('✅ [setupServiceLocator] EmbeddingService registered');
 
@@ -659,7 +643,7 @@ Future<void> setupServiceLocator() async {
     // Skip if already registered (e.g., by tests with mocks)
     if (!getIt.isRegistered<LLMService>()) {
       getIt.registerSingleton<LLMService>(
-        LLMService.instance, // Already initialized by bootstrap
+        LLMService.instance,  // Already initialized by bootstrap
       );
     }
     debugPrint('✅ [setupServiceLocator] LLMService registered');
@@ -668,7 +652,7 @@ Future<void> setupServiceLocator() async {
     // Skip if already registered (e.g., by tests with mocks)
     if (!getIt.isRegistered<TTSService>()) {
       getIt.registerSingleton<TTSService>(
-        TTSService.instance, // Already initialized by bootstrap
+        TTSService.instance,  // Already initialized by bootstrap
       );
     }
     debugPrint('✅ [setupServiceLocator] TTSService registered');
@@ -677,7 +661,7 @@ Future<void> setupServiceLocator() async {
     // Skip if already registered (e.g., by tests with mocks)
     if (!getIt.isRegistered<STTService>()) {
       getIt.registerSingleton<STTService>(
-        STTService.instance, // Already initialized by bootstrap
+        STTService.instance,  // Already initialized by bootstrap
       );
     }
     debugPrint('✅ [setupServiceLocator] STTService registered');
@@ -693,8 +677,7 @@ Future<void> setupServiceLocator() async {
     debugPrint('🔍 [setupServiceLocator] Registering NamespaceSelector...');
     getIt.registerSingleton<NamespaceSelector>(
       NamespaceSelector(
-        invocationRepo:
-            getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
         adaptationStateRepo: getIt<AdaptationStateRepository>(),
         feedbackRepo: getIt<FeedbackRepository>(),
       ),
@@ -703,8 +686,7 @@ Future<void> setupServiceLocator() async {
 
     getIt.registerSingleton<ToolSelector>(
       ToolSelector(
-        invocationRepo:
-            getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
         adaptationStateRepo: getIt<AdaptationStateRepository>(),
         feedbackRepo: getIt<FeedbackRepository>(),
       ),
@@ -712,8 +694,7 @@ Future<void> setupServiceLocator() async {
 
     getIt.registerSingleton<ContextInjector>(
       ContextInjector(
-        invocationRepo:
-            getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
         adaptationStateRepo: getIt<AdaptationStateRepository>(),
         feedbackRepo: getIt<FeedbackRepository>(),
       ),
@@ -721,8 +702,7 @@ Future<void> setupServiceLocator() async {
 
     getIt.registerSingleton<LLMConfigSelector>(
       LLMConfigSelector(
-        invocationRepo:
-            getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
         adaptationStateRepo: getIt<AdaptationStateRepository>(),
         feedbackRepo: getIt<FeedbackRepository>(),
       ),
@@ -730,8 +710,7 @@ Future<void> setupServiceLocator() async {
 
     getIt.registerSingleton<LLMOrchestrator>(
       LLMOrchestrator(
-        invocationRepo:
-            getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
         adaptationStateRepo: getIt<AdaptationStateRepository>(),
         feedbackRepo: getIt<FeedbackRepository>(),
       ),
@@ -739,8 +718,7 @@ Future<void> setupServiceLocator() async {
 
     getIt.registerSingleton<ResponseRenderer>(
       ResponseRenderer(
-        invocationRepo:
-            getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
         adaptationStateRepo: getIt<AdaptationStateRepository>(),
         feedbackRepo: getIt<FeedbackRepository>(),
       ),
@@ -765,8 +743,7 @@ Future<void> setupServiceLocator() async {
     late EventRepository eventRepository;
     if (kIsWeb) {
       debugPrint('📝 EventBus: Using IndexedDB adapter (web)');
-      eventRepository =
-          SystemEventRepositoryIndexedDBAdapter(await openIndexedDB());
+      eventRepository = SystemEventRepositoryIndexedDBAdapter(await openIndexedDB());
     } else {
       debugPrint('📝 EventBus: Using ObjectBox adapter (native)');
       final store = await openObjectBoxStore();
@@ -783,8 +760,7 @@ Future<void> setupServiceLocator() async {
 
     getIt.registerSingleton<ToolExecutor>(
       ToolExecutor(
-        invocationRepo:
-            getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
         toolRegistry: getIt<ToolRegistry>(),
       ),
     );
@@ -802,16 +778,14 @@ Future<void> setupServiceLocator() async {
       llmService: getIt<LLMService>(),
       ttsService: getIt<TTSService>(),
       toolExecutor: getIt<ToolExecutor>(),
-      invocationRepo:
-          getIt<InvocationRepository<domain_invocation.Invocation>>(),
+      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
       eventBus: getIt<EventBus>(),
     );
     getIt.registerSingleton<Coordinator>(coordinator);
 
     // Initialize Coordinator event listeners
     coordinator.initialize();
-    debugPrint(
-        '✅ [setupServiceLocator] Coordinator registered and initialized');
+    debugPrint('✅ [setupServiceLocator] Coordinator registered and initialized');
     debugPrint('🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY');
   } catch (e, st) {
     debugPrint('❌ [setupServiceLocator] ERROR: $e');
