@@ -1,4 +1,4 @@
-package com.example.everything_stack_template
+package everything.stack.me
 
 import io.flutter.embedding.android.FlutterActivity
 
