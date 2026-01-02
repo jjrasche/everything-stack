@@ -143,6 +143,9 @@ jobs:
       - name: Generate code
         run: dart run build_runner build --delete-conflicting-outputs
 
+      - name: Create .env for build
+        run: echo "# CI/CD build - secrets via dart-define" > .env
+
       - name: Build APK
         run: flutter build apk --release
           --dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}
