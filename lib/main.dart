@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
-import 'dart:io';
 
 import 'bootstrap.dart';
 import 'domain/event.dart';

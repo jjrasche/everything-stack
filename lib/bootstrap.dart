@@ -30,8 +30,11 @@
 
 library;
 
-import 'dart:io';
 import 'package:flutter/foundation.dart';
+
+// Conditional import for platform-specific environment variable access
+import 'bootstrap/platform_env_stub.dart'
+    if (dart.library.io) 'bootstrap/platform_env_io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
@@ -66,7 +69,7 @@ import 'tools/task/repositories/task_repository.dart';
 import 'core/event_repository.dart';
 import 'persistence/event_repository_in_memory.dart';
 import 'persistence/objectbox/system_event_objectbox_adapter.dart'
-    if (dart.library.html) 'persistence/event_repository_in_memory.dart';
+    if (dart.library.html) 'persistence/objectbox/system_event_objectbox_adapter_stub.dart';
 import 'persistence/indexeddb/system_event_indexeddb_adapter.dart';
 import 'tools/task/task_tools.dart';
 import 'services/trainables/namespace_selector.dart';
@@ -202,8 +205,9 @@ class EverythingStackConfig {
     }
 
     // 2. OS environment variables (CI/CD pipelines)
-    final osValue = Platform.environment[key];
-    if (osValue != null && osValue.isNotEmpty) {
+    // Uses platform-specific helper (returns null on web)
+    final osValue = getPlatformEnvironmentVariable(key);
+    if (osValue != null) {
       return osValue;
     }
 

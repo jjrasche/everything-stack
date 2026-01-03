@@ -1,12 +1,16 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'dart:convert';
-import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'streaming_service.dart';
 import 'trainable.dart';
-import 'package:web_socket_channel/io.dart';
+// Conditional import for platform-specific WebSocket
+import 'websocket_factory_stub.dart'
+    if (dart.library.io) 'websocket_factory_io.dart'
+    if (dart.library.html) 'websocket_factory_web.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
 import 'package:everything_stack_template/domain/invocation.dart';
 import 'package:everything_stack_template/services/event_bus.dart';
@@ -151,7 +155,7 @@ class DeepgramSTTService extends STTService {
   final InvocationRepository<Invocation> _invocationRepository;
 
   bool _isReady = false;
-  IOWebSocketChannel? _ws;
+  WebSocketChannel? _ws;
   StreamSubscription<dynamic>? _wsSubscription;
   Timer? _idleTimer;
   String _lastTranscript = '';
@@ -215,7 +219,7 @@ class DeepgramSTTService extends STTService {
         // Build WebSocket URL with parameters and API key
         // Flux v2: Minimal params only - NO channels, interim_results, endpointing, vad_events, utterance_end_ms
         // These v1 params break v2 (causes HTTP 400)
-        final urlString = 'wss://api.deepgram.com/v2/listen'
+        var urlString = 'wss://api.deepgram.com/v2/listen'
             '?model=flux-general-en'
             '&encoding=linear16'
             '&sample_rate=16000'
@@ -223,13 +227,19 @@ class DeepgramSTTService extends STTService {
             '&eot_threshold=0.5'
             '&eot_timeout_ms=3000';
 
-        // Connect with timeout and Authorization header
+        // Web doesn't support custom WebSocket headers, so we pass token in URL
+        if (kIsWeb) {
+          urlString += '&token=$apiKey';
+        }
+
+        // Connect with timeout and Authorization header (native) or URL token (web)
         try {
-          print('🔗 [Deepgram] Connecting to: $urlString');
+          print('🔗 [Deepgram] Connecting to: ${kIsWeb ? urlString.replaceAll(apiKey, "***") : urlString}');
           final connectStart = DateTime.now();
-          _ws = IOWebSocketChannel.connect(
+          // Use platform-specific WebSocket factory
+          _ws = createWebSocketChannel(
             Uri.parse(urlString),
-            headers: {'Authorization': 'Token $apiKey'},
+            headers: kIsWeb ? null : {'Authorization': 'Token $apiKey'},
           );
           final connectTime =
               DateTime.now().difference(connectStart).inMilliseconds;
