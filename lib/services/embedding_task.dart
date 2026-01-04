@@ -1,6 +1,6 @@
 /// # EmbeddingTask
 ///
-/// Persistent queue entry for background embedding generation.
+/// ObjectBox entity for persistent embedding task queue (native only).
 /// Survives app crashes and restarts.
 ///
 /// ## Lifecycle
@@ -15,14 +15,7 @@
 /// those messages never get embeddings. Persistent queue survives crashes.
 
 import 'package:objectbox/objectbox.dart';
-
-/// Status of an embedding task in the queue.
-enum TaskStatus {
-  pending, // Waiting to be processed
-  processing, // Currently being processed
-  completed, // Successfully completed
-  failed, // Failed after max retries
-}
+import 'embedding_task_store.dart' show TaskStatus;
 
 @Entity()
 class EmbeddingTask {

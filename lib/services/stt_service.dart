@@ -7,10 +7,10 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'streaming_service.dart';
 import 'trainable.dart';
-// Conditional import for platform-specific WebSocket
-import 'websocket_factory_stub.dart'
-    if (dart.library.io) 'websocket_factory_io.dart'
-    if (dart.library.html) 'websocket_factory_web.dart';
+
+// Platform-specific WebSocket connection
+import 'websocket_connect_web.dart'
+    if (dart.library.io) 'websocket_connect_io.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
 import 'package:everything_stack_template/domain/invocation.dart';
 import 'package:everything_stack_template/services/event_bus.dart';
@@ -236,8 +236,8 @@ class DeepgramSTTService extends STTService {
         try {
           print('🔗 [Deepgram] Connecting to: ${kIsWeb ? urlString.replaceAll(apiKey, "***") : urlString}');
           final connectStart = DateTime.now();
-          // Use platform-specific WebSocket factory
-          _ws = createWebSocketChannel(
+          // Use platform-specific WebSocket connection
+          _ws = connectWebSocket(
             Uri.parse(urlString),
             headers: kIsWeb ? null : {'Authorization': 'Token $apiKey'},
           );

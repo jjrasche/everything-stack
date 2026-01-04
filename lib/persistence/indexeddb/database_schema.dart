@@ -52,6 +52,7 @@ class ObjectStores {
   static const String feedback = 'feedback';
   static const String invocations = 'invocations';
   static const String turns = 'turns';
+  static const String embeddingTasks = 'embedding_tasks';
 }
 
 /// Index names for each object store
@@ -117,6 +118,11 @@ class Indexes {
   static const String turnsId = 'id';
   static const String turnsUuid = 'uuid';
   static const String turnsSyncStatus = 'dbSyncStatus';
+
+  // EmbeddingTasks indexes
+  static const String embeddingTasksId = 'id';
+  static const String embeddingTasksEntityUuid = 'entityUuid';
+  static const String embeddingTasksStatus = 'status';
 }
 
 /// Schema definition for notes object store
@@ -450,6 +456,31 @@ class TurnsStoreSchema {
   ];
 }
 
+/// Schema definition for embedding_tasks object store
+class EmbeddingTasksStoreSchema {
+  static const String storeName = ObjectStores.embeddingTasks;
+  static const String keyPath = 'id'; // Integer auto-increment key
+  static const bool autoIncrement = true;
+
+  static const List<IndexDefinition> indexes = [
+    IndexDefinition(
+      name: Indexes.embeddingTasksId,
+      keyPath: 'id',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.embeddingTasksEntityUuid,
+      keyPath: 'entityUuid',
+      unique: false, // Same entity can be re-enqueued after completion
+    ),
+    IndexDefinition(
+      name: Indexes.embeddingTasksStatus,
+      keyPath: 'status',
+      unique: false,
+    ),
+  ];
+}
+
 /// Schema definition for HNSW index metadata store
 class HnswIndexStoreSchema {
   static const String storeName = ObjectStores.hnswIndex;
@@ -554,6 +585,12 @@ class DatabaseSchema {
       keyPath: TurnsStoreSchema.keyPath,
       autoIncrement: TurnsStoreSchema.autoIncrement,
       indexes: TurnsStoreSchema.indexes,
+    ),
+    ObjectStoreDefinition(
+      name: EmbeddingTasksStoreSchema.storeName,
+      keyPath: EmbeddingTasksStoreSchema.keyPath,
+      autoIncrement: EmbeddingTasksStoreSchema.autoIncrement,
+      indexes: EmbeddingTasksStoreSchema.indexes,
     ),
   ];
 }

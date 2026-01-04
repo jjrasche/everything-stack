@@ -28,24 +28,18 @@
 /// - Entity deleted → Mark as completed, skip
 ///
 /// ## Implementation notes
-/// - Persistent queue (EmbeddingTask entity in ObjectBox)
+/// - Persistent queue (EmbeddingTaskData stored via platform-specific adapter)
 /// - Uses adapter.save(touch: false) to avoid updatedAt collision
 /// - Direct adapter access bypasses repository handlers (intentional)
 
 import 'dart:async';
-import 'package:objectbox/objectbox.dart';
 import 'embedding_service.dart';
-import 'embedding_task.dart';
-import '../core/persistence/persistence_adapter.dart';
-// import '../domain/note.dart'; // TODO: Phase 1 - Re-enable when Note entity is implemented
-import '../objectbox.g.dart'; // Generated ObjectBox query builders
+import 'embedding_task_store.dart';
 
 class EmbeddingQueueService {
-  final Store _store;
+  final EmbeddingTaskStore _store;
   final EmbeddingService _embeddingService;
-  // final PersistenceAdapter<Note> _noteAdapter; // TODO: Phase 1 - Re-enable with Note entity
 
-  late final Box<EmbeddingTask> _taskBox;
   Timer? _processingTimer;
   bool _isProcessing = false;
 
@@ -60,17 +54,13 @@ class EmbeddingQueueService {
   DateTime? _lastProcessedAt;
 
   EmbeddingQueueService({
-    required Store store,
+    required EmbeddingTaskStore store,
     required EmbeddingService embeddingService,
-    // required PersistenceAdapter<Note> noteAdapter, // TODO: Phase 1 - Re-enable with Note entity
     this.batchSize = 10,
     this.processingIntervalSeconds = 2,
     this.maxRetries = 3,
   })  : _store = store,
-        _embeddingService = embeddingService {
-        // _noteAdapter = noteAdapter, // TODO: Phase 1 - Re-enable with Note entity
-    _taskBox = _store.box<EmbeddingTask>();
-  }
+        _embeddingService = embeddingService;
 
   /// Start background processing.
   /// Called on app init.
@@ -83,7 +73,7 @@ class EmbeddingQueueService {
     print('EmbeddingQueueService starting...');
 
     // Process immediately if queue has pending items
-    final pendingCount = await _getPendingCount();
+    final pendingCount = await _store.getPendingCount();
     if (pendingCount > 0) {
       print('Found $pendingCount pending tasks, processing immediately');
       unawaited(_processBatch());
@@ -120,7 +110,7 @@ class EmbeddingQueueService {
     print('EmbeddingQueueService flushing all pending tasks...');
 
     int iterations = 0;
-    while (await _getPendingCount() > 0) {
+    while (await _store.getPendingCount() > 0) {
       await _processBatch();
 
       iterations++;
@@ -146,28 +136,24 @@ class EmbeddingQueueService {
     }
 
     // Check if already queued
-    final existing = _taskBox
-        .query(EmbeddingTask_.entityUuid.equals(entityUuid))
-        .build()
-        .findFirst();
-
+    final existing = await _store.findByEntityUuid(entityUuid);
     if (existing != null && !existing.isCompleted && !existing.isFailed) {
       print('$entityType:$entityUuid already queued, skipping');
       return;
     }
 
-    final task = EmbeddingTask(
+    final task = EmbeddingTaskData(
       entityUuid: entityUuid,
       entityType: entityType,
       text: text,
     );
 
-    _taskBox.put(task);
+    await _store.save(task);
     print(
-        'Enqueued $entityType:$entityUuid (queue size: ${await _getPendingCount()})');
+        'Enqueued $entityType:$entityUuid (queue size: ${await _store.getPendingCount()})');
 
     // If queue reached batch size, process immediately
-    if (await _getPendingCount() >= batchSize) {
+    if (await _store.getPendingCount() >= batchSize) {
       print('Queue reached batch size ($batchSize), processing immediately');
       unawaited(_processBatch());
     }
@@ -176,20 +162,12 @@ class EmbeddingQueueService {
   /// Get current queue statistics.
   Future<Map<String, dynamic>> getStats() async {
     return {
-      'pending': await _getPendingCount(),
+      'pending': await _store.getPendingCount(),
       'completed': _completedCount,
       'failed': _failedCount,
       'isProcessing': _isProcessing,
       'lastProcessedAt': _lastProcessedAt?.toIso8601String(),
     };
-  }
-
-  /// Get count of pending tasks.
-  Future<int> _getPendingCount() async {
-    return _taskBox
-        .query(EmbeddingTask_.dbTaskStatus.equals(TaskStatus.pending.index))
-        .build()
-        .count();
   }
 
   /// Process a batch of pending tasks.
@@ -203,12 +181,7 @@ class EmbeddingQueueService {
 
     try {
       // Get next batch of pending tasks
-      final tasks = _taskBox
-          .query(EmbeddingTask_.dbTaskStatus.equals(TaskStatus.pending.index))
-          .build()
-          .find()
-          .take(batchSize)
-          .toList();
+      final tasks = await _store.getPendingTasks(batchSize);
 
       if (tasks.isEmpty) {
         return; // Nothing to process
@@ -232,7 +205,7 @@ class EmbeddingQueueService {
   }
 
   /// Process tasks as a batch (one API call).
-  Future<void> _processBatchEmbeddings(List<EmbeddingTask> tasks) async {
+  Future<void> _processBatchEmbeddings(List<EmbeddingTaskData> tasks) async {
     final texts = tasks.map((t) => t.text).toList();
 
     // Generate embeddings in batch
@@ -249,7 +222,7 @@ class EmbeddingQueueService {
 
       // Mark as completed
       task.status = TaskStatus.completed;
-      _taskBox.put(task);
+      await _store.save(task);
       _completedCount++;
 
       print('✓ ${task.entityType}:${task.entityUuid} embedded successfully');
@@ -257,12 +230,12 @@ class EmbeddingQueueService {
   }
 
   /// Process tasks individually (fallback on batch failure).
-  Future<void> _processIndividually(List<EmbeddingTask> tasks) async {
+  Future<void> _processIndividually(List<EmbeddingTaskData> tasks) async {
     for (final task in tasks) {
       try {
         task.status = TaskStatus.processing;
         task.lastAttemptAt = DateTime.now();
-        _taskBox.put(task);
+        await _store.save(task);
 
         // Generate embedding
         final embedding = await _embeddingService
@@ -274,7 +247,7 @@ class EmbeddingQueueService {
 
         // Mark as completed
         task.status = TaskStatus.completed;
-        _taskBox.put(task);
+        await _store.save(task);
         _completedCount++;
 
         print('✓ ${task.entityType}:${task.entityUuid} embedded successfully');
@@ -288,14 +261,14 @@ class EmbeddingQueueService {
   /// Uses adapter directly (bypasses repository) with touch=false.
   /// TODO: Phase 1 - Re-enable when Note entity is implemented
   Future<void> _saveEmbedding(
-      EmbeddingTask task, List<double> embedding) async {
+      EmbeddingTaskData task, List<double> embedding) async {
     // Fetch latest entity state
     // final note = await _noteAdapter.findByUuid(task.entityUuid);
     //
     // if (note == null) {
     //   // Entity was deleted - not a failure, just skip
     //   task.status = TaskStatus.completed;
-    //   _taskBox.put(task);
+    //   await _store.save(task);
     //   print('Entity ${task.entityUuid} was deleted, skipping embedding');
     //   return;
     // }
@@ -311,18 +284,18 @@ class EmbeddingQueueService {
 
     // For now, just mark as completed
     task.status = TaskStatus.completed;
-    _taskBox.put(task);
+    await _store.save(task);
   }
 
   /// Handle task failure with retry logic.
-  Future<void> _handleTaskFailure(EmbeddingTask task, Object error) async {
+  Future<void> _handleTaskFailure(EmbeddingTaskData task, Object error) async {
     task.retryCount++;
     task.lastError = error.toString();
 
     if (task.retryCount >= maxRetries) {
       // Give up after max retries
       task.status = TaskStatus.failed;
-      _taskBox.put(task);
+      await _store.save(task);
       _failedCount++;
 
       print(
@@ -330,7 +303,7 @@ class EmbeddingQueueService {
     } else {
       // Retry on next cycle
       task.status = TaskStatus.pending;
-      _taskBox.put(task);
+      await _store.save(task);
 
       print(
           '⚠ ${task.entityType}:${task.entityUuid} failed (attempt ${task.retryCount}/$maxRetries), will retry: $error');

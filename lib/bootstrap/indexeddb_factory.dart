@@ -54,4 +54,13 @@ void _createObjectStores(Database db) {
   if (!db.objectStoreNames.contains(ObjectStores.turns)) {
     db.createObjectStore(ObjectStores.turns, keyPath: 'uuid');
   }
+  if (!db.objectStoreNames.contains(ObjectStores.embeddingTasks)) {
+    final store = db.createObjectStore(
+      ObjectStores.embeddingTasks,
+      keyPath: 'id',
+      autoIncrement: true,
+    );
+    store.createIndex('entityUuid', 'entityUuid', unique: false);
+    store.createIndex('status', 'status', unique: false);
+  }
 }

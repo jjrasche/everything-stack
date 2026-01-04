@@ -8,7 +8,7 @@
 /// - Web: Plain Dart class without ObjectBox (uses IndexedDB)
 ///
 /// Conditional imports select the correct implementation automatically.
+/// Default is web (pure Dart) version; native uses ObjectBox decorators.
 
-export 'platform/base_entity_stub.dart'
-    if (dart.library.io) 'platform/base_entity_io.dart'
-    if (dart.library.html) 'platform/base_entity_web.dart';
+export 'platform/base_entity_web.dart'
+    if (dart.library.io) 'platform/base_entity_io.dart';

@@ -23,37 +23,24 @@
 /// ## Initialization Order
 /// 1. Persistence (platform-specific: ObjectBox or IndexedDB)
 /// 2. BlobStore (platform-specific: FileSystem or IndexedDB)
-/// 3. FileService (depends on BlobStore)
-/// 4. ConnectivityService
-/// 5. SyncService (optional, requires Supabase credentials)
-/// 6. EmbeddingService (optional, requires API key)
+/// 3. ConnectivityService
+/// 4. SyncService (optional, requires Supabase credentials)
+/// 5. EmbeddingService (optional, requires API key)
 
 library;
 
 import 'package:flutter/foundation.dart';
-
-// Conditional import for platform-specific environment variable access
-import 'bootstrap/platform_env_stub.dart'
-    if (dart.library.io) 'bootstrap/platform_env_io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
-// Conditional import for ObjectBox (native platforms only)
-import 'package:objectbox/objectbox.dart'
-    if (dart.library.html) 'bootstrap/objectbox_stub.dart';
-
 import 'services/blob_store.dart';
-import 'services/file_service.dart';
 import 'services/sync_service.dart';
 import 'services/connectivity_service.dart';
 import 'services/embedding_service.dart';
-
-// Conditional import for EmbeddingQueueService (native platforms only)
-import 'services/embedding_queue_service.dart'
-    if (dart.library.html) 'bootstrap/embedding_queue_service_web_stub.dart';
+import 'services/embedding_queue_service.dart';
 import 'services/audio_recording_service.dart';
 import 'services/stt_service.dart';
 import 'services/tts_service.dart';
@@ -67,10 +54,6 @@ import 'services/event_bus.dart';
 import 'services/event_bus_impl.dart';
 import 'tools/task/repositories/task_repository.dart';
 import 'core/event_repository.dart';
-import 'persistence/event_repository_in_memory.dart';
-import 'persistence/objectbox/system_event_objectbox_adapter.dart'
-    if (dart.library.html) 'persistence/objectbox/system_event_objectbox_adapter_stub.dart';
-import 'persistence/indexeddb/system_event_indexeddb_adapter.dart';
 import 'tools/task/task_tools.dart';
 import 'services/trainables/namespace_selector.dart';
 import 'services/trainables/tool_selector.dart';
@@ -83,28 +66,18 @@ import 'core/invocation_repository.dart';
 import 'core/adaptation_state_repository.dart';
 import 'core/feedback_repository.dart';
 import 'core/turn_repository.dart';
-// Conditional imports for ObjectBox adapters (native platforms only)
-import 'persistence/objectbox/invocation_objectbox_adapter.dart'
-    if (dart.library.html) 'persistence/objectbox/invocation_objectbox_adapter_stub.dart';
-import 'persistence/objectbox/adaptation_state_objectbox_adapter.dart'
-    if (dart.library.html) 'persistence/objectbox/adaptation_state_objectbox_adapter_stub.dart';
-import 'persistence/objectbox/feedback_objectbox_adapter.dart'
-    if (dart.library.html) 'persistence/objectbox/feedback_objectbox_adapter_stub.dart';
-import 'persistence/objectbox/turn_objectbox_adapter.dart'
-    if (dart.library.html) 'persistence/objectbox/turn_objectbox_adapter_stub.dart';
-import 'persistence/indexeddb/invocation_indexeddb_adapter.dart';
-import 'persistence/indexeddb/adaptation_state_indexeddb_adapter.dart';
-import 'persistence/indexeddb/feedback_indexeddb_adapter.dart';
-import 'persistence/indexeddb/turn_indexeddb_adapter.dart';
-// Conditional import for ObjectBox factory (native platforms only)
-import 'bootstrap/objectbox_store_factory.dart'
-    if (dart.library.html) 'bootstrap/objectbox_store_factory_stub.dart';
-import 'bootstrap/indexeddb_factory.dart';
 
-// Conditional import for platform-specific BlobStore
-import 'bootstrap/blob_store_factory_stub.dart'
-    if (dart.library.io) 'bootstrap/blob_store_factory_io.dart'
-    if (dart.library.html) 'bootstrap/blob_store_factory_web.dart';
+// Platform-specific persistence initialization (ObjectBox or IndexedDB)
+import 'bootstrap/persistence_web.dart'
+    if (dart.library.io) 'bootstrap/persistence_native.dart';
+
+// Platform-specific BlobStore factory
+import 'bootstrap/blob_store_factory_web.dart'
+    if (dart.library.io) 'bootstrap/blob_store_factory_io.dart';
+
+// Platform-specific EmbeddingTaskStore factory
+import 'services/embedding_task_store_web.dart'
+    if (dart.library.io) 'services/embedding_task_store_native.dart';
 
 /// Configuration for Everything Stack initialization.
 class EverythingStackConfig {
@@ -204,14 +177,7 @@ class EverythingStackConfig {
       return runtimeValue;
     }
 
-    // 2. OS environment variables (CI/CD pipelines)
-    // Uses platform-specific helper (returns null on web)
-    final osValue = getPlatformEnvironmentVariable(key);
-    if (osValue != null) {
-      return osValue;
-    }
-
-    // 3. Compile-time environment (--dart-define)
+    // 2. Compile-time environment (--dart-define)
     switch (key) {
       case 'SUPABASE_URL':
         return _supabaseUrl.isEmpty ? null : _supabaseUrl;
@@ -387,68 +353,13 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
   // final wrappedHttpClient = _wrapHttpClientWithTimeout(timeoutClient);
 
   // 2. Initialize Persistence (platform-specific: ObjectBox or IndexedDB)
-  if (kIsWeb) {
-    // Web: IndexedDB
-    debugPrint('💾 Initializing IndexedDB for web platform...');
-    final db = await openIndexedDB();
+  debugPrint('💾 Initializing persistence layer...');
+  await initializePersistence(getIt);
 
-    // Create and register adapters
-    final invocationAdapter = InvocationIndexedDBAdapter(db);
-    final adaptationStateAdapter = AdaptationStateIndexedDBAdapter(db);
-    final feedbackAdapter = FeedbackIndexedDBAdapter(db);
-    final turnAdapter = TurnIndexedDBAdapter(db);
-
-    // Register repositories in GetIt
-    getIt.registerSingleton<InvocationRepository<domain_invocation.Invocation>>(
-      invocationAdapter,
-    );
-    getIt.registerSingleton<AdaptationStateRepository>(
-      adaptationStateAdapter,
-    );
-    getIt.registerSingleton<FeedbackRepository>(
-      feedbackAdapter,
-    );
-    getIt.registerSingleton<TurnRepository>(
-      turnAdapter,
-    );
-  } else {
-    // Native: ObjectBox
-    debugPrint('💾 Initializing ObjectBox for native platform...');
-    final store = await openObjectBoxStore();
-
-    // Register store for direct access (TaskRepository needs it)
-    getIt.registerSingleton<Store>(store, instanceName: 'objectBoxStore');
-
-    // Create and register adapters
-    final invocationAdapter = InvocationObjectBoxAdapter(store);
-    final adaptationStateAdapter = AdaptationStateObjectBoxAdapter(store);
-    final feedbackAdapter = FeedbackObjectBoxAdapter(store);
-    final turnAdapter = TurnObjectBoxAdapter(store);
-
-    // Register repositories in GetIt
-    getIt.registerSingleton<InvocationRepository<domain_invocation.Invocation>>(
-      invocationAdapter,
-    );
-    getIt.registerSingleton<AdaptationStateRepository>(
-      adaptationStateAdapter,
-    );
-    getIt.registerSingleton<FeedbackRepository>(
-      feedbackAdapter,
-    );
-    getIt.registerSingleton<TurnRepository>(
-      turnAdapter,
-    );
-  }
-
-  // 2. Initialize BlobStore (platform-specific)
+  // 3. Initialize BlobStore (platform-specific)
   final blobStore = createPlatformBlobStore();
   await blobStore.initialize();
   BlobStore.instance = blobStore;
-
-  // 3. Initialize FileService (depends on BlobStore)
-  final fileService = RealFileService(blobStore: blobStore);
-  await fileService.initialize();
-  FileService.instance = fileService;
 
   // 4. Initialize ConnectivityService
   final connectivityService = ConnectivityPlusService();
@@ -593,17 +504,10 @@ Future<void> disposeEverythingStack() async {
   LLMService.instance.dispose();
   AudioRecordingService.instance.dispose();
 
+  // Dispose persistence (platform-specific cleanup)
+  disposePersistence(getIt);
+
   // Dispose other services
-  // Note: ObjectBox Store can be safely disposed, IndexedDB cleanup is handled by browser
-  if (!kIsWeb) {
-    try {
-      final store = getIt<Store>(instanceName: 'objectBoxStore');
-      store.close();  // Store.close() is synchronous, no await needed
-    } catch (e) {
-      debugPrint('⚠️ Store not registered in GetIt, skipping disposal');
-    }
-  }
-  FileService.instance.dispose();
   BlobStore.instance.dispose();
   ConnectivityService.instance.dispose();
   SyncService.instance.dispose();
@@ -744,15 +648,7 @@ Future<void> setupServiceLocator() async {
     debugPrint('🔍 [setupServiceLocator] Initializing EventBus...');
 
     // Create platform-specific EventRepository
-    late EventRepository eventRepository;
-    if (kIsWeb) {
-      debugPrint('📝 EventBus: Using IndexedDB adapter (web)');
-      eventRepository = SystemEventRepositoryIndexedDBAdapter(await openIndexedDB());
-    } else {
-      debugPrint('📝 EventBus: Using ObjectBox adapter (native)');
-      final store = await openObjectBoxStore();
-      eventRepository = SystemEventRepositoryObjectBoxAdapter(store);
-    }
+    final eventRepository = await createEventRepository();
     getIt.registerSingleton<EventRepository>(eventRepository);
 
     // Create EventBus with repository
