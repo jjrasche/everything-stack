@@ -25,7 +25,7 @@ class InvocationOB {
 
   // ============ Invocation-specific fields ============
 
-  String correlationId;
+  String eventId;
   String componentType;
   String? turnId;
   bool success;
@@ -39,7 +39,7 @@ class InvocationOB {
   // ============ Constructor ============
 
   InvocationOB({
-    required this.correlationId,
+    required this.eventId,
     required this.componentType,
     required this.success,
     required this.confidence,
@@ -54,7 +54,7 @@ class InvocationOB {
   /// Convert from domain Invocation to ObjectBox wrapper
   factory InvocationOB.fromInvocation(domain_invocation.Invocation invocation) {
     return InvocationOB(
-      correlationId: invocation.correlationId,
+      eventId: invocation.eventId,
       componentType: invocation.componentType,
       success: invocation.success,
       confidence: invocation.confidence,
@@ -101,7 +101,7 @@ class InvocationOB {
     }
 
     return domain_invocation.Invocation(
-      correlationId: correlationId,
+      eventId: eventId,
       componentType: componentType,
       success: success,
       confidence: confidence,
