@@ -3,7 +3,7 @@
 /// IndexedDB adapter for Event entity persistence on web platform.
 library;
 
-import 'package:idb_shim/idb_browser.dart';
+import 'package:idb_shim/idb_browser.dart' hide Event;
 import '../../core/event_repository.dart';
 import '../../core/event.dart';
 

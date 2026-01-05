@@ -2,7 +2,7 @@
 
 import 'package:idb_shim/idb.dart';
 import '../../core/invocation_repository.dart';
-import '../../domain/invocation.dart';
+import '../../core/invocation.dart';
 import 'base_indexeddb_adapter.dart';
 import 'database_schema.dart';
 

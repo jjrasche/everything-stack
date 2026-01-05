@@ -55,17 +55,23 @@ import 'services/event_bus_impl.dart';
 import 'tools/task/repositories/task_repository.dart';
 import 'core/event_repository.dart';
 import 'tools/task/task_tools.dart';
+import 'core/invocation.dart';
+import 'core/invocation_repository.dart';
+import 'core/adaptation_state_repository.dart';
+import 'core/feedback_repository.dart';
+import 'core/event_repository.dart';
+import 'services/implementations/groq_implementer.dart';
+import 'services/implementations/deepgram_implementer.dart';
+import 'services/implementations/flutter_tts_implementer.dart';
+import 'services/implementations/llm_implementer.dart';
+import 'services/implementations/stt_implementer.dart';
+import 'services/implementations/tts_implementer.dart';
 import 'services/trainables/namespace_selector.dart';
 import 'services/trainables/tool_selector.dart';
 import 'services/trainables/context_injector.dart';
 import 'services/trainables/llm_config_selector.dart';
 import 'services/trainables/llm_orchestrator.dart';
 import 'services/trainables/response_renderer.dart';
-import 'core/invocation.dart';
-import 'core/invocation_repository.dart';
-import 'core/adaptation_state_repository.dart';
-import 'core/feedback_repository.dart';
-import 'core/event_repository.dart';
 
 // Platform-specific persistence initialization (ObjectBox or IndexedDB)
 import 'bootstrap/persistence_web.dart'
@@ -392,31 +398,46 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
     invocationRepo,
   );
 
-  // 10. Initialize TTS Service
-  final ttsConfig = ServiceConfig(
-    provider: cfg.ttsProvider ?? 'flutter',
-    credentials: cfg.googleTtsApiKey != null ? {'apiKey': cfg.googleTtsApiKey} : {},
+  // 10. Initialize TTS Service with implementers
+  debugPrint('🔊 [TTS] Initializing TTSService with implementers');
+  final ttsImplementers = <String, TTSImplementer>{
+    'flutter': FlutterTtsImplementer(),
+  };
+  final ttsService = TTSService(
+    implementers: ttsImplementers,
+    defaultImplementer: 'flutter',
+    invocationRepo: getIt<InvocationRepository<Invocation>>(),
+    adaptationStateRepo: getIt<AdaptationStateRepository>(),
+    feedbackRepo: getIt<FeedbackRepository>(),
   );
-  await _initializeService<TTSService>(
-    serviceName: 'tts',
-    config: ttsConfig,
-    setInstance: (service) { TTSService.instance = service; },
-    shouldInitialize: (service) => true,
-    getType: (service) => service.runtimeType,
-  );
+  getIt.registerSingleton<TTSService>(ttsService);
+  debugPrint('✅ TTS: TTSService (flutter)');
 
-  // 11. Initialize LLM Service
-  final llmConfig = ServiceConfig(
-    provider: cfg.llmProvider ?? 'groq',
-    credentials: {if (cfg.groqApiKey != null) 'apiKey': cfg.groqApiKey!},
+  // 11. Initialize LLM Service with implementers
+  debugPrint('🧠 [LLM] Initializing LLMService with implementers');
+  final llmImplementers = <String, LLMImplementer>{};
+
+  // Add Groq implementer if API key provided
+  if (cfg.groqApiKey != null && cfg.groqApiKey!.isNotEmpty) {
+    llmImplementers['groq'] = GroqImplementer(apiKey: cfg.groqApiKey!);
+    debugPrint('✅ LLM: GroqImplementer registered');
+  }
+
+  // Default to Groq if available, otherwise error
+  final defaultLLMImplementer = llmImplementers.isNotEmpty ? 'groq' : 'null';
+  if (llmImplementers.isEmpty) {
+    debugPrint('⚠️ No LLM API keys provided - LLM will not function');
+  }
+
+  final llmService = LLMService(
+    implementers: llmImplementers,
+    defaultImplementer: defaultLLMImplementer,
+    invocationRepo: getIt<InvocationRepository<Invocation>>(),
+    adaptationStateRepo: getIt<AdaptationStateRepository>(),
+    feedbackRepo: getIt<FeedbackRepository>(),
   );
-  await _initializeService<LLMService>(
-    serviceName: 'llm',
-    config: llmConfig,
-    setInstance: (service) { LLMService.instance = service; },
-    shouldInitialize: (service) => true,
-    getType: (service) => service.runtimeType,
-  );
+  getIt.registerSingleton<LLMService>(llmService);
+  debugPrint('✅ LLM: LLMService (default: $defaultLLMImplementer)');
 
   // 12. Initialize Embedding Service
   final embeddingConfig = ServiceConfig(
@@ -442,20 +463,39 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
     debugPrint('⚠️ Audio recording service init failed: $e');
   }
 
-  // 14. Initialize STT Service (Speech-to-Text)
+  // 14. Initialize STT Service (Speech-to-Text) with implementers
+  debugPrint('🎤 [STT] Initializing STTService with implementers');
+  final sttImplementers = <String, STTImplementer>{};
+
+  // Add Deepgram implementer if API key provided
   if (cfg.deepgramApiKey != null && cfg.deepgramApiKey!.isNotEmpty) {
-    debugPrint('🎤 [STT] Initializing DeepgramSTTService');
-    final sttService = DeepgramSTTService(
-      apiKey: cfg.deepgramApiKey!,
-      invocationRepository: getIt<InvocationRepository<Invocation>>(),
+    sttImplementers['deepgram'] = DeepgramImplementer(apiKey: cfg.deepgramApiKey!);
+    debugPrint('✅ STT: DeepgramImplementer registered');
+  }
+
+  // Only register if we have implementers
+  if (sttImplementers.isNotEmpty) {
+    final sttService = STTService(
+      implementers: sttImplementers,
+      defaultImplementer: 'deepgram',
+      invocationRepo: getIt<InvocationRepository<Invocation>>(),
+      adaptationStateRepo: getIt<AdaptationStateRepository>(),
+      feedbackRepo: getIt<FeedbackRepository>(),
     );
-    await sttService.initialize();
-    STTService.instance = sttService;
-    debugPrint('✅ STT: DeepgramSTTService');
+    getIt.registerSingleton<STTService>(sttService);
+    debugPrint('✅ STT: STTService (deepgram)');
   } else {
     debugPrint('⚠️ Deepgram API key missing');
     debugPrint('ℹ️ STT: disabled');
-    STTService.instance = NullSTTService();
+    // Register a disabled STT service (empty implementer map)
+    final nullSttService = STTService(
+      implementers: {},
+      defaultImplementer: 'null',
+      invocationRepo: getIt<InvocationRepository<Invocation>>(),
+      adaptationStateRepo: getIt<AdaptationStateRepository>(),
+      feedbackRepo: getIt<FeedbackRepository>(),
+    );
+    getIt.registerSingleton<STTService>(nullSttService);
   }
 
   // Note: Domain repositories (Task, Timer, Personality, Namespace) are initialized
@@ -498,10 +538,8 @@ Future<void> disposeEverythingStack() async {
     debugPrint('⚠️ EventBus not registered, skipping disposal');
   }
 
-  // Dispose streaming services
-  STTService.instance.dispose();
-  TTSService.instance.dispose();
-  LLMService.instance.dispose();
+  // Note: Streaming services (STT/TTS/LLM) don't have dispose() - implementers are stateless
+  // AudioRecordingService still needs disposal
   AudioRecordingService.instance.dispose();
 
   // Dispose persistence (platform-specific cleanup)
@@ -547,32 +585,15 @@ Future<void> setupServiceLocator() async {
     );
     debugPrint('✅ [setupServiceLocator] EmbeddingService registered');
 
-    // LLMService - loaded from config, respects abstraction
-    // Skip if already registered (e.g., by tests with mocks)
-    if (!getIt.isRegistered<LLMService>()) {
-      getIt.registerSingleton<LLMService>(
-        LLMService.instance,  // Already initialized by bootstrap
-      );
-    }
-    debugPrint('✅ [setupServiceLocator] LLMService registered');
+    // LLMService - Already registered in _initializeServices
+    // (Composition pattern: Service holds Map<String, LLMImplementer>)
+    debugPrint('✅ [setupServiceLocator] LLMService already registered from bootstrap');
 
-    // TTSService - loaded from config, respects abstraction
-    // Skip if already registered (e.g., by tests with mocks)
-    if (!getIt.isRegistered<TTSService>()) {
-      getIt.registerSingleton<TTSService>(
-        TTSService.instance,  // Already initialized by bootstrap
-      );
-    }
-    debugPrint('✅ [setupServiceLocator] TTSService registered');
+    // TTSService - Already registered in _initializeServices
+    debugPrint('✅ [setupServiceLocator] TTSService already registered from bootstrap');
 
-    // STTService - loaded from config, respects abstraction
-    // Skip if already registered (e.g., by tests with mocks)
-    if (!getIt.isRegistered<STTService>()) {
-      getIt.registerSingleton<STTService>(
-        STTService.instance,  // Already initialized by bootstrap
-      );
-    }
-    debugPrint('✅ [setupServiceLocator] STTService registered');
+    // STTService - Already registered in _initializeServices
+    debugPrint('✅ [setupServiceLocator] STTService already registered from bootstrap');
 
     // ========== Domain Repositories (Already registered in initializeEverythingStack) ==========
     // InvocationRepository, AdaptationStateRepository, FeedbackRepository, TurnRepository
