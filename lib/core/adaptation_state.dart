@@ -1,19 +1,14 @@
 /// # Adaptation State (Generic)
 ///
 /// ## What it does
-/// Stores learned parameters for any trainable component.
-/// A single entity replaces component-specific adaptation states.
-///
-/// ## Scope
-/// Currently single-user (no user scoping yet).
-/// Will add userId via mixin later if needed.
+/// Stores learned parameters for any trainable component per implementer.
+/// Adaptation state is per-user (individual preference tuning).
 ///
 /// ## Generic Data Storage
 /// - data: Component-specific parameters as JSON
 ///   - For STT: { confidenceThreshold: 0.65, minFeedbackCount: 10 }
-///   - For LLM: { temperature: 0.7, maxTokens: 2048, systemPromptVariant: 'default' }
-///   - For TTS: { voiceId: 'default', speechRate: 1.0 }
-///   - For ContextManager: { namespaceAttention: {...}, toolAttention: {...} }
+///   - For LLM: { temperature: 0.7, preferredResponseLength: 1024, systemPrompt: null }
+///   - For TTS: { voiceId: 'default', speechRate: 1.0, pitch: 1.0 }
 ///
 /// ## Version Tracking
 /// - version: Incremented on each update (optimistic locking)
@@ -64,13 +59,13 @@ class AdaptationState extends BaseEntity {
   /// Examples: 'stt', 'llm', 'tts', 'namespace_selector', 'tool_selector'
   String componentType;
 
-  /// Scope of the adaptation state: 'global' or 'user'
-  /// 'global': Applies to all users
-  /// 'user': Personalized to a specific user (see userId)
-  String scope = 'global';
+  /// Which implementer does this state apply to?
+  /// Examples: 'groq', 'claude', 'deepgram', 'flutter_tts'
+  /// Null for single-implementation components (tool_selector, namespace_selector)
+  String? implementer;
 
-  /// If scope='user', this is the user ID for personalized adaptation
-  /// If scope='global', this is null
+  /// User ID for this adaptation state (personalized to a specific user)
+  /// Null means default/global initialization values, but all states are per-user
   String? userId;
 
   // ============ Learned Parameters (Generic JSON) ============
@@ -100,7 +95,7 @@ class AdaptationState extends BaseEntity {
 
   AdaptationState({
     required this.componentType,
-    this.scope = 'global',
+    this.implementer,
     this.userId,
     Map<String, dynamic>? data,
   }) {
@@ -145,7 +140,7 @@ class AdaptationState extends BaseEntity {
         'updatedAt': updatedAt.toIso8601String(),
         'syncId': syncId,
         'componentType': componentType,
-        'scope': scope,
+        'implementer': implementer,
         'userId': userId,
         'data': data,
         'version': version,
@@ -157,7 +152,7 @@ class AdaptationState extends BaseEntity {
   factory AdaptationState.fromJson(Map<String, dynamic> json) {
     final state = AdaptationState(
       componentType: json['componentType'] as String,
-      scope: json['scope'] as String? ?? 'global',
+      implementer: json['implementer'] as String?,
       userId: json['userId'] as String?,
       data: json['data'] != null
           ? Map<String, dynamic>.from(json['data'] as Map)

@@ -21,53 +21,33 @@ class AdaptationStateIndexedDBAdapter
   // ============ AdaptationStateRepository Implementation ============
 
   @override
-  Future<AdaptationState> getForComponent(
+  Future<AdaptationState?> getForComponent(
     String componentType, {
+    required String? implementer,
     String? userId,
   }) async {
-    // Try user-scoped first if userId provided
-    if (userId != null) {
-      final userState = await getUserState(componentType, userId);
-      if (userState != null) return userState;
-    }
-
-    // Fall back to global
-    final globalState = await getGlobal(componentType);
-    if (globalState != null) return globalState;
-
-    // Create default
-    return createDefault(componentType, userId: userId);
-  }
-
-  @override
-  Future<AdaptationState?> getUserState(
-    String componentType,
-    String userId,
-  ) async {
+    // Query by (componentType, implementer, userId)
     final allItems = await findAll();
     return allItems.firstWhere(
       (item) =>
           item.componentType == componentType &&
-          item.scope == 'user' &&
+          item.implementer == implementer &&
           item.userId == userId,
       orElse: () => null as dynamic,
     ) as AdaptationState?;
   }
 
   @override
-  Future<AdaptationState?> getGlobal(String componentType) async {
+  Future<List<AdaptationState>> findByComponentAndImplementer(
+    String componentType, {
+    required String? implementer,
+  }) async {
     final allItems = await findAll();
-    return allItems.firstWhere(
-      (item) =>
-          item.componentType == componentType && item.scope == 'global',
-      orElse: () => null as dynamic,
-    ) as AdaptationState?;
-  }
-
-  @override
-  Future<List<AdaptationState>> findByComponent(String componentType) async {
-    final allItems = await findAll();
-    return allItems.where((item) => item.componentType == componentType).toList();
+    return allItems
+        .where((item) =>
+            item.componentType == componentType &&
+            item.implementer == implementer)
+        .toList();
   }
 
   @override
@@ -90,35 +70,15 @@ class AdaptationStateIndexedDBAdapter
   }
 
   @override
-  Future<List<AdaptationState>> getHistory(String componentType) async {
-    final allItems = await findAll();
-    final filtered = allItems
-        .where((item) => item.componentType == componentType)
-        .toList();
-    filtered.sort((a, b) => a.version.compareTo(b.version));
-    return filtered;
-  }
-
-  @override
   AdaptationState createDefault(
     String componentType, {
-    String scope = 'global',
+    required String? implementer,
     String? userId,
   }) {
     return AdaptationState(
       componentType: componentType,
-      scope: scope,
+      implementer: implementer,
       userId: userId,
     );
-  }
-
-  @override
-  Future<AdaptationState> getCurrent({
-    String? componentType,
-    String? userId,
-  }) async {
-    // If no componentType specified, use 'global'
-    final type = componentType ?? 'global';
-    return getForComponent(type, userId: userId);
   }
 }

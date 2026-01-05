@@ -83,7 +83,7 @@ class ToolExecutor {
   /// Execute a tool call
   Future<ToolExecutionResult> executeTool(
     ToolCall toolCall, {
-    required String correlationId,
+    required String eventId,
   }) async {
     final startTime = DateTime.now();
 
@@ -107,7 +107,7 @@ class ToolExecutor {
         toolName: toolName,
         params: toolCall.params,
         callId: toolCall.callId,
-        correlationId: correlationId,
+        eventId: eventId,
       );
 
       return ToolExecutionResult(
@@ -130,14 +130,14 @@ class ToolExecutor {
   /// Execute multiple tool calls
   Future<List<ToolExecutionResult>> executeTools(
     List<ToolCall> toolCalls, {
-    required String correlationId,
+    required String eventId,
   }) async {
     final results = <ToolExecutionResult>[];
 
     for (final toolCall in toolCalls) {
       final result = await executeTool(
         toolCall,
-        correlationId: correlationId,
+        eventId: eventId,
       );
       results.add(result);
     }
@@ -151,7 +151,7 @@ class ToolExecutor {
     required String toolName,
     required Map<String, dynamic> params,
     required String callId,
-    required String correlationId,
+    required String eventId,
   }) async {
     final fullToolName = '$namespace.$toolName';
 
@@ -185,12 +185,12 @@ class ToolExecutor {
 
   /// Record tool execution invocation
   Future<void> recordToolExecution({
-    required String correlationId,
+    required String eventId,
     required ToolCall toolCall,
     required ToolExecutionResult result,
   }) async {
     final invocation = Invocation(
-      correlationId: correlationId,
+      eventId: eventId,
       componentType: 'tool_executor',
       success: result.success,
       confidence: toolCall.confidence,

@@ -31,34 +31,26 @@ class AdaptationStateObjectBoxAdapter
   // ============ AdaptationStateRepository Implementation ============
 
   @override
-  Future<AdaptationState> getForComponent(
+  Future<AdaptationState?> getForComponent(
     String componentType, {
+    required String? implementer,
     String? userId,
   }) async {
-    // Try user-scoped first if userId provided
+    // Query by (componentType, implementer, userId)
+    late Condition<AdaptationStateOB> condition;
+
     if (userId != null) {
-      final userState = await getUserState(componentType, userId);
-      if (userState != null) return userState;
+      // User-scoped state
+      condition = AdaptationStateOB_.componentType.equals(componentType)
+          .and(AdaptationStateOB_.implementer.equals(implementer))
+          .and(AdaptationStateOB_.userId.equals(userId));
+    } else {
+      // No user filtering (shouldn't happen, but handle it)
+      condition = AdaptationStateOB_.componentType.equals(componentType)
+          .and(AdaptationStateOB_.implementer.equals(implementer));
     }
 
-    // Fall back to global
-    final globalState = await getGlobal(componentType);
-    if (globalState != null) return globalState;
-
-    // Create default
-    return createDefault(componentType, userId: userId);
-  }
-
-  @override
-  Future<AdaptationState?> getUserState(
-    String componentType,
-    String userId,
-  ) async {
-    final query = box
-        .query(AdaptationStateOB_.componentType.equals(componentType)
-            .and(AdaptationStateOB_.scope.equals('user'))
-            .and(AdaptationStateOB_.userId.equals(userId)))
-        .build();
+    final query = box.query(condition).build();
     try {
       final ob = query.findFirst();
       return ob != null ? fromOB(ob) : null;
@@ -68,23 +60,13 @@ class AdaptationStateObjectBoxAdapter
   }
 
   @override
-  Future<AdaptationState?> getGlobal(String componentType) async {
+  Future<List<AdaptationState>> findByComponentAndImplementer(
+    String componentType, {
+    required String? implementer,
+  }) async {
     final query = box
         .query(AdaptationStateOB_.componentType.equals(componentType)
-            .and(AdaptationStateOB_.scope.equals('global')))
-        .build();
-    try {
-      final ob = query.findFirst();
-      return ob != null ? fromOB(ob) : null;
-    } finally {
-      query.close();
-    }
-  }
-
-  @override
-  Future<List<AdaptationState>> findByComponent(String componentType) async {
-    final query = box
-        .query(AdaptationStateOB_.componentType.equals(componentType))
+            .and(AdaptationStateOB_.implementer.equals(implementer)))
         .build();
     try {
       final obList = query.find();
@@ -114,39 +96,15 @@ class AdaptationStateObjectBoxAdapter
   }
 
   @override
-  Future<List<AdaptationState>> getHistory(String componentType) async {
-    final query = box
-        .query(AdaptationStateOB_.componentType.equals(componentType))
-        .order(AdaptationStateOB_.version)
-        .build();
-    try {
-      final obList = query.find();
-      return obList.map((ob) => fromOB(ob)).toList();
-    } finally {
-      query.close();
-    }
-  }
-
-  @override
   AdaptationState createDefault(
     String componentType, {
-    String scope = 'global',
+    required String? implementer,
     String? userId,
   }) {
     return AdaptationState(
       componentType: componentType,
-      scope: scope,
+      implementer: implementer,
       userId: userId,
     );
-  }
-
-  @override
-  Future<AdaptationState> getCurrent({
-    String? componentType,
-    String? userId,
-  }) async {
-    // If no componentType specified, use 'global'
-    final type = componentType ?? 'global';
-    return getForComponent(type, userId: userId);
   }
 }

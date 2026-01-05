@@ -98,7 +98,7 @@ abstract class TTSService implements Trainable {
   /// Completes when synthesis is done and invocation is recorded.
   Future<void> synthesizeAndLog({
     required String text,
-    required String correlationId,
+    required String eventId,
   });
 
   /// Speak text and block until audio playback finishes.
@@ -289,7 +289,7 @@ class GoogleTTSService extends TTSService {
   @override
   Future<void> synthesizeAndLog({
     required String text,
-    required String correlationId,
+    required String eventId,
   }) async {
     final startTime = DateTime.now();
     bool success = false;
@@ -315,7 +315,7 @@ class GoogleTTSService extends TTSService {
 
     final latency = DateTime.now().difference(startTime).inMilliseconds;
     final invocation = Invocation(
-      correlationId: correlationId,
+      eventId: eventId,
       componentType: 'tts',
       success: success,
       confidence: success ? 1.0 : 0.0,
@@ -406,7 +406,7 @@ class NullTTSService extends TTSService {
   @override
   Future<void> synthesizeAndLog({
     required String text,
-    required String correlationId,
+    required String eventId,
   }) async {
     print('⚠️  [NullTTSService] TTS not configured - skipping synthesis for: "$text"');
     // No-op: TTS not configured, so we don't do anything

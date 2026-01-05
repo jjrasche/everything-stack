@@ -147,9 +147,9 @@ class FlutterTtsService extends TTSService {
   @override
   Future<void> synthesizeAndLog({
     required String text,
-    required String correlationId,
+    required String eventId,
   }) async {
-    print('🔊 [FlutterTtsService] Synthesizing: "$text" (correlationId=$correlationId)');
+    print('🔊 [FlutterTtsService] Synthesizing: "$text" (eventId=$eventId)');
 
     final startTime = DateTime.now();
 
@@ -169,7 +169,7 @@ class FlutterTtsService extends TTSService {
 
       // Record successful invocation (NOW that audio is done)
       final invocation = Invocation(
-        correlationId: correlationId,
+        eventId: eventId,
         componentType: 'tts',
         success: true,
         confidence: 1.0,
@@ -185,7 +185,7 @@ class FlutterTtsService extends TTSService {
       // Record failed invocation but don't rethrow - let orchestration continue
       try {
         final failureInvocation = Invocation(
-          correlationId: correlationId,
+          eventId: eventId,
           componentType: 'tts',
           success: false,
           confidence: 0.0,

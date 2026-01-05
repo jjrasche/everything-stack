@@ -159,7 +159,7 @@ class DeepgramSTTService extends STTService {
   StreamSubscription<dynamic>? _wsSubscription;
   Timer? _idleTimer;
   String _lastTranscript = '';
-  String _correlationIdForEvent = '';
+  String _eventId = '';
   double _transcriptConfidence = 0.0; // Actual Deepgram confidence
   double _audioDuration = 0.0;
   int _wordCount = 0;
@@ -275,7 +275,7 @@ class DeepgramSTTService extends STTService {
               // ============ Flux v2: Results Event (transcript chunks) ============
               if (json['type'] == 'Results') {
                 // Save correlation ID for event publishing
-                _correlationIdForEvent = json['request_id'] ??
+                _eventId = json['request_id'] ??
                     json['metadata']?['request_id'] ??
                     'unknown';
 
@@ -548,7 +548,7 @@ class DeepgramSTTService extends STTService {
         // Create Event entity with transcription_complete type
         final event = Event(
           eventType: 'transcription_complete',
-          correlationId: _correlationIdForEvent,
+          correlationId: _eventId,
           source: 'stt',
           payloadJson: jsonEncode({
             'transcript': _lastTranscript,
@@ -571,7 +571,7 @@ class DeepgramSTTService extends STTService {
         // Record STT invocation for training/learning
         try {
           final invocation = Invocation(
-            correlationId: _correlationIdForEvent,
+            eventId: _eventId,
             componentType: 'stt',
             success: true,
             confidence: _transcriptConfidence,
