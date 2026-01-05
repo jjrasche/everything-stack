@@ -7,10 +7,10 @@ library;
 import 'package:get_it/get_it.dart';
 
 import '../core/invocation_repository.dart';
+import '../core/invocation.dart';
 import '../core/adaptation_state_repository.dart';
 import '../core/feedback_repository.dart';
 import '../core/event_repository.dart';
-import '../domain/invocation.dart' as domain_invocation;
 import '../persistence/indexeddb/invocation_indexeddb_adapter.dart';
 import '../persistence/indexeddb/adaptation_state_indexeddb_adapter.dart';
 import '../persistence/indexeddb/feedback_indexeddb_adapter.dart';
@@ -29,7 +29,7 @@ Future<void> initializePersistence(GetIt getIt) async {
   final feedbackAdapter = FeedbackIndexedDBAdapter(db);
 
   // Register repositories in GetIt
-  getIt.registerSingleton<InvocationRepository<domain_invocation.Invocation>>(
+  getIt.registerSingleton<InvocationRepository<Invocation>>(
     invocationAdapter,
   );
   getIt.registerSingleton<AdaptationStateRepository>(
