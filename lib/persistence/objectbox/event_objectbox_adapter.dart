@@ -5,7 +5,8 @@ library;
 
 import 'package:objectbox/objectbox.dart';
 import '../../core/event_repository.dart';
-import '../../domain/event.dart';
+import '../../core/event.dart';
+import '../../objectbox.g.dart';
 import 'wrappers/event_ob.dart';
 
 class EventObjectBoxAdapter implements EventRepository {
@@ -64,7 +65,8 @@ class EventObjectBoxAdapter implements EventRepository {
         .build()
         .findFirst();
     if (ob != null) {
-      return box.remove(ob.id) > 0;
+      box.remove(ob.id);
+      return true;
     }
     return false;
   }
@@ -90,17 +92,18 @@ class EventObjectBoxAdapter implements EventRepository {
   // Conversion helpers
   EventOB _toOB(Event event) {
     return EventOB(
-      uuid: event.uuid,
-      createdAt: event.createdAt,
-      updatedAt: event.updatedAt,
-      syncId: event.syncId,
       eventType: event.eventType,
       correlationId: event.correlationId,
       parentEventId: event.parentEventId,
       source: event.source,
       timestamp: event.timestamp,
       payloadJson: event.payloadJson,
-    );
+    )
+      ..id = event.id
+      ..uuid = event.uuid
+      ..createdAt = event.createdAt
+      ..updatedAt = event.updatedAt
+      ..syncId = event.syncId;
   }
 
   Event _fromOB(EventOB ob) {

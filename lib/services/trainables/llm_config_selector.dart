@@ -20,7 +20,7 @@
 
 import 'package:flutter/material.dart';
 import '../trainable.dart';
-import '../../domain/invocation.dart';
+import '../../core/invocation.dart';
 import '../../core/invocation_repository.dart';
 import '../../core/adaptation_state_repository.dart';
 import '../../core/adaptation_state.dart';
@@ -43,7 +43,7 @@ class LLMConfigSelector implements Trainable {
   /// For now, returns default config.
   /// Will learn to adjust temperature and other parameters based on feedback.
   Future<Map<String, dynamic>> selectConfig({
-    required String correlationId,
+    required String eventId,
     required String utterance,
     required String namespace,
     required List<String> tools,
@@ -59,7 +59,7 @@ class LLMConfigSelector implements Trainable {
 
     // Record invocation
     final invocation = Invocation(
-      correlationId: correlationId,
+      eventId: eventId,
       componentType: 'llm_config_selector',
       success: true,
       confidence: 1.0,
@@ -96,7 +96,8 @@ class LLMConfigSelector implements Trainable {
     if (feedbackList.isEmpty) return;
 
     // Get current adaptation state
-    final state = await adaptationStateRepo.getCurrent(userId: userId);
+    var state = await adaptationStateRepo.getForComponent('llm_config_selector', implementer: null, userId: userId);
+    if (state == null) return;
     state.loadData();
 
     // Process each feedback
@@ -151,7 +152,8 @@ class LLMConfigSelector implements Trainable {
 
   @override
   Future<Map<String, dynamic>> getAdaptationState({String? userId}) async {
-    final state = await adaptationStateRepo.getCurrent(userId: userId);
+    var state = await adaptationStateRepo.getForComponent('llm_config_selector', implementer: null, userId: userId);
+    if (state == null) return {};
     state.loadData();
     return state.data;
   }

@@ -20,7 +20,7 @@
 
 import 'package:flutter/material.dart';
 import '../trainable.dart';
-import '../../domain/invocation.dart';
+import '../../core/invocation.dart';
 import '../../core/invocation_repository.dart';
 import '../../core/adaptation_state_repository.dart';
 import '../../core/adaptation_state.dart';
@@ -43,7 +43,7 @@ class NamespaceSelector implements Trainable {
   /// For now, returns first namespace if only one, otherwise picks randomly.
   /// Will learn from feedback in future iterations.
   Future<String> selectNamespace({
-    required String correlationId,
+    required String eventId,
     required String utterance,
     required List<double> embedding,
     required List<String> availableNamespaces,
@@ -58,7 +58,7 @@ class NamespaceSelector implements Trainable {
 
       // Record invocation
       final invocation = Invocation(
-        correlationId: correlationId,
+        eventId: eventId,
         componentType: 'namespace_selector',
         success: true,
         confidence: 1.0,
@@ -76,7 +76,11 @@ class NamespaceSelector implements Trainable {
     }
 
     // Multiple namespaces - use adaptation state to score
-    final state = await adaptationStateRepo.getCurrent();
+    var state = await adaptationStateRepo.getForComponent('namespace_selector', implementer: null);
+    if (state == null) {
+      // No adaptation state, return first namespace
+      return availableNamespaces.first;
+    }
     state.loadData();
 
     // Score each namespace (for now, equal weight)
@@ -85,7 +89,7 @@ class NamespaceSelector implements Trainable {
 
     // Record invocation
     final invocation = Invocation(
-      correlationId: correlationId,
+      eventId: eventId,
       componentType: 'namespace_selector',
       success: true,
       confidence: 0.5, // Low confidence since we're guessing
@@ -122,7 +126,8 @@ class NamespaceSelector implements Trainable {
     if (feedbackList.isEmpty) return;
 
     // Get current adaptation state
-    final state = await adaptationStateRepo.getCurrent(userId: userId);
+    var state = await adaptationStateRepo.getForComponent('namespace_selector', implementer: null, userId: userId);
+    if (state == null) return;
     state.loadData();
 
     // Process each feedback
@@ -168,7 +173,8 @@ class NamespaceSelector implements Trainable {
 
   @override
   Future<Map<String, dynamic>> getAdaptationState({String? userId}) async {
-    final state = await adaptationStateRepo.getCurrent(userId: userId);
+    var state = await adaptationStateRepo.getForComponent('namespace_selector', implementer: null, userId: userId);
+    if (state == null) return {};
     state.loadData();
     return state.data;
   }

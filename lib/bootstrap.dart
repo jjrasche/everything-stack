@@ -61,7 +61,7 @@ import 'services/trainables/context_injector.dart';
 import 'services/trainables/llm_config_selector.dart';
 import 'services/trainables/llm_orchestrator.dart';
 import 'services/trainables/response_renderer.dart';
-import 'domain/invocation.dart' as domain_invocation;
+import 'core/invocation.dart';
 import 'core/invocation_repository.dart';
 import 'core/adaptation_state_repository.dart';
 import 'core/feedback_repository.dart';
@@ -386,8 +386,8 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
   // 9. Register invocation repository in service registry (shared by all services)
   // Note: Repository is already registered as singleton in GetIt above.
   // This registers it in the old ServiceRegistry for backward compatibility.
-  final invocationRepo = getIt<InvocationRepository<domain_invocation.Invocation>>();
-  ServiceRegistry.register<InvocationRepository<domain_invocation.Invocation>>(
+  final invocationRepo = getIt<InvocationRepository<Invocation>>();
+  ServiceRegistry.register<InvocationRepository<Invocation>>(
     'invocation_repo',
     invocationRepo,
   );
@@ -447,7 +447,7 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
     debugPrint('🎤 [STT] Initializing DeepgramSTTService');
     final sttService = DeepgramSTTService(
       apiKey: cfg.deepgramApiKey!,
-      invocationRepository: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+      invocationRepository: getIt<InvocationRepository<Invocation>>(),
     );
     await sttService.initialize();
     STTService.instance = sttService;
@@ -585,7 +585,7 @@ Future<void> setupServiceLocator() async {
     debugPrint('🔍 [setupServiceLocator] Registering NamespaceSelector...');
     getIt.registerSingleton<NamespaceSelector>(
       NamespaceSelector(
-        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        invocationRepo: getIt<InvocationRepository<Invocation>>(),
         adaptationStateRepo: getIt<AdaptationStateRepository>(),
         feedbackRepo: getIt<FeedbackRepository>(),
       ),
@@ -594,7 +594,7 @@ Future<void> setupServiceLocator() async {
 
     getIt.registerSingleton<ToolSelector>(
       ToolSelector(
-        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        invocationRepo: getIt<InvocationRepository<Invocation>>(),
         adaptationStateRepo: getIt<AdaptationStateRepository>(),
         feedbackRepo: getIt<FeedbackRepository>(),
       ),
@@ -602,7 +602,7 @@ Future<void> setupServiceLocator() async {
 
     getIt.registerSingleton<ContextInjector>(
       ContextInjector(
-        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        invocationRepo: getIt<InvocationRepository<Invocation>>(),
         adaptationStateRepo: getIt<AdaptationStateRepository>(),
         feedbackRepo: getIt<FeedbackRepository>(),
       ),
@@ -610,7 +610,7 @@ Future<void> setupServiceLocator() async {
 
     getIt.registerSingleton<LLMConfigSelector>(
       LLMConfigSelector(
-        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        invocationRepo: getIt<InvocationRepository<Invocation>>(),
         adaptationStateRepo: getIt<AdaptationStateRepository>(),
         feedbackRepo: getIt<FeedbackRepository>(),
       ),
@@ -618,7 +618,7 @@ Future<void> setupServiceLocator() async {
 
     getIt.registerSingleton<LLMOrchestrator>(
       LLMOrchestrator(
-        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        invocationRepo: getIt<InvocationRepository<Invocation>>(),
         adaptationStateRepo: getIt<AdaptationStateRepository>(),
         feedbackRepo: getIt<FeedbackRepository>(),
       ),
@@ -626,7 +626,7 @@ Future<void> setupServiceLocator() async {
 
     getIt.registerSingleton<ResponseRenderer>(
       ResponseRenderer(
-        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        invocationRepo: getIt<InvocationRepository<Invocation>>(),
         adaptationStateRepo: getIt<AdaptationStateRepository>(),
         feedbackRepo: getIt<FeedbackRepository>(),
       ),
@@ -659,7 +659,7 @@ Future<void> setupServiceLocator() async {
 
     getIt.registerSingleton<ToolExecutor>(
       ToolExecutor(
-        invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+        invocationRepo: getIt<InvocationRepository<Invocation>>(),
         toolRegistry: getIt<ToolRegistry>(),
       ),
     );
@@ -677,7 +677,7 @@ Future<void> setupServiceLocator() async {
       llmService: getIt<LLMService>(),
       ttsService: getIt<TTSService>(),
       toolExecutor: getIt<ToolExecutor>(),
-      invocationRepo: getIt<InvocationRepository<domain_invocation.Invocation>>(),
+      invocationRepo: getIt<InvocationRepository<Invocation>>(),
       eventBus: getIt<EventBus>(),
     );
     getIt.registerSingleton<Coordinator>(coordinator);

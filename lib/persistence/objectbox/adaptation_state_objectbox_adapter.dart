@@ -41,13 +41,24 @@ class AdaptationStateObjectBoxAdapter
 
     if (userId != null) {
       // User-scoped state
-      condition = AdaptationStateOB_.componentType.equals(componentType)
-          .and(AdaptationStateOB_.implementer.equals(implementer))
-          .and(AdaptationStateOB_.userId.equals(userId));
+      if (implementer != null) {
+        condition = AdaptationStateOB_.componentType.equals(componentType)
+            .and(AdaptationStateOB_.implementer.equals(implementer))
+            .and(AdaptationStateOB_.userId.equals(userId));
+      } else {
+        condition = AdaptationStateOB_.componentType.equals(componentType)
+            .and(AdaptationStateOB_.implementer.isNull())
+            .and(AdaptationStateOB_.userId.equals(userId));
+      }
     } else {
       // No user filtering (shouldn't happen, but handle it)
-      condition = AdaptationStateOB_.componentType.equals(componentType)
-          .and(AdaptationStateOB_.implementer.equals(implementer));
+      if (implementer != null) {
+        condition = AdaptationStateOB_.componentType.equals(componentType)
+            .and(AdaptationStateOB_.implementer.equals(implementer));
+      } else {
+        condition = AdaptationStateOB_.componentType.equals(componentType)
+            .and(AdaptationStateOB_.implementer.isNull());
+      }
     }
 
     final query = box.query(condition).build();
@@ -64,10 +75,16 @@ class AdaptationStateObjectBoxAdapter
     String componentType, {
     required String? implementer,
   }) async {
-    final query = box
-        .query(AdaptationStateOB_.componentType.equals(componentType)
-            .and(AdaptationStateOB_.implementer.equals(implementer)))
-        .build();
+    late Condition<AdaptationStateOB> condition;
+    if (implementer != null) {
+      condition = AdaptationStateOB_.componentType.equals(componentType)
+          .and(AdaptationStateOB_.implementer.equals(implementer));
+    } else {
+      condition = AdaptationStateOB_.componentType.equals(componentType)
+          .and(AdaptationStateOB_.implementer.isNull());
+    }
+
+    final query = box.query(condition).build();
     try {
       final obList = query.find();
       return obList.map((ob) => fromOB(ob)).toList();

@@ -20,7 +20,7 @@ class AdaptationStateOB {
   String? syncId;
 
   String componentType;
-  String scope = 'global';
+  String? implementer;
   String? userId;
   String dataJson = '{}';
   int version = 0;
@@ -30,14 +30,14 @@ class AdaptationStateOB {
 
   AdaptationStateOB({
     required this.componentType,
-    this.scope = 'global',
+    this.implementer,
     this.userId,
   });
 
   factory AdaptationStateOB.fromAdaptationState(AdaptationState state) {
     return AdaptationStateOB(
       componentType: state.componentType,
-      scope: state.scope,
+      implementer: state.implementer,
       userId: state.userId,
     )
       ..id = state.id
@@ -55,7 +55,7 @@ class AdaptationStateOB {
   AdaptationState toAdaptationState() {
     return AdaptationState(
       componentType: componentType,
-      scope: scope,
+      implementer: implementer,
       userId: userId,
     )
       ..id = id

@@ -4,22 +4,22 @@ import 'package:objectbox/objectbox.dart';
 import '../../core/base_entity.dart';
 import '../../core/invocation_repository.dart';
 import '../../core/persistence/persistence_adapter.dart';
-import '../../domain/invocation.dart' as domain_invocation;
+import '../../core/invocation.dart';
 import '../../objectbox.g.dart';
 import 'base_objectbox_adapter.dart';
 import 'wrappers/invocation_ob.dart';
 
 class InvocationObjectBoxAdapter
-    extends BaseObjectBoxAdapter<domain_invocation.Invocation, InvocationOB>
-    implements InvocationRepository<domain_invocation.Invocation> {
+    extends BaseObjectBoxAdapter<Invocation, InvocationOB>
+    implements InvocationRepository<Invocation> {
   InvocationObjectBoxAdapter(Store store) : super(store);
 
   @override
-  InvocationOB toOB(domain_invocation.Invocation entity) =>
+  InvocationOB toOB(Invocation entity) =>
       InvocationOB.fromInvocation(entity);
 
   @override
-  domain_invocation.Invocation fromOB(InvocationOB ob) =>
+  Invocation fromOB(InvocationOB ob) =>
       ob.toInvocation();
 
   @override
@@ -33,7 +33,7 @@ class InvocationObjectBoxAdapter
   // ============ InvocationRepository Implementation ============
 
   @override
-  Future<List<domain_invocation.Invocation>> findByTurn(String turnId) async {
+  Future<List<Invocation>> findByTurn(String turnId) async {
     final query = box
         .query(InvocationOB_.turnId.equals(turnId))
         .order(InvocationOB_.createdAt)
@@ -47,7 +47,7 @@ class InvocationObjectBoxAdapter
   }
 
   @override
-  Future<List<domain_invocation.Invocation>> findByContextType(
+  Future<List<Invocation>> findByContextType(
       String contextType) async {
     final query = box
         .query(InvocationOB_.componentType.equals(contextType))
@@ -61,7 +61,7 @@ class InvocationObjectBoxAdapter
   }
 
   @override
-  Future<List<domain_invocation.Invocation>> findByIds(
+  Future<List<Invocation>> findByIds(
       List<String> ids) async {
     final allInvocations = await findAll();
     return allInvocations.where((inv) => ids.contains(inv.uuid)).toList();

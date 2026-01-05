@@ -23,7 +23,7 @@
 
 import 'package:flutter/material.dart';
 import '../trainable.dart';
-import '../../domain/invocation.dart';
+import '../../core/invocation.dart';
 import '../../core/invocation_repository.dart';
 import '../../core/adaptation_state_repository.dart';
 import '../../core/adaptation_state.dart';
@@ -45,7 +45,7 @@ class LLMOrchestrator implements Trainable {
   ///
   /// Called after the agentic loop completes.
   Future<void> recordOrchestration({
-    required String correlationId,
+    required String eventId,
     required String utterance,
     required String namespace,
     required List<String> tools,
@@ -56,7 +56,7 @@ class LLMOrchestrator implements Trainable {
     required bool success,
   }) async {
     final invocation = Invocation(
-      correlationId: correlationId,
+      eventId: eventId,
       componentType: 'llm_orchestrator',
       success: success,
       confidence: success ? 1.0 : 0.0,
@@ -95,7 +95,8 @@ class LLMOrchestrator implements Trainable {
     if (feedbackList.isEmpty) return;
 
     // Get current adaptation state
-    final state = await adaptationStateRepo.getCurrent(userId: userId);
+    var state = await adaptationStateRepo.getForComponent('llm_orchestrator', implementer: null, userId: userId);
+    if (state == null) return;
     state.loadData();
 
     // Process each feedback
@@ -145,7 +146,8 @@ class LLMOrchestrator implements Trainable {
 
   @override
   Future<Map<String, dynamic>> getAdaptationState({String? userId}) async {
-    final state = await adaptationStateRepo.getCurrent(userId: userId);
+    var state = await adaptationStateRepo.getForComponent('llm_orchestrator', implementer: null, userId: userId);
+    if (state == null) return {};
     state.loadData();
     return state.data;
   }

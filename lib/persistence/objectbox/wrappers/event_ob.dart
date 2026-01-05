@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 import 'package:objectbox/objectbox.dart';
-import 'package:everything_stack_template/domain/event.dart';
+import 'package:everything_stack_template/core/event.dart';
 
 @Entity()
 class EventOB {

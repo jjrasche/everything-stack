@@ -76,10 +76,15 @@ class STTInvocationOutput {
   /// Per-word details: text, confidence, start time, end time.
   final List<Word> words;
 
+  /// Latency in milliseconds (from implementer).
+  /// Time taken to process audio and return transcription.
+  final double latencyMs;
+
   STTInvocationOutput({
     required this.transcription,
     required this.confidence,
     required this.words,
+    required this.latencyMs,
   });
 
   /// Serialize to JSON.
@@ -87,6 +92,7 @@ class STTInvocationOutput {
     'transcription': transcription,
     'confidence': confidence,
     'words': words.map((w) => w.toJson()).toList(),
+    'latencyMs': latencyMs,
   };
 
   /// Deserialize from JSON.
@@ -94,6 +100,7 @@ class STTInvocationOutput {
     transcription: json['transcription'] as String,
     confidence: json['confidence'] as double,
     words: (json['words'] as List).map((w) => Word.fromJson(w as Map<String, dynamic>)).toList(),
+    latencyMs: json['latencyMs'] as double,
   );
 }
 

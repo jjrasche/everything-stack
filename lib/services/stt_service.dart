@@ -12,8 +12,8 @@ import 'trainable.dart';
 import 'websocket_connect_web.dart'
     if (dart.library.io) 'websocket_connect_io.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
-import 'package:everything_stack_template/domain/invocation.dart';
-import 'package:everything_stack_template/domain/event.dart';
+import 'package:everything_stack_template/core/invocation.dart';
+import 'package:everything_stack_template/core/event.dart';
 import 'package:everything_stack_template/services/event_bus.dart';
 import 'package:get_it/get_it.dart';
 

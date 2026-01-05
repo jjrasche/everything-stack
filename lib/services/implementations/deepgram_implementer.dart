@@ -78,6 +78,7 @@ class DeepgramImplementer implements STTImplementer {
               transcription: transcript,
               confidence: confidence,
               words: words,
+              latencyMs: latencyMs,
             );
           }
         }

@@ -5,7 +5,7 @@ library;
 
 import 'package:idb_shim/idb_browser.dart';
 import '../../core/event_repository.dart';
-import '../../domain/event.dart';
+import '../../core/event.dart';
 
 class EventIndexedDBAdapter implements EventRepository {
   final Database db;

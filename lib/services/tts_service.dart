@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'timeout_config.dart';
 import 'trainable.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
-import 'package:everything_stack_template/domain/invocation.dart';
+import 'package:everything_stack_template/core/invocation.dart';
 
 /// Text-to-speech service contract.
 ///

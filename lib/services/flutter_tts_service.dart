@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:flutter/material.dart';
 import 'tts_service.dart';
-import 'package:everything_stack_template/domain/invocation.dart';
+import 'package:everything_stack_template/core/invocation.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
 
 /// Cross-platform TTS service using flutter_tts package.

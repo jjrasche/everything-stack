@@ -8,7 +8,7 @@
 /// Called synchronously by EventBusImpl.publish() before returning.
 library;
 
-import '../domain/event.dart';
+import './event.dart';
 
 abstract class EventRepository {
   /// Save an event to persistent storage

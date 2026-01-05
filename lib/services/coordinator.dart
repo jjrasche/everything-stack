@@ -37,8 +37,8 @@
 
 import 'dart:async';
 import 'dart:convert';
-import '../domain/invocation.dart';
-import '../domain/event.dart';
+import '../core/invocation.dart';
+import '../core/event.dart';
 import '../core/invocation_repository.dart';
 import 'trainables/namespace_selector.dart';
 import 'trainables/tool_selector.dart';
@@ -159,7 +159,7 @@ class Coordinator {
           print('🚀 [Coordinator] Starting orchestration from event...');
 
           final result = await orchestrate(
-            correlationId: event.correlationId,
+            eventId: event.uuid,
             utterance: inputText,
             availableNamespaces: ['general', 'productivity', 'entertainment'],
             toolsByNamespace: {
@@ -177,7 +177,7 @@ class Coordinator {
           // Publish orchestration_complete event for UI to update state
           await eventBus.publish(Event(
             eventType: 'orchestration_complete',
-            correlationId: event.correlationId,
+            correlationId: event.uuid,
             source: 'coordinator',
             payloadJson: jsonEncode({
               'success': result.success,
@@ -206,7 +206,7 @@ class Coordinator {
 
   /// Orchestrate voice assistant pipeline
   Future<CoordinatorResult> orchestrate({
-    required String correlationId,
+    required String eventId,
     required String utterance,
     required List<String> availableNamespaces,
     required Map<String, List<String>> toolsByNamespace,
@@ -215,7 +215,7 @@ class Coordinator {
     // throw Exception('TEST FAILURE: Coordinator.orchestrate() intentionally broken');
 
     print('\n=== COORDINATOR: orchestrate START ===');
-    print('🔗 CorrelationId: $correlationId');
+    print('🔗 EventId: $eventId');
     print('📝 Utterance: "$utterance"');
 
     final startTime = DateTime.now();
@@ -313,7 +313,7 @@ class Coordinator {
       print('\n📋 Recording LLM orchestration...');
       print('DEBUG: About to call llmOrchestrator.recordOrchestration');
       await llmOrchestrator.recordOrchestration(
-        correlationId: correlationId,
+        eventId: eventId,
         utterance: utterance,
         namespace: selectedNamespace,
         tools: selectedTools,
@@ -330,7 +330,7 @@ class Coordinator {
       // COMMENTED OUT: Focus on LLM + TTS data for learning
       // print('\n🎨 Rendering response...');
       // final renderedResponse = await responseRenderer.renderResponse(
-      //   correlationId: correlationId,
+      //   eventId: eventId,
       //   llmResponse: finalResponse,
       //   namespace: selectedNamespace,
       //   tools: selectedTools,
@@ -343,7 +343,7 @@ class Coordinator {
       print('\n🔊 Synthesizing response to speech...');
       await ttsService.synthesizeAndLog(
         text: renderedResponse,
-        correlationId: correlationId,
+        eventId: eventId,
       );
       invocationIds.add('tts_synthesis_invocation');
 
@@ -354,7 +354,7 @@ class Coordinator {
       print('=== COORDINATOR: orchestrate END ===\n');
 
       return CoordinatorResult(
-        turnId: correlationId,
+        turnId: eventId,
         selectedNamespace: selectedNamespace,
         selectedTools: selectedTools,
         injectedContext: injectedContext,
@@ -375,7 +375,7 @@ class Coordinator {
       // Publish error event (for monitoring and testing)
       final errorEvent = Event(
         eventType: 'orchestration_error',
-        correlationId: correlationId,
+        correlationId: eventId,
         source: 'coordinator',
         payloadJson: jsonEncode({
           'message': e.toString(),
@@ -388,7 +388,7 @@ class Coordinator {
       print('📤 orchestration_error event published');
 
       return CoordinatorResult(
-        turnId: correlationId,
+        turnId: eventId,
         selectedNamespace: '',
         selectedTools: [],
         injectedContext: {},

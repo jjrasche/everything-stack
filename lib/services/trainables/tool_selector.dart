@@ -21,7 +21,7 @@
 
 import 'package:flutter/material.dart';
 import '../trainable.dart';
-import '../../domain/invocation.dart';
+import '../../core/invocation.dart';
 import '../../core/invocation_repository.dart';
 import '../../core/adaptation_state_repository.dart';
 import '../../core/adaptation_state.dart';
@@ -45,7 +45,7 @@ class ToolSelector implements Trainable {
   /// If no tools available, returns empty list (LLM-only mode).
   /// Will learn from feedback to filter irrelevant tools.
   Future<List<String>> selectTools({
-    required String correlationId,
+    required String eventId,
     required String namespace,
     required String utterance,
     required List<double> embedding,
@@ -62,7 +62,7 @@ class ToolSelector implements Trainable {
 
     // Record invocation
     final invocation = Invocation(
-      correlationId: correlationId,
+      eventId: eventId,
       componentType: 'tool_selector',
       success: true,
       confidence: 0.5, // Low confidence since we're selecting all
@@ -100,7 +100,8 @@ class ToolSelector implements Trainable {
     if (feedbackList.isEmpty) return;
 
     // Get current adaptation state
-    final state = await adaptationStateRepo.getCurrent(userId: userId);
+    var state = await adaptationStateRepo.getForComponent('tool_selector', implementer: null, userId: userId);
+    if (state == null) return;
     state.loadData();
 
     // Process each feedback
@@ -150,7 +151,8 @@ class ToolSelector implements Trainable {
 
   @override
   Future<Map<String, dynamic>> getAdaptationState({String? userId}) async {
-    final state = await adaptationStateRepo.getCurrent(userId: userId);
+    var state = await adaptationStateRepo.getForComponent('tool_selector', implementer: null, userId: userId);
+    if (state == null) return {};
     state.loadData();
     return state.data;
   }

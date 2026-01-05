@@ -5,10 +5,15 @@
 /// Events flow through the Context Manager for processing.
 ///
 /// ## Key Design
-/// - correlationId: Links all operations in a synchronous chain
+/// - correlationId: Links all operations in a synchronous chain (Event-to-Event links)
 /// - parentEventId: Links async chains (e.g., timer fires hours later)
 /// - source: Who triggered this event ('user', 'timer', 'system')
 /// - payload: The event data (transcription, timer fire, etc.)
+///
+/// ## Naming Note: correlationId vs Invocation.eventId
+/// **Event.correlationId** groups related events together (synchronous pipeline chain)
+/// **Invocation.eventId** points to the triggering event that caused the invocation
+/// Both are essential: correlationId links events, eventId links invocations to their trigger
 ///
 /// ## Chain Tracking
 /// Synchronous chain: All operations share same correlationId

@@ -33,7 +33,7 @@
 /// ```
 library;
 
-import '../domain/event.dart';
+import '../core/event.dart';
 
 abstract class EventBus {
   /// Publish an event (persisted simultaneously)

@@ -26,7 +26,7 @@ import 'groq_service.dart';
 import 'flutter_tts_service.dart';
 import 'service_registry.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
-import 'package:everything_stack_template/domain/invocation.dart';
+import 'package:everything_stack_template/core/invocation.dart';
 import 'package:http/http.dart' as http;
 
 // ============================================================================

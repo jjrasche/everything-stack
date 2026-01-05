@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'dart:convert';
 
 import 'bootstrap.dart';
-import 'domain/event.dart';
+import 'core/event.dart';
 import 'services/coordinator.dart';
 import 'services/embedding_service.dart';
 import 'ui/screens/voice_assistant_screen.dart';
@@ -144,6 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
         'output_modality': _outputModality.toString(),
       };
       final event = Event(
+        eventType: 'text_input',
         correlationId: 'user_${DateTime.now().millisecondsSinceEpoch}',
         source: 'user',
         payloadJson: jsonEncode(payloadMap),

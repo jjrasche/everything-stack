@@ -4,7 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:everything_stack_template/services/stt_service.dart';
 import 'package:everything_stack_template/services/audio_recording_service.dart';
 import 'package:everything_stack_template/services/event_bus.dart';
-import 'package:everything_stack_template/domain/event.dart';
+import 'package:everything_stack_template/core/event.dart';
 
 /// Voice Assistant Screen
 ///

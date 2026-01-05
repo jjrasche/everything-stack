@@ -10,7 +10,7 @@
 /// 3. Calls the function with params
 /// 4. Returns: {results: [{toolName: 'task.create', success: true, data: {...}}]}
 
-import '../domain/invocation.dart';
+import '../core/invocation.dart';
 import '../core/invocation_repository.dart';
 import 'tool_registry.dart';
 

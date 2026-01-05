@@ -76,7 +76,7 @@ import 'package:get_it/get_it.dart';
 
 import 'adaptation_data.dart';
 import 'adaptation_state.dart';
-import '../domain/invocation.dart';
+import 'invocation.dart';
 import 'invocation_repository.dart';
 import 'adaptation_state_repository.dart';
 
@@ -99,7 +99,12 @@ mixin class Trainable<D extends AdaptationData> {
   /// userId: if provided, get user-scoped state; if null, get global state
   /// Returns: Fallback chain: user-scoped → global → default
   Future<AdaptationState> getAdaptationState({String? userId}) async {
-    return _adaptationStateRepo.getForComponent(componentType, userId: userId);
+    final state = await _adaptationStateRepo.getForComponent(
+      componentType,
+      implementer: null,
+      userId: userId,
+    );
+    return state ?? AdaptationState(componentType: componentType);
   }
 
   // ============ Repository Access (GetIt) ============
@@ -116,11 +121,11 @@ mixin class Trainable<D extends AdaptationData> {
   /// Called immediately after component executes.
   /// Invocation is stored with input/output for semantic search and training.
   Future<void> recordInvocation(
-    String correlationId,
+    String eventId,
     Invocation invocation,
   ) async {
     final inv = Invocation(
-      correlationId: correlationId,
+      eventId: eventId,
       componentType: componentType,
       success: invocation.success,
       confidence: invocation.confidence,

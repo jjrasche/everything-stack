@@ -20,7 +20,7 @@
 
 import 'package:flutter/material.dart';
 import '../trainable.dart';
-import '../../domain/invocation.dart';
+import '../../core/invocation.dart';
 import '../../core/invocation_repository.dart';
 import '../../core/adaptation_state_repository.dart';
 import '../../core/adaptation_state.dart';
@@ -46,7 +46,7 @@ class ContextInjector implements Trainable {
   /// For now, returns empty context.
   /// Will be expanded to inject actual task/timer/subscription data.
   Future<Map<String, dynamic>> injectContext({
-    required String correlationId,
+    required String eventId,
     required String namespace,
   }) async {
     // Context injection placeholder
@@ -64,7 +64,7 @@ class ContextInjector implements Trainable {
 
     // Record invocation
     final invocation = Invocation(
-      correlationId: correlationId,
+      eventId: eventId,
       componentType: 'context_injector',
       success: true,
       confidence: 1.0,
@@ -99,7 +99,9 @@ class ContextInjector implements Trainable {
     if (feedbackList.isEmpty) return;
 
     // Get current adaptation state
-    final state = await adaptationStateRepo.getCurrent(userId: userId);
+    var state = await adaptationStateRepo.getForComponent('context_injector', implementer: null, userId: userId);
+    if (state == null) return;
+
     state.loadData();
 
     // Process each feedback
@@ -139,7 +141,8 @@ class ContextInjector implements Trainable {
 
   @override
   Future<Map<String, dynamic>> getAdaptationState({String? userId}) async {
-    final state = await adaptationStateRepo.getCurrent(userId: userId);
+    final state = await adaptationStateRepo.getForComponent('context_injector', implementer: null, userId: userId);
+    if (state == null) return {};
     state.loadData();
     return state.data;
   }

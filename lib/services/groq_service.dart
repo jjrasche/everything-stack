@@ -25,7 +25,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'llm_service.dart';
-import 'package:everything_stack_template/domain/invocation.dart';
+import 'package:everything_stack_template/core/invocation.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
 
 class GroqService extends LLMService {

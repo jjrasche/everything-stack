@@ -25,7 +25,7 @@ library;
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'event_bus.dart';
-import '../domain/event.dart';
+import '../core/event.dart';
 import '../core/event_repository.dart';
 
 class EventBusImpl implements EventBus {

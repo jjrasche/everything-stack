@@ -11,7 +11,7 @@ import '../core/invocation_repository.dart';
 import '../core/adaptation_state_repository.dart';
 import '../core/feedback_repository.dart';
 import '../core/event_repository.dart';
-import '../domain/invocation.dart' as domain_invocation;
+import '../core/invocation.dart';
 import '../persistence/objectbox/invocation_objectbox_adapter.dart';
 import '../persistence/objectbox/adaptation_state_objectbox_adapter.dart';
 import '../persistence/objectbox/feedback_objectbox_adapter.dart';
@@ -33,7 +33,7 @@ Future<void> initializePersistence(GetIt getIt) async {
   final feedbackAdapter = FeedbackObjectBoxAdapter(store);
 
   // Register repositories in GetIt
-  getIt.registerSingleton<InvocationRepository<domain_invocation.Invocation>>(
+  getIt.registerSingleton<InvocationRepository<Invocation>>(
     invocationAdapter,
   );
   getIt.registerSingleton<AdaptationStateRepository>(

@@ -5,7 +5,7 @@
 
 import 'dart:convert';
 import 'package:objectbox/objectbox.dart';
-import 'package:everything_stack_template/domain/invocation.dart' as domain_invocation;
+import 'package:everything_stack_template/core/invocation.dart';
 
 @Entity()
 class InvocationOB {
@@ -52,7 +52,7 @@ class InvocationOB {
   // ============ Conversion Methods ============
 
   /// Convert from domain Invocation to ObjectBox wrapper
-  factory InvocationOB.fromInvocation(domain_invocation.Invocation invocation) {
+  factory InvocationOB.fromInvocation(Invocation invocation) {
     return InvocationOB(
       eventId: invocation.eventId,
       componentType: invocation.componentType,
@@ -71,7 +71,7 @@ class InvocationOB {
   }
 
   /// Convert from ObjectBox wrapper back to domain Invocation
-  domain_invocation.Invocation toInvocation() {
+  Invocation toInvocation() {
     // Deserialize JSON strings back to Maps
     Map<String, dynamic>? inputMap;
     if (inputJson != null && inputJson!.isNotEmpty) {
@@ -100,7 +100,7 @@ class InvocationOB {
       }
     }
 
-    return domain_invocation.Invocation(
+    return Invocation(
       eventId: eventId,
       componentType: componentType,
       success: success,

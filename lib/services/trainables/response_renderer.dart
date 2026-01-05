@@ -21,7 +21,7 @@
 
 import 'package:flutter/material.dart';
 import '../trainable.dart';
-import '../../domain/invocation.dart';
+import '../../core/invocation.dart';
 import '../../core/invocation_repository.dart';
 import '../../core/adaptation_state_repository.dart';
 import '../../core/adaptation_state.dart';
@@ -44,7 +44,7 @@ class ResponseRenderer implements Trainable {
   /// For now, returns raw response.
   /// Will learn to format based on user feedback.
   Future<String> renderResponse({
-    required String correlationId,
+    required String eventId,
     required String llmResponse,
     required String namespace,
     required List<String> tools,
@@ -54,7 +54,7 @@ class ResponseRenderer implements Trainable {
 
     // Record invocation
     final invocation = Invocation(
-      correlationId: correlationId,
+      eventId: eventId,
       componentType: 'response_renderer',
       success: true,
       confidence: 1.0,
@@ -96,7 +96,8 @@ class ResponseRenderer implements Trainable {
     if (feedbackList.isEmpty) return;
 
     // Get current adaptation state
-    final state = await adaptationStateRepo.getCurrent(userId: userId);
+    var state = await adaptationStateRepo.getForComponent('response_renderer', implementer: null, userId: userId);
+    if (state == null) return;
     state.loadData();
 
     // Process each feedback
@@ -156,7 +157,8 @@ class ResponseRenderer implements Trainable {
 
   @override
   Future<Map<String, dynamic>> getAdaptationState({String? userId}) async {
-    final state = await adaptationStateRepo.getCurrent(userId: userId);
+    var state = await adaptationStateRepo.getForComponent('response_renderer', implementer: null, userId: userId);
+    if (state == null) return {};
     state.loadData();
     return state.data;
   }
