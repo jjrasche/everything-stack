@@ -45,4 +45,8 @@ abstract class BaseEntity {
   /// Sync status: local, syncing, synced, conflict
   /// Stored as int (enum index) in ObjectBox.
   SyncStatus syncStatus = SyncStatus.local;
+
+  /// ObjectBox/IndexedDB-specific: Sync status as int for storage
+  int get dbSyncStatus => syncStatus.index;
+  set dbSyncStatus(int value) => syncStatus = SyncStatus.values[value];
 }

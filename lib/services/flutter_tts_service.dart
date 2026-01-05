@@ -104,6 +104,36 @@ class FlutterTtsService extends TTSService {
     );
   }
 
+  /// Speak text and wait for audio to ACTUALLY finish playing.
+  ///
+  /// This is different from synthesize() which returns a stream.
+  /// Use this when you need to block until TTS is truly done (for continuous listening).
+  ///
+  /// Returns: Completes when audio playback is finished
+  /// Throws: TTSException if synthesis fails or times out
+  Future<void> speakAndAwait(String text) async {
+    if (!_isReady) {
+      throw TTSException('FlutterTtsService not initialized');
+    }
+
+    if (text.isEmpty) {
+      throw TTSException('Synthesis text cannot be empty');
+    }
+
+    try {
+      print('🔊 [FlutterTtsService] Speaking: "$text"');
+      await _flutterTts.speak(text);
+      print('⏳ [FlutterTtsService] Waiting for audio to finish...');
+      await _waitForCompletion();
+      print('✅ [FlutterTtsService] Audio playback complete');
+    } catch (e) {
+      if (e is TTSException) {
+        rethrow;
+      }
+      throw TTSException('TTS synthesis failed', cause: e);
+    }
+  }
+
   @override
   void dispose() {
     _flutterTts.stop();
@@ -132,24 +162,23 @@ class FlutterTtsService extends TTSService {
         throw TTSException('Synthesis text cannot be empty');
       }
 
-      // Synthesize and consume audio chunks
-      var audioChunkCount = 0;
-      await for (final chunk in synthesize(text)) {
-        audioChunkCount++;
-      }
+      // Speak and WAIT for audio to actually finish (CRITICAL for continuous listening)
+      await speakAndAwait(text);
 
-      // Record successful invocation
+      final latencyMs = DateTime.now().difference(startTime).inMilliseconds;
+
+      // Record successful invocation (NOW that audio is done)
       final invocation = Invocation(
         correlationId: correlationId,
         componentType: 'tts',
         success: true,
         confidence: 1.0,
         input: {'text': text},
-        output: {'chunks': audioChunkCount},
+        output: {'latencyMs': latencyMs},
       );
 
       await _invocationRepository.save(invocation);
-      print('✅ [FlutterTtsService] TTS synthesis complete and logged');
+      print('✅ [FlutterTtsService] TTS synthesis complete and logged (waited $latencyMs ms for audio)');
     } catch (e) {
       print('⚠️  [FlutterTtsService] TTS synthesis failed: $e');
 

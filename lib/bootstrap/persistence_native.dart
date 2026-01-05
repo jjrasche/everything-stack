@@ -10,14 +10,12 @@ import 'package:objectbox/objectbox.dart';
 import '../core/invocation_repository.dart';
 import '../core/adaptation_state_repository.dart';
 import '../core/feedback_repository.dart';
-import '../core/turn_repository.dart';
 import '../core/event_repository.dart';
 import '../domain/invocation.dart' as domain_invocation;
 import '../persistence/objectbox/invocation_objectbox_adapter.dart';
 import '../persistence/objectbox/adaptation_state_objectbox_adapter.dart';
 import '../persistence/objectbox/feedback_objectbox_adapter.dart';
-import '../persistence/objectbox/turn_objectbox_adapter.dart';
-import '../persistence/objectbox/system_event_objectbox_adapter.dart';
+import '../persistence/objectbox/event_objectbox_adapter.dart';
 import 'objectbox_store_factory.dart';
 
 /// Initialize persistence layer for native platforms using ObjectBox.
@@ -33,7 +31,6 @@ Future<void> initializePersistence(GetIt getIt) async {
   final invocationAdapter = InvocationObjectBoxAdapter(store);
   final adaptationStateAdapter = AdaptationStateObjectBoxAdapter(store);
   final feedbackAdapter = FeedbackObjectBoxAdapter(store);
-  final turnAdapter = TurnObjectBoxAdapter(store);
 
   // Register repositories in GetIt
   getIt.registerSingleton<InvocationRepository<domain_invocation.Invocation>>(
@@ -45,15 +42,12 @@ Future<void> initializePersistence(GetIt getIt) async {
   getIt.registerSingleton<FeedbackRepository>(
     feedbackAdapter,
   );
-  getIt.registerSingleton<TurnRepository>(
-    turnAdapter,
-  );
 }
 
 /// Create EventRepository for native platforms using ObjectBox.
 Future<EventRepository> createEventRepository() async {
   final store = await openObjectBoxStore();
-  return SystemEventRepositoryObjectBoxAdapter(store);
+  return EventObjectBoxAdapter(store);
 }
 
 /// Close the ObjectBox store on disposal.

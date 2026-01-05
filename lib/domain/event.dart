@@ -39,6 +39,7 @@
 /// Events flow through the system, not persisted long-term for MVP.
 /// ContextManagerInvocation captures the decision log.
 
+import 'dart:convert';
 import '../core/base_entity.dart';
 
 class Event extends BaseEntity {
@@ -60,6 +61,9 @@ class Event extends BaseEntity {
 
   // ============ Event fields ============
 
+  /// Event type identifier: 'transcription_complete', 'orchestration_complete', etc.
+  String eventType;
+
   /// Links all operations in this synchronous chain
   String correlationId;
 
@@ -73,12 +77,14 @@ class Event extends BaseEntity {
   /// When this event occurred
   DateTime timestamp;
 
-  /// Event payload (transcription, timer data, etc.) stored as JSON string
+  /// Typed event payload stored as JSON string
+  /// Structure depends on eventType
   String payloadJson;
 
   // ============ Constructor ============
 
   Event({
+    required this.eventType,
     required this.correlationId,
     required this.source,
     required this.payloadJson,
@@ -98,6 +104,7 @@ class Event extends BaseEntity {
         'createdAt': createdAt.toIso8601String(),
         'updatedAt': updatedAt.toIso8601String(),
         'syncId': syncId,
+        'eventType': eventType,
         'correlationId': correlationId,
         'parentEventId': parentEventId,
         'source': source,
@@ -107,6 +114,7 @@ class Event extends BaseEntity {
 
   factory Event.fromJson(Map<String, dynamic> json) {
     final event = Event(
+      eventType: json['eventType'] as String,
       correlationId: json['correlationId'] as String,
       source: json['source'] as String,
       payloadJson: json['payloadJson'] as String? ?? '{}',
@@ -125,5 +133,106 @@ class Event extends BaseEntity {
         : DateTime.now();
     event.syncId = json['syncId'] as String?;
     return event;
+  }
+
+  // ============ Semantic Input ============
+
+  /// Extract the semantic input text that drives the pipeline.
+  /// Different event types contain the input in different payload fields.
+  /// Used by Coordinator to orchestrate processing.
+  String toInputString() {
+    try {
+      final payload = jsonDecode(payloadJson);
+      switch (eventType) {
+        case 'transcription_complete':
+          return payload['transcript'] as String? ?? '';
+        case 'text_input':
+          return payload['text'] as String? ?? '';
+        case 'clipboard_paste':
+          return payload['pastedText'] as String? ?? '';
+        case 'voice_command':
+          return payload['command'] as String? ?? '';
+        default:
+          return '';
+      }
+    } catch (e) {
+      return '';
+    }
+  }
+
+  // ============ UI Display ============
+
+  /// Format event for UI display.
+  /// Different from toInputString() - this is the human-readable representation
+  /// shown to the user, which may include metadata, timestamps, or status.
+  String getDisplayString() {
+    try {
+      final payload = jsonDecode(payloadJson);
+      switch (eventType) {
+        case 'transcription_complete':
+          final transcript = payload['transcript'] as String? ?? '';
+          final confidence = payload['confidence'] as num? ?? 0;
+          return '$transcript (${(confidence * 100).toStringAsFixed(0)}% confidence)';
+
+        case 'orchestration_complete':
+          final response = payload['response'] as String? ?? '';
+          final success = payload['success'] as bool? ?? false;
+          return success ? response : '❌ ${payload["errorMessage"] ?? "Processing failed"}';
+
+        case 'text_input':
+          return payload['text'] as String? ?? '';
+
+        case 'clipboard_paste':
+          final text = payload['pastedText'] as String? ?? '';
+          return text.length > 100 ? '${text.substring(0, 100)}...' : text;
+
+        default:
+          return '[$eventType] Event';
+      }
+    } catch (e) {
+      return '[$eventType] Event';
+    }
+  }
+
+  // ============ Typed Accessors ============
+
+  /// Get response text from orchestration_complete events.
+  /// Returns null for other event types.
+  String? getResponse() {
+    if (eventType != 'orchestration_complete') return null;
+    try {
+      final payload = jsonDecode(payloadJson);
+      return payload['response'] as String?;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Get success flag from orchestration_complete events.
+  /// Returns null for other event types.
+  bool? getSuccess() {
+    if (eventType != 'orchestration_complete') return null;
+    try {
+      final payload = jsonDecode(payloadJson);
+      return payload['success'] as bool?;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Get error message from orchestration_error or orchestration_complete (failure) events.
+  /// Returns null if no error information available.
+  String? getErrorMessage() {
+    try {
+      final payload = jsonDecode(payloadJson);
+      if (eventType == 'orchestration_error') {
+        return payload['message'] as String?;
+      } else if (eventType == 'orchestration_complete') {
+        return payload['errorMessage'] as String?;
+      }
+    } catch (e) {
+      return null;
+    }
+    return null;
   }
 }

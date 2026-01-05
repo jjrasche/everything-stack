@@ -8,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class SearchResult {
   final String mediaItemId;
   final String title;
-  final String channelName;
   final double similarity;
   final String format;
   final String? downloadedAt;
@@ -18,7 +17,6 @@ class SearchResult {
   SearchResult({
     required this.mediaItemId,
     required this.title,
-    required this.channelName,
     required this.similarity,
     required this.format,
     this.downloadedAt,
@@ -31,7 +29,6 @@ class SearchResult {
     return SearchResult(
       mediaItemId: json['mediaItemId'] as String? ?? '',
       title: json['title'] as String? ?? '',
-      channelName: json['channelName'] as String? ?? 'Unknown',
       similarity: (json['similarity'] as num?)?.toDouble() ?? 0.0,
       format: json['format'] as String? ?? '',
       downloadedAt: json['downloadedAt'] as String?,
@@ -78,7 +75,6 @@ class SearchNotifier extends StateNotifier<SearchState> {
   Future<void> search(
     String query, {
     String? format,
-    String? channelId,
     int limit = 20,
   }) async {
     if (query.isEmpty) {

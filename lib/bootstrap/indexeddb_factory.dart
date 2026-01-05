@@ -51,9 +51,6 @@ void _createObjectStores(Database db) {
   if (!db.objectStoreNames.contains(ObjectStores.feedback)) {
     db.createObjectStore(ObjectStores.feedback, keyPath: 'uuid');
   }
-  if (!db.objectStoreNames.contains(ObjectStores.turns)) {
-    db.createObjectStore(ObjectStores.turns, keyPath: 'uuid');
-  }
   if (!db.objectStoreNames.contains(ObjectStores.embeddingTasks)) {
     final store = db.createObjectStore(
       ObjectStores.embeddingTasks,

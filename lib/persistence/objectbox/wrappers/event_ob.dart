@@ -20,7 +20,12 @@ class EventOB {
 
   String? syncId;
 
+  @Index()
+  String eventType;
+
+  @Index()
   String correlationId;
+
   String? parentEventId;
   String source;
 
@@ -31,6 +36,7 @@ class EventOB {
   String payloadJson;
 
   EventOB({
+    required this.eventType,
     required this.correlationId,
     required this.source,
     required this.timestamp,
@@ -40,6 +46,7 @@ class EventOB {
 
   factory EventOB.fromEvent(Event event) {
     return EventOB(
+      eventType: event.eventType,
       correlationId: event.correlationId,
       source: event.source,
       timestamp: event.timestamp,
@@ -55,6 +62,7 @@ class EventOB {
 
   Event toEvent() {
     return Event(
+      eventType: eventType,
       correlationId: correlationId,
       source: source,
       payloadJson: payloadJson,

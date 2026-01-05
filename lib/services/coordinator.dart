@@ -13,7 +13,7 @@
 /// 8. TTSService - synthesizes response to speech (NEW)
 ///
 /// ## Flow (Audio In → Audio Out)
-/// 1. STT publishes TranscriptionComplete event
+/// 1. STT publishes Event(eventType: transcription_complete)
 /// 2. Coordinator.orchestrate() triggered by event listener
 /// 3. Generate embedding of utterance
 /// 4. NamespaceSelector picks namespace
@@ -23,7 +23,8 @@
 /// 8. Call LLM with tools available (agentic loop with tool execution)
 /// 9. ResponseRenderer formats final response for user
 /// 10. TTSService synthesizes response → audio bytes → speaker
-/// 11. Record all invocations for training
+/// 11. Publish Event(eventType: orchestration_complete) for UI
+/// 12. Record all invocations for training
 ///
 /// ## Agentic Loop
 /// The LLM has tools available. If it requests tool calls:
@@ -35,7 +36,9 @@
 /// 6. Repeat until LLM produces final_response (no tool calls)
 
 import 'dart:async';
+import 'dart:convert';
 import '../domain/invocation.dart';
+import '../domain/event.dart';
 import '../core/invocation_repository.dart';
 import 'trainables/namespace_selector.dart';
 import 'trainables/tool_selector.dart';
@@ -48,8 +51,6 @@ import 'llm_service.dart';
 import 'tts_service.dart';
 import 'tool_executor.dart' show ToolExecutor;
 import 'event_bus.dart';
-import 'events/transcription_complete.dart';
-import 'events/error_occurred.dart';
 
 /// Result of coordinator orchestration
 class CoordinatorResult {
@@ -114,7 +115,7 @@ class Coordinator {
   final EventBus eventBus;
 
   // Event listener subscription
-  late StreamSubscription<TranscriptionComplete> _transcriptionSubscription;
+  StreamSubscription<Event>? _transcriptionSubscription;
 
   // Agentic loop control
   static const int maxAgentLoopIterations = 10;
@@ -137,22 +138,29 @@ class Coordinator {
   /// Initialize Coordinator: register event listeners
   ///
   /// Called during bootstrap after Coordinator is registered in GetIt.
-  /// Subscribes to TranscriptionComplete events from STTService.
+  /// Subscribes to transcription_complete events from STTService via EventBus.
   /// Automatically triggers orchestration on each transcription event.
+  ///
+  /// This is the ONLY path for orchestration - UI should NOT call orchestrate() directly.
   void initialize() {
     print('\n🔧 [Coordinator.initialize] Wiring event listener');
-    _transcriptionSubscription = eventBus.subscribe<TranscriptionComplete>().listen(
+    _transcriptionSubscription = eventBus.subscribe().listen(
       (event) async {
-        print('\n📡 [Coordinator] Heard TranscriptionComplete: "${event.transcript}"');
+        // Filter for transcription_complete events
+        if (event.eventType != 'transcription_complete') {
+          return;
+        }
 
         try {
-          // Orchestrate on transcription complete event
-          // This enables event-driven flow: STT → EventBus → Coordinator → Orchestrate
+          // Extract semantic input from event
+          final inputText = event.toInputString();
+
+          print('\n📡 [Coordinator] Heard transcription_complete: "$inputText"');
           print('🚀 [Coordinator] Starting orchestration from event...');
 
           final result = await orchestrate(
             correlationId: event.correlationId,
-            utterance: event.transcript,
+            utterance: inputText,
             availableNamespaces: ['general', 'productivity', 'entertainment'],
             toolsByNamespace: {
               'general': [],
@@ -165,6 +173,19 @@ class Coordinator {
           if (!result.success) {
             print('⚠️ Error: ${result.errorMessage}');
           }
+
+          // Publish orchestration_complete event for UI to update state
+          await eventBus.publish(Event(
+            eventType: 'orchestration_complete',
+            correlationId: event.correlationId,
+            source: 'coordinator',
+            payloadJson: jsonEncode({
+              'success': result.success,
+              'response': result.finalResponse,
+              'errorMessage': result.errorMessage,
+            }),
+          ));
+          print('📡 [Coordinator] Published orchestration_complete event');
         } catch (e) {
           print('❌ [Coordinator] Failed to orchestrate from event: $e');
         }
@@ -179,7 +200,7 @@ class Coordinator {
   /// Dispose: cleanup event listeners
   void dispose() {
     print('🛑 [Coordinator.dispose] Cleaning up event listener');
-    _transcriptionSubscription.cancel();
+    _transcriptionSubscription?.cancel();
     print('✅ [Coordinator.dispose] Disposed');
   }
 
@@ -352,16 +373,19 @@ class Coordinator {
       print('=== COORDINATOR: orchestrate END (ERROR) ===\n');
 
       // Publish error event (for monitoring and testing)
-      final errorEvent = ErrorOccurred(
-        source: 'coordinator',
-        message: e.toString(),
-        errorType: e.runtimeType.toString(),
+      final errorEvent = Event(
+        eventType: 'orchestration_error',
         correlationId: correlationId,
-        stackTrace: stackTrace.toString(),
-        severity: 'error',
+        source: 'coordinator',
+        payloadJson: jsonEncode({
+          'message': e.toString(),
+          'errorType': e.runtimeType.toString(),
+          'stackTrace': stackTrace.toString(),
+          'severity': 'error',
+        }),
       );
       await eventBus.publish(errorEvent);
-      print('📤 ErrorOccurred event published');
+      print('📤 orchestration_error event published');
 
       return CoordinatorResult(
         turnId: correlationId,

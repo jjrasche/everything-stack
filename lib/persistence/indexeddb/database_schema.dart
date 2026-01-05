@@ -42,16 +42,13 @@ const int kDatabaseVersion = 1;
 /// Object store names
 class ObjectStores {
   static const String notes = 'notes';
-  static const String mediaItems = 'mediaItems';
-  static const String channels = 'channels';
   static const String edges = 'edges';
   static const String entityVersions = 'entity_versions';
   static const String hnswIndex = '_hnsw_index'; // Metadata store for HNSW
   static const String adaptation_state = 'adaptation_state';
-  static const String events = 'events';
   static const String feedback = 'feedback';
+  static const String events = 'events';
   static const String invocations = 'invocations';
-  static const String turns = 'turns';
   static const String embeddingTasks = 'embedding_tasks';
 }
 
@@ -63,19 +60,6 @@ class Indexes {
   static const String notesSyncStatus = 'dbSyncStatus';
   static const String notesPinned = 'isPinned';
   static const String notesArchived = 'isArchived';
-
-  // MediaItems indexes
-  static const String mediaItemsId = 'id';
-  static const String mediaItemsUuid = 'uuid';
-  static const String mediaItemsSyncStatus = 'dbSyncStatus';
-  static const String mediaItemsDownloadStatus = 'downloadStatus';
-  static const String mediaItemsChannelId = 'channelId';
-
-  // Channels indexes
-  static const String channelsId = 'id';
-  static const String channelsUuid = 'uuid';
-  static const String channelsSyncStatus = 'dbSyncStatus';
-  static const String channelsSubscribed = 'isSubscribed';
 
   // Edges indexes
   static const String edgesId = 'id';
@@ -97,27 +81,22 @@ class Indexes {
   static const String adaptationStateUuid = 'uuid';
   static const String adaptationStateSyncStatus = 'dbSyncStatus';
 
-  // Events indexes
-  static const String eventsId = 'id';
-  static const String eventsUuid = 'uuid';
-  static const String eventsSyncStatus = 'dbSyncStatus';
-  static const String eventsCorrelationId = 'correlationId';
-
   // Feedback indexes
   static const String feedbackId = 'id';
   static const String feedbackUuid = 'uuid';
   static const String feedbackSyncStatus = 'dbSyncStatus';
+
+  // Events indexes
+  static const String eventsId = 'id';
+  static const String eventsUuid = 'uuid';
+  static const String eventsCorrelationId = 'correlationId';
+  static const String eventsEventType = 'eventType';
 
   // Invocations indexes
   static const String invocationsId = 'id';
   static const String invocationsUuid = 'uuid';
   static const String invocationsSyncStatus = 'dbSyncStatus';
   static const String invocationsCorrelationId = 'correlationId';
-
-  // Turns indexes
-  static const String turnsId = 'id';
-  static const String turnsUuid = 'uuid';
-  static const String turnsSyncStatus = 'dbSyncStatus';
 
   // EmbeddingTasks indexes
   static const String embeddingTasksId = 'id';
@@ -167,77 +146,6 @@ class NotesStoreSchema {
   /// - No IndexedDB index on embeddings (not supported)
   /// - NoteIndexedDBAdapter builds in-memory HNSW index using local_hnsw
   /// - Index rebuilt on app load and incrementally updated
-}
-
-/// Schema definition for mediaItems object store
-class MediaItemsStoreSchema {
-  static const String storeName = ObjectStores.mediaItems;
-  static const String keyPath = 'uuid';
-  static const bool autoIncrement = false;
-
-  static const List<IndexDefinition> indexes = [
-    IndexDefinition(
-      name: Indexes.mediaItemsId,
-      keyPath: 'id',
-      unique: true,
-    ),
-    IndexDefinition(
-      name: Indexes.mediaItemsUuid,
-      keyPath: 'uuid',
-      unique: true,
-    ),
-    IndexDefinition(
-      name: Indexes.mediaItemsSyncStatus,
-      keyPath: 'dbSyncStatus',
-      unique: false,
-    ),
-    IndexDefinition(
-      name: Indexes.mediaItemsDownloadStatus,
-      keyPath: 'downloadStatus',
-      unique: false,
-    ),
-    IndexDefinition(
-      name: Indexes.mediaItemsChannelId,
-      keyPath: 'channelId',
-      unique: false,
-    ),
-  ];
-
-  /// HNSW semantic search
-  /// - Embeddings stored in 'embedding' field (array of doubles)
-  /// - No IndexedDB index on embeddings (not supported)
-  /// - MediaItemIndexedDBAdapter builds in-memory HNSW index using local_hnsw
-  /// - Index rebuilt on app load and incrementally updated
-}
-
-/// Schema definition for channels object store
-class ChannelsStoreSchema {
-  static const String storeName = ObjectStores.channels;
-  static const String keyPath = 'uuid';
-  static const bool autoIncrement = false;
-
-  static const List<IndexDefinition> indexes = [
-    IndexDefinition(
-      name: Indexes.channelsId,
-      keyPath: 'id',
-      unique: true,
-    ),
-    IndexDefinition(
-      name: Indexes.channelsUuid,
-      keyPath: 'uuid',
-      unique: true,
-    ),
-    IndexDefinition(
-      name: Indexes.channelsSyncStatus,
-      keyPath: 'dbSyncStatus',
-      unique: false,
-    ),
-    IndexDefinition(
-      name: Indexes.channelsSubscribed,
-      keyPath: 'isSubscribed',
-      unique: false,
-    ),
-  ];
 }
 
 /// Schema definition for edges object store
@@ -346,36 +254,6 @@ class AdaptationStateStoreSchema {
   ];
 }
 
-/// Schema definition for events object store
-class EventsStoreSchema {
-  static const String storeName = ObjectStores.events;
-  static const String keyPath = 'uuid';
-  static const bool autoIncrement = false;
-
-  static const List<IndexDefinition> indexes = [
-    IndexDefinition(
-      name: Indexes.eventsId,
-      keyPath: 'id',
-      unique: true,
-    ),
-    IndexDefinition(
-      name: Indexes.eventsUuid,
-      keyPath: 'uuid',
-      unique: true,
-    ),
-    IndexDefinition(
-      name: Indexes.eventsSyncStatus,
-      keyPath: 'dbSyncStatus',
-      unique: false,
-    ),
-    IndexDefinition(
-      name: Indexes.eventsCorrelationId,
-      keyPath: 'correlationId',
-      unique: false,
-    ),
-  ];
-}
-
 /// Schema definition for feedback object store
 class FeedbackStoreSchema {
   static const String storeName = ObjectStores.feedback;
@@ -396,6 +274,36 @@ class FeedbackStoreSchema {
     IndexDefinition(
       name: Indexes.feedbackSyncStatus,
       keyPath: 'dbSyncStatus',
+      unique: false,
+    ),
+  ];
+}
+
+/// Schema definition for events object store
+class EventsStoreSchema {
+  static const String storeName = ObjectStores.events;
+  static const String keyPath = 'uuid';
+  static const bool autoIncrement = false;
+
+  static const List<IndexDefinition> indexes = [
+    IndexDefinition(
+      name: Indexes.eventsId,
+      keyPath: 'id',
+      unique: false,
+    ),
+    IndexDefinition(
+      name: Indexes.eventsUuid,
+      keyPath: 'uuid',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.eventsCorrelationId,
+      keyPath: 'correlationId',
+      unique: false,
+    ),
+    IndexDefinition(
+      name: Indexes.eventsEventType,
+      keyPath: 'eventType',
       unique: false,
     ),
   ];
@@ -426,31 +334,6 @@ class InvocationsStoreSchema {
     IndexDefinition(
       name: Indexes.invocationsCorrelationId,
       keyPath: 'correlationId',
-      unique: false,
-    ),
-  ];
-}
-
-/// Schema definition for turns object store
-class TurnsStoreSchema {
-  static const String storeName = ObjectStores.turns;
-  static const String keyPath = 'uuid';
-  static const bool autoIncrement = false;
-
-  static const List<IndexDefinition> indexes = [
-    IndexDefinition(
-      name: Indexes.turnsId,
-      keyPath: 'id',
-      unique: true,
-    ),
-    IndexDefinition(
-      name: Indexes.turnsUuid,
-      keyPath: 'uuid',
-      unique: true,
-    ),
-    IndexDefinition(
-      name: Indexes.turnsSyncStatus,
-      keyPath: 'dbSyncStatus',
       unique: false,
     ),
   ];
@@ -527,18 +410,6 @@ class DatabaseSchema {
       indexes: NotesStoreSchema.indexes,
     ),
     ObjectStoreDefinition(
-      name: MediaItemsStoreSchema.storeName,
-      keyPath: MediaItemsStoreSchema.keyPath,
-      autoIncrement: MediaItemsStoreSchema.autoIncrement,
-      indexes: MediaItemsStoreSchema.indexes,
-    ),
-    ObjectStoreDefinition(
-      name: ChannelsStoreSchema.storeName,
-      keyPath: ChannelsStoreSchema.keyPath,
-      autoIncrement: ChannelsStoreSchema.autoIncrement,
-      indexes: ChannelsStoreSchema.indexes,
-    ),
-    ObjectStoreDefinition(
       name: EdgesStoreSchema.storeName,
       keyPath: EdgesStoreSchema.keyPath,
       autoIncrement: EdgesStoreSchema.autoIncrement,
@@ -563,28 +434,22 @@ class DatabaseSchema {
       indexes: AdaptationStateStoreSchema.indexes,
     ),
     ObjectStoreDefinition(
-      name: EventsStoreSchema.storeName,
-      keyPath: EventsStoreSchema.keyPath,
-      autoIncrement: EventsStoreSchema.autoIncrement,
-      indexes: EventsStoreSchema.indexes,
-    ),
-    ObjectStoreDefinition(
       name: FeedbackStoreSchema.storeName,
       keyPath: FeedbackStoreSchema.keyPath,
       autoIncrement: FeedbackStoreSchema.autoIncrement,
       indexes: FeedbackStoreSchema.indexes,
     ),
     ObjectStoreDefinition(
+      name: EventsStoreSchema.storeName,
+      keyPath: EventsStoreSchema.keyPath,
+      autoIncrement: EventsStoreSchema.autoIncrement,
+      indexes: EventsStoreSchema.indexes,
+    ),
+    ObjectStoreDefinition(
       name: InvocationsStoreSchema.storeName,
       keyPath: InvocationsStoreSchema.keyPath,
       autoIncrement: InvocationsStoreSchema.autoIncrement,
       indexes: InvocationsStoreSchema.indexes,
-    ),
-    ObjectStoreDefinition(
-      name: TurnsStoreSchema.storeName,
-      keyPath: TurnsStoreSchema.keyPath,
-      autoIncrement: TurnsStoreSchema.autoIncrement,
-      indexes: TurnsStoreSchema.indexes,
     ),
     ObjectStoreDefinition(
       name: EmbeddingTasksStoreSchema.storeName,

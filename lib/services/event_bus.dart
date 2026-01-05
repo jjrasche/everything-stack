@@ -2,26 +2,29 @@
 ///
 /// Pub/sub event coordination for the Everything Stack.
 ///
-/// ## Design: Write-Through Persistence
-/// Every event is:
-/// 1. Persisted to EventRepository immediately (synchronous, guaranteed)
-/// 2. Published to listeners asynchronously (fire-and-forget)
+/// ## Design: Simultaneous Persistence & Publication
+/// Every Event is:
+/// 1. Published to EventBus listeners immediately
+/// 2. Persisted to ObjectBox/IndexedDB simultaneously
 ///
-/// This ensures events are NEVER LOST even if listeners fail.
+/// Both operations complete before publish() returns.
 ///
 /// ## Usage
 /// ```dart
-/// // Publish an event (persisted immediately)
-/// eventBus.publish(TranscriptionComplete(
+/// // Publish an event (persisted simultaneously)
+/// final event = Event(
+///   eventType: 'transcription_complete',
 ///   correlationId: 'corr_001',
-///   transcript: 'hello world',
-///   durationMs: 2500,
-///   confidence: 0.95,
-/// ));
+///   source: 'stt',
+///   payloadJson: '{"transcript":"hello world","confidence":0.95}',
+/// );
+/// await eventBus.publish(event);
 ///
-/// // Subscribe to events of a type
-/// eventBus.subscribe<TranscriptionComplete>().listen((event) {
-///   print('Heard transcription: ${event.transcript}');
+/// // Subscribe to all events and filter by eventType
+/// eventBus.subscribe().listen((event) {
+///   if (event.eventType == 'transcription_complete') {
+///     print('Heard transcription');
+///   }
 /// });
 ///
 /// // Query events by correlation ID (for testing)
@@ -30,60 +33,60 @@
 /// ```
 library;
 
-import 'events/system_event.dart';
+import '../domain/event.dart';
 
 abstract class EventBus {
-  /// Publish an event
+  /// Publish an event (persisted simultaneously)
   ///
-  /// Async: persists to repository first (guaranteed)
-  /// Then notifies listeners (fire-and-forget)
+  /// Event is saved to ObjectBox/IndexedDB and published to listeners.
+  /// Both operations complete before returning.
   ///
-  /// Event is guaranteed to persist even if all listeners fail.
-  ///
-  /// Callers MUST await this for write-through guarantee:
+  /// Callers MUST await this:
   /// ```dart
-  /// await eventBus.publish(event);  // Waits for persistence
+  /// await eventBus.publish(event);
   /// ```
-  Future<void> publish<T extends SystemEvent>(T event);
+  Future<void> publish(Event event);
 
-  /// Subscribe to events of type T
+  /// Subscribe to all events
   ///
   /// Returns a broadcast stream. Multiple listeners can subscribe.
-  /// Listeners receive events published after subscription.
-  ///
-  /// Remember to cancel subscription to avoid memory leaks:
+  /// Filter by eventType in the listener:
   /// ```dart
   /// late StreamSubscription _sub;
   ///
   /// void initialize() {
-  ///   _sub = eventBus.subscribe<TranscriptionComplete>().listen(...);
+  ///   _sub = eventBus.subscribe().listen((event) {
+  ///     if (event.eventType == 'transcription_complete') {
+  ///       // handle transcription
+  ///     }
+  ///   });
   /// }
   ///
   /// void dispose() {
   ///   _sub.cancel();
   /// }
   /// ```
-  Stream<T> subscribe<T extends SystemEvent>();
+  Stream<Event> subscribe();
 
   /// Get all events with a specific correlation ID
   ///
   /// Used for turn-level debugging and testing.
   /// Returns events in chronological order.
-  List<SystemEvent> getEventsByCorrelationId(String correlationId);
+  List<Event> getEventsByCorrelationId(String correlationId);
 
-  /// Get all events of a specific type
+  /// Get all events of a specific eventType
   ///
-  /// Used for filtering events by source (STT, Coordinator, etc).
-  List<T> getEventsByType<T extends SystemEvent>();
+  /// Used for filtering events (e.g., 'transcription_complete', 'orchestration_complete').
+  List<Event> getEventsByType(String eventType);
 
   /// Get all events since a specific time
   ///
   /// Used for monitoring and log collection.
-  List<SystemEvent> getEventsSince(DateTime timestamp);
+  List<Event> getEventsSince(DateTime timestamp);
 
   /// Clear all events (for testing)
   ///
-  /// Removes events from both repository and in-memory cache.
+  /// Removes events from in-memory cache only.
   void clear();
 
   /// Dispose EventBus and cancel all listeners

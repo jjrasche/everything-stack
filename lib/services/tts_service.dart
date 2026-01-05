@@ -101,6 +101,26 @@ abstract class TTSService implements Trainable {
     required String correlationId,
   });
 
+  /// Speak text and block until audio playback finishes.
+  ///
+  /// Used for continuous conversation - ensures audio completes before STT resumes.
+  /// This is NOT used for training/logging - use [synthesizeAndLog] for that.
+  ///
+  /// ## Parameters
+  /// - [text]: Text to synthesize and speak
+  ///
+  /// ## Returns
+  /// Completes when audio playback is finished
+  /// Throws: TTSException if synthesis fails or times out
+  ///
+  /// ## Example
+  /// ```dart
+  /// // Speak response and wait for completion
+  /// await tts.speakAndAwait('Hello world');
+  /// // Now STT can safely resume listening
+  /// ```
+  Future<void> speakAndAwait(String text);
+
   /// Cleanup resources.
   ///
   /// Always call this when done with the service.
@@ -271,10 +291,56 @@ class GoogleTTSService extends TTSService {
     required String text,
     required String correlationId,
   }) async {
-    // TODO: Implement synthesizeAndLog for GoogleTTSService
-    // For MVP: delegate to synthesize() and consume audio stream
-    // Then record invocation with correlationId
-    print('GoogleTTSService.synthesizeAndLog() - TODO');
+    final startTime = DateTime.now();
+    bool success = false;
+    String? errorMessage;
+
+    try {
+      final audioStream = synthesize(text);
+      final audioChunks = <Uint8List>[];
+
+      await for (final chunk in audioStream) {
+        audioChunks.add(chunk);
+      }
+
+      final totalBytes = audioChunks.fold<int>(0, (sum, chunk) => sum + chunk.length);
+      print('🔊 [GoogleTTS] Synthesis complete: $totalBytes bytes');
+      success = true;
+
+    } catch (e) {
+      errorMessage = e.toString();
+      print('⚠️ [GoogleTTS] Synthesis failed: $e');
+      success = false;
+    }
+
+    final latency = DateTime.now().difference(startTime).inMilliseconds;
+    final invocation = Invocation(
+      correlationId: correlationId,
+      componentType: 'tts',
+      success: success,
+      confidence: success ? 1.0 : 0.0,
+      input: {
+        'text': text,
+        'voice': defaultVoice,
+        'audioEncoding': audioEncoding,
+      },
+      output: {
+        'success': success,
+        'latencyMs': latency,
+        'error': errorMessage,
+      },
+    );
+
+    await _invocationRepository.save(invocation);
+    print('💾 [GoogleTTS] TTS invocation logged');
+  }
+
+  @override
+  Future<void> speakAndAwait(String text) async {
+    // TODO: Implement Google Cloud TTS with audio playback
+    // For MVP: stub - use FlutterTtsService instead
+    print('⚠️ [GoogleTTS] speakAndAwait() not yet implemented');
+    throw TTSException('Google TTS not yet implemented - use FlutterTtsService');
   }
 
   // ============================================================================
@@ -345,6 +411,12 @@ class NullTTSService extends TTSService {
     print('⚠️  [NullTTSService] TTS not configured - skipping synthesis for: "$text"');
     // No-op: TTS not configured, so we don't do anything
     // This allows orchestration to continue without crashing
+  }
+
+  @override
+  Future<void> speakAndAwait(String text) async {
+    print('⚠️  [NullTTSService] TTS not configured - skipping: "$text"');
+    // No-op: TTS not configured, return immediately so listening can continue
   }
 
   @override

@@ -68,6 +68,9 @@ class Feedback extends BaseEntity {
   @override
   String? syncId;
 
+  @override
+  SyncStatus syncStatus = SyncStatus.local;
+
   // ============ Feedback fields ============
 
   /// Which invocation does this feedback apply to?

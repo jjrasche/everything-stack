@@ -1,18 +1,27 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:everything_stack_template/services/coordinator.dart';
-import 'package:everything_stack_template/services/tts_service.dart';
 import 'package:everything_stack_template/services/stt_service.dart';
 import 'package:everything_stack_template/services/audio_recording_service.dart';
+import 'package:everything_stack_template/services/event_bus.dart';
+import 'package:everything_stack_template/domain/event.dart';
 
 /// Voice Assistant Screen
 ///
-/// UI for voice input/output interaction:
-/// 1. User speaks
-/// 2. STT converts speech to text
-/// 3. Coordinator processes text with LLM
-/// 4. TTS speaks response
+/// PASSIVE OBSERVER - displays state from events, never calls orchestrate().
+///
+/// ## What it does:
+/// - Start/Stop button controls STT listening
+/// - Displays interim transcription (left side - what user is saying)
+/// - Displays LLM response (right side - AI response)
+///
+/// ## Event Flow:
+/// 1. User presses Start → STT begins listening
+/// 2. STT interim callbacks → update interim text display
+/// 3. STT detects utterance end → publishes Event(eventType: transcription_complete)
+/// 4. Coordinator receives event → LLM → TTS → publishes Event(eventType: orchestration_complete)
+/// 5. Screen receives orchestration_complete event → displays response
+/// 6. STT continues listening for next turn (even during TTS)
 class VoiceAssistantScreen extends StatefulWidget {
   const VoiceAssistantScreen({Key? key}) : super(key: key);
 
@@ -24,23 +33,22 @@ class VoiceAssistantScreen extends StatefulWidget {
 enum ConversationState {
   idle, // Not in conversation
   listening, // Capturing user speech
-  thinking, // Processing with LLM
+  thinking, // Processing with LLM (after utterance end, before response)
   speaking, // Playing TTS response
 }
 
 class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
-  late Coordinator _coordinator;
-  late TTSService _ttsService;
+  late EventBus _eventBus;
   late STTService _sttService;
   late AudioRecordingService _audioService;
 
-  String _interimText = ''; // Gray, updating text
-  String _finalText = ''; // Black, locked text
-  String _responseText = '';
+  String _interimText = ''; // Gray, updating text (what user is currently saying)
+  String _finalText = ''; // Black, locked text (last complete utterance)
+  String _responseText = ''; // AI response
   ConversationState _conversationState = ConversationState.idle;
 
   StreamSubscription<String>? _sttSubscription;
-  StreamSubscription<dynamic>? _ttsSubscription;
+  StreamSubscription<Event>? _eventSubscription;
   Timer? _sessionIdleTimer;
 
   static const int SESSION_TIMEOUT_MS = 30000;
@@ -49,26 +57,57 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   void initState() {
     super.initState();
 
-    // Get services from GetIt/singletons
-    debugPrint('🔍 [initState] Getting Coordinator from GetIt...');
-    try {
-      _coordinator = GetIt.instance<Coordinator>();
-      debugPrint('✅ [initState] Coordinator successfully retrieved');
-    } catch (e) {
-      debugPrint('❌ [initState] FAILED TO GET COORDINATOR: $e');
-      debugPrint(
-          'This error means setupServiceLocator() was not called or failed in main()');
-      rethrow;
-    }
-    _ttsService = TTSService.instance;
+    // Get services from GetIt
+    debugPrint('🔍 [initState] Getting services from GetIt...');
+    _eventBus = GetIt.instance<EventBus>();
     _sttService = STTService.instance;
     _audioService = AudioRecordingService.instance;
 
-    debugPrint('✅ [initState] All services initialized');
-    debugPrint('  - Coordinator: OK');
-    debugPrint('  - TTS: ${_ttsService.isReady ? "ready" : "not ready"}');
-    debugPrint('  - STT: ${_sttService.isReady ? "ready" : "not ready"}');
-    debugPrint('  - Audio: initialized');
+    // Subscribe to OrchestrationComplete events
+    _subscribeToEvents();
+
+    debugPrint('✅ [initState] Services initialized, event subscriptions active');
+  }
+
+  /// Subscribe to events from EventBus
+  void _subscribeToEvents() {
+    debugPrint('📡 [_subscribeToEvents] Subscribing to orchestration_complete events...');
+
+    _eventSubscription = _eventBus.subscribe().listen(
+      (event) {
+        // Filter for orchestration_complete events
+        if (event.eventType != 'orchestration_complete') {
+          return;
+        }
+
+        try {
+          // Format event for display
+          final displayText = event.getDisplayString();
+
+          debugPrint('📡 [Event] orchestration_complete received');
+          debugPrint('   Response: "$displayText"');
+
+          if (mounted) {
+            setState(() {
+              _responseText = displayText;
+              // TTS is playing, but STT continues listening
+              // State goes back to listening (STT never stopped)
+              _conversationState = ConversationState.listening;
+            });
+          }
+
+          // Reset idle timer since we got a response
+          _resetSessionIdleTimer();
+        } catch (e) {
+          debugPrint('❌ [Event] Error handling orchestration_complete: $e');
+        }
+      },
+      onError: (error) {
+        debugPrint('❌ [Event] orchestration_complete subscription error: $error');
+      },
+    );
+
+    debugPrint('✅ [_subscribeToEvents] Event subscriptions active');
   }
 
   /// Start conversation session (continuous listening)
@@ -107,76 +146,75 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
     });
 
     _startSessionIdleTimer();
-    await _startListeningPhase();
+    await _startListening();
   }
 
-  /// Start a listening phase (can be called multiple times in a session)
-  Future<void> _startListeningPhase() async {
+  /// Start STT listening
+  ///
+  /// STT runs continuously until session ends.
+  /// When utterance ends, STT publishes Event(eventType: transcription_complete).
+  /// Coordinator handles the event → LLM → TTS.
+  /// STT keeps listening for next utterance (even during TTS).
+  Future<void> _startListening() async {
     if (_conversationState == ConversationState.idle) {
-      debugPrint('Session ended, not starting new listening phase');
+      debugPrint('Session ended, not starting STT');
       return;
     }
 
-    debugPrint('🎤 [_startListeningPhase] Getting audio stream...');
+    debugPrint('🎤 [_startListening] Starting continuous STT...');
 
     try {
       // Get audio stream from microphone
       final audioStream = _audioService.startRecording();
 
-      debugPrint('🎤 [_startListeningPhase] Starting STT transcription...');
-
-      if (mounted) {
-        setState(() => _conversationState = ConversationState.listening);
-      }
-
       // Pass audio to STT service
+      // STT will publish Event(eventType: transcription_complete) when utterance ends
       _sttSubscription = _sttService.transcribe(
         audio: audioStream,
         onTranscript: (transcript) {
-          debugPrint('📝 [STT] Interim transcript: "$transcript"');
+          // Interim transcript - update display
+          debugPrint('📝 [STT] Interim: "$transcript"');
           if (mounted) {
             setState(() => _interimText = transcript);
           }
-          // Reset idle timer on new speech
+          // Reset idle timer on speech activity
           _resetSessionIdleTimer();
         },
         onUtteranceEnd: () {
-          debugPrint('✅ [STT] Utterance ended - user stopped talking');
-          // Lock interim text as final
+          // Utterance complete - lock text, show thinking state
+          debugPrint('✅ [STT] Utterance ended');
           if (mounted) {
             setState(() {
               _finalText = _interimText;
               _interimText = '';
+              _conversationState = ConversationState.thinking;
             });
           }
-          // Don't stop listening, instead process this utterance
-          if (_conversationState == ConversationState.listening &&
-              _finalText.isNotEmpty) {
-            _processUtterance(_finalText);
-          }
+          // NOTE: STT publishes Event(eventType: transcription_complete) internally
+          // Coordinator receives it via EventBus and handles orchestration
+          // STT continues listening for next utterance
         },
         onError: (error) {
           debugPrint('❌ [STT] Error: $error');
           if (mounted) {
-            setState(() => _conversationState = ConversationState.idle);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('STT error: $error')),
             );
           }
-          _cancelSessionIdleTimer();
         },
         onDone: () {
-          debugPrint('🏁 [STT] Transcription stream closed');
-          // If we're still in conversation, this might be an error
-          if (_conversationState != ConversationState.idle) {
-            debugPrint('⚠️ STT stream closed unexpectedly during conversation');
+          debugPrint('🏁 [STT] Stream closed');
+          // STT stream closed - restart if still in conversation
+          if (_conversationState != ConversationState.idle && mounted) {
+            debugPrint('↻ [STT] Restarting listening...');
+            _startListening();
           }
         },
       );
 
-      debugPrint('✅ [_startListeningPhase] Listening phase started');
+      debugPrint('✅ [_startListening] STT active');
     } catch (e) {
-      debugPrint('❌ Error in listening phase: $e');
+      debugPrint('❌ Error starting STT: $e');
       if (mounted) {
         setState(() => _conversationState = ConversationState.idle);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -187,39 +225,9 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
     }
   }
 
-  /// Process one utterance and generate response (stays in conversation)
-  Future<void> _processUtterance(String text) async {
-    if (_conversationState != ConversationState.listening) return;
-
-    debugPrint('💬 [_processUtterance] Processing: "$text"');
-
-    // Stop STT and pause listening
-    await _sttSubscription?.cancel();
-    _sttSubscription = null;
-    await _audioService.stopRecording();
-
-    // Move to thinking state
-    setState(() => _conversationState = ConversationState.thinking);
-
-    await _processRecognizedText(text);
-
-    // After processing, speak response
-    if (_responseText.isNotEmpty) {
-      setState(() => _conversationState = ConversationState.speaking);
-      await _speakResponse(_responseText);
-    }
-
-    // After speaking, go back to listening (not idle!)
-    setState(() => _conversationState = ConversationState.listening);
-    debugPrint('↻ [_processUtterance] Returning to listening phase...');
-
-    // Resume listening for next turn
-    await _startListeningPhase();
-  }
-
   /// Stop the entire conversation session
-  Future<void> _endConversation() async {
-    debugPrint('⏹️ [_endConversation] Ending conversation session...');
+  Future<void> _stopConversation() async {
+    debugPrint('⏹️ [_stopConversation] Stopping conversation...');
 
     _cancelSessionIdleTimer();
 
@@ -230,51 +238,28 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
     // Stop audio recording
     await _audioService.stopRecording();
 
-    setState(() => _conversationState = ConversationState.idle);
-
-    debugPrint('✅ [_endConversation] Conversation ended');
-  }
-
-  /// Stop everything immediately (interrupt mid-response)
-  Future<void> _stopEverything() async {
-    debugPrint('⏹️ [_stopEverything] INTERRUPTING - stopping all services...');
-
-    _cancelSessionIdleTimer();
-
-    // Stop STT (if listening)
-    await _sttSubscription?.cancel();
-    _sttSubscription = null;
-    await _audioService.stopRecording();
-
-    // Stop TTS (if speaking)
-    await _ttsSubscription?.cancel();
-    _ttsSubscription = null;
-
-    // Reset state
     setState(() {
       _conversationState = ConversationState.idle;
       _interimText = '';
-      _finalText = '';
-      _responseText = '';
     });
 
-    debugPrint('✅ [_stopEverything] All services stopped');
+    debugPrint('✅ [_stopConversation] Conversation stopped');
   }
 
   /// Session idle timer - 30 seconds of silence closes conversation
   void _startSessionIdleTimer() {
-    _sessionIdleTimer =
-        Timer(const Duration(milliseconds: SESSION_TIMEOUT_MS), () {
-      debugPrint(
-          '⏲️ [Session Timeout] 30 seconds of idle time - ending conversation');
-      _endConversation();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Session ended due to 30 seconds of silence')),
-        );
-      }
-    });
+    _sessionIdleTimer = Timer(
+      const Duration(milliseconds: SESSION_TIMEOUT_MS),
+      () {
+        debugPrint('⏲️ [Session Timeout] 30 seconds idle - ending conversation');
+        _stopConversation();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Session ended due to 30 seconds of silence')),
+          );
+        }
+      },
+    );
   }
 
   void _resetSessionIdleTimer() {
@@ -287,117 +272,12 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
     _sessionIdleTimer = null;
   }
 
-  /// Process recognized text through Coordinator
-  Future<void> _processRecognizedText(String text) async {
-    debugPrint('\n=== VOICE ASSISTANT: _processRecognizedText START ===');
-    debugPrint('📥 Input text: "$text"');
-
-    if (text.isEmpty) {
-      debugPrint('❌ Text is empty, returning');
-      return;
-    }
-
-    try {
-      final correlationId = '${DateTime.now().millisecondsSinceEpoch}';
-      debugPrint('🔗 Correlation ID: $correlationId');
-      debugPrint('📞 Calling coordinator.orchestrate()...');
-
-      final result = await _coordinator.orchestrate(
-        correlationId: correlationId,
-        utterance: text,
-        availableNamespaces: ['general'],
-        toolsByNamespace: {
-          'general': [],
-        },
-      );
-
-      debugPrint('✅ Coordinator returned!');
-      debugPrint(
-          '📊 Result: success=${result.success}, finalResponse="${result.finalResponse}"');
-      debugPrint('⏱️ Latency: ${result.latencyMs}ms');
-
-      if (!result.success) {
-        debugPrint('❌ Coordinator failed: ${result.errorMessage}');
-      }
-
-      if (mounted) {
-        debugPrint('📱 Widget mounted, updating UI...');
-        setState(() {
-          _responseText = result.finalResponse;
-        });
-        debugPrint('💬 Updated response text: "${result.finalResponse}"');
-
-        // Speak the response
-        if (result.finalResponse.isNotEmpty) {
-          debugPrint('🔊 Calling _speakResponse()...');
-          await _speakResponse(result.finalResponse);
-          debugPrint('✅ TTS complete');
-        } else {
-          debugPrint('⚠️ No response text to speak');
-        }
-      } else {
-        debugPrint('⚠️ Widget not mounted, skipping UI update');
-      }
-
-      debugPrint(
-          '=== VOICE ASSISTANT: _processRecognizedText END (success) ===\n');
-    } catch (e) {
-      debugPrint('❌ EXCEPTION in _processRecognizedText: $e');
-      debugPrint('Stack trace: ${StackTrace.current}');
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
-      }
-      debugPrint(
-          '=== VOICE ASSISTANT: _processRecognizedText END (error) ===\n');
-    }
-  }
-
-  /// Speak the response using TTS
-  Future<void> _speakResponse(String text) async {
-    if (text.isEmpty) return;
-
-    try {
-      // Use subscription instead of await for so we can cancel mid-play
-      final completer = Completer<void>();
-      _ttsSubscription = _ttsService.synthesize(text).listen(
-        (_) {
-          // Stream chunk received (audio being played)
-        },
-        onError: (e) {
-          debugPrint('TTS error: $e');
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('TTS error: $e')),
-            );
-          }
-          if (!completer.isCompleted) completer.completeError(e);
-        },
-        onDone: () {
-          _ttsSubscription = null;
-          if (!completer.isCompleted) completer.complete();
-        },
-      );
-
-      await completer.future;
-    } catch (e) {
-      debugPrint('TTS error in _speakResponse: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('TTS error: $e')),
-        );
-      }
-    }
-  }
-
   @override
   void dispose() {
     debugPrint('🧹 [dispose] Cleaning up VoiceAssistantScreen...');
     _cancelSessionIdleTimer();
     _sttSubscription?.cancel();
-    _ttsSubscription?.cancel();
+    _eventSubscription?.cancel();
     _audioService.stopRecording();
     super.dispose();
   }
@@ -439,11 +319,11 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
                     ),
                   )
                 else
-                  const SizedBox(height: 56), // Placeholder when not listening
+                  const SizedBox(height: 56),
 
                 const SizedBox(height: 24),
 
-                // Final (locked) transcription - black, bold
+                // Final (locked) transcription - what user said
                 if (_finalText.isNotEmpty)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -472,7 +352,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
                     ],
                   ),
 
-                // Interim (updating) transcription - gray, italic
+                // Interim (updating) transcription - what user is currently saying
                 if (_interimText.isNotEmpty)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -508,7 +388,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
                 else
                   const SizedBox.shrink(),
 
-                // LLM Response
+                // AI Response
                 if (_responseText.isNotEmpty) ...[
                   const SizedBox(height: 24),
                   Text(
@@ -527,15 +407,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
                       style: const TextStyle(fontSize: 16),
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  if (_conversationState == ConversationState.speaking)
-                    const Column(
-                      children: [
-                        CircularProgressIndicator(),
-                        SizedBox(height: 8),
-                        Text('Speaking...'),
-                      ],
-                    ),
                 ],
 
                 const SizedBox(height: 32),
@@ -544,7 +415,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
                 FloatingActionButton.extended(
                   onPressed: _conversationState == ConversationState.idle
                       ? _startConversation
-                      : _stopEverything,
+                      : _stopConversation,
                   label: Text(_conversationState == ConversationState.idle
                       ? '🎤 Start Conversation'
                       : '⏹️ Stop'),
@@ -558,7 +429,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
 
                 const SizedBox(height: 16),
 
-                // New request button
+                // Clear button
                 if (_responseText.isNotEmpty)
                   TextButton.icon(
                     onPressed: () {
@@ -569,7 +440,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
                       });
                     },
                     icon: const Icon(Icons.refresh),
-                    label: const Text('New Request'),
+                    label: const Text('Clear'),
                   ),
               ],
             ),

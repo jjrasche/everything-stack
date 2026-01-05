@@ -65,7 +65,7 @@ import 'domain/invocation.dart' as domain_invocation;
 import 'core/invocation_repository.dart';
 import 'core/adaptation_state_repository.dart';
 import 'core/feedback_repository.dart';
-import 'core/turn_repository.dart';
+import 'core/event_repository.dart';
 
 // Platform-specific persistence initialization (ObjectBox or IndexedDB)
 import 'bootstrap/persistence_web.dart'
@@ -644,14 +644,13 @@ Future<void> setupServiceLocator() async {
     // Register task tools with registry
     registerTaskTools(getIt<ToolRegistry>(), taskRepo);
 
-    // ========== Event Bus (Write-through persistence + pub/sub) ==========
+    // ========== Event Bus (Pub/sub with persistence) ==========
     debugPrint('🔍 [setupServiceLocator] Initializing EventBus...');
 
-    // Create platform-specific EventRepository
+    // Create EventRepository and EventBus
     final eventRepository = await createEventRepository();
     getIt.registerSingleton<EventRepository>(eventRepository);
 
-    // Create EventBus with repository
     final eventBus = EventBusImpl(repository: eventRepository);
     getIt.registerSingleton<EventBus>(eventBus);
     debugPrint('✅ [setupServiceLocator] EventBus registered');

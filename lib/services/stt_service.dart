@@ -13,8 +13,8 @@ import 'websocket_connect_web.dart'
     if (dart.library.io) 'websocket_connect_io.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
 import 'package:everything_stack_template/domain/invocation.dart';
+import 'package:everything_stack_template/domain/event.dart';
 import 'package:everything_stack_template/services/event_bus.dart';
-import 'package:everything_stack_template/services/events/transcription_complete.dart';
 import 'package:get_it/get_it.dart';
 
 /// Speech-to-text service contract.
@@ -394,7 +394,9 @@ class DeepgramSTTService extends STTService {
                 }
 
                 // Handle turn end events
-                if (eventType == 'EndOfTurn' || eventType == 'EagerEndOfTurn') {
+                // NOTE: EagerEndOfTurn comes first (quick), EndOfTurn comes after (confirmed)
+                // Only process EagerEndOfTurn to avoid duplicate orchestration
+                if (eventType == 'EagerEndOfTurn') {
                   finalCompleteTimer?.cancel();
                   onUtteranceEnd?.call();
                   if (isActive) {
@@ -404,6 +406,10 @@ class DeepgramSTTService extends STTService {
                     onDone?.call();
                     _cleanup();
                   }
+                } else if (eventType == 'EndOfTurn') {
+                  // Skip EndOfTurn if we already processed EagerEndOfTurn
+                  // This prevents duplicate orchestration
+                  print('ℹ️ [Deepgram/Flux] EndOfTurn received (already processed via EagerEndOfTurn)');
                 } else if (eventType == 'Update') {
                   // Flux Update: reschedule timeout on each Update
                   // When Updates stop coming = turn complete (audio ended, Flux done processing)
@@ -538,15 +544,29 @@ class DeepgramSTTService extends STTService {
     try {
       if (_lastTranscript.isNotEmpty) {
         final eventBus = GetIt.instance<EventBus>();
-        final event = TranscriptionComplete(
-          transcript: _lastTranscript,
-          durationMs: 0,
-          confidence: 0.95,
+
+        // Create Event entity with transcription_complete type
+        final event = Event(
+          eventType: 'transcription_complete',
           correlationId: _correlationIdForEvent,
+          source: 'stt',
+          payloadJson: jsonEncode({
+            'transcript': _lastTranscript,
+            'confidence': _transcriptConfidence,
+            'wordCount': _wordCount,
+            'audioDuration': _audioDuration,
+            'endOfTurnConfidence': _endOfTurnConfidence,
+            'audioWindowStart': _audioWindowStart,
+            'audioWindowEnd': _audioWindowEnd,
+            'turnIndex': _turnIndex,
+            'words': _wordDetails,
+          }),
         );
+
+        // Publish event (persisted simultaneously)
         await eventBus.publish(event);
         print(
-            '📡 [Deepgram] Published TranscriptionComplete event: "$_lastTranscript"');
+            '📡 [Deepgram] Published Event(transcription_complete): "$_lastTranscript"');
 
         // Record STT invocation for training/learning
         try {
@@ -567,14 +587,12 @@ class DeepgramSTTService extends STTService {
               'confidence': _transcriptConfidence,
               'wordCount': _wordCount,
               'audioDuration': _audioDuration,
-              // ============ Flux v2 Turn Detection Data (for training) ============
-              'endOfTurnConfidence':
-                  _endOfTurnConfidence, // Critical for turn detection quality
+              'endOfTurnConfidence': _endOfTurnConfidence,
               'audioWindowStart': _audioWindowStart,
               'audioWindowEnd': _audioWindowEnd,
               'turnIndex': _turnIndex,
               'eventType': _eventType,
-              'words': _wordDetails, // Per-word confidence array
+              'words': _wordDetails,
               'success': true,
             },
             metadata: {
@@ -591,7 +609,7 @@ class DeepgramSTTService extends STTService {
         }
       }
     } catch (e) {
-      print('⚠️ [Deepgram] Failed to publish TranscriptionComplete event: $e');
+      print('⚠️ [Deepgram] Failed to publish transcription_complete event: $e');
     }
   }
 
