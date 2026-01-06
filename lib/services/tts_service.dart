@@ -26,7 +26,7 @@ import '../core/component_types.dart';
 import './implementations/tts_implementer.dart';
 import './types/tts_types.dart';
 
-class TTSService implements Trainable {
+abstract class TTSService implements Trainable {
   final Map<String, TTSImplementer> _implementers;
   final String _defaultImplementer;
   final InvocationRepository invocationRepo;

@@ -26,7 +26,7 @@ import '../core/component_types.dart';
 import './implementations/stt_implementer.dart';
 import './types/stt_types.dart';
 
-class STTService implements Trainable {
+abstract class STTService implements Trainable {
   final Map<String, STTImplementer> _implementers;
   final String _defaultImplementer;
   final InvocationRepository invocationRepo;

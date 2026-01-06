@@ -45,7 +45,7 @@ import './types/message.dart';
 export './types/message.dart' show Message;
 export './types/llm_types.dart' show LLMResponse, LLMTool, LLMToolCall, LLMInvocationInput, LLMInvocationOutput, LLMAdaptationData, LLMFeedback;
 
-class LLMService implements Trainable {
+abstract class LLMService implements Trainable {
   final Map<String, LLMImplementer> _implementers;
   final String _defaultImplementer;
   final InvocationRepository invocationRepo;
