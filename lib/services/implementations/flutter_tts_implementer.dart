@@ -1,11 +1,13 @@
 /// # FlutterTtsImplementer
 ///
 /// Dumb API wrapper for Flutter TTS plugin.
-/// Synthesizes text to speech and saves audio to device storage.
+/// Synthesizes text to speech using flutter_tts package.
 /// No state management - just calls plugin and returns results.
 
 import 'dart:convert';
+import 'dart:async';
 import 'package:crypto/crypto.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 import 'tts_implementer.dart';
 import '../types/tts_types.dart';
@@ -14,7 +16,56 @@ class FlutterTtsImplementer implements TTSImplementer {
   // Cache: maps text+voice+params → audioId for reuse
   final Map<String, String> _synthesisCache = {};
 
-  FlutterTtsImplementer();
+  late final FlutterTts _flutterTts;
+  bool _isInitialized = false;
+
+  FlutterTtsImplementer() {
+    _flutterTts = FlutterTts();
+  }
+
+  /// Initialize the flutter_tts plugin
+  Future<void> initialize() async {
+    if (_isInitialized) return;
+
+    try {
+      await _flutterTts.setLanguage('en-US');
+      await _flutterTts.setSpeechRate(0.5);
+      await _flutterTts.setVolume(1.0);
+      await _flutterTts.setPitch(1.0);
+      _isInitialized = true;
+    } catch (e) {
+      throw FlutterTtsException('Failed to initialize: $e');
+    }
+  }
+
+  /// Wait for flutter_tts to complete speaking
+  Future<void> _waitForCompletion() async {
+    final completer = Completer<void>();
+
+    // Set completion handler
+    _flutterTts.setCompletionHandler(() {
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
+    });
+
+    // Set error handler
+    _flutterTts.setErrorHandler((message) {
+      if (!completer.isCompleted) {
+        completer.completeError(
+          FlutterTtsException('TTS Error: $message'),
+        );
+      }
+    });
+
+    // Wait with timeout
+    return completer.future.timeout(
+      const Duration(minutes: 5),
+      onTimeout: () {
+        throw FlutterTtsException('TTS operation timed out');
+      },
+    );
+  }
 
   @override
   String get implementerName => 'flutter_tts';

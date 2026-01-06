@@ -10,6 +10,8 @@ import 'package:everything_stack_template/services/llm_service.dart';
 import 'package:everything_stack_template/services/stt_service.dart';
 import 'package:everything_stack_template/services/event_bus.dart';
 import 'package:everything_stack_template/services/events/transcription_complete.dart';
+import 'package:everything_stack_template/core/invocation.dart';
+import 'package:everything_stack_template/core/feedback.dart';
 
 /// Mock LLM Service - returns test response without hitting API
 class MockLLMService extends LLMService {
@@ -54,13 +56,13 @@ class MockLLMService extends LLMService {
   Future<String> recordInvocation(dynamic invocation) async => 'mock_invocation_id';
 
   @override
-  Future<void> trainFromFeedback(String turnId, {String? userId}) async {}
+  Future<void> trainFromFeedback(Invocation invocation, Feedback feedback) async {}
 
   @override
   Future<Map<String, dynamic>> getAdaptationState({String? userId}) async => {};
 
   @override
-  Widget buildFeedbackUI(String invocationId) => Container();
+  Widget buildFeedbackUI(BuildContext context, Invocation invocation) => Container();
 }
 
 /// Mock STT Service - returns test transcription without processing audio
@@ -133,13 +135,13 @@ class MockSTTService extends STTService {
   Future<String> recordInvocation(dynamic invocation) async => 'mock_invocation_id';
 
   @override
-  Future<void> trainFromFeedback(String turnId, {String? userId}) async {}
+  Future<void> trainFromFeedback(Invocation invocation, Feedback feedback) async {}
 
   @override
   Future<Map<String, dynamic>> getAdaptationState({String? userId}) async => {};
 
   @override
-  Widget buildFeedbackUI(String invocationId) => Container();
+  Widget buildFeedbackUI(BuildContext context, Invocation invocation) => Container();
 }
 
 /// Enhanced Mock STT Service - Actually processes input stream
@@ -291,11 +293,11 @@ class EnhancedMockSTTService extends STTService {
   Future<String> recordInvocation(dynamic invocation) async => 'enhanced_mock_invocation_id';
 
   @override
-  Future<void> trainFromFeedback(String turnId, {String? userId}) async {}
+  Future<void> trainFromFeedback(Invocation invocation, Feedback feedback) async {}
 
   @override
   Future<Map<String, dynamic>> getAdaptationState({String? userId}) async => {};
 
   @override
-  Widget buildFeedbackUI(String invocationId) => Container();
+  Widget buildFeedbackUI(BuildContext context, Invocation invocation) => Container();
 }

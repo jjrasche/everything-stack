@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'tts_service.dart';
 import 'package:everything_stack_template/core/invocation.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
+import 'package:everything_stack_template/core/feedback.dart';
 
 /// Cross-platform TTS service using flutter_tts package.
 ///
@@ -217,7 +218,7 @@ class FlutterTtsService extends TTSService {
   }
 
   @override
-  Future<void> trainFromFeedback(String turnId, {String? userId}) async {
+  Future<void> trainFromFeedback(Invocation invocation, Feedback feedback) async {
     // TODO: Implement TTS learning from feedback
     print('FlutterTtsService.trainFromFeedback() - TODO');
   }
@@ -229,7 +230,7 @@ class FlutterTtsService extends TTSService {
   }
 
   @override
-  Widget buildFeedbackUI(String invocationId) {
+  Widget buildFeedbackUI(BuildContext context, Invocation invocation) {
     // TODO: Implement TTS feedback UI
     return Center(child: Text('TTS Feedback UI (TODO)'));
   }

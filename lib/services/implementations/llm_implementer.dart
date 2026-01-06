@@ -6,7 +6,8 @@
 
 import '../types/message.dart';
 import '../types/llm_types.dart';
-import '../../core/implementer.dart';
+import '../../core/implementer.dart'
+    show Implementer;
 
 abstract class LLMImplementer implements Implementer {
   /// Hard token limit for this implementer (e.g., Groq 8K, Claude 200K).
@@ -26,5 +27,24 @@ abstract class LLMImplementer implements Implementer {
     required List<Message> messages,
     required double temperature,
     String? systemPrompt,
+  });
+
+  /// Call LLM with tools available (for agentic workflows).
+  ///
+  /// Parameters:
+  /// - [model] Which model to use (e.g., 'llama-3.3-70b-versatile')
+  /// - [messages] Conversation (as Maps, not Message objects, for raw API pass-through)
+  /// - [tools] Tools available to the LLM
+  /// - [temperature] Creativity level
+  /// - [maxTokens] Optional hard token limit (implementer-specific)
+  ///
+  /// Returns: LLMResponse with text content and optional tool calls
+  /// For agentic loops: If wantsToolCall is true, execute tools and call again
+  Future<LLMResponse> chatWithTools({
+    required String model,
+    required List<Map<String, dynamic>> messages,
+    List<LLMTool>? tools,
+    double temperature = 0.7,
+    int? maxTokens,
   });
 }

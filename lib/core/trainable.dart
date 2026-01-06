@@ -72,11 +72,13 @@
 /// final globalAdaptation = await getAdaptationState();
 /// ```
 
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 import 'adaptation_data.dart';
 import 'adaptation_state.dart';
 import 'invocation.dart';
+import 'feedback.dart' as core_feedback;
 import 'invocation_repository.dart';
 import 'adaptation_state_repository.dart';
 
@@ -141,17 +143,22 @@ mixin class Trainable<D extends AdaptationData> {
     await _invocationRepo.save(inv);
   }
 
+  /// Build feedback UI for this component.
+  /// Must be implemented by subclass.
+  /// [context] BuildContext for Theme access
+  /// [invocation] The invocation to collect feedback on
+  Widget buildFeedbackUI(BuildContext context, Invocation invocation) =>
+      throw UnimplementedError('buildFeedbackUI must be implemented');
+
   /// Train component from user feedback.
-  /// Stub implementation: no learning logic yet.
-  /// Future phase will implement learning from feedback patterns.
-  /// Called after user provides corrections/ratings for a turn.
-  Future<void> trainFromFeedback(String turnId) async {
+  /// Must be implemented by subclass.
+  /// Called after user provides corrections/ratings for an invocation.
+  Future<void> trainFromFeedback(Invocation invocation, core_feedback.Feedback feedback) async {
     // Placeholder: learning logic deferred to Phase 2.
     // When implemented, this will:
-    // 1. Fetch all Feedback for this turnId with action=correct or action=rating
-    // 2. For each Feedback, fetch the corresponding Invocation
-    // 3. Update AdaptationState based on feedback patterns
-    // 4. Save updated AdaptationState
+    // 1. Parse typed feedback (LLMFeedback, STTFeedback, etc.)
+    // 2. Update AdaptationState based on feedback patterns
+    // 3. Save updated AdaptationState
   }
 
   /// Get context for feedback UI builder.

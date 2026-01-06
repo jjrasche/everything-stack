@@ -146,3 +146,75 @@ class LLMFeedback {
     correctedResponse: json['correctedResponse'] as String?,
   );
 }
+
+/// LLM response from chatWithTools (includes tool calls, not just text).
+/// Used by Coordinator for agentic workflows.
+class LLMResponse {
+  /// Request ID for logging and correlation.
+  final String id;
+
+  /// The LLM's text response or reasoning.
+  final String? content;
+
+  /// Tool calls the LLM wants to make (if any).
+  final List<LLMToolCall> toolCalls;
+
+  /// Tokens used by the LLM (for cost tracking and adaptation).
+  final int tokensUsed;
+
+  /// Whether the LLM indicated it wants to call tools.
+  bool get wantsToolCall => toolCalls.isNotEmpty;
+
+  LLMResponse({
+    required this.id,
+    this.content,
+    List<LLMToolCall>? toolCalls,
+    required this.tokensUsed,
+  }) : toolCalls = toolCalls ?? [];
+}
+
+/// A tool call requested by the LLM.
+class LLMToolCall {
+  /// Unique ID for this tool call.
+  final String id;
+
+  /// Name of the tool to call (must match available tools).
+  final String toolName;
+
+  /// Arguments to pass to the tool (parsed JSON).
+  final Map<String, dynamic> params;
+
+  LLMToolCall({
+    required this.id,
+    required this.toolName,
+    required this.params,
+  });
+}
+
+/// Tool definition provided to LLM for available tools.
+class LLMTool {
+  /// Tool name (must match Coordinator's tools).
+  final String name;
+
+  /// Description of what the tool does (for LLM to understand).
+  final String description;
+
+  /// JSON schema of tool parameters.
+  final Map<String, dynamic> parametersSchema;
+
+  LLMTool({
+    required this.name,
+    required this.description,
+    required this.parametersSchema,
+  });
+
+  /// Convert to JSON for Groq/Claude API.
+  Map<String, dynamic> toJson() => {
+    'type': 'function',
+    'function': {
+      'name': name,
+      'description': description,
+      'parameters': parametersSchema,
+    },
+  };
+}

@@ -19,7 +19,7 @@ import '../core/invocation.dart';
 import '../core/invocation_repository.dart';
 import '../core/adaptation_state_repository.dart';
 import '../core/adaptation_state.dart';
-import '../core/feedback.dart';
+import '../core/feedback.dart' as core_feedback;
 import '../core/feedback_repository.dart';
 import '../core/trainable.dart';
 import '../core/component_types.dart';
@@ -92,6 +92,16 @@ class TTSService implements Trainable {
     return output;
   }
 
+  /// Synthesize text to speech and log (Coordinator compatibility wrapper).
+  /// This is a convenience method - synthesize() already logs.
+  Future<void> synthesizeAndLog({
+    required String text,
+    required String eventId,
+  }) async {
+    // Call the normal synthesize method (which already logs the invocation)
+    await synthesize(eventId: eventId, text: text);
+  }
+
   /// Get adaptation state for this implementer, or defaults if not found.
   Future<TTSAdaptationData> _getAdaptationState(
     String implementerName,
@@ -111,7 +121,7 @@ class TTSService implements Trainable {
   // ============ Trainable Implementation ============
 
   @override
-  Widget buildFeedbackUI(Invocation invocation) {
+  Widget buildFeedbackUI(BuildContext context, Invocation invocation) {
     // Parse typed input/output from invocation
     final input = TTSInvocationInput.fromJson(invocation.input!);
     final output = TTSInvocationOutput.fromJson(invocation.output!);
@@ -119,7 +129,7 @@ class TTSService implements Trainable {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Text Synthesized:', style: Theme.of(null).textTheme.labelLarge),
+        Text('Text Synthesized:', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.all(12),
@@ -131,9 +141,9 @@ class TTSService implements Trainable {
         ),
         const SizedBox(height: 16),
         Text('Audio Duration: ${output.durationSeconds.toStringAsFixed(1)}s',
-            style: Theme.of(null).textTheme.bodySmall),
+            style: Theme.of(context).textTheme.bodySmall),
         const SizedBox(height: 16),
-        Text('Was this voice appropriate?', style: Theme.of(null).textTheme.labelLarge),
+        Text('Was this voice appropriate?', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -157,7 +167,7 @@ class TTSService implements Trainable {
   }
 
   @override
-  Future<void> trainFromFeedback(String invocationId, Feedback feedback) async {
+  Future<void> trainFromFeedback(Invocation invocation, core_feedback.Feedback feedback) async {
     // TODO: Implement training algorithm
     // 1. Parse typed feedback: TTSFeedback.fromJson(feedback.correctedData)
     // 2. Get current AdaptationState for feedback.implementer

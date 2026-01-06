@@ -428,7 +428,7 @@ class Coordinator {
         .map((tool) => LLMTool(
               name: tool,
               description: 'Tool: $tool',
-              parameters: {
+              parametersSchema: {
                 'type': 'object',
                 'properties': {},
               },
