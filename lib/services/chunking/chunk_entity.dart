@@ -1,5 +1,5 @@
 import 'package:objectbox/objectbox.dart';
-import 'chunk.dart';
+import 'package:everything_stack_template/services/semantic_search/chunk.dart';
 
 /// ObjectBox entity for persisting chunks to database.
 ///

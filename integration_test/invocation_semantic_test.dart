@@ -9,60 +9,60 @@
 /// Run with: flutter test integration_test/invocation_semantic_test.dart -d <platform>
 
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:everything_stack_template/core/invocation.dart';
 import 'package:everything_stack_template/services/chunking_service.dart';
 import 'package:everything_stack_template/services/semantic_search/semantic_search_service.dart';
 import 'package:everything_stack_template/services/semantic_search/chunk.dart';
+import 'package:everything_stack_template/main.dart';
 import 'package:get_it/get_it.dart';
-
-// Mock embeddings for testing - In real setup, these come from smoke test
-const _mockEmbeddings = {
-  'What time is the meeting tomorrow': [
-    0.1, 0.2, 0.3, 0.4, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0,
-  ],
-  'The meeting is scheduled': [
-    0.15, 0.25, 0.35, 0.45, 0.55, 0.0, 0.0, 0.0, 0.0, 0.0,
-  ],
-  'meeting schedule conference room': [
-    0.12, 0.22, 0.32, 0.42, 0.52, 0.0, 0.0, 0.0, 0.0, 0.0,
-  ],
-};
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Invocation Semantic Search - CI Test (Replayed Embeddings)', () {
-    late ChunkingService chunkingService;
-    late SemanticSearchService searchService;
-
     setUpAll(() async {
-      chunkingService = GetIt.instance<ChunkingService>();
-      searchService = GetIt.instance<SemanticSearchService>();
+      // No setup needed - app will initialize on pumpWidget()
     });
 
-    /// Helper to create invocation with text content
-    Invocation _createInvocation({
-      required String componentType,
-      required String text,
-    }) {
-      return Invocation(
-        uuid: 'test-invocation-${DateTime.now().millisecondsSinceEpoch}',
-        turnId: 'test-turn',
-        componentType: componentType,
-        output: {
-          if (componentType == 'stt') 'transcription': text
-          else 'response': text,
-        },
-        startTime: DateTime.now(),
-        endTime: DateTime.now(),
-        adaptationContext: const {},
-        metadata: {},
-      );
-    }
+    testWidgets('Full CI test: Chunking, indexing, and search',
+        (WidgetTester tester) async {
+      // Build app - this runs bootstrap and initializes GetIt
+      debugPrint('🏗️ Building MyApp...');
+      await tester.pumpWidget(const MyApp());
 
-    test('Create invocation with STT content', () {
+      debugPrint('⏳ Waiting for bootstrap and initialization...');
+      await tester.pumpAndSettle(const Duration(seconds: 5));
+
+      // NOW GetIt services are available
+      final chunkingService = GetIt.instance<ChunkingService>();
+      final searchService = GetIt.instance<SemanticSearchService>();
+
+      debugPrint('✅ Services initialized');
+
+      // Helper to create invocation with text content
+      Invocation _createInvocation({
+        required String componentType,
+        required String text,
+      }) {
+        return Invocation(
+          eventId: 'test-event-${DateTime.now().millisecondsSinceEpoch}',
+          turnId: 'test-turn',
+          componentType: componentType,
+          success: true,
+          confidence: 0.95,
+          output: {
+            if (componentType == 'stt') 'transcription': text
+            else 'response': text,
+          },
+          metadata: {},
+        );
+      }
+
+      // Test 1: Create invocation with STT content
+      debugPrint('\n📝 Test 1: Create invocation with STT content');
       final invocation = _createInvocation(
         componentType: 'stt',
         text: 'What time is the meeting tomorrow',
@@ -71,173 +71,176 @@ void main() {
       expect(invocation.uuid, isNotEmpty);
       expect(invocation.componentType, 'stt');
       expect(invocation.output?['transcription'], isNotEmpty);
-    });
+      debugPrint('✅ Test 1 passed');
 
-    test('Create invocation with LLM response', () {
-      final invocation = _createInvocation(
+      // Test 2: Create invocation with LLM response
+      debugPrint('\n📝 Test 2: Create invocation with LLM response');
+      final invocation2 = _createInvocation(
         componentType: 'llm',
         text: 'The meeting is scheduled for 2 PM tomorrow in the main conference room.',
       );
 
-      expect(invocation.componentType, 'llm');
-      expect(invocation.output?['response'], isNotEmpty);
-    });
+      expect(invocation2.componentType, 'llm');
+      expect(invocation2.output?['response'], isNotEmpty);
+      debugPrint('✅ Test 2 passed');
 
-    test('Invocation implements SemanticIndexable', () {
-      final invocation = _createInvocation(
+      // Test 3: Invocation implements SemanticIndexable
+      debugPrint('\n📝 Test 3: Invocation implements SemanticIndexable');
+      final invocation3 = _createInvocation(
         componentType: 'stt',
         text: 'What time is the meeting tomorrow',
       );
 
-      final chunkableInput = invocation.toChunkableInput();
+      final chunkableInput = invocation3.toChunkableInput();
       expect(chunkableInput, contains('What time'));
       expect(chunkableInput, startsWith('User:'));
-    });
+      debugPrint('✅ Test 3 passed');
 
-    test('SemanticChunker produces valid chunks', () async {
-      final invocation = _createInvocation(
+      // Test 4: SemanticChunker produces valid chunks
+      debugPrint('\n📝 Test 4: SemanticChunker produces valid chunks');
+      final invocation4 = _createInvocation(
         componentType: 'llm',
         text:
             'The meeting is scheduled for 2 PM tomorrow in the main conference room. '
             'Please prepare the presentation slides and bring the Q3 reports.',
       );
 
-      final chunks = await chunkingService.indexEntity(invocation);
+      final chunks = await chunkingService.indexEntity(invocation4);
 
       expect(chunks, isNotEmpty);
       for (final chunk in chunks) {
         expect(chunk.id, isNotEmpty);
-        expect(chunk.sourceEntityId, invocation.uuid);
+        expect(chunk.sourceEntityId, invocation4.uuid);
         expect(chunk.text, isNotEmpty);
         expect(chunk.tokenCount, greaterThan(0));
         expect(['parent', 'child'], contains(chunk.config));
       }
-    });
+      debugPrint('✅ Test 4 passed: ${chunks.length} chunks created');
 
-    test('Chunks have text field for reconstruction', () async {
-      final invocation = _createInvocation(
+      // Test 5: Chunks have text field for reconstruction
+      debugPrint('\n📝 Test 5: Chunks have text field for reconstruction');
+      final invocation5 = _createInvocation(
         componentType: 'llm',
         text: 'The meeting is scheduled for 2 PM tomorrow in the main conference room.',
       );
 
-      final chunks = await chunkingService.indexEntity(invocation);
+      final chunks2 = await chunkingService.indexEntity(invocation5);
 
-      for (final chunk in chunks) {
+      for (final chunk in chunks2) {
         expect(chunk.text, isNotEmpty);
-        expect(chunk.text, contains(RegExp(r'\w+'))); // Contains words
+        expect(chunk.text, contains(RegExp(r'\w+')));
       }
-    });
+      debugPrint('✅ Test 5 passed');
 
-    test('HNSW index stores chunk vectors', () async {
-      final invocation = _createInvocation(
+      // Test 6: HNSW index stores chunk vectors
+      debugPrint('\n📝 Test 6: HNSW index stores chunk vectors');
+      final invocation6 = _createInvocation(
         componentType: 'stt',
         text: 'What time is the meeting tomorrow',
       );
 
-      final chunks = await chunkingService.indexEntity(invocation);
+      final chunks3 = await chunkingService.indexEntity(invocation6);
 
-      expect(chunks, isNotEmpty);
-      // Index should have entries
-      final index = GetIt.instance.get<dynamic>(instanceName: null);
-      // Verify index is populated (implementation dependent)
-      expect(chunks.length, greaterThan(0));
-    });
+      expect(chunks3, isNotEmpty);
+      expect(chunks3.length, greaterThan(0));
+      debugPrint('✅ Test 6 passed');
 
-    test('ChunkingService retrieves chunks by ID', () async {
-      final invocation = _createInvocation(
+      // Test 7: ChunkingService retrieves chunks by ID
+      debugPrint('\n📝 Test 7: ChunkingService retrieves chunks by ID');
+      final invocation7 = _createInvocation(
         componentType: 'llm',
         text: 'The meeting is scheduled for 2 PM tomorrow.',
       );
 
-      final chunks = await chunkingService.indexEntity(invocation);
-      expect(chunks, isNotEmpty);
+      final chunks4 = await chunkingService.indexEntity(invocation7);
+      expect(chunks4, isNotEmpty);
 
-      final firstChunk = chunks.first;
+      final firstChunk = chunks4.first;
       final retrieved = chunkingService.getChunkById(firstChunk.id);
 
       expect(retrieved, isNotNull);
       expect(retrieved?.id, firstChunk.id);
       expect(retrieved?.text, firstChunk.text);
-    });
+      debugPrint('✅ Test 7 passed');
 
-    test('ChunkingService queries chunks by entity ID', () async {
-      final invocation = _createInvocation(
+      // Test 8: ChunkingService queries chunks by entity ID
+      debugPrint('\n📝 Test 8: ChunkingService queries chunks by entity ID');
+      final invocation8 = _createInvocation(
         componentType: 'llm',
         text: 'The meeting is scheduled for 2 PM tomorrow in the conference room.',
       );
 
-      final indexedChunks = await chunkingService.indexEntity(invocation);
+      final indexedChunks = await chunkingService.indexEntity(invocation8);
       expect(indexedChunks, isNotEmpty);
 
       final retrievedChunks =
-          await chunkingService.getChunksForEntity(invocation.uuid);
+          await chunkingService.getChunksForEntity(invocation8.uuid);
 
       expect(retrievedChunks, isNotEmpty);
       expect(retrievedChunks.length, indexedChunks.length);
-    });
+      debugPrint('✅ Test 8 passed');
 
-    test('Delete chunks removes from HNSW index', () async {
-      final invocation = _createInvocation(
+      // Test 9: Delete chunks removes from HNSW index
+      debugPrint('\n📝 Test 9: Delete chunks removes from HNSW index');
+      final invocation9 = _createInvocation(
         componentType: 'stt',
         text: 'What time is the meeting tomorrow',
       );
 
-      final chunks = await chunkingService.indexEntity(invocation);
-      expect(chunks, isNotEmpty);
+      final chunks5 = await chunkingService.indexEntity(invocation9);
+      expect(chunks5, isNotEmpty);
 
-      // Delete chunks
-      await chunkingService.deleteByEntityId(invocation.uuid);
+      await chunkingService.deleteByEntityId(invocation9.uuid);
 
-      // Verify deletion
-      final retrievedChunks =
-          await chunkingService.getChunksForEntity(invocation.uuid);
-      expect(retrievedChunks, isEmpty);
-    });
+      final retrievedChunks2 =
+          await chunkingService.getChunksForEntity(invocation9.uuid);
+      expect(retrievedChunks2, isEmpty);
+      debugPrint('✅ Test 9 passed');
 
-    test('Search service finds indexed chunks', () async {
-      final invocation = _createInvocation(
+      // Test 10: Search service finds indexed chunks
+      debugPrint('\n📝 Test 10: Search service finds indexed chunks');
+      final invocation10 = _createInvocation(
         componentType: 'llm',
         text:
             'The meeting is scheduled for 2 PM tomorrow in the main conference room. '
             'Please prepare the presentation slides.',
       );
 
-      await chunkingService.indexEntity(invocation);
+      await chunkingService.indexEntity(invocation10);
 
-      // Query should return results
       final results = await searchService.search(
         'meeting schedule conference room',
         limit: 5,
       );
 
-      // May be empty if embeddings are mocked, but should not crash
       expect(results, isA<List>());
-    });
+      debugPrint('✅ Test 10 passed: ${results.length} results found');
 
-    test('Search results include source entity reference', () async {
-      final invocation = _createInvocation(
+      // Test 11: Search results include source entity reference
+      debugPrint('\n📝 Test 11: Search results include source entity reference');
+      final invocation11 = _createInvocation(
         componentType: 'llm',
         text:
             'The meeting is scheduled for 2 PM tomorrow in the main conference room.',
       );
 
-      await chunkingService.indexEntity(invocation);
+      await chunkingService.indexEntity(invocation11);
 
-      final results = await searchService.search(
+      final results2 = await searchService.search(
         'meeting schedule',
         limit: 5,
       );
 
-      // If results exist, verify structure
-      for (final result in results) {
+      for (final result in results2) {
         expect(result.chunk, isNotNull);
         expect(result.similarity, isA<double>());
         expect(result.similarity, greaterThanOrEqualTo(0.0));
         expect(result.similarity, lessThanOrEqualTo(1.0));
       }
-    });
+      debugPrint('✅ Test 11 passed');
 
-    test('Semantic search ranks by similarity', () async {
+      // Test 12: Semantic search ranks by similarity
+      debugPrint('\n📝 Test 12: Semantic search ranks by similarity');
       final inv1 = _createInvocation(
         componentType: 'llm',
         text: 'The meeting is tomorrow at 2 PM in the conference room.',
@@ -250,55 +253,56 @@ void main() {
       await chunkingService.indexEntity(inv1);
       await chunkingService.indexEntity(inv2);
 
-      final results = await searchService.search(
+      final results3 = await searchService.search(
         'meeting time tomorrow',
         limit: 10,
       );
 
-      // Results should be sorted by similarity (if not empty)
-      if (results.length > 1) {
-        for (int i = 0; i < results.length - 1; i++) {
+      if (results3.length > 1) {
+        for (int i = 0; i < results3.length - 1; i++) {
           expect(
-            results[i].similarity,
-            greaterThanOrEqualTo(results[i + 1].similarity),
+            results3[i].similarity,
+            greaterThanOrEqualTo(results3[i + 1].similarity),
             reason: 'Results should be sorted by similarity descending',
           );
         }
       }
-    });
+      debugPrint('✅ Test 12 passed');
 
-    test('Search with entity type filter', () async {
-      final invocation = _createInvocation(
+      // Test 13: Search with entity type filter
+      debugPrint('\n📝 Test 13: Search with entity type filter');
+      final invocation13 = _createInvocation(
         componentType: 'llm',
         text: 'The meeting is scheduled for 2 PM tomorrow.',
       );
 
-      await chunkingService.indexEntity(invocation);
+      await chunkingService.indexEntity(invocation13);
 
-      final results = await searchService.search(
+      final results4 = await searchService.search(
         'meeting scheduled',
         entityTypes: ['Invocation'],
         limit: 5,
       );
 
-      expect(results, isA<List>());
-    });
+      expect(results4, isA<List>());
+      debugPrint('✅ Test 13 passed');
 
-    test('Index consistency check', () {
+      // Test 14: Index consistency check
+      debugPrint('\n📝 Test 14: Index consistency check');
       final isConsistent = chunkingService.isIndexConsistent();
-      // After indexing, should be consistent or empty
       expect(isConsistent, isA<bool>());
-    });
+      debugPrint('✅ Test 14 passed');
 
-    test('Multiple index/delete cycles', () async {
+      // Test 15: Multiple index/delete cycles
+      debugPrint('\n📝 Test 15: Multiple index/delete cycles');
       for (int i = 0; i < 3; i++) {
         final invocation = _createInvocation(
           componentType: i % 2 == 0 ? 'stt' : 'llm',
           text: 'Cycle $i: The meeting is scheduled for 2 PM tomorrow.',
         );
 
-        final chunks = await chunkingService.indexEntity(invocation);
-        expect(chunks, isNotEmpty);
+        final chunks6 = await chunkingService.indexEntity(invocation);
+        expect(chunks6, isNotEmpty);
 
         await chunkingService.deleteByEntityId(invocation.uuid);
 
@@ -306,6 +310,9 @@ void main() {
             await chunkingService.getChunksForEntity(invocation.uuid);
         expect(retrieved, isEmpty);
       }
+      debugPrint('✅ Test 15 passed');
+
+      debugPrint('\n✅ All CI tests passed!');
     });
   });
 }

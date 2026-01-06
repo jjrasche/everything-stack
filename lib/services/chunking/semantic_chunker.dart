@@ -1,5 +1,6 @@
+import 'package:uuid/uuid.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
-import 'chunk.dart';
+import 'package:everything_stack_template/services/semantic_search/chunk.dart';
 import 'chunking_config.dart';
 import 'chunking_strategy.dart';
 import 'sentence_splitter.dart';
@@ -50,16 +51,28 @@ class SemanticChunker extends ChunkingStrategy {
           final chunkText = tokens.sublist(i, end).join(' ');
           final chunkTokens = end - i;
           chunks.add(Chunk(
+            id: const Uuid().v4(),
+            sourceEntityId: '',
+            sourceEntityType: '',
             text: chunkText,
             startToken: globalPos,
             endToken: globalPos + chunkTokens,
+            config: 'parent',
           ));
           globalPos += chunkTokens;
         }
         return chunks;
       }
 
-      return [Chunk(text: text, startToken: 0, endToken: tokenCount)];
+      return [Chunk(
+        id: const Uuid().v4(),
+        sourceEntityId: '',
+        sourceEntityType: '',
+        text: text,
+        startToken: 0,
+        endToken: tokenCount,
+        config: 'parent',
+      )];
     }
 
     // Step 2: Generate embeddings for all segments
@@ -145,9 +158,13 @@ class SemanticChunker extends ChunkingStrategy {
         // Only create chunk if it meets minimum size (soft limit)
         if (chunkTokens >= config.minChunkSize || chunks.isEmpty) {
           chunks.add(Chunk(
+            id: const Uuid().v4(),
+            sourceEntityId: '',
+            sourceEntityType: '',
             text: chunkText,
             startToken: globalTokenPosition,
             endToken: globalTokenPosition + chunkTokens,
+            config: 'parent',
           ));
           globalTokenPosition += chunkTokens;
           currentSegments.clear();
@@ -171,15 +188,23 @@ class SemanticChunker extends ChunkingStrategy {
         final mergedText = '${lastChunk.text} $chunkText';
         final mergedTokens = SentenceSplitter.countTokens(mergedText);
         chunks.add(Chunk(
+          id: const Uuid().v4(),
+          sourceEntityId: '',
+          sourceEntityType: '',
           text: mergedText,
           startToken: lastChunk.startToken,
           endToken: lastChunk.startToken + mergedTokens,
+          config: 'parent',
         ));
       } else {
         chunks.add(Chunk(
+          id: const Uuid().v4(),
+          sourceEntityId: '',
+          sourceEntityType: '',
           text: chunkText,
           startToken: globalTokenPosition,
           endToken: globalTokenPosition + chunkTokens,
+          config: 'parent',
         ));
       }
     }
@@ -207,9 +232,13 @@ class SemanticChunker extends ChunkingStrategy {
           final splitTokens = end - i;
 
           result.add(Chunk(
+            id: const Uuid().v4(),
+            sourceEntityId: '',
+            sourceEntityType: '',
             text: splitText,
             startToken: chunkStart,
             endToken: chunkStart + splitTokens,
+            config: 'parent',
           ));
           chunkStart += splitTokens;
         }

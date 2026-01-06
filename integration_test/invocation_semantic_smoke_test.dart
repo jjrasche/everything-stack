@@ -9,81 +9,91 @@
 /// Run with: flutter test integration_test/invocation_semantic_smoke_test.dart -d <platform>
 
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:everything_stack_template/core/invocation.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/chunking_service.dart';
 import 'package:everything_stack_template/services/semantic_search/semantic_search_service.dart';
+import 'package:everything_stack_template/main.dart';
 import 'package:get_it/get_it.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Invocation Semantic Search - Smoke Test (Real Embeddings)', () {
-    late ChunkingService chunkingService;
-    late SemanticSearchService searchService;
-    late EmbeddingService embeddingService;
-    late Map<String, List<double>> capturedEmbeddings;
-
     setUpAll(() async {
-      // Get services from GetIt (initialized by app)
-      chunkingService = GetIt.instance<ChunkingService>();
-      searchService = GetIt.instance<SemanticSearchService>();
-      embeddingService = EmbeddingService.instance;
-      capturedEmbeddings = {};
+      // No setup needed - app will initialize on pumpWidget()
     });
 
-    /// Helper to create invocation with text content
-    Invocation _createInvocation({
-      required String componentType,
-      required String text,
-    }) {
-      return Invocation(
-        uuid: 'test-invocation-${DateTime.now().millisecondsSinceEpoch}',
-        turnId: 'test-turn',
-        componentType: componentType,
-        output: {
-          if (componentType == 'stt') 'transcription': text
-          else 'response': text,
-        },
-        startTime: DateTime.now(),
-        endTime: DateTime.now(),
-        adaptationContext: const {},
-        metadata: {},
-      );
-    }
+    testWidgets('Full smoke test: Index and search invocations',
+        (WidgetTester tester) async {
+      // Build app - this runs bootstrap and initializes GetIt
+      debugPrint('🏗️ Building MyApp...');
+      await tester.pumpWidget(const MyApp());
 
-    /// Capture embedding from semantic search
-    Future<void> _captureEmbedding(String text) async {
-      try {
-        final embedding = await embeddingService.generate(text);
-        capturedEmbeddings[text] = embedding;
-      } catch (e) {
-        // Silently skip if capture fails
+      debugPrint('⏳ Waiting for bootstrap and initialization...');
+      await tester.pumpAndSettle(const Duration(seconds: 5));
+
+      // NOW GetIt services are available
+      final chunkingService = GetIt.instance<ChunkingService>();
+      final searchService = GetIt.instance<SemanticSearchService>();
+      final embeddingService = EmbeddingService.instance;
+
+      debugPrint('✅ Services initialized');
+
+      final capturedEmbeddings = <String, List<double>>{};
+
+      // Helper to create invocation with text content
+      Invocation _createInvocation({
+        required String componentType,
+        required String text,
+      }) {
+        return Invocation(
+          eventId: 'test-event-${DateTime.now().millisecondsSinceEpoch}',
+          turnId: 'test-turn',
+          componentType: componentType,
+          success: true,
+          confidence: 0.95,
+          output: {
+            if (componentType == 'stt') 'transcription': text
+            else 'response': text,
+          },
+          metadata: {},
+        );
       }
-    }
 
-    test('Index short STT invocation', () async {
-      final invocation = _createInvocation(
+      /// Capture embedding from semantic search
+      Future<void> _captureEmbedding(String text) async {
+        try {
+          final embedding = await embeddingService.generate(text);
+          capturedEmbeddings[text] = embedding;
+        } catch (e) {
+          // Silently skip if capture fails
+        }
+      }
+
+      // Test 1: Index short STT invocation
+      debugPrint('\n📝 Test 1: Index short STT invocation');
+      final invocation1 = _createInvocation(
         componentType: 'stt',
         text: 'What time is the meeting tomorrow',
       );
 
-      // Index the invocation
-      final chunks = await chunkingService.indexEntity(invocation);
+      final chunks1 = await chunkingService.indexEntity(invocation1);
 
-      expect(chunks, isNotEmpty);
-      expect(chunks.length, greaterThan(0));
+      expect(chunks1, isNotEmpty);
+      expect(chunks1.length, greaterThan(0));
 
-      // Capture embeddings from chunks
-      for (final chunk in chunks) {
+      for (final chunk in chunks1) {
         await _captureEmbedding(chunk.text);
       }
-    });
+      debugPrint('✅ Test 1 passed: ${chunks1.length} chunks created');
 
-    test('Index medium LLM invocation', () async {
-      final invocation = _createInvocation(
+      // Test 2: Index medium LLM invocation
+      debugPrint('\n📝 Test 2: Index medium LLM invocation');
+      final invocation2 = _createInvocation(
         componentType: 'llm',
         text:
             'The meeting is scheduled for 2 PM tomorrow in the main conference room. '
@@ -91,19 +101,19 @@ void main() {
             'We will discuss budget allocation and timeline for the new project.',
       );
 
-      final chunks = await chunkingService.indexEntity(invocation);
+      final chunks2 = await chunkingService.indexEntity(invocation2);
 
-      expect(chunks, isNotEmpty);
-      expect(chunks.length, greaterThanOrEqualTo(2)); // Should have parent + children
+      expect(chunks2, isNotEmpty);
+      expect(chunks2.length, greaterThanOrEqualTo(2));
 
-      // Capture embeddings from chunks
-      for (final chunk in chunks) {
+      for (final chunk in chunks2) {
         await _captureEmbedding(chunk.text);
       }
-    });
+      debugPrint('✅ Test 2 passed: ${chunks2.length} chunks created');
 
-    test('Index long conversation invocation', () async {
-      final invocation = _createInvocation(
+      // Test 3: Index long conversation invocation
+      debugPrint('\n📝 Test 3: Index long conversation invocation');
+      final invocation3 = _createInvocation(
         componentType: 'llm',
         text:
             'Based on the quarterly review, we need to reallocate resources. '
@@ -115,30 +125,26 @@ void main() {
             'This will improve deployment frequency and reduce incident response time.',
       );
 
-      final chunks = await chunkingService.indexEntity(invocation);
+      final chunks3 = await chunkingService.indexEntity(invocation3);
 
-      expect(chunks, isNotEmpty);
-      // Long text should produce multiple chunks
-      expect(chunks.length, greaterThanOrEqualTo(3));
+      expect(chunks3, isNotEmpty);
+      expect(chunks3.length, greaterThanOrEqualTo(3));
 
-      // Capture embeddings from chunks
-      for (final chunk in chunks) {
+      for (final chunk in chunks3) {
         await _captureEmbedding(chunk.text);
       }
-    });
+      debugPrint('✅ Test 3 passed: ${chunks3.length} chunks created');
 
-    test('Search returns semantic results', () async {
-      // Query that should match our indexed content
+      // Test 4: Search returns semantic results
+      debugPrint('\n📝 Test 4: Search returns semantic results');
       final results = await searchService.search(
         'meeting schedule conference room',
         limit: 5,
       );
 
       expect(results, isNotEmpty);
-      // Should find chunks related to meeting
       expect(results.length, greaterThan(0));
 
-      // Results should be ranked by similarity
       if (results.length > 1) {
         expect(
           results.first.similarity,
@@ -146,26 +152,27 @@ void main() {
         );
       }
 
-      // Capture search query embedding
       await _captureEmbedding('meeting schedule conference room');
-    });
+      debugPrint('✅ Test 4 passed: ${results.length} results found');
 
-    test('Search with entity type filter', () async {
-      final results = await searchService.search(
+      // Test 5: Search with entity type filter
+      debugPrint('\n📝 Test 5: Search with entity type filter');
+      final results2 = await searchService.search(
         'deployment DevOps infrastructure',
         entityTypes: ['Invocation'],
         limit: 5,
       );
 
-      expect(results, isNotEmpty);
-      for (final result in results) {
-        expect(result.sourceEntity, isNotNull);
+      expect(results2, isNotEmpty);
+      for (final result in results2) {
+        expect(result.chunk, isNotNull);
       }
 
       await _captureEmbedding('deployment DevOps infrastructure');
-    });
+      debugPrint('✅ Test 5 passed: ${results2.length} results found');
 
-    test('Index multiple invocations and search across them', () async {
+      // Test 6: Index multiple invocations and search across them
+      debugPrint('\n📝 Test 6: Index multiple and search across');
       final inv1 = _createInvocation(
         componentType: 'stt',
         text: 'Schedule a meeting with the design team',
@@ -180,18 +187,16 @@ void main() {
       await chunkingService.indexEntity(inv1);
       await chunkingService.indexEntity(inv2);
 
-      // Search should find content from both invocations
-      final results = await searchService.search(
+      final results3 = await searchService.search(
         'design team dashboard mockups',
         limit: 10,
       );
 
-      expect(results, isNotEmpty);
+      expect(results3, isNotEmpty);
 
       await _captureEmbedding('design team dashboard mockups');
-    });
+      debugPrint('✅ Test 6 passed: ${results3.length} results found');
 
-    tearDownAll(() async {
       // Save captured embeddings for CI tests
       if (capturedEmbeddings.isNotEmpty) {
         final json = jsonEncode(capturedEmbeddings);
@@ -199,6 +204,8 @@ void main() {
         debugPrint('📄 Save this to test/fixtures/invocation_embeddings.json:');
         debugPrint(json);
       }
+
+      debugPrint('\n✅ All smoke tests passed!');
     });
   });
 }

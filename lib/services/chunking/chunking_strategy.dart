@@ -1,4 +1,4 @@
-import 'chunk.dart';
+import 'package:everything_stack_template/services/semantic_search/chunk.dart';
 
 /// Strategy interface for text chunking algorithms
 ///
