@@ -65,6 +65,9 @@ class Chunk {
   /// "child" = small chunks (~25 tokens) for scanning
   final String config;
 
+  /// Full chunk text (needed for reconstruction after HNSW search)
+  final String text;
+
   Chunk({
     required this.id,
     required this.sourceEntityId,
@@ -72,6 +75,7 @@ class Chunk {
     required this.startToken,
     required this.endToken,
     required this.config,
+    required this.text,
   }) {
     // Validate token range
     if (startToken < 0) {
@@ -82,6 +86,9 @@ class Chunk {
     }
     if (config != 'parent' && config != 'child') {
       throw ArgumentError('config must be "parent" or "child"');
+    }
+    if (text.isEmpty) {
+      throw ArgumentError('text cannot be empty');
     }
   }
 
@@ -102,7 +109,8 @@ class Chunk {
           sourceEntityType == other.sourceEntityType &&
           startToken == other.startToken &&
           endToken == other.endToken &&
-          config == other.config;
+          config == other.config &&
+          text == other.text;
 
   @override
   int get hashCode =>
@@ -111,5 +119,6 @@ class Chunk {
       sourceEntityType.hashCode ^
       startToken.hashCode ^
       endToken.hashCode ^
-      config.hashCode;
+      config.hashCode ^
+      text.hashCode;
 }

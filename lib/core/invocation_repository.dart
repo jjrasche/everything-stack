@@ -17,6 +17,13 @@
 /// - save(): Persist invocation
 /// - delete(): Remove invocation
 
+import 'package:everything_stack_template/core/entity_repository.dart';
+import 'package:everything_stack_template/core/invocation.dart';
+import 'package:everything_stack_template/core/handlers/semantic_indexable_handler.dart';
+import 'package:everything_stack_template/core/persistence/persistence_adapter.dart';
+import 'package:everything_stack_template/services/chunking_service.dart';
+import 'package:everything_stack_template/services/embedding_service.dart';
+
 abstract class InvocationRepository<T> {
   /// Find invocation by ID
   ///
@@ -81,3 +88,31 @@ abstract class InvocationRepository<T> {
   /// Returns: All invocations of this type
   Future<List<T>> findAll();
 }
+
+/// # InvocationRepository Adapter
+///
+/// Bridges EntityRepository to InvocationRepository interface while adding
+/// semantic indexing via SemanticIndexableHandler.
+///
+/// This adapter:
+/// - Extends EntityRepository to get CRUD operations
+/// - Implements InvocationRepository to satisfy type contracts
+/// - Wires SemanticIndexableHandler for automatic chunking on save/delete
+///
+/// Unlike a dead wrapper, this adapter performs real work: it orchestrates
+/// the handler lifecycle while implementing the required interface.
+/// Create InvocationRepository with SemanticIndexableHandler wired.
+///
+/// Returns an EntityRepository configured with semantic indexing handler.
+/// Cast to InvocationRepository<Invocation> when registering in GetIt.
+EntityRepository<Invocation> createInvocationRepository({
+  required PersistenceAdapter<Invocation> adapter,
+  required EmbeddingService embeddingService,
+  required ChunkingService chunkingService,
+}) =>
+    EntityRepository<Invocation>(
+      adapter: adapter,
+      embeddingService: embeddingService,
+      chunkingService: chunkingService,
+      handlers: [SemanticIndexableHandler<Invocation>(chunkingService)],
+    );

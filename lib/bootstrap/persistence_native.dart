@@ -21,21 +21,22 @@ import 'objectbox_store_factory.dart';
 /// Initialize persistence layer for native platforms using ObjectBox.
 ///
 /// Creates and registers all repository adapters backed by ObjectBox.
+/// Note: Handler wiring (like SemanticIndexableHandler) happens in bootstrap.dart
 Future<void> initializePersistence(GetIt getIt) async {
   final store = await openObjectBoxStore();
 
   // Register store for direct access (TaskRepository needs it)
-  getIt.registerSingleton<Store>(store, instanceName: 'objectBoxStore');
+  getIt.registerSingleton<Store>(store);
 
   // Create and register adapters
   final invocationAdapter = InvocationObjectBoxAdapter(store);
   final adaptationStateAdapter = AdaptationStateObjectBoxAdapter(store);
   final feedbackAdapter = FeedbackObjectBoxAdapter(store);
 
-  // Register repositories in GetIt
-  getIt.registerSingleton<InvocationRepository<Invocation>>(
-    invocationAdapter,
-  );
+  // Register InvocationRepository adapter
+  // Handler wiring (like SemanticIndexableHandler) is done in bootstrap.dart
+  getIt.registerSingleton<InvocationRepository<Invocation>>(invocationAdapter);
+
   getIt.registerSingleton<AdaptationStateRepository>(
     adaptationStateAdapter,
   );
@@ -53,7 +54,7 @@ Future<EventRepository> createEventRepository() async {
 /// Close the ObjectBox store on disposal.
 void disposePersistence(GetIt getIt) {
   try {
-    final store = getIt<Store>(instanceName: 'objectBoxStore');
+    final store = getIt<Store>();
     store.close();
   } catch (e) {
     // Store not registered, nothing to dispose

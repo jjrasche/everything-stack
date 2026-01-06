@@ -2,8 +2,10 @@ import 'package:uuid/uuid.dart';
 import 'package:everything_stack_template/core/base_entity.dart';
 import 'package:everything_stack_template/patterns/semantic_indexable.dart';
 import 'package:everything_stack_template/services/chunking/semantic_chunker.dart';
+import 'package:everything_stack_template/services/chunking/chunk_entity.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/hnsw_index.dart';
+import 'package:everything_stack_template/services/semantic_search/chunk.dart';
 
 /// Service for orchestrating semantic chunking and HNSW indexing.
 ///
@@ -56,6 +58,9 @@ class ChunkingService {
   /// Child-level chunker (~25 tokens)
   final SemanticChunker childChunker;
 
+  /// ObjectBox store for persisting chunks to database
+  final dynamic chunkBox;
+
   /// In-memory registry of chunk IDs by entity ID
   /// Maps entityId -> [chunkId1, chunkId2, ...]
   /// Used to track which chunks belong to which entity for deletion
@@ -66,6 +71,7 @@ class ChunkingService {
     required this.embeddingService,
     required this.parentChunker,
     required this.childChunker,
+    required this.chunkBox,
   });
 
   /// Index a SemanticIndexable entity by chunking and embedding.
@@ -106,6 +112,7 @@ class ChunkingService {
         startToken: parentChunkText.startToken,
         endToken: parentChunkText.endToken,
         config: 'parent',
+        text: parentChunkText.text,
       );
       chunks.add(parentChunk);
       chunkIds.add(parentChunkId);
@@ -114,6 +121,9 @@ class ChunkingService {
       final parentEmbedding =
           await embeddingService.generate(parentChunkText.text);
       index.insert(parentChunkId, parentEmbedding);
+
+      // Persist parent chunk to database
+      _persistChunk(parentChunk);
 
       // Generate child chunks from this parent
       final childChunkTexts = await childChunker.chunk(parentChunkText.text);
@@ -127,6 +137,7 @@ class ChunkingService {
           startToken: childChunkText.startToken,
           endToken: childChunkText.endToken,
           config: 'child',
+          text: childChunkText.text,
         );
         chunks.add(childChunk);
         chunkIds.add(childChunkId);
@@ -135,6 +146,9 @@ class ChunkingService {
         final childEmbedding =
             await embeddingService.generate(childChunkText.text);
         index.insert(childChunkId, childEmbedding);
+
+        // Persist child chunk to database
+        _persistChunk(childChunk);
       }
     }
 
@@ -144,7 +158,7 @@ class ChunkingService {
     return chunks;
   }
 
-  /// Delete all chunks for an entity from the HNSW index.
+  /// Delete all chunks for an entity from HNSW index and database.
   ///
   /// Called when:
   /// - Entity is deleted
@@ -152,9 +166,15 @@ class ChunkingService {
   /// - Index needs to be rebuilt
   Future<void> deleteByEntityId(String entityId) async {
     final chunkIds = _chunkRegistry[entityId] ?? [];
+
+    // Delete from HNSW index
     for (final chunkId in chunkIds) {
       index.delete(chunkId);
     }
+
+    // Delete from database using dynamic query to avoid ObjectBox import
+    _deleteChunksFromDb(entityId);
+
     _chunkRegistry.remove(entityId);
   }
 
@@ -201,76 +221,78 @@ class ChunkingService {
     // - Orphaned chunks in index but missing entities
     return index.size > 0;
   }
-}
 
-/// Lightweight chunk representation for semantic search results.
-///
-/// Stores minimal metadata needed to:
-/// 1. Identify which entity the chunk came from (sourceEntityId, sourceEntityType)
-/// 2. Locate text within the entity (startToken, endToken)
-/// 3. Understand chunk level (parent vs child)
-///
-/// Does NOT store full text (reconstruct from entity + token positions).
-class Chunk {
-  /// Unique identifier for this chunk in HNSW
-  final String id;
-
-  /// UUID of the entity this chunk came from
-  final String sourceEntityId;
-
-  /// Type name of the source entity (for entity loader routing)
-  final String sourceEntityType;
-
-  /// Starting token position in original entity text
-  final int startToken;
-
-  /// Ending token position in original entity text
-  final int endToken;
-
-  /// Chunk level: 'parent' (~200 tokens) or 'child' (~25 tokens)
-  final String config;
-
-  Chunk({
-    required this.id,
-    required this.sourceEntityId,
-    required this.sourceEntityType,
-    required this.startToken,
-    required this.endToken,
-    required this.config,
-  }) {
-    if (endToken <= startToken) {
-      throw ArgumentError('endToken must be greater than startToken');
-    }
-    if (config != 'parent' && config != 'child') {
-      throw ArgumentError('config must be "parent" or "child", got "$config"');
+  /// Persist a chunk to database.
+  /// Uses dynamic dispatch to avoid direct ObjectBox import.
+  void _persistChunk(Chunk chunk) {
+    try {
+      final entity = ChunkEntity(
+        chunkId: chunk.id,
+        sourceEntityId: chunk.sourceEntityId,
+        sourceEntityType: chunk.sourceEntityType,
+        startToken: chunk.startToken,
+        endToken: chunk.endToken,
+        config: chunk.config,
+        text: chunk.text,
+      );
+      entity.validate();
+      (chunkBox as dynamic).put(entity);
+    } catch (e) {
+      print('⚠️ Failed to persist chunk ${chunk.id}: $e');
+      // Don't throw - chunking should not fail if DB write fails
+      // Chunks are still in HNSW index and can be rebuilt
     }
   }
 
-  /// Number of tokens in this chunk
-  int get tokenCount => endToken - startToken;
+  /// Delete all chunks for an entity from database.
+  void _deleteChunksFromDb(String entityId) {
+    try {
+      final allChunks = (chunkBox as dynamic).getAll() as List<dynamic>;
+      final toDelete = <int>[];
+      for (final chunk in allChunks) {
+        if ((chunk as dynamic).sourceEntityId == entityId) {
+          toDelete.add((chunk as dynamic).id as int);
+        }
+      }
+      if (toDelete.isNotEmpty) {
+        (chunkBox as dynamic).removeMany(toDelete);
+      }
+    } catch (e) {
+      print('⚠️ Failed to delete chunks from DB for entity $entityId: $e');
+      // Don't throw - deletion should be best-effort
+    }
+  }
 
-  @override
-  String toString() =>
-      'Chunk($id, $sourceEntityType, tokens: $tokenCount, config: $config)';
+  /// Get all chunks for an entity from database.
+  Future<List<Chunk>> getChunksForEntity(String entityId) async {
+    try {
+      final allChunks = (chunkBox as dynamic).getAll() as List<dynamic>;
+      final matching = <Chunk>[];
+      for (final entity in allChunks) {
+        if ((entity as dynamic).sourceEntityId == entityId) {
+          matching.add((entity as ChunkEntity).toDomain());
+        }
+      }
+      return matching;
+    } catch (e) {
+      print('⚠️ Failed to load chunks for entity $entityId: $e');
+      return [];
+    }
+  }
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Chunk &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          sourceEntityId == other.sourceEntityId &&
-          sourceEntityType == other.sourceEntityType &&
-          startToken == other.startToken &&
-          endToken == other.endToken &&
-          config == other.config;
-
-  @override
-  int get hashCode =>
-      id.hashCode ^
-      sourceEntityId.hashCode ^
-      sourceEntityType.hashCode ^
-      startToken.hashCode ^
-      endToken.hashCode ^
-      config.hashCode;
+  /// Get a specific chunk by ID from database.
+  Chunk? getChunkById(String chunkId) {
+    try {
+      final allChunks = (chunkBox as dynamic).getAll() as List<dynamic>;
+      for (final entity in allChunks) {
+        if ((entity as dynamic).chunkId == chunkId) {
+          return (entity as ChunkEntity).toDomain();
+        }
+      }
+      return null;
+    } catch (e) {
+      print('⚠️ Failed to load chunk $chunkId: $e');
+      return null;
+    }
+  }
 }

@@ -181,13 +181,24 @@ class SemanticSearchService {
     return results.take(limit).toList();
   }
 
-  /// Reconstruct chunks from HNSW search results
-  /// In production, chunks would be looked up from ChunkingService cache
-  /// For now, this is a placeholder that would be implemented with actual chunk storage
+  /// Reconstruct chunks from HNSW search results.
+  /// Looks up chunk metadata from ChunkingService's database store.
   List<Chunk> _reconstructChunks(List<SearchResult> hnswResults) {
-    // This would normally query chunk storage
-    // For now returning empty - implementation depends on chunk persistence strategy
-    return [];
+    final chunks = <Chunk>[];
+
+    for (final result in hnswResults) {
+      final chunkId = result.id;
+
+      // Look up chunk from ChunkingService database store
+      if (chunkingService != null) {
+        final chunk = (chunkingService as dynamic).getChunkById(chunkId);
+        if (chunk != null) {
+          chunks.add(chunk);
+        }
+      }
+    }
+
+    return chunks;
   }
 }
 

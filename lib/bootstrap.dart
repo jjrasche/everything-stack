@@ -34,6 +34,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:objectbox/objectbox.dart' hide HnswIndex;
 
 import 'services/blob_store.dart';
 import 'services/sync_service.dart';
@@ -51,6 +52,14 @@ import 'services/tool_executor.dart';
 import 'services/tool_registry.dart';
 import 'services/event_bus.dart';
 import 'services/event_bus_impl.dart';
+import 'services/chunking_service.dart';
+import 'services/chunking/semantic_chunker.dart';
+import 'services/chunking/chunking_config.dart';
+import 'services/chunking/chunk_entity.dart';
+import 'services/semantic_search/semantic_search_service.dart';
+import 'services/semantic_search/entity_loader_impl.dart';
+import 'services/hnsw_index.dart';
+import 'core/persistence/persistence_adapter.dart';
 import 'tools/task/repositories/task_repository.dart';
 import 'core/event_repository.dart';
 import 'tools/task/task_tools.dart';
@@ -447,7 +456,71 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
     getType: (service) => service.runtimeType,
   );
 
-  // 13. Initialize Audio Recording Service (Microphone Input)
+  // 13. Initialize Semantic Search Infrastructure (ChunkingService + SemanticSearchService)
+  debugPrint('🔍 Initializing semantic search infrastructure...');
+  try {
+    // Create HNSW index
+    final hnswIndex = HnswIndex(dimensions: 384);
+
+    // Create parent and child chunkers
+    final parentChunker = SemanticChunker(config: ChunkingConfig.parent());
+    final childChunker = SemanticChunker(config: ChunkingConfig.child());
+
+    // Get ChunkEntity box from persistence
+    final store = getIt<Store>();
+    final chunkBox = store.box<ChunkEntity>();
+
+    // Create ChunkingService
+    final chunkingService = ChunkingService(
+      index: hnswIndex,
+      embeddingService: EmbeddingService.instance,
+      parentChunker: parentChunker,
+      childChunker: childChunker,
+      chunkBox: chunkBox,
+    );
+    getIt.registerSingleton<ChunkingService>(chunkingService);
+    debugPrint('✅ ChunkingService initialized');
+
+    // Register HNSW index for direct access
+    getIt.registerSingleton<HnswIndex>(hnswIndex);
+    debugPrint('✅ HNSW index registered');
+
+    // Create SemanticSearchService
+    final entityLoader = EntityLoaderImpl();
+    final semanticSearchService = SemanticSearchService(
+      index: hnswIndex,
+      embeddingService: EmbeddingService.instance,
+      entityLoader: entityLoader,
+      chunkingService: chunkingService,
+    );
+    getIt.registerSingleton<SemanticSearchService>(semanticSearchService);
+    debugPrint('✅ SemanticSearchService initialized');
+
+    // Wire InvocationRepository with SemanticIndexableHandler
+    try {
+      final adapterRegistration = getIt<InvocationRepository<Invocation>>();
+
+      // Create EntityRepository with semantic indexing handler
+      // Cast to InvocationRepository for registration
+      final invocationRepo = createInvocationRepository(
+        adapter: adapterRegistration as PersistenceAdapter<Invocation>,
+        embeddingService: EmbeddingService.instance,
+        chunkingService: chunkingService,
+      ) as InvocationRepository<Invocation>;
+
+      // Unregister old adapter-only registration and register new one with handlers
+      getIt.unregister<InvocationRepository<Invocation>>();
+      getIt.registerSingleton<InvocationRepository<Invocation>>(invocationRepo);
+      debugPrint('✅ InvocationRepository wired with SemanticIndexableHandler');
+    } catch (e) {
+      debugPrint('⚠️ Failed to wire InvocationRepository handler: $e');
+      rethrow;
+    }
+  } catch (e) {
+    debugPrint('⚠️ Semantic search initialization failed: $e');
+  }
+
+  // 14. Initialize Audio Recording Service (Microphone Input)
   try {
     await AudioRecordingService.instance.initialize();
     debugPrint('✅ Audio: AudioRecordingService');
