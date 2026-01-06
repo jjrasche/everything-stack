@@ -9,6 +9,7 @@
 /// Run with: flutter test integration_test/invocation_semantic_smoke_test.dart -d <platform>
 
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -201,8 +202,24 @@ void main() {
       if (capturedEmbeddings.isNotEmpty) {
         final json = jsonEncode(capturedEmbeddings);
         debugPrint('💾 Captured ${capturedEmbeddings.length} embeddings');
-        debugPrint('📄 Save this to test/fixtures/invocation_embeddings.json:');
-        debugPrint(json);
+
+        // Write fixture file to disk for CI tests
+        try {
+          final fixtureDir = Directory('test/fixtures');
+          if (!fixtureDir.existsSync()) {
+            fixtureDir.createSync(recursive: true);
+            debugPrint('📁 Created test/fixtures directory');
+          }
+
+          final fixtureFile = File('test/fixtures/invocation_embeddings.json');
+          fixtureFile.writeAsStringSync(json);
+
+          debugPrint('✅ Fixture saved to: test/fixtures/invocation_embeddings.json');
+          debugPrint('📊 Embedding vectors: ${capturedEmbeddings.length}');
+          debugPrint('📐 Vector dimensions: 384 (Jina default)');
+        } catch (e) {
+          debugPrint('❌ Failed to save fixture: $e');
+        }
       }
 
       debugPrint('\n✅ All smoke tests passed!');
