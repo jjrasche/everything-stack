@@ -68,8 +68,6 @@ import 'services/trainables/namespace_selector.dart';
 import 'services/trainables/tool_selector.dart';
 import 'services/trainables/context_injector.dart';
 import 'services/trainables/llm_config_selector.dart';
-import 'services/trainables/llm_orchestrator.dart';
-import 'services/trainables/response_renderer.dart';
 
 // Platform-specific persistence initialization (ObjectBox or IndexedDB)
 import 'bootstrap/persistence_web.dart'
@@ -629,22 +627,6 @@ Future<void> setupServiceLocator() async {
 
     getIt.registerSingleton<LLMConfigSelector>(
       LLMConfigSelector(
-        invocationRepo: getIt<InvocationRepository<Invocation>>(),
-        adaptationStateRepo: getIt<AdaptationStateRepository>(),
-        feedbackRepo: getIt<FeedbackRepository>(),
-      ),
-    );
-
-    getIt.registerSingleton<LLMOrchestrator>(
-      LLMOrchestrator(
-        invocationRepo: getIt<InvocationRepository<Invocation>>(),
-        adaptationStateRepo: getIt<AdaptationStateRepository>(),
-        feedbackRepo: getIt<FeedbackRepository>(),
-      ),
-    );
-
-    getIt.registerSingleton<ResponseRenderer>(
-      ResponseRenderer(
         invocationRepo: getIt<InvocationRepository<Invocation>>(),
         adaptationStateRepo: getIt<AdaptationStateRepository>(),
         feedbackRepo: getIt<FeedbackRepository>(),

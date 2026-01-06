@@ -2,29 +2,19 @@
 ///
 /// ## What it does
 /// Central orchestrator for the voice assistant pipeline.
-/// Chains together trainable decision components + text-to-speech:
+/// Orchestrates LLM + TTS for end-to-end voice interaction:
 /// 1. Embedding generation (semantic representation)
-/// 2. NamespaceSelector - picks namespace
-/// 3. ToolSelector - picks tools within namespace
-/// 4. ContextInjector - injects relevant context
-/// 5. LLMConfigSelector - picks LLM parameters
-/// 6. LLMOrchestrator - calls LLM + handles agentic loop
-/// 7. ResponseRenderer - formats response for user
-/// 8. TTSService - synthesizes response to speech (NEW)
+/// 2. LLMService - calls LLM with tools (includes agentic loop)
+/// 3. TTSService - synthesizes response to speech
 ///
 /// ## Flow (Audio In → Audio Out)
 /// 1. STT publishes Event(eventType: transcription_complete)
 /// 2. Coordinator.orchestrate() triggered by event listener
 /// 3. Generate embedding of utterance
-/// 4. NamespaceSelector picks namespace
-/// 5. ToolSelector picks tools in namespace
-/// 6. ContextInjector injects context (tasks, timers, etc.)
-/// 7. LLMConfigSelector picks LLM config (temperature, etc.)
-/// 8. Call LLM with tools available (agentic loop with tool execution)
-/// 9. ResponseRenderer formats final response for user
-/// 10. TTSService synthesizes response → audio bytes → speaker
-/// 11. Publish Event(eventType: orchestration_complete) for UI
-/// 12. Record all invocations for training
+/// 4. Call LLM with tools available (agentic loop with tool execution)
+/// 5. TTSService synthesizes response → audio bytes → speaker
+/// 6. Publish Event(eventType: orchestration_complete) for UI
+/// 7. Record all invocations for training
 ///
 /// ## Agentic Loop
 /// The LLM has tools available. If it requests tool calls:
@@ -40,12 +30,6 @@ import 'dart:convert';
 import '../core/invocation.dart';
 import '../core/event.dart';
 import '../core/invocation_repository.dart';
-import 'trainables/namespace_selector.dart';
-import 'trainables/tool_selector.dart';
-import 'trainables/context_injector.dart';
-import 'trainables/llm_config_selector.dart';
-import 'trainables/llm_orchestrator.dart';
-import 'trainables/response_renderer.dart';
 import 'embedding_service.dart';
 import 'llm_service.dart';
 import 'tts_service.dart';
@@ -98,14 +82,8 @@ class CoordinatorResult {
   });
 }
 
-/// Central coordinator orchestrating all trainable decisions
+/// Central coordinator orchestrating voice assistant pipeline
 class Coordinator {
-  final NamespaceSelector namespaceSelector;
-  final ToolSelector toolSelector;
-  final ContextInjector contextInjector;
-  final LLMConfigSelector llmConfigSelector;
-  final LLMOrchestrator llmOrchestrator;
-  final ResponseRenderer responseRenderer;
   final EmbeddingService embeddingService;
   final LLMService llmService;
   final TTSService ttsService;
@@ -121,12 +99,6 @@ class Coordinator {
   static const int maxAgentLoopIterations = 10;
 
   Coordinator({
-    required this.namespaceSelector,
-    required this.toolSelector,
-    required this.contextInjector,
-    required this.llmConfigSelector,
-    required this.llmOrchestrator,
-    required this.responseRenderer,
     required this.embeddingService,
     required this.llmService,
     required this.ttsService,
