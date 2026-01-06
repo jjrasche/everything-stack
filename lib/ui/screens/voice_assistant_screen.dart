@@ -38,18 +38,19 @@ enum ConversationState {
 }
 
 class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
-  late EventBus _eventBus;
-  late STTService _sttService;
-  late AudioRecordingService _audioService;
+  // TODO: Restore STT/Audio service integration when services are fully implemented
+  // late EventBus _eventBus;
+  // late STTService _sttService;
+  // late AudioRecordingService _audioService;
 
   String _interimText = ''; // Gray, updating text (what user is currently saying)
   String _finalText = ''; // Black, locked text (last complete utterance)
   String _responseText = ''; // AI response
   ConversationState _conversationState = ConversationState.idle;
 
-  StreamSubscription<String>? _sttSubscription;
-  StreamSubscription<Event>? _eventSubscription;
-  Timer? _sessionIdleTimer;
+  // StreamSubscription<String>? _sttSubscription;
+  // StreamSubscription<Event>? _eventSubscription;
+  // Timer? _sessionIdleTimer;
 
   static const int SESSION_TIMEOUT_MS = 30000;
 
@@ -57,96 +58,100 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   void initState() {
     super.initState();
 
+    // TODO: Restore service initialization when STTService, AudioRecordingService, and EventBus are fully implemented
     // Get services from GetIt
-    debugPrint('🔍 [initState] Getting services from GetIt...');
-    _eventBus = GetIt.instance<EventBus>();
-    _sttService = STTService.instance;
-    _audioService = AudioRecordingService.instance;
-
-    // Subscribe to OrchestrationComplete events
-    _subscribeToEvents();
-
-    debugPrint('✅ [initState] Services initialized, event subscriptions active');
+    // debugPrint('🔍 [initState] Getting services from GetIt...');
+    // _eventBus = GetIt.instance<EventBus>();
+    // _sttService = GetIt.instance<STTService>();
+    // _audioService = GetIt.instance<AudioRecordingService>();
+    //
+    // // Subscribe to OrchestrationComplete events
+    // _subscribeToEvents();
+    //
+    // debugPrint('✅ [initState] Services initialized, event subscriptions active');
   }
 
   /// Subscribe to events from EventBus
-  void _subscribeToEvents() {
-    debugPrint('📡 [_subscribeToEvents] Subscribing to orchestration_complete events...');
-
-    _eventSubscription = _eventBus.subscribe().listen(
-      (event) {
-        // Filter for orchestration_complete events
-        if (event.eventType != 'orchestration_complete') {
-          return;
-        }
-
-        try {
-          // Format event for display
-          final displayText = event.getDisplayString();
-
-          debugPrint('📡 [Event] orchestration_complete received');
-          debugPrint('   Response: "$displayText"');
-
-          if (mounted) {
-            setState(() {
-              _responseText = displayText;
-              // TTS is playing, but STT continues listening
-              // State goes back to listening (STT never stopped)
-              _conversationState = ConversationState.listening;
-            });
-          }
-
-          // Reset idle timer since we got a response
-          _resetSessionIdleTimer();
-        } catch (e) {
-          debugPrint('❌ [Event] Error handling orchestration_complete: $e');
-        }
-      },
-      onError: (error) {
-        debugPrint('❌ [Event] orchestration_complete subscription error: $error');
-      },
-    );
-
-    debugPrint('✅ [_subscribeToEvents] Event subscriptions active');
-  }
+  // TODO: Restore when EventBus and services are implemented
+  // void _subscribeToEvents() {
+  //   debugPrint('📡 [_subscribeToEvents] Subscribing to orchestration_complete events...');
+  //
+  //   _eventSubscription = _eventBus.subscribe().listen(
+  //     (event) {
+  //       // Filter for orchestration_complete events
+  //       if (event.eventType != 'orchestration_complete') {
+  //         return;
+  //       }
+  //
+  //       try {
+  //         // Format event for display
+  //         final displayText = event.getDisplayString();
+  //
+  //         debugPrint('📡 [Event] orchestration_complete received');
+  //         debugPrint('   Response: "$displayText"');
+  //
+  //         if (mounted) {
+  //           setState(() {
+  //             _responseText = displayText;
+  //             // TTS is playing, but STT continues listening
+  //             // State goes back to listening (STT never stopped)
+  //             _conversationState = ConversationState.listening;
+  //           });
+  //         }
+  //
+  //         // Reset idle timer since we got a response
+  //         _resetSessionIdleTimer();
+  //       } catch (e) {
+  //         debugPrint('❌ [Event] Error handling orchestration_complete: $e');
+  //       }
+  //     },
+  //     onError: (error) {
+  //       debugPrint('❌ [Event] orchestration_complete subscription error: $error');
+  //     },
+  //   );
+  //
+  //   debugPrint('✅ [_subscribeToEvents] Event subscriptions active');
+  // }
 
   /// Start conversation session (continuous listening)
+  // TODO: Restore when STT, Audio, and EventBus services are implemented
   Future<void> _startConversation() async {
-    if (_conversationState != ConversationState.idle) return;
-
-    debugPrint('🎤 [_startConversation] Starting conversation session...');
-
-    // Request microphone permission
-    try {
-      final hasPermission = await _audioService.requestPermission();
-      if (!hasPermission) {
-        debugPrint('❌ Microphone permission denied');
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Microphone permission required')),
-          );
-        }
-        return;
-      }
-    } catch (e) {
-      debugPrint('⚠️ Permission error: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Permission error: $e')),
-        );
-      }
-      return;
-    }
-
-    setState(() {
-      _conversationState = ConversationState.listening;
-      _interimText = '';
-      _finalText = '';
-      _responseText = '';
-    });
-
-    _startSessionIdleTimer();
-    await _startListening();
+    debugPrint('⚠️ Voice assistant disabled - services not yet implemented');
+    // if (_conversationState != ConversationState.idle) return;
+    //
+    // debugPrint('🎤 [_startConversation] Starting conversation session...');
+    //
+    // // Request microphone permission
+    // try {
+    //   final hasPermission = await _audioService.requestPermission();
+    //   if (!hasPermission) {
+    //     debugPrint('❌ Microphone permission denied');
+    //     if (mounted) {
+    //       ScaffoldMessenger.of(context).showSnackBar(
+    //         const SnackBar(content: Text('Microphone permission required')),
+    //       );
+    //     }
+    //     return;
+    //   }
+    // } catch (e) {
+    //   debugPrint('⚠️ Permission error: $e');
+    //   if (mounted) {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       SnackBar(content: Text('Permission error: $e')),
+    //     );
+    //   }
+    //   return;
+    // }
+    //
+    // setState(() {
+    //   _conversationState = ConversationState.listening;
+    //   _interimText = '';
+    //   _finalText = '';
+    //   _responseText = '';
+    // });
+    //
+    // _startSessionIdleTimer();
+    // await _startListening();
   }
 
   /// Start STT listening
@@ -155,130 +160,135 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   /// When utterance ends, STT publishes Event(eventType: transcription_complete).
   /// Coordinator handles the event → LLM → TTS.
   /// STT keeps listening for next utterance (even during TTS).
-  Future<void> _startListening() async {
-    if (_conversationState == ConversationState.idle) {
-      debugPrint('Session ended, not starting STT');
-      return;
-    }
-
-    debugPrint('🎤 [_startListening] Starting continuous STT...');
-
-    try {
-      // Get audio stream from microphone
-      final audioStream = _audioService.startRecording();
-
-      // Pass audio to STT service
-      // STT will publish Event(eventType: transcription_complete) when utterance ends
-      _sttSubscription = _sttService.transcribe(
-        audio: audioStream,
-        onTranscript: (transcript) {
-          // Interim transcript - update display
-          debugPrint('📝 [STT] Interim: "$transcript"');
-          if (mounted) {
-            setState(() => _interimText = transcript);
-          }
-          // Reset idle timer on speech activity
-          _resetSessionIdleTimer();
-        },
-        onUtteranceEnd: () {
-          // Utterance complete - lock text, show thinking state
-          debugPrint('✅ [STT] Utterance ended');
-          if (mounted) {
-            setState(() {
-              _finalText = _interimText;
-              _interimText = '';
-              _conversationState = ConversationState.thinking;
-            });
-          }
-          // NOTE: STT publishes Event(eventType: transcription_complete) internally
-          // Coordinator receives it via EventBus and handles orchestration
-          // STT continues listening for next utterance
-        },
-        onError: (error) {
-          debugPrint('❌ [STT] Error: $error');
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('STT error: $error')),
-            );
-          }
-        },
-        onDone: () {
-          debugPrint('🏁 [STT] Stream closed');
-          // STT stream closed - restart if still in conversation
-          if (_conversationState != ConversationState.idle && mounted) {
-            debugPrint('↻ [STT] Restarting listening...');
-            _startListening();
-          }
-        },
-      );
-
-      debugPrint('✅ [_startListening] STT active');
-    } catch (e) {
-      debugPrint('❌ Error starting STT: $e');
-      if (mounted) {
-        setState(() => _conversationState = ConversationState.idle);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
-      }
-      _cancelSessionIdleTimer();
-    }
-  }
+  // TODO: Restore when STT and Audio services are implemented
+  // Future<void> _startListening() async {
+  //   if (_conversationState == ConversationState.idle) {
+  //     debugPrint('Session ended, not starting STT');
+  //     return;
+  //   }
+  //
+  //   debugPrint('🎤 [_startListening] Starting continuous STT...');
+  //
+  //   try {
+  //     // Get audio stream from microphone
+  //     final audioStream = _audioService.startRecording();
+  //
+  //     // Pass audio to STT service
+  //     // STT will publish Event(eventType: transcription_complete) when utterance ends
+  //     _sttSubscription = _sttService.transcribe(
+  //       audio: audioStream,
+  //       onTranscript: (transcript) {
+  //         // Interim transcript - update display
+  //         debugPrint('📝 [STT] Interim: "$transcript"');
+  //         if (mounted) {
+  //           setState(() => _interimText = transcript);
+  //         }
+  //         // Reset idle timer on speech activity
+  //         _resetSessionIdleTimer();
+  //       },
+  //       onUtteranceEnd: () {
+  //         // Utterance complete - lock text, show thinking state
+  //         debugPrint('✅ [STT] Utterance ended');
+  //         if (mounted) {
+  //           setState(() {
+  //             _finalText = _interimText;
+  //             _interimText = '';
+  //             _conversationState = ConversationState.thinking;
+  //           });
+  //         }
+  //         // NOTE: STT publishes Event(eventType: transcription_complete) internally
+  //         // Coordinator receives it via EventBus and handles orchestration
+  //         // STT continues listening for next utterance
+  //       },
+  //       onError: (error) {
+  //         debugPrint('❌ [STT] Error: $error');
+  //         if (mounted) {
+  //           ScaffoldMessenger.of(context).showSnackBar(
+  //             SnackBar(content: Text('STT error: $error')),
+  //           );
+  //         }
+  //       },
+  //       onDone: () {
+  //         debugPrint('🏁 [STT] Stream closed');
+  //         // STT stream closed - restart if still in conversation
+  //         if (_conversationState != ConversationState.idle && mounted) {
+  //           debugPrint('↻ [STT] Restarting listening...');
+  //           _startListening();
+  //         }
+  //       },
+  //     );
+  //
+  //     debugPrint('✅ [_startListening] STT active');
+  //   } catch (e) {
+  //     debugPrint('❌ Error starting STT: $e');
+  //     if (mounted) {
+  //       setState(() => _conversationState = ConversationState.idle);
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('Error: $e')),
+  //       );
+  //     }
+  //     _cancelSessionIdleTimer();
+  //   }
+  // }
 
   /// Stop the entire conversation session
+  // TODO: Restore when services are implemented
   Future<void> _stopConversation() async {
-    debugPrint('⏹️ [_stopConversation] Stopping conversation...');
-
-    _cancelSessionIdleTimer();
-
-    // Stop STT
-    await _sttSubscription?.cancel();
-    _sttSubscription = null;
-
-    // Stop audio recording
-    await _audioService.stopRecording();
-
-    setState(() {
-      _conversationState = ConversationState.idle;
-      _interimText = '';
-    });
-
-    debugPrint('✅ [_stopConversation] Conversation stopped');
+    debugPrint('⚠️ Stop conversation - services not yet implemented');
+    // debugPrint('⏹️ [_stopConversation] Stopping conversation...');
+    //
+    // _cancelSessionIdleTimer();
+    //
+    // // Stop STT
+    // await _sttSubscription?.cancel();
+    // _sttSubscription = null;
+    //
+    // // Stop audio recording
+    // await _audioService.stopRecording();
+    //
+    // setState(() {
+    //   _conversationState = ConversationState.idle;
+    //   _interimText = '';
+    // });
+    //
+    // debugPrint('✅ [_stopConversation] Conversation stopped');
   }
 
   /// Session idle timer - 30 seconds of silence closes conversation
-  void _startSessionIdleTimer() {
-    _sessionIdleTimer = Timer(
-      const Duration(milliseconds: SESSION_TIMEOUT_MS),
-      () {
-        debugPrint('⏲️ [Session Timeout] 30 seconds idle - ending conversation');
-        _stopConversation();
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Session ended due to 30 seconds of silence')),
-          );
-        }
-      },
-    );
-  }
-
-  void _resetSessionIdleTimer() {
-    _cancelSessionIdleTimer();
-    _startSessionIdleTimer();
-  }
-
-  void _cancelSessionIdleTimer() {
-    _sessionIdleTimer?.cancel();
-    _sessionIdleTimer = null;
-  }
+  // TODO: Restore when services are implemented
+  // void _startSessionIdleTimer() {
+  //   _sessionIdleTimer = Timer(
+  //     const Duration(milliseconds: SESSION_TIMEOUT_MS),
+  //     () {
+  //       debugPrint('⏲️ [Session Timeout] 30 seconds idle - ending conversation');
+  //       _stopConversation();
+  //       if (mounted) {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           const SnackBar(content: Text('Session ended due to 30 seconds of silence')),
+  //         );
+  //       }
+  //     },
+  //   );
+  // }
+  //
+  // void _resetSessionIdleTimer() {
+  //   _cancelSessionIdleTimer();
+  //   _startSessionIdleTimer();
+  // }
+  //
+  // void _cancelSessionIdleTimer() {
+  //   _sessionIdleTimer?.cancel();
+  //   _sessionIdleTimer = null;
+  // }
 
   @override
   void dispose() {
     debugPrint('🧹 [dispose] Cleaning up VoiceAssistantScreen...');
-    _cancelSessionIdleTimer();
-    _sttSubscription?.cancel();
-    _eventSubscription?.cancel();
-    _audioService.stopRecording();
+    // TODO: Restore cleanup when services are implemented
+    // _cancelSessionIdleTimer();
+    // _sttSubscription?.cancel();
+    // _eventSubscription?.cancel();
+    // _audioService.stopRecording();
     super.dispose();
   }
 

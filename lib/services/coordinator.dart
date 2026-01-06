@@ -282,21 +282,22 @@ class Coordinator {
       print('💾 Final response set to: "$finalResponse"');
 
       // Record LLM orchestration invocation
-      print('\n📋 Recording LLM orchestration...');
-      print('DEBUG: About to call llmOrchestrator.recordOrchestration');
-      await llmOrchestrator.recordOrchestration(
-        eventId: eventId,
-        utterance: utterance,
-        namespace: selectedNamespace,
-        tools: selectedTools,
-        context: injectedContext,
-        finalResponse: finalResponse,
-        toolCalls: toolCalls,
-        iterations: iterations,
-        success: true,
-      );
-      print('✅ LLM orchestration recorded');
-      invocationIds.add('llm_orchestration_invocation');
+      // TODO: Restore when LLMOrchestrator is available
+      // print('\n📋 Recording LLM orchestration...');
+      // print('DEBUG: About to call llmOrchestrator.recordOrchestration');
+      // await llmOrchestrator.recordOrchestration(
+      //   eventId: eventId,
+      //   utterance: utterance,
+      //   namespace: selectedNamespace,
+      //   tools: selectedTools,
+      //   context: injectedContext,
+      //   finalResponse: finalResponse,
+      //   toolCalls: toolCalls,
+      //   iterations: iterations,
+      //   success: true,
+      // );
+      // print('✅ LLM orchestration recorded');
+      // invocationIds.add('llm_orchestration_invocation');
 
       // 7. ResponseRenderer formats response
       // COMMENTED OUT: Focus on LLM + TTS data for learning

@@ -71,7 +71,7 @@ abstract class TTSService implements Trainable {
     // 3. Call implementer with text
     final output = await implementer.synthesize(
       text: text,
-      voicePreference: state.voiceId,
+      voiceId: state.voiceId,
       speechRate: state.speechRate,
       pitch: state.pitch,
     );

@@ -68,32 +68,37 @@ LLMService createLLMService(ServiceConfig config) {
 }
 
 LLMService _buildGroqLLM(ServiceConfig config) {
-  final apiKey = config.credentials['apiKey'] as String?;
-  if (apiKey == null || apiKey.isEmpty) {
-    print('⚠️ Groq API key missing - LLM service unavailable');
-    throw Exception('Groq API key required for LLM service');
-  }
+  // TODO: LLMService requires concrete implementation
+  // LLMService is abstract and cannot be instantiated
+  print('⚠️ Groq LLM service builder - awaiting concrete LLMService implementation');
+  throw UnimplementedError('Groq LLM service builder not yet implemented');
 
-  final invocationRepo = ServiceRegistry.getOrNull<InvocationRepository<Invocation>>('invocation_repo');
-  final adaptationStateRepo = ServiceRegistry.getOrNull<AdaptationStateRepository>('adaptation_state_repo');
-  final feedbackRepo = ServiceRegistry.getOrNull<FeedbackRepository>('feedback_repo');
-
-  if (invocationRepo == null || adaptationStateRepo == null || feedbackRepo == null) {
-    print('⚠️ Required repositories not registered');
-    throw Exception('LLM service requires invocation_repo, adaptation_state_repo, and feedback_repo');
-  }
-
-  // Create Groq implementer
-  final groqImplementer = GroqImplementer(apiKey: apiKey);
-
-  // Create LLMService with map of implementers
-  return LLMService(
-    implementers: {'groq': groqImplementer},
-    defaultImplementer: 'groq',
-    invocationRepo: invocationRepo,
-    adaptationStateRepo: adaptationStateRepo,
-    feedbackRepo: feedbackRepo,
-  );
+  // final apiKey = config.credentials['apiKey'] as String?;
+  // if (apiKey == null || apiKey.isEmpty) {
+  //   print('⚠️ Groq API key missing - LLM service unavailable');
+  //   throw Exception('Groq API key required for LLM service');
+  // }
+  //
+  // final invocationRepo = ServiceRegistry.getOrNull<InvocationRepository<Invocation>>('invocation_repo');
+  // final adaptationStateRepo = ServiceRegistry.getOrNull<AdaptationStateRepository>('adaptation_state_repo');
+  // final feedbackRepo = ServiceRegistry.getOrNull<FeedbackRepository>('feedback_repo');
+  //
+  // if (invocationRepo == null || adaptationStateRepo == null || feedbackRepo == null) {
+  //   print('⚠️ Required repositories not registered');
+  //   throw Exception('LLM service requires invocation_repo, adaptation_state_repo, and feedback_repo');
+  // }
+  //
+  // // Create Groq implementer
+  // final groqImplementer = GroqImplementer(apiKey: apiKey);
+  //
+  // // Create LLMService with map of implementers
+  // return LLMService(
+  //   implementers: {'groq': groqImplementer},
+  //   defaultImplementer: 'groq',
+  //   invocationRepo: invocationRepo,
+  //   adaptationStateRepo: adaptationStateRepo,
+  //   feedbackRepo: feedbackRepo,
+  // );
 }
 
 LLMService _buildClaudeLLM(ServiceConfig config) {
@@ -121,26 +126,31 @@ TTSService createTTSService(ServiceConfig config) {
 }
 
 TTSService _buildFlutterTTS(ServiceConfig config) {
-  final invocationRepo = ServiceRegistry.getOrNull<InvocationRepository<Invocation>>('invocation_repo');
-  final adaptationStateRepo = ServiceRegistry.getOrNull<AdaptationStateRepository>('adaptation_state_repo');
-  final feedbackRepo = ServiceRegistry.getOrNull<FeedbackRepository>('feedback_repo');
+  // TODO: TTSService requires concrete implementation
+  // TTSService is abstract and cannot be instantiated
+  print('⚠️ Flutter TTS service builder - awaiting concrete TTSService implementation');
+  throw UnimplementedError('Flutter TTS service builder not yet implemented');
 
-  if (invocationRepo == null || adaptationStateRepo == null || feedbackRepo == null) {
-    print('⚠️ Required repositories not registered');
-    throw Exception('TTS service requires invocation_repo, adaptation_state_repo, and feedback_repo');
-  }
-
-  // Create Flutter TTS implementer
-  final flutterTtsImplementer = FlutterTtsImplementer();
-
-  // Create TTSService with map of implementers
-  return TTSService(
-    implementers: {'flutter': flutterTtsImplementer},
-    defaultImplementer: 'flutter',
-    invocationRepo: invocationRepo,
-    adaptationStateRepo: adaptationStateRepo,
-    feedbackRepo: feedbackRepo,
-  );
+  // final invocationRepo = ServiceRegistry.getOrNull<InvocationRepository<Invocation>>('invocation_repo');
+  // final adaptationStateRepo = ServiceRegistry.getOrNull<AdaptationStateRepository>('adaptation_state_repo');
+  // final feedbackRepo = ServiceRegistry.getOrNull<FeedbackRepository>('feedback_repo');
+  //
+  // if (invocationRepo == null || adaptationStateRepo == null || feedbackRepo == null) {
+  //   print('⚠️ Required repositories not registered');
+  //   throw Exception('TTS service requires invocation_repo, adaptation_state_repo, and feedback_repo');
+  // }
+  //
+  // // Create Flutter TTS implementer
+  // final flutterTtsImplementer = FlutterTtsImplementer();
+  //
+  // // Create TTSService with map of implementers
+  // return TTSService(
+  //   implementers: {'flutter': flutterTtsImplementer},
+  //   defaultImplementer: 'flutter',
+  //   invocationRepo: invocationRepo,
+  //   adaptationStateRepo: adaptationStateRepo,
+  //   feedbackRepo: feedbackRepo,
+  // );
 }
 
 TTSService _buildGoogleTTS(ServiceConfig config) {
