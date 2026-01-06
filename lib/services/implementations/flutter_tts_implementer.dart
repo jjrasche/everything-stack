@@ -77,6 +77,10 @@ class FlutterTtsImplementer implements TTSImplementer {
     required double speechRate,
     required double pitch,
   }) async {
+    if (!_isInitialized) {
+      await initialize();
+    }
+
     try {
       // Time the synthesis call
       final stopwatch = Stopwatch()..start();
@@ -94,8 +98,18 @@ class FlutterTtsImplementer implements TTSImplementer {
         // Estimate duration based on text length and speech rate
         estimatedDuration = _estimateDuration(text, speechRate);
       } else {
-        // TODO: Implement actual TTS synthesis via flutter_tts plugin
-        // For now, generate a synthetic audioId and estimate duration
+        // Set voice and parameters
+        await _flutterTts.setSpeechRate(speechRate);
+        await _flutterTts.setPitch(pitch);
+        if (voiceId != 'default') {
+          await _flutterTts.setVoice({'name': voiceId});
+        }
+
+        // Speak and wait for completion
+        await _flutterTts.speak(text);
+        await _waitForCompletion();
+
+        // Generate audioId and estimate duration
         audioId = 'audio_${_generateId(cacheKey)}';
         estimatedDuration = _estimateDuration(text, speechRate);
 

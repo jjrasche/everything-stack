@@ -92,16 +92,6 @@ class TTSService implements Trainable {
     return output;
   }
 
-  /// Synthesize text to speech and log (Coordinator compatibility wrapper).
-  /// This is a convenience method - synthesize() already logs.
-  Future<void> synthesizeAndLog({
-    required String text,
-    required String eventId,
-  }) async {
-    // Call the normal synthesize method (which already logs the invocation)
-    await synthesize(eventId: eventId, text: text);
-  }
-
   /// Get adaptation state for this implementer, or defaults if not found.
   Future<TTSAdaptationData> _getAdaptationState(
     String implementerName,

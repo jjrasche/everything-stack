@@ -22,11 +22,13 @@
 import 'llm_service.dart';
 import 'tts_service.dart';
 import 'embedding_service.dart';
-import 'groq_service.dart';
-import 'flutter_tts_service.dart';
 import 'service_registry.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
 import 'package:everything_stack_template/core/invocation.dart';
+import 'package:everything_stack_template/core/adaptation_state_repository.dart';
+import 'package:everything_stack_template/core/feedback_repository.dart';
+import 'implementations/groq_implementer.dart';
+import 'implementations/flutter_tts_implementer.dart';
 import 'package:http/http.dart' as http;
 
 // ============================================================================
@@ -61,39 +63,49 @@ LLMService createLLMService(ServiceConfig config) {
     'groq' => _buildGroqLLM(config),
     'claude' => _buildClaudeLLM(config),
     'local' => _buildLocalLLM(config),
-    _ => NullLLMService(),
+    _ => throw UnknownServiceException('Unknown LLM provider: ${config.provider}'),
   };
 }
 
 LLMService _buildGroqLLM(ServiceConfig config) {
   final apiKey = config.credentials['apiKey'] as String?;
   if (apiKey == null || apiKey.isEmpty) {
-    print('⚠️ Groq API key missing');
-    return NullLLMService();
+    print('⚠️ Groq API key missing - LLM service unavailable');
+    throw Exception('Groq API key required for LLM service');
   }
 
   final invocationRepo = ServiceRegistry.getOrNull<InvocationRepository<Invocation>>('invocation_repo');
-  if (invocationRepo == null) {
-    print('⚠️ Invocation repository not registered');
-    return NullLLMService();
+  final adaptationStateRepo = ServiceRegistry.getOrNull<AdaptationStateRepository>('adaptation_state_repo');
+  final feedbackRepo = ServiceRegistry.getOrNull<FeedbackRepository>('feedback_repo');
+
+  if (invocationRepo == null || adaptationStateRepo == null || feedbackRepo == null) {
+    print('⚠️ Required repositories not registered');
+    throw Exception('LLM service requires invocation_repo, adaptation_state_repo, and feedback_repo');
   }
 
-  return GroqService(
-    apiKey: apiKey,
-    invocationRepository: invocationRepo,
+  // Create Groq implementer
+  final groqImplementer = GroqImplementer(apiKey: apiKey);
+
+  // Create LLMService with map of implementers
+  return LLMService(
+    implementers: {'groq': groqImplementer},
+    defaultImplementer: 'groq',
+    invocationRepo: invocationRepo,
+    adaptationStateRepo: adaptationStateRepo,
+    feedbackRepo: feedbackRepo,
   );
 }
 
 LLMService _buildClaudeLLM(ServiceConfig config) {
   // TODO: Implement Claude service
   print('⚠️ Claude LLM not yet implemented');
-  return NullLLMService();
+  throw UnimplementedError('Claude LLM not yet implemented');
 }
 
 LLMService _buildLocalLLM(ServiceConfig config) {
   // TODO: Implement local LLM
   print('⚠️ Local LLM not yet implemented');
-  return NullLLMService();
+  throw UnimplementedError('Local LLM not yet implemented');
 }
 
 // ============================================================================
@@ -104,30 +116,41 @@ TTSService createTTSService(ServiceConfig config) {
   return switch (config.provider.toLowerCase()) {
     'flutter' => _buildFlutterTTS(config),
     'google' => _buildGoogleTTS(config),
-    _ => NullTTSService(),
+    _ => throw UnknownServiceException('Unknown TTS provider: ${config.provider}'),
   };
 }
 
 TTSService _buildFlutterTTS(ServiceConfig config) {
   final invocationRepo = ServiceRegistry.getOrNull<InvocationRepository<Invocation>>('invocation_repo');
-  if (invocationRepo == null) {
-    print('⚠️ Invocation repository not registered');
-    return NullTTSService();
+  final adaptationStateRepo = ServiceRegistry.getOrNull<AdaptationStateRepository>('adaptation_state_repo');
+  final feedbackRepo = ServiceRegistry.getOrNull<FeedbackRepository>('feedback_repo');
+
+  if (invocationRepo == null || adaptationStateRepo == null || feedbackRepo == null) {
+    print('⚠️ Required repositories not registered');
+    throw Exception('TTS service requires invocation_repo, adaptation_state_repo, and feedback_repo');
   }
 
-  return FlutterTtsService(
-    invocationRepository: invocationRepo,
+  // Create Flutter TTS implementer
+  final flutterTtsImplementer = FlutterTtsImplementer();
+
+  // Create TTSService with map of implementers
+  return TTSService(
+    implementers: {'flutter': flutterTtsImplementer},
+    defaultImplementer: 'flutter',
+    invocationRepo: invocationRepo,
+    adaptationStateRepo: adaptationStateRepo,
+    feedbackRepo: feedbackRepo,
   );
 }
 
 TTSService _buildGoogleTTS(ServiceConfig config) {
   final apiKey = config.credentials['apiKey'] as String?;
   if (apiKey == null || apiKey.isEmpty) {
-    print('⚠️ Google TTS API key missing, falling back to Flutter');
+    print('⚠️ Google TTS API key missing - falling back to Flutter');
     return _buildFlutterTTS(config);
   }
   // TODO: Implement Google TTS
-  print('⚠️ Google TTS not yet implemented');
+  print('⚠️ Google TTS not yet implemented - falling back to Flutter');
   return _buildFlutterTTS(config);
 }
 
@@ -140,15 +163,15 @@ EmbeddingService createEmbeddingService(ServiceConfig config) {
     'jina' => _buildJinaEmbedding(config),
     'gemini' => _buildGeminiEmbedding(config),
     'local' => _buildLocalEmbedding(config),
-    _ => NullEmbeddingService(),
+    _ => throw UnknownServiceException('Unknown embedding provider: ${config.provider}'),
   };
 }
 
 EmbeddingService _buildJinaEmbedding(ServiceConfig config) {
   final apiKey = config.credentials['apiKey'] as String?;
   if (apiKey == null || apiKey.isEmpty) {
-    print('⚠️ Jina API key missing');
-    return NullEmbeddingService();
+    print('⚠️ Jina API key missing - embedding service unavailable');
+    throw Exception('Jina API key required for embedding service');
   }
 
   return JinaEmbeddingService(
@@ -171,17 +194,16 @@ EmbeddingService _buildGeminiEmbedding(ServiceConfig config) {
   final apiKey = config.credentials['apiKey'] as String?;
   if (apiKey == null || apiKey.isEmpty) {
     print('⚠️ Gemini API key missing');
-    return NullEmbeddingService();
   }
   // TODO: Implement Gemini embedding
   print('⚠️ Gemini embedding not yet implemented');
-  return NullEmbeddingService();
+  throw UnimplementedError('Gemini embedding not yet implemented');
 }
 
 EmbeddingService _buildLocalEmbedding(ServiceConfig config) {
   // TODO: Implement local embedding
   print('⚠️ Local embedding not yet implemented');
-  return NullEmbeddingService();
+  throw UnimplementedError('Local embedding not yet implemented');
 }
 
 // ============================================================================

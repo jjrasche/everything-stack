@@ -341,7 +341,7 @@ class Coordinator {
 
       // 8. TTS synthesizes and plays response
       print('\n🔊 Synthesizing response to speech...');
-      await ttsService.synthesizeAndLog(
+      await ttsService.synthesize(
         text: renderedResponse,
         eventId: eventId,
       );

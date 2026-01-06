@@ -111,7 +111,6 @@ class LLMService implements Trainable {
     final implementer = _implementers[_defaultImplementer]!;
 
     // Delegate to implementer (currently only Groq supports tools)
-    // TODO: Phase 8 - Move implementation logic from groq_service.dart into groq_implementer.dart
     final response = await implementer.chatWithTools(
       model: model,
       messages: messages,
