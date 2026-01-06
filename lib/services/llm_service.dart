@@ -3,16 +3,30 @@
 /// Smart orchestration service for LLM capabilities.
 /// Holds multiple LLM implementations and coordinates adaptation learning.
 ///
-/// ## Key Responsibilities
-/// - Hold Map<String, LLMImplementer> (Groq, Claude, etc.)
-/// - Select implementer (specified or default)
-/// - Read/apply adaptation state per implementer
-/// - Log invocations for training feedback
-/// - Train from feedback (update AdaptationState)
-///
-/// ## Design Pattern
+/// ## Architecture
 /// Service (smart, orchestration) = Composition of Implementers (dumb, API wrappers)
 /// Service knows HOW to use implementer, Implementer knows HOW to call API.
+///
+/// ## Current Implementation Status
+///
+/// ✅ COMPLETE:
+/// - Composition pattern with Map<String, LLMImplementer>
+/// - chat() reads AdaptationState before calling implementer
+/// - Logs invocations with typed payloads
+/// - Per-implementer adaptation state structure
+///
+/// ⚠️ SCAFFOLDED (Future work - Training Loop Implementation):
+/// - chatWithTools() does NOT yet read AdaptationState (hardcoded defaults)
+/// - trainFromFeedback() is TODO stub (no learning logic)
+/// - AdaptationState never created/persisted for new users
+/// - Invocation logs missing actual parameters used (temperature, etc.)
+///
+/// To complete the training loop:
+/// 1. Add userId parameter to chatWithTools()
+/// 2. Call _getAdaptationState() before implementer call
+/// 3. Log actual temperature/params used in invocation
+/// 4. Implement trainFromFeedback() to update AdaptationState
+/// 5. Wire feedback collection UI
 
 import 'package:flutter/material.dart';
 
