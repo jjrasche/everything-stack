@@ -64,10 +64,6 @@ import 'services/implementations/flutter_tts_implementer.dart';
 import 'services/implementations/llm_implementer.dart';
 import 'services/implementations/stt_implementer.dart';
 import 'services/implementations/tts_implementer.dart';
-import 'services/trainables/namespace_selector.dart';
-import 'services/trainables/tool_selector.dart';
-import 'services/trainables/context_injector.dart';
-import 'services/trainables/llm_config_selector.dart';
 
 // Platform-specific persistence initialization (ObjectBox or IndexedDB)
 import 'bootstrap/persistence_web.dart'
