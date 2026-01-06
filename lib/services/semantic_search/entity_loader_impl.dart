@@ -14,9 +14,15 @@ class EntityLoaderImpl extends EntityLoader {
   Future<BaseEntity?> getById(String uuid) async {
     // Try Invocation repository first
     try {
-      final invocationRepo = GetIt.instance<InvocationRepository<Invocation>>();
-      final invocation = await invocationRepo.getByUuid(uuid);
-      if (invocation != null) return invocation;
+      final repo = GetIt.instance<InvocationRepository<Invocation>>();
+      // InvocationRepository is EntityRepository<Invocation> via factory function
+      // EntityRepository has findByUuid method
+      if (repo is InvocationRepository<Invocation>) {
+        // Cast to EntityRepository to access findByUuid
+        final entityRepo = repo as dynamic;
+        final invocation = await entityRepo.findByUuid(uuid);
+        if (invocation != null) return invocation;
+      }
     } catch (e) {
       // Repository not available, continue to next
     }

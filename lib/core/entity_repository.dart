@@ -39,7 +39,7 @@ import '../patterns/embeddable.dart';
 import '../services/embedding_service.dart';
 import '../services/chunking_service.dart';
 
-abstract class EntityRepository<T extends BaseEntity> {
+class EntityRepository<T extends BaseEntity> {
   /// Persistence adapter for database operations.
   /// Handles storage and vector search.
   final PersistenceAdapter<T> adapter;

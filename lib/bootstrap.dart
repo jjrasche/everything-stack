@@ -665,42 +665,14 @@ Future<void> setupServiceLocator() async {
     // are already registered as singletons in initializeEverythingStack().
     // They don't need to be re-registered here.
 
-    // ========== Trainable Selectors (Real implementations) ==========
-    // Repositories are already registered in initializeEverythingStack()
+    // ========== Trainable Selectors (Removed - dead code) ==========
+    // These classes were deleted in Phase 8 cleanup
+    // TODO: Coordinator needs refactoring to remove dependency on these
+    // For now, commented out to allow app to compile for semantic search testing
 
-    debugPrint('🔍 [setupServiceLocator] Registering NamespaceSelector...');
-    getIt.registerSingleton<NamespaceSelector>(
-      NamespaceSelector(
-        invocationRepo: getIt<InvocationRepository<Invocation>>(),
-        adaptationStateRepo: getIt<AdaptationStateRepository>(),
-        feedbackRepo: getIt<FeedbackRepository>(),
-      ),
-    );
-    debugPrint('✅ [setupServiceLocator] NamespaceSelector registered');
-
-    getIt.registerSingleton<ToolSelector>(
-      ToolSelector(
-        invocationRepo: getIt<InvocationRepository<Invocation>>(),
-        adaptationStateRepo: getIt<AdaptationStateRepository>(),
-        feedbackRepo: getIt<FeedbackRepository>(),
-      ),
-    );
-
-    getIt.registerSingleton<ContextInjector>(
-      ContextInjector(
-        invocationRepo: getIt<InvocationRepository<Invocation>>(),
-        adaptationStateRepo: getIt<AdaptationStateRepository>(),
-        feedbackRepo: getIt<FeedbackRepository>(),
-      ),
-    );
-
-    getIt.registerSingleton<LLMConfigSelector>(
-      LLMConfigSelector(
-        invocationRepo: getIt<InvocationRepository<Invocation>>(),
-        adaptationStateRepo: getIt<AdaptationStateRepository>(),
-        feedbackRepo: getIt<FeedbackRepository>(),
-      ),
-    );
+    // debugPrint('🔍 [setupServiceLocator] Registering NamespaceSelector...');
+    // getIt.registerSingleton<NamespaceSelector>(...)
+    // debugPrint('✅ [setupServiceLocator] NamespaceSelector registered');
 
     // ========== Tool Registry ==========
 
@@ -734,27 +706,16 @@ Future<void> setupServiceLocator() async {
       ),
     );
 
-    // ========== Coordinator (Orchestrates all components) ==========
-    debugPrint('🔍 [setupServiceLocator] Registering Coordinator...');
-    final coordinator = Coordinator(
-      namespaceSelector: getIt<NamespaceSelector>(),
-      toolSelector: getIt<ToolSelector>(),
-      contextInjector: getIt<ContextInjector>(),
-      llmConfigSelector: getIt<LLMConfigSelector>(),
-      llmOrchestrator: getIt<LLMOrchestrator>(),
-      responseRenderer: getIt<ResponseRenderer>(),
-      embeddingService: getIt<EmbeddingService>(),
-      llmService: getIt<LLMService>(),
-      ttsService: getIt<TTSService>(),
-      toolExecutor: getIt<ToolExecutor>(),
-      invocationRepo: getIt<InvocationRepository<Invocation>>(),
-      eventBus: getIt<EventBus>(),
-    );
-    getIt.registerSingleton<Coordinator>(coordinator);
+    // ========== Coordinator (Removed - requires refactoring) ==========
+    // Coordinator initialization removed - references deleted classes
+    // TODO: Refactor Coordinator and register it without dead code dependencies
+    // For now, commented out to allow app to compile for semantic search testing
 
-    // Initialize Coordinator event listeners
-    coordinator.initialize();
-    debugPrint('✅ [setupServiceLocator] Coordinator registered and initialized');
+    // debugPrint('🔍 [setupServiceLocator] Registering Coordinator...');
+    // final coordinator = Coordinator(...);
+    // getIt.registerSingleton<Coordinator>(coordinator);
+    // coordinator.initialize();
+    // debugPrint('✅ [setupServiceLocator] Coordinator registered and initialized');
     debugPrint('🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY');
   } catch (e, st) {
     debugPrint('❌ [setupServiceLocator] ERROR: $e');
