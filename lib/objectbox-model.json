@@ -711,10 +711,68 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "25:5668834073929766005",
+      "lastPropertyId": "9:8086842614968907384",
+      "name": "ChunkEntity",
+      "properties": [
+        {
+          "id": "1:319406774241525386",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:5123269674220075944",
+          "name": "chunkId",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "37:3437830801602597188"
+        },
+        {
+          "id": "3:7360303809106534680",
+          "name": "sourceEntityId",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "38:7575202082767622543"
+        },
+        {
+          "id": "4:3461561061657356408",
+          "name": "sourceEntityType",
+          "type": 9
+        },
+        {
+          "id": "5:5104852576972696659",
+          "name": "startToken",
+          "type": 6
+        },
+        {
+          "id": "6:6613212398203255227",
+          "name": "endToken",
+          "type": 6
+        },
+        {
+          "id": "7:5193263711899394311",
+          "name": "config",
+          "type": 9
+        },
+        {
+          "id": "8:8711304779161738276",
+          "name": "text",
+          "type": 9
+        },
+        {
+          "id": "9:8086842614968907384",
+          "name": "createdAt",
+          "type": 10
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "24:1700899337694174415",
-  "lastIndexId": "36:1321519300871730668",
+  "lastEntityId": "25:5668834073929766005",
+  "lastIndexId": "38:7575202082767622543",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

@@ -26,7 +26,9 @@ Future<void> initializePersistence(GetIt getIt) async {
   final store = await openObjectBoxStore();
 
   // Register store for direct access (TaskRepository needs it)
+  // Register both with and without name for compatibility
   getIt.registerSingleton<Store>(store);
+  getIt.registerSingleton<Store>(store, instanceName: 'objectBoxStore');
 
   // Create and register adapters
   final invocationAdapter = InvocationObjectBoxAdapter(store);
