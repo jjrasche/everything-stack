@@ -142,13 +142,13 @@ class GroqImplementer implements LLMImplementer {
 
       // Map Groq response → LLM domain response
       return _mapToLLMResponse(groqResponse);
-    } on GroqTimeoutException catch (e) {
+    } on GroqTimeoutException {
       rethrow;
-    } on GroqRateLimitException catch (e) {
+    } on GroqRateLimitException {
       rethrow;
-    } on GroqServerException catch (e) {
+    } on GroqServerException {
       rethrow;
-    } on GroqException catch (e) {
+    } on GroqException {
       rethrow;
     }
   }

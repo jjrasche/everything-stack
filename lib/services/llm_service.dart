@@ -14,13 +14,11 @@
 /// Service (smart, orchestration) = Composition of Implementers (dumb, API wrappers)
 /// Service knows HOW to use implementer, Implementer knows HOW to call API.
 
-import 'dart:math' show min;
 import 'package:flutter/material.dart';
 
 import '../core/invocation.dart';
 import '../core/invocation_repository.dart';
 import '../core/adaptation_state_repository.dart';
-import '../core/adaptation_state.dart';
 import '../core/feedback.dart' as core_feedback;
 import '../core/feedback_repository.dart';
 import '../core/trainable.dart';

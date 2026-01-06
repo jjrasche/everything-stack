@@ -30,7 +30,6 @@
 library;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -59,7 +58,6 @@ import 'core/invocation.dart';
 import 'core/invocation_repository.dart';
 import 'core/adaptation_state_repository.dart';
 import 'core/feedback_repository.dart';
-import 'core/event_repository.dart';
 import 'services/implementations/groq_implementer.dart';
 import 'services/implementations/deepgram_implementer.dart';
 import 'services/implementations/flutter_tts_implementer.dart';

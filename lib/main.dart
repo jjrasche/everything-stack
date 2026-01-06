@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'bootstrap.dart';
 import 'core/event.dart';
 import 'services/coordinator.dart';
-import 'services/embedding_service.dart';
 import 'ui/screens/voice_assistant_screen.dart';
 
 enum InputModality { text, voice }

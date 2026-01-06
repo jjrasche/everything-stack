@@ -1,32 +1,126 @@
 // Export base service types for GetIt registration
 export 'package:everything_stack_template/services/llm_service.dart' show LLMService, Message, LLMResponse, LLMTool;
-export 'package:everything_stack_template/services/stt_service.dart' show STTService, STTException;
+export 'package:everything_stack_template/services/stt_service.dart' show STTService;
 
-import 'dart:async';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:everything_stack_template/services/llm_service.dart';
 import 'package:everything_stack_template/services/stt_service.dart';
-import 'package:everything_stack_template/services/event_bus.dart';
-import 'package:everything_stack_template/services/events/transcription_complete.dart';
 import 'package:everything_stack_template/core/invocation.dart';
-import 'package:everything_stack_template/core/feedback.dart';
+import 'package:everything_stack_template/core/invocation_repository.dart';
+import 'package:everything_stack_template/core/adaptation_state_repository.dart';
+import 'package:everything_stack_template/core/feedback_repository.dart';
+import 'package:everything_stack_template/core/feedback.dart' as core_feedback;
+
+/// Mock repositories for testing
+class _MockInvocationRepo implements InvocationRepository<Invocation> {
+  @override
+  Future<void> save(Invocation entity) async {}
+
+  @override
+  Future<Invocation?> findById(String id) async => null;
+
+  @override
+  Future<List<Invocation>> findAll({int offset = 0, int limit = 100}) async => [];
+
+  @override
+  Future<void> delete(String id) async {}
+
+  @override
+  Future<void> deleteAll() async {}
+
+  @override
+  Future<int> count() async => 0;
+
+  @override
+  Future<List<Invocation>> findByQuery(String query) async => [];
+
+  @override
+  Future<void> update(Invocation entity) async {}
+
+  @override
+  Future<void> deleteWhere(bool Function(Invocation) predicate) async {}
+
+  @override
+  Future<void> saveBatch(List<Invocation> entities) async {}
+}
+
+class _MockAdaptationStateRepo implements AdaptationStateRepository {
+  @override
+  Future<void> save(dynamic entity) async {}
+
+  @override
+  Future<dynamic> findById(String id) async => null;
+
+  @override
+  Future<List<dynamic>> findAll({int offset = 0, int limit = 100}) async => [];
+
+  @override
+  Future<void> delete(String id) async {}
+
+  @override
+  Future<void> deleteAll() async {}
+
+  @override
+  Future<int> count() async => 0;
+
+  @override
+  Future<List<dynamic>> findByQuery(String query) async => [];
+
+  @override
+  Future<dynamic> getForComponent(String componentType, {required String? implementer, String? userId}) async => null;
+
+  @override
+  Future<void> update(dynamic entity) async {}
+
+  @override
+  Future<void> deleteWhere(bool Function(dynamic) predicate) async {}
+
+  @override
+  Future<void> saveBatch(List<dynamic> entities) async {}
+}
+
+class _MockFeedbackRepo implements FeedbackRepository {
+  @override
+  Future<void> save(dynamic entity) async {}
+
+  @override
+  Future<dynamic> findById(String id) async => null;
+
+  @override
+  Future<List<dynamic>> findAll({int offset = 0, int limit = 100}) async => [];
+
+  @override
+  Future<void> delete(String id) async {}
+
+  @override
+  Future<void> deleteAll() async {}
+
+  @override
+  Future<int> count() async => 0;
+
+  @override
+  Future<List<dynamic>> findByQuery(String query) async => [];
+
+  @override
+  Future<void> update(dynamic entity) async {}
+
+  @override
+  Future<void> deleteWhere(bool Function(dynamic) predicate) async {}
+
+  @override
+  Future<void> saveBatch(List<dynamic> entities) async {}
+}
 
 /// Mock LLM Service - returns test response without hitting API
 class MockLLMService extends LLMService {
-  @override
-  Future<void> initialize() async {}
-
-  @override
-  Stream<String> chat({
-    required List<Message> history,
-    required String userMessage,
-    String? systemPrompt,
-    int? maxTokens,
-  }) async* {
-    yield 'Mock response to: $userMessage';
-  }
+  MockLLMService()
+      : super(
+          implementers: {},
+          defaultImplementer: 'mock',
+          invocationRepo: _MockInvocationRepo(),
+          adaptationStateRepo: _MockAdaptationStateRepo(),
+          feedbackRepo: _MockFeedbackRepo(),
+        );
 
   @override
   Future<LLMResponse> chatWithTools({
@@ -46,129 +140,46 @@ class MockLLMService extends LLMService {
   }
 
   @override
-  void dispose() {}
-
-  @override
-  bool get isReady => true;
-
-  // Implement Trainable interface
-  @override
-  Future<String> recordInvocation(dynamic invocation) async => 'mock_invocation_id';
-
-  @override
-  Future<void> trainFromFeedback(Invocation invocation, Feedback feedback) async {}
-
-  @override
-  Future<Map<String, dynamic>> getAdaptationState({String? userId}) async => {};
-
-  @override
   Widget buildFeedbackUI(BuildContext context, Invocation invocation) => Container();
+
+  @override
+  Future<void> trainFromFeedback(Invocation invocation, core_feedback.Feedback feedback) async {}
 }
 
-/// Mock STT Service - returns test transcription without processing audio
-///
-/// **LEGACY:** Use [EnhancedMockSTTService] for tests that need realistic stream handling.
-/// This service ignores the input stream - useful for fast unit tests but not E2E.
+/// Mock STT Service - returns test transcription without hitting API
 class MockSTTService extends STTService {
-  @override
-  Future<void> initialize() async {}
+  MockSTTService()
+      : super(
+          implementers: {},
+          defaultImplementer: 'mock',
+          invocationRepo: _MockInvocationRepo(),
+          adaptationStateRepo: _MockAdaptationStateRepo(),
+          feedbackRepo: _MockFeedbackRepo(),
+        );
 
   @override
-  StreamSubscription<String> transcribe({
-    required Stream<Uint8List> audio,
-    required void Function(String) onTranscript,
-    void Function()? onUtteranceEnd,
-    required void Function(Object) onError,
-    void Function()? onDone,
-  }) {
+  Future<String> recognize({
+    required String eventId,
+    required String audioId,
+    required double durationSeconds,
+    String? implementerName,
+    String? userId,
+  }) async {
     print('🎤 MockSTTService: Returning mock transcription (no API call)');
-    // Return a subscription that yields mock transcript
-    return stream(
-      input: audio,
-      onData: onTranscript,
-      onUtteranceEnd: onUtteranceEnd,
-      onError: onError,
-      onDone: onDone,
-    );
+    return 'mock transcription from audio';
   }
-
-  @override
-  StreamSubscription<String> stream({
-    required Stream<Uint8List> input,
-    required void Function(String) onData,
-    void Function()? onUtteranceEnd,
-    required void Function(Object) onError,
-    void Function()? onDone,
-  }) {
-    print('🎤 MockSTTService: Creating mock stream subscription');
-
-    // Create a mock stream that yields one transcript
-    final controller = StreamController<String>();
-
-    // Schedule the mock response
-    Future.delayed(Duration(milliseconds: 100), () {
-      if (!controller.isClosed) {
-        onData('mock transcription from audio');
-        onUtteranceEnd?.call();
-      }
-    }).then((_) {
-      if (!controller.isClosed) {
-        controller.close();
-      }
-    });
-
-    return controller.stream.listen(
-      onData,
-      onError: onError,
-      onDone: onDone,
-    );
-  }
-
-  @override
-  void dispose() {}
-
-  @override
-  bool get isReady => true;
-
-  // Implement Trainable interface
-  @override
-  Future<String> recordInvocation(dynamic invocation) async => 'mock_invocation_id';
-
-  @override
-  Future<void> trainFromFeedback(Invocation invocation, Feedback feedback) async {}
-
-  @override
-  Future<Map<String, dynamic>> getAdaptationState({String? userId}) async => {};
 
   @override
   Widget buildFeedbackUI(BuildContext context, Invocation invocation) => Container();
+
+  @override
+  Future<void> trainFromFeedback(Invocation invocation, core_feedback.Feedback feedback) async {}
 }
 
-/// Enhanced Mock STT Service - Actually processes input stream
+/// Enhanced Mock STT Service - Configurable transcription response
 ///
-/// **For E2E testing:** Configurable transcript, consumes audio bytes from input stream.
-/// This proves the streaming layer works without hitting real APIs.
-///
-/// **IMPORTANT:** Publishes TranscriptionComplete event to EventBus to trigger orchestration.
-/// This is realistic because real STT services publish events after transcription.
-///
-/// ## Usage
-/// ```dart
-/// GetIt.instance.registerSingleton<STTService>(
-///   EnhancedMockSTTService(
-///     transcriptToEmit: 'What is the weather today?',
-///     processingDelay: Duration(milliseconds: 150),
-///   )
-/// );
-/// ```
-///
-/// ## What it verifies
-/// - ✅ Input stream is properly consumed (audio bytes received)
-/// - ✅ Transcript is emitted (onData called)
-/// - ✅ Utterance end signaled (onUtteranceEnd called)
-/// - ✅ TranscriptionComplete event published to EventBus
-/// - ✅ Orchestration triggered (event → Coordinator listener)
-/// - ✅ Graceful cleanup (onDone called)
+/// **For E2E testing:** Allows configuration of transcript text for testing different scenarios.
+/// Streaming support will be added when DeepgramImplementer WebSocket logic is implemented.
 class EnhancedMockSTTService extends STTService {
   final String transcriptToEmit;
   final Duration processingDelay;
@@ -176,128 +187,35 @@ class EnhancedMockSTTService extends STTService {
   EnhancedMockSTTService({
     this.transcriptToEmit = 'mock transcription',
     this.processingDelay = const Duration(milliseconds: 100),
-  });
+  })  : super(
+          implementers: {},
+          defaultImplementer: 'mock',
+          invocationRepo: _MockInvocationRepo(),
+          adaptationStateRepo: _MockAdaptationStateRepo(),
+          feedbackRepo: _MockFeedbackRepo(),
+        );
 
   @override
-  Future<void> initialize() async {}
+  Future<String> recognize({
+    required String eventId,
+    required String audioId,
+    required double durationSeconds,
+    String? implementerName,
+    String? userId,
+  }) async {
+    print('🎤 EnhancedMockSTTService: Processing audio (configurable transcript)');
+    print('   📝 Duration: ${durationSeconds}s');
 
-  @override
-  StreamSubscription<String> transcribe({
-    required Stream<Uint8List> audio,
-    required void Function(String) onTranscript,
-    void Function()? onUtteranceEnd,
-    required void Function(Object) onError,
-    void Function()? onDone,
-  }) {
-    return stream(
-      input: audio,
-      onData: onTranscript,
-      onUtteranceEnd: onUtteranceEnd,
-      onError: onError,
-      onDone: onDone,
-    );
+    // Simulate processing delay
+    await Future.delayed(processingDelay);
+
+    print('   📤 Emitting transcript: "$transcriptToEmit"');
+    return transcriptToEmit;
   }
-
-  @override
-  StreamSubscription<String> stream({
-    required Stream<Uint8List> input,
-    required void Function(String) onData,
-    void Function()? onUtteranceEnd,
-    required void Function(Object) onError,
-    void Function()? onDone,
-  }) {
-    print('🎤 EnhancedMockSTTService: Processing audio stream');
-
-    final controller = StreamController<String>();
-    var totalBytes = 0;
-
-    // CRITICAL: Actually consume the input stream
-    // This proves the caller is providing audio data correctly
-    input.listen(
-      (audioBytes) {
-        totalBytes += audioBytes.length;
-        print('   📨 Received ${audioBytes.length} bytes (total: $totalBytes)');
-      },
-      onError: (error) {
-        print('   ❌ Audio stream error: $error');
-        onError(error);
-        controller.addError(error);
-      },
-      onDone: () {
-        print('   ✅ Stream ended: $totalBytes total bytes processed');
-
-        // After consuming stream, emit configured transcript
-        Future.delayed(processingDelay, () async {
-          if (totalBytes > 0) {
-            print('   📤 Emitting transcript: "$transcriptToEmit"');
-            onData(transcriptToEmit);
-            if (!controller.isClosed) {
-              controller.add(transcriptToEmit);
-            }
-            print('   🔊 Signaling utterance end');
-            onUtteranceEnd?.call();
-
-            // CRITICAL: Publish TranscriptionComplete event to trigger orchestration
-            // This is what real STT services do - they publish an event after transcription
-            try {
-              final eventBus = GetIt.instance<EventBus>();
-              final correlationId =
-                  'stt_${DateTime.now().millisecondsSinceEpoch}';
-              final event = TranscriptionComplete(
-                transcript: transcriptToEmit,
-                durationMs: (totalBytes ~/ 16000 * 1000), // Rough estimate
-                confidence: 0.95,
-                correlationId: correlationId,
-              );
-              print(
-                  '   📡 Publishing TranscriptionComplete event to EventBus (correlationId: $correlationId)');
-              await eventBus.publish(event);
-              print('   ✅ Event published - Coordinator listener should trigger');
-            } catch (e) {
-              print('   ⚠️ Failed to publish event: $e');
-              // Don't fail - the onData callback already happened
-            }
-          } else {
-            print('   ❌ No audio data received - emitting error');
-            final error = STTException('No audio data received');
-            onError(error);
-            if (!controller.isClosed) {
-              controller.addError(error);
-            }
-          }
-          print('   🏁 Signaling done');
-          onDone?.call();
-          if (!controller.isClosed) {
-            controller.close();
-          }
-        });
-      },
-    );
-
-    // Return subscription to the controller's stream
-    return controller.stream.listen(
-      onData,
-      onError: onError,
-      onDone: onDone,
-    );
-  }
-
-  @override
-  void dispose() {}
-
-  @override
-  bool get isReady => true;
-
-  // Implement Trainable interface
-  @override
-  Future<String> recordInvocation(dynamic invocation) async => 'enhanced_mock_invocation_id';
-
-  @override
-  Future<void> trainFromFeedback(Invocation invocation, Feedback feedback) async {}
-
-  @override
-  Future<Map<String, dynamic>> getAdaptationState({String? userId}) async => {};
 
   @override
   Widget buildFeedbackUI(BuildContext context, Invocation invocation) => Container();
+
+  @override
+  Future<void> trainFromFeedback(Invocation invocation, core_feedback.Feedback feedback) async {}
 }
