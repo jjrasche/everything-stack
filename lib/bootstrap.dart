@@ -399,46 +399,19 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
     invocationRepo,
   );
 
-  // 10. Initialize TTS Service with implementers
-  debugPrint('🔊 [TTS] Initializing TTSService with implementers');
-  final ttsImplementers = <String, TTSImplementer>{
-    'flutter': FlutterTtsImplementer(),
-  };
-  final ttsService = TTSService(
-    implementers: ttsImplementers,
-    defaultImplementer: 'flutter',
-    invocationRepo: getIt<InvocationRepository<Invocation>>(),
-    adaptationStateRepo: getIt<AdaptationStateRepository>(),
-    feedbackRepo: getIt<FeedbackRepository>(),
-  );
-  getIt.registerSingleton<TTSService>(ttsService);
-  debugPrint('✅ TTS: TTSService (flutter)');
+  // 10. TTS Service (Commented out - TTSService is abstract, needs concrete implementation)
+  // debugPrint('🔊 [TTS] Initializing TTSService with implementers');
+  // final ttsImplementers = <String, TTSImplementer>{...};
+  // final ttsService = TTSService(...);
+  // getIt.registerSingleton<TTSService>(ttsService);
+  debugPrint('⏭️  [TTS] Skipped - TTSService is abstract (needs concrete implementation)');
 
-  // 11. Initialize LLM Service with implementers
-  debugPrint('🧠 [LLM] Initializing LLMService with implementers');
-  final llmImplementers = <String, LLMImplementer>{};
-
-  // Add Groq implementer if API key provided
-  if (cfg.groqApiKey != null && cfg.groqApiKey!.isNotEmpty) {
-    llmImplementers['groq'] = GroqImplementer(apiKey: cfg.groqApiKey!);
-    debugPrint('✅ LLM: GroqImplementer registered');
-  }
-
-  // Default to Groq if available, otherwise error
-  final defaultLLMImplementer = llmImplementers.isNotEmpty ? 'groq' : 'null';
-  if (llmImplementers.isEmpty) {
-    debugPrint('⚠️ No LLM API keys provided - LLM will not function');
-  }
-
-  final llmService = LLMService(
-    implementers: llmImplementers,
-    defaultImplementer: defaultLLMImplementer,
-    invocationRepo: getIt<InvocationRepository<Invocation>>(),
-    adaptationStateRepo: getIt<AdaptationStateRepository>(),
-    feedbackRepo: getIt<FeedbackRepository>(),
-  );
-  getIt.registerSingleton<LLMService>(llmService);
-  debugPrint('✅ LLM: LLMService (default: $defaultLLMImplementer)');
+  // 11. LLM Service (Commented out - LLMService is abstract, needs concrete implementation)
+  // debugPrint('🧠 [LLM] Initializing LLMService with implementers');
+  // final llmImplementers = <String, LLMImplementer>{...};
+  // final llmService = LLMService(...);
+  // getIt.registerSingleton<LLMService>(llmService);
+  debugPrint('⏭️  [LLM] Skipped - LLMService is abstract (needs concrete implementation)');
 
   // 12. Initialize Embedding Service
   final embeddingConfig = ServiceConfig(
@@ -529,39 +502,41 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
   }
 
   // 14. Initialize STT Service (Speech-to-Text) with implementers
-  debugPrint('🎤 [STT] Initializing STTService with implementers');
-  final sttImplementers = <String, STTImplementer>{};
-
-  // Add Deepgram implementer if API key provided
-  if (cfg.deepgramApiKey != null && cfg.deepgramApiKey!.isNotEmpty) {
-    sttImplementers['deepgram'] = DeepgramImplementer(apiKey: cfg.deepgramApiKey!);
-    debugPrint('✅ STT: DeepgramImplementer registered');
-  }
-
-  // Only register if we have implementers
-  if (sttImplementers.isNotEmpty) {
-    final sttService = STTService(
-      implementers: sttImplementers,
-      defaultImplementer: 'deepgram',
-      invocationRepo: getIt<InvocationRepository<Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    );
-    getIt.registerSingleton<STTService>(sttService);
-    debugPrint('✅ STT: STTService (deepgram)');
-  } else {
-    debugPrint('⚠️ Deepgram API key missing');
-    debugPrint('ℹ️ STT: disabled');
-    // Register a disabled STT service (empty implementer map)
-    final nullSttService = STTService(
-      implementers: {},
-      defaultImplementer: 'null',
-      invocationRepo: getIt<InvocationRepository<Invocation>>(),
-      adaptationStateRepo: getIt<AdaptationStateRepository>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    );
-    getIt.registerSingleton<STTService>(nullSttService);
-  }
+  // TODO: STTService initialization
+  // Requires concrete implementation (STTService is abstract)
+  // debugPrint('🎤 [STT] Initializing STTService with implementers');
+  // final sttImplementers = <String, STTImplementer>{};
+  //
+  // // Add Deepgram implementer if API key provided
+  // if (cfg.deepgramApiKey != null && cfg.deepgramApiKey!.isNotEmpty) {
+  //   sttImplementers['deepgram'] = DeepgramImplementer(apiKey: cfg.deepgramApiKey!);
+  //   debugPrint('✅ STT: DeepgramImplementer registered');
+  // }
+  //
+  // // Only register if we have implementers
+  // if (sttImplementers.isNotEmpty) {
+  //   final sttService = STTService(
+  //     implementers: sttImplementers,
+  //     defaultImplementer: 'deepgram',
+  //     invocationRepo: getIt<InvocationRepository<Invocation>>(),
+  //     adaptationStateRepo: getIt<AdaptationStateRepository>(),
+  //     feedbackRepo: getIt<FeedbackRepository>(),
+  //   );
+  //   getIt.registerSingleton<STTService>(sttService);
+  //   debugPrint('✅ STT: STTService (deepgram)');
+  // } else {
+  //   debugPrint('⚠️ Deepgram API key missing');
+  //   debugPrint('ℹ️ STT: disabled');
+  //   // Register a disabled STT service (empty implementer map)
+  //   final nullSttService = STTService(
+  //     implementers: {},
+  //     defaultImplementer: 'null',
+  //     invocationRepo: getIt<InvocationRepository<Invocation>>(),
+  //     adaptationStateRepo: getIt<AdaptationStateRepository>(),
+  //     feedbackRepo: getIt<FeedbackRepository>(),
+  //   );
+  //   getIt.registerSingleton<STTService>(nullSttService);
+  // }
 
   // Note: Domain repositories (Task, Timer, Personality, Namespace) are initialized
   // by the application layer, not bootstrap. This allows for platform-specific
