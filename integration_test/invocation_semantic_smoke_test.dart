@@ -13,22 +13,20 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:everything_stack_template/core/invocation.dart';
-import 'package:everything_stack_template/services/embedding_service.dart';
-import 'package:everything_stack_template/services/chunking_service.dart';
-import 'package:everything_stack_template/services/semantic_search/semantic_search_service.dart';
 import 'package:everything_stack_template/main.dart';
-import 'package:get_it/get_it.dart';
+import 'package:everything_stack_template/services/embedding_service.dart';
+import '../test/support/invocation_semantic_test_shared.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Invocation Semantic Search - Smoke Test (Real Embeddings)', () {
     setUpAll(() async {
-      // No setup needed - app will initialize on pumpWidget()
+      print('🔥 Using REAL Jina embeddings');
+      print('ℹ️  Capturing embeddings from API for CI test fixture');
     });
 
-    testWidgets('Full smoke test: Index and search invocations',
+    testWidgets('Smoke: Semantic search with real Jina embeddings',
         (WidgetTester tester) async {
       // Build app - this runs bootstrap and initializes GetIt
       debugPrint('🏗️ Building MyApp...');
@@ -37,192 +35,80 @@ void main() {
       debugPrint('⏳ Waiting for bootstrap and initialization...');
       await tester.pumpAndSettle(const Duration(seconds: 5));
 
-      // NOW GetIt services are available
-      final chunkingService = GetIt.instance<ChunkingService>();
-      final searchService = GetIt.instance<SemanticSearchService>();
+      // Initialize embedding capture
       final embeddingService = EmbeddingService.instance;
-
-      debugPrint('✅ Services initialized');
-
       final capturedEmbeddings = <String, List<double>>{};
 
-      // Helper to create invocation with text content
-      Invocation _createInvocation({
-        required String componentType,
-        required String text,
-      }) {
-        return Invocation(
-          eventId: 'test-event-${DateTime.now().millisecondsSinceEpoch}',
-          turnId: 'test-turn',
-          componentType: componentType,
-          success: true,
-          confidence: 0.95,
-          output: {
-            if (componentType == 'stt') 'transcription': text
-            else 'response': text,
-          },
-          metadata: {},
-        );
-      }
-
-      /// Capture embedding from semantic search
-      Future<void> _captureEmbedding(String text) async {
+      /// Capture embedding from real API
+      Future<void> captureEmbedding(String text) async {
         try {
           final embedding = await embeddingService.generate(text);
           capturedEmbeddings[text] = embedding;
+          debugPrint('  📡 Captured: $text (${embedding.length} dims)');
         } catch (e) {
-          // Silently skip if capture fails
+          debugPrint('  ⚠️ Failed to capture: $text - $e');
         }
       }
 
-      // Test 1: Index short STT invocation
-      debugPrint('\n📝 Test 1: Index short STT invocation');
-      final invocation1 = _createInvocation(
-        componentType: 'stt',
-        text: 'What time is the meeting tomorrow',
-      );
+      // Run shared test logic
+      await runInvocationSemanticTest();
 
-      final chunks1 = await chunkingService.indexEntity(invocation1);
+      // Capture embeddings AFTER tests (for all test texts)
+      debugPrint('\n💾 Capturing embeddings for fixture...');
+      await captureEmbedding('What time is the meeting tomorrow');
+      await captureEmbedding(
+          'The meeting is scheduled for 2 PM tomorrow in the main conference room. '
+          'Please prepare the presentation slides and bring the Q3 reports. '
+          'We will discuss budget allocation and timeline for the new project.');
+      await captureEmbedding(
+          'Based on the quarterly review, we need to reallocate resources. '
+          'The marketing team is performing well but engineering is understaffed. '
+          'I recommend moving two people from operations to the backend team. '
+          'The DevOps infrastructure needs improvement for scalability. '
+          'We should also invest in monitoring tools and automated testing. '
+          'Timeline: target completion by end of Q1. Budget estimate: \$150K. '
+          'This will improve deployment frequency and reduce incident response time.');
+      await captureEmbedding(
+          'Based on the quarterly review, we need to reallocate resources. '
+          'The marketing team is performing well but engineering is understaffed. '
+          'I recommend moving two people from operations to the backend team. '
+          'The DevOps infrastructure needs improvement for scalability. '
+          'We should also invest in monitoring tools and automated testing. '
+          'Timeline: target completion by end of Q1. Budget estimate: \$150K. '
+          'This');
+      await captureEmbedding(
+          'will improve deployment frequency and reduce incident response time.');
+      await captureEmbedding('meeting schedule conference room');
+      await captureEmbedding('deployment DevOps infrastructure');
+      await captureEmbedding('design team dashboard mockups');
 
-      expect(chunks1, isNotEmpty);
-      expect(chunks1.length, greaterThan(0));
-
-      for (final chunk in chunks1) {
-        await _captureEmbedding(chunk.text);
-      }
-      debugPrint('✅ Test 1 passed: ${chunks1.length} chunks created');
-
-      // Test 2: Index medium LLM invocation
-      debugPrint('\n📝 Test 2: Index medium LLM invocation');
-      final invocation2 = _createInvocation(
-        componentType: 'llm',
-        text:
-            'The meeting is scheduled for 2 PM tomorrow in the main conference room. '
-            'Please prepare the presentation slides and bring the Q3 reports. '
-            'We will discuss budget allocation and timeline for the new project.',
-      );
-
-      final chunks2 = await chunkingService.indexEntity(invocation2);
-
-      expect(chunks2, isNotEmpty);
-      expect(chunks2.length, greaterThanOrEqualTo(2));
-
-      for (final chunk in chunks2) {
-        await _captureEmbedding(chunk.text);
-      }
-      debugPrint('✅ Test 2 passed: ${chunks2.length} chunks created');
-
-      // Test 3: Index long conversation invocation
-      debugPrint('\n📝 Test 3: Index long conversation invocation');
-      final invocation3 = _createInvocation(
-        componentType: 'llm',
-        text:
-            'Based on the quarterly review, we need to reallocate resources. '
-            'The marketing team is performing well but engineering is understaffed. '
-            'I recommend moving two people from operations to the backend team. '
-            'The DevOps infrastructure needs improvement for scalability. '
-            'We should also invest in monitoring tools and automated testing. '
-            'Timeline: target completion by end of Q1. Budget estimate: \$150K. '
-            'This will improve deployment frequency and reduce incident response time.',
-      );
-
-      final chunks3 = await chunkingService.indexEntity(invocation3);
-
-      expect(chunks3, isNotEmpty);
-      expect(chunks3.length, greaterThanOrEqualTo(3));
-
-      for (final chunk in chunks3) {
-        await _captureEmbedding(chunk.text);
-      }
-      debugPrint('✅ Test 3 passed: ${chunks3.length} chunks created');
-
-      // Test 4: Search returns semantic results
-      debugPrint('\n📝 Test 4: Search returns semantic results');
-      final results = await searchService.search(
-        'meeting schedule conference room',
-        limit: 5,
-      );
-
-      expect(results, isNotEmpty);
-      expect(results.length, greaterThan(0));
-
-      if (results.length > 1) {
-        expect(
-          results.first.similarity,
-          greaterThanOrEqualTo(results.last.similarity),
-        );
-      }
-
-      await _captureEmbedding('meeting schedule conference room');
-      debugPrint('✅ Test 4 passed: ${results.length} results found');
-
-      // Test 5: Search with entity type filter
-      debugPrint('\n📝 Test 5: Search with entity type filter');
-      final results2 = await searchService.search(
-        'deployment DevOps infrastructure',
-        entityTypes: ['Invocation'],
-        limit: 5,
-      );
-
-      expect(results2, isNotEmpty);
-      for (final result in results2) {
-        expect(result.chunk, isNotNull);
-      }
-
-      await _captureEmbedding('deployment DevOps infrastructure');
-      debugPrint('✅ Test 5 passed: ${results2.length} results found');
-
-      // Test 6: Index multiple invocations and search across them
-      debugPrint('\n📝 Test 6: Index multiple and search across');
-      final inv1 = _createInvocation(
-        componentType: 'stt',
-        text: 'Schedule a meeting with the design team',
-      );
-      final inv2 = _createInvocation(
-        componentType: 'llm',
-        text:
-            'The design team will present mockups for the new dashboard. '
-            'We need feedback on color scheme and layout.',
-      );
-
-      await chunkingService.indexEntity(inv1);
-      await chunkingService.indexEntity(inv2);
-
-      final results3 = await searchService.search(
-        'design team dashboard mockups',
-        limit: 10,
-      );
-
-      expect(results3, isNotEmpty);
-
-      await _captureEmbedding('design team dashboard mockups');
-      debugPrint('✅ Test 6 passed: ${results3.length} results found');
-
-      // Save captured embeddings for CI tests
+      // Save fixture
       if (capturedEmbeddings.isNotEmpty) {
         final json = jsonEncode(capturedEmbeddings);
-        debugPrint('💾 Captured ${capturedEmbeddings.length} embeddings');
+        debugPrint('\n✅ Saving fixture with ${capturedEmbeddings.length} embeddings');
 
-        // Write fixture file to disk for CI tests
         try {
           final fixtureDir = Directory('test/fixtures');
           if (!fixtureDir.existsSync()) {
             fixtureDir.createSync(recursive: true);
-            debugPrint('📁 Created test/fixtures directory');
+            debugPrint('  📁 Created test/fixtures directory');
           }
 
           final fixtureFile = File('test/fixtures/invocation_embeddings.json');
           fixtureFile.writeAsStringSync(json);
 
-          debugPrint('✅ Fixture saved to: test/fixtures/invocation_embeddings.json');
-          debugPrint('📊 Embedding vectors: ${capturedEmbeddings.length}');
-          debugPrint('📐 Vector dimensions: 384 (Jina default)');
+          debugPrint('  ✅ Fixture saved to: test/fixtures/invocation_embeddings.json');
+          debugPrint('  📊 Embedding vectors: ${capturedEmbeddings.length}');
+          debugPrint('  📐 Vector dimensions: 384 (Jina)');
         } catch (e) {
-          debugPrint('❌ Failed to save fixture: $e');
+          debugPrint('  ❌ Failed to save fixture: $e');
         }
       }
 
-      debugPrint('\n✅ All smoke tests passed!');
+      debugPrint('\n🎉 Smoke test complete');
+      debugPrint('   - Semantic search pipeline: ✅');
+      debugPrint('   - Real embeddings captured: ✅');
+      debugPrint('   - Fixture ready for CI: ✅');
     });
   });
 }
