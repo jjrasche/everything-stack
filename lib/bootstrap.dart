@@ -65,6 +65,7 @@ import 'core/event_repository.dart';
 import 'tools/task/task_tools.dart';
 import 'core/invocation.dart';
 import 'core/invocation_repository.dart';
+import 'core/entity_repository.dart';
 import 'core/adaptation_state_repository.dart';
 import 'core/feedback_repository.dart';
 import 'services/implementations/groq_implementer.dart';
@@ -474,20 +475,20 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
       final adapterRegistration = getIt<InvocationRepository<Invocation>>();
 
       // Create EntityRepository with semantic indexing handler
-      // Cast to InvocationRepository for registration
+      // This wraps the adapter with SemanticIndexableHandler for automatic chunking
       final invocationRepo = createInvocationRepository(
         adapter: adapterRegistration as PersistenceAdapter<Invocation>,
         embeddingService: EmbeddingService.instance,
         chunkingService: chunkingService,
-      ) as InvocationRepository<Invocation>;
+      );
 
-      // Unregister old adapter-only registration and register new one with handlers
-      getIt.unregister<InvocationRepository<Invocation>>();
-      getIt.registerSingleton<InvocationRepository<Invocation>>(invocationRepo);
-      debugPrint('✅ InvocationRepository wired with SemanticIndexableHandler');
+      // Register EntityRepository (NOT InvocationRepository - different types!)
+      // EntityRepository has the handlers, InvocationRepository is the bare adapter
+      getIt.registerSingleton<EntityRepository<Invocation>>(invocationRepo);
+      debugPrint('✅ InvocationRepository wired with SemanticIndexableHandler (EntityRepository)');
     } catch (e) {
       debugPrint('⚠️ Failed to wire InvocationRepository handler: $e');
-      rethrow;
+      // Don't rethrow - handler wiring is optional, semantic search works without it
     }
   } catch (e) {
     debugPrint('⚠️ Semantic search initialization failed: $e');
