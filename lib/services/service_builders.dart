@@ -8,18 +8,18 @@
 /// Usage:
 /// ```dart
 /// // Bootstrap - create any service
-/// final llm = createService<LLMService>('llm', llmConfig);
+/// final llm = createService<InferenceService>('llm', llmConfig);
 /// final tts = createService<TTSService>('tts', ttsConfig);
 ///
 /// // Runtime switching - same function
-/// await ServiceRegistry.switchProvider<LLMService>(
+/// await ServiceRegistry.switchProvider<InferenceService>(
 ///   'llm',
 ///   newConfig,
-///   (config) => createService<LLMService>('llm', config),
+///   (config) => createService<InferenceService>('llm', config),
 /// );
 /// ```
 
-import 'llm_service.dart';
+import 'inference_service.dart';
 import 'tts_service.dart';
 import 'embedding_service.dart';
 import 'service_registry.dart';
@@ -42,12 +42,12 @@ import 'package:http/http.dart' as http;
 ///
 /// Example:
 /// ```dart
-/// final llm = createService<LLMService>('llm', config);
+/// final llm = createService<InferenceService>('llm', config);
 /// final tts = createService<TTSService>('tts', config);
 /// ```
 dynamic createService<T>(String serviceName, ServiceConfig config) {
   return switch (serviceName.toLowerCase()) {
-    'llm' => createLLMService(config),
+    'llm' => createInferenceService(config),
     'tts' => createTTSService(config),
     'embedding' => createEmbeddingService(config),
     _ => throw UnknownServiceException('Unknown service: $serviceName'),
@@ -58,7 +58,7 @@ dynamic createService<T>(String serviceName, ServiceConfig config) {
 // LLM Service Builder
 // ============================================================================
 
-LLMService createLLMService(ServiceConfig config) {
+InferenceService createInferenceService(ServiceConfig config) {
   return switch (config.provider.toLowerCase()) {
     'groq' => _buildGroqLLM(config),
     'claude' => _buildClaudeLLM(config),
@@ -67,10 +67,10 @@ LLMService createLLMService(ServiceConfig config) {
   };
 }
 
-LLMService _buildGroqLLM(ServiceConfig config) {
-  // TODO: LLMService requires concrete implementation
-  // LLMService is abstract and cannot be instantiated
-  print('⚠️ Groq LLM service builder - awaiting concrete LLMService implementation');
+InferenceService _buildGroqLLM(ServiceConfig config) {
+  // TODO: InferenceService requires concrete implementation
+  // InferenceService is abstract and cannot be instantiated
+  print('⚠️ Groq LLM service builder - awaiting concrete InferenceService implementation');
   throw UnimplementedError('Groq LLM service builder not yet implemented');
 
   // final apiKey = config.credentials['apiKey'] as String?;
@@ -91,8 +91,8 @@ LLMService _buildGroqLLM(ServiceConfig config) {
   // // Create Groq implementer
   // final groqImplementer = GroqImplementer(apiKey: apiKey);
   //
-  // // Create LLMService with map of implementers
-  // return LLMService(
+  // // Create InferenceService with map of implementers
+  // return InferenceService(
   //   implementers: {'groq': groqImplementer},
   //   defaultImplementer: 'groq',
   //   invocationRepo: invocationRepo,
@@ -101,13 +101,13 @@ LLMService _buildGroqLLM(ServiceConfig config) {
   // );
 }
 
-LLMService _buildClaudeLLM(ServiceConfig config) {
+InferenceService _buildClaudeLLM(ServiceConfig config) {
   // TODO: Implement Claude service
   print('⚠️ Claude LLM not yet implemented');
   throw UnimplementedError('Claude LLM not yet implemented');
 }
 
-LLMService _buildLocalLLM(ServiceConfig config) {
+InferenceService _buildLocalLLM(ServiceConfig config) {
   // TODO: Implement local LLM
   print('⚠️ Local LLM not yet implemented');
   throw UnimplementedError('Local LLM not yet implemented');

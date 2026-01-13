@@ -46,8 +46,9 @@
 
 import 'dart:convert';
 import '../core/base_entity.dart';
+import '../patterns/ownable.dart';
 
-class Event extends BaseEntity {
+class Event extends BaseEntity with Ownable {
   // ============ BaseEntity field overrides ============
   @override
   int id = 0;

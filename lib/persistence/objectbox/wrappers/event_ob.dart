@@ -1,8 +1,8 @@
 /// # EventOB - ObjectBox Wrapper
 
-import 'dart:convert';
 import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/core/event.dart';
+import 'package:everything_stack_template/patterns/ownable.dart';
 
 @Entity()
 class EventOB {
@@ -35,6 +35,10 @@ class EventOB {
   // Store payload as JSON string for ObjectBox
   String payloadJson;
 
+  // ============ Ownable fields ============
+  String? ownerId;
+  String? visibility; // 'private', 'shared', 'public'
+
   EventOB({
     required this.eventType,
     required this.correlationId,
@@ -42,6 +46,8 @@ class EventOB {
     required this.timestamp,
     this.parentEventId,
     this.payloadJson = '{}',
+    this.ownerId,
+    this.visibility,
   });
 
   factory EventOB.fromEvent(Event event) {
@@ -52,6 +58,8 @@ class EventOB {
       timestamp: event.timestamp,
       parentEventId: event.parentEventId,
       payloadJson: event.payloadJson,
+      ownerId: event.ownerId,
+      visibility: event.visibility.toString().split('.').last,
     )
       ..id = event.id
       ..uuid = event.uuid
@@ -61,7 +69,7 @@ class EventOB {
   }
 
   Event toEvent() {
-    return Event(
+    final event = Event(
       eventType: eventType,
       correlationId: correlationId,
       source: source,
@@ -74,5 +82,16 @@ class EventOB {
       ..createdAt = createdAt
       ..updatedAt = updatedAt
       ..syncId = syncId;
+
+    // Restore Ownable fields
+    event.ownerId = ownerId;
+    if (visibility != null) {
+      event.visibility = Visibility.values.firstWhere(
+        (v) => v.toString().split('.').last == visibility,
+        orElse: () => Visibility.private,
+      );
+    }
+
+    return event;
   }
 }

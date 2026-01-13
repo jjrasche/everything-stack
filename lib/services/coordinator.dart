@@ -4,7 +4,7 @@
 /// Central orchestrator for the voice assistant pipeline.
 /// Orchestrates LLM + TTS for end-to-end voice interaction:
 /// 1. Embedding generation (semantic representation)
-/// 2. LLMService - calls LLM with tools (includes agentic loop)
+/// 2. InferenceService - calls LLM with tools (includes agentic loop)
 /// 3. TTSService - synthesizes response to speech
 ///
 /// ## Flow (Audio In → Audio Out)
@@ -31,7 +31,7 @@ import '../core/invocation.dart';
 import '../core/event.dart';
 import '../core/invocation_repository.dart';
 import 'embedding_service.dart';
-import 'llm_service.dart';
+import 'inference_service.dart';
 import 'tts_service.dart';
 import 'tool_executor.dart' show ToolExecutor;
 import 'event_bus.dart';
@@ -85,7 +85,7 @@ class CoordinatorResult {
 /// Central coordinator orchestrating voice assistant pipeline
 class Coordinator {
   final EmbeddingService embeddingService;
-  final LLMService llmService;
+  final InferenceService llmService;
   final TTSService ttsService;
   final ToolExecutor toolExecutor;
 

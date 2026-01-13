@@ -3,11 +3,13 @@
 /// Typed payloads for LLM service adaptation, invocations, and feedback.
 /// Provides compile-time safety, IDE autocomplete, and self-documentation.
 
+import 'dart:convert';
+import 'package:everything_stack_template/core/adaptation_data.dart';
 import 'message.dart';
 
 /// Learned LLM preferences (per implementer, per user).
 /// These are adaptable parameters that training adjusts.
-class LLMAdaptationData {
+class LLMAdaptationData extends AdaptationData {
   /// How "creative" vs "rigid" the LLM should be (0.0-2.0).
   /// Higher = more creative/risky, Lower = more factual/conservative.
   /// Note: Different implementations have different temperature semantics.
@@ -40,12 +42,13 @@ class LLMAdaptationData {
     systemPrompt: json['systemPrompt'] as String?,
   );
 
-  /// Serialize to JSON.
-  Map<String, dynamic> toJson() => {
+  /// Serialize to JSON string.
+  @override
+  String toJson() => jsonEncode({
     'temperature': temperature,
     'preferredResponseLength': preferredResponseLength,
     if (systemPrompt != null) 'systemPrompt': systemPrompt,
-  };
+  });
 }
 
 /// LLM invocation input (what was sent to the LLM).

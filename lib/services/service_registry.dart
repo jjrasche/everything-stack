@@ -12,16 +12,16 @@
 /// ## Usage
 /// ```dart
 /// // Register a service
-/// ServiceRegistry.register<LLMService>('llm', groqService);
+/// ServiceRegistry.register<InferenceService>('llm', groqService);
 ///
 /// // Get current service
-/// final llm = ServiceRegistry.get<LLMService>('llm');
+/// final llm = ServiceRegistry.get<InferenceService>('llm');
 ///
 /// // Switch provider at runtime
-/// await ServiceRegistry.switchProvider<LLMService>(
+/// await ServiceRegistry.switchProvider<InferenceService>(
 ///   'llm',
 ///   claudeConfig,
-///   LLMServiceFactory.create,
+///   InferenceServiceFactory.create,
 /// );
 /// ```
 
@@ -56,7 +56,7 @@ class ServiceRegistry {
   ///
   /// Example:
   /// ```dart
-  /// ServiceRegistry.register<LLMService>('llm', groqService);
+  /// ServiceRegistry.register<InferenceService>('llm', groqService);
   /// ```
   static void register<T>(String name, T service) {
     _services[name] = service;
@@ -84,10 +84,10 @@ class ServiceRegistry {
   ///
   /// Example:
   /// ```dart
-  /// await ServiceRegistry.switchProvider<LLMService>(
+  /// await ServiceRegistry.switchProvider<InferenceService>(
   ///   'llm',
   ///   ServiceConfig(provider: 'claude', credentials: {...}),
-  ///   LLMServiceFactory.create,
+  ///   InferenceServiceFactory.create,
   /// );
   /// ```
   static Future<void> switchProvider<T>(

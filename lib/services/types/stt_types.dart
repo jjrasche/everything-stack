@@ -2,10 +2,12 @@
 ///
 /// Typed payloads for STT (speech-to-text) service adaptation, invocations, and feedback.
 
+import 'dart:convert';
+import 'package:everything_stack_template/core/adaptation_data.dart';
 import 'word.dart';
 
 /// Learned STT preferences (per implementer, per user).
-class STTAdaptationData {
+class STTAdaptationData extends AdaptationData {
   /// Minimum confidence threshold to accept transcription.
   /// Below this, request human correction or retry.
   final double confidenceThreshold;
@@ -31,11 +33,12 @@ class STTAdaptationData {
     minFeedbackCount: json['minFeedbackCount'] as int? ?? 10,
   );
 
-  /// Serialize to JSON.
-  Map<String, dynamic> toJson() => {
+  /// Serialize to JSON string.
+  @override
+  String toJson() => jsonEncode({
     'confidenceThreshold': confidenceThreshold,
     'minFeedbackCount': minFeedbackCount,
-  };
+  });
 }
 
 /// STT invocation input (audio metadata).

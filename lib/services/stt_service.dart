@@ -14,6 +14,7 @@
 /// Service (smart, orchestration) = Composition of Implementers (dumb, API wrappers)
 
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
 import '../core/invocation.dart';
 import '../core/invocation_repository.dart';
@@ -26,7 +27,7 @@ import '../core/component_types.dart';
 import './implementations/stt_implementer.dart';
 import './types/stt_types.dart';
 
-abstract class STTService implements Trainable {
+class STTService with Trainable<STTAdaptationData> {
   final Map<String, STTImplementer> _implementers;
   final String _defaultImplementer;
   final InvocationRepository invocationRepo;
@@ -162,4 +163,16 @@ abstract class STTService implements Trainable {
     // 3. Update confidence threshold based on feedback
     // 4. Save updated AdaptationState
   }
+
+  // ============ Trainable Interface Implementation ============
+
+  @override
+  String get componentType => 'stt';
+
+  @override
+  STTAdaptationData createDefaultData() => STTAdaptationData.defaults();
+
+  @override
+  STTAdaptationData deserializeData(String json) =>
+      STTAdaptationData.fromJson(jsonDecode(json) as Map<String, dynamic>);
 }

@@ -44,7 +44,7 @@ import 'services/embedding_queue_service.dart';
 import 'services/audio_recording_service.dart';
 import 'services/stt_service.dart';
 import 'services/tts_service.dart';
-import 'services/llm_service.dart';
+import 'services/inference_service.dart';
 import 'services/service_registry.dart';
 import 'services/service_builders.dart';
 import 'services/coordinator.dart';
@@ -407,12 +407,12 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
   // getIt.registerSingleton<TTSService>(ttsService);
   debugPrint('⏭️  [TTS] Skipped - TTSService is abstract (needs concrete implementation)');
 
-  // 11. LLM Service (Commented out - LLMService is abstract, needs concrete implementation)
-  // debugPrint('🧠 [LLM] Initializing LLMService with implementers');
+  // 11. LLM Service (Commented out - InferenceService is abstract, needs concrete implementation)
+  // debugPrint('🧠 [LLM] Initializing InferenceService with implementers');
   // final llmImplementers = <String, LLMImplementer>{...};
-  // final llmService = LLMService(...);
-  // getIt.registerSingleton<LLMService>(llmService);
-  debugPrint('⏭️  [LLM] Skipped - LLMService is abstract (needs concrete implementation)');
+  // final llmService = InferenceService(...);
+  // getIt.registerSingleton<InferenceService>(llmService);
+  debugPrint('⏭️  [LLM] Skipped - InferenceService is abstract (needs concrete implementation)');
 
   // 12. Initialize Embedding Service
   final embeddingConfig = ServiceConfig(
@@ -626,9 +626,9 @@ Future<void> setupServiceLocator() async {
     );
     debugPrint('✅ [setupServiceLocator] EmbeddingService registered');
 
-    // LLMService - Already registered in _initializeServices
+    // InferenceService - Already registered in _initializeServices
     // (Composition pattern: Service holds Map<String, LLMImplementer>)
-    debugPrint('✅ [setupServiceLocator] LLMService already registered from bootstrap');
+    debugPrint('✅ [setupServiceLocator] InferenceService already registered from bootstrap');
 
     // TTSService - Already registered in _initializeServices
     debugPrint('✅ [setupServiceLocator] TTSService already registered from bootstrap');

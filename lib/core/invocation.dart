@@ -40,10 +40,11 @@
 import 'dart:convert';
 import 'package:everything_stack_template/patterns/embeddable.dart';
 import 'package:everything_stack_template/patterns/semantic_indexable.dart';
+import 'package:everything_stack_template/patterns/ownable.dart';
 
 import 'base_entity.dart';
 
-class Invocation extends BaseEntity with Embeddable, SemanticIndexable {
+class Invocation extends BaseEntity with Embeddable, SemanticIndexable, Ownable {
   // ============ BaseEntity field overrides ============
   @override
   int id = 0;

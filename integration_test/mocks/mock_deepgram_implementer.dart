@@ -1,0 +1,85 @@
+/// Mock Deepgram Implementer - returns canned STT response for testing
+///
+/// Implements STTImplementer interface but returns hardcoded responses
+/// instead of hitting the real Deepgram API. Used in CI mode integration tests.
+
+import 'package:everything_stack_template/services/implementations/stt_implementer.dart';
+import 'package:everything_stack_template/services/types/stt_types.dart';
+import 'package:everything_stack_template/services/types/word.dart';
+
+class MockDeepgramImplementer implements STTImplementer {
+  @override
+  String get implementerName => 'deepgram';
+
+  @override
+  Future<STTInvocationOutput> recognize({
+    required String audioId,
+    required double durationSeconds,
+  }) async {
+    print('🎤 MockDeepgramImplementer.recognize(): Returning canned transcription (no API call)');
+    const transcription = 'mock transcription from audio';
+    final words = transcription.split(' ').asMap().entries.map((e) {
+      return Word(
+        text: e.value,
+        confidence: 0.95,
+        startTime: e.key * 0.5,
+        endTime: (e.key + 1) * 0.5,
+      );
+    }).toList();
+
+    return STTInvocationOutput(
+      transcription: transcription,
+      confidence: 0.95,
+      words: words,
+      latencyMs: 50,
+    );
+  }
+}
+
+/// Enhanced Mock Deepgram Implementer - configurable transcription response
+///
+/// Allows tests to specify what transcript should be returned.
+/// Useful for testing different scenarios (e.g., "one plus one", error cases).
+class EnhancedMockDeepgramImplementer implements STTImplementer {
+  final String transcriptToEmit;
+  final Duration processingDelay;
+
+  EnhancedMockDeepgramImplementer({
+    this.transcriptToEmit = 'mock transcription',
+    this.processingDelay = const Duration(milliseconds: 100),
+  });
+
+  @override
+  String get implementerName => 'deepgram';
+
+  @override
+  Future<STTInvocationOutput> recognize({
+    required String audioId,
+    required double durationSeconds,
+  }) async {
+    print('🎤 EnhancedMockDeepgramImplementer.recognize(): Processing audio (configurable)');
+    print('   📝 Duration: ${durationSeconds}s');
+
+    // Simulate processing delay
+    await Future.delayed(processingDelay);
+
+    print('   📤 Emitting transcript: "$transcriptToEmit"');
+
+    // Split transcript into words with timing
+    final words = transcriptToEmit.split(' ').asMap().entries.map((e) {
+      return Word(
+        text: e.value,
+        confidence: 0.95,
+        startTime: e.key * 0.5,
+        endTime: (e.key + 1) * 0.5,
+      );
+    }).toList();
+
+    return STTInvocationOutput(
+      transcription: transcriptToEmit,
+      confidence: 0.95,
+      words: words,
+      latencyMs: processingDelay.inMilliseconds.toDouble(),
+    );
+  }
+}

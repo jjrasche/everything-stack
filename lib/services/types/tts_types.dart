@@ -2,8 +2,11 @@
 ///
 /// Typed payloads for TTS (text-to-speech) service adaptation, invocations, and feedback.
 
+import 'dart:convert';
+import 'package:everything_stack_template/core/adaptation_data.dart';
+
 /// Learned TTS preferences (per implementer, per user).
-class TTSAdaptationData {
+class TTSAdaptationData extends AdaptationData {
   /// Preferred voice ID (implementer-specific: e.g., 'en-US-Neural2-C').
   final String voiceId;
 
@@ -33,12 +36,13 @@ class TTSAdaptationData {
     pitch: json['pitch'] as double? ?? 1.0,
   );
 
-  /// Serialize to JSON.
-  Map<String, dynamic> toJson() => {
+  /// Serialize to JSON string.
+  @override
+  String toJson() => jsonEncode({
     'voiceId': voiceId,
     'speechRate': speechRate,
     'pitch': pitch,
-  };
+  });
 }
 
 /// TTS invocation input (text to synthesize).

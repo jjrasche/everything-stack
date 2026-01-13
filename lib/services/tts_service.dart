@@ -14,6 +14,7 @@
 /// Service (smart, orchestration) = Composition of Implementers (dumb, API wrappers)
 
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
 import '../core/invocation.dart';
 import '../core/invocation_repository.dart';
@@ -26,7 +27,7 @@ import '../core/component_types.dart';
 import './implementations/tts_implementer.dart';
 import './types/tts_types.dart';
 
-abstract class TTSService implements Trainable {
+class TTSService with Trainable<TTSAdaptationData> {
   final Map<String, TTSImplementer> _implementers;
   final String _defaultImplementer;
   final InvocationRepository invocationRepo;
@@ -164,4 +165,16 @@ abstract class TTSService implements Trainable {
     // 3. Update voice preference based on feedback
     // 4. Save updated AdaptationState
   }
+
+  // ============ Trainable Interface Implementation ============
+
+  @override
+  String get componentType => 'tts';
+
+  @override
+  TTSAdaptationData createDefaultData() => TTSAdaptationData.defaults();
+
+  @override
+  TTSAdaptationData deserializeData(String json) =>
+      TTSAdaptationData.fromJson(jsonDecode(json) as Map<String, dynamic>);
 }

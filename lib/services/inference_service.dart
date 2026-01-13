@@ -1,7 +1,7 @@
-/// # LLMService
+/// # InferenceService
 ///
-/// Smart orchestration service for LLM capabilities.
-/// Holds multiple LLM implementations and coordinates adaptation learning.
+/// Smart orchestration service for LLM and VLM capabilities.
+/// Holds multiple inference implementations (LLM, VLM) and coordinates adaptation learning.
 ///
 /// ## Architecture
 /// Service (smart, orchestration) = Composition of Implementers (dumb, API wrappers)
@@ -29,6 +29,7 @@
 /// 5. Wire feedback collection UI
 
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
 import '../core/invocation.dart';
 import '../core/invocation_repository.dart';
@@ -45,14 +46,14 @@ import './types/message.dart';
 export './types/message.dart' show Message;
 export './types/llm_types.dart' show LLMResponse, LLMTool, LLMToolCall, LLMInvocationInput, LLMInvocationOutput, LLMAdaptationData, LLMFeedback;
 
-abstract class LLMService implements Trainable {
+class InferenceService with Trainable<LLMAdaptationData> {
   final Map<String, LLMImplementer> _implementers;
   final String _defaultImplementer;
   final InvocationRepository invocationRepo;
   final AdaptationStateRepository adaptationStateRepo;
   final FeedbackRepository feedbackRepo;
 
-  LLMService({
+  InferenceService({
     required Map<String, LLMImplementer> implementers,
     required String defaultImplementer,
     required this.invocationRepo,
@@ -215,4 +216,16 @@ abstract class LLMService implements Trainable {
     // 3. Update temperature/responseLength based on feedback
     // 4. Save updated AdaptationState
   }
+
+  // ============ Trainable Interface Implementation ============
+
+  @override
+  String get componentType => 'llm';
+
+  @override
+  LLMAdaptationData createDefaultData() => LLMAdaptationData.defaults();
+
+  @override
+  LLMAdaptationData deserializeData(String json) =>
+      LLMAdaptationData.fromJson(jsonDecode(json) as Map<String, dynamic>);
 }

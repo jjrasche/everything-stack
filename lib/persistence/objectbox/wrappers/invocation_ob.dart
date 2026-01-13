@@ -6,6 +6,7 @@
 import 'dart:convert';
 import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/core/invocation.dart';
+import 'package:everything_stack_template/patterns/ownable.dart';
 
 @Entity()
 class InvocationOB {
@@ -27,6 +28,7 @@ class InvocationOB {
 
   String eventId;
   String componentType;
+  String? implementer;
   String? turnId;
   bool success;
   double confidence;
@@ -36,6 +38,10 @@ class InvocationOB {
   String? outputJson;
   String? metadataJson;
 
+  // ============ Ownable fields ============
+  String? ownerId;
+  String? visibility; // 'private', 'shared', 'public'
+
   // ============ Constructor ============
 
   InvocationOB({
@@ -43,10 +49,13 @@ class InvocationOB {
     required this.componentType,
     required this.success,
     required this.confidence,
+    this.implementer,
     this.turnId,
     this.inputJson,
     this.outputJson,
     this.metadataJson,
+    this.ownerId,
+    this.visibility,
   });
 
   // ============ Conversion Methods ============
@@ -56,12 +65,15 @@ class InvocationOB {
     return InvocationOB(
       eventId: invocation.eventId,
       componentType: invocation.componentType,
+      implementer: invocation.implementer,
       success: invocation.success,
       confidence: invocation.confidence,
       turnId: invocation.turnId,
       inputJson: invocation.inputJson,
       outputJson: invocation.outputJson,
       metadataJson: invocation.metadataJson,
+      ownerId: invocation.ownerId,
+      visibility: invocation.visibility.toString().split('.').last,
     )
       ..id = invocation.id
       ..uuid = invocation.uuid
@@ -100,11 +112,12 @@ class InvocationOB {
       }
     }
 
-    return Invocation(
+    final invocation = Invocation(
       eventId: eventId,
       componentType: componentType,
       success: success,
       confidence: confidence,
+      implementer: implementer,
       turnId: turnId,
       input: inputMap,
       output: outputMap,
@@ -118,5 +131,16 @@ class InvocationOB {
       ..inputJson = inputJson
       ..outputJson = outputJson
       ..metadataJson = metadataJson;
+
+    // Restore Ownable fields
+    invocation.ownerId = ownerId;
+    if (visibility != null) {
+      invocation.visibility = Visibility.values.firstWhere(
+        (v) => v.toString().split('.').last == visibility,
+        orElse: () => Visibility.private,
+      );
+    }
+
+    return invocation;
   }
 }
