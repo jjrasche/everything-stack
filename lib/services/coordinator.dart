@@ -33,8 +33,11 @@ import '../core/invocation_repository.dart';
 import 'embedding_service.dart';
 import 'inference_service.dart';
 import 'tts_service.dart';
-import 'tool_executor.dart' show ToolExecutor;
+import 'tool_executor.dart' show ToolExecutor, ToolCall;
 import 'event_bus.dart';
+import 'context_selector.dart';
+import 'types/context_selector_types.dart';
+import 'types/llm_types.dart';
 
 /// Result of coordinator orchestration
 class CoordinatorResult {
@@ -88,6 +91,7 @@ class Coordinator {
   final InferenceService llmService;
   final TTSService ttsService;
   final ToolExecutor toolExecutor;
+  final ContextSelector contextSelector;
 
   final InvocationRepository<Invocation> invocationRepo;
   final EventBus eventBus;
@@ -103,6 +107,7 @@ class Coordinator {
     required this.llmService,
     required this.ttsService,
     required this.toolExecutor,
+    required this.contextSelector,
     required this.invocationRepo,
     required this.eventBus,
   });
@@ -194,92 +199,99 @@ class Coordinator {
     final invocationIds = <String>[];
 
     try {
-      // 1. Generate embedding
-      print('\n[1/6] Generating embedding...');
-      final embedding = await embeddingService.generate(utterance);
-      print('✅ Embedding generated: ${embedding.isNotEmpty ? embedding.length : 0} dimensions');
+      // 1. Select context using ContextSelector (dual temporal decay)
+      print('\n[1/4] Selecting context via ContextSelector...');
+      final contextBundle = await contextSelector.selectContext(
+        transcription: utterance,
+        userId: null, // No user segmentation yet
+      );
+      print('✅ Context selected: ${contextBundle.summary}');
 
-      // 2. NamespaceSelector picks namespace
-      // COMMENTED OUT: Focus on LLM + TTS data for learning
-      // print('\n[2/6] Selecting namespace...');
-      // final selectedNamespace = await namespaceSelector.selectNamespace(
-      //   correlationId: correlationId,
-      //   utterance: utterance,
-      //   embedding: embedding,
-      //   availableNamespaces: availableNamespaces,
-      // );
-      final selectedNamespace = 'general'; // Default
-      // print('✅ Selected namespace: "$selectedNamespace"');
-      // invocationIds.add('namespace_selector_invocation');
+      // 2. Build messages from ContextBundle
+      print('\n[2/4] Building message array from context...');
+      final messages = _buildMessagesFromContext(
+        contextBundle: contextBundle,
+        currentUtterance: utterance,
+      );
+      print('✅ Messages built: ${messages.length} messages');
 
-      // 3. ToolSelector picks tools
-      // COMMENTED OUT: Focus on LLM + TTS data for learning
-      // print('\n[3/6] Selecting tools...');
-      // final availableTools = toolsByNamespace[selectedNamespace] ?? [];
-      // final selectedTools = await toolSelector.selectTools(
-      //   correlationId: correlationId,
-      //   namespace: selectedNamespace,
-      //   utterance: utterance,
-      //   embedding: embedding,
-      //   availableTools: availableTools,
-      // );
-      final selectedTools = <String>[]; // No tools
-      // print('✅ Selected tools: ${selectedTools.isEmpty ? "none" : selectedTools.join(", ")}');
-      // invocationIds.add('tool_selector_invocation');
+      // 3. Get all available tools from ToolRegistry
+      print('\n[3/4] Getting available tools...');
+      final toolDefinitions = toolExecutor.toolRegistry.getAllTools();
+      final availableTools = toolDefinitions
+          .map((tool) => LLMTool(
+                name: tool.name,
+                description: tool.description,
+                parametersSchema: tool.parameters,
+              ))
+          .toList();
+      print('✅ Available tools: ${availableTools.length} tools');
 
-      // 4. ContextInjector injects context
-      // COMMENTED OUT: Focus on LLM + TTS data for learning
-      // print('\n[4/6] Injecting context...');
-      // final injectedContext = await contextInjector.injectContext(
-      //   correlationId: correlationId,
-      //   namespace: selectedNamespace,
-      // );
-      final injectedContext = <String, dynamic>{}; // No context
-      // print('✅ Context injected: ${injectedContext.length} keys');
-      // invocationIds.add('context_injector_invocation');
-
-      // 5. LLMConfigSelector picks config
-      // COMMENTED OUT: Focus on LLM + TTS data for learning
-      // print('\n[5/6] Selecting LLM config...');
-      // final llmConfig = await llmConfigSelector.selectConfig(
-      //   correlationId: correlationId,
-      //   utterance: utterance,
-      //   namespace: selectedNamespace,
-      //   tools: selectedTools,
-      // );
+      // 4. LLM config (default for now)
       final llmConfig = {
         'model': 'llama-3.1-8b-instant',
         'temperature': 0.7,
-      }; // Default config
-      // print('✅ LLM config: model=${llmConfig['model']}, temp=${llmConfig['temperature']}');
-      // invocationIds.add('llm_config_selector_invocation');
+      };
 
-      // 6. Call LLM (MVP: no tool execution)
-      print('\n[6/6] Calling LLM service...');
+      // 5. Call LLM with tools
+      print('\n[4/4] Calling LLM service with context...');
       print('📡 LLM call starting...');
       final llmResponse = await llmService.chatWithTools(
         model: llmConfig['model'] as String? ?? 'llama-3.1-8b-instant',
-        messages: [
-          {
-            'role': 'system',
-            'content': _buildSystemPrompt(
-              namespace: selectedNamespace,
-              tools: selectedTools,
-              context: injectedContext,
-            ),
-          },
-          {'role': 'user', 'content': utterance},
-        ],
-        tools: _buildToolDefinitions(selectedTools),
+        messages: messages,
+        tools: availableTools,
         temperature: (llmConfig['temperature'] as num?)?.toDouble() ?? 0.7,
       );
       print('✅ LLM response received');
       print('📄 Response content: "${llmResponse.content}"');
 
-      final finalResponse = llmResponse.content ?? 'No response generated';
-      final toolCalls = <String>[];
-      final iterations = 1;
+      // 6. Execute tool calls if present
+      String finalResponse = llmResponse.content ?? 'No response generated';
+      final executedToolNames = <String>[];
+      int iterations = 1;
+
+      if (llmResponse.toolCalls.isNotEmpty) {
+        print('\n[Tool Execution] LLM requested ${llmResponse.toolCalls.length} tool calls');
+
+        for (final llmToolCall in llmResponse.toolCalls) {
+          print('  🔧 Executing: ${llmToolCall.toolName}');
+          try {
+            // Convert LLMToolCall to ToolCall
+            final toolCall = ToolCall(
+              toolName: llmToolCall.toolName,
+              params: llmToolCall.params,
+              callId: llmToolCall.id,
+              confidence: 1.0,
+            );
+
+            final result = await toolExecutor.executeTool(
+              toolCall,
+              eventId: eventId,
+            );
+
+            if (result.success) {
+              executedToolNames.add(llmToolCall.toolName);
+              print('  ✅ Tool executed: ${llmToolCall.toolName}');
+              final resultStr = result.data.toString();
+              print('  📦 Result: ${resultStr.substring(0, resultStr.length > 100 ? 100 : resultStr.length)}...');
+            } else {
+              print('  ❌ Tool execution failed: ${result.error}');
+            }
+          } catch (e) {
+            print('  ❌ Tool execution exception: $e');
+          }
+        }
+      }
+
       print('💾 Final response set to: "$finalResponse"');
+
+      // Placeholder values for return
+      final selectedNamespace = 'general';
+      final selectedTools = executedToolNames;
+      final injectedContext = {
+        'conversationThreadSize': contextBundle.conversationThread.length,
+        'semanticContextSize': contextBundle.semanticContext.length,
+      };
 
       // Record LLM orchestration invocation
       // TODO: Restore when LLMOrchestrator is available
@@ -375,6 +387,51 @@ class Coordinator {
     }
   }
 
+
+  /// Build message array from ContextBundle
+  ///
+  /// Format:
+  /// 1. System message with semantic context (facts from across system)
+  /// 2. Conversation thread (STT → user, LLM → assistant)
+  /// 3. Current user utterance
+  List<Map<String, String>> _buildMessagesFromContext({
+    required ContextBundle contextBundle,
+    required String currentUtterance,
+  }) {
+    final messages = <Map<String, String>>[];
+
+    // 1. System message with semantic context
+    final systemPrompt = StringBuffer();
+    systemPrompt.writeln('You are a helpful voice assistant.');
+
+    if (contextBundle.semanticContext.isNotEmpty) {
+      systemPrompt.writeln('\n# Relevant Context (from past interactions):');
+      for (final inv in contextBundle.semanticContext) {
+        final summary = inv.toEmbeddingInput();
+        systemPrompt.writeln('- ${inv.componentType}: $summary');
+      }
+    }
+
+    messages.add({'role': 'system', 'content': systemPrompt.toString()});
+
+    // 2. Conversation thread (STT/LLM pairs → user/assistant messages)
+    for (final inv in contextBundle.conversationThread) {
+      if (inv.componentType == 'stt') {
+        // STT invocation → user message
+        final userMessage = inv.toEmbeddingInput();
+        messages.add({'role': 'user', 'content': userMessage});
+      } else if (inv.componentType == 'llm') {
+        // LLM invocation → assistant message
+        final assistantMessage = inv.toEmbeddingInput();
+        messages.add({'role': 'assistant', 'content': assistantMessage});
+      }
+    }
+
+    // 3. Current user utterance
+    messages.add({'role': 'user', 'content': currentUtterance});
+
+    return messages;
+  }
 
   String _buildSystemPrompt({
     required String namespace,

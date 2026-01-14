@@ -115,3 +115,7 @@ nul
 secrets/
 .firebase/
 .vercel
+
+# Test audio fixtures (don't commit large binary files)
+test_fixtures/audio/*.wav
+!test_fixtures/audio/.gitkeep

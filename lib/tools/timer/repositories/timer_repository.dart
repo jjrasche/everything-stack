@@ -2,11 +2,11 @@
 ///
 /// ## What it does
 /// Repository for Timer entities. Manages countdown timers.
+/// Uses platform-specific adapters - ObjectBox on native, IndexedDB on web.
 ///
 /// ## Usage
 /// ```dart
-/// final adapter = TimerObjectBoxAdapter(store);
-/// final repo = TimerRepository(adapter: adapter);
+/// final repo = TimerRepository();
 ///
 /// // Find active timers
 /// final active = await repo.findActive();
@@ -16,16 +16,17 @@
 /// ```
 
 import '../../../core/entity_repository.dart';
-import '../../../core/persistence/persistence_adapter.dart';
 import '../../../services/embedding_service.dart';
 import '../entities/timer.dart';
 
+// Platform-specific adapter factory
+import 'timer_adapter_web.dart'
+    if (dart.library.io) 'timer_adapter_native.dart';
+
 class TimerRepository extends EntityRepository<Timer> {
-  TimerRepository({
-    required PersistenceAdapter<Timer> adapter,
-    EmbeddingService? embeddingService,
-  }) : super(
-          adapter: adapter,
+  TimerRepository({EmbeddingService? embeddingService})
+      : super(
+          adapter: createTimerAdapter(),
           embeddingService: embeddingService ?? EmbeddingService.instance,
         );
 

@@ -13,10 +13,17 @@
 
 import 'package:idb_shim/idb.dart';
 import '../../../persistence/indexeddb/base_indexeddb_adapter.dart';
+import '../../../persistence/indexeddb/database_init.dart';
 import '../entities/timer.dart';
 
 class TimerIndexedDBAdapter extends BaseIndexedDBAdapter<Timer> {
   TimerIndexedDBAdapter(Database db) : super(db);
+
+  /// Factory method for creating and initializing TimerIndexedDBAdapter
+  static Future<TimerIndexedDBAdapter> create() async {
+    final db = await openIndexedDatabase();
+    return TimerIndexedDBAdapter(db);
+  }
 
   @override
   String get objectStoreName => 'timers';

@@ -48,6 +48,7 @@ import 'services/inference_service.dart';
 import 'services/service_registry.dart';
 import 'services/service_builders.dart';
 import 'services/coordinator.dart';
+import 'services/context_selector.dart';
 import 'services/tool_executor.dart';
 import 'services/tool_registry.dart';
 import 'services/event_bus.dart';
@@ -61,8 +62,10 @@ import 'services/semantic_search/entity_loader_impl.dart';
 import 'services/hnsw_index.dart';
 import 'core/persistence/persistence_adapter.dart';
 import 'tools/task/repositories/task_repository.dart';
+import 'tools/timer/repositories/timer_repository.dart';
 import 'core/event_repository.dart';
 import 'tools/task/task_tools.dart';
+import 'tools/timer/timer_tools.dart';
 import 'core/invocation.dart';
 import 'core/invocation_repository.dart';
 import 'core/entity_repository.dart';
@@ -662,6 +665,15 @@ Future<void> setupServiceLocator() async {
     // Register task tools with registry
     registerTaskTools(getIt<ToolRegistry>(), taskRepo);
 
+    // ========== Timer Repository (Owns adapter selection internally) ==========
+
+    final timerRepo = TimerRepository();
+    getIt.registerSingleton<TimerRepository>(timerRepo);
+
+    // Register timer tools with registry
+    registerTimerTools(getIt<ToolRegistry>(), timerRepo);
+    debugPrint('✅ [setupServiceLocator] Timer tools registered (timer.set, timer.cancel, timer.list)');
+
     // ========== Event Bus (Pub/sub with persistence) ==========
     debugPrint('🔍 [setupServiceLocator] Initializing EventBus...');
 
@@ -682,16 +694,31 @@ Future<void> setupServiceLocator() async {
       ),
     );
 
-    // ========== Coordinator (Removed - requires refactoring) ==========
-    // Coordinator initialization removed - references deleted classes
-    // TODO: Refactor Coordinator and register it without dead code dependencies
-    // For now, commented out to allow app to compile for semantic search testing
+    // ========== Context Selector (Trainable context gathering) ==========
+    debugPrint('🔍 [setupServiceLocator] Registering ContextSelector...');
 
-    // debugPrint('🔍 [setupServiceLocator] Registering Coordinator...');
-    // final coordinator = Coordinator(...);
-    // getIt.registerSingleton<Coordinator>(coordinator);
-    // coordinator.initialize();
-    // debugPrint('✅ [setupServiceLocator] Coordinator registered and initialized');
+    final contextSelector = ContextSelector(
+      invocationRepo: getIt<InvocationRepository<Invocation>>(),
+      embeddingService: EmbeddingService.instance,
+    );
+    getIt.registerSingleton<ContextSelector>(contextSelector);
+    debugPrint('✅ [setupServiceLocator] ContextSelector registered');
+
+    // ========== Coordinator (Multi-turn context management) ==========
+    debugPrint('🔍 [setupServiceLocator] Registering Coordinator...');
+
+    final coordinator = Coordinator(
+      embeddingService: EmbeddingService.instance,
+      llmService: getIt<InferenceService>(),
+      ttsService: getIt<TTSService>(),
+      toolExecutor: getIt<ToolExecutor>(),
+      contextSelector: getIt<ContextSelector>(),
+      invocationRepo: getIt<InvocationRepository<Invocation>>(),
+      eventBus: getIt<EventBus>(),
+    );
+    getIt.registerSingleton<Coordinator>(coordinator);
+    coordinator.initialize();
+    debugPrint('✅ [setupServiceLocator] Coordinator registered and initialized');
     debugPrint('🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY');
   } catch (e, st) {
     debugPrint('❌ [setupServiceLocator] ERROR: $e');
