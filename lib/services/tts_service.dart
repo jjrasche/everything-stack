@@ -78,16 +78,18 @@ class TTSService with Trainable<TTSAdaptationData> {
     );
 
     // 4. Log invocation for training feedback
-    final invocation = Invocation(
-      eventId: eventId,
-      componentType: ComponentType.tts,
-      implementer: implementer.implementerName,
-      success: true,
-      confidence: 1.0,
-      input: TTSInvocationInput(text: text).toJson(),
-      output: output.toJson(),
+    await recordInvocation(
+      eventId,
+      Invocation(
+        eventId: eventId,
+        componentType: ComponentType.tts,
+        implementer: implementer.implementerName,
+        success: true,
+        confidence: 1.0,
+        input: TTSInvocationInput(text: text).toJson(),
+        output: output.toJson(),
+      ),
     );
-    await invocationRepo.save(invocation);
 
     // 5. Return audio output
     return output;

@@ -77,19 +77,21 @@ class STTService with Trainable<STTAdaptationData> {
     );
 
     // 4. Log invocation for training feedback
-    final invocation = Invocation(
-      eventId: eventId,
-      componentType: ComponentType.stt,
-      implementer: implementer.implementerName,
-      success: output.confidence >= state.confidenceThreshold,
-      confidence: output.confidence,
-      input: STTInvocationInput(
-        audioId: audioId,
-        durationSeconds: durationSeconds,
-      ).toJson(),
-      output: output.toJson(),
+    await recordInvocation(
+      eventId,
+      Invocation(
+        eventId: eventId,
+        componentType: ComponentType.stt,
+        implementer: implementer.implementerName,
+        success: output.confidence >= state.confidenceThreshold,
+        confidence: output.confidence,
+        input: STTInvocationInput(
+          audioId: audioId,
+          durationSeconds: durationSeconds,
+        ).toJson(),
+        output: output.toJson(),
+      ),
     );
-    await invocationRepo.save(invocation);
 
     // 5. Return transcription
     return output.transcription;
