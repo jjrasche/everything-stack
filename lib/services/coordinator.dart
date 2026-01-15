@@ -154,7 +154,7 @@ class Coordinator {
           // Publish orchestration_complete event for UI to update state
           await eventBus.publish(Event(
             eventType: 'orchestration_complete',
-            correlationId: event.uuid,
+            correlationId: event.correlationId,  // Preserve correlation chain
             source: 'coordinator',
             payloadJson: jsonEncode({
               'success': result.success,
@@ -202,6 +202,7 @@ class Coordinator {
       // 1. Select context using ContextSelector (dual temporal decay)
       print('\n[1/4] Selecting context via ContextSelector...');
       final contextBundle = await contextSelector.selectContext(
+        eventId: eventId,
         transcription: utterance,
         userId: null, // No user segmentation yet
       );
@@ -268,6 +269,7 @@ class Coordinator {
               toolCall,
               eventId: eventId,
             );
+            // Note: Invocation recording happens inside executeTool() via Trainable mixin
 
             if (result.success) {
               executedToolNames.add(llmToolCall.toolName);
@@ -394,11 +396,11 @@ class Coordinator {
   /// 1. System message with semantic context (facts from across system)
   /// 2. Conversation thread (STT → user, LLM → assistant)
   /// 3. Current user utterance
-  List<Map<String, String>> _buildMessagesFromContext({
+  List<Map<String, dynamic>> _buildMessagesFromContext({
     required ContextBundle contextBundle,
     required String currentUtterance,
   }) {
-    final messages = <Map<String, String>>[];
+    final messages = <Map<String, dynamic>>[];
 
     // 1. System message with semantic context
     final systemPrompt = StringBuffer();

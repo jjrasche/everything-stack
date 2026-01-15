@@ -96,16 +96,18 @@ class InferenceService with Trainable<LLMAdaptationData> {
     );
 
     // 4. Log invocation for training feedback
-    final invocation = Invocation(
-      eventId: eventId,
-      componentType: ComponentType.llm,
-      implementer: implementer.implementerName,
-      success: true,
-      confidence: 1.0,
-      input: LLMInvocationInput(messages: messages).toJson(),
-      output: output.toJson(),
+    await recordInvocation(
+      eventId,
+      Invocation(
+        eventId: eventId,
+        componentType: ComponentType.llm,
+        implementer: implementer.implementerName,
+        success: true,
+        confidence: 1.0,
+        input: LLMInvocationInput(messages: messages).toJson(),
+        output: output.toJson(),
+      ),
     );
-    await invocationRepo.save(invocation);
 
     // 5. Return response
     return output.response;
@@ -133,16 +135,18 @@ class InferenceService with Trainable<LLMAdaptationData> {
     );
 
     // Log invocation for training (raw messages as JSON)
-    final invocation = Invocation(
-      eventId: 'unknown',  // TODO: Pass eventId from Coordinator
-      componentType: ComponentType.llm,
-      implementer: implementer.implementerName,
-      success: true,
-      confidence: 1.0,
-      input: {'messages': messages},
-      output: {'content': response.content},
+    await recordInvocation(
+      'unknown',  // TODO: Pass eventId from Coordinator
+      Invocation(
+        eventId: 'unknown',
+        componentType: ComponentType.llm,
+        implementer: implementer.implementerName,
+        success: true,
+        confidence: 1.0,
+        input: {'messages': messages},
+        output: {'content': response.content},
+      ),
     );
-    await invocationRepo.save(invocation);
 
     return response;
   }

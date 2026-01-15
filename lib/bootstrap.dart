@@ -689,7 +689,6 @@ Future<void> setupServiceLocator() async {
 
     getIt.registerSingleton<ToolExecutor>(
       ToolExecutor(
-        invocationRepo: getIt<InvocationRepository<Invocation>>(),
         toolRegistry: getIt<ToolRegistry>(),
       ),
     );
@@ -698,27 +697,32 @@ Future<void> setupServiceLocator() async {
     debugPrint('🔍 [setupServiceLocator] Registering ContextSelector...');
 
     final contextSelector = ContextSelector(
-      invocationRepo: getIt<InvocationRepository<Invocation>>(),
+      invocationRepo: getIt<EntityRepository<Invocation>>(),
       embeddingService: EmbeddingService.instance,
     );
     getIt.registerSingleton<ContextSelector>(contextSelector);
     debugPrint('✅ [setupServiceLocator] ContextSelector registered');
 
     // ========== Coordinator (Multi-turn context management) ==========
-    debugPrint('🔍 [setupServiceLocator] Registering Coordinator...');
+    // Only register if InferenceService and TTSService exist
+    if (getIt.isRegistered<InferenceService>() && getIt.isRegistered<TTSService>()) {
+      debugPrint('🔍 [setupServiceLocator] Registering Coordinator...');
 
-    final coordinator = Coordinator(
-      embeddingService: EmbeddingService.instance,
-      llmService: getIt<InferenceService>(),
-      ttsService: getIt<TTSService>(),
-      toolExecutor: getIt<ToolExecutor>(),
-      contextSelector: getIt<ContextSelector>(),
-      invocationRepo: getIt<InvocationRepository<Invocation>>(),
-      eventBus: getIt<EventBus>(),
-    );
-    getIt.registerSingleton<Coordinator>(coordinator);
-    coordinator.initialize();
-    debugPrint('✅ [setupServiceLocator] Coordinator registered and initialized');
+      final coordinator = Coordinator(
+        embeddingService: EmbeddingService.instance,
+        llmService: getIt<InferenceService>(),
+        ttsService: getIt<TTSService>(),
+        toolExecutor: getIt<ToolExecutor>(),
+        contextSelector: getIt<ContextSelector>(),
+        invocationRepo: getIt<InvocationRepository<Invocation>>(),
+        eventBus: getIt<EventBus>(),
+      );
+      getIt.registerSingleton<Coordinator>(coordinator);
+      coordinator.initialize();
+      debugPrint('✅ [setupServiceLocator] Coordinator registered and initialized');
+    } else {
+      debugPrint('⏭️ [setupServiceLocator] Coordinator skipped (InferenceService/TTSService not registered)');
+    }
     debugPrint('🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY');
   } catch (e, st) {
     debugPrint('❌ [setupServiceLocator] ERROR: $e');

@@ -28,12 +28,12 @@ import 'package:get_it/get_it.dart';
 
 import '../core/trainable.dart';
 import '../core/invocation.dart';
-import '../core/invocation_repository.dart';
+import '../core/entity_repository.dart';
 import 'embedding_service.dart';
 import 'types/context_selector_types.dart';
 
 class ContextSelector with Trainable<ContextSelectorAdaptationData> {
-  final InvocationRepository<Invocation> invocationRepo;
+  final EntityRepository<Invocation> invocationRepo;
   final EmbeddingService embeddingService;
 
   ContextSelector({
@@ -67,6 +67,7 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
   /// - conversationThread: Recent STT/LLM pairs (chronological order)
   /// - semanticContext: Relevant invocations from across system (scored by relevance)
   Future<ContextBundle> selectContext({
+    required String eventId,
     required String transcription,
     String? userId,
   }) async {
@@ -170,6 +171,23 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
     );
 
     print('\n✅ ContextBundle created: ${bundle.summary}');
+
+    // Log invocation for training
+    await recordInvocation(
+      eventId,
+      Invocation(
+        eventId: eventId,
+        componentType: componentType,
+        success: true,
+        confidence: 1.0,
+        input: {'transcription': transcription},
+        output: {
+          'conversationThreadSize': conversationThread.length,
+          'semanticContextSize': bundle.semanticContext.length,
+        },
+      ),
+    );
+
     return bundle;
   }
 

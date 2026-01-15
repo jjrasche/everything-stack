@@ -8,11 +8,27 @@
 /// 1. LLM returns: {toolCalls: [{toolName: 'task.create', params: {title: 'Buy milk'}}]}
 /// 2. ToolExecutor looks up 'task.create' in registry
 /// 3. Calls the function with params
-/// 4. Returns: {results: [{toolName: 'task.create', success: true, data: {...}}]}
+/// 4. Records invocation for training (via Trainable mixin)
+/// 5. Returns: {results: [{toolName: 'task.create', success: true, data: {...}}]}
 
+import 'dart:convert';
 import '../core/invocation.dart';
-import '../core/invocation_repository.dart';
+import '../core/trainable.dart';
+import '../core/adaptation_data.dart';
 import 'tool_registry.dart';
+
+/// Placeholder adaptation data for ToolExecutor.
+/// Currently no trainable parameters - this is a stub for future training.
+class ToolExecutorAdaptationData extends AdaptationData {
+  ToolExecutorAdaptationData();
+
+  factory ToolExecutorAdaptationData.fromJson(Map<String, dynamic> json) {
+    return ToolExecutorAdaptationData();
+  }
+
+  @override
+  String toJson() => '{}';
+}
 
 /// Result of a single tool execution
 class ToolExecutionResult {
@@ -71,14 +87,30 @@ class ToolCall {
 }
 
 /// Executes LLM-requested tools via registry lookup
-class ToolExecutor {
-  final InvocationRepository<Invocation> invocationRepo;
+class ToolExecutor with Trainable<ToolExecutorAdaptationData> {
   final ToolRegistry toolRegistry;
 
   ToolExecutor({
-    required this.invocationRepo,
     required this.toolRegistry,
   });
+
+  // ============ Trainable Implementation ============
+
+  @override
+  String get componentType => 'tool_executor';
+
+  @override
+  ToolExecutorAdaptationData createDefaultData() => ToolExecutorAdaptationData();
+
+  @override
+  ToolExecutorAdaptationData deserializeData(String json) =>
+      ToolExecutorAdaptationData.fromJson(
+        Map<String, dynamic>.from(
+          const JsonDecoder().convert(json) as Map,
+        ),
+      );
+
+  // ============ Tool Execution ============
 
   /// Execute a tool call
   Future<ToolExecutionResult> executeTool(
@@ -91,11 +123,31 @@ class ToolExecutor {
       // Parse tool name (format: "namespace.toolName")
       final parts = toolCall.toolName.split('.');
       if (parts.length != 2) {
-        return ToolExecutionResult(
+        final result = ToolExecutionResult(
           toolName: toolCall.toolName,
           success: false,
           error: 'Invalid tool name format',
         );
+
+        // Record failed execution
+        await recordInvocation(
+          eventId,
+          Invocation(
+            eventId: eventId,
+            componentType: componentType,
+            success: false,
+            confidence: toolCall.confidence,
+            input: {
+              'toolName': toolCall.toolName,
+              'params': toolCall.params,
+            },
+            output: {
+              'result': result.toJson(),
+            },
+          ),
+        );
+
+        return result;
       }
 
       final namespace = parts[0];
@@ -110,20 +162,60 @@ class ToolExecutor {
         eventId: eventId,
       );
 
-      return ToolExecutionResult(
+      final executionResult = ToolExecutionResult(
         toolName: toolCall.toolName,
         success: result.success,
         data: result.data,
         error: result.error,
         latencyMs: DateTime.now().difference(startTime).inMilliseconds,
       );
+
+      // Record execution invocation (standardized pattern)
+      await recordInvocation(
+        eventId,
+        Invocation(
+          eventId: eventId,
+          componentType: componentType,
+          success: executionResult.success,
+          confidence: toolCall.confidence,
+          input: {
+            'toolName': toolCall.toolName,
+            'params': toolCall.params,
+          },
+          output: {
+            'result': executionResult.toJson(),
+          },
+        ),
+      );
+
+      return executionResult;
     } catch (e) {
-      return ToolExecutionResult(
+      final result = ToolExecutionResult(
         toolName: toolCall.toolName,
         success: false,
         error: e.toString(),
         latencyMs: DateTime.now().difference(startTime).inMilliseconds,
       );
+
+      // Record exception
+      await recordInvocation(
+        eventId,
+        Invocation(
+          eventId: eventId,
+          componentType: componentType,
+          success: false,
+          confidence: toolCall.confidence,
+          input: {
+            'toolName': toolCall.toolName,
+            'params': toolCall.params,
+          },
+          output: {
+            'result': result.toJson(),
+          },
+        ),
+      );
+
+      return result;
     }
   }
 
@@ -183,26 +275,4 @@ class ToolExecutor {
     }
   }
 
-  /// Record tool execution invocation
-  Future<void> recordToolExecution({
-    required String eventId,
-    required ToolCall toolCall,
-    required ToolExecutionResult result,
-  }) async {
-    final invocation = Invocation(
-      eventId: eventId,
-      componentType: 'tool_executor',
-      success: result.success,
-      confidence: toolCall.confidence,
-      input: {
-        'toolName': toolCall.toolName,
-        'params': toolCall.params,
-      },
-      output: {
-        'result': result.toJson(),
-      },
-    );
-
-    await invocationRepo.save(invocation);
-  }
 }

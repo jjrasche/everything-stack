@@ -72,6 +72,7 @@
 /// final globalAdaptation = await getAdaptationState();
 /// ```
 
+import 'dart:async' show unawaited;
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -111,8 +112,8 @@ mixin class Trainable<D extends AdaptationData> {
 
   // ============ Repository Access (GetIt) ============
 
-  InvocationRepository get _invocationRepo =>
-      GetIt.instance<InvocationRepository>();
+  InvocationRepository<Invocation> get _invocationRepo =>
+      GetIt.instance<InvocationRepository<Invocation>>();
 
   AdaptationStateRepository get _adaptationStateRepo =>
       GetIt.instance<AdaptationStateRepository>();
@@ -122,6 +123,10 @@ mixin class Trainable<D extends AdaptationData> {
   /// Record an invocation for later feedback/training.
   /// Called immediately after component executes.
   /// Invocation is stored with input/output for semantic search and training.
+  ///
+  /// **Performance**: Invocation is saved immediately without blocking.
+  /// Embedding generation happens asynchronously in the background and updates
+  /// the invocation when complete.
   Future<void> recordInvocation(
     String eventId,
     Invocation invocation,
@@ -136,11 +141,21 @@ mixin class Trainable<D extends AdaptationData> {
       metadata: invocation.metadata,
     );
 
-    // Generate embedding if Invocation has text output (STT/LLM)
-    await inv.generateEmbedding();
-
-    // Save to repository for semantic search and training
+    // Save invocation immediately (fast path, no blocking)
     await _invocationRepo.save(inv);
+
+    // Generate embedding asynchronously in background
+    // Don't block the happy path - semantic search can use the invocation
+    // once the embedding is updated
+    unawaited(
+      inv.generateEmbedding().then((_) {
+        // Update invocation with embedding
+        return _invocationRepo.save(inv);
+      }).catchError((e) {
+        print('⚠️ [Trainable] Background embedding generation failed for '
+            '${inv.componentType}: $e');
+      }),
+    );
   }
 
   /// Build feedback UI for this component.

@@ -1,7 +1,7 @@
 /// # Generic Integration Test Entry Point
 ///
-/// Single entry point for all integration tests. Configuration is data-driven
-/// and defined inline below.
+/// Single entry point for all integration tests. Tests are defined in
+/// logic/ directory and aggregated here.
 ///
 /// Run all tests:
 /// ```bash
@@ -10,66 +10,31 @@
 ///
 /// Run single test:
 /// ```bash
-/// flutter test integration_test/shared/generic_test.dart --dart-define=TEST=invocation_semantic -d <platform>
+/// flutter test integration_test/shared/generic_test.dart --dart-define=TEST=timer -d <platform>
 /// ```
 ///
-/// Smoke mode (real APIs, capture fixtures):
+/// Smoke mode (real APIs):
 /// ```bash
 /// flutter test integration_test/shared/generic_test.dart --dart-define=SMOKE_TEST=true -d <platform>
 /// ```
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:get_it/get_it.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:everything_stack_template/services/inference_service.dart';
-import 'package:everything_stack_template/services/stt_service.dart';
 import 'test_harness.dart';
-import '../mocks/services_setup.dart';
-import '../invocation_semantic_logic.dart';
-import '../audio_pipeline_logic.dart';
+import '../logic/timer_multiturn_logic.dart';
+// import '../logic/audio_pipeline_logic.dart';
+// import '../invocation_semantic_logic.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   final testName = const String.fromEnvironment('TEST', defaultValue: '');
 
-  // Define all test configurations inline
+  // Aggregate all test configs from logic files
   final configs = {
-    'invocation_semantic': IntegrationTestConfig(
-      name: 'Invocation Semantic Search',
-      services: [
-        ServiceConfig.embedding(fixture: 'invocation_embeddings.json'),
-      ],
-      testLogic: (tester) async {
-        await runInvocationSemanticTest();
-      },
-    ),
-    'audio_pipeline': IntegrationTestConfig(
-      name: 'Audio Pipeline',
-      services: [
-        ServiceConfig(
-          setup: (bool isSmoke) async {
-            if (isSmoke) {
-              print('🔥 Smoke: Real services (loading .env)');
-              await dotenv.load(fileName: '.env');
-              print('✅ Real Deepgram/Groq services configured');
-            } else {
-              print('📝 CI: Mock services (real services + mock implementers)');
-              GetIt.instance.registerSingleton<InferenceService>(createMockInferenceService());
-              GetIt.instance.registerSingleton<STTService>(
-                createEnhancedMockSTTService(
-                  transcriptToEmit: 'one plus one',
-                  processingDelay: const Duration(milliseconds: 100),
-                ),
-              );
-              print('✅ Mock services registered');
-            }
-          },
-        ),
-      ],
-      testLogic: runAudioPipelineTest,
-    ),
+    'timer': timerMultiturnTest,
+    // 'audio': audioPipelineTest,
+    // 'semantic': invocationSemanticTest,
   };
 
   if (testName.isEmpty) {
