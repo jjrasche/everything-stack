@@ -1,7 +1,6 @@
 /// # Generic Integration Test Entry Point
 ///
-/// Single entry point for all integration tests. Tests are defined in
-/// logic/ directory and aggregated here.
+/// Single entry point for all integration tests.
 ///
 /// Run all tests:
 /// ```bash
@@ -21,20 +20,20 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'test_harness.dart';
-import '../logic/timer_multiturn_logic.dart';
-// import '../logic/audio_pipeline_logic.dart';
-// import '../invocation_semantic_logic.dart';
+import '../timer_multiturn_logic.dart';
+import '../audio_pipeline_logic.dart';
+import '../invocation_semantic_logic.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   final testName = const String.fromEnvironment('TEST', defaultValue: '');
 
-  // Aggregate all test configs from logic files
+  // Aggregate all test configs
   final configs = {
     'timer': timerMultiturnTest,
-    // 'audio': audioPipelineTest,
-    // 'semantic': invocationSemanticTest,
+    'audio': audioPipelineTest,
+    'semantic': invocationSemanticTest,
   };
 
   if (testName.isEmpty) {

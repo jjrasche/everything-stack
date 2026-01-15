@@ -62,10 +62,10 @@ class IntegrationTestConfig {
 
           if (mockResponses != null) {
             await _swapExternalImplementers(tester, mockResponses!);
-          }
 
-          // Register Coordinator now that services exist
-          await _registerCoordinator();
+            // Register Coordinator now that services exist
+            await _registerCoordinator();
+          }
         }
 
         // 3. Create TestContext

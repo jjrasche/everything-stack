@@ -12,8 +12,8 @@ import 'package:everything_stack_template/services/types/llm_types.dart';
 import 'package:everything_stack_template/tools/timer/repositories/timer_repository.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
 import 'package:everything_stack_template/core/invocation.dart';
-import '../shared/test_harness.dart';
-import '../shared/test_context.dart';
+import 'shared/test_harness.dart';
+import 'shared/test_context.dart';
 
 final timerMultiturnTest = IntegrationTestConfig(
   name: 'Multi-Turn Timer Conversation',
