@@ -15,6 +15,13 @@ import 'package:everything_stack_template/core/invocation.dart';
 import 'shared/test_harness.dart';
 import 'shared/test_context.dart';
 
+// Define utterances once - used in both test logic and mock responses
+final _utterances = {
+  'turn1': 'Set a timer for 5 minutes',
+  'turn2': 'Make it 10 minutes instead',
+  'turn3': 'Cancel the timer',
+};
+
 final timerMultiturnTest = IntegrationTestConfig(
   name: 'Multi-Turn Timer Conversation',
 
@@ -23,15 +30,11 @@ final timerMultiturnTest = IntegrationTestConfig(
     InvocationRepository<Invocation>,
   ],
 
-  utterances: {
-    'turn1': 'Set a timer for 5 minutes',
-    'turn2': 'Make it 10 minutes instead',
-    'turn3': 'Cancel the timer',
-  },
+  utterances: _utterances,
 
   mockResponses: {
     'groq': {
-      'Set a timer for 5 minutes': LLMResponse(
+      _utterances['turn1']!: LLMResponse(
         id: 'mock_1',
         content: 'Setting a 5-minute timer',
         toolCalls: [
@@ -43,7 +46,7 @@ final timerMultiturnTest = IntegrationTestConfig(
         ],
         tokensUsed: 20,
       ),
-      'Make it 10 minutes instead': LLMResponse(
+      _utterances['turn2']!: LLMResponse(
         id: 'mock_2',
         content: 'Cancelling old timer and setting new 10-minute timer',
         toolCalls: [
@@ -60,7 +63,7 @@ final timerMultiturnTest = IntegrationTestConfig(
         ],
         tokensUsed: 25,
       ),
-      'Cancel the timer': LLMResponse(
+      _utterances['turn3']!: LLMResponse(
         id: 'mock_3',
         content: 'Cancelling timer',
         toolCalls: [

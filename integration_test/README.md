@@ -1,236 +1,172 @@
-# Integration Tests - Full App with Real UI and Persistence
+# Integration Tests
 
-Tests the **complete infrastructure end-to-end**: Real UI interactions via WidgetTester, real persistence, mocked external services (STT, LLM, TTS).
+E2E tests with real app, real persistence, mocked external APIs.
 
 ## Structure
 
 ```
 integration_test/
-├── app_test.dart      # Infrastructure tests (audio pipeline, tool executor, feedback)
-└── README.md          # This file
+├── shared/          # Test harness (IntegrationTestConfig, TestContext helper)
+├── *_logic.dart     # Test logic files (one per feature/domain)
+└── README.md
 ```
-
-## Test Coverage
-
-**Test 1: Full Audio Pipeline**
-- User provides text input (simulating STT)
-- Coordinator orchestrates: namespace selection → tool selection → context → LLM call
-- Mocked LLM returns conversational response (no tools)
-- Invocations persisted in repository
-- TTS service called with response
-- Verifies: success, response text, invocations recorded
-
-**Test 2: Embedding Service**
-- Tests semantic embedding generation
-- Verifies correct dimensions returned
-
-**Test 3: Invocation Persistence**
-- Verifies invocations stored in repository
-- Can find invocations by correlation ID
-- Runs multiple times to verify persistence grows
-
-**Test 4: Error Handling**
-- Simulates failing LLM service
-- Verifies graceful error handling
-- Restores working service for next test
 
 ## Run Tests
 
+### CI Mode (Mocked APIs - Default)
+
 ```bash
-# Run on Windows desktop
-flutter test integration_test/app_test.dart -d windows
+# All tests
+flutter test integration_test/shared/generic_test.dart -d windows
 
-# Run on Android emulator
-flutter test integration_test/app_test.dart -d <emulator-id>
-
-# Run on iOS simulator
-flutter test integration_test/app_test.dart -d <simulator-id>
-
-# Run on specific device
-flutter test integration_test/app_test.dart -d <device-id>
+# Single test
+flutter test integration_test/shared/generic_test.dart --dart-define=TEST=timer -d windows
 ```
 
-## Using WidgetTester
+**What's mocked**: External APIs (Groq, Deepgram, TTS)
+**What's real**: Repositories (ObjectBox/IndexedDB), EventBus, Coordinator, full app infrastructure
 
-The tests use `WidgetTester` to interact with the real Flutter app:
+### Smoke Mode (Real APIs)
+
+```bash
+# All tests with real APIs
+flutter test integration_test/shared/generic_test.dart --dart-define=SMOKE_TEST=true -d windows
+```
+
+**Use case**: Verify real API integrations work (rate-limited, slower, requires API keys in .env)
+
+## Pattern: Add a New Test
+
+**1. Create `integration_test/my_feature_logic.dart`**
 
 ```dart
-testWidgets('Test name', (WidgetTester tester) async {
-  // 1. Build the app
-  await tester.pumpWidget(const MyApp());
-  await tester.pumpAndSettle();  // Wait for animations
+// Define utterances once (if multi-turn)
+final _utterances = {
+  'turn1': 'What is 2+2?',
+};
 
-  // 2. Find widgets
-  expect(find.byType(VoiceAssistantScreen), findsOneWidget);
+final mathTest = IntegrationTestConfig(
+  name: 'Math Question',
+  repos: [InvocationRepository<Invocation>],
+  utterances: _utterances,
+  mockResponses: {
+    'groq': {
+      _utterances['turn1']!: LLMResponse(
+        id: 'mock_1',
+        content: 'The answer is 4',
+        toolCalls: [],
+        tokensUsed: 10,
+      ),
+    },
+  },
+  testLogic: (t) async {
+    await t.stt('turn1');
 
-  // 3. Interact with widgets
-  await tester.tap(find.byType(FloatingActionButton));
-  await tester.pumpAndSettle();
+    final invocations = await t.invocationRepo.findAll();
+    final recent = invocations
+        .where((i) => i.createdAt.isAfter(DateTime.now().subtract(const Duration(minutes: 1))))
+        .toList();
 
-  // 4. Verify UI state
-  expect(find.byText('Response text'), findsOneWidget);
-});
+    expect(recent.isNotEmpty, isTrue);
+
+    final componentTypes = recent.map((i) => i.componentType).toSet();
+    expect(componentTypes.contains('llm'), isTrue);
+  },
+);
 ```
 
-## Key WidgetTester Methods
-
-- `tester.pumpWidget(widget)` - Build widget tree
-- `tester.pumpAndSettle()` - Wait for animations/async
-- `tester.pump()` - Single frame update
-- `find.byType(Type)` - Find by widget type
-- `find.byKey(Key)` - Find by key
-- `find.byText('text')` - Find by text
-- `tester.tap(finder)` - Simulate tap
-- `tester.enterText(finder, 'text')` - Enter text
-- `tester.drag(finder, offset)` - Drag widget
-- `tester.longPress(finder)` - Long press
-
-## Mocking Services
-
-The tests mock external services:
+**2. Register in `generic_test.dart`**
 
 ```dart
-class MockLLMService extends Mock implements LLMService {
-  @override
-  Future<LLMResponse> chatWithTools({...}) async {
-    return LLMResponse(
-      content: 'Conversational response',
-      toolCalls: [],
-    );
-  }
-}
+import '../my_feature_logic.dart';
 
-class MockTTSService extends Mock implements TTSService {
-  @override
-  Stream<void> synthesize(String text) async* {
-    print('TTS: $text');
-    yield null;
-  }
-}
+final configs = {
+  'timer': timerMultiturnTest,
+  'audio': audioPipelineTest,
+  'semantic': invocationSemanticTest,
+  'math': mathTest, // NEW
+};
 ```
 
-Then register before tests:
+Done. Run with `--dart-define=TEST=math`.
 
-```dart
-setUpAll(() async {
-  final getIt = GetIt.instance;
-  getIt.registerSingleton<LLMService>(mockLLMService);
-  getIt.registerSingleton<TTSService>(mockTTSService);
-});
-```
+## TestContext Helper
 
-## Verifying Service Calls
+Syntactic sugar for common test operations:
 
-Use Mockito's `verify()` to check services were called:
+- `t.stt('turn1')` - Publish transcription_complete event (triggers Coordinator)
+- `t.timerRepo` - Get TimerRepository from GetIt
+- `t.invocationRepo` - Get InvocationRepository from GetIt
+- `t.eventBus` - Get EventBus from GetIt
 
-```dart
-// Verify LLM was called
-verify(mockLLMService.chatWithTools(
-  model: anyNamed('model'),
-  messages: anyNamed('messages'),
-  tools: anyNamed('tools'),
-  temperature: anyNamed('temperature'),
-)).called(greaterThan(0));
+Keeps test logic clean: just arrange/act/assert.
 
-// Verify TTS was called
-expect(mockTTSService.spokenTexts, isNotEmpty);
-expect(mockTTSService.spokenTexts.first, equals('Response text'));
-```
+## Architectural Decisions
 
-## Verifying Persistence
+### Why IntegrationTestConfig (Data-Driven Pattern)?
 
-Get repository from GetIt and query:
+**Goal**: Make tests easy to write and maintain.
 
-```dart
-final invocationRepo = getIt<InvocationRepository<Invocation>>();
+**Pattern**: Separate data (config) from logic (test function). Test harness handles ALL DI/setup.
 
-// Verify invocations persisted
-final allInvocations = await invocationRepo.findAll();
-expect(allInvocations, isNotEmpty);
+**Result**: Tests are pure data configs + clean test logic. No DI noise. Easy to add new tests (just add config + logic function).
 
-// Find by correlation ID
-final byId = await invocationRepo.findByCorrelationId(correlationId);
-expect(byId, isNotEmpty);
-```
+### Why Separate Utterances Map?
 
-## Full Example Test
+**Goal**: Single source of truth for test inputs.
 
-```dart
-testWidgets('Audio pipeline test', (WidgetTester tester) async {
-  // Setup
-  await tester.pumpWidget(const MyApp());
-  await tester.pumpAndSettle();
+**Pattern**: Define utterances once at top, reference in mockResponses via `_utterances['turn1']!`.
 
-  // Get services
-  final coordinator = getIt<Coordinator>();
-  final invocationRepo = getIt<InvocationRepository<Invocation>>();
+**Result**: DRY - change utterance in one place, all references update. No string duplication.
 
-  // Run coordinator (simulates user input)
-  final result = await coordinator.orchestrate(
-    correlationId: 'test-${DateTime.now().millisecondsSinceEpoch}',
-    utterance: 'What is the weather?',
-    availableNamespaces: ['general'],
-    toolsByNamespace: {'general': []},
-  );
+### Why ResponseMapLLMImplementer (Pure Data Lookup)?
 
-  // Verify success
-  expect(result.success, isTrue);
-  expect(result.finalResponse, isNotEmpty);
+**Goal**: Zero conditionals in mocks.
 
-  // Verify LLM was called
-  verify(mockLLMService.chatWithTools(...)).called(greaterThan(0));
+**Pattern**: Mock is `Map<String, LLMResponse>`. Match utterance → return response. No if/else chains.
 
-  // Verify TTS was called
-  expect(mockTTSService.spokenTexts, isNotEmpty);
+**Result**: Clean, maintainable, type-safe. Easy to add new utterances.
 
-  // Verify persistence
-  final invocations = await invocationRepo.findAll();
-  expect(invocations, isNotEmpty);
-});
-```
+### Why Real Repositories (Not Mocks)?
 
-## CI Integration
+**Goal**: Test the full stack, including persistence layer.
 
-Tests run automatically on all platforms:
-- Android (emulator)
-- iOS (simulator)
-- Web (Chrome)
-- Desktop (Windows, macOS, Linux)
+**Pattern**: Use REAL repositories (ObjectBox on native, IndexedDB on web). Only mock external APIs.
 
-All platforms must pass before merge.
+**Result**: Tests validate database writes, queries, indices. Catches ObjectBox/IndexedDB bugs.
 
-## Debugging
+### Why Optional mockResponses?
 
-**Test fails: "Widget not found"**
-```dart
-// Check what widgets exist
-print(find.byType(TextField).evaluate());
-```
+**Goal**: Flexibility - not all tests need Coordinator.
 
-**Test hangs: Animations not complete**
-```dart
-// Use pumpAndSettle() instead of pump()
-await tester.pumpAndSettle();
-```
+**Pattern**: Only register Coordinator when `mockResponses != null`. Tests without external mocks (e.g., audio pipeline) omit the field.
 
-**Service not called**
-```dart
-// Verify mock was registered
-expect(getIt.isRegistered<LLMService>(), isTrue);
-```
+**Result**: Tests opt-in to Coordinator when needed. Simpler tests don't pay coordination overhead.
 
-**Persistence empty**
-```dart
-// Check repository is registered
-final repo = getIt<InvocationRepository<Invocation>>();
-expect(repo, isNotNull);
-```
+## Ethos
 
-## Next Steps
+**1. Test the real thing**
+If it runs in prod, it runs in tests. Real app, real database, real event flow. Only external APIs are mocked.
 
-Add tests for:
-- Task creation through UI (text input → tool execution)
-- Task list filtering
-- Feedback mechanism (user provides feedback)
-- Trainable aspects (adaptation state changes)
-- Error scenarios (invalid input, network failures)
+**2. No mocks for internal infrastructure**
+Repositories, EventBus, Coordinator - all real. Mocks hide bugs. We want to catch them.
+
+**3. Data over code**
+Tests are data configs + small logic functions. The pattern scales without code duplication.
+
+**4. DRY ruthlessly**
+Define utterances once. Define responses once. Reference everywhere. Change in one place = change everywhere.
+
+**5. Clean test logic**
+Test logic is pure arrange/act/assert. No DI, no service registration, no setup noise. Shared infrastructure handles that.
+
+**6. CI-first, smoke second**
+Default mode uses mocks (fast, deterministic, no API keys). Smoke mode validates real APIs (slower, requires keys, run less frequently).
+
+## What Runs Under the Hood
+
+1. Build app → Bootstrap creates real repos (ObjectBox/IndexedDB)
+2. Swap externals → Groq/TTS/Deepgram implementers replaced with mocks (repos kept real)
+3. Register Coordinator (if mockResponses provided) → Wires EventBus listener
+4. Run test logic → Your testLogic function executes with full infrastructure
+5. Clean up → GetIt.reset()
