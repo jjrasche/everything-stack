@@ -1,4 +1,6 @@
 import 'package:uuid/uuid.dart';
+import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:everything_stack_template/core/base_entity.dart';
 import 'package:everything_stack_template/patterns/semantic_indexable.dart';
 import 'package:everything_stack_template/services/chunking/semantic_chunker.dart';
@@ -6,8 +8,18 @@ import 'package:everything_stack_template/services/chunking/chunk_entity.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/hnsw_index.dart';
 import 'package:everything_stack_template/services/semantic_search/chunk.dart';
+import 'package:everything_stack_template/core/trainable.dart';
+import 'package:everything_stack_template/core/invocation.dart';
+import 'package:everything_stack_template/core/feedback.dart' as core_feedback;
+import 'package:everything_stack_template/services/types/chunking_types.dart';
 
 /// Service for orchestrating semantic chunking and HNSW indexing.
+///
+/// ## Trainability
+/// Learns optimal chunk sizes based on:
+/// - Entity type (Invocation vs Note vs Task)
+/// - User feedback on semantic search quality
+/// - Category-specific tuning
 ///
 /// This service:
 /// 1. Takes a SemanticIndexable entity
@@ -45,7 +57,7 @@ import 'package:everything_stack_template/services/semantic_search/chunk.dart';
 ///   }
 /// }
 /// ```
-class ChunkingService {
+class ChunkingService with Trainable<ChunkingAdaptationData> {
   /// HNSW index for semantic search
   final HnswIndex index;
 
@@ -77,12 +89,13 @@ class ChunkingService {
   /// Index a SemanticIndexable entity by chunking and embedding.
   ///
   /// Process:
-  /// 1. Extract chunkable input from entity (title + content, etc.)
-  /// 2. Generate parent chunks (~200 tokens each)
-  /// 3. For each parent chunk, generate child chunks (~25 tokens each)
-  /// 4. Generate embeddings for all chunks (batch)
-  /// 5. Insert chunks into HNSW index
-  /// 6. Track chunk IDs for later deletion
+  /// 1. Load adaptation state (adaptive chunk sizes)
+  /// 2. Extract chunkable input from entity (title + content, etc.)
+  /// 3. Generate parent chunks (adaptive size based on entity type)
+  /// 4. For each parent chunk, generate child chunks (adaptive size)
+  /// 5. Generate embeddings for all chunks (batch)
+  /// 6. Insert chunks into HNSW index
+  /// 7. Record invocation for training feedback
   ///
   /// Returns list of created Chunk objects with HNSW IDs
   Future<List<Chunk>> indexEntity(BaseEntity entity) async {
@@ -96,10 +109,25 @@ class ChunkingService {
       return [];
     }
 
+    // 1. Load adaptation state for adaptive chunk sizes
+    final adaptationState = await getAdaptationState();
+    final adaptationData = adaptationState.dataJson.isNotEmpty && adaptationState.dataJson != '{}'
+        ? deserializeData(adaptationState.dataJson)
+        : createDefaultData();
+
+    // Get entity-specific parent chunk size (falls back to default)
+    final entityType = entity.runtimeType.toString();
+    final parentSize = adaptationData.getParentSizeForCategory(entityType);
+
+    // Estimate token count (rough heuristic: 1 token ≈ 4 chars)
+    final inputTokenCount = (input.length / 4).round();
+
     final chunks = <Chunk>[];
     final chunkIds = <String>[];
+    final chunkSizes = <int>[];
 
     // Generate parent chunks
+    // TODO: Pass adaptive parent size to chunker (currently hardcoded)
     final parentChunkTexts = await parentChunker.chunk(input);
 
     for (final parentChunkText in parentChunkTexts) {
@@ -142,6 +170,9 @@ class ChunkingService {
         chunks.add(childChunk);
         chunkIds.add(childChunkId);
 
+        // Track chunk size for invocation logging
+        chunkSizes.add((childChunkText.text.length / 4).round());
+
         // Generate and insert child embedding
         final childEmbedding =
             await embeddingService.generate(childChunkText.text);
@@ -154,6 +185,33 @@ class ChunkingService {
 
     // Track chunk IDs for this entity
     _chunkRegistry[entity.uuid] = chunkIds;
+
+    // Record invocation for training feedback
+    final parentChunkCount = parentChunkTexts.length;
+    final totalChildCount = chunks.where((c) => c.config == 'child').length;
+
+    await recordInvocation(
+      entity.uuid,
+      Invocation(
+        eventId: entity.uuid,
+        componentType: componentType,
+        implementer: null,
+        success: true,
+        confidence: 1.0,
+        input: ChunkingInvocationInput(
+          entityId: entity.uuid,
+          entityType: entityType,
+          chunkableInput: input.substring(0, input.length > 200 ? 200 : input.length) + '...',
+          inputTokenCount: inputTokenCount,
+        ).toJson(),
+        output: ChunkingInvocationOutput(
+          parentChunkCount: parentChunkCount,
+          childChunkCount: totalChildCount,
+          totalChunks: chunks.length,
+          chunkSizesTokens: chunkSizes,
+        ).toJson(),
+      ),
+    );
 
     return chunks;
   }
@@ -294,5 +352,85 @@ class ChunkingService {
       print('⚠️ Failed to load chunk $chunkId: $e');
       return null;
     }
+  }
+
+  // ============ Trainable Implementation ============
+
+  @override
+  String get componentType => 'chunking';
+
+  @override
+  ChunkingAdaptationData createDefaultData() => ChunkingAdaptationData.defaults();
+
+  @override
+  ChunkingAdaptationData deserializeData(String json) =>
+      ChunkingAdaptationData.fromJson(jsonDecode(json) as Map<String, dynamic>);
+
+  @override
+  Widget buildFeedbackUI(BuildContext context, Invocation invocation) {
+    // Parse typed input/output from invocation
+    final input = ChunkingInvocationInput.fromJson(invocation.input!);
+    final output = ChunkingInvocationOutput.fromJson(invocation.output!);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Chunked Entity:', style: Theme.of(context).textTheme.labelLarge),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Type: ${input.entityType}'),
+              Text('Tokens: ${input.inputTokenCount}'),
+              Text('Parent chunks: ${output.parentChunkCount}'),
+              Text('Child chunks: ${output.childChunkCount}'),
+              Text('Total: ${output.totalChunks}'),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text('Were chunks appropriate?', style: Theme.of(context).textTheme.labelLarge),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                // TODO: Record feedback (chunks were good size)
+              },
+              child: const Text('Good'),
+            ),
+            const SizedBox(width: 8),
+            OutlinedButton(
+              onPressed: () {
+                // TODO: Show adjustment UI (too large/too small)
+              },
+              child: const Text('Too Large'),
+            ),
+            const SizedBox(width: 8),
+            OutlinedButton(
+              onPressed: () {
+                // TODO: Show adjustment UI
+              },
+              child: const Text('Too Small'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  @override
+  Future<void> trainFromFeedback(Invocation invocation, core_feedback.Feedback feedback) async {
+    // TODO: Implement training algorithm
+    // 1. Parse typed feedback: determine if chunks too large/small
+    // 2. Get current AdaptationState for chunking
+    // 3. Adjust parentTargetTokens/childTargetTokens or categorySpecificSizes
+    // 4. Save updated AdaptationState
   }
 }

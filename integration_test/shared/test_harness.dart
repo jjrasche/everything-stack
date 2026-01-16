@@ -33,14 +33,14 @@ class IntegrationTestConfig {
   final String name;
   final List<Type> repos;
   final Map<String, String>? utterances; // Optional (only for STT tests)
-  final Map<String, Map<String, LLMResponse>>? mockResponses; // Optional
+  final Map<String, dynamic>? mockImplementers; // Optional (mocked external implementers)
   final Future<void> Function(TestContext) testLogic;
 
   const IntegrationTestConfig({
     required this.name,
     this.repos = const [],
     this.utterances,
-    this.mockResponses,
+    this.mockImplementers,
     required this.testLogic,
   });
 
@@ -60,8 +60,8 @@ class IntegrationTestConfig {
           // Always swap embedding service in CI mode to avoid real API calls
           _swapEmbeddingService();
 
-          if (mockResponses != null) {
-            await _swapExternalImplementers(tester, mockResponses!);
+          if (mockImplementers != null) {
+            await _swapExternalImplementers(tester, mockImplementers!);
 
             // Register Coordinator now that services exist
             await _registerCoordinator();
@@ -90,13 +90,13 @@ class IntegrationTestConfig {
   /// Swap external implementers with mocks (keep real repos)
   Future<void> _swapExternalImplementers(
     WidgetTester tester,
-    Map<String, Map<String, LLMResponse>> mockResponses,
+    Map<String, dynamic> mockImplementers,
   ) async {
     final getIt = GetIt.instance;
 
-    for (final entry in mockResponses.entries) {
+    for (final entry in mockImplementers.entries) {
       final serviceName = entry.key;
-      final responses = entry.value;
+      final implementer = entry.value;
 
       switch (serviceName) {
         case 'groq':
@@ -114,7 +114,7 @@ class IntegrationTestConfig {
           getIt.registerSingleton<InferenceService>(
             InferenceService(
               implementers: {
-                'groq': ResponseMapLLMImplementer(responses),
+                'groq': implementer,
               },
               defaultImplementer: 'groq',
               invocationRepo: invocationRepo,
@@ -122,7 +122,7 @@ class IntegrationTestConfig {
               feedbackRepo: feedbackRepo,
             ),
           );
-          print('✅ Swapped InferenceService: ResponseMapLLMImplementer + real repos');
+          print('✅ Swapped InferenceService: ${implementer.runtimeType} + real repos');
           break;
 
         case 'tts':
@@ -133,10 +133,11 @@ class IntegrationTestConfig {
           if (getIt.isRegistered<TTSService>()) {
             getIt.unregister<TTSService>();
           }
+
           getIt.registerSingleton<TTSService>(
             TTSService(
               implementers: {
-                'flutter_tts': MockFlutterTTSImplementer(),
+                'flutter_tts': implementer,
               },
               defaultImplementer: 'flutter_tts',
               invocationRepo: invocationRepo,
@@ -144,7 +145,7 @@ class IntegrationTestConfig {
               feedbackRepo: feedbackRepo,
             ),
           );
-          print('✅ Swapped TTSService: MockFlutterTTSImplementer + real repos');
+          print('✅ Swapped TTSService: ${implementer.runtimeType} + real repos');
           break;
 
         case 'deepgram':
@@ -155,10 +156,11 @@ class IntegrationTestConfig {
           if (getIt.isRegistered<STTService>()) {
             getIt.unregister<STTService>();
           }
+
           getIt.registerSingleton<STTService>(
             STTService(
               implementers: {
-                'deepgram': MockDeepgramImplementer(),
+                'deepgram': implementer,
               },
               defaultImplementer: 'deepgram',
               invocationRepo: invocationRepo,
@@ -166,7 +168,7 @@ class IntegrationTestConfig {
               feedbackRepo: feedbackRepo,
             ),
           );
-          print('✅ Swapped STTService: MockDeepgramImplementer + real repos');
+          print('✅ Swapped STTService: ${implementer.runtimeType} + real repos');
           break;
 
         default:

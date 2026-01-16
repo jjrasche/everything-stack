@@ -40,24 +40,31 @@ flutter test integration_test/shared/generic_test.dart --dart-define=SMOKE_TEST=
 **1. Create `integration_test/my_feature_logic.dart`**
 
 ```dart
+import 'shared/response_map_implementer.dart';
+import 'mocks/mock_flutter_tts_implementer.dart';
+
 // Define utterances once (if multi-turn)
 final _utterances = {
   'turn1': 'What is 2+2?',
+};
+
+// Define mock responses
+final _responses = {
+  _utterances['turn1']!: LLMResponse(
+    id: 'mock_1',
+    content: 'The answer is 4',
+    toolCalls: [],
+    tokensUsed: 10,
+  ),
 };
 
 final mathTest = IntegrationTestConfig(
   name: 'Math Question',
   repos: [InvocationRepository<Invocation>],
   utterances: _utterances,
-  mockResponses: {
-    'groq': {
-      _utterances['turn1']!: LLMResponse(
-        id: 'mock_1',
-        content: 'The answer is 4',
-        toolCalls: [],
-        tokensUsed: 10,
-      ),
-    },
+  mockImplementers: {
+    'groq': ResponseMapLLMImplementer(_responses),
+    'tts': MockFlutterTTSImplementer(),
   },
   testLogic: (t) async {
     await t.stt('turn1');
@@ -135,11 +142,11 @@ Keeps test logic clean: just arrange/act/assert.
 
 **Result**: Tests validate database writes, queries, indices. Catches ObjectBox/IndexedDB bugs.
 
-### Why Optional mockResponses?
+### Why Optional mockImplementers?
 
 **Goal**: Flexibility - not all tests need Coordinator.
 
-**Pattern**: Only register Coordinator when `mockResponses != null`. Tests without external mocks (e.g., audio pipeline) omit the field.
+**Pattern**: Only register Coordinator when `mockImplementers != null`. Tests without external mocks (e.g., audio pipeline) omit the field.
 
 **Result**: Tests opt-in to Coordinator when needed. Simpler tests don't pay coordination overhead.
 
@@ -167,6 +174,67 @@ Default mode uses mocks (fast, deterministic, no API keys). Smoke mode validates
 
 1. Build app → Bootstrap creates real repos (ObjectBox/IndexedDB)
 2. Swap externals → Groq/TTS/Deepgram implementers replaced with mocks (repos kept real)
-3. Register Coordinator (if mockResponses provided) → Wires EventBus listener
+3. Register Coordinator (if mockImplementers provided) → Wires EventBus listener
 4. Run test logic → Your testLogic function executes with full infrastructure
 5. Clean up → GetIt.reset()
+
+## Error Handling Tests
+
+Tests verify system gracefully handles service failures and logs invocations with `success=false`.
+
+### Pattern: Failure Simulation
+
+Mock implementers accept `shouldFail` parameter. When true, implementer throws exception.
+
+**Example** (from `error_handling_logic.dart`):
+
+```dart
+final llmFailureTest = IntegrationTestConfig(
+  name: 'LLM Failure Handling',
+  repos: [InvocationRepository<Invocation>],
+  utterances: {'trigger': 'Test error handling'},
+  mockImplementers: {
+    'groq': MockGroqImplementer(shouldFail: true),
+    'tts': MockFlutterTTSImplementer(),
+  },
+  testLogic: (t) async {
+    try {
+      await t.stt('trigger');
+    } catch (e) {
+      print('⚠️ Expected error caught: $e');
+    }
+
+    // Verify invocations logged
+    final invocations = await t.invocationRepo.findAll();
+    final recent = invocations.where((i) =>
+      i.createdAt.isAfter(DateTime.now().subtract(const Duration(minutes: 1)))
+    ).toList();
+
+    // Assert: ContextSelector succeeded (before LLM)
+    final contextInvocations = recent.where((i) => i.componentType == 'context_selector').toList();
+    expect(contextInvocations.first.success, isTrue);
+  },
+);
+```
+
+### Available Tests
+
+Run individual error tests:
+
+```bash
+# LLM failure
+flutter test integration_test/shared/generic_test.dart --dart-define=TEST=llm_failure -d windows
+
+# STT failure
+flutter test integration_test/shared/generic_test.dart --dart-define=TEST=stt_failure -d windows
+
+# TTS failure
+flutter test integration_test/shared/generic_test.dart --dart-define=TEST=tts_failure -d windows
+```
+
+**What's tested**:
+- `llm_failure` - LLM service throws error (ContextSelector succeeds, LLM fails)
+- `stt_failure` - STT service throws error (direct implementer call)
+- `tts_failure` - TTS service throws error (ContextSelector + LLM succeed, TTS fails)
+
+**Verification**: System handles errors gracefully, preceding steps log success=true, error info captured in invocation.

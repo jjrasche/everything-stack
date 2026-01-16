@@ -2,11 +2,17 @@
 ///
 /// Implements TTSImplementer interface but returns hardcoded responses
 /// instead of hitting the real Flutter TTS API. Used in CI mode integration tests.
+///
+/// Supports failure mode for error handling tests via shouldFail parameter.
 
 import 'package:everything_stack_template/services/implementations/tts_implementer.dart';
 import 'package:everything_stack_template/services/types/tts_types.dart';
 
 class MockFlutterTTSImplementer implements TTSImplementer {
+  final bool shouldFail;
+
+  MockFlutterTTSImplementer({this.shouldFail = false});
+
   @override
   String get implementerName => 'flutter_tts';
 
@@ -17,6 +23,11 @@ class MockFlutterTTSImplementer implements TTSImplementer {
     required double speechRate,
     required double pitch,
   }) async {
+    if (shouldFail) {
+      print('💥 MockFlutterTTSImplementer.synthesize(): Simulating failure');
+      throw Exception('Mock TTS failure: Simulated synthesis error');
+    }
+
     print('🔊 MockFlutterTTSImplementer.synthesize(): Returning canned audio (no API call)');
     print('   📝 Text: "$text"');
     print('   🎙️ Voice: $voiceId');

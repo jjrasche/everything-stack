@@ -14,12 +14,58 @@ import 'package:everything_stack_template/core/invocation_repository.dart';
 import 'package:everything_stack_template/core/invocation.dart';
 import 'shared/test_harness.dart';
 import 'shared/test_context.dart';
+import 'shared/response_map_implementer.dart';
+import 'mocks/mock_flutter_tts_implementer.dart';
 
 // Define utterances once - used in both test logic and mock responses
 final _utterances = {
   'turn1': 'Set a timer for 5 minutes',
   'turn2': 'Make it 10 minutes instead',
   'turn3': 'Cancel the timer',
+};
+
+final _responses = {
+  _utterances['turn1']!: LLMResponse(
+    id: 'mock_1',
+    content: 'Setting a 5-minute timer',
+    toolCalls: [
+      LLMToolCall(
+        id: 'call_1',
+        toolName: 'timer.set',
+        params: {'duration_seconds': 300, 'label': 'Timer'},
+      ),
+    ],
+    tokensUsed: 20,
+  ),
+  _utterances['turn2']!: LLMResponse(
+    id: 'mock_2',
+    content: 'Cancelling old timer and setting new 10-minute timer',
+    toolCalls: [
+      LLMToolCall(
+        id: 'call_2a',
+        toolName: 'timer.cancel',
+        params: {},
+      ),
+      LLMToolCall(
+        id: 'call_2b',
+        toolName: 'timer.set',
+        params: {'duration_seconds': 600, 'label': 'Timer'},
+      ),
+    ],
+    tokensUsed: 25,
+  ),
+  _utterances['turn3']!: LLMResponse(
+    id: 'mock_3',
+    content: 'Cancelling timer',
+    toolCalls: [
+      LLMToolCall(
+        id: 'call_3',
+        toolName: 'timer.cancel',
+        params: {},
+      ),
+    ],
+    tokensUsed: 15,
+  ),
 };
 
 final timerMultiturnTest = IntegrationTestConfig(
@@ -32,51 +78,9 @@ final timerMultiturnTest = IntegrationTestConfig(
 
   utterances: _utterances,
 
-  mockResponses: {
-    'groq': {
-      _utterances['turn1']!: LLMResponse(
-        id: 'mock_1',
-        content: 'Setting a 5-minute timer',
-        toolCalls: [
-          LLMToolCall(
-            id: 'call_1',
-            toolName: 'timer.set',
-            params: {'duration_seconds': 300, 'label': 'Timer'},
-          ),
-        ],
-        tokensUsed: 20,
-      ),
-      _utterances['turn2']!: LLMResponse(
-        id: 'mock_2',
-        content: 'Cancelling old timer and setting new 10-minute timer',
-        toolCalls: [
-          LLMToolCall(
-            id: 'call_2a',
-            toolName: 'timer.cancel',
-            params: {},
-          ),
-          LLMToolCall(
-            id: 'call_2b',
-            toolName: 'timer.set',
-            params: {'duration_seconds': 600, 'label': 'Timer'},
-          ),
-        ],
-        tokensUsed: 25,
-      ),
-      _utterances['turn3']!: LLMResponse(
-        id: 'mock_3',
-        content: 'Cancelling timer',
-        toolCalls: [
-          LLMToolCall(
-            id: 'call_3',
-            toolName: 'timer.cancel',
-            params: {},
-          ),
-        ],
-        tokensUsed: 15,
-      ),
-    },
-    'tts': {}, // Empty map - TTS doesn't use LLM responses, but we need it registered
+  mockImplementers: {
+    'groq': ResponseMapLLMImplementer(_responses),
+    'tts': MockFlutterTTSImplementer(),
   },
 
   testLogic: (t) async {

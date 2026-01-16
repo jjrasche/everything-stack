@@ -41,6 +41,7 @@ import '../core/component_types.dart';
 import './implementations/llm_implementer.dart';
 import './types/llm_types.dart';
 import './types/message.dart';
+import './types/context_selector_types.dart';
 
 // Export types for use by Coordinator, Implementers, and Tests
 export './types/message.dart' show Message;
@@ -111,6 +112,54 @@ class InferenceService with Trainable<LLMAdaptationData> {
 
     // 5. Return response
     return output.response;
+  }
+
+  /// Build LLM message array from ContextBundle.
+  ///
+  /// Prompt engineering: Converts semantic context + conversation thread
+  /// into properly formatted LLM messages.
+  ///
+  /// Format:
+  /// 1. System message with semantic context (facts from across system)
+  /// 2. Conversation thread (STT → user, LLM → assistant)
+  /// 3. Current user utterance
+  List<Map<String, dynamic>> buildMessagesFromContext({
+    required ContextBundle contextBundle,
+    required String currentUtterance,
+  }) {
+    final messages = <Map<String, dynamic>>[];
+
+    // 1. System message with semantic context
+    final systemPrompt = StringBuffer();
+    systemPrompt.writeln('You are a helpful voice assistant.');
+
+    if (contextBundle.semanticContext.isNotEmpty) {
+      systemPrompt.writeln('\n# Relevant Context (from past interactions):');
+      for (final inv in contextBundle.semanticContext) {
+        final summary = inv.toEmbeddingInput();
+        systemPrompt.writeln('- ${inv.componentType}: $summary');
+      }
+    }
+
+    messages.add({'role': 'system', 'content': systemPrompt.toString()});
+
+    // 2. Conversation thread (STT/LLM pairs → user/assistant messages)
+    for (final inv in contextBundle.conversationThread) {
+      if (inv.componentType == 'stt') {
+        // STT invocation → user message
+        final userMessage = inv.toEmbeddingInput();
+        messages.add({'role': 'user', 'content': userMessage});
+      } else if (inv.componentType == 'llm') {
+        // LLM invocation → assistant message
+        final assistantMessage = inv.toEmbeddingInput();
+        messages.add({'role': 'assistant', 'content': assistantMessage});
+      }
+    }
+
+    // 3. Current user utterance
+    messages.add({'role': 'user', 'content': currentUtterance});
+
+    return messages;
   }
 
   /// Call LLM with tools available for agentic workflows.

@@ -2,12 +2,18 @@
 ///
 /// Implements STTImplementer interface but returns hardcoded responses
 /// instead of hitting the real Deepgram API. Used in CI mode integration tests.
+///
+/// Supports failure mode for error handling tests via shouldFail parameter.
 
 import 'package:everything_stack_template/services/implementations/stt_implementer.dart';
 import 'package:everything_stack_template/services/types/stt_types.dart';
 import 'package:everything_stack_template/services/types/word.dart';
 
 class MockDeepgramImplementer implements STTImplementer {
+  final bool shouldFail;
+
+  MockDeepgramImplementer({this.shouldFail = false});
+
   @override
   String get implementerName => 'deepgram';
 
@@ -16,6 +22,11 @@ class MockDeepgramImplementer implements STTImplementer {
     required String audioId,
     required double durationSeconds,
   }) async {
+    if (shouldFail) {
+      print('💥 MockDeepgramImplementer.recognize(): Simulating failure');
+      throw Exception('Mock STT failure: Simulated transcription error');
+    }
+
     print('🎤 MockDeepgramImplementer.recognize(): Returning canned transcription (no API call)');
     const transcription = 'mock transcription from audio';
     final words = transcription.split(' ').asMap().entries.map((e) {
@@ -40,13 +51,17 @@ class MockDeepgramImplementer implements STTImplementer {
 ///
 /// Allows tests to specify what transcript should be returned.
 /// Useful for testing different scenarios (e.g., "one plus one", error cases).
+///
+/// Supports failure mode for error handling tests via shouldFail parameter.
 class EnhancedMockDeepgramImplementer implements STTImplementer {
   final String transcriptToEmit;
   final Duration processingDelay;
+  final bool shouldFail;
 
   EnhancedMockDeepgramImplementer({
     this.transcriptToEmit = 'mock transcription',
     this.processingDelay = const Duration(milliseconds: 100),
+    this.shouldFail = false,
   });
 
   @override
@@ -57,6 +72,11 @@ class EnhancedMockDeepgramImplementer implements STTImplementer {
     required String audioId,
     required double durationSeconds,
   }) async {
+    if (shouldFail) {
+      print('💥 EnhancedMockDeepgramImplementer.recognize(): Simulating failure');
+      throw Exception('Mock STT failure: Simulated transcription error');
+    }
+
     print('🎤 EnhancedMockDeepgramImplementer.recognize(): Processing audio (configurable)');
     print('   📝 Duration: ${durationSeconds}s');
 

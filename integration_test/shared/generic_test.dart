@@ -23,6 +23,7 @@ import 'test_harness.dart';
 import '../timer_multiturn_logic.dart';
 import '../audio_pipeline_logic.dart';
 import '../invocation_semantic_logic.dart';
+import '../error_handling_logic.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +35,9 @@ void main() {
     'timer': timerMultiturnTest,
     'audio': audioPipelineTest,
     'semantic': invocationSemanticTest,
+    'llm_failure': llmFailureTest,
+    'stt_failure': sttFailureTest,
+    'tts_failure': ttsFailureTest,
   };
 
   if (testName.isEmpty) {

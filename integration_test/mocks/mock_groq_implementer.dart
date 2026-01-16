@@ -2,12 +2,18 @@
 ///
 /// Implements LLMImplementer interface but returns hardcoded responses
 /// instead of hitting the real Groq API. Used in CI mode integration tests.
+///
+/// Supports failure mode for error handling tests via shouldFail parameter.
 
 import 'package:everything_stack_template/services/implementations/llm_implementer.dart';
 import 'package:everything_stack_template/services/types/message.dart';
 import 'package:everything_stack_template/services/types/llm_types.dart';
 
 class MockGroqImplementer implements LLMImplementer {
+  final bool shouldFail;
+
+  MockGroqImplementer({this.shouldFail = false});
+
   @override
   String get implementerName => 'groq';
 
@@ -20,6 +26,11 @@ class MockGroqImplementer implements LLMImplementer {
     required double temperature,
     String? systemPrompt,
   }) async {
+    if (shouldFail) {
+      print('💥 MockGroqImplementer.chat(): Simulating failure');
+      throw Exception('Mock LLM failure: Simulated API error');
+    }
+
     print('🤖 MockGroqImplementer.chat(): Returning canned response (no API call)');
     return LLMInvocationOutput(
       response: 'This is a mock response from Groq implementer.',
@@ -36,6 +47,11 @@ class MockGroqImplementer implements LLMImplementer {
     double temperature = 0.7,
     int? maxTokens,
   }) async {
+    if (shouldFail) {
+      print('💥 MockGroqImplementer.chatWithTools(): Simulating failure');
+      throw Exception('Mock LLM failure: Simulated API error');
+    }
+
     print('🤖 MockGroqImplementer.chatWithTools(): Returning canned response (no API call)');
     return LLMResponse(
       id: 'mock_response_${DateTime.now().millisecondsSinceEpoch}',
