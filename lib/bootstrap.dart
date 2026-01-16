@@ -77,6 +77,12 @@ import 'services/implementations/flutter_tts_implementer.dart';
 import 'services/implementations/llm_implementer.dart';
 import 'services/implementations/stt_implementer.dart';
 import 'services/implementations/tts_implementer.dart';
+import 'services/enrichment/enrichment_runner.dart';
+import 'services/enrichment/enrichment_worker.dart';
+import 'services/enrichment/semantic_enrichment_worker.dart';
+import 'core/enrichment_queue_item.dart';
+import 'core/enrichment_queue_repository.dart';
+import 'core/repository_registry.dart';
 
 // Platform-specific persistence initialization (ObjectBox or IndexedDB)
 import 'bootstrap/persistence_web.dart'
@@ -473,22 +479,66 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
     getIt.registerSingleton<SemanticSearchService>(semanticSearchService);
     debugPrint('✅ SemanticSearchService initialized');
 
-    // Wire InvocationRepository with SemanticIndexableHandler
+    // Create RepositoryRegistry for worker entity lookups
+    final repoRegistry = RepositoryRegistry();
+    getIt.registerSingleton<RepositoryRegistry>(repoRegistry);
+    debugPrint('✅ RepositoryRegistry initialized');
+
+    // Create EnrichmentQueueRepository (adapter created by platform-specific code)
+    // Note: EnrichmentQueue adapter is registered by persistence initialization
+    EnrichmentQueueRepository? enrichmentQueueRepo;
+    EnrichmentRunner? enrichmentRunner;
+    try {
+      final enrichmentQueueAdapter = getIt<EnrichmentQueueAdapter>();
+      enrichmentQueueRepo = EnrichmentQueueRepository(adapter: enrichmentQueueAdapter);
+      getIt.registerSingleton<EnrichmentQueueRepository>(enrichmentQueueRepo);
+      debugPrint('✅ EnrichmentQueueRepository initialized');
+
+      // Create EnrichmentRunner with workers
+      enrichmentRunner = EnrichmentRunner(
+        queueRepo: enrichmentQueueRepo,
+        workers: [
+          SemanticEnrichmentWorker(
+            chunkingService: chunkingService,
+            repoRegistry: repoRegistry,
+          ),
+          // Add more workers here as needed:
+          // CategorizationEnrichmentWorker(...)
+        ],
+        batchSize: 10,
+      );
+      getIt.registerSingleton<EnrichmentRunner>(enrichmentRunner);
+      debugPrint('✅ EnrichmentRunner initialized with SemanticEnrichmentWorker');
+
+      // Initialize runner (startup recovery)
+      await enrichmentRunner.initialize();
+      debugPrint('✅ EnrichmentRunner startup recovery complete');
+    } catch (e) {
+      debugPrint('⚠️ EnrichmentRunner initialization failed: $e');
+      debugPrint('   Continuing without async enrichment...');
+    }
+
+    // Wire InvocationRepository with SemanticIndexableHandler and EnrichmentRunner
     try {
       final adapterRegistration = getIt<InvocationRepository<Invocation>>();
 
-      // Create EntityRepository with semantic indexing handler
+      // Create EntityRepository with semantic indexing handler and enrichment runner
       // This wraps the adapter with SemanticIndexableHandler for automatic chunking
       final invocationRepo = createInvocationRepository(
         adapter: adapterRegistration as PersistenceAdapter<Invocation>,
         embeddingService: EmbeddingService.instance,
         chunkingService: chunkingService,
+        enrichmentRunner: enrichmentRunner,
       );
 
       // Register EntityRepository (NOT InvocationRepository - different types!)
       // EntityRepository has the handlers, InvocationRepository is the bare adapter
       getIt.registerSingleton<EntityRepository<Invocation>>(invocationRepo);
       debugPrint('✅ InvocationRepository wired with SemanticIndexableHandler (EntityRepository)');
+
+      // Register invocation repo in RepositoryRegistry for worker entity lookups
+      repoRegistry.register<Invocation>(invocationRepo);
+      debugPrint('✅ Invocation registered in RepositoryRegistry');
     } catch (e) {
       debugPrint('⚠️ Failed to wire InvocationRepository handler: $e');
       // Don't rethrow - handler wiring is optional, semantic search works without it

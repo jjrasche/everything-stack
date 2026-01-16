@@ -23,6 +23,7 @@ import 'package:everything_stack_template/core/handlers/semantic_indexable_handl
 import 'package:everything_stack_template/core/persistence/persistence_adapter.dart';
 import 'package:everything_stack_template/services/chunking_service.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
+import 'package:everything_stack_template/services/enrichment/enrichment_runner.dart';
 
 abstract class InvocationRepository<T> {
   /// Find invocation by ID
@@ -109,10 +110,12 @@ EntityRepository<Invocation> createInvocationRepository({
   required PersistenceAdapter<Invocation> adapter,
   required EmbeddingService embeddingService,
   required ChunkingService chunkingService,
+  EnrichmentRunner? enrichmentRunner,
 }) =>
     EntityRepository<Invocation>(
       adapter: adapter,
       embeddingService: embeddingService,
       chunkingService: chunkingService,
+      enrichmentRunner: enrichmentRunner,
       handlers: [SemanticIndexableHandler<Invocation>(chunkingService)],
     );

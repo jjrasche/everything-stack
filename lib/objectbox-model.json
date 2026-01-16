@@ -794,10 +794,90 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "26:8701531131817741478",
+      "lastPropertyId": "13:7759048448224480043",
+      "name": "EnrichmentQueueItemOB",
+      "properties": [
+        {
+          "id": "1:4092759091964885639",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:5577607134866793633",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "39:2238674789741423314"
+        },
+        {
+          "id": "3:227334305179953694",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "4:172569987698253509",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "5:2194271146900609825",
+          "name": "syncId",
+          "type": 9
+        },
+        {
+          "id": "6:7942978941440661760",
+          "name": "entityUuid",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "40:7290080025593318596"
+        },
+        {
+          "id": "7:2642558433594313994",
+          "name": "entityType",
+          "type": 9
+        },
+        {
+          "id": "8:1407382800219869439",
+          "name": "pendingStepsStr",
+          "type": 9
+        },
+        {
+          "id": "9:5706405185655325762",
+          "name": "completedStepsStr",
+          "type": 9
+        },
+        {
+          "id": "10:2938044742873804656",
+          "name": "currentStep",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "41:324739922490260275"
+        },
+        {
+          "id": "11:9183727512621840659",
+          "name": "retries",
+          "type": 6
+        },
+        {
+          "id": "12:5323860480740701432",
+          "name": "lastError",
+          "type": 9
+        },
+        {
+          "id": "13:7759048448224480043",
+          "name": "enqueuedAt",
+          "type": 10
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "25:5668834073929766005",
-  "lastIndexId": "38:7575202082767622543",
+  "lastEntityId": "26:8701531131817741478",
+  "lastIndexId": "41:324739922490260275",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

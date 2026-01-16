@@ -11,11 +11,13 @@ import '../core/invocation_repository.dart';
 import '../core/adaptation_state_repository.dart';
 import '../core/feedback_repository.dart';
 import '../core/event_repository.dart';
+import '../core/enrichment_queue_repository.dart';
 import '../core/invocation.dart';
 import '../persistence/objectbox/invocation_objectbox_adapter.dart';
 import '../persistence/objectbox/adaptation_state_objectbox_adapter.dart';
 import '../persistence/objectbox/feedback_objectbox_adapter.dart';
 import '../persistence/objectbox/event_objectbox_adapter.dart';
+import '../persistence/objectbox/enrichment_queue_objectbox_adapter.dart';
 import 'objectbox_store_factory.dart';
 
 /// Initialize persistence layer for native platforms using ObjectBox.
@@ -45,6 +47,10 @@ Future<void> initializePersistence(GetIt getIt) async {
   getIt.registerSingleton<FeedbackRepository>(
     feedbackAdapter,
   );
+
+  // Create and register EnrichmentQueue adapter
+  final enrichmentQueueAdapter = EnrichmentQueueObjectBoxAdapter(store);
+  getIt.registerSingleton<EnrichmentQueueAdapter>(enrichmentQueueAdapter);
 }
 
 /// Create EventRepository for native platforms using ObjectBox.

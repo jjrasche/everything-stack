@@ -14,7 +14,12 @@ import 'package:everything_stack_template/core/event.dart';
 import 'package:everything_stack_template/tools/timer/repositories/timer_repository.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
 import 'package:everything_stack_template/core/invocation.dart';
+import 'package:everything_stack_template/core/entity_repository.dart';
 import 'package:everything_stack_template/tools/task/repositories/task_repository.dart';
+import 'package:everything_stack_template/core/enrichment_queue_repository.dart';
+import 'package:everything_stack_template/services/enrichment/enrichment_runner.dart';
+import 'package:everything_stack_template/services/chunking_service.dart';
+import 'package:everything_stack_template/services/hnsw_index.dart';
 
 class TestContext {
   final WidgetTester tester;
@@ -50,6 +55,16 @@ class TestContext {
   TimerRepository get timerRepo => get<TimerRepository>();
   InvocationRepository<Invocation> get invocationRepo => get<InvocationRepository<Invocation>>();
   TaskRepository get taskRepo => get<TaskRepository>();
+
+  // Enrichment queue related services (always available from GetIt)
+  EnrichmentQueueRepository get enrichmentQueueRepo => GetIt.instance<EnrichmentQueueRepository>();
+  EnrichmentRunner get enrichmentRunner => GetIt.instance<EnrichmentRunner>();
+  ChunkingService get chunkingService => GetIt.instance<ChunkingService>();
+  HnswIndex get hnswIndex => GetIt.instance<HnswIndex>();
+
+  // EntityRepository for invocations (with enrichment runner wired)
+  // Use this for tests that need async enrichment
+  EntityRepository<Invocation> get invocationEntityRepo => GetIt.instance<EntityRepository<Invocation>>();
 
   // STT helper - publishes transcription event and waits for orchestration to complete
   Future<void> stt(String key) async {

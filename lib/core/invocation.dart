@@ -41,10 +41,13 @@ import 'dart:convert';
 import 'package:everything_stack_template/patterns/embeddable.dart';
 import 'package:everything_stack_template/patterns/semantic_indexable.dart';
 import 'package:everything_stack_template/patterns/ownable.dart';
+import 'package:everything_stack_template/patterns/enrichable.dart';
 
 import 'base_entity.dart';
 
-class Invocation extends BaseEntity with Embeddable, SemanticIndexable, Ownable {
+class Invocation extends BaseEntity
+    with Embeddable, SemanticIndexable, Ownable
+    implements Enrichable {
   // ============ BaseEntity field overrides ============
   @override
   int id = 0;
@@ -248,4 +251,11 @@ class Invocation extends BaseEntity with Embeddable, SemanticIndexable, Ownable 
   /// Child chunks (20 tokens) are optimized for precise conversational units.
   @override
   String getChunkingConfig() => 'child';
+
+  // ============ Enrichable Implementation ============
+
+  /// Declare enrichment steps for async processing.
+  /// Invocations need semantic enrichment (chunking + embedding + HNSW).
+  @override
+  List<String> get enrichmentSteps => ['semantic_enrichment'];
 }

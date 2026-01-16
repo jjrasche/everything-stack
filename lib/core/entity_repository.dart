@@ -36,8 +36,10 @@ import 'persistence/transaction_manager.dart';
 import 'persistence/transaction_context.dart';
 import 'repository_pattern_handler.dart';
 import '../patterns/embeddable.dart';
+import '../patterns/enrichable.dart';
 import '../services/embedding_service.dart';
 import '../services/chunking_service.dart';
+import '../services/enrichment/enrichment_runner.dart';
 
 class EntityRepository<T extends BaseEntity> {
   /// Persistence adapter for database operations.
@@ -71,12 +73,18 @@ class EntityRepository<T extends BaseEntity> {
   /// Created by domain repository's handler factory.
   final List<RepositoryPatternHandler<T>> handlers;
 
+  /// Enrichment runner for async post-save enrichment.
+  /// If provided and entity is Enrichable, enrichment is queued after save.
+  /// If null, Enrichable entities are saved without async enrichment.
+  final EnrichmentRunner? enrichmentRunner;
+
   EntityRepository({
     required this.adapter,
     required this.embeddingService,
     ChunkingService? chunkingService,
     this.versionRepository,
     this.transactionManager,
+    this.enrichmentRunner,
     List<RepositoryPatternHandler<T>>? handlers,
   })  : chunkingService = chunkingService,
         handlers = handlers ?? [];
@@ -131,6 +139,8 @@ class EntityRepository<T extends BaseEntity> {
   /// Handler execution order determines pattern integration.
   /// See RepositoryPatternHandler for semantics of each lifecycle phase.
   Future<int> save(T entity) async {
+    final isUpdate = entity.id > 0;
+
     // Phase 1: beforeSave hooks (fail-fast, outside transaction)
     for (final handler in handlers) {
       await handler.beforeSave(entity);
@@ -149,6 +159,26 @@ class EntityRepository<T extends BaseEntity> {
         // Entity is already persisted
         // ignore: avoid_print
         print('Warning: Handler afterSave failed: $e');
+      }
+    }
+
+    // Phase 6: Queue enrichment if entity is Enrichable
+    if (enrichmentRunner != null && entity is Enrichable) {
+      final enrichable = entity as Enrichable;
+      final steps = enrichable.enrichmentSteps;
+
+      if (steps.isNotEmpty) {
+        if (isUpdate) {
+          // Cancel any existing queue item for this entity
+          await enrichmentRunner!.cancelForEntity(entity.uuid);
+        }
+
+        // Queue for enrichment
+        await enrichmentRunner!.enqueue(
+          entityUuid: entity.uuid,
+          entityType: T.toString(),
+          steps: steps,
+        );
       }
     }
 

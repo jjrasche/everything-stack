@@ -50,6 +50,7 @@ class ObjectStores {
   static const String events = 'events';
   static const String invocations = 'invocations';
   static const String embeddingTasks = 'embedding_tasks';
+  static const String enrichmentQueue = 'enrichment_queue';
 }
 
 /// Index names for each object store
@@ -102,6 +103,12 @@ class Indexes {
   static const String embeddingTasksId = 'id';
   static const String embeddingTasksEntityUuid = 'entityUuid';
   static const String embeddingTasksStatus = 'status';
+
+  // EnrichmentQueue indexes
+  static const String enrichmentQueueId = 'id';
+  static const String enrichmentQueueUuid = 'uuid';
+  static const String enrichmentQueueEntityUuid = 'entityUuid';
+  static const String enrichmentQueueCurrentStep = 'currentStep';
 }
 
 /// Schema definition for notes object store
@@ -364,6 +371,36 @@ class EmbeddingTasksStoreSchema {
   ];
 }
 
+/// Schema definition for enrichment_queue object store
+class EnrichmentQueueStoreSchema {
+  static const String storeName = ObjectStores.enrichmentQueue;
+  static const String keyPath = 'uuid';
+  static const bool autoIncrement = false;
+
+  static const List<IndexDefinition> indexes = [
+    IndexDefinition(
+      name: Indexes.enrichmentQueueId,
+      keyPath: 'id',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.enrichmentQueueUuid,
+      keyPath: 'uuid',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.enrichmentQueueEntityUuid,
+      keyPath: 'entityUuid',
+      unique: false, // Entity can be re-enqueued after completion
+    ),
+    IndexDefinition(
+      name: Indexes.enrichmentQueueCurrentStep,
+      keyPath: 'currentStep',
+      unique: false, // Multiple items can have same step (or null)
+    ),
+  ];
+}
+
 /// Schema definition for HNSW index metadata store
 class HnswIndexStoreSchema {
   static const String storeName = ObjectStores.hnswIndex;
@@ -456,6 +493,12 @@ class DatabaseSchema {
       keyPath: EmbeddingTasksStoreSchema.keyPath,
       autoIncrement: EmbeddingTasksStoreSchema.autoIncrement,
       indexes: EmbeddingTasksStoreSchema.indexes,
+    ),
+    ObjectStoreDefinition(
+      name: EnrichmentQueueStoreSchema.storeName,
+      keyPath: EnrichmentQueueStoreSchema.keyPath,
+      autoIncrement: EnrichmentQueueStoreSchema.autoIncrement,
+      indexes: EnrichmentQueueStoreSchema.indexes,
     ),
   ];
 }

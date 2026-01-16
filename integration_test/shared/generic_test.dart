@@ -24,6 +24,7 @@ import '../timer_multiturn_logic.dart';
 import '../audio_pipeline_logic.dart';
 import '../invocation_semantic_logic.dart';
 import '../error_handling_logic.dart';
+import '../enrichment_queue_logic.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +39,9 @@ void main() {
     'llm_failure': llmFailureTest,
     'stt_failure': sttFailureTest,
     'tts_failure': ttsFailureTest,
+    'enrichment_queue': enrichmentQueueTest,
+    'startup_recovery': startupRecoveryTest,
+    'entity_update_cancels': entityUpdateCancelsTest,
   };
 
   if (testName.isEmpty) {
