@@ -1,0 +1,1181 @@
+00:00 +0: loading C:/Users/rasche_j/Documents/workspace/everything-stack/integration_test/shared/generic_test.dart
+Building Windows application...                                 
+CMake Deprecation Warning at C:/Users/rasche_j/Documents/workspace/everything-stack/build/windows/x64/extracted/firebase_cpp_sdk_windows/CMakeLists.txt:17 (cmake_minimum_required):
+  Compatibility with CMake < 3.5 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value or use a ...<max> suffix to tell
+  CMake that the project does not need compatibility with older versions.
+
+
+CMake Warning (dev) at C:/Program Files/Microsoft Visual Studio/2022/Professional/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/FetchContent.cmake:1953 (message):
+  Calling FetchContent_Populate(objectbox-download) is deprecated, call
+  FetchContent_MakeAvailable(objectbox-download) instead.  Policy CMP0169 can
+  be set to OLD to allow FetchContent_Populate(objectbox-download) to be
+  called directly for now, but the ability to call it with declared details
+  will be removed completely in a future version.
+Call Stack (most recent call first):
+  flutter/ephemeral/.plugin_symlinks/objectbox_flutter_libs/windows/CMakeLists.txt:68 (FetchContent_Populate)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+Building Windows application...                                    50.8s
+✓ Built build\windows\x64\runner\Debug\everything_stack_template.exe
+00:00 +0: Multi-Turn Timer Conversation - CI (Mocked APIs) full test
+🔧 [_ensureInitialized] Initializing bootstrap...
+═══════════════════════════════════════════════════════
+🚀 [Bootstrap] Starting Everything Stack initialization
+═══════════════════════════════════════════════════════
+✅ [Bootstrap] Loaded .env with API keys
+✅ [Bootstrap] Configuration loaded successfully
+🔑 Config loaded - Deepgram key present: true
+🔑 Config loaded - Groq key present: true
+⚠️ Firebase/Crashlytics initialization failed: [core/not-initialized] Firebase has not been correctly initialized.
+
+Usually this means you've attempted to use a Firebase service before calling `Firebase.initializeApp`.
+
+View the documentation for more information: https://firebase.google.com/docs/flutter/setup
+    
+   Continuing without crash reporting...
+💾 Initializing persistence layer...
+🔍 [ObjectBox] Test mode: TEST_MODE=false (compile-time constant)
+ℹ️ ObjectBox: Using production database directory
+✅ ObjectBox Store initialized (production mode)
+📦 Registered service: invocation_repo = InvocationObjectBoxAdapter
+⏭️  [TTS] Skipped - TTSService is abstract (needs concrete implementation)
+⏭️  [LLM] Skipped - InferenceService is abstract (needs concrete implementation)
+✅ EMBEDDING: JinaEmbeddingService
+📦 Registered service: embedding = JinaEmbeddingService
+🔍 Initializing semantic search infrastructure...
+✅ ChunkingService initialized
+✅ HNSW index registered
+✅ SemanticSearchService initialized
+✅ RepositoryRegistry initialized
+✅ EnrichmentQueueRepository initialized
+✅ EnrichmentRunner initialized with SemanticEnrichmentWorker
+✅ EnrichmentRunner startup recovery complete
+✅ InvocationRepository wired with SemanticIndexableHandler (EntityRepository)
+✅ Invocation registered in RepositoryRegistry
+AudioRecordingService initialized
+✅ Audio: AudioRecordingService
+
+✅ Bootstrap complete: infrastructure services initialized
+[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION
+🚀 [setupServiceLocator] Starting service registration...
+✅ [setupServiceLocator] EmbeddingService registered
+✅ [setupServiceLocator] InferenceService already registered from bootstrap
+✅ [setupServiceLocator] TTSService already registered from bootstrap
+✅ [setupServiceLocator] STTService already registered from bootstrap
+✅ [setupServiceLocator] Timer tools registered (timer.set, timer.cancel, timer.list)
+🔍 [setupServiceLocator] Initializing EventBus...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+✅ [setupServiceLocator] EventBus registered
+🔍 [setupServiceLocator] Registering ContextSelector...
+✅ [setupServiceLocator] ContextSelector registered
+⏭️ [setupServiceLocator] Coordinator skipped (InferenceService/TTSService not registered)
+🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY
+✅ [_ensureInitialized] Bootstrap initialization complete
+✅ Swapped EmbeddingService: MockEmbeddingService (no API calls)
+✅ Swapped InferenceService: ResponseMapLLMImplementer + real repos
+✅ Swapped TTSService: MockFlutterTTSImplementer + real repos
+🔍 Registering Coordinator...
+
+🔧 [Coordinator.initialize] Wiring event listener
+✅ [Coordinator.initialize] Event listener registered
+✅ Coordinator registered and initialized
+📤 EventBus: Published transcription_complete
+
+📡 [Coordinator] Heard transcription_complete: "Set a timer for 5 minutes"
+🚀 [Coordinator] Starting orchestration from event...
+
+=== COORDINATOR: orchestrate START ===
+🔗 EventId: 34344046-3849-4b36-afdd-75313b6fe290
+📝 Utterance: "Set a timer for 5 minutes"
+
+[1/4] Selecting context via ContextSelector...
+
+🔍 [ContextSelector.selectContext] Starting context selection
+   Params: threadSize=5, convHalfLife=24.0h, semanticHalfLife=720.0h, threshold=0.7
+
+[1/6] Generating embedding for transcription...
+✅ Embedding generated: 384 dimensions
+
+[2/6] Loading conversation thread (STT/LLM invocations)...
+✅ Conversation thread: 5 invocations
+   stt (0.1h ago): decay=0.999
+   stt (0.1h ago): decay=0.999
+   stt (0.1h ago): decay=0.999
+   stt (0.1h ago): decay=0.999
+   stt (0.1h ago): decay=0.999
+
+[3/6] Semantic search across all embeddable entities...
+✅ Semantic search returned 0 candidates
+
+[4/6] Deduplicating (removing conversation thread from semantic results)...
+✅ After dedup: 0 candidates
+
+[5/6] Applying fused scoring (semantic * temporal decay)...
+
+[6/6] Filtering by threshold and selecting top results...
+✅ Top semantic context: 0 invocations
+
+✅ ContextBundle created: ContextBundle: 5 conversation, 0 semantic
+✅ Context selected: ContextBundle: 5 conversation, 0 semantic
+
+[2/4] Building message array from context...
+✅ Messages built: 7 messages
+
+[3/4] Getting available tools...
+✅ Available tools: 6 tools
+
+[4/4] Calling LLM service with context...
+📡 LLM call starting...
+✅ LLM response received
+📄 Response content: "Setting a 5-minute timer"
+
+[Tool Execution] LLM requested 1 tool calls
+  🔧 Executing: timer.set
+  ✅ Tool executed: timer.set
+
+🔊 Synthesizing response to speech...
+🔊 MockFlutterTTSImplementer.synthesize(): Returning canned audio (no API call)
+   📝 Text: "Setting a 5-minute timer"
+   🎙️ Voice: default
+
+✅ COORDINATOR: orchestrate SUCCESS
+⏱️ Total latency: 945ms
+=== COORDINATOR: orchestrate END ===
+
+✅ [Coordinator] Orchestration complete: SUCCESS
+📤 EventBus: Published orchestration_complete
+📡 [Coordinator] Published orchestration_complete event
+📤 EventBus: Published transcription_complete
+
+📡 [Coordinator] Heard transcription_complete: "Make it 10 minutes instead"
+🚀 [Coordinator] Starting orchestration from event...
+
+=== COORDINATOR: orchestrate START ===
+🔗 EventId: dff82276-77dd-4bf6-a946-5b636e2caed7
+📝 Utterance: "Make it 10 minutes instead"
+
+[1/4] Selecting context via ContextSelector...
+
+🔍 [ContextSelector.selectContext] Starting context selection
+   Params: threadSize=5, convHalfLife=24.0h, semanticHalfLife=720.0h, threshold=0.7
+
+[1/6] Generating embedding for transcription...
+✅ Embedding generated: 384 dimensions
+
+[2/6] Loading conversation thread (STT/LLM invocations)...
+✅ Conversation thread: 5 invocations
+   stt (0.1h ago): decay=0.999
+   stt (0.1h ago): decay=0.999
+   stt (0.1h ago): decay=0.999
+   stt (0.1h ago): decay=0.999
+   llm (0.0h ago): decay=1.000
+
+[3/6] Semantic search across all embeddable entities...
+✅ Semantic search returned 0 candidates
+
+[4/6] Deduplicating (removing conversation thread from semantic results)...
+✅ After dedup: 0 candidates
+
+[5/6] Applying fused scoring (semantic * temporal decay)...
+
+[6/6] Filtering by threshold and selecting top results...
+✅ Top semantic context: 0 invocations
+
+✅ ContextBundle created: ContextBundle: 5 conversation, 0 semantic
+✅ Context selected: ContextBundle: 5 conversation, 0 semantic
+
+[2/4] Building message array from context...
+✅ Messages built: 7 messages
+
+[3/4] Getting available tools...
+✅ Available tools: 6 tools
+
+[4/4] Calling LLM service with context...
+📡 LLM call starting...
+✅ LLM response received
+📄 Response content: "Cancelling old timer and setting new 10-minute timer"
+
+[Tool Execution] LLM requested 2 tool calls
+  🔧 Executing: timer.cancel
+  ✅ Tool executed: timer.cancel
+  🔧 Executing: timer.set
+  ✅ Tool executed: timer.set
+
+🔊 Synthesizing response to speech...
+🔊 MockFlutterTTSImplementer.synthesize(): Returning canned audio (no API call)
+   📝 Text: "Cancelling old timer and setting new 10-minute timer"
+   🎙️ Voice: default
+
+✅ COORDINATOR: orchestrate SUCCESS
+⏱️ Total latency: 531ms
+=== COORDINATOR: orchestrate END ===
+
+✅ [Coordinator] Orchestration complete: SUCCESS
+📤 EventBus: Published orchestration_complete
+📡 [Coordinator] Published orchestration_complete event
+📤 EventBus: Published transcription_complete
+
+📡 [Coordinator] Heard transcription_complete: "Cancel the timer"
+🚀 [Coordinator] Starting orchestration from event...
+
+=== COORDINATOR: orchestrate START ===
+🔗 EventId: fd31b6dc-c02c-40c3-812d-6ba9d0e3c322
+📝 Utterance: "Cancel the timer"
+
+[1/4] Selecting context via ContextSelector...
+
+🔍 [ContextSelector.selectContext] Starting context selection
+   Params: threadSize=5, convHalfLife=24.0h, semanticHalfLife=720.0h, threshold=0.7
+
+[1/6] Generating embedding for transcription...
+✅ Embedding generated: 384 dimensions
+
+[2/6] Loading conversation thread (STT/LLM invocations)...
+✅ Conversation thread: 5 invocations
+   stt (0.1h ago): decay=0.999
+   stt (0.1h ago): decay=0.999
+   stt (0.1h ago): decay=0.999
+   llm (0.0h ago): decay=1.000
+   llm (0.0h ago): decay=1.000
+
+[3/6] Semantic search across all embeddable entities...
+✅ Semantic search returned 0 candidates
+
+[4/6] Deduplicating (removing conversation thread from semantic results)...
+✅ After dedup: 0 candidates
+
+[5/6] Applying fused scoring (semantic * temporal decay)...
+
+[6/6] Filtering by threshold and selecting top results...
+✅ Top semantic context: 0 invocations
+
+✅ ContextBundle created: ContextBundle: 5 conversation, 0 semantic
+✅ Context selected: ContextBundle: 5 conversation, 0 semantic
+
+[2/4] Building message array from context...
+✅ Messages built: 7 messages
+
+[3/4] Getting available tools...
+✅ Available tools: 6 tools
+
+[4/4] Calling LLM service with context...
+📡 LLM call starting...
+✅ LLM response received
+📄 Response content: "Cancelling timer"
+
+[Tool Execution] LLM requested 1 tool calls
+  🔧 Executing: timer.cancel
+  ✅ Tool executed: timer.cancel
+
+🔊 Synthesizing response to speech...
+🔊 MockFlutterTTSImplementer.synthesize(): Returning canned audio (no API call)
+   📝 Text: "Cancelling timer"
+   🎙️ Voice: default
+
+✅ COORDINATOR: orchestrate SUCCESS
+⏱️ Total latency: 545ms
+=== COORDINATOR: orchestrate END ===
+
+✅ [Coordinator] Orchestration complete: SUCCESS
+📤 EventBus: Published orchestration_complete
+📡 [Coordinator] Published orchestration_complete event
+🧹 [dispose] Cleaning up VoiceAssistantScreen...
+00:13 +1: Multi-Turn Timer Conversation - CI (Mocked APIs) (tearDownAll)
+00:13 +1: Audio Pipeline - CI (Mocked APIs) full test
+00:13 +1: Multi-Turn Timer Conversation - CI (Mocked APIs) full test
+⚠️ Bootstrap flag set but services missing, reinitializing...
+🔧 [_ensureInitialized] Initializing bootstrap...
+═══════════════════════════════════════════════════════
+🚀 [Bootstrap] Starting Everything Stack initialization
+═══════════════════════════════════════════════════════
+✅ [Bootstrap] Loaded .env with API keys
+✅ [Bootstrap] Configuration loaded successfully
+🔑 Config loaded - Deepgram key present: true
+🔑 Config loaded - Groq key present: true
+⚠️ Firebase/Crashlytics initialization failed: [core/not-initialized] Firebase has not been correctly initialized.
+
+Usually this means you've attempted to use a Firebase service before calling `Firebase.initializeApp`.
+
+View the documentation for more information: https://firebase.google.com/docs/flutter/setup
+    
+   Continuing without crash reporting...
+💾 Initializing persistence layer...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+📦 Registered service: invocation_repo = InvocationObjectBoxAdapter
+⏭️  [TTS] Skipped - TTSService is abstract (needs concrete implementation)
+⏭️  [LLM] Skipped - InferenceService is abstract (needs concrete implementation)
+✅ EMBEDDING: JinaEmbeddingService
+📦 Registered service: embedding = JinaEmbeddingService
+🔍 Initializing semantic search infrastructure...
+✅ ChunkingService initialized
+✅ HNSW index registered
+✅ SemanticSearchService initialized
+✅ RepositoryRegistry initialized
+✅ EnrichmentQueueRepository initialized
+✅ EnrichmentRunner initialized with SemanticEnrichmentWorker
+✅ EnrichmentRunner startup recovery complete
+✅ InvocationRepository wired with SemanticIndexableHandler (EntityRepository)
+✅ Invocation registered in RepositoryRegistry
+AudioRecordingService initialized
+✅ Audio: AudioRecordingService
+
+✅ Bootstrap complete: infrastructure services initialized
+[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION
+🚀 [setupServiceLocator] Starting service registration...
+✅ [setupServiceLocator] EmbeddingService registered
+✅ [setupServiceLocator] InferenceService already registered from bootstrap
+✅ [setupServiceLocator] TTSService already registered from bootstrap
+✅ [setupServiceLocator] STTService already registered from bootstrap
+✅ [setupServiceLocator] Timer tools registered (timer.set, timer.cancel, timer.list)
+🔍 [setupServiceLocator] Initializing EventBus...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+✅ [setupServiceLocator] EventBus registered
+🔍 [setupServiceLocator] Registering ContextSelector...
+✅ [setupServiceLocator] ContextSelector registered
+⏭️ [setupServiceLocator] Coordinator skipped (InferenceService/TTSService not registered)
+🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY
+✅ [_ensureInitialized] Bootstrap initialization complete
+00:23 +1: Audio Pipeline - CI (Mocked APIs) full test
+✅ Swapped EmbeddingService: MockEmbeddingService (no API calls)
+🧹 [dispose] Cleaning up VoiceAssistantScreen...
+00:23 +2: Audio Pipeline - CI (Mocked APIs) (tearDownAll)
+00:23 +2: Invocation Semantic Search - CI (Mocked APIs) full test
+00:23 +2: Multi-Turn Timer Conversation - CI (Mocked APIs) full test
+⚠️ Bootstrap flag set but services missing, reinitializing...
+🔧 [_ensureInitialized] Initializing bootstrap...
+═══════════════════════════════════════════════════════
+🚀 [Bootstrap] Starting Everything Stack initialization
+═══════════════════════════════════════════════════════
+✅ [Bootstrap] Loaded .env with API keys
+✅ [Bootstrap] Configuration loaded successfully
+🔑 Config loaded - Deepgram key present: true
+🔑 Config loaded - Groq key present: true
+⚠️ Firebase/Crashlytics initialization failed: [core/not-initialized] Firebase has not been correctly initialized.
+
+Usually this means you've attempted to use a Firebase service before calling `Firebase.initializeApp`.
+
+View the documentation for more information: https://firebase.google.com/docs/flutter/setup
+    
+   Continuing without crash reporting...
+💾 Initializing persistence layer...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+📦 Registered service: invocation_repo = InvocationObjectBoxAdapter
+⏭️  [TTS] Skipped - TTSService is abstract (needs concrete implementation)
+⏭️  [LLM] Skipped - InferenceService is abstract (needs concrete implementation)
+✅ EMBEDDING: JinaEmbeddingService
+📦 Registered service: embedding = JinaEmbeddingService
+🔍 Initializing semantic search infrastructure...
+✅ ChunkingService initialized
+✅ HNSW index registered
+✅ SemanticSearchService initialized
+✅ RepositoryRegistry initialized
+✅ EnrichmentQueueRepository initialized
+✅ EnrichmentRunner initialized with SemanticEnrichmentWorker
+✅ EnrichmentRunner startup recovery complete
+✅ InvocationRepository wired with SemanticIndexableHandler (EntityRepository)
+✅ Invocation registered in RepositoryRegistry
+AudioRecordingService initialized
+✅ Audio: AudioRecordingService
+
+✅ Bootstrap complete: infrastructure services initialized
+[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION
+🚀 [setupServiceLocator] Starting service registration...
+✅ [setupServiceLocator] EmbeddingService registered
+✅ [setupServiceLocator] InferenceService already registered from bootstrap
+✅ [setupServiceLocator] TTSService already registered from bootstrap
+✅ [setupServiceLocator] STTService already registered from bootstrap
+✅ [setupServiceLocator] Timer tools registered (timer.set, timer.cancel, timer.list)
+🔍 [setupServiceLocator] Initializing EventBus...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+✅ [setupServiceLocator] EventBus registered
+🔍 [setupServiceLocator] Registering ContextSelector...
+✅ [setupServiceLocator] ContextSelector registered
+⏭️ [setupServiceLocator] Coordinator skipped (InferenceService/TTSService not registered)
+🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY
+✅ [_ensureInitialized] Bootstrap initialization complete
+00:33 +2: Invocation Semantic Search - CI (Mocked APIs) full test
+✅ Swapped EmbeddingService: MockEmbeddingService (no API calls)
+🧹 [dispose] Cleaning up VoiceAssistantScreen...
+00:39 +3: Invocation Semantic Search - CI (Mocked APIs) (tearDownAll)
+00:39 +3: LLM Failure Handling - CI (Mocked APIs) full test
+00:39 +3: Multi-Turn Timer Conversation - CI (Mocked APIs) full test
+⚠️ Bootstrap flag set but services missing, reinitializing...
+🔧 [_ensureInitialized] Initializing bootstrap...
+═══════════════════════════════════════════════════════
+🚀 [Bootstrap] Starting Everything Stack initialization
+═══════════════════════════════════════════════════════
+✅ [Bootstrap] Loaded .env with API keys
+✅ [Bootstrap] Configuration loaded successfully
+🔑 Config loaded - Deepgram key present: true
+🔑 Config loaded - Groq key present: true
+⚠️ Firebase/Crashlytics initialization failed: [core/not-initialized] Firebase has not been correctly initialized.
+
+Usually this means you've attempted to use a Firebase service before calling `Firebase.initializeApp`.
+
+View the documentation for more information: https://firebase.google.com/docs/flutter/setup
+    
+   Continuing without crash reporting...
+💾 Initializing persistence layer...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+📦 Registered service: invocation_repo = InvocationObjectBoxAdapter
+⏭️  [TTS] Skipped - TTSService is abstract (needs concrete implementation)
+⏭️  [LLM] Skipped - InferenceService is abstract (needs concrete implementation)
+✅ EMBEDDING: JinaEmbeddingService
+📦 Registered service: embedding = JinaEmbeddingService
+🔍 Initializing semantic search infrastructure...
+✅ ChunkingService initialized
+✅ HNSW index registered
+✅ SemanticSearchService initialized
+✅ RepositoryRegistry initialized
+✅ EnrichmentQueueRepository initialized
+✅ EnrichmentRunner initialized with SemanticEnrichmentWorker
+✅ EnrichmentRunner startup recovery complete
+✅ InvocationRepository wired with SemanticIndexableHandler (EntityRepository)
+✅ Invocation registered in RepositoryRegistry
+AudioRecordingService initialized
+✅ Audio: AudioRecordingService
+
+✅ Bootstrap complete: infrastructure services initialized
+[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION
+🚀 [setupServiceLocator] Starting service registration...
+✅ [setupServiceLocator] EmbeddingService registered
+✅ [setupServiceLocator] InferenceService already registered from bootstrap
+✅ [setupServiceLocator] TTSService already registered from bootstrap
+✅ [setupServiceLocator] STTService already registered from bootstrap
+✅ [setupServiceLocator] Timer tools registered (timer.set, timer.cancel, timer.list)
+🔍 [setupServiceLocator] Initializing EventBus...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+✅ [setupServiceLocator] EventBus registered
+🔍 [setupServiceLocator] Registering ContextSelector...
+✅ [setupServiceLocator] ContextSelector registered
+⏭️ [setupServiceLocator] Coordinator skipped (InferenceService/TTSService not registered)
+🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY
+✅ [_ensureInitialized] Bootstrap initialization complete
+00:49 +3: LLM Failure Handling - CI (Mocked APIs) full test
+✅ Swapped EmbeddingService: MockEmbeddingService (no API calls)
+✅ Swapped InferenceService: MockGroqImplementer + real repos
+✅ Swapped TTSService: MockFlutterTTSImplementer + real repos
+🔍 Registering Coordinator...
+
+🔧 [Coordinator.initialize] Wiring event listener
+✅ [Coordinator.initialize] Event listener registered
+✅ Coordinator registered and initialized
+
+🧪 [LLM Failure Test] Starting...
+📤 EventBus: Published transcription_complete
+
+📡 [Coordinator] Heard transcription_complete: "Test error handling"
+🚀 [Coordinator] Starting orchestration from event...
+
+=== COORDINATOR: orchestrate START ===
+🔗 EventId: 366edc03-bb16-4bd2-986f-2f0e6068d691
+📝 Utterance: "Test error handling"
+
+[1/4] Selecting context via ContextSelector...
+
+🔍 [ContextSelector.selectContext] Starting context selection
+   Params: threadSize=5, convHalfLife=24.0h, semanticHalfLife=720.0h, threshold=0.7
+
+[1/6] Generating embedding for transcription...
+✅ Embedding generated: 384 dimensions
+
+[2/6] Loading conversation thread (STT/LLM invocations)...
+✅ Conversation thread: 5 invocations
+   stt (0.1h ago): decay=0.998
+   stt (0.1h ago): decay=0.998
+   llm (0.0h ago): decay=1.000
+   llm (0.0h ago): decay=1.000
+   llm (0.0h ago): decay=1.000
+
+[3/6] Semantic search across all embeddable entities...
+✅ Semantic search returned 0 candidates
+
+[4/6] Deduplicating (removing conversation thread from semantic results)...
+✅ After dedup: 0 candidates
+
+[5/6] Applying fused scoring (semantic * temporal decay)...
+
+[6/6] Filtering by threshold and selecting top results...
+✅ Top semantic context: 0 invocations
+
+✅ ContextBundle created: ContextBundle: 5 conversation, 0 semantic
+✅ Context selected: ContextBundle: 5 conversation, 0 semantic
+
+[2/4] Building message array from context...
+✅ Messages built: 7 messages
+
+[3/4] Getting available tools...
+✅ Available tools: 6 tools
+
+[4/4] Calling LLM service with context...
+📡 LLM call starting...
+💥 MockGroqImplementer.chatWithTools(): Simulating failure
+📤 EventBus: Published orchestration_error
+✅ [Coordinator] Orchestration complete: FAILED
+⚠️ Error: Exception: Mock LLM failure: Simulated API error
+📤 EventBus: Published orchestration_complete
+📡 [Coordinator] Published orchestration_complete event
+📊 Recent invocations: 22
+   - context_selector: success=true
+   - llm: success=true
+   - tool_executor: success=true
+   - tts: success=true
+   - context_selector: success=true
+   - llm: success=true
+   - tool_executor: success=true
+   - tool_executor: success=true
+   - tts: success=true
+   - context_selector: success=true
+   - llm: success=true
+   - tool_executor: success=true
+   - tts: success=true
+   - chunking: success=true
+   - chunking: success=true
+   - chunking: success=true
+   - chunking: success=true
+   - chunking: success=true
+   - chunking: success=true
+   - chunking: success=true
+   - chunking: success=true
+   - context_selector: success=true
+✅ LLM Failure Test PASSED: System handled error gracefully
+🧹 [dispose] Cleaning up VoiceAssistantScreen...
+00:51 +4: LLM Failure Handling - CI (Mocked APIs) (tearDownAll)
+00:51 +4: STT Failure Handling - CI (Mocked APIs) full test
+00:51 +4: Multi-Turn Timer Conversation - CI (Mocked APIs) full test
+⚠️ Bootstrap flag set but services missing, reinitializing...
+🔧 [_ensureInitialized] Initializing bootstrap...
+═══════════════════════════════════════════════════════
+🚀 [Bootstrap] Starting Everything Stack initialization
+═══════════════════════════════════════════════════════
+✅ [Bootstrap] Loaded .env with API keys
+✅ [Bootstrap] Configuration loaded successfully
+🔑 Config loaded - Deepgram key present: true
+🔑 Config loaded - Groq key present: true
+⚠️ Firebase/Crashlytics initialization failed: [core/not-initialized] Firebase has not been correctly initialized.
+
+Usually this means you've attempted to use a Firebase service before calling `Firebase.initializeApp`.
+
+View the documentation for more information: https://firebase.google.com/docs/flutter/setup
+    
+   Continuing without crash reporting...
+💾 Initializing persistence layer...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+📦 Registered service: invocation_repo = InvocationObjectBoxAdapter
+⏭️  [TTS] Skipped - TTSService is abstract (needs concrete implementation)
+⏭️  [LLM] Skipped - InferenceService is abstract (needs concrete implementation)
+✅ EMBEDDING: JinaEmbeddingService
+📦 Registered service: embedding = JinaEmbeddingService
+🔍 Initializing semantic search infrastructure...
+✅ ChunkingService initialized
+✅ HNSW index registered
+✅ SemanticSearchService initialized
+✅ RepositoryRegistry initialized
+✅ EnrichmentQueueRepository initialized
+✅ EnrichmentRunner initialized with SemanticEnrichmentWorker
+✅ EnrichmentRunner startup recovery complete
+✅ InvocationRepository wired with SemanticIndexableHandler (EntityRepository)
+✅ Invocation registered in RepositoryRegistry
+AudioRecordingService initialized
+✅ Audio: AudioRecordingService
+
+✅ Bootstrap complete: infrastructure services initialized
+[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION
+🚀 [setupServiceLocator] Starting service registration...
+✅ [setupServiceLocator] EmbeddingService registered
+✅ [setupServiceLocator] InferenceService already registered from bootstrap
+✅ [setupServiceLocator] TTSService already registered from bootstrap
+✅ [setupServiceLocator] STTService already registered from bootstrap
+✅ [setupServiceLocator] Timer tools registered (timer.set, timer.cancel, timer.list)
+🔍 [setupServiceLocator] Initializing EventBus...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+✅ [setupServiceLocator] EventBus registered
+🔍 [setupServiceLocator] Registering ContextSelector...
+✅ [setupServiceLocator] ContextSelector registered
+⏭️ [setupServiceLocator] Coordinator skipped (InferenceService/TTSService not registered)
+🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY
+✅ [_ensureInitialized] Bootstrap initialization complete
+01:01 +4: STT Failure Handling - CI (Mocked APIs) full test
+✅ Swapped EmbeddingService: MockEmbeddingService (no API calls)
+✅ Swapped STTService: MockDeepgramImplementer + real repos
+🔍 Registering Coordinator...
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: GetIt: Object/factory with type InferenceService is not registered inside GetIt.
+(Did you accidentally do GetIt sl=GetIt.instance(); instead of GetIt sl=GetIt.instance;
+Did you forget to register it?)
+
+When the exception was thrown, this was the stack:
+#0      throwIfNot (package:get_it/get_it_impl.dart:14:19)
+#1      _GetItImplementation._findFactoryByNameAndType (package:get_it/get_it_impl.dart:435:5)
+#2      _GetItImplementation.get (package:get_it/get_it_impl.dart:463:29)
+#3      _GetItImplementation.call (package:get_it/get_it_impl.dart:554:12)
+#4      IntegrationTestConfig._registerCoordinator (file:///C:/Users/rasche_j/Documents/workspace/everything-stack/integration_test/shared/test_harness.dart:195:24)
+#5      IntegrationTestConfig.run.<anonymous closure>.<anonymous closure> (file:///C:/Users/rasche_j/Documents/workspace/everything-stack/integration_test/shared/test_harness.dart:67:19)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  full test
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:01 +4 -1: STT Failure Handling - CI (Mocked APIs) full test [E]
+  Test failed. See exception logs above.
+  The test description was: full test
+  
+01:01 +4 -1: STT Failure Handling - CI (Mocked APIs) (tearDownAll)
+01:01 +4 -1: TTS Failure Handling - CI (Mocked APIs) full test
+🧹 [dispose] Cleaning up VoiceAssistantScreen...
+01:01 +4 -1: Multi-Turn Timer Conversation - CI (Mocked APIs) full test
+⚠️ Bootstrap flag set but services missing, reinitializing...
+🔧 [_ensureInitialized] Initializing bootstrap...
+═══════════════════════════════════════════════════════
+🚀 [Bootstrap] Starting Everything Stack initialization
+═══════════════════════════════════════════════════════
+✅ [Bootstrap] Loaded .env with API keys
+✅ [Bootstrap] Configuration loaded successfully
+🔑 Config loaded - Deepgram key present: true
+🔑 Config loaded - Groq key present: true
+⚠️ Firebase/Crashlytics initialization failed: [core/not-initialized] Firebase has not been correctly initialized.
+
+Usually this means you've attempted to use a Firebase service before calling `Firebase.initializeApp`.
+
+View the documentation for more information: https://firebase.google.com/docs/flutter/setup
+    
+   Continuing without crash reporting...
+💾 Initializing persistence layer...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+📦 Registered service: invocation_repo = InvocationObjectBoxAdapter
+⏭️  [TTS] Skipped - TTSService is abstract (needs concrete implementation)
+⏭️  [LLM] Skipped - InferenceService is abstract (needs concrete implementation)
+✅ EMBEDDING: JinaEmbeddingService
+📦 Registered service: embedding = JinaEmbeddingService
+🔍 Initializing semantic search infrastructure...
+✅ ChunkingService initialized
+✅ HNSW index registered
+✅ SemanticSearchService initialized
+✅ RepositoryRegistry initialized
+✅ EnrichmentQueueRepository initialized
+✅ EnrichmentRunner initialized with SemanticEnrichmentWorker
+✅ EnrichmentRunner startup recovery complete
+✅ InvocationRepository wired with SemanticIndexableHandler (EntityRepository)
+✅ Invocation registered in RepositoryRegistry
+AudioRecordingService initialized
+✅ Audio: AudioRecordingService
+
+✅ Bootstrap complete: infrastructure services initialized
+[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION
+🚀 [setupServiceLocator] Starting service registration...
+✅ [setupServiceLocator] EmbeddingService registered
+✅ [setupServiceLocator] InferenceService already registered from bootstrap
+✅ [setupServiceLocator] TTSService already registered from bootstrap
+✅ [setupServiceLocator] STTService already registered from bootstrap
+✅ [setupServiceLocator] Timer tools registered (timer.set, timer.cancel, timer.list)
+🔍 [setupServiceLocator] Initializing EventBus...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+✅ [setupServiceLocator] EventBus registered
+🔍 [setupServiceLocator] Registering ContextSelector...
+✅ [setupServiceLocator] ContextSelector registered
+⏭️ [setupServiceLocator] Coordinator skipped (InferenceService/TTSService not registered)
+🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY
+✅ [_ensureInitialized] Bootstrap initialization complete
+01:11 +4 -1: TTS Failure Handling - CI (Mocked APIs) full test
+✅ Swapped EmbeddingService: MockEmbeddingService (no API calls)
+✅ Swapped InferenceService: ResponseMapLLMImplementer + real repos
+✅ Swapped TTSService: MockFlutterTTSImplementer + real repos
+🔍 Registering Coordinator...
+
+🔧 [Coordinator.initialize] Wiring event listener
+✅ [Coordinator.initialize] Event listener registered
+✅ Coordinator registered and initialized
+
+🧪 [TTS Failure Test] Starting...
+📤 EventBus: Published transcription_complete
+
+📡 [Coordinator] Heard transcription_complete: "Test error handling"
+🚀 [Coordinator] Starting orchestration from event...
+
+=== COORDINATOR: orchestrate START ===
+🔗 EventId: 1a7fd259-5a46-412e-8bd8-204175f24f53
+📝 Utterance: "Test error handling"
+
+[1/4] Selecting context via ContextSelector...
+
+🔍 [ContextSelector.selectContext] Starting context selection
+   Params: threadSize=5, convHalfLife=24.0h, semanticHalfLife=720.0h, threshold=0.7
+
+[1/6] Generating embedding for transcription...
+✅ Embedding generated: 384 dimensions
+
+[2/6] Loading conversation thread (STT/LLM invocations)...
+✅ Conversation thread: 5 invocations
+   stt (0.1h ago): decay=0.998
+   stt (0.1h ago): decay=0.998
+   llm (0.0h ago): decay=1.000
+   llm (0.0h ago): decay=1.000
+   llm (0.0h ago): decay=1.000
+
+[3/6] Semantic search across all embeddable entities...
+✅ Semantic search returned 0 candidates
+
+[4/6] Deduplicating (removing conversation thread from semantic results)...
+✅ After dedup: 0 candidates
+
+[5/6] Applying fused scoring (semantic * temporal decay)...
+
+[6/6] Filtering by threshold and selecting top results...
+✅ Top semantic context: 0 invocations
+
+✅ ContextBundle created: ContextBundle: 5 conversation, 0 semantic
+✅ Context selected: ContextBundle: 5 conversation, 0 semantic
+
+[2/4] Building message array from context...
+✅ Messages built: 7 messages
+
+[3/4] Getting available tools...
+✅ Available tools: 6 tools
+
+[4/4] Calling LLM service with context...
+📡 LLM call starting...
+✅ LLM response received
+📄 Response content: "This will trigger TTS"
+
+🔊 Synthesizing response to speech...
+💥 MockFlutterTTSImplementer.synthesize(): Simulating failure
+📤 EventBus: Published orchestration_error
+✅ [Coordinator] Orchestration complete: FAILED
+⚠️ Error: Exception: Mock TTS failure: Simulated synthesis error
+📤 EventBus: Published orchestration_complete
+📡 [Coordinator] Published orchestration_complete event
+📊 Recent invocations: 15
+   - context_selector: success=true
+   - llm: success=true
+   - tool_executor: success=true
+   - tts: success=true
+   - chunking: success=true
+   - chunking: success=true
+   - chunking: success=true
+   - chunking: success=true
+   - chunking: success=true
+   - chunking: success=true
+   - chunking: success=true
+   - chunking: success=true
+   - context_selector: success=true
+   - context_selector: success=true
+   - llm: success=true
+✅ TTS Failure Test PASSED: System handled error gracefully
+🧹 [dispose] Cleaning up VoiceAssistantScreen...
+01:13 +5 -1: TTS Failure Handling - CI (Mocked APIs) (tearDownAll)
+01:13 +5 -1: Enrichment Queue - CI (Mocked APIs) full test
+01:13 +5 -1: Multi-Turn Timer Conversation - CI (Mocked APIs) full test
+⚠️ Bootstrap flag set but services missing, reinitializing...
+🔧 [_ensureInitialized] Initializing bootstrap...
+═══════════════════════════════════════════════════════
+🚀 [Bootstrap] Starting Everything Stack initialization
+═══════════════════════════════════════════════════════
+✅ [Bootstrap] Loaded .env with API keys
+✅ [Bootstrap] Configuration loaded successfully
+🔑 Config loaded - Deepgram key present: true
+🔑 Config loaded - Groq key present: true
+⚠️ Firebase/Crashlytics initialization failed: [core/not-initialized] Firebase has not been correctly initialized.
+
+Usually this means you've attempted to use a Firebase service before calling `Firebase.initializeApp`.
+
+View the documentation for more information: https://firebase.google.com/docs/flutter/setup
+    
+   Continuing without crash reporting...
+💾 Initializing persistence layer...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+📦 Registered service: invocation_repo = InvocationObjectBoxAdapter
+⏭️  [TTS] Skipped - TTSService is abstract (needs concrete implementation)
+⏭️  [LLM] Skipped - InferenceService is abstract (needs concrete implementation)
+✅ EMBEDDING: JinaEmbeddingService
+📦 Registered service: embedding = JinaEmbeddingService
+🔍 Initializing semantic search infrastructure...
+✅ ChunkingService initialized
+✅ HNSW index registered
+✅ SemanticSearchService initialized
+✅ RepositoryRegistry initialized
+✅ EnrichmentQueueRepository initialized
+✅ EnrichmentRunner initialized with SemanticEnrichmentWorker
+✅ EnrichmentRunner startup recovery complete
+✅ InvocationRepository wired with SemanticIndexableHandler (EntityRepository)
+✅ Invocation registered in RepositoryRegistry
+AudioRecordingService initialized
+✅ Audio: AudioRecordingService
+
+✅ Bootstrap complete: infrastructure services initialized
+[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION
+🚀 [setupServiceLocator] Starting service registration...
+✅ [setupServiceLocator] EmbeddingService registered
+✅ [setupServiceLocator] InferenceService already registered from bootstrap
+✅ [setupServiceLocator] TTSService already registered from bootstrap
+✅ [setupServiceLocator] STTService already registered from bootstrap
+✅ [setupServiceLocator] Timer tools registered (timer.set, timer.cancel, timer.list)
+🔍 [setupServiceLocator] Initializing EventBus...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+✅ [setupServiceLocator] EventBus registered
+🔍 [setupServiceLocator] Registering ContextSelector...
+✅ [setupServiceLocator] ContextSelector registered
+⏭️ [setupServiceLocator] Coordinator skipped (InferenceService/TTSService not registered)
+🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY
+✅ [_ensureInitialized] Bootstrap initialization complete
+01:23 +5 -1: Enrichment Queue - CI (Mocked APIs) full test
+✅ Swapped EmbeddingService: MockEmbeddingService (no API calls)
+
+=== [Enrichment Queue Test] Starting... ===
+
+Saved invocation with uuid: be7f809d-211a-47a3-8501-5b46bfed6640
+Found 2 chunks
+HNSW contains chunk: true
+Queue item for entity: null (cleaned up)
+
+=== [Enrichment Queue Test] PASSED ===
+
+🧹 [dispose] Cleaning up VoiceAssistantScreen...
+01:26 +6 -1: Enrichment Queue - CI (Mocked APIs) (tearDownAll)
+01:26 +6 -1: Startup Recovery - CI (Mocked APIs) full test
+01:26 +6 -1: Multi-Turn Timer Conversation - CI (Mocked APIs) full test
+⚠️ Bootstrap flag set but services missing, reinitializing...
+🔧 [_ensureInitialized] Initializing bootstrap...
+═══════════════════════════════════════════════════════
+🚀 [Bootstrap] Starting Everything Stack initialization
+═══════════════════════════════════════════════════════
+✅ [Bootstrap] Loaded .env with API keys
+✅ [Bootstrap] Configuration loaded successfully
+🔑 Config loaded - Deepgram key present: true
+🔑 Config loaded - Groq key present: true
+⚠️ Firebase/Crashlytics initialization failed: [core/not-initialized] Firebase has not been correctly initialized.
+
+Usually this means you've attempted to use a Firebase service before calling `Firebase.initializeApp`.
+
+View the documentation for more information: https://firebase.google.com/docs/flutter/setup
+    
+   Continuing without crash reporting...
+💾 Initializing persistence layer...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+📦 Registered service: invocation_repo = InvocationObjectBoxAdapter
+⏭️  [TTS] Skipped - TTSService is abstract (needs concrete implementation)
+⏭️  [LLM] Skipped - InferenceService is abstract (needs concrete implementation)
+✅ EMBEDDING: JinaEmbeddingService
+📦 Registered service: embedding = JinaEmbeddingService
+🔍 Initializing semantic search infrastructure...
+✅ ChunkingService initialized
+✅ HNSW index registered
+✅ SemanticSearchService initialized
+✅ RepositoryRegistry initialized
+✅ EnrichmentQueueRepository initialized
+✅ EnrichmentRunner initialized with SemanticEnrichmentWorker
+✅ EnrichmentRunner startup recovery complete
+✅ InvocationRepository wired with SemanticIndexableHandler (EntityRepository)
+✅ Invocation registered in RepositoryRegistry
+AudioRecordingService initialized
+✅ Audio: AudioRecordingService
+
+✅ Bootstrap complete: infrastructure services initialized
+[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION
+🚀 [setupServiceLocator] Starting service registration...
+✅ [setupServiceLocator] EmbeddingService registered
+✅ [setupServiceLocator] InferenceService already registered from bootstrap
+✅ [setupServiceLocator] TTSService already registered from bootstrap
+✅ [setupServiceLocator] STTService already registered from bootstrap
+✅ [setupServiceLocator] Timer tools registered (timer.set, timer.cancel, timer.list)
+🔍 [setupServiceLocator] Initializing EventBus...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+✅ [setupServiceLocator] EventBus registered
+🔍 [setupServiceLocator] Registering ContextSelector...
+✅ [setupServiceLocator] ContextSelector registered
+⏭️ [setupServiceLocator] Coordinator skipped (InferenceService/TTSService not registered)
+🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY
+✅ [_ensureInitialized] Bootstrap initialization complete
+01:36 +6 -1: Startup Recovery - CI (Mocked APIs) full test
+✅ Swapped EmbeddingService: MockEmbeddingService (no API calls)
+
+=== [Startup Recovery Test] Starting... ===
+
+Created stuck item with uuid: 0f8cb49a-d5ce-4c61-8412-a0bfc346d146
+Stuck item currentStep after recovery: null
+
+=== [Startup Recovery Test] PASSED ===
+
+🧹 [dispose] Cleaning up VoiceAssistantScreen...
+01:36 +7 -1: Startup Recovery - CI (Mocked APIs) (tearDownAll)
+01:36 +7 -1: Entity Update Cancels Old Enrichment - CI (Mocked APIs) full test
+01:36 +7 -1: Multi-Turn Timer Conversation - CI (Mocked APIs) full test
+⚠️ Bootstrap flag set but services missing, reinitializing...
+🔧 [_ensureInitialized] Initializing bootstrap...
+═══════════════════════════════════════════════════════
+🚀 [Bootstrap] Starting Everything Stack initialization
+═══════════════════════════════════════════════════════
+✅ [Bootstrap] Loaded .env with API keys
+✅ [Bootstrap] Configuration loaded successfully
+🔑 Config loaded - Deepgram key present: true
+🔑 Config loaded - Groq key present: true
+⚠️ Firebase/Crashlytics initialization failed: [core/not-initialized] Firebase has not been correctly initialized.
+
+Usually this means you've attempted to use a Firebase service before calling `Firebase.initializeApp`.
+
+View the documentation for more information: https://firebase.google.com/docs/flutter/setup
+    
+   Continuing without crash reporting...
+💾 Initializing persistence layer...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+📦 Registered service: invocation_repo = InvocationObjectBoxAdapter
+⏭️  [TTS] Skipped - TTSService is abstract (needs concrete implementation)
+⏭️  [LLM] Skipped - InferenceService is abstract (needs concrete implementation)
+✅ EMBEDDING: JinaEmbeddingService
+📦 Registered service: embedding = JinaEmbeddingService
+🔍 Initializing semantic search infrastructure...
+✅ ChunkingService initialized
+✅ HNSW index registered
+✅ SemanticSearchService initialized
+✅ RepositoryRegistry initialized
+✅ EnrichmentQueueRepository initialized
+✅ EnrichmentRunner initialized with SemanticEnrichmentWorker
+✅ EnrichmentRunner startup recovery complete
+✅ InvocationRepository wired with SemanticIndexableHandler (EntityRepository)
+✅ Invocation registered in RepositoryRegistry
+AudioRecordingService initialized
+✅ Audio: AudioRecordingService
+
+✅ Bootstrap complete: infrastructure services initialized
+[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION
+🚀 [setupServiceLocator] Starting service registration...
+✅ [setupServiceLocator] EmbeddingService registered
+✅ [setupServiceLocator] InferenceService already registered from bootstrap
+✅ [setupServiceLocator] TTSService already registered from bootstrap
+✅ [setupServiceLocator] STTService already registered from bootstrap
+✅ [setupServiceLocator] Timer tools registered (timer.set, timer.cancel, timer.list)
+🔍 [setupServiceLocator] Initializing EventBus...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+✅ [setupServiceLocator] EventBus registered
+🔍 [setupServiceLocator] Registering ContextSelector...
+✅ [setupServiceLocator] ContextSelector registered
+⏭️ [setupServiceLocator] Coordinator skipped (InferenceService/TTSService not registered)
+🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY
+✅ [_ensureInitialized] Bootstrap initialization complete
+01:47 +7 -1: Entity Update Cancels Old Enrichment - CI (Mocked APIs) full test
+✅ Swapped EmbeddingService: MockEmbeddingService (no API calls)
+
+=== [Entity Update Cancels Test] Starting... ===
+
+First save - uuid: e718b826-257a-427e-98c6-839eeba36702
+Second save (update)
+Queue item after update: exists (uuid: d211fc7c-6d51-4b32-aa89-2db02d937b05)
+
+=== [Entity Update Cancels Test] PASSED ===
+
+🧹 [dispose] Cleaning up VoiceAssistantScreen...
+01:48 +8 -1: Entity Update Cancels Old Enrichment - CI (Mocked APIs) (tearDownAll)
+01:48 +8 -1: Batch Partial Failures - CI (Mocked APIs) full test
+01:48 +8 -1: Multi-Turn Timer Conversation - CI (Mocked APIs) full test
+⚠️ Bootstrap flag set but services missing, reinitializing...
+🔧 [_ensureInitialized] Initializing bootstrap...
+═══════════════════════════════════════════════════════
+🚀 [Bootstrap] Starting Everything Stack initialization
+═══════════════════════════════════════════════════════
+✅ [Bootstrap] Loaded .env with API keys
+✅ [Bootstrap] Configuration loaded successfully
+🔑 Config loaded - Deepgram key present: true
+🔑 Config loaded - Groq key present: true
+⚠️ Firebase/Crashlytics initialization failed: [core/not-initialized] Firebase has not been correctly initialized.
+
+Usually this means you've attempted to use a Firebase service before calling `Firebase.initializeApp`.
+
+View the documentation for more information: https://firebase.google.com/docs/flutter/setup
+    
+   Continuing without crash reporting...
+💾 Initializing persistence layer...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+📦 Registered service: invocation_repo = InvocationObjectBoxAdapter
+⏭️  [TTS] Skipped - TTSService is abstract (needs concrete implementation)
+⏭️  [LLM] Skipped - InferenceService is abstract (needs concrete implementation)
+✅ EMBEDDING: JinaEmbeddingService
+📦 Registered service: embedding = JinaEmbeddingService
+🔍 Initializing semantic search infrastructure...
+✅ ChunkingService initialized
+✅ HNSW index registered
+✅ SemanticSearchService initialized
+✅ RepositoryRegistry initialized
+✅ EnrichmentQueueRepository initialized
+✅ EnrichmentRunner initialized with SemanticEnrichmentWorker
+✅ EnrichmentRunner startup recovery complete
+✅ InvocationRepository wired with SemanticIndexableHandler (EntityRepository)
+✅ Invocation registered in RepositoryRegistry
+AudioRecordingService initialized
+✅ Audio: AudioRecordingService
+
+✅ Bootstrap complete: infrastructure services initialized
+[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION
+🚀 [setupServiceLocator] Starting service registration...
+✅ [setupServiceLocator] EmbeddingService registered
+✅ [setupServiceLocator] InferenceService already registered from bootstrap
+✅ [setupServiceLocator] TTSService already registered from bootstrap
+✅ [setupServiceLocator] STTService already registered from bootstrap
+✅ [setupServiceLocator] Timer tools registered (timer.set, timer.cancel, timer.list)
+🔍 [setupServiceLocator] Initializing EventBus...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+✅ [setupServiceLocator] EventBus registered
+🔍 [setupServiceLocator] Registering ContextSelector...
+✅ [setupServiceLocator] ContextSelector registered
+⏭️ [setupServiceLocator] Coordinator skipped (InferenceService/TTSService not registered)
+🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY
+✅ [_ensureInitialized] Bootstrap initialization complete
+01:58 +8 -1: Batch Partial Failures - CI (Mocked APIs) full test
+✅ Swapped EmbeddingService: MockEmbeddingService (no API calls)
+
+=== [Batch Partial Failures Test] Starting... ===
+
+Saved 10 invocations
+Successfully enriched: 10/10
+
+=== [Batch Partial Failures Test] PASSED ===
+
+🧹 [dispose] Cleaning up VoiceAssistantScreen...
+02:09 +9 -1: Batch Partial Failures - CI (Mocked APIs) (tearDownAll)
+02:09 +9 -1: Concurrent Entity Saves - CI (Mocked APIs) full test
+02:09 +9 -1: Multi-Turn Timer Conversation - CI (Mocked APIs) full test
+⚠️ Bootstrap flag set but services missing, reinitializing...
+🔧 [_ensureInitialized] Initializing bootstrap...
+═══════════════════════════════════════════════════════
+🚀 [Bootstrap] Starting Everything Stack initialization
+═══════════════════════════════════════════════════════
+✅ [Bootstrap] Loaded .env with API keys
+✅ [Bootstrap] Configuration loaded successfully
+🔑 Config loaded - Deepgram key present: true
+🔑 Config loaded - Groq key present: true
+⚠️ Firebase/Crashlytics initialization failed: [core/not-initialized] Firebase has not been correctly initialized.
+
+Usually this means you've attempted to use a Firebase service before calling `Firebase.initializeApp`.
+
+View the documentation for more information: https://firebase.google.com/docs/flutter/setup
+    
+   Continuing without crash reporting...
+💾 Initializing persistence layer...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+📦 Registered service: invocation_repo = InvocationObjectBoxAdapter
+⏭️  [TTS] Skipped - TTSService is abstract (needs concrete implementation)
+⏭️  [LLM] Skipped - InferenceService is abstract (needs concrete implementation)
+✅ EMBEDDING: JinaEmbeddingService
+📦 Registered service: embedding = JinaEmbeddingService
+🔍 Initializing semantic search infrastructure...
+✅ ChunkingService initialized
+✅ HNSW index registered
+✅ SemanticSearchService initialized
+✅ RepositoryRegistry initialized
+✅ EnrichmentQueueRepository initialized
+✅ EnrichmentRunner initialized with SemanticEnrichmentWorker
+✅ EnrichmentRunner startup recovery complete
+✅ InvocationRepository wired with SemanticIndexableHandler (EntityRepository)
+✅ Invocation registered in RepositoryRegistry
+AudioRecordingService initialized
+✅ Audio: AudioRecordingService
+
+✅ Bootstrap complete: infrastructure services initialized
+[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION
+🚀 [setupServiceLocator] Starting service registration...
+✅ [setupServiceLocator] EmbeddingService registered
+✅ [setupServiceLocator] InferenceService already registered from bootstrap
+✅ [setupServiceLocator] TTSService already registered from bootstrap
+✅ [setupServiceLocator] STTService already registered from bootstrap
+✅ [setupServiceLocator] Timer tools registered (timer.set, timer.cancel, timer.list)
+🔍 [setupServiceLocator] Initializing EventBus...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+✅ [setupServiceLocator] EventBus registered
+🔍 [setupServiceLocator] Registering ContextSelector...
+✅ [setupServiceLocator] ContextSelector registered
+⏭️ [setupServiceLocator] Coordinator skipped (InferenceService/TTSService not registered)
+🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY
+✅ [_ensureInitialized] Bootstrap initialization complete
+02:20 +9 -1: Concurrent Entity Saves - CI (Mocked APIs) full test
+✅ Swapped EmbeddingService: MockEmbeddingService (no API calls)
+
+=== [Concurrent Entity Saves Test] Starting... ===
+
+Saved 2 invocations concurrently
+Entity 1: 2 chunks
+Entity 2: 2 chunks
+Both entities in HNSW index
+
+=== [Concurrent Entity Saves Test] PASSED ===
+
+🧹 [dispose] Cleaning up VoiceAssistantScreen...
+02:24 +10 -1: Concurrent Entity Saves - CI (Mocked APIs) (tearDownAll)
+02:24 +10 -1: Entity Deleted During Processing - CI (Mocked APIs) full test
+02:24 +10 -1: Multi-Turn Timer Conversation - CI (Mocked APIs) full test
+⚠️ Bootstrap flag set but services missing, reinitializing...
+🔧 [_ensureInitialized] Initializing bootstrap...
+═══════════════════════════════════════════════════════
+🚀 [Bootstrap] Starting Everything Stack initialization
+═══════════════════════════════════════════════════════
+✅ [Bootstrap] Loaded .env with API keys
+✅ [Bootstrap] Configuration loaded successfully
+🔑 Config loaded - Deepgram key present: true
+🔑 Config loaded - Groq key present: true
+⚠️ Firebase/Crashlytics initialization failed: [core/not-initialized] Firebase has not been correctly initialized.
+
+Usually this means you've attempted to use a Firebase service before calling `Firebase.initializeApp`.
+
+View the documentation for more information: https://firebase.google.com/docs/flutter/setup
+    
+   Continuing without crash reporting...
+💾 Initializing persistence layer...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+📦 Registered service: invocation_repo = InvocationObjectBoxAdapter
+⏭️  [TTS] Skipped - TTSService is abstract (needs concrete implementation)
+⏭️  [LLM] Skipped - InferenceService is abstract (needs concrete implementation)
+✅ EMBEDDING: JinaEmbeddingService
+📦 Registered service: embedding = JinaEmbeddingService
+🔍 Initializing semantic search infrastructure...
+✅ ChunkingService initialized
+✅ HNSW index registered
+✅ SemanticSearchService initialized
+✅ RepositoryRegistry initialized
+✅ EnrichmentQueueRepository initialized
+✅ EnrichmentRunner initialized with SemanticEnrichmentWorker
+✅ EnrichmentRunner startup recovery complete
+✅ InvocationRepository wired with SemanticIndexableHandler (EntityRepository)
+✅ Invocation registered in RepositoryRegistry
+AudioRecordingService initialized
+✅ Audio: AudioRecordingService
+
+✅ Bootstrap complete: infrastructure services initialized
+[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION
+🚀 [setupServiceLocator] Starting service registration...
+✅ [setupServiceLocator] EmbeddingService registered
+✅ [setupServiceLocator] InferenceService already registered from bootstrap
+✅ [setupServiceLocator] TTSService already registered from bootstrap
+✅ [setupServiceLocator] STTService already registered from bootstrap
+✅ [setupServiceLocator] Timer tools registered (timer.set, timer.cancel, timer.list)
+🔍 [setupServiceLocator] Initializing EventBus...
+ℹ️ ObjectBox Store already initialized, returning existing instance
+✅ [setupServiceLocator] EventBus registered
+🔍 [setupServiceLocator] Registering ContextSelector...
+✅ [setupServiceLocator] ContextSelector registered
+⏭️ [setupServiceLocator] Coordinator skipped (InferenceService/TTSService not registered)
+🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY
+✅ [_ensureInitialized] Bootstrap initialization complete
+02:34 +10 -1: Entity Deleted During Processing - CI (Mocked APIs) full test
+✅ Swapped EmbeddingService: MockEmbeddingService (no API calls)
+
+=== [Entity Deleted During Processing Test] Starting... ===
+
+Saved invocation: 44562e18-10f2-40b5-8be0-f5c73ef35183
+Deleted entity: 44562e18-10f2-40b5-8be0-f5c73ef35183
+Entity deleted: confirmed
+No chunks found (cleaned by deleteByUuid or never created)
+Queue item deleted (enrichment completed or cancelled)
+
+=== [Entity Deleted During Processing Test] PASSED ===
+
+🧹 [dispose] Cleaning up VoiceAssistantScreen...
+02:38 +11 -1: Entity Deleted During Processing - CI (Mocked APIs) (tearDownAll)
+02:38 +11 -1: (tearDownAll)
+02:38 +11 -1: Some tests failed.

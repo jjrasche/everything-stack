@@ -66,31 +66,21 @@ Patterns are opt-in. Add `with PatternName` to entity only if needed.
 
 ## Testing Requirements
 
-Test your code through real E2E execution. No mocks. What you test is what ships.
+**AUTHORITATIVE SOURCE:** `TESTING.md` (read it before any testing work)
 
-E2E tests generate real Invocation logs that feed the learning system. The system learns from what it actually does, not from mock behavior.
+Integration tests run with FULL UI - not headless:
+- App window/browser opens like `flutter run`
+- Full bootstrap: services, repos, enrichment pipeline
+- Real execution generates Invocation logs for learning system
+- Command: `flutter test integration_test/ -d {platform}`
 
-**CRITICAL: Integration tests run with FULL UI.**
-- Tests launch the complete app (window/browser opens just like `flutter run`)
-- Bootstrap initializes all services, repositories, enrichment pipeline
-- Tests interact with the real running application
-- You can watch tests execute in real-time
-
-**What to test:**
-- ✅ Every user-facing feature (message, rating, action)
-- ✅ Every end result (entity created, updated, deleted)
-- ✅ Every adaptation loop (feedback → system learns)
-- ✅ Every platform (iOS, Android, Web, macOS, Windows, Linux)
-
-**How to test:**
+Testing philosophy:
+- No mocks in E2E tests - what you test is what ships
 - Real components, real services, real persistence
-- No test doubles or mocks
-- Run on actual device or emulator
-- Every test generates an Invocation log
+- Every test generates real Invocation logs
+- Test every platform: iOS, Android, Web, macOS, Windows, Linux
 
-**Command:** `flutter test integration_test/ -d {platform}`
-
-**Read:** `TESTING.md` for complete guidance on E2E testing patterns and platform setup
+**Before implementing any test:** Read `TESTING.md` for complete patterns, examples, and requirements.
 
 ## Build and Run
 

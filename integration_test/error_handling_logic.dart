@@ -94,6 +94,9 @@ final sttFailureTest = IntegrationTestConfig(
 
   mockImplementers: {
     'deepgram': MockDeepgramImplementer(shouldFail: true),
+    // Coordinator requires LLM + TTS, provide mocks even though STT is focus
+    'groq': ResponseMapLLMImplementer({}),
+    'tts': MockFlutterTTSImplementer(),
   },
 
   testLogic: (t) async {
