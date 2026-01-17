@@ -73,16 +73,23 @@ class EnrichmentQueueObjectBoxAdapter implements EnrichmentQueueAdapter {
   @override
   Future<List<EnrichmentQueueItem>> findReadyForStep(String stepType) async {
     // Find items where:
-    // - pendingStepsStr contains stepType
+    // - pendingSteps contains stepType (EXACT match, not substring)
     // - currentStep is null (not being processed)
+    //
+    // CRITICAL: Cannot use .contains() on comma-separated string - it does substring matching
+    // "semantic" would incorrectly match "semantic_enrichment,categorization"
+    // Solution: Fetch all candidates, filter in Dart for exact list membership
     final query = _box
-        .query(EnrichmentQueueItemOB_.pendingStepsStr.contains(stepType) &
-            EnrichmentQueueItemOB_.currentStep.isNull())
+        .query(EnrichmentQueueItemOB_.currentStep.isNull())
         .order(EnrichmentQueueItemOB_.enqueuedAt)
         .build();
     try {
       final obList = query.find();
-      return obList.map((ob) => ob.toItem()).toList();
+      // Filter in Dart for exact step matching
+      return obList
+          .map((ob) => ob.toItem())
+          .where((item) => item.pendingSteps.contains(stepType))
+          .toList();
     } finally {
       query.close();
     }
@@ -98,21 +105,20 @@ class EnrichmentQueueObjectBoxAdapter implements EnrichmentQueueAdapter {
       return findReadyForStep(stepType);
     }
 
-    // Build condition: pendingSteps contains stepType AND currentStep is null
-    var condition = EnrichmentQueueItemOB_.pendingStepsStr.contains(stepType) &
-        EnrichmentQueueItemOB_.currentStep.isNull();
-
-    // Add condition for each required step
-    for (final required in requiredSteps) {
-      condition =
-          condition & EnrichmentQueueItemOB_.completedStepsStr.contains(required);
-    }
-
-    final query =
-        _box.query(condition).order(EnrichmentQueueItemOB_.enqueuedAt).build();
+    // Fetch all non-processing items, filter in Dart for exact matching
+    // CRITICAL: .contains() does substring matching, not list membership
+    final query = _box
+        .query(EnrichmentQueueItemOB_.currentStep.isNull())
+        .order(EnrichmentQueueItemOB_.enqueuedAt)
+        .build();
     try {
       final obList = query.find();
-      return obList.map((ob) => ob.toItem()).toList();
+      return obList.map((ob) => ob.toItem()).where((item) {
+        // pendingSteps contains stepType (exact match)
+        if (!item.pendingSteps.contains(stepType)) return false;
+        // completedSteps contains all required steps (exact match)
+        return requiredSteps.every((step) => item.completedSteps.contains(step));
+      }).toList();
     } finally {
       query.close();
     }

@@ -37,6 +37,7 @@ import 'persistence/transaction_context.dart';
 import 'repository_pattern_handler.dart';
 import '../patterns/embeddable.dart';
 import '../patterns/enrichable.dart';
+import '../patterns/semantic_indexable.dart';
 import '../services/embedding_service.dart';
 import '../services/chunking_service.dart';
 import '../services/enrichment/enrichment_runner.dart';
@@ -265,6 +266,30 @@ class EntityRepository<T extends BaseEntity> {
     // Load entity to pass to handlers
     final entity = await findByUuid(uuid);
     if (entity == null) return false;
+
+    // Cancel enrichment if entity is Enrichable
+    // This prevents worker from processing deleted entity
+    if (enrichmentRunner != null && entity is Enrichable) {
+      try {
+        await enrichmentRunner!.cancelForEntity(entity.uuid);
+      } catch (e) {
+        // Log but don't fail deletion if cancellation fails
+        // ignore: avoid_print
+        print('Warning: Enrichment cancellation failed for ${entity.uuid}: $e');
+      }
+    }
+
+    // Clean up chunks if entity is SemanticIndexable
+    // Must happen before entity deletion so chunks can be looked up
+    if (chunkingService != null && entity is SemanticIndexable) {
+      try {
+        await chunkingService!.deleteByEntityId(entity.uuid);
+      } catch (e) {
+        // Log but don't fail deletion if chunk cleanup fails
+        // ignore: avoid_print
+        print('Warning: Chunk cleanup failed for ${entity.uuid}: $e');
+      }
+    }
 
     // Phase 1: beforeDelete hooks (fail-fast, outside transaction)
     for (final handler in handlers) {

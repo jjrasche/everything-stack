@@ -502,8 +502,6 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
             chunkingService: chunkingService,
             repoRegistry: repoRegistry,
           ),
-          // Add more workers here as needed:
-          // CategorizationEnrichmentWorker(...)
         ],
         batchSize: 10,
       );

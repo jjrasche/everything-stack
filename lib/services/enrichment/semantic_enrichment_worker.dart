@@ -84,14 +84,19 @@ class SemanticEnrichmentWorker implements EnrichmentWorker {
       }
 
       // 4. Do the work (HNSW mutations happen here)
+      // CRITICAL: Delete old chunks first to ensure idempotency (restart-safe)
+      // If app crashed mid-processing, old chunks may exist from previous attempt
+      await chunkingService.deleteByEntityId(item.entityUuid);
+
       // ChunkingService handles: chunking, embedding, HNSW insert
       await chunkingService.indexEntity(entity);
 
       // 5. RACE CONDITION CHECK: Re-fetch item before marking complete
       final stillValid = await queueRepo.findByUuid(item.uuid);
       if (stillValid == null) {
-        // Item was cancelled during processing (entity was updated)
-        // Orphaned chunks will be cleaned up when entity is re-enriched
+        // Item was cancelled during processing (entity was updated or deleted)
+        // Clean up orphaned chunks - entity may have been deleted, won't be re-enriched
+        await chunkingService.deleteByEntityId(item.entityUuid);
         return;
       }
 

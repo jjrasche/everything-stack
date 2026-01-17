@@ -25,6 +25,7 @@ import '../audio_pipeline_logic.dart';
 import '../invocation_semantic_logic.dart';
 import '../error_handling_logic.dart';
 import '../enrichment_queue_logic.dart';
+import '../enrichment_advanced_logic.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +43,9 @@ void main() {
     'enrichment_queue': enrichmentQueueTest,
     'startup_recovery': startupRecoveryTest,
     'entity_update_cancels': entityUpdateCancelsTest,
+    'batch_failures': batchPartialFailuresTest,
+    'concurrent_saves': concurrentSavesTest,
+    'entity_deleted': entityDeletedDuringProcessingTest,
   };
 
   if (testName.isEmpty) {
