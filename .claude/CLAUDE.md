@@ -70,6 +70,12 @@ Test your code through real E2E execution. No mocks. What you test is what ships
 
 E2E tests generate real Invocation logs that feed the learning system. The system learns from what it actually does, not from mock behavior.
 
+**CRITICAL: Integration tests run with FULL UI.**
+- Tests launch the complete app (window/browser opens just like `flutter run`)
+- Bootstrap initializes all services, repositories, enrichment pipeline
+- Tests interact with the real running application
+- You can watch tests execute in real-time
+
 **What to test:**
 - ✅ Every user-facing feature (message, rating, action)
 - ✅ Every end result (entity created, updated, deleted)

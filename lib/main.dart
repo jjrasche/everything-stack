@@ -4,6 +4,8 @@ import 'dart:convert';
 
 import 'bootstrap.dart';
 import 'core/event.dart';
+import 'core/entity_repository.dart';
+import 'core/invocation.dart';
 import 'services/coordinator.dart';
 import 'ui/screens/voice_assistant_screen.dart';
 
@@ -18,8 +20,9 @@ bool _bootstrapInitialized = false;
 Future<void> _ensureInitialized() async {
   if (_bootstrapInitialized) {
     // Already initialized, verify services are still available
+    // Use EntityRepository<Invocation> as sentinel (always registered in bootstrap)
     try {
-      getIt<Coordinator>();
+      getIt<EntityRepository<Invocation>>();
       return; // All good
     } catch (e) {
       debugPrint('⚠️ Bootstrap flag set but services missing, reinitializing...');
@@ -29,11 +32,13 @@ Future<void> _ensureInitialized() async {
 
   debugPrint('🔧 [_ensureInitialized] Initializing bootstrap...');
 
-  // Check if Coordinator already exists (avoid double initialization)
+  // Check if core services already exist (avoid double initialization)
+  // Use EntityRepository<Invocation> as sentinel (always registered in bootstrap)
   bool needsInitialization = false;
   try {
-    getIt<Coordinator>();
-    debugPrint('   Coordinator already registered, skipping bootstrap');
+    getIt<EntityRepository<Invocation>>();
+    debugPrint('   Core services already registered, skipping bootstrap');
+    _bootstrapInitialized = true;
     return;
   } catch (e) {
     needsInitialization = true;
@@ -59,8 +64,23 @@ void main() async {
   }
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late final Future<void> _initializationFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    // Create the initialization future ONCE during initState
+    // This prevents re-initialization on every build
+    _initializationFuture = _ensureInitialized();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +91,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: FutureBuilder<void>(
-        future: _ensureInitialized(),
+        future: _initializationFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Scaffold(

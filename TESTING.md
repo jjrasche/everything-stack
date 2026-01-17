@@ -122,6 +122,12 @@ void main() {
 
 ## Running E2E Tests
 
+**CRITICAL: Integration tests run with FULL UI, not headless.**
+- The app window/browser opens just like `flutter run`
+- Bootstrap initializes: services, repositories, enrichment pipeline - everything
+- Tests interact with the real running application
+- You can watch the test execute in real-time (use `--headed` for browsers)
+
 **All platforms (CI):**
 ```bash
 # Android emulator
