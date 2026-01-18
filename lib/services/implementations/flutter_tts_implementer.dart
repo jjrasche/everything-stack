@@ -25,15 +25,22 @@ class FlutterTtsImplementer implements TTSImplementer {
 
   /// Initialize the flutter_tts plugin
   Future<void> initialize() async {
-    if (_isInitialized) return;
+    if (_isInitialized) {
+      print('   ℹ️ FlutterTtsImplementer already initialized');
+      return;
+    }
 
     try {
+      print('🔊 [FlutterTtsImplementer] Initializing...');
       await _flutterTts.setLanguage('en-US');
       await _flutterTts.setSpeechRate(0.5);
       await _flutterTts.setVolume(1.0);
       await _flutterTts.setPitch(1.0);
       _isInitialized = true;
-    } catch (e) {
+      print('   ✅ FlutterTTS initialized: en-US, volume=1.0');
+    } catch (e, stackTrace) {
+      print('   ❌ FlutterTTS initialization failed: $e');
+      print('   Stack: $stackTrace');
       throw FlutterTtsException('Failed to initialize: $e');
     }
   }
@@ -82,6 +89,9 @@ class FlutterTtsImplementer implements TTSImplementer {
     }
 
     try {
+      print('🔊 [FlutterTtsImplementer] Synthesizing: "$text"');
+      print('   Voice: $voiceId, Rate: $speechRate, Pitch: $pitch');
+
       // Time the synthesis call
       final stopwatch = Stopwatch()..start();
 
@@ -97,7 +107,9 @@ class FlutterTtsImplementer implements TTSImplementer {
         audioId = _synthesisCache[cacheKey]!;
         // Estimate duration based on text length and speech rate
         estimatedDuration = _estimateDuration(text, speechRate);
+        print('   📦 Using cached audio: $audioId');
       } else {
+        print('   🎤 Calling flutter_tts.speak()...');
         // Set voice and parameters
         await _flutterTts.setSpeechRate(speechRate);
         await _flutterTts.setPitch(pitch);
@@ -107,7 +119,9 @@ class FlutterTtsImplementer implements TTSImplementer {
 
         // Speak and wait for completion
         await _flutterTts.speak(text);
+        print('   ⏳ Waiting for TTS completion...');
         await _waitForCompletion();
+        print('   ✅ TTS playback completed');
 
         // Generate audioId and estimate duration
         audioId = 'audio_${_generateId(cacheKey)}';
@@ -120,12 +134,15 @@ class FlutterTtsImplementer implements TTSImplementer {
       stopwatch.stop();
       final latencyMs = stopwatch.elapsedMilliseconds.toDouble();
 
+      print('   ✅ Synthesis complete: ${latencyMs}ms');
       return TTSInvocationOutput(
         audioId: audioId,
         durationSeconds: estimatedDuration,
         latencyMs: latencyMs,
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('   ❌ TTS Error: $e');
+      print('   Stack: $stackTrace');
       throw FlutterTtsException('Synthesis failed: $e');
     }
   }

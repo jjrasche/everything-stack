@@ -251,10 +251,15 @@ class Coordinator {
         }
       }
 
-      // 4. Synthesize TTS
-      print('\n🔊 Synthesizing response to speech...');
+      // 4. Synthesize TTS (only if there's content to speak)
       final finalResponse = llmResponse.content ?? '';
-      await ttsService.synthesize(text: finalResponse, eventId: eventId);
+      if (finalResponse.isNotEmpty) {
+        print('\n🔊 Synthesizing response to speech...');
+        print('   Text: "${finalResponse.length > 50 ? '${finalResponse.substring(0, 50)}...' : finalResponse}"');
+        await ttsService.synthesize(text: finalResponse, eventId: eventId);
+      } else {
+        print('\n⏭️  Skipping TTS (LLM provided no text content, only tool calls)');
+      }
 
       final latency = DateTime.now().difference(startTime).inMilliseconds;
       print('\n✅ COORDINATOR: orchestrate SUCCESS');
