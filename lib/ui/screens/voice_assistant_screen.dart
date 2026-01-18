@@ -81,8 +81,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
 
         // Handle transcription_complete events (show what user said)
         if (event.eventType == 'transcription_complete') {
-          final utterance = event.payload['utterance'] as String?;
-          if (utterance != null && mounted) {
+          final utterance = event.toInputString(); // Extract transcript from payload
+          if (utterance.isNotEmpty && mounted) {
             debugPrint('   Utterance: "$utterance"');
             setState(() {
               _finalText = utterance;
@@ -95,12 +95,12 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
         // Handle orchestration_complete events (show LLM response)
         if (event.eventType == 'orchestration_complete') {
           try {
-            // Extract LLM response from event
+            // Extract LLM response from event payload
             final displayText = event.getDisplayString();
 
             debugPrint('   Response: "$displayText"');
 
-            if (mounted) {
+            if (displayText.isNotEmpty && mounted) {
               setState(() {
                 _responseText = displayText;
                 _conversationState = ConversationState.listening;

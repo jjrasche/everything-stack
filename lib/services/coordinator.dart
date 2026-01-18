@@ -221,7 +221,7 @@ class Coordinator {
       print('\n[4/4] Calling LLM service with context...');
       print('📡 LLM call starting...');
       final llmResponse = await llmService.chatWithTools(
-        model: 'llama-3.1-8b-instant',
+        model: 'llama-3.3-70b-versatile',  // Best Groq model for function calling
         messages: messages,
         tools: tools,
         temperature: 0.7,
@@ -274,7 +274,7 @@ class Coordinator {
           'conversationThreadSize': context.conversationThread.length,
           'semanticContextSize': context.semanticContext.length,
         },
-        llmConfig: {'model': 'llama-3.1-8b-instant', 'temperature': 0.7},
+        llmConfig: {'model': 'llama-3.3-70b-versatile', 'temperature': 0.7},
         finalResponse: finalResponse,
         invocationIds: ['tts_synthesis_invocation'],
         success: true,
