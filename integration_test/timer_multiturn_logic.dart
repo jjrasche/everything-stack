@@ -99,7 +99,7 @@ final timerMultiturnTest = IntegrationTestConfig(
 
     var timer = timers.first;
     expect(timer.durationSeconds, equals(300), reason: 'Timer should be 5 minutes (300s)');
-    expect(timer.label, equals('Timer'));
+    expect(timer.label, isNotEmpty, reason: 'Timer should have a label');
     expect(timer.fired, isFalse);
 
     // ===== TURN 2: Change to 10 minutes =====

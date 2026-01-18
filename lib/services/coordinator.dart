@@ -229,10 +229,15 @@ class Coordinator {
       print('✅ LLM response received');
       print('📄 Response content: "${llmResponse.content}"');
 
-      // 3. Execute tool calls
+      // 3. Agentic loop: Execute tool calls and get verbal response
       final executedTools = <String>[];
+      String finalResponse = llmResponse.content ?? '';
+
       if (llmResponse.toolCalls.isNotEmpty) {
         print('\n[Tool Execution] LLM requested ${llmResponse.toolCalls.length} tool calls');
+
+        // Execute all tool calls and collect results
+        final toolResults = <Map<String, dynamic>>[];
         for (final llmToolCall in llmResponse.toolCalls) {
           print('  🔧 Executing: ${llmToolCall.toolName}');
           final toolCall = ToolCall(
@@ -242,23 +247,64 @@ class Coordinator {
             confidence: 1.0,
           );
           final result = await toolExecutor.executeTool(toolCall, eventId: eventId);
+
           if (result.success) {
             executedTools.add(llmToolCall.toolName);
             print('  ✅ Tool executed: ${llmToolCall.toolName}');
+            toolResults.add({
+              'tool_call_id': llmToolCall.id,
+              'role': 'tool',
+              'name': llmToolCall.toolName,
+              'content': jsonEncode(result.result),
+            });
           } else {
             print('  ❌ Tool execution failed: ${result.error}');
+            toolResults.add({
+              'tool_call_id': llmToolCall.id,
+              'role': 'tool',
+              'name': llmToolCall.toolName,
+              'content': jsonEncode({'error': result.error}),
+            });
           }
         }
+
+        // Send tool results back to LLM for verbal confirmation
+        print('\n[Agentic Loop] Sending tool results back to LLM for confirmation...');
+        final followUpMessages = [
+          ...messages,
+          {
+            'role': 'assistant',
+            'content': llmResponse.content,
+            'tool_calls': llmResponse.toolCalls.map((tc) => {
+              'id': tc.id,
+              'type': 'function',
+              'function': {
+                'name': tc.toolName,
+                'arguments': jsonEncode(tc.params),
+              }
+            }).toList(),
+          },
+          ...toolResults,
+        ];
+
+        final followUpResponse = await llmService.chatWithTools(
+          model: 'llama-3.3-70b-versatile',
+          messages: followUpMessages,
+          tools: tools,
+          temperature: 0.7,
+        );
+
+        finalResponse = followUpResponse.content ?? '';
+        print('✅ LLM follow-up response: "$finalResponse"');
       }
 
       // 4. Synthesize TTS (only if there's content to speak)
-      final finalResponse = llmResponse.content ?? '';
       if (finalResponse.isNotEmpty) {
         print('\n🔊 Synthesizing response to speech...');
         print('   Text: "${finalResponse.length > 50 ? '${finalResponse.substring(0, 50)}...' : finalResponse}"');
         await ttsService.synthesize(text: finalResponse, eventId: eventId);
       } else {
-        print('\n⏭️  Skipping TTS (LLM provided no text content, only tool calls)');
+        print('\n⏭️  Skipping TTS (no verbal response from LLM)');
       }
 
       final latency = DateTime.now().difference(startTime).inMilliseconds;
