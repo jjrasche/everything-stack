@@ -38,8 +38,8 @@ enum ConversationState {
 }
 
 class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
-  // TODO: Restore STT/Audio service integration when services are fully implemented
-  // late EventBus _eventBus;
+  late EventBus _eventBus;
+  // TODO: Restore STT/Audio service integration when fully needed for manual interaction
   // late STTService _sttService;
   // late AudioRecordingService _audioService;
 
@@ -49,7 +49,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   ConversationState _conversationState = ConversationState.idle;
 
   // StreamSubscription<String>? _sttSubscription;
-  // StreamSubscription<Event>? _eventSubscription;
+  StreamSubscription<Event>? _eventSubscription;
   // Timer? _sessionIdleTimer;
 
   static const int SESSION_TIMEOUT_MS = 30000;
@@ -58,60 +58,67 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   void initState() {
     super.initState();
 
-    // TODO: Restore service initialization when STTService, AudioRecordingService, and EventBus are fully implemented
-    // Get services from GetIt
-    // debugPrint('🔍 [initState] Getting services from GetIt...');
-    // _eventBus = GetIt.instance<EventBus>();
+    // Get EventBus from GetIt to listen to orchestration events
+    debugPrint('🔍 [initState] Getting services from GetIt...');
+    _eventBus = GetIt.instance<EventBus>();
+    // TODO: Get STT/Audio services when needed for manual user interaction
     // _sttService = GetIt.instance<STTService>();
     // _audioService = GetIt.instance<AudioRecordingService>();
-    //
-    // // Subscribe to OrchestrationComplete events
-    // _subscribeToEvents();
-    //
-    // debugPrint('✅ [initState] Services initialized, event subscriptions active');
+
+    // Subscribe to orchestration_complete events (from Coordinator)
+    _subscribeToEvents();
+
+    debugPrint('✅ [initState] Event subscriptions active');
   }
 
   /// Subscribe to events from EventBus
-  // TODO: Restore when EventBus and services are implemented
-  // void _subscribeToEvents() {
-  //   debugPrint('📡 [_subscribeToEvents] Subscribing to orchestration_complete events...');
-  //
-  //   _eventSubscription = _eventBus.subscribe().listen(
-  //     (event) {
-  //       // Filter for orchestration_complete events
-  //       if (event.eventType != 'orchestration_complete') {
-  //         return;
-  //       }
-  //
-  //       try {
-  //         // Format event for display
-  //         final displayText = event.getDisplayString();
-  //
-  //         debugPrint('📡 [Event] orchestration_complete received');
-  //         debugPrint('   Response: "$displayText"');
-  //
-  //         if (mounted) {
-  //           setState(() {
-  //             _responseText = displayText;
-  //             // TTS is playing, but STT continues listening
-  //             // State goes back to listening (STT never stopped)
-  //             _conversationState = ConversationState.listening;
-  //           });
-  //         }
-  //
-  //         // Reset idle timer since we got a response
-  //         _resetSessionIdleTimer();
-  //       } catch (e) {
-  //         debugPrint('❌ [Event] Error handling orchestration_complete: $e');
-  //       }
-  //     },
-  //     onError: (error) {
-  //       debugPrint('❌ [Event] orchestration_complete subscription error: $error');
-  //     },
-  //   );
-  //
-  //   debugPrint('✅ [_subscribeToEvents] Event subscriptions active');
-  // }
+  void _subscribeToEvents() {
+    debugPrint('📡 [_subscribeToEvents] Subscribing to orchestration events...');
+
+    _eventSubscription = _eventBus.subscribe().listen(
+      (event) {
+        debugPrint('📡 [Event] Received: ${event.eventType}');
+
+        // Handle transcription_complete events (show what user said)
+        if (event.eventType == 'transcription_complete') {
+          final utterance = event.payload['utterance'] as String?;
+          if (utterance != null && mounted) {
+            debugPrint('   Utterance: "$utterance"');
+            setState(() {
+              _finalText = utterance;
+              _conversationState = ConversationState.thinking;
+            });
+          }
+          return;
+        }
+
+        // Handle orchestration_complete events (show LLM response)
+        if (event.eventType == 'orchestration_complete') {
+          try {
+            // Extract LLM response from event
+            final displayText = event.getDisplayString();
+
+            debugPrint('   Response: "$displayText"');
+
+            if (mounted) {
+              setState(() {
+                _responseText = displayText;
+                _conversationState = ConversationState.listening;
+              });
+            }
+          } catch (e) {
+            debugPrint('❌ [Event] Error handling orchestration_complete: $e');
+          }
+          return;
+        }
+      },
+      onError: (error) {
+        debugPrint('❌ [Event] subscription error: $error');
+      },
+    );
+
+    debugPrint('✅ [_subscribeToEvents] Event subscriptions active');
+  }
 
   /// Start conversation session (continuous listening)
   // TODO: Restore when STT, Audio, and EventBus services are implemented
@@ -284,10 +291,10 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   @override
   void dispose() {
     debugPrint('🧹 [dispose] Cleaning up VoiceAssistantScreen...');
-    // TODO: Restore cleanup when services are implemented
+    _eventSubscription?.cancel();
+    // TODO: Cleanup STT/Audio when needed for manual interaction
     // _cancelSessionIdleTimer();
     // _sttSubscription?.cancel();
-    // _eventSubscription?.cancel();
     // _audioService.stopRecording();
     super.dispose();
   }
