@@ -170,21 +170,27 @@ flutter test integration_test/ -d chrome --headed
 Smoke tests validate **real API integrations** before release. Same test logic as E2E tests, but with real services instead of mocks.
 
 **Why both?**
-- **E2E tests (CI):** Mocked services, fast (~10s), catch regressions, no secrets needed
-- **Smoke tests (manual):** Real APIs, slower (~10s), catch production issues, requires .env keys
+- **E2E tests (CI):** Mock implementers (real services), fast (~10s), catch regressions, no secrets needed
+- **Smoke tests (manual):** Real implementers + real APIs, slower (~10s), catch production issues, requires .env keys
 
 **Architecture: Parameterized Test Pattern**
 
 Both tests use identical test logic via shared function `runAudioPipelineTest()`:
-- Different service injection (mocks vs real)
+- Different implementer injection (mocks vs real)
 - Zero code duplication
 - Same assertions, different execution context
 
+**CRITICAL: Mock implementers, not services**
+- Services are REAL (InferenceService, STTService, TTSService) - smart orchestration
+- Implementers are MOCKED (MockGroqImplementer, MockDeepgramImplementer) - dumb API wrappers
+- Services compose implementers: `Map<String, LLMImplementer> implementers`
+- Test harness swaps mock implementers into real services
+
 ```
-test/support/mock_services.dart           ← MockLLMService, MockSTTService
-test/support/audio_pipeline_test_shared.dart ← runAudioPipelineTest() function
-├─ integration_test/audio_pipeline_e2e_test.dart       ← E2E: registers mocks
-└─ integration_test/audio_pipeline_smoke_test.dart     ← Smoke: uses real services
+integration_test/mocks/                     ← Mock implementers (MockGroqImplementer, MockDeepgramImplementer)
+integration_test/shared/test_harness.dart  ← Swaps mock implementers into real services
+├─ integration_test/audio_pipeline_e2e_test.dart       ← E2E: registers mock implementers
+└─ integration_test/audio_pipeline_smoke_test.dart     ← Smoke: uses real implementers
 ```
 
 **Critical: Run as integration tests with device targets and TEST_MODE flag**
@@ -192,10 +198,10 @@ test/support/audio_pipeline_test_shared.dart ← runAudioPipelineTest() function
 Tests MUST include `--dart-define=TEST_MODE=true` to get isolated database (separate from development data):
 
 ```bash
-# E2E (CI): Mocked services on any platform
+# E2E (CI): Mock implementers (real services) on any platform
 flutter test integration_test/audio_pipeline_e2e_test.dart --dart-define=TEST_MODE=true -d chrome
 
-# Smoke (pre-release): Real services, manual only
+# Smoke (pre-release): Real implementers + real APIs, manual only
 flutter test integration_test/audio_pipeline_smoke_test.dart --dart-define=TEST_MODE=true -d windows
 ```
 

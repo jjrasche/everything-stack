@@ -164,14 +164,36 @@ final service = GetIt.I<EmbeddingService>();
 final embedding = await service.embed('hello world');
 ```
 
-### Testing with Real or Mock
+### Testing: Mock Implementers, Not Services
 ```dart
-// E2E: Use real service
-GetIt.I.registerSingleton<EmbeddingService>(EmbeddingService());
+// Production: Real service with real implementer
+GetIt.I.registerSingleton<InferenceService>(
+  InferenceService(
+    implementers: {'groq': GroqImplementer()},
+    defaultImplementer: 'groq',
+    invocationRepo: invocationRepo,
+    adaptationRepo: adaptationRepo,
+    feedbackRepo: feedbackRepo,
+  ),
+);
 
-// Special case: Use mock
-GetIt.I.registerSingleton<EmbeddingService>(MockEmbeddingService());
+// E2E Testing: Real service with MOCK implementer
+GetIt.I.registerSingleton<InferenceService>(
+  InferenceService(
+    implementers: {'groq': MockGroqImplementer()},  // ← Mock the implementer
+    defaultImplementer: 'groq',
+    invocationRepo: invocationRepo,  // ← Real repos
+    adaptationRepo: adaptationRepo,
+    feedbackRepo: feedbackRepo,
+  ),
+);
 ```
+
+**Critical: Services are real orchestration, implementers are API wrappers**
+- **Service** (InferenceService, STTService, TTSService) - smart orchestration, adaptation, logging
+- **Implementer** (GroqImplementer, DeepgramImplementer) - dumb API calls
+- **Pattern**: `Service(implementers: Map<String, Implementer>)`
+- **Testing**: Mock implementers, inject into real services
 
 ---
 
@@ -486,8 +508,20 @@ class MyEntityOB {
 // Must reset between tests
 setUp(() {
   GetIt.I.reset();
-  // Re-register (real for E2E, mock for unit)
-  GetIt.I.registerSingleton<MyService>(MockMyService());
+
+  // ✅ CORRECT: Mock implementer, inject into real service
+  GetIt.I.registerSingleton<InferenceService>(
+    InferenceService(
+      implementers: {'groq': MockGroqImplementer()},  // Mock implementer
+      defaultImplementer: 'groq',
+      invocationRepo: invocationRepo,  // Real repos
+      adaptationRepo: adaptationRepo,
+      feedbackRepo: feedbackRepo,
+    ),
+  );
+
+  // ❌ WRONG: Don't mock the entire service
+  // GetIt.I.registerSingleton<InferenceService>(MockInferenceService());
 });
 ```
 
