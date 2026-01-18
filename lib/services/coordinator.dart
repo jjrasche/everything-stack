@@ -255,7 +255,7 @@ class Coordinator {
               'tool_call_id': llmToolCall.id,
               'role': 'tool',
               'name': llmToolCall.toolName,
-              'content': jsonEncode(result.result),
+              'content': jsonEncode(result.data),
             });
           } else {
             print('  ❌ Tool execution failed: ${result.error}');
