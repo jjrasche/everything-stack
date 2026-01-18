@@ -45,6 +45,12 @@ import 'services/audio_recording_service.dart';
 import 'services/stt_service.dart';
 import 'services/tts_service.dart';
 import 'services/inference_service.dart';
+import 'services/implementations/llm_implementer.dart';
+import 'services/implementations/stt_implementer.dart';
+import 'services/implementations/tts_implementer.dart';
+import 'services/implementations/groq_implementer.dart';
+import 'services/implementations/deepgram_implementer.dart';
+import 'services/implementations/flutter_tts_implementer.dart';
 import 'services/service_registry.dart';
 import 'services/service_builders.dart';
 import 'services/coordinator.dart';
@@ -71,12 +77,6 @@ import 'core/invocation_repository.dart';
 import 'core/entity_repository.dart';
 import 'core/adaptation_state_repository.dart';
 import 'core/feedback_repository.dart';
-import 'services/implementations/groq_implementer.dart';
-import 'services/implementations/deepgram_implementer.dart';
-import 'services/implementations/flutter_tts_implementer.dart';
-import 'services/implementations/llm_implementer.dart';
-import 'services/implementations/stt_implementer.dart';
-import 'services/implementations/tts_implementer.dart';
 import 'services/enrichment/enrichment_runner.dart';
 import 'services/enrichment/enrichment_worker.dart';
 import 'services/enrichment/semantic_enrichment_worker.dart';
@@ -409,21 +409,67 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
     invocationRepo,
   );
 
-  // 10. TTS Service (Commented out - TTSService is abstract, needs concrete implementation)
-  // debugPrint('🔊 [TTS] Initializing TTSService with implementers');
-  // final ttsImplementers = <String, TTSImplementer>{...};
-  // final ttsService = TTSService(...);
-  // getIt.registerSingleton<TTSService>(ttsService);
-  debugPrint('⏭️  [TTS] Skipped - TTSService is abstract (needs concrete implementation)');
+  // 10. STT Service (Speech-to-Text)
+  debugPrint('🎤 [STT] Initializing STTService with implementers');
+  final sttImplementers = <String, STTImplementer>{};
+  if (cfg.deepgramApiKey != null && cfg.deepgramApiKey!.isNotEmpty) {
+    sttImplementers['deepgram'] = DeepgramImplementer(apiKey: cfg.deepgramApiKey!);
+    debugPrint('   ✅ DeepgramImplementer registered');
+  }
 
-  // 11. LLM Service (Commented out - InferenceService is abstract, needs concrete implementation)
-  // debugPrint('🧠 [LLM] Initializing InferenceService with implementers');
-  // final llmImplementers = <String, LLMImplementer>{...};
-  // final llmService = InferenceService(...);
-  // getIt.registerSingleton<InferenceService>(llmService);
-  debugPrint('⏭️  [LLM] Skipped - InferenceService is abstract (needs concrete implementation)');
+  if (sttImplementers.isNotEmpty) {
+    final sttService = STTService(
+      implementers: sttImplementers,
+      defaultImplementer: 'deepgram',
+      invocationRepo: invocationRepo,
+      adaptationStateRepo: getIt<AdaptationStateRepository>(),
+      feedbackRepo: getIt<FeedbackRepository>(),
+    );
+    getIt.registerSingleton<STTService>(sttService);
+    debugPrint('   ✅ STTService registered with ${sttImplementers.length} implementer(s)');
+  } else {
+    debugPrint('   ⏭️  STTService skipped (no API key configured)');
+  }
 
-  // 12. Initialize Embedding Service
+  // 11. TTS Service (Text-to-Speech)
+  debugPrint('🔊 [TTS] Initializing TTSService with implementers');
+  final ttsImplementers = <String, TTSImplementer>{
+    'flutter_tts': FlutterTtsImplementer(),
+  };
+
+  final ttsService = TTSService(
+    implementers: ttsImplementers,
+    defaultImplementer: 'flutter_tts',
+    invocationRepo: invocationRepo,
+    adaptationStateRepo: getIt<AdaptationStateRepository>(),
+    feedbackRepo: getIt<FeedbackRepository>(),
+  );
+  getIt.registerSingleton<TTSService>(ttsService);
+  debugPrint('   ✅ TTSService registered with ${ttsImplementers.length} implementer(s)');
+
+  // 12. LLM Service (Inference)
+  debugPrint('🧠 [LLM] Initializing InferenceService with implementers');
+  final llmImplementers = <String, LLMImplementer>{};
+  if (cfg.groqApiKey != null && cfg.groqApiKey!.isNotEmpty) {
+    llmImplementers['groq'] = GroqImplementer(apiKey: cfg.groqApiKey!);
+    debugPrint('   ✅ GroqImplementer registered');
+  }
+
+  if (llmImplementers.isNotEmpty) {
+    final llmService = InferenceService(
+      implementers: llmImplementers,
+      defaultImplementer: 'groq',
+      invocationRepo: invocationRepo,
+      adaptationStateRepo: getIt<AdaptationStateRepository>(),
+      feedbackRepo: getIt<FeedbackRepository>(),
+    );
+    getIt.registerSingleton<InferenceService>(llmService);
+    debugPrint('   ✅ InferenceService registered with ${llmImplementers.length} implementer(s)');
+  } else {
+    debugPrint('   ⏭️  InferenceService skipped (no API key configured)');
+  }
+
+  // 13. Initialize Embedding Service
   final embeddingConfig = ServiceConfig(
     provider: cfg.embeddingProvider ?? 'jina',
     credentials: {
@@ -439,7 +485,7 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
     getType: (service) => service.runtimeType,
   );
 
-  // 13. Initialize Semantic Search Infrastructure (ChunkingService + SemanticSearchService)
+  // 14. Initialize Semantic Search Infrastructure (ChunkingService + SemanticSearchService)
   debugPrint('🔍 Initializing semantic search infrastructure...');
   try {
     // Create HNSW index
@@ -677,15 +723,11 @@ Future<void> setupServiceLocator() async {
     );
     debugPrint('✅ [setupServiceLocator] EmbeddingService registered');
 
-    // InferenceService - Already registered in _initializeServices
-    // (Composition pattern: Service holds Map<String, LLMImplementer>)
-    debugPrint('✅ [setupServiceLocator] InferenceService already registered from bootstrap');
-
-    // TTSService - Already registered in _initializeServices
-    debugPrint('✅ [setupServiceLocator] TTSService already registered from bootstrap');
-
-    // STTService - Already registered in _initializeServices
-    debugPrint('✅ [setupServiceLocator] STTService already registered from bootstrap');
+    // Check service registration status (registered in bootstrap if API keys present)
+    final hasInference = getIt.isRegistered<InferenceService>();
+    final hasTTS = getIt.isRegistered<TTSService>();
+    final hasSTT = getIt.isRegistered<STTService>();
+    debugPrint('📊 [setupServiceLocator] Service status: Inference=$hasInference, TTS=$hasTTS, STT=$hasSTT');
 
     // ========== Domain Repositories (Already registered in initializeEverythingStack) ==========
     // InvocationRepository, AdaptationStateRepository, FeedbackRepository, TurnRepository
