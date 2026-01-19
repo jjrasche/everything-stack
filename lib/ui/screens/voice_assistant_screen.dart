@@ -4,7 +4,12 @@ import 'package:get_it/get_it.dart';
 import 'package:everything_stack_template/services/stt_service.dart';
 import 'package:everything_stack_template/services/audio_recording_service.dart';
 import 'package:everything_stack_template/services/event_bus.dart';
+import 'package:everything_stack_template/services/context_selector.dart';
 import 'package:everything_stack_template/core/event.dart';
+import 'package:everything_stack_template/core/invocation.dart';
+import 'package:everything_stack_template/core/invocation_repository.dart';
+import 'package:everything_stack_template/domain/feedback.dart' as domain_feedback;
+import 'package:everything_stack_template/core/feedback_repository.dart';
 
 /// Voice Assistant Screen
 ///
@@ -39,6 +44,10 @@ enum ConversationState {
 
 class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   late EventBus _eventBus;
+  late InvocationRepository<Invocation> _invocationRepo;
+  late FeedbackRepository _feedbackRepo;
+  late ContextSelector _contextSelector;
+
   // TODO: Restore STT/Audio service integration when fully needed for manual interaction
   // late STTService _sttService;
   // late AudioRecordingService _audioService;
@@ -47,6 +56,10 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   String _finalText = ''; // Black, locked text (last complete utterance)
   String _responseText = ''; // AI response
   ConversationState _conversationState = ConversationState.idle;
+
+  // Feedback state
+  String? _currentEventId; // Track current turn for feedback
+  bool _feedbackGiven = false; // Prevent duplicate feedback
 
   // StreamSubscription<String>? _sttSubscription;
   StreamSubscription<Event>? _eventSubscription;
@@ -58,9 +71,13 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   void initState() {
     super.initState();
 
-    // Get EventBus from GetIt to listen to orchestration events
+    // Get services from GetIt
     debugPrint('🔍 [initState] Getting services from GetIt...');
     _eventBus = GetIt.instance<EventBus>();
+    _invocationRepo = GetIt.instance<InvocationRepository<Invocation>>();
+    _feedbackRepo = GetIt.instance<FeedbackRepository>();
+    _contextSelector = GetIt.instance<ContextSelector>();
+
     // TODO: Get STT/Audio services when needed for manual user interaction
     // _sttService = GetIt.instance<STTService>();
     // _audioService = GetIt.instance<AudioRecordingService>();
@@ -103,6 +120,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
             if (displayText.isNotEmpty && mounted) {
               setState(() {
                 _responseText = displayText;
+                _currentEventId = event.uuid; // Track for feedback
+                _feedbackGiven = false; // Reset feedback state
                 _conversationState = ConversationState.listening;
               });
             }
@@ -118,6 +137,114 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
     );
 
     debugPrint('✅ [_subscribeToEvents] Event subscriptions active');
+  }
+
+  /// Handle thumbs up feedback (positive)
+  Future<void> _handleThumbsUp() async {
+    if (_currentEventId == null || _feedbackGiven) return;
+
+    debugPrint('👍 [Feedback] User confirmed response');
+
+    try {
+      // Find the context_selector invocation for this turn
+      final invocations = await _invocationRepo.findAll();
+      final contextInvocation = invocations.firstWhere(
+        (inv) => inv.eventId == _currentEventId && inv.componentType == 'context_selector',
+        orElse: () => throw Exception('Context invocation not found for eventId: $_currentEventId'),
+      );
+
+      // Create positive feedback
+      final feedback = domain_feedback.Feedback(
+        invocationId: contextInvocation.uuid,
+        componentType: 'context_selector',
+        action: domain_feedback.FeedbackAction.confirm,
+      );
+
+      // Save feedback
+      await _feedbackRepo.save(feedback);
+
+      // Train ContextSelector with this feedback
+      debugPrint('🧠 [Training] Calling trainFromFeedback...');
+      await _contextSelector.trainFromFeedback(contextInvocation, feedback);
+      debugPrint('✅ [Training] trainFromFeedback complete');
+
+      setState(() {
+        _feedbackGiven = true;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('👍 Feedback recorded - System is learning!'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ [Feedback] Error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error recording feedback: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Handle thumbs down feedback (negative)
+  Future<void> _handleThumbsDown() async {
+    if (_currentEventId == null || _feedbackGiven) return;
+
+    debugPrint('👎 [Feedback] User denied response');
+
+    try {
+      // Find the context_selector invocation for this turn
+      final invocations = await _invocationRepo.findAll();
+      final contextInvocation = invocations.firstWhere(
+        (inv) => inv.eventId == _currentEventId && inv.componentType == 'context_selector',
+        orElse: () => throw Exception('Context invocation not found for eventId: $_currentEventId'),
+      );
+
+      // Create negative feedback
+      final feedback = domain_feedback.Feedback(
+        invocationId: contextInvocation.uuid,
+        componentType: 'context_selector',
+        action: domain_feedback.FeedbackAction.deny,
+      );
+
+      // Save feedback
+      await _feedbackRepo.save(feedback);
+
+      // Train ContextSelector with this feedback
+      debugPrint('🧠 [Training] Calling trainFromFeedback...');
+      await _contextSelector.trainFromFeedback(contextInvocation, feedback);
+      debugPrint('✅ [Training] trainFromFeedback complete');
+
+      setState(() {
+        _feedbackGiven = true;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('👎 Feedback recorded - System will adjust'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ [Feedback] Error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error recording feedback: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   /// Start conversation session (continuous listening)
@@ -424,6 +551,47 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
                       style: const TextStyle(fontSize: 16),
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  // Feedback buttons (thumbs up/down)
+                  if (!_feedbackGiven)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Was this helpful?',
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(width: 16),
+                        IconButton(
+                          onPressed: _handleThumbsUp,
+                          icon: const Icon(Icons.thumb_up_outlined),
+                          color: Colors.green,
+                          tooltip: 'Good response - System learns',
+                        ),
+                        IconButton(
+                          onPressed: _handleThumbsDown,
+                          icon: const Icon(Icons.thumb_down_outlined),
+                          color: Colors.red,
+                          tooltip: 'Poor response - System adjusts',
+                        ),
+                      ],
+                    )
+                  else
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.check_circle, color: Colors.green.shade700, size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Feedback recorded - System is learning!',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.green.shade700,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                 ],
 
                 const SizedBox(height: 32),
@@ -454,6 +622,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
                         _interimText = '';
                         _finalText = '';
                         _responseText = '';
+                        _currentEventId = null;
+                        _feedbackGiven = false;
                       });
                     },
                     icon: const Icon(Icons.refresh),

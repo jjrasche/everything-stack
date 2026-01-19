@@ -79,7 +79,7 @@ import 'package:get_it/get_it.dart';
 import 'adaptation_data.dart';
 import 'adaptation_state.dart';
 import 'invocation.dart';
-import 'feedback.dart' as core_feedback;
+import '../domain/feedback.dart' as domain_feedback;
 import 'invocation_repository.dart';
 import 'adaptation_state_repository.dart';
 
@@ -185,7 +185,7 @@ mixin class Trainable<D extends AdaptationData> {
   /// Train component from user feedback.
   /// Must be implemented by subclass.
   /// Called after user provides corrections/ratings for an invocation.
-  Future<void> trainFromFeedback(Invocation invocation, core_feedback.Feedback feedback) async {
+  Future<void> trainFromFeedback(Invocation invocation, domain_feedback.Feedback feedback) async {
     // Placeholder: learning logic deferred to Phase 2.
     // When implemented, this will:
     // 1. Parse typed feedback (LLMFeedback, STTFeedback, etc.)

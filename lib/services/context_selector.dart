@@ -29,7 +29,7 @@ import 'package:get_it/get_it.dart';
 import '../core/trainable.dart';
 import '../core/invocation.dart';
 import '../core/entity_repository.dart';
-import '../core/feedback.dart' as core_feedback;
+import '../domain/feedback.dart' as domain_feedback;
 import '../core/adaptation_state_repository.dart';
 import 'embedding_service.dart';
 import 'types/context_selector_types.dart';
@@ -72,7 +72,7 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
   @override
   Future<void> trainFromFeedback(
     Invocation invocation,
-    core_feedback.Feedback feedback,
+    domain_feedback.Feedback feedback,
   ) async {
     // TODO: Extract userId from invocation/turn context for per-user training
     // For now, use global training (userId = null)
@@ -88,7 +88,7 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
         : createDefaultData();
 
     // Convert feedback to reward
-    final reward = feedback.action == core_feedback.FeedbackAction.confirm ? 1.0 : -1.0;
+    final reward = feedback.action == domain_feedback.FeedbackAction.confirm ? 1.0 : -1.0;
 
     // Record trial (persists to database)
     await optimizer.recordTrial({
