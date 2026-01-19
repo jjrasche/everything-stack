@@ -874,10 +874,75 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "27:3146279761244466060",
+      "lastPropertyId": "10:3630196457872931320",
+      "name": "TrialOB",
+      "properties": [
+        {
+          "id": "1:1190668285469248803",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:9140437551264248886",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "42:28128643421593088"
+        },
+        {
+          "id": "3:2557496375591411500",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "4:3112736953102153141",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "5:2916487001205164863",
+          "name": "syncId",
+          "type": 9
+        },
+        {
+          "id": "6:8784781915107547023",
+          "name": "componentType",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "43:4920496234790879630"
+        },
+        {
+          "id": "7:4829479055913138361",
+          "name": "userId",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "44:5199931117279558567"
+        },
+        {
+          "id": "8:7452389057157603999",
+          "name": "paramsJson",
+          "type": 9
+        },
+        {
+          "id": "9:4656664828669642142",
+          "name": "reward",
+          "type": 8
+        },
+        {
+          "id": "10:3630196457872931320",
+          "name": "metadata",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "26:8701531131817741478",
-  "lastIndexId": "41:324739922490260275",
+  "lastEntityId": "27:3146279761244466060",
+  "lastIndexId": "44:5199931117279558567",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

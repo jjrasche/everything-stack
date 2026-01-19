@@ -12,11 +12,13 @@ import '../core/adaptation_state_repository.dart';
 import '../core/feedback_repository.dart';
 import '../core/event_repository.dart';
 import '../core/enrichment_queue_repository.dart';
+import '../core/trial_repository.dart';
 import '../persistence/indexeddb/invocation_indexeddb_adapter.dart';
 import '../persistence/indexeddb/adaptation_state_indexeddb_adapter.dart';
 import '../persistence/indexeddb/feedback_indexeddb_adapter.dart';
 import '../persistence/indexeddb/event_indexeddb_adapter.dart';
 import '../persistence/indexeddb/enrichment_queue_indexeddb_adapter.dart';
+import '../persistence/indexeddb/trial_indexeddb_adapter.dart';
 import 'indexeddb_factory.dart';
 
 /// Initialize persistence layer for web platform using IndexedDB.
@@ -29,6 +31,7 @@ Future<void> initializePersistence(GetIt getIt) async {
   final invocationAdapter = InvocationIndexedDBAdapter(db);
   final adaptationStateAdapter = AdaptationStateIndexedDBAdapter(db);
   final feedbackAdapter = FeedbackIndexedDBAdapter(db);
+  final trialAdapter = TrialIndexedDBAdapter(db);
 
   // Register repositories in GetIt
   getIt.registerSingleton<InvocationRepository<Invocation>>(
@@ -39,6 +42,9 @@ Future<void> initializePersistence(GetIt getIt) async {
   );
   getIt.registerSingleton<FeedbackRepository>(
     feedbackAdapter,
+  );
+  getIt.registerSingleton<TrialRepository>(
+    trialAdapter,
   );
 
   // Create and register EnrichmentQueue adapter

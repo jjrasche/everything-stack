@@ -51,6 +51,7 @@ class ObjectStores {
   static const String invocations = 'invocations';
   static const String embeddingTasks = 'embedding_tasks';
   static const String enrichmentQueue = 'enrichment_queue';
+  static const String trials = 'trials';
 }
 
 /// Index names for each object store
@@ -109,6 +110,12 @@ class Indexes {
   static const String enrichmentQueueUuid = 'uuid';
   static const String enrichmentQueueEntityUuid = 'entityUuid';
   static const String enrichmentQueueCurrentStep = 'currentStep';
+
+  // Trials indexes
+  static const String trialsId = 'id';
+  static const String trialsUuid = 'uuid';
+  static const String trialsSyncStatus = 'dbSyncStatus';
+  static const String trialsComponentType = 'componentType';
 }
 
 /// Schema definition for notes object store
@@ -401,6 +408,36 @@ class EnrichmentQueueStoreSchema {
   ];
 }
 
+/// Schema definition for trials object store
+class TrialsStoreSchema {
+  static const String storeName = ObjectStores.trials;
+  static const String keyPath = 'uuid';
+  static const bool autoIncrement = false;
+
+  static const List<IndexDefinition> indexes = [
+    IndexDefinition(
+      name: Indexes.trialsId,
+      keyPath: 'id',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.trialsUuid,
+      keyPath: 'uuid',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.trialsSyncStatus,
+      keyPath: 'dbSyncStatus',
+      unique: false,
+    ),
+    IndexDefinition(
+      name: Indexes.trialsComponentType,
+      keyPath: 'componentType',
+      unique: false,
+    ),
+  ];
+}
+
 /// Schema definition for HNSW index metadata store
 class HnswIndexStoreSchema {
   static const String storeName = ObjectStores.hnswIndex;
@@ -499,6 +536,12 @@ class DatabaseSchema {
       keyPath: EnrichmentQueueStoreSchema.keyPath,
       autoIncrement: EnrichmentQueueStoreSchema.autoIncrement,
       indexes: EnrichmentQueueStoreSchema.indexes,
+    ),
+    ObjectStoreDefinition(
+      name: TrialsStoreSchema.storeName,
+      keyPath: TrialsStoreSchema.keyPath,
+      autoIncrement: TrialsStoreSchema.autoIncrement,
+      indexes: TrialsStoreSchema.indexes,
     ),
   ];
 }

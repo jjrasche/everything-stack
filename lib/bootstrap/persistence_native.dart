@@ -12,12 +12,14 @@ import '../core/adaptation_state_repository.dart';
 import '../core/feedback_repository.dart';
 import '../core/event_repository.dart';
 import '../core/enrichment_queue_repository.dart';
+import '../core/trial_repository.dart';
 import '../core/invocation.dart';
 import '../persistence/objectbox/invocation_objectbox_adapter.dart';
 import '../persistence/objectbox/adaptation_state_objectbox_adapter.dart';
 import '../persistence/objectbox/feedback_objectbox_adapter.dart';
 import '../persistence/objectbox/event_objectbox_adapter.dart';
 import '../persistence/objectbox/enrichment_queue_objectbox_adapter.dart';
+import '../persistence/objectbox/trial_objectbox_adapter.dart';
 import 'objectbox_store_factory.dart';
 
 /// Initialize persistence layer for native platforms using ObjectBox.
@@ -36,6 +38,7 @@ Future<void> initializePersistence(GetIt getIt) async {
   final invocationAdapter = InvocationObjectBoxAdapter(store);
   final adaptationStateAdapter = AdaptationStateObjectBoxAdapter(store);
   final feedbackAdapter = FeedbackObjectBoxAdapter(store);
+  final trialAdapter = TrialObjectBoxAdapter(store);
 
   // Register InvocationRepository adapter
   // Handler wiring (like SemanticIndexableHandler) is done in bootstrap.dart
@@ -46,6 +49,9 @@ Future<void> initializePersistence(GetIt getIt) async {
   );
   getIt.registerSingleton<FeedbackRepository>(
     feedbackAdapter,
+  );
+  getIt.registerSingleton<TrialRepository>(
+    trialAdapter,
   );
 
   // Create and register EnrichmentQueue adapter
