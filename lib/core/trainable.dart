@@ -98,6 +98,23 @@ mixin class Trainable<D extends AdaptationData> {
   /// Must be overridden by implementing classes
   D deserializeData(String json) => throw UnimplementedError('deserializeData must be implemented');
 
+  /// Get parameter bounds for Gaussian Process optimization.
+  /// Must be overridden by trainable components that use GP optimizer.
+  ///
+  /// Returns map of parameter names to (min, max) bounds:
+  /// ```dart
+  /// {
+  ///   'conversationThreadSize': (3.0, 15.0),
+  ///   'maxSemanticResults': (5.0, 25.0),
+  ///   'semanticThreshold': (0.5, 0.9),
+  /// }
+  /// ```
+  ///
+  /// Note: Discrete parameters (ending with Size/Results/Count) will be
+  /// automatically rounded to integers by GaussianProcessOptimizer.
+  Map<String, (double, double)> getParameterBounds() =>
+      throw UnimplementedError('getParameterBounds must be implemented');
+
   /// Retrieve or create adaptation state for this component.
   /// userId: if provided, get user-scoped state; if null, get global state
   /// Returns: Fallback chain: user-scoped → global → default
