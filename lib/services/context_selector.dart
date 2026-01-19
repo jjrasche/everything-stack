@@ -29,8 +29,11 @@ import 'package:get_it/get_it.dart';
 import '../core/trainable.dart';
 import '../core/invocation.dart';
 import '../core/entity_repository.dart';
+import '../core/feedback.dart' as core_feedback;
+import '../core/adaptation_state_repository.dart';
 import 'embedding_service.dart';
 import 'types/context_selector_types.dart';
+import 'trainer/gaussian_process_optimizer.dart';
 
 class ContextSelector with Trainable<ContextSelectorAdaptationData> {
   final EntityRepository<Invocation> invocationRepo;
@@ -58,6 +61,81 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
           const JsonDecoder().convert(json) as Map,
         ),
       );
+
+  @override
+  Map<String, (double, double)> getParameterBounds() => {
+    'conversationThreadSize': (3.0, 15.0),
+    'maxSemanticResults': (5.0, 25.0),
+    'semanticThreshold': (0.5, 0.9),
+  };
+
+  @override
+  Future<void> trainFromFeedback(
+    Invocation invocation,
+    core_feedback.Feedback feedback,
+  ) async {
+    // TODO: Extract userId from invocation/turn context for per-user training
+    // For now, use global training (userId = null)
+    const String? userId = null;
+
+    // Import needed for optimizer
+    final optimizer = _getOrCreateOptimizer(userId);
+
+    // Get current params
+    final state = await getAdaptationState(userId: userId);
+    final params = state.dataJson?.isNotEmpty == true
+        ? deserializeData(state.dataJson!)
+        : createDefaultData();
+
+    // Convert feedback to reward
+    final reward = feedback.action == core_feedback.FeedbackAction.confirm ? 1.0 : -1.0;
+
+    // Record trial (persists to database)
+    await optimizer.recordTrial({
+      'conversationThreadSize': params.conversationThreadSize,
+      'maxSemanticResults': params.maxSemanticResults,
+      'semanticThreshold': params.semanticThreshold,
+    }, reward);
+
+    // Get GP suggestion (loads historical trials from database)
+    final suggested = await optimizer.suggestNext();
+
+    // Update AdaptationState with new parameters
+    final newParams = params.copyWith(
+      conversationThreadSize: suggested['conversationThreadSize'] as int,
+      maxSemanticResults: suggested['maxSemanticResults'] as int,
+      semanticThreshold: suggested['semanticThreshold'] as double,
+    );
+
+    state.dataJson = newParams.toJson();
+    state.version++;
+    state.lastUpdatedAt = DateTime.now();
+    state.lastUpdateReason = 'trainFromFeedback';
+    state.feedbackCountApplied++;
+
+    await GetIt.I<AdaptationStateRepository>().save(state);
+
+    print('✅ [ContextSelector.trainFromFeedback] Updated parameters:');
+    print('   conversationThreadSize: ${params.conversationThreadSize} → ${newParams.conversationThreadSize}');
+    print('   maxSemanticResults: ${params.maxSemanticResults} → ${newParams.maxSemanticResults}');
+    print('   semanticThreshold: ${params.semanticThreshold.toStringAsFixed(2)} → ${newParams.semanticThreshold.toStringAsFixed(2)}');
+  }
+
+  // ============ GP Optimizer Management ============
+
+  final Map<String, GaussianProcessOptimizer> _optimizers = {};
+
+  GaussianProcessOptimizer _getOrCreateOptimizer(String? userId) {
+    final key = userId ?? '_global_';
+    return _optimizers.putIfAbsent(
+      key,
+      () => GaussianProcessOptimizer(
+        paramBounds: getParameterBounds(),
+        componentType: componentType,
+        userId: userId,
+      ),
+    );
+  }
 
   // ============ Context Selection ============
 

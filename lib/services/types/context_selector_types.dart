@@ -66,6 +66,23 @@ class ContextSelectorAdaptationData extends AdaptationData {
     'semanticHalfLifeHours': semanticHalfLifeHours,
     'semanticThreshold': semanticThreshold,
   });
+
+  /// Create a copy with modified fields (for GP optimizer updates).
+  ContextSelectorAdaptationData copyWith({
+    int? conversationThreadSize,
+    double? conversationHalfLifeHours,
+    int? maxSemanticResults,
+    double? semanticHalfLifeHours,
+    double? semanticThreshold,
+  }) {
+    return ContextSelectorAdaptationData(
+      conversationThreadSize: conversationThreadSize ?? this.conversationThreadSize,
+      conversationHalfLifeHours: conversationHalfLifeHours ?? this.conversationHalfLifeHours,
+      maxSemanticResults: maxSemanticResults ?? this.maxSemanticResults,
+      semanticHalfLifeHours: semanticHalfLifeHours ?? this.semanticHalfLifeHours,
+      semanticThreshold: semanticThreshold ?? this.semanticThreshold,
+    );
+  }
 }
 
 /// Context bundle returned by ContextSelector.
