@@ -1,6 +1,6 @@
 /// # FeedbackIndexedDBAdapter
 
-import 'package:idb_shim/idb.dart';
+import 'dart:indexed_db' as idb;
 import '../../core/feedback_repository.dart';
 import '../../domain/feedback.dart';
 import 'base_indexeddb_adapter.dart';

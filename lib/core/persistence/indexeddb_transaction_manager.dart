@@ -43,7 +43,7 @@
 /// Verified in test/persistence/indexeddb_transaction_test.dart
 /// and test/persistence/cross_repository_transaction_test.dart
 
-import 'package:idb_shim/idb.dart';
+import 'dart:indexed_db' as idb;
 import 'transaction_context.dart';
 import 'indexeddb_tx_context.dart';
 import 'transaction_manager.dart';

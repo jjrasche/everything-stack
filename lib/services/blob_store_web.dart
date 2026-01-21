@@ -12,7 +12,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:idb_shim/idb_browser.dart';
+import 'dart:indexed_db' as idb;
+import 'dart:html' show window;
 import 'blob_store.dart';
 
 /// IndexedDB-based blob store for web platforms.

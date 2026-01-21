@@ -23,8 +23,9 @@
 /// - InvalidStateError: Database already open (reuse connection)
 /// - VersionError: Schema version mismatch (clear data or migrate)
 
-import 'package:idb_shim/idb.dart';
-import 'package:idb_shim/idb_browser.dart';
+import 'dart:indexed_db' as idb;
+import 'dart:indexed_db' as idb;
+import 'dart:html' show window;
 import 'database_schema.dart';
 import '../../core/exceptions/persistence_exceptions.dart';
 

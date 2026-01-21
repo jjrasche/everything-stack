@@ -1,6 +1,6 @@
 /// # AdaptationStateIndexedDBAdapter
 
-import 'package:idb_shim/idb.dart';
+import 'dart:indexed_db' as idb;
 import '../../core/adaptation_state.dart';
 import '../../core/adaptation_state_repository.dart';
 import 'base_indexeddb_adapter.dart';

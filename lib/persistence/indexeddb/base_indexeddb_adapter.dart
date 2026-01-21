@@ -36,7 +36,7 @@
 /// }
 /// ```
 
-import 'package:idb_shim/idb.dart';
+import 'dart:indexed_db' as idb;
 import 'package:meta/meta.dart';
 import '../../core/base_entity.dart';
 import '../../core/persistence/persistence_adapter.dart';

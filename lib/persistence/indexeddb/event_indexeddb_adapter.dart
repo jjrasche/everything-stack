@@ -3,16 +3,17 @@
 /// IndexedDB adapter for Event entity persistence on web platform.
 library;
 
-import 'package:idb_shim/idb_browser.dart' hide Event;
+import 'dart:indexed_db' as idb;
+import 'dart:html' show window;
 import '../../core/event_repository.dart';
 import '../../core/event.dart';
 
 class EventIndexedDBAdapter implements EventRepository {
-  final Database db;
+  final idb.Database db;
 
   EventIndexedDBAdapter(this.db);
 
-  Future<ObjectStore> _getStore() async {
+  Future<idb.ObjectStore> _getStore() async {
     final txn = db.transaction('events', 'readwrite');
     return txn.objectStore('events');
   }

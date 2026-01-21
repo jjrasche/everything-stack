@@ -18,7 +18,7 @@
 /// }
 /// ```
 
-import 'package:idb_shim/idb.dart';
+import 'dart:indexed_db' as idb;
 import 'transaction_context.dart';
 
 /// IndexedDB transaction context.

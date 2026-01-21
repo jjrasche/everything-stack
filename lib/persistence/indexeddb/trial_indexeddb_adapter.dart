@@ -3,7 +3,7 @@
 /// IndexedDB adapter for Trial entity (web platform).
 /// Implements TrialRepository interface for web.
 
-import 'package:idb_shim/idb.dart';
+import 'dart:indexed_db' as idb;
 import '../../core/trial_repository.dart';
 import '../../core/trial.dart';
 import 'base_indexeddb_adapter.dart';

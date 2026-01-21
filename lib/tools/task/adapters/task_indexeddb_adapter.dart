@@ -11,7 +11,7 @@
 /// final repo = TaskRepository(adapter: adapter);
 /// ```
 
-import 'package:idb_shim/idb.dart';
+import 'dart:indexed_db' as idb;
 import '../../../persistence/indexeddb/base_indexeddb_adapter.dart';
 import '../../../persistence/indexeddb/database_init.dart';
 import '../entities/task.dart';

@@ -4,7 +4,7 @@
 library;
 
 import 'package:get_it/get_it.dart';
-import 'package:idb_shim/idb.dart';
+import 'dart:indexed_db' as idb;
 import '../persistence/indexeddb/database_schema.dart';
 import 'embedding_task_store.dart';
 

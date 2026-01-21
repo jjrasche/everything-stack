@@ -11,7 +11,7 @@
 /// final repo = VersionRepository(adapter: adapter);
 /// ```
 
-import 'package:idb_shim/idb.dart';
+import 'dart:indexed_db' as idb;
 import 'base_indexeddb_adapter.dart';
 import 'database_schema.dart';
 import '../../core/entity_version.dart';

@@ -1,6 +1,6 @@
 /// # InvocationIndexedDBAdapter
 
-import 'package:idb_shim/idb.dart';
+import 'dart:indexed_db' as idb;
 import '../../core/invocation_repository.dart';
 import '../../core/invocation.dart';
 import 'base_indexeddb_adapter.dart';
