@@ -2,53 +2,88 @@
 ///
 /// Typed payloads for LLM service adaptation, invocations, and feedback.
 /// Provides compile-time safety, IDE autocomplete, and self-documentation.
+///
+/// Note: LLMAdaptationData renamed to InferenceAdaptationData for clarity.
 
 import 'dart:convert';
 import 'package:everything_stack_template/core/adaptation_data.dart';
 import 'message.dart';
 
-/// Learned LLM preferences (per implementer, per user).
+/// Learned inference preferences (per implementer, per user).
 /// These are adaptable parameters that training adjusts.
-class LLMAdaptationData extends AdaptationData {
+class InferenceAdaptationData extends AdaptationData {
   /// How "creative" vs "rigid" the LLM should be (0.0-2.0).
   /// Higher = more creative/risky, Lower = more factual/conservative.
-  /// Note: Different implementations have different temperature semantics.
   final double temperature;
 
-  /// User's preferred response length (tokens).
-  /// Service uses this to constrain actual maxTokens based on implementer limits.
-  /// Not the hard limit itself (Groq:8K, Claude:200K), but user preference within limit.
-  final int preferredResponseLength;
+  /// Nucleus sampling threshold (0.0-1.0).
+  /// Only tokens with cumulative probability <= topP are considered.
+  final double topP;
 
-  /// System prompt override (if user prefers specific system behavior).
-  final String? systemPrompt;
+  /// Frequency penalty (-2.0 to 2.0).
+  /// Positive values decrease likelihood of repeating tokens based on frequency.
+  final double frequencyPenalty;
 
-  LLMAdaptationData({
+  /// Presence penalty (-2.0 to 2.0).
+  /// Positive values decrease likelihood of repeating any token that appeared.
+  final double presencePenalty;
+
+  /// Maximum tokens to generate.
+  /// Implementer-specific bounds (Groq: 8K, Claude: 200K).
+  final int maxTokens;
+
+  InferenceAdaptationData({
     required this.temperature,
-    required this.preferredResponseLength,
-    this.systemPrompt,
+    required this.topP,
+    required this.frequencyPenalty,
+    required this.presencePenalty,
+    required this.maxTokens,
   });
 
   /// Default adaptation state (untrained).
-  factory LLMAdaptationData.defaults() => LLMAdaptationData(
+  factory InferenceAdaptationData.defaults() => InferenceAdaptationData(
     temperature: 0.7,
-    preferredResponseLength: 1024,
+    topP: 1.0,
+    frequencyPenalty: 0.0,
+    presencePenalty: 0.0,
+    maxTokens: 1024,
   );
 
   /// Deserialize from JSON.
-  factory LLMAdaptationData.fromJson(Map<String, dynamic> json) => LLMAdaptationData(
+  factory InferenceAdaptationData.fromJson(Map<String, dynamic> json) => InferenceAdaptationData(
     temperature: json['temperature'] as double? ?? 0.7,
-    preferredResponseLength: json['preferredResponseLength'] as int? ?? 1024,
-    systemPrompt: json['systemPrompt'] as String?,
+    topP: json['topP'] as double? ?? 1.0,
+    frequencyPenalty: json['frequencyPenalty'] as double? ?? 0.0,
+    presencePenalty: json['presencePenalty'] as double? ?? 0.0,
+    maxTokens: json['maxTokens'] as int? ?? 1024,
   );
 
   /// Serialize to JSON string.
   @override
   String toJson() => jsonEncode({
     'temperature': temperature,
-    'preferredResponseLength': preferredResponseLength,
-    if (systemPrompt != null) 'systemPrompt': systemPrompt,
+    'topP': topP,
+    'frequencyPenalty': frequencyPenalty,
+    'presencePenalty': presencePenalty,
+    'maxTokens': maxTokens,
   });
+
+  /// Create a copy with modified fields (for GP optimizer updates).
+  InferenceAdaptationData copyWith({
+    double? temperature,
+    double? topP,
+    double? frequencyPenalty,
+    double? presencePenalty,
+    int? maxTokens,
+  }) {
+    return InferenceAdaptationData(
+      temperature: temperature ?? this.temperature,
+      topP: topP ?? this.topP,
+      frequencyPenalty: frequencyPenalty ?? this.frequencyPenalty,
+      presencePenalty: presencePenalty ?? this.presencePenalty,
+      maxTokens: maxTokens ?? this.maxTokens,
+    );
+  }
 }
 
 /// LLM invocation input (what was sent to the LLM).
@@ -221,3 +256,7 @@ class LLMTool {
     },
   };
 }
+
+/// Backward compatibility alias
+/// @deprecated Use InferenceAdaptationData instead
+typedef LLMAdaptationData = InferenceAdaptationData;

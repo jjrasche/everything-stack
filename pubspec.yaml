@@ -41,9 +41,11 @@ dependencies:
   json_annotation: ^4.8.0
   http: ^1.1.0
   flutter_dotenv: ^5.1.0
+  timeago: ^3.7.0
 
   # WebSocket support (for Deepgram STT)
   web_socket_channel: ^3.0.0
+  universal_io: ^2.2.2  # Pure Dart WebSocket (fixes Flutter Windows wss:// bug)
 
   # File input and storage
   image_picker: ^1.1.0
@@ -80,6 +82,7 @@ dev_dependencies:
 
   # Testing
   mockito: ^5.4.0
+  pubspec_checker: ^1.3.0
 
 flutter:
   uses-material-design: true

@@ -23,7 +23,10 @@ class ResponseMapLLMImplementer implements LLMImplementer {
   Future<LLMInvocationOutput> chat({
     required List<Message> messages,
     required double temperature,
-    String? systemPrompt,
+    required double topP,
+    required double frequencyPenalty,
+    required double presencePenalty,
+    required int maxTokens,
   }) async {
     return LLMInvocationOutput(
       response: 'Mock response',

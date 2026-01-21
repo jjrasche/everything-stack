@@ -19,14 +19,20 @@ abstract class LLMImplementer implements Implementer {
   /// Parameters:
   /// - [messages] Typed conversation messages to send to LLM
   /// - [temperature] Creativity level (0.0-2.0)
-  /// - [systemPrompt] Optional system prompt override
+  /// - [topP] Nucleus sampling threshold (0.0-1.0)
+  /// - [frequencyPenalty] Penalize frequent tokens (-2.0 to 2.0)
+  /// - [presencePenalty] Penalize any repeated tokens (-2.0 to 2.0)
+  /// - [maxTokens] Maximum tokens to generate
   ///
   /// Returns: LLMInvocationOutput with response, tokens, and latency
   /// No side effects: Returns typed output directly
   Future<LLMInvocationOutput> chat({
     required List<Message> messages,
     required double temperature,
-    String? systemPrompt,
+    required double topP,
+    required double frequencyPenalty,
+    required double presencePenalty,
+    required int maxTokens,
   });
 
   /// Call LLM with tools available (for agentic workflows).

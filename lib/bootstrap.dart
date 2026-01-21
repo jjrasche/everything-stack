@@ -42,6 +42,7 @@ import 'services/connectivity_service.dart';
 import 'services/embedding_service.dart';
 import 'services/embedding_queue_service.dart';
 import 'services/audio_recording_service.dart';
+import 'services/audio_storage.dart';
 import 'services/stt_service.dart';
 import 'services/tts_service.dart';
 import 'services/inference_service.dart';
@@ -50,6 +51,7 @@ import 'services/implementations/stt_implementer.dart';
 import 'services/implementations/tts_implementer.dart';
 import 'services/implementations/groq_implementer.dart';
 import 'services/implementations/deepgram_implementer.dart';
+import 'services/implementations/deepgram_flux_implementer.dart';
 import 'services/implementations/flutter_tts_implementer.dart';
 import 'services/service_registry.dart';
 import 'services/service_builders.dart';
@@ -77,12 +79,15 @@ import 'core/invocation_repository.dart';
 import 'core/entity_repository.dart';
 import 'core/adaptation_state_repository.dart';
 import 'core/feedback_repository.dart';
+import 'domain/audio_file.dart';
 import 'services/enrichment/enrichment_runner.dart';
 import 'services/enrichment/enrichment_worker.dart';
 import 'services/enrichment/semantic_enrichment_worker.dart';
 import 'core/enrichment_queue_item.dart';
 import 'core/enrichment_queue_repository.dart';
 import 'core/repository_registry.dart';
+import 'persistence/objectbox/audio_file_objectbox_adapter.dart'
+    if (dart.library.html) 'persistence/indexeddb/stub.dart';
 
 // Platform-specific persistence initialization (ObjectBox or IndexedDB)
 import 'bootstrap/persistence_web.dart'
@@ -413,14 +418,25 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
   debugPrint('🎤 [STT] Initializing STTService with implementers');
   final sttImplementers = <String, STTImplementer>{};
   if (cfg.deepgramApiKey != null && cfg.deepgramApiKey!.isNotEmpty) {
-    sttImplementers['deepgram'] = DeepgramImplementer(apiKey: cfg.deepgramApiKey!);
-    debugPrint('   ✅ DeepgramImplementer registered');
+    // Batch API (legacy) - uses POST to /v1/listen
+    sttImplementers['deepgram_batch'] = DeepgramImplementer(
+      apiKey: cfg.deepgramApiKey!,
+      model: 'nova-2',  // Batch model
+    );
+    debugPrint('   ✅ DeepgramImplementer (batch) registered');
+
+    // Flux WebSocket API (default) - real-time streaming with turn detection
+    sttImplementers['deepgram_flux'] = DeepgramFluxImplementer(
+      apiKey: cfg.deepgramApiKey!,
+      model: 'flux-general-en',  // Flux model for streaming STT
+    );
+    debugPrint('   ✅ DeepgramFluxImplementer (streaming) registered');
   }
 
   if (sttImplementers.isNotEmpty) {
     final sttService = STTService(
       implementers: sttImplementers,
-      defaultImplementer: 'deepgram',
+      defaultImplementer: 'deepgram_flux',  // Use Flux streaming by default
       invocationRepo: invocationRepo,
       adaptationStateRepo: getIt<AdaptationStateRepository>(),
       feedbackRepo: getIt<FeedbackRepository>(),
@@ -597,6 +613,23 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
     debugPrint('✅ Audio: AudioRecordingService');
   } catch (e) {
     debugPrint('⚠️ Audio recording service init failed: $e');
+  }
+
+  // 15. Initialize Audio Storage Service
+  try {
+    // Wrap AudioFile adapter in EntityRepository now that EmbeddingService is ready
+    final audioFileAdapter = getIt<AudioFileObjectBoxAdapter>();
+    final audioFileRepo = EntityRepository<AudioFile>(
+      adapter: audioFileAdapter,
+      embeddingService: EmbeddingService.instance,
+    );
+    getIt.registerSingleton<EntityRepository<AudioFile>>(audioFileRepo);
+
+    final audioStorage = AudioStorage(audioFileRepo);
+    getIt.registerSingleton<AudioStorage>(audioStorage);
+    debugPrint('✅ Audio: AudioStorage');
+  } catch (e) {
+    debugPrint('⚠️ Audio storage service init failed: $e');
   }
 
   // 14. Initialize STT Service (Speech-to-Text) with implementers
@@ -780,6 +813,7 @@ Future<void> setupServiceLocator() async {
     getIt.registerSingleton<ToolExecutor>(
       ToolExecutor(
         toolRegistry: getIt<ToolRegistry>(),
+        eventBus: eventBus,
       ),
     );
 

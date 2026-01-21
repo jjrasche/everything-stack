@@ -142,7 +142,9 @@ void main() {
 
     final testBounds = {
       'conversationThreadSize': (3.0, 15.0),
+      'conversationHalfLifeHours': (1.0, 72.0),
       'maxSemanticResults': (5.0, 25.0),
+      'semanticHalfLifeHours': (168.0, 2160.0),
       'semanticThreshold': (0.5, 0.9),
     };
 

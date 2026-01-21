@@ -14,6 +14,7 @@
 /// Service (smart, orchestration) = Composition of Implementers (dumb, API wrappers)
 
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'dart:convert';
 
 import '../core/invocation.dart';
@@ -24,8 +25,10 @@ import '../core/feedback.dart' as core_feedback;
 import '../core/feedback_repository.dart';
 import '../core/trainable.dart';
 import '../core/component_types.dart';
+import '../core/event.dart';
 import './implementations/stt_implementer.dart';
 import './types/stt_types.dart';
+import './event_bus.dart';
 
 class STTService with Trainable<STTAdaptationData> {
   final Map<String, STTImplementer> _implementers;
@@ -70,10 +73,16 @@ class STTService with Trainable<STTAdaptationData> {
     // 2. Read adaptation state for this implementer + user
     final state = await _getAdaptationState(implementer.implementerName, userId);
 
-    // 3. Call implementer with audio
+    // 3. Call implementer with audio and adaptation parameters
     final output = await implementer.recognize(
       audioId: audioId,
       durationSeconds: durationSeconds,
+      eventId: eventId,
+      eotThreshold: state.eotThreshold,
+      eagerEotThreshold: state.eagerEotThreshold,
+      eotTimeoutMs: state.eotTimeoutMs,
+      enablePartialTranscripts: state.enablePartialTranscripts,
+      enableEagerProcessing: state.enableEagerProcessing,
     );
 
     // 4. Log invocation for training feedback
@@ -93,7 +102,17 @@ class STTService with Trainable<STTAdaptationData> {
       ),
     );
 
-    // 5. Return transcription
+    // 5. Publish transcription_complete event (STTService owns this domain event)
+    final eventBus = GetIt.instance<EventBus>();
+    await eventBus.publish(Event(
+      eventType: 'transcription_complete',
+      correlationId: eventId,
+      source: 'stt',
+      payloadJson: jsonEncode({'transcript': output.transcription}),
+    ));
+    debugPrint('   📡 Published transcription_complete event');
+
+    // 6. Return transcription
     return output.transcription;
   }
 
@@ -109,7 +128,7 @@ class STTService with Trainable<STTAdaptationData> {
     );
 
     return state != null
-        ? STTAdaptationData.fromJson(state.data)
+        ? STTAdaptationData.fromJson(jsonDecode(state.dataJson ?? '{}') as Map<String, dynamic>)
         : STTAdaptationData.defaults();
   }
 

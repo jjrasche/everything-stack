@@ -15,7 +15,9 @@ import 'dart:convert';
 import '../core/invocation.dart';
 import '../core/trainable.dart';
 import '../core/adaptation_data.dart';
+import '../core/event.dart';
 import 'tool_registry.dart';
+import 'event_bus.dart';
 
 /// Placeholder adaptation data for ToolExecutor.
 /// Currently no trainable parameters - this is a stub for future training.
@@ -89,9 +91,11 @@ class ToolCall {
 /// Executes LLM-requested tools via registry lookup
 class ToolExecutor with Trainable<ToolExecutorAdaptationData> {
   final ToolRegistry toolRegistry;
+  final EventBus eventBus;
 
   ToolExecutor({
     required this.toolRegistry,
+    required this.eventBus,
   });
 
   // ============ Trainable Implementation ============
@@ -187,6 +191,19 @@ class ToolExecutor with Trainable<ToolExecutorAdaptationData> {
           },
         ),
       );
+
+      // Publish tool_call_executed event for UI visibility
+      await eventBus.publish(Event(
+        eventType: 'tool_call_executed',
+        correlationId: eventId,
+        source: 'tool_executor',
+        payloadJson: jsonEncode({
+          'tool_name': toolCall.toolName,
+          'success': executionResult.success,
+          'result': executionResult.data,
+          'error': executionResult.error,
+        }),
+      ));
 
       return executionResult;
     } catch (e) {

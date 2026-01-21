@@ -939,10 +939,66 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "28:8542333702600155354",
+      "lastPropertyId": "9:885647638604281726",
+      "name": "AudioFileOB",
+      "properties": [
+        {
+          "id": "1:6012524243692535003",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:7955355602822603864",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "45:8055478778545809558"
+        },
+        {
+          "id": "3:5640707899270658284",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "4:5950731465640424004",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "5:4360606199925489684",
+          "name": "syncId",
+          "type": 9
+        },
+        {
+          "id": "6:1669448361929565011",
+          "name": "audioBytes",
+          "type": 23
+        },
+        {
+          "id": "7:2316532066181613771",
+          "name": "durationSeconds",
+          "type": 8
+        },
+        {
+          "id": "8:210168737088825386",
+          "name": "format",
+          "type": 9
+        },
+        {
+          "id": "9:885647638604281726",
+          "name": "eventId",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "27:3146279761244466060",
-  "lastIndexId": "44:5199931117279558567",
+  "lastEntityId": "28:8542333702600155354",
+  "lastIndexId": "45:8055478778545809558",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

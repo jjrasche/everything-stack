@@ -33,6 +33,7 @@ import 'dart:convert';
 
 import '../core/invocation.dart';
 import '../core/invocation_repository.dart';
+import '../core/adaptation_state.dart';
 import '../core/adaptation_state_repository.dart';
 import '../core/feedback.dart' as core_feedback;
 import '../core/feedback_repository.dart';
@@ -42,12 +43,13 @@ import './implementations/llm_implementer.dart';
 import './types/llm_types.dart';
 import './types/message.dart';
 import './types/context_selector_types.dart';
+import './trainer/gaussian_process_optimizer.dart';
 
 // Export types for use by Coordinator, Implementers, and Tests
 export './types/message.dart' show Message;
-export './types/llm_types.dart' show LLMResponse, LLMTool, LLMToolCall, LLMInvocationInput, LLMInvocationOutput, LLMAdaptationData, LLMFeedback;
+export './types/llm_types.dart' show LLMResponse, LLMTool, LLMToolCall, LLMInvocationInput, LLMInvocationOutput, InferenceAdaptationData, LLMFeedback;
 
-class InferenceService with Trainable<LLMAdaptationData> {
+class InferenceService with Trainable<InferenceAdaptationData> {
   final Map<String, LLMImplementer> _implementers;
   final String _defaultImplementer;
   final InvocationRepository invocationRepo;
@@ -93,7 +95,10 @@ class InferenceService with Trainable<LLMAdaptationData> {
     final output = await implementer.chat(
       messages: messages,
       temperature: state.temperature,
-      systemPrompt: state.systemPrompt,
+      topP: state.topP,
+      frequencyPenalty: state.frequencyPenalty,
+      presencePenalty: state.presencePenalty,
+      maxTokens: state.maxTokens,
     );
 
     // 4. Log invocation for training feedback
@@ -131,7 +136,9 @@ class InferenceService with Trainable<LLMAdaptationData> {
 
     // 1. System message with semantic context
     final systemPrompt = StringBuffer();
-    systemPrompt.writeln('You are a helpful voice assistant.');
+    systemPrompt.writeln('You are a helpful voice assistant. Keep responses brief and conversational - like you\'re talking to a friend, not writing an essay.');
+    systemPrompt.writeln('\nIMPORTANT: Only use tools when the user explicitly asks you to do something that requires a tool (like "set a timer" or "create a task"). For casual conversation, respond naturally without calling tools.');
+    systemPrompt.writeln('\nStyle: Short, direct answers. 1-2 sentences max unless asked for details. Avoid verbose explanations.');
 
     if (contextBundle.semanticContext.isNotEmpty) {
       systemPrompt.writeln('\n# Relevant Context (from past interactions):');
@@ -201,7 +208,7 @@ class InferenceService with Trainable<LLMAdaptationData> {
   }
 
   /// Get adaptation state for this implementer, or defaults if not found.
-  Future<LLMAdaptationData> _getAdaptationState(
+  Future<InferenceAdaptationData> _getAdaptationState(
     String implementerName,
     String? userId,
   ) async {
@@ -212,8 +219,8 @@ class InferenceService with Trainable<LLMAdaptationData> {
     );
 
     return state != null
-        ? LLMAdaptationData.fromJson(state.data)
-        : LLMAdaptationData.defaults();
+        ? InferenceAdaptationData.fromJson(jsonDecode(state.dataJson ?? '{}') as Map<String, dynamic>)
+        : InferenceAdaptationData.defaults();
   }
 
   // ============ Trainable Implementation ============
@@ -263,11 +270,84 @@ class InferenceService with Trainable<LLMAdaptationData> {
 
   @override
   Future<void> trainFromFeedback(Invocation invocation, core_feedback.Feedback feedback) async {
-    // TODO: Implement training algorithm
-    // 1. Parse typed feedback: LLMFeedback.fromJson(feedback.correctedData)
-    // 2. Get current AdaptationState for feedback.implementer
-    // 3. Update temperature/responseLength based on feedback
-    // 4. Save updated AdaptationState
+    // TODO: Extract userId from invocation/turn context for per-user training
+    // For now, use global training (userId = null)
+    const String? userId = null;
+
+    // Get implementer from invocation (e.g., 'groq')
+    final implementerName = invocation.implementer ?? _defaultImplementer;
+
+    // Get or create optimizer for this implementer
+    final optimizer = _getOrCreateOptimizer(implementerName, userId);
+
+    // Get current params
+    final state = await _getAdaptationState(implementerName, userId);
+
+    // Convert feedback to reward
+    final reward = feedback.action == core_feedback.FeedbackAction.confirm ? 1.0 : -1.0;
+
+    // Record trial (persists to database)
+    await optimizer.recordTrial({
+      'temperature': state.temperature,
+      'topP': state.topP,
+      'frequencyPenalty': state.frequencyPenalty,
+      'presencePenalty': state.presencePenalty,
+      'maxTokens': state.maxTokens,
+    }, reward);
+
+    // Get GP suggestion (loads historical trials from database)
+    final suggested = await optimizer.suggestNext();
+
+    // Update with new parameters
+    final newParams = state.copyWith(
+      temperature: suggested['temperature'] as double,
+      topP: suggested['topP'] as double,
+      frequencyPenalty: suggested['frequencyPenalty'] as double,
+      presencePenalty: suggested['presencePenalty'] as double,
+      maxTokens: suggested['maxTokens'] as int,
+    );
+
+    // Save to AdaptationState
+    final adaptationState = await adaptationStateRepo.getForComponent(
+      ComponentType.llm,
+      implementer: implementerName,
+      userId: userId,
+    ) ?? AdaptationState(
+      componentType: ComponentType.llm,
+      implementer: implementerName,
+      userId: userId,
+    );
+
+    adaptationState.dataJson = newParams.toJson();
+    adaptationState.version++;
+    adaptationState.lastUpdatedAt = DateTime.now();
+    adaptationState.lastUpdateReason = 'trainFromFeedback';
+    adaptationState.feedbackCountApplied++;
+
+    await adaptationStateRepo.save(adaptationState);
+
+    print('✅ [InferenceService.trainFromFeedback] Updated parameters for $implementerName:');
+    print('   temperature: ${state.temperature.toStringAsFixed(2)} → ${newParams.temperature.toStringAsFixed(2)}');
+    print('   topP: ${state.topP.toStringAsFixed(2)} → ${newParams.topP.toStringAsFixed(2)}');
+    print('   frequencyPenalty: ${state.frequencyPenalty.toStringAsFixed(2)} → ${newParams.frequencyPenalty.toStringAsFixed(2)}');
+    print('   presencePenalty: ${state.presencePenalty.toStringAsFixed(2)} → ${newParams.presencePenalty.toStringAsFixed(2)}');
+    print('   maxTokens: ${state.maxTokens} → ${newParams.maxTokens}');
+  }
+
+  // ============ GP Optimizer Management ============
+
+  final Map<String, GaussianProcessOptimizer> _optimizers = {};
+
+  GaussianProcessOptimizer _getOrCreateOptimizer(String implementerName, String? userId) {
+    final key = '${implementerName}_${userId ?? "_global_"}';
+    return _optimizers.putIfAbsent(
+      key,
+      () => GaussianProcessOptimizer(
+        paramBounds: getParameterBounds(),
+        componentType: '${componentType}_$implementerName',  // e.g., 'llm_groq'
+        userId: userId,
+      ),
+    );
   }
 
   // ============ Trainable Interface Implementation ============
@@ -276,9 +356,18 @@ class InferenceService with Trainable<LLMAdaptationData> {
   String get componentType => 'llm';
 
   @override
-  LLMAdaptationData createDefaultData() => LLMAdaptationData.defaults();
+  InferenceAdaptationData createDefaultData() => InferenceAdaptationData.defaults();
 
   @override
-  LLMAdaptationData deserializeData(String json) =>
-      LLMAdaptationData.fromJson(jsonDecode(json) as Map<String, dynamic>);
+  InferenceAdaptationData deserializeData(String json) =>
+      InferenceAdaptationData.fromJson(jsonDecode(json) as Map<String, dynamic>);
+
+  @override
+  Map<String, (double, double)> getParameterBounds() => {
+    'temperature': (0.0, 2.0),
+    'topP': (0.0, 1.0),
+    'frequencyPenalty': (-2.0, 2.0),
+    'presencePenalty': (-2.0, 2.0),
+    'maxTokens': (100.0, 8000.0),  // Groq limit, adjust per implementer if needed
+  };
 }

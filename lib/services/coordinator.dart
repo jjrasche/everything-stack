@@ -145,7 +145,7 @@ class Coordinator {
             print('⚠️ Error: ${result.errorMessage}');
           }
 
-          // Publish orchestration_complete event for UI to update state
+          // Publish orchestration_complete event for UI to update state (text appears FIRST)
           await eventBus.publish(Event(
             eventType: 'orchestration_complete',
             correlationId: event.correlationId,  // Preserve correlation chain
@@ -157,6 +157,15 @@ class Coordinator {
             }),
           ));
           print('📡 [Coordinator] Published orchestration_complete event');
+
+          // THEN synthesize TTS (user sees text before hearing audio - better UX)
+          if (result.success && result.finalResponse.isNotEmpty) {
+            print('🔊 Synthesizing response to speech...');
+            await ttsService.synthesize(
+              text: result.finalResponse,
+              eventId: event.correlationId,
+            );
+          }
         } catch (e) {
           print('❌ [Coordinator] Failed to orchestrate from event: $e');
         }
@@ -298,14 +307,8 @@ class Coordinator {
         print('✅ LLM follow-up response: "$finalResponse"');
       }
 
-      // 4. Synthesize TTS (only if there's content to speak)
-      if (finalResponse.isNotEmpty) {
-        print('\n🔊 Synthesizing response to speech...');
-        print('   Text: "${finalResponse.length > 50 ? '${finalResponse.substring(0, 50)}...' : finalResponse}"');
-        await ttsService.synthesize(text: finalResponse, eventId: eventId);
-      } else {
-        print('\n⏭️  Skipping TTS (no verbal response from LLM)');
-      }
+      // Note: TTS happens in event listener AFTER orchestration_complete is published
+      // This ensures text appears in UI before audio plays (better UX)
 
       final latency = DateTime.now().difference(startTime).inMilliseconds;
       print('\n✅ COORDINATOR: orchestrate SUCCESS');

@@ -16,21 +16,63 @@ class STTAdaptationData extends AdaptationData {
   /// Prevents premature adaptation from noise.
   final int minFeedbackCount;
 
+  // ============ Deepgram Flux Turn Detection Parameters ============
+
+  /// End-of-turn threshold (0.5-0.9).
+  /// Higher = more conservative (waits longer before declaring turn end).
+  /// Lower = more aggressive (faster responses but may cut off mid-sentence).
+  /// Trainable via GP based on user feedback.
+  final double eotThreshold;
+
+  /// Eager end-of-turn threshold (0.3-0.9, optional).
+  /// If set, Deepgram sends EagerEndOfTurn events when confidence exceeds this.
+  /// Used for fast interruption without waiting for full turn end.
+  final double? eagerEotThreshold;
+
+  /// End-of-turn timeout in milliseconds (optional).
+  /// If set, forces turn end after this duration even if no silence detected.
+  final int? eotTimeoutMs;
+
+  // ============ Feature Flags (NOT trainable yet - needs Thompson Sampling) ============
+
+  /// Enable partial transcripts during streaming (live typing effect).
+  /// If false, only final transcript shown after EndOfTurn.
+  final bool enablePartialTranscripts;
+
+  /// Enable eager processing (respond to EagerEndOfTurn events).
+  /// If false, only EndOfTurn events trigger processing.
+  final bool enableEagerProcessing;
+
   STTAdaptationData({
     required this.confidenceThreshold,
     required this.minFeedbackCount,
+    required this.eotThreshold,
+    this.eagerEotThreshold,
+    this.eotTimeoutMs,
+    required this.enablePartialTranscripts,
+    required this.enableEagerProcessing,
   });
 
   /// Default adaptation state (untrained).
   factory STTAdaptationData.defaults() => STTAdaptationData(
     confidenceThreshold: 0.65,
     minFeedbackCount: 10,
+    eotThreshold: 0.7,                  // Balanced default
+    eagerEotThreshold: null,            // Disabled by default
+    eotTimeoutMs: null,                 // No timeout by default
+    enablePartialTranscripts: true,     // Show live typing
+    enableEagerProcessing: false,       // Conservative default
   );
 
   /// Deserialize from JSON.
   factory STTAdaptationData.fromJson(Map<String, dynamic> json) => STTAdaptationData(
     confidenceThreshold: json['confidenceThreshold'] as double? ?? 0.65,
     minFeedbackCount: json['minFeedbackCount'] as int? ?? 10,
+    eotThreshold: json['eotThreshold'] as double? ?? 0.7,
+    eagerEotThreshold: json['eagerEotThreshold'] as double?,
+    eotTimeoutMs: json['eotTimeoutMs'] as int?,
+    enablePartialTranscripts: json['enablePartialTranscripts'] as bool? ?? true,
+    enableEagerProcessing: json['enableEagerProcessing'] as bool? ?? false,
   );
 
   /// Serialize to JSON string.
@@ -38,7 +80,34 @@ class STTAdaptationData extends AdaptationData {
   String toJson() => jsonEncode({
     'confidenceThreshold': confidenceThreshold,
     'minFeedbackCount': minFeedbackCount,
+    'eotThreshold': eotThreshold,
+    if (eagerEotThreshold != null) 'eagerEotThreshold': eagerEotThreshold,
+    if (eotTimeoutMs != null) 'eotTimeoutMs': eotTimeoutMs,
+    'enablePartialTranscripts': enablePartialTranscripts,
+    'enableEagerProcessing': enableEagerProcessing,
   });
+
+  /// Create a copy with updated parameters (for GP optimization).
+  /// GP will test variations of eotThreshold to find optimal value.
+  STTAdaptationData copyWith({
+    double? confidenceThreshold,
+    int? minFeedbackCount,
+    double? eotThreshold,
+    double? eagerEotThreshold,
+    int? eotTimeoutMs,
+    bool? enablePartialTranscripts,
+    bool? enableEagerProcessing,
+  }) {
+    return STTAdaptationData(
+      confidenceThreshold: confidenceThreshold ?? this.confidenceThreshold,
+      minFeedbackCount: minFeedbackCount ?? this.minFeedbackCount,
+      eotThreshold: eotThreshold ?? this.eotThreshold,
+      eagerEotThreshold: eagerEotThreshold ?? this.eagerEotThreshold,
+      eotTimeoutMs: eotTimeoutMs ?? this.eotTimeoutMs,
+      enablePartialTranscripts: enablePartialTranscripts ?? this.enablePartialTranscripts,
+      enableEagerProcessing: enableEagerProcessing ?? this.enableEagerProcessing,
+    );
+  }
 }
 
 /// STT invocation input (audio metadata).

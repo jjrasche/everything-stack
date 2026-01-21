@@ -38,22 +38,26 @@ class GroqImplementer implements LLMImplementer {
   Future<LLMInvocationOutput> chat({
     required List<Message> messages,
     required double temperature,
-    String? systemPrompt,
+    required double topP,
+    required double frequencyPenalty,
+    required double presencePenalty,
+    required int maxTokens,
   }) async {
     try {
       // Build message list for API
       final messagesList = <Map<String, dynamic>>[
-        if (systemPrompt != null)
-          {'role': 'system', 'content': systemPrompt},
         ...messages.map((m) => {'role': m.role, 'content': m.content}),
       ];
 
-      // Build request body
+      // Build request body with all adaptation parameters
       final body = {
         'model': model,
         'messages': messagesList,
         'temperature': temperature,
-        'max_tokens': maxTokensLimit,
+        'top_p': topP,
+        'frequency_penalty': frequencyPenalty,
+        'presence_penalty': presencePenalty,
+        'max_tokens': maxTokens,
       };
 
       // Time the API call

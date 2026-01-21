@@ -22,6 +22,7 @@ import 'package:integration_test/integration_test.dart';
 import 'test_harness.dart';
 import '../timer_multiturn_logic.dart';
 import '../audio_pipeline_logic.dart';
+import '../microphone_stt_logic.dart';
 import '../invocation_semantic_logic.dart';
 import '../error_handling_logic.dart';
 import '../enrichment_queue_logic.dart';
@@ -36,6 +37,7 @@ void main() {
   final configs = {
     'timer': timerMultiturnTest,
     'audio': audioPipelineTest,
+    'microphone_stt': microphoneSttTest,
     'semantic': invocationSemanticTest,
     'llm_failure': llmFailureTest,
     'stt_failure': sttFailureTest,

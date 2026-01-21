@@ -21,6 +21,12 @@ class MockDeepgramImplementer implements STTImplementer {
   Future<STTInvocationOutput> recognize({
     required String audioId,
     required double durationSeconds,
+    String? eventId,
+    double? eotThreshold,
+    double? eagerEotThreshold,
+    int? eotTimeoutMs,
+    bool? enablePartialTranscripts,
+    bool? enableEagerProcessing,
   }) async {
     if (shouldFail) {
       print('💥 MockDeepgramImplementer.recognize(): Simulating failure');
@@ -71,6 +77,12 @@ class EnhancedMockDeepgramImplementer implements STTImplementer {
   Future<STTInvocationOutput> recognize({
     required String audioId,
     required double durationSeconds,
+    String? eventId,
+    double? eotThreshold,
+    double? eagerEotThreshold,
+    int? eotTimeoutMs,
+    bool? enablePartialTranscripts,
+    bool? enableEagerProcessing,
   }) async {
     if (shouldFail) {
       print('💥 EnhancedMockDeepgramImplementer.recognize(): Simulating failure');

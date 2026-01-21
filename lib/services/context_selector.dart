@@ -65,7 +65,9 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
   @override
   Map<String, (double, double)> getParameterBounds() => {
     'conversationThreadSize': (3.0, 15.0),
+    'conversationHalfLifeHours': (1.0, 72.0),      // 1 hour to 3 days
     'maxSemanticResults': (5.0, 25.0),
+    'semanticHalfLifeHours': (168.0, 2160.0),      // 1 week to 3 months
     'semanticThreshold': (0.5, 0.9),
   };
 
@@ -93,7 +95,9 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
     // Record trial (persists to database)
     await optimizer.recordTrial({
       'conversationThreadSize': params.conversationThreadSize,
+      'conversationHalfLifeHours': params.conversationHalfLifeHours,
       'maxSemanticResults': params.maxSemanticResults,
+      'semanticHalfLifeHours': params.semanticHalfLifeHours,
       'semanticThreshold': params.semanticThreshold,
     }, reward);
 
@@ -103,7 +107,9 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
     // Update AdaptationState with new parameters
     final newParams = params.copyWith(
       conversationThreadSize: suggested['conversationThreadSize'] as int,
+      conversationHalfLifeHours: suggested['conversationHalfLifeHours'] as double,
       maxSemanticResults: suggested['maxSemanticResults'] as int,
+      semanticHalfLifeHours: suggested['semanticHalfLifeHours'] as double,
       semanticThreshold: suggested['semanticThreshold'] as double,
     );
 
@@ -117,7 +123,9 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
 
     print('✅ [ContextSelector.trainFromFeedback] Updated parameters:');
     print('   conversationThreadSize: ${params.conversationThreadSize} → ${newParams.conversationThreadSize}');
+    print('   conversationHalfLifeHours: ${params.conversationHalfLifeHours.toStringAsFixed(1)}h → ${newParams.conversationHalfLifeHours.toStringAsFixed(1)}h');
     print('   maxSemanticResults: ${params.maxSemanticResults} → ${newParams.maxSemanticResults}');
+    print('   semanticHalfLifeHours: ${params.semanticHalfLifeHours.toStringAsFixed(1)}h → ${newParams.semanticHalfLifeHours.toStringAsFixed(1)}h');
     print('   semanticThreshold: ${params.semanticThreshold.toStringAsFixed(2)} → ${newParams.semanticThreshold.toStringAsFixed(2)}');
   }
 
