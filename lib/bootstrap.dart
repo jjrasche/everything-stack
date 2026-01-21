@@ -32,8 +32,7 @@ library;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:objectbox/objectbox.dart' hide HnswIndex;
 
 import 'services/blob_store.dart';
@@ -53,6 +52,7 @@ import 'services/implementations/groq_implementer.dart';
 import 'services/implementations/deepgram_implementer.dart';
 import 'services/implementations/deepgram_flux_implementer.dart';
 import 'services/implementations/flutter_tts_implementer.dart';
+import 'services/implementations/google_cloud_tts_implementer.dart';
 import 'services/service_registry.dart';
 import 'services/service_builders.dart';
 import 'services/coordinator.dart';
@@ -79,6 +79,8 @@ import 'core/invocation_repository.dart';
 import 'core/entity_repository.dart';
 import 'core/adaptation_state_repository.dart';
 import 'core/feedback_repository.dart';
+import 'core/platform_detector.dart';
+import 'bootstrap/implementer_selector.dart';
 import 'domain/audio_file.dart';
 import 'services/enrichment/enrichment_runner.dart';
 import 'services/enrichment/enrichment_worker.dart';
@@ -339,33 +341,32 @@ Future<void> initializeEverythingStack({
 Future<void> _initializeServices(EverythingStackConfig cfg) async {
   try {
 
-  // 0. Initialize Firebase Crashlytics (cross-platform: Android, iOS, Web)
-  // Skip Firebase in test environment (TEST_MODE dart-define flag set when running tests)
+  // 0. Initialize Sentry (cross-platform crash reporting: all 6 platforms)
+  // Skip Sentry in test environment (TEST_MODE dart-define flag set when running tests)
   const isTestMode = bool.fromEnvironment('TEST_MODE', defaultValue: false);
   if (isTestMode) {
-    debugPrint('⚠️ Skipping Firebase initialization (TEST_MODE=true)');
+    debugPrint('⚠️ Skipping Sentry initialization (TEST_MODE=true)');
   } else {
-    try {
-      // Initialize Firebase (auto-config on native, web uses default project)
-      await Firebase.initializeApp();
-      debugPrint('✅ Firebase Core initialized');
+    // Sentry DSN (Data Source Name) - set via environment or leave empty to disable
+    const sentryDsn = String.fromEnvironment('SENTRY_DSN', defaultValue: '');
 
-      // Enable Crashlytics crash reporting
-      // This catches all uncaught exceptions and sends them to Firebase
-      FlutterError.onError = (errorDetails) {
-        FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
-      };
-
-      // Also capture async errors
-      PlatformDispatcher.instance.onError = (error, stack) {
-        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-        return true;
-      };
-
-      debugPrint('✅ Crashlytics enabled - crashes will be reported to Firebase');
-    } catch (e) {
-      debugPrint('⚠️ Firebase/Crashlytics initialization failed: $e');
-      debugPrint('   Continuing without crash reporting...');
+    if (sentryDsn.isEmpty) {
+      debugPrint('⚠️ SENTRY_DSN not configured - crash reporting disabled');
+      debugPrint('   To enable: Add SENTRY_DSN to .env or --dart-define');
+    } else {
+      try {
+        await SentryFlutter.init(
+          (options) {
+            options.dsn = sentryDsn;
+            options.tracesSampleRate = 1.0; // Capture 100% of transactions for performance monitoring
+            options.environment = kDebugMode ? 'development' : 'production';
+          },
+        );
+        debugPrint('✅ Sentry initialized - crashes will be reported');
+      } catch (e) {
+        debugPrint('⚠️ Sentry initialization failed: $e');
+        debugPrint('   Continuing without crash reporting...');
+      }
     }
   }
 
@@ -434,9 +435,13 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
   }
 
   if (sttImplementers.isNotEmpty) {
+    // Auto-select first implementer compatible with current platform
+    final defaultSTT = selectCompatibleImplementer(sttImplementers, 'STT');
+    debugPrint('   📍 Platform: $currentPlatform, Selected: $defaultSTT');
+
     final sttService = STTService(
       implementers: sttImplementers,
-      defaultImplementer: 'deepgram_flux',  // Use Flux streaming by default
+      defaultImplementer: defaultSTT,
       invocationRepo: invocationRepo,
       adaptationStateRepo: getIt<AdaptationStateRepository>(),
       feedbackRepo: getIt<FeedbackRepository>(),
@@ -453,9 +458,21 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
     'flutter_tts': FlutterTtsImplementer(),
   };
 
+  // Add Google Cloud TTS if API key provided (fallback for Linux, works everywhere)
+  if (cfg.googleTtsApiKey != null && cfg.googleTtsApiKey!.isNotEmpty) {
+    ttsImplementers['google_cloud_tts'] = GoogleCloudTTSImplementer(
+      apiKey: cfg.googleTtsApiKey!,
+    );
+    debugPrint('   ✅ GoogleCloudTTSImplementer registered');
+  }
+
+  // Auto-select first implementer compatible with current platform
+  final defaultTTS = selectCompatibleImplementer(ttsImplementers, 'TTS');
+  debugPrint('   📍 Platform: $currentPlatform, Selected: $defaultTTS');
+
   final ttsService = TTSService(
     implementers: ttsImplementers,
-    defaultImplementer: 'flutter_tts',
+    defaultImplementer: defaultTTS,
     invocationRepo: invocationRepo,
     adaptationStateRepo: getIt<AdaptationStateRepository>(),
     feedbackRepo: getIt<FeedbackRepository>(),
@@ -472,9 +489,13 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
   }
 
   if (llmImplementers.isNotEmpty) {
+    // Auto-select first implementer compatible with current platform
+    final defaultLLM = selectCompatibleImplementer(llmImplementers, 'LLM');
+    debugPrint('   📍 Platform: $currentPlatform, Selected: $defaultLLM');
+
     final llmService = InferenceService(
       implementers: llmImplementers,
-      defaultImplementer: 'groq',
+      defaultImplementer: defaultLLM,
       invocationRepo: invocationRepo,
       adaptationStateRepo: getIt<AdaptationStateRepository>(),
       feedbackRepo: getIt<FeedbackRepository>(),

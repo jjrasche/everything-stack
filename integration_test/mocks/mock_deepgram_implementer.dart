@@ -18,6 +18,17 @@ class MockDeepgramImplementer implements STTImplementer {
   String get implementerName => 'deepgram';
 
   @override
+  Set<String> get supportedPlatforms => {
+        'android',
+        'ios',
+        'macos',
+        'windows',
+        'linux',
+        'web',
+        // Mock supports all platforms (no real API dependencies)
+      };
+
+  @override
   Future<STTInvocationOutput> recognize({
     required String audioId,
     required double durationSeconds,
@@ -72,6 +83,17 @@ class EnhancedMockDeepgramImplementer implements STTImplementer {
 
   @override
   String get implementerName => 'deepgram';
+
+  @override
+  Set<String> get supportedPlatforms => {
+        'android',
+        'ios',
+        'macos',
+        'windows',
+        'linux',
+        'web',
+        // Mock supports all platforms (no real API dependencies)
+      };
 
   @override
   Future<STTInvocationOutput> recognize({

@@ -60,6 +60,17 @@ class DeepgramFluxImplementer implements STTImplementer {
   String get implementerName => 'deepgram_flux';
 
   @override
+  Set<String> get supportedPlatforms => {
+        'android',
+        'ios',
+        'macos',
+        'windows',
+        'linux',
+        'web',
+        // Pure Dart WebSocket via universal_io - works everywhere
+      };
+
+  @override
   Future<STTInvocationOutput> recognize({
     required String audioId,
     required double durationSeconds,

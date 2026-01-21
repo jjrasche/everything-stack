@@ -78,6 +78,16 @@ class FlutterTtsImplementer implements TTSImplementer {
   String get implementerName => 'flutter_tts';
 
   @override
+  Set<String> get supportedPlatforms => {
+        'android',
+        'ios',
+        'macos',
+        'windows',
+        'web',
+        // NOT linux - flutter_tts doesn't support Linux (verified pub.dev 2026-01-21)
+      };
+
+  @override
   Future<TTSInvocationOutput> synthesize({
     required String text,
     required String voiceId,

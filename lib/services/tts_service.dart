@@ -13,17 +13,19 @@
 /// ## Design Pattern
 /// Service (smart, orchestration) = Composition of Implementers (dumb, API wrappers)
 
+library;
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
 import '../core/invocation.dart';
 import '../core/invocation_repository.dart';
 import '../core/adaptation_state_repository.dart';
-import '../core/adaptation_state.dart';
 import '../core/feedback.dart' as core_feedback;
 import '../core/feedback_repository.dart';
 import '../core/trainable.dart';
 import '../core/component_types.dart';
+import '../core/platform_detector.dart';
 import './implementations/tts_implementer.dart';
 import './types/tts_types.dart';
 
@@ -45,6 +47,15 @@ class TTSService with Trainable<TTSAdaptationData> {
     if (!_implementers.containsKey(_defaultImplementer)) {
       throw ArgumentError(
         'Default implementer "$_defaultImplementer" not found in implementers',
+      );
+    }
+
+    // Validate default implementer supports current platform
+    final defaultImpl = _implementers[_defaultImplementer]!;
+    if (!defaultImpl.supportedPlatforms.contains(currentPlatform)) {
+      throw UnsupportedError(
+        'Default TTS implementer "$_defaultImplementer" does not support '
+        'platform "$currentPlatform". Supported platforms: ${defaultImpl.supportedPlatforms}',
       );
     }
   }

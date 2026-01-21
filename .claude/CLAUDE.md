@@ -156,6 +156,49 @@ flutter build web --dart-define=...   # Web
 - Changing CI/CD configuration
 - Adding new dependencies to pubspec.yaml
 
+## Cross-Platform Dependency Management
+
+**CRITICAL RULE:** Every package added to `pubspec.yaml` MUST support all 6 platforms: Android, iOS, Windows, macOS, Linux, Web.
+
+### Before Adding Any Package
+
+```bash
+# 1. Check pub.dev badges (verify manually on website)
+https://pub.dev/packages/{package_name}
+
+# 2. Run checker (can have false positives)
+dart run pubspec_checker all -s -l
+```
+
+### Platform Detection System (Built-in)
+
+All implementers declare supported platforms via `supportedPlatforms` property:
+
+```dart
+class FlutterTtsImplementer implements TTSImplementer {
+  @override
+  Set<String> get supportedPlatforms => {'android', 'ios', 'macos', 'windows', 'web'};
+}
+```
+
+Services auto-select compatible implementers at bootstrap:
+```dart
+final defaultTTS = TTSService.selectCompatibleImplementer(ttsImplementers);
+// Picks first implementer that supports currentPlatform
+```
+
+### If Package Missing Platform
+
+1. **Replace:** Find alternative with full support
+2. **Add fallback implementer:** Register multiple implementations, auto-select by platform
+3. **Document:** Last resort - add limitation to ARCHITECTURE.md
+
+### Pending Package Fixes
+
+- `just_audio` (no Windows/Linux) → Replace with `audioplayers`
+- `firebase_crashlytics` (no Windows/Linux/Web) → Replace with `sentry_flutter`
+- `flutter_tts` (no Linux) → Add RemoteTTSImplementer (ElevenLabs/Google Cloud)
+
 ## Architecture Constraints
 
 - All entities extend `BaseEntity`

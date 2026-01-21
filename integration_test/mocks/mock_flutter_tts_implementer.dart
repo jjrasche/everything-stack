@@ -17,6 +17,17 @@ class MockFlutterTTSImplementer implements TTSImplementer {
   String get implementerName => 'flutter_tts';
 
   @override
+  Set<String> get supportedPlatforms => {
+        'android',
+        'ios',
+        'macos',
+        'windows',
+        'linux',
+        'web',
+        // Mock supports all platforms (no real API dependencies)
+      };
+
+  @override
   Future<TTSInvocationOutput> synthesize({
     required String text,
     required String voiceId,

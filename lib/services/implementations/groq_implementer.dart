@@ -30,6 +30,17 @@ class GroqImplementer implements LLMImplementer {
   @override
   String get implementerName => 'groq';
 
+  @override
+  Set<String> get supportedPlatforms => {
+        'android',
+        'ios',
+        'macos',
+        'windows',
+        'linux',
+        'web',
+        // Pure Dart HTTP - works everywhere
+      };
+
   /// Groq's hard token limit for available models
   @override
   int get maxTokensLimit => 8192;

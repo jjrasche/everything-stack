@@ -32,6 +32,17 @@ class DeepgramImplementer implements STTImplementer {
   String get implementerName => 'deepgram';
 
   @override
+  Set<String> get supportedPlatforms => {
+        'android',
+        'ios',
+        'macos',
+        'windows',
+        'linux',
+        'web',
+        // Pure Dart HTTP - works everywhere
+      };
+
+  @override
   Future<STTInvocationOutput> recognize({
     required String audioId,
     required double durationSeconds,

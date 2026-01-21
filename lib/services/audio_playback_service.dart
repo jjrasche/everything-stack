@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:typed_data';
-import 'package:just_audio/just_audio.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 /// Audio playback service contract.
 abstract class AudioPlaybackService {
-  static AudioPlaybackService instance = JustAudioPlaybackService();
+  static AudioPlaybackService instance = AudioPlayersPlaybackService();
 
   Future<void> initialize();
   Future<void> playAudio(Uint8List audioBytes);
@@ -12,21 +12,20 @@ abstract class AudioPlaybackService {
   void dispose();
 }
 
-/// Production implementation using `just_audio` package
-class JustAudioPlaybackService implements AudioPlaybackService {
+/// Production implementation using `audioplayers` package (supports all 6 platforms)
+class AudioPlayersPlaybackService implements AudioPlaybackService {
   final AudioPlayer _player = AudioPlayer();
 
   @override
   Future<void> initialize() async {
-    print('AudioPlaybackService initialized');
+    print('AudioPlaybackService initialized (audioplayers)');
   }
 
   @override
   Future<void> playAudio(Uint8List audioBytes) async {
     try {
-      final audioSource = ByteArrayAudioSource(audioBytes);
-      await _player.setAudioSource(audioSource);
-      await _player.play();
+      // audioplayers can play directly from bytes
+      await _player.play(BytesSource(audioBytes));
     } catch (e) {
       print('Playback error: $e');
       rethrow;
@@ -41,27 +40,6 @@ class JustAudioPlaybackService implements AudioPlaybackService {
   @override
   void dispose() {
     _player.dispose();
-  }
-}
-
-/// Custom audio source for just_audio that plays from byte array
-class ByteArrayAudioSource extends StreamAudioSource {
-  final Uint8List bytes;
-
-  ByteArrayAudioSource(this.bytes);
-
-  @override
-  Future<StreamAudioResponse> request([int? start, int? end]) async {
-    final startByte = start ?? 0;
-    final endByte = end ?? bytes.length;
-
-    return StreamAudioResponse(
-      sourceLength: bytes.length,
-      contentLength: endByte - startByte,
-      offset: startByte,
-      stream: Stream.value(bytes.sublist(startByte, endByte)),
-      contentType: 'audio/wav',
-    );
   }
 }
 

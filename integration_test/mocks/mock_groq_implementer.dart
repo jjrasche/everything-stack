@@ -18,6 +18,17 @@ class MockGroqImplementer implements LLMImplementer {
   String get implementerName => 'groq';
 
   @override
+  Set<String> get supportedPlatforms => {
+        'android',
+        'ios',
+        'macos',
+        'windows',
+        'linux',
+        'web',
+        // Mock supports all platforms (no real API dependencies)
+      };
+
+  @override
   int get maxTokensLimit => 8192;
 
   @override
