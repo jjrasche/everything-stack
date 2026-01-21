@@ -43,7 +43,6 @@ dependencies:
 
   # WebSocket support (for Deepgram STT)
   web_socket_channel: ^3.0.0
-  universal_io: ^2.2.2  # Pure Dart WebSocket (fixes Flutter Windows wss:// bug)
 
   # File input and storage
   image_picker: ^1.1.0
