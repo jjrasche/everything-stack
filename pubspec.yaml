@@ -57,7 +57,7 @@ dependencies:
   # HNSW vector search (for web platform)
   local_hnsw: ^1.0.0
   audioplayers: ^6.5.1
-  sentry_flutter: ^9.10.0
+  # sentry_flutter: ^9.10.0  # DISABLED: Pulls in JNI (Java) on Windows, blocking builds. Re-enable for production.
 
 dev_dependencies:
   flutter_test:

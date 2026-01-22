@@ -17,6 +17,9 @@ class ResponseMapLLMImplementer implements LLMImplementer {
   String get implementerName => 'response_map_mock';
 
   @override
+  Set<String> get supportedPlatforms => {'android', 'ios', 'web', 'windows', 'macos', 'linux'};
+
+  @override
   int get maxTokensLimit => 8192;
 
   @override

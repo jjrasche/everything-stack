@@ -32,7 +32,7 @@ library;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
+// import 'package:sentry_flutter/sentry_flutter.dart';  // DISABLED: Pulls in JNI (Java) on Windows
 import 'package:objectbox/objectbox.dart' hide HnswIndex;
 
 import 'services/blob_store.dart';
@@ -341,34 +341,26 @@ Future<void> initializeEverythingStack({
 Future<void> _initializeServices(EverythingStackConfig cfg) async {
   try {
 
-  // 0. Initialize Sentry (cross-platform crash reporting: all 6 platforms)
-  // Skip Sentry in test environment (TEST_MODE dart-define flag set when running tests)
+  // 0. Initialize Sentry (DISABLED: Pulls in JNI/Java on Windows)
+  // Re-enable for production when Sentry crash reporting needed
+  /*
   const isTestMode = bool.fromEnvironment('TEST_MODE', defaultValue: false);
   if (isTestMode) {
     debugPrint('⚠️ Skipping Sentry initialization (TEST_MODE=true)');
   } else {
-    // Sentry DSN (Data Source Name) - set via environment or leave empty to disable
     const sentryDsn = String.fromEnvironment('SENTRY_DSN', defaultValue: '');
-
     if (sentryDsn.isEmpty) {
       debugPrint('⚠️ SENTRY_DSN not configured - crash reporting disabled');
-      debugPrint('   To enable: Add SENTRY_DSN to .env or --dart-define');
     } else {
       try {
-        await SentryFlutter.init(
-          (options) {
-            options.dsn = sentryDsn;
-            options.tracesSampleRate = 1.0; // Capture 100% of transactions for performance monitoring
-            options.environment = kDebugMode ? 'development' : 'production';
-          },
-        );
+        // await SentryFlutter.init(...);
         debugPrint('✅ Sentry initialized - crashes will be reported');
       } catch (e) {
         debugPrint('⚠️ Sentry initialization failed: $e');
-        debugPrint('   Continuing without crash reporting...');
       }
     }
   }
+  */
 
   // 1. Create timeout-wrapped HTTP client (Layer 1 defense)
   // Note: Currently unused. Will be used for embedding service HTTP client in future phases.
@@ -435,8 +427,11 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
   }
 
   if (sttImplementers.isNotEmpty) {
-    // Auto-select first implementer compatible with current platform
-    final defaultSTT = selectCompatibleImplementer(sttImplementers, 'STT');
+    // Use Flux as default (streaming with turn detection)
+    // Fall back to batch if Flux not available
+    final defaultSTT = sttImplementers.containsKey('deepgram_flux')
+      ? 'deepgram_flux'
+      : selectCompatibleImplementer(sttImplementers, 'STT');
     debugPrint('   📍 Platform: $currentPlatform, Selected: $defaultSTT');
 
     final sttService = STTService(

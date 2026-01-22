@@ -18,7 +18,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:universal_io/io.dart';  // Pure Dart WebSocket (fixes Flutter Windows bug)
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:get_it/get_it.dart';
 
 import 'stt_implementer.dart';
@@ -35,7 +35,7 @@ class DeepgramFluxImplementer implements STTImplementer {
   final Duration timeout;
 
   // WebSocket connection (reused across recognitions if possible)
-  WebSocket? _wsChannel;
+  WebSocketChannel? _wsChannel;
   Timer? _keepAliveTimer;
   StreamSubscription? _wsSubscription;
 
@@ -149,8 +149,7 @@ class DeepgramFluxImplementer implements STTImplementer {
     }
 
     try {
-      // Build WebSocket URL with Flux parameters (NO token in query params)
-      // Auth uses Sec-WebSocket-Protocol header instead (Flutter security requirement)
+      // Build WebSocket URL with Flux parameters + API key
       final queryParts = [
         'model=$model',
         'encoding=linear16',
@@ -161,6 +160,9 @@ class DeepgramFluxImplementer implements STTImplementer {
         'interim_results=true',
         'eot_threshold=${eotThreshold.toString()}',
       ];
+
+      // Add API key to URL (Deepgram accepts this for WebSocket auth)
+      queryParts.add('api_key=$apiKey');
 
       // Optional parameters (only add if set)
       if (eagerEotThreshold != null) {
@@ -175,12 +177,10 @@ class DeepgramFluxImplementer implements STTImplementer {
 
       print('🔗 [DeepgramFluxImplementer] Connecting to: $wsUrl');
 
-      // Use dart:io WebSocket with Authorization header
-      _wsChannel = await WebSocket.connect(
-        wsUrl,
-        headers: {
-          'Authorization': 'Token $apiKey',  // Deepgram token format
-        },
+      // Use web_socket_channel for cross-platform compatibility
+      // (avoids dart:io WebSocket URL mangling bug on Windows)
+      _wsChannel = WebSocketChannel.connect(
+        Uri.parse(wsUrl),
       );
 
       // Setup message handler
@@ -189,7 +189,7 @@ class DeepgramFluxImplementer implements STTImplementer {
       // Start keep-alive ping (every 5 seconds)
       _keepAliveTimer = Timer.periodic(const Duration(seconds: 5), (_) {
         if (_wsChannel != null) {
-          _wsChannel!.add(jsonEncode({'type': 'KeepAlive'}));
+          _wsChannel!.sink.add(jsonEncode({'type': 'KeepAlive'}));
         }
       });
 
@@ -201,7 +201,7 @@ class DeepgramFluxImplementer implements STTImplementer {
 
   /// Setup WebSocket message handler.
   void _setupMessageHandler() {
-    _wsSubscription = _wsChannel!.listen(
+    _wsSubscription = _wsChannel!.stream.listen(
       (message) {
         try {
           final data = jsonDecode(message as String) as Map<String, dynamic>;
@@ -318,7 +318,7 @@ class DeepgramFluxImplementer implements STTImplementer {
       final chunk = audioData.sublist(i, end);
 
       // Send chunk to WebSocket
-      _wsChannel!.add(chunk);
+      _wsChannel!.sink.add(chunk);
 
       // Throttle to prevent overwhelming WebSocket
       if (end < audioData.length) {
@@ -327,7 +327,7 @@ class DeepgramFluxImplementer implements STTImplementer {
     }
 
     // Send CloseStream message to signal end of audio
-    _wsChannel!.add(jsonEncode({'type': 'CloseStream'}));
+    _wsChannel!.sink.add(jsonEncode({'type': 'CloseStream'}));
     print('📤 [DeepgramFluxImplementer] Finished streaming ${audioData.length} bytes');
   }
 
@@ -355,7 +355,7 @@ class DeepgramFluxImplementer implements STTImplementer {
   void dispose() {
     _keepAliveTimer?.cancel();
     _wsSubscription?.cancel();
-    _wsChannel?.close();
+    _wsChannel?.sink.close();
     _wsChannel = null;
   }
 }
