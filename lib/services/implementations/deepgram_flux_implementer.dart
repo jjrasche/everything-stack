@@ -17,8 +17,10 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io' show WebSocket;
 import 'dart:typed_data';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/io.dart';
 import 'package:get_it/get_it.dart';
 
 import 'stt_implementer.dart';
@@ -149,7 +151,7 @@ class DeepgramFluxImplementer implements STTImplementer {
     }
 
     try {
-      // Build WebSocket URL with Flux parameters + API key
+      // Build query string manually (avoid Uri parsing issues on Windows)
       final queryParts = [
         'model=$model',
         'encoding=linear16',
@@ -159,12 +161,9 @@ class DeepgramFluxImplementer implements STTImplementer {
         'smart_format=true',
         'interim_results=true',
         'eot_threshold=${eotThreshold.toString()}',
+        'token=$apiKey',  // Deepgram accepts token in URL
       ];
 
-      // Add API key to URL (Deepgram accepts this for WebSocket auth)
-      queryParts.add('api_key=$apiKey');
-
-      // Optional parameters (only add if set)
       if (eagerEotThreshold != null) {
         queryParts.add('eager_eot_threshold=${eagerEotThreshold.toString()}');
       }
@@ -172,16 +171,14 @@ class DeepgramFluxImplementer implements STTImplementer {
         queryParts.add('eot_timeout_ms=${eotTimeoutMs.toString()}');
       }
 
-      final queryString = queryParts.join('&');
-      final wsUrl = '$baseUrl/v2/listen?$queryString';
+      // Build raw URL string - explicit port 443 to avoid Windows dart:io bug
+      final wsUrl = 'wss://api.deepgram.com:443/v2/listen?${queryParts.join('&')}';
 
-      print('🔗 [DeepgramFluxImplementer] Connecting to: $wsUrl');
+      print('🔗 [DeepgramFluxImplementer] Raw URL (redacted): wss://api.deepgram.com:443/v2/listen?model=$model&...');
 
-      // Use web_socket_channel for cross-platform compatibility
-      // (avoids dart:io WebSocket URL mangling bug on Windows)
-      _wsChannel = WebSocketChannel.connect(
-        Uri.parse(wsUrl),
-      );
+      // Use raw dart:io WebSocket
+      final ws = await WebSocket.connect(wsUrl);
+      _wsChannel = IOWebSocketChannel(ws);
 
       // Setup message handler
       _setupMessageHandler();
