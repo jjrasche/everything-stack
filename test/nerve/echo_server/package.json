@@ -1,0 +1,12 @@
+{
+  "name": "nerve-echo-server",
+  "version": "1.0.0",
+  "description": "WebSocket echo server for Nerve System integration tests",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.14.0"
+  }
+}
