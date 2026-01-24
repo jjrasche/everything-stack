@@ -16,7 +16,6 @@
 /// );
 /// ```
 
-import 'dart:convert';
 import 'package:objectbox/objectbox.dart';
 
 import '../../../core/base_entity.dart';
