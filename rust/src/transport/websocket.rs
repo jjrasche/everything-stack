@@ -59,21 +59,23 @@ impl WebSocketConnection {
         // Insert connecting state
         CONNECTIONS.insert(handle, Connection::Connecting);
 
-        // Spawn connection task
-        RUNTIME.spawn(async move {
-            match Self::connect_async(url, config.headers).await {
-                Ok(ws) => {
-                    // Update to connected state
-                    CONNECTIONS.insert(handle, Connection::Connected { ws });
-                }
-                Err(e) => {
-                    eprintln!("WebSocket connection failed: {}", e);
-                    CONNECTIONS.remove(&handle);
-                }
-            }
+        // Connect synchronously (block until complete)
+        let result = RUNTIME.block_on(async move {
+            Self::connect_async(url, config.headers).await
         });
 
-        Ok(handle)
+        match result {
+            Ok(ws) => {
+                // Update to connected state
+                CONNECTIONS.insert(handle, Connection::Connected { ws });
+                Ok(handle)
+            }
+            Err(e) => {
+                eprintln!("WebSocket connection failed: {}", e);
+                CONNECTIONS.remove(&handle);
+                Err(e)
+            }
+        }
     }
 
     /// Async connect using tungstenite.

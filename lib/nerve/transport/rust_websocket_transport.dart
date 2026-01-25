@@ -26,6 +26,7 @@ import '../../bridge/native.dart/frb_generated.dart';
 /// Fixes Windows dart:io bug where wss:// URLs are converted to https://.
 class RustWebSocketTransport implements Transport {
   static int _idCounter = 0;
+  static Completer<void>? _initCompleter;
 
   @override
   final String id;
@@ -53,6 +54,23 @@ class RustWebSocketTransport implements Transport {
   @override
   Stream<Uint8List> get received => _receivedController.stream;
 
+  /// Ensure RustLib is initialized exactly once per process.
+  ///
+  /// Uses Completer pattern to handle concurrent initialization attempts.
+  static Future<void> _ensureRustInitialized() async {
+    if (_initCompleter == null) {
+      _initCompleter = Completer<void>();
+      try {
+        await RustLib.init();
+        _initCompleter!.complete();
+      } catch (e) {
+        _initCompleter = null; // Allow retry on failure
+        rethrow;
+      }
+    }
+    return _initCompleter!.future;
+  }
+
   @override
   Future<void> connect() async {
     if (_state == TransportState.connected) {
@@ -62,8 +80,8 @@ class RustWebSocketTransport implements Transport {
     _setState(TransportState.connecting);
 
     try {
-      // Ensure Rust FFI bridge is initialized
-      await RustLib.init();
+      // Ensure Rust FFI bridge is initialized (once per process)
+      await _ensureRustInitialized();
 
       final url = config.url;
       final headers = config.headers?.entries.map((e) => (e.key, e.value)).toList() ?? [];
