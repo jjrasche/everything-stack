@@ -119,3 +119,14 @@ secrets/
 # Test audio fixtures (don't commit large binary files)
 test_fixtures/audio/*.wav
 !test_fixtures/audio/.gitkeep
+
+# Rust FFI (Phase 2) - https://github.com/github/gitignore/blob/main/Rust.gitignore
+rust/debug/               # Cargo debug builds
+rust/target/              # Cargo build output (all profiles)
+rust/**/*.rs.bk           # Rustfmt backup files
+rust/*.pdb                # MSVC Windows builds
+rust/**/mutants.out*/     # Mutation testing output
+rust/Cargo.lock           # Dependency lockfile (library crate, ignore per Cargo docs)
+
+# Note: flutter_rust_bridge generated files (frb_generated.*, bridge/*.dart) ARE committed
+# per https://cjycode.com/flutter_rust_bridge/guides/how-to/gitignore - works immediately

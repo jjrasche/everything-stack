@@ -1,0 +1,12 @@
+# Flutter Rust Bridge Configuration (v2)
+# Generates Dart bindings from Rust FFI code
+
+# Rust root and input module
+rust_root: "."
+rust_input: "crate::api"
+
+# Dart output
+dart_output: "../lib/bridge/native.dart"
+
+# C output (for native builds)
+c_output: "bridge_generated.h"
