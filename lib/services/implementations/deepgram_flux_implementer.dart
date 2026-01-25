@@ -1,11 +1,16 @@
 /// # DeepgramFluxImplementer
 ///
-/// Real-time WebSocket STT using Deepgram Flux model.
+/// Real-time WebSocket STT using Deepgram Flux model via Nerve System.
 /// Streams audio chunks and publishes partial transcripts via EventBus.
 /// Handles turn detection (EndOfTurn, EagerEndOfTurn, TurnResumed).
 ///
+/// ## Platform Support
+/// - Web: Browser WebSocket (works)
+/// - macOS/iOS/Android/Linux: dart:io WebSocket (works)
+/// - Windows: Uses Nerve with browser WebSocket internally (works around dart:io bug)
+///
 /// ## Flow:
-/// 1. Connect to wss://api.deepgram.com/v2/listen
+/// 1. Connect via Nerve Channel (Transport → Protocol → Channel)
 /// 2. Load audio from AudioStorage
 /// 3. Stream chunks (8KB each, 10ms throttle)
 /// 4. Receive ListenV2TurnInfo → publish transcription_partial events
@@ -17,10 +22,7 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io' show WebSocket;
 import 'dart:typed_data';
-import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:web_socket_channel/io.dart';
 import 'package:get_it/get_it.dart';
 
 import 'stt_implementer.dart';
@@ -29,6 +31,7 @@ import '../types/word.dart';
 import '../audio_storage.dart';
 import '../event_bus.dart';
 import '../../core/event.dart';
+import '../../nerve/nerve.dart';
 
 class DeepgramFluxImplementer implements STTImplementer {
   final String apiKey;
@@ -36,10 +39,12 @@ class DeepgramFluxImplementer implements STTImplementer {
   final String baseUrl;
   final Duration timeout;
 
-  // WebSocket connection (reused across recognitions if possible)
-  WebSocketChannel? _wsChannel;
+  // Nerve components (reused across recognitions if possible)
+  Transport? _transport;
+  Protocol? _protocol;
+  Channel? _channel;
   Timer? _keepAliveTimer;
-  StreamSubscription? _wsSubscription;
+  StreamSubscription<Message>? _messageSubscription;
 
   // Current recognition state
   Completer<STTInvocationOutput>? _recognitionCompleter;
@@ -139,98 +144,125 @@ class DeepgramFluxImplementer implements STTImplementer {
     }
   }
 
-  /// Ensure WebSocket connection is established.
+  /// Ensure Nerve Channel connection is established.
   Future<void> _ensureWebSocketConnected({
     required double eotThreshold,
     double? eagerEotThreshold,
     int? eotTimeoutMs,
   }) async {
-    if (_wsChannel != null) {
+    if (_channel != null && _channel!.state == ChannelState.connected) {
       // Reuse existing connection
       return;
     }
 
     try {
-      // Build query string manually (avoid Uri parsing issues on Windows)
-      final queryParts = [
-        'model=$model',
-        'encoding=linear16',
-        'sample_rate=16000',
-        'punctuate=true',
-        'utterances=true',
-        'smart_format=true',
-        'interim_results=true',
-        'eot_threshold=${eotThreshold.toString()}',
-        'token=$apiKey',  // Deepgram accepts token in URL
-      ];
+      // Build query parameters
+      final queryParams = {
+        'model': model,
+        'encoding': 'linear16',
+        'sample_rate': '16000',
+        'punctuate': 'true',
+        'utterances': 'true',
+        'smart_format': 'true',
+        'interim_results': 'true',
+        'eot_threshold': eotThreshold.toString(),
+        'token': apiKey, // Deepgram accepts token in URL
+      };
 
       if (eagerEotThreshold != null) {
-        queryParts.add('eager_eot_threshold=${eagerEotThreshold.toString()}');
+        queryParams['eager_eot_threshold'] = eagerEotThreshold.toString();
       }
       if (eotTimeoutMs != null) {
-        queryParts.add('eot_timeout_ms=${eotTimeoutMs.toString()}');
+        queryParams['eot_timeout_ms'] = eotTimeoutMs.toString();
       }
 
-      // Build raw URL string - explicit port 443 to avoid Windows dart:io bug
-      final wsUrl = 'wss://api.deepgram.com:443/v2/listen?${queryParts.join('&')}';
+      // Create Transport config
+      final transportConfig = TransportConfig(
+        host: 'api.deepgram.com',
+        port: 443,
+        useTls: true,
+        path: '/v2/listen',
+        queryParams: queryParams,
+        connectTimeout: const Duration(seconds: 10),
+      );
 
-      print('🔗 [DeepgramFluxImplementer] Raw URL (redacted): wss://api.deepgram.com:443/v2/listen?model=$model&...');
+      print('🔗 [DeepgramFluxImplementer] Connecting via Nerve Channel...');
+      print('   URL: ${transportConfig.url.replaceAll(apiKey, '***')}');
 
-      // Use raw dart:io WebSocket
-      final ws = await WebSocket.connect(wsUrl);
-      _wsChannel = IOWebSocketChannel(ws);
+      // Create Nerve stack
+      final factory = createTransportFactory();
+      _transport = factory.create(transportConfig);
+      _protocol = WebSocketProtocol(transport: _transport!);
+      _channel = ChannelImpl(
+        config: ChannelConfig(
+          endpoint: transportConfig.url,
+          retryPolicy: RetryPolicy(
+            maxAttempts: 3,
+            initialDelay: const Duration(milliseconds: 500),
+          ),
+        ),
+        protocol: _protocol!,
+      );
+
+      // Connect
+      await _channel!.connect();
 
       // Setup message handler
       _setupMessageHandler();
 
       // Start keep-alive ping (every 5 seconds)
       _keepAliveTimer = Timer.periodic(const Duration(seconds: 5), (_) {
-        if (_wsChannel != null) {
-          _wsChannel!.sink.add(jsonEncode({'type': 'KeepAlive'}));
+        if (_channel?.state == ChannelState.connected) {
+          _channel!.sendText(jsonEncode({'type': 'KeepAlive'}));
         }
       });
 
-      print('✅ [DeepgramFluxImplementer] WebSocket connected: $model');
+      print('✅ [DeepgramFluxImplementer] Connected via Nerve Channel');
     } catch (e) {
-      throw DeepgramException('Failed to connect WebSocket: $e');
+      throw DeepgramException('Failed to connect: $e');
     }
   }
 
-  /// Setup WebSocket message handler.
+  /// Setup message handler for Nerve Channel.
   void _setupMessageHandler() {
-    _wsSubscription = _wsChannel!.stream.listen(
+    _messageSubscription = _channel!.messages.listen(
       (message) {
-        try {
-          final data = jsonDecode(message as String) as Map<String, dynamic>;
-          final type = data['type'] as String?;
-
-          if (type == 'Results') {
-            _handleListenV2TurnInfo(data);
-          } else if (type == 'Metadata') {
-            // Ignore metadata for now
-          } else if (type == 'UtteranceEnd') {
-            // This is EndOfTurn - finalize recognition
-            _handleEndOfTurn();
-          } else {
-            print('🔍 [DeepgramFluxImplementer] Unknown message type: $type');
-          }
-        } catch (e) {
-          print('⚠️ [DeepgramFluxImplementer] Error parsing message: $e');
+        if (message is TextMessage) {
+          _handleTextMessage(message.text);
         }
+        // Binary messages from Deepgram are not expected
       },
       onError: (error) {
-        print('❌ [DeepgramFluxImplementer] WebSocket error: $error');
+        print('❌ [DeepgramFluxImplementer] Channel error: $error');
         if (_recognitionCompleter != null && !_recognitionCompleter!.isCompleted) {
-          _recognitionCompleter!.completeError(DeepgramException('WebSocket error: $error'));
+          _recognitionCompleter!.completeError(DeepgramException('Channel error: $error'));
         }
       },
       onDone: () {
-        print('🔌 [DeepgramFluxImplementer] WebSocket closed');
-        _wsChannel = null;
-        _keepAliveTimer?.cancel();
+        print('🔌 [DeepgramFluxImplementer] Channel closed');
       },
-      cancelOnError: false,
     );
+  }
+
+  /// Handle incoming text message from Deepgram.
+  void _handleTextMessage(String text) {
+    try {
+      final data = jsonDecode(text) as Map<String, dynamic>;
+      final type = data['type'] as String?;
+
+      if (type == 'Results') {
+        _handleListenV2TurnInfo(data);
+      } else if (type == 'Metadata') {
+        // Ignore metadata for now
+      } else if (type == 'UtteranceEnd') {
+        // This is EndOfTurn - finalize recognition
+        _handleEndOfTurn();
+      } else {
+        print('🔍 [DeepgramFluxImplementer] Unknown message type: $type');
+      }
+    } catch (e) {
+      print('⚠️ [DeepgramFluxImplementer] Error parsing message: $e');
+    }
   }
 
   /// Handle ListenV2TurnInfo message (partial transcript).
@@ -305,26 +337,26 @@ class DeepgramFluxImplementer implements STTImplementer {
     ));
   }
 
-  /// Stream audio chunks to WebSocket (8KB chunks, 10ms throttle).
+  /// Stream audio chunks via Nerve Channel (8KB chunks, 10ms throttle).
   Future<void> _streamAudioChunks(Uint8List audioData) async {
     const chunkSize = 8192; // 8KB chunks
     const throttleMs = 10;   // 10ms between chunks
 
     for (int i = 0; i < audioData.length; i += chunkSize) {
       final end = (i + chunkSize < audioData.length) ? i + chunkSize : audioData.length;
-      final chunk = audioData.sublist(i, end);
+      final chunk = Uint8List.sublistView(audioData, i, end);
 
-      // Send chunk to WebSocket
-      _wsChannel!.sink.add(chunk);
+      // Send binary chunk via Channel
+      await _channel!.sendBinary(chunk);
 
-      // Throttle to prevent overwhelming WebSocket
+      // Throttle to prevent overwhelming
       if (end < audioData.length) {
         await Future.delayed(const Duration(milliseconds: throttleMs));
       }
     }
 
     // Send CloseStream message to signal end of audio
-    _wsChannel!.sink.add(jsonEncode({'type': 'CloseStream'}));
+    await _channel!.sendText(jsonEncode({'type': 'CloseStream'}));
     print('📤 [DeepgramFluxImplementer] Finished streaming ${audioData.length} bytes');
   }
 
@@ -351,9 +383,13 @@ class DeepgramFluxImplementer implements STTImplementer {
   /// Dispose resources.
   void dispose() {
     _keepAliveTimer?.cancel();
-    _wsSubscription?.cancel();
-    _wsChannel?.sink.close();
-    _wsChannel = null;
+    _messageSubscription?.cancel();
+    _channel?.dispose();
+    _protocol?.dispose();
+    _transport?.dispose();
+    _transport = null;
+    _protocol = null;
+    _channel = null;
   }
 }
 

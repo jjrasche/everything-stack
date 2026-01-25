@@ -44,6 +44,41 @@ When instructed to initialize this template for a new project:
    - Add entities to `lib/domain/`
    - Add scenarios to `test/scenarios/`
 
+## Flutter Hot Reload Workflow
+
+**CRITICAL: When making code changes during active development, use hot reload instead of rebuilding.**
+
+### When App is Running in Background Task
+
+If you started the app with `flutter run -d {platform}` in background mode:
+
+1. **Make code changes** using Edit tool
+2. **Apply hot reload** by sending `r` to the background bash task:
+   ```bash
+   # Send 'r' to trigger hot reload
+   echo 'r' > /proc/{task_id}/fd/0  # Linux/macOS
+   # Or use appropriate Windows method to send input to background process
+   ```
+3. **Verify reload succeeded** by checking task output for "Reloaded" message
+4. **Iterate rapidly** - hot reload takes ~2 seconds vs 2-4 minutes for full rebuild
+
+### Hot Reload Commands
+- `r` - Hot reload (UI/code changes, preserves state) - **USE THIS FOR MOST CHANGES**
+- `R` - Hot restart (full app restart, still faster than rebuild)
+- `q` - Quit app
+
+### When to Use Full Rebuild vs Hot Reload
+- **Hot reload (`r`)**: UI changes, business logic, service implementations
+- **Hot restart (`R`)**: Changing main(), bootstrap changes, dependency injection changes
+- **Full rebuild**: Adding dependencies, changing native code, platform channels
+
+### Testing Changes
+1. Make change → hot reload → test in app
+2. If change doesn't apply: hot restart
+3. If still broken: full rebuild needed
+
+**Never tell user to manually apply hot reload - you should do it for them.**
+
 ## Development Workflow
 
 Follow ASD workflow for all features:
@@ -218,16 +253,28 @@ final defaultTTS = TTSService.selectCompatibleImplementer(ttsImplementers);
 This section tracks active development, blockers, and work in progress. It changes daily. **When a feature is finished, delete it from this section.** If the work is architecturally significant, document the decision in DECISIONS.md instead.
 
 ### Active Development
+- **Tool Discoverability System** (NEXT PRIORITY) - Trainable component for LLM tool selection
+  - Currently: All tools registered in ToolRegistry, but no semantic filtering/discovery
+  - Needed: Component that learns which tools to surface based on user intent
+  - NOT hardcoded system prompt rules - trainable via invocation feedback
+  - Pattern: Semantic tool search + relevance scoring + invocation logging
 - Trainable component migration (9 components to mixin pattern, ~60% done)
 - ContextManager service integration
 - Invocation logging wired throughout pipeline
 
 ### Blockers
+- Tool discoverability: Design needed for semantic tool filtering (embedding-based? keyword-based? hybrid?)
 - ContextManager blueprint exists (.claude/ARCHITECTURE_TRANSITION.md), implementation pending
 - Plugin selection training: Invocation logs captured, feedback training loop not yet active
 - Multi-device sync: requires Supabase schema updates + conflict resolution
 
 ### What's Working
+- **Regulation Tracking Tool Domain** (✅ Complete, merged to main)
+  - 4 entities: Person, RegulationEntry, Commitment, CommitmentLog
+  - 4 tools: regulation.log_entry, regulation.log_commitment, commitment.create, commitment.list
+  - 8 adapters (ObjectBox + IndexedDB), 4 repositories, full E2E test
+  - Demonstrates event bus pattern: STT → LLM → ToolExecutor → Persistence
+  - Auto-creates Person entities, tracks dysregulation events and commitments
 - Event/Invocation/Turn entity model (typed, no dynamic fields)
 - Dual persistence (ObjectBox native, IndexedDB web) with identical schemas
 - Semantic search (HNSW, 8-12ms queries)
@@ -235,7 +282,7 @@ This section tracks active development, blockers, and work in progress. It chang
 - Trainable mixin pattern for feedback collection
 - Plugin pattern for execution fungibility (local vs remote, not yet trainable)
 - All 6 platforms (iOS, Android, macOS, Windows, Linux, Web)
-- 372 integration tests passing, E2E approach
+- 372+ integration tests passing, E2E approach
 
 ---
 

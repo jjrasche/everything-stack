@@ -3,6 +3,7 @@
 /// Displays the context bundle selected by ContextSelector.
 /// Shows conversation thread + semantic matches with scores.
 /// Long-press to provide feedback on context selection quality.
+/// Includes real-time similarity threshold slider for testing.
 
 import 'package:flutter/material.dart';
 import 'package:everything_stack_template/services/types/context_selector_types.dart';
@@ -10,7 +11,7 @@ import 'package:everything_stack_template/core/invocation.dart';
 import 'feedback_bottom_sheet.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class ContextPanel extends StatelessWidget {
+class ContextPanel extends StatefulWidget {
   final ContextBundle? contextBundle;
   final bool feedbackGiven;
   final Function(bool isPositive)? onFeedback;
@@ -23,7 +24,28 @@ class ContextPanel extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<ContextPanel> createState() => _ContextPanelState();
+}
+
+class _ContextPanelState extends State<ContextPanel> {
+  double _similarityThreshold = 0.0; // Start at 0.0 to show all
+
+  @override
   Widget build(BuildContext context) {
+    // Calculate total context count and filter semantic matches
+    final conversationCount = widget.contextBundle?.conversationThread.length ?? 0;
+    final allSemanticMatches = widget.contextBundle?.semanticContext ?? [];
+
+    // Filter semantic matches by similarity threshold
+    // Note: ContextBundle doesn't store similarity scores yet, so we'll use decay as proxy
+    final filteredSemanticMatches = allSemanticMatches.where((inv) {
+      final ageHours = DateTime.now().difference(inv.updatedAt).inHours.toDouble();
+      final score = _computeDecay(ageHours, 720.0); // semantic half-life
+      return score >= _similarityThreshold;
+    }).toList();
+
+    final totalCount = conversationCount + filteredSemanticMatches.length;
+
     return GestureDetector(
       onLongPress: () => _handleLongPress(context),
       child: Container(
@@ -40,32 +62,70 @@ class ContextPanel extends StatelessWidget {
                 color: Colors.blue.shade50,
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
               ),
-              child: Row(
+              child: Column(
                 children: [
-                  const Icon(Icons.psychology, size: 20),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'Context Selection',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                  Row(
+                    children: [
+                      const Icon(Icons.psychology, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Context Selection ($totalCount)',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const Spacer(),
+                      if (widget.feedbackGiven)
+                        Icon(Icons.check_circle, color: Colors.green.shade700, size: 20)
+                      else
+                        const Text(
+                          'Long-press to rate',
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                    ],
                   ),
-                  const Spacer(),
-                  if (feedbackGiven)
-                    Icon(Icons.check_circle, color: Colors.green.shade700, size: 20)
-                  else
-                    const Text(
-                      'Long-press to rate',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+
+                  // Similarity threshold slider
+                  if (widget.contextBundle != null && allSemanticMatches.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        const Text(
+                          'Similarity Filter:',
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                        Expanded(
+                          child: Slider(
+                            value: _similarityThreshold,
+                            min: 0.0,
+                            max: 1.0,
+                            divisions: 20,
+                            label: _similarityThreshold.toStringAsFixed(2),
+                            onChanged: (value) {
+                              setState(() {
+                                _similarityThreshold = value;
+                              });
+                            },
+                          ),
+                        ),
+                        Text(
+                          _similarityThreshold.toStringAsFixed(2),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
+                  ],
                 ],
               ),
             ),
 
             // Content
             Expanded(
-              child: contextBundle == null
+              child: widget.contextBundle == null
                   ? const Center(
                       child: Text(
                         'No context selected yet',
@@ -79,17 +139,17 @@ class ContextPanel extends StatelessWidget {
                         _buildSection(
                           context,
                           title: 'Recent Conversation',
-                          items: contextBundle!.conversationThread,
+                          items: widget.contextBundle!.conversationThread,
                           showDecay: true,
                         ),
 
                         const SizedBox(height: 24),
 
-                        // Semantic Matches
+                        // Semantic Matches (filtered by threshold)
                         _buildSection(
                           context,
                           title: 'Semantic Matches',
-                          items: contextBundle!.semanticContext,
+                          items: filteredSemanticMatches,
                           showDecay: false,
                         ),
                       ],
@@ -235,7 +295,7 @@ class ContextPanel extends StatelessWidget {
   }
 
   Future<void> _handleLongPress(BuildContext context) async {
-    if (contextBundle == null || feedbackGiven || onFeedback == null) {
+    if (widget.contextBundle == null || widget.feedbackGiven || widget.onFeedback == null) {
       return;
     }
 
@@ -246,7 +306,7 @@ class ContextPanel extends StatelessWidget {
     );
 
     if (result != null) {
-      onFeedback!(result);
+      widget.onFeedback!(result);
     }
   }
 }

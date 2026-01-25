@@ -4,15 +4,14 @@
 /// NO MOCKS - real network calls.
 ///
 /// Run with:
+///   flutter test integration_test/nerve/transport_integration_test.dart -d windows
 ///   flutter test integration_test/nerve/transport_integration_test.dart -d chrome
 ///
-/// Note: Only runs on web platform (BrowserWebSocketTransport uses dart:html)
-
-@TestOn('browser')
-library;
+/// Note: Tests both native (NativeWebSocketTransport) and web (BrowserWebSocketTransport)
 
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_test/flutter_test.dart';
@@ -42,13 +41,20 @@ const echoServerTls = localEchoTls;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Skip on native platforms - tests use browser WebSocket
-  if (!kIsWeb) {
-    test('skipped on native', () {
-      // Transport tests only run on web
-    });
-    return;
-  }
+  // Print which transport is being used
+  setUpAll(() {
+    if (kIsWeb) {
+      print('🌐 [Transport Tests] Running on WEB - using BrowserWebSocketTransport');
+    } else if (Platform.isWindows) {
+      print('🪟 [Transport Tests] Running on WINDOWS - using NativeWebSocketTransport');
+    } else if (Platform.isMacOS) {
+      print('🍎 [Transport Tests] Running on macOS - using NativeWebSocketTransport');
+    } else if (Platform.isLinux) {
+      print('🐧 [Transport Tests] Running on Linux - using NativeWebSocketTransport');
+    } else {
+      print('📱 [Transport Tests] Running on ${Platform.operatingSystem} - using NativeWebSocketTransport');
+    }
+  });
 
   group('Transport Integration Tests', () {
     late Transport transport;
@@ -239,6 +245,57 @@ void main() {
 
         // All messages should be received
         expect(received.length, 5);
+      });
+    });
+
+    group('TLS WebSocket (wss://)', () {
+      testWidgets('Windows wss:// bug check with Deepgram', (tester) async {
+        // Test with Deepgram's actual wss:// endpoint (no auth, will fail with 401, but should upgrade to WebSocket first)
+        final tlsTransport = factory.create(TransportConfig(
+          host: 'api.deepgram.com',
+          port: 443,
+          useTls: true,
+          path: '/v2/listen',
+          connectTimeout: Duration(seconds: 10),
+        ));
+
+        print('🔒 Testing wss://api.deepgram.com - Windows bug check');
+
+        try {
+          await tlsTransport.connect();
+
+          // If we get here on Windows, the bug is FIXED (or doesn't exist)
+          print('✅ TLS WebSocket WORKS on this platform (bug does not exist)');
+
+          await tlsTransport.close();
+          tlsTransport.dispose();
+        } catch (e) {
+          print('❌ TLS WebSocket failed: $e');
+
+          final errorStr = e.toString();
+
+          // Check for the specific Windows bug error message
+          if (errorStr.contains('was not upgraded to websocket') || errorStr.contains('HTTP status code: 400')) {
+            print('⚠️ CONFIRMED: Windows dart:io WebSocket bug');
+            print('   dart:io is sending HTTP request instead of WebSocket upgrade');
+            if (Platform.isWindows && !kIsWeb) {
+              // Expected on Windows - bug confirmed
+              expect(e, isA<ConnectionFailedException>());
+            } else {
+              // Should not happen on other platforms
+              fail('WebSocket upgrade failed on non-Windows platform: $e');
+            }
+          } else {
+            // Other error (network, timeout, etc) - acceptable
+            print('   (Different error - not the Windows bug)');
+            expect(e, anyOf(
+              isA<ConnectionFailedException>(),
+              isA<TimeoutException>(),
+            ));
+          }
+
+          tlsTransport.dispose();
+        }
       });
     });
 
