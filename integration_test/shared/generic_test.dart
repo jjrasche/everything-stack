@@ -21,6 +21,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'test_harness.dart';
 import '../timer_multiturn_logic.dart';
+import '../regulation_logic.dart';
 import '../audio_pipeline_logic.dart';
 import '../microphone_stt_logic.dart';
 import '../invocation_semantic_logic.dart';
@@ -36,6 +37,7 @@ void main() {
   // Aggregate all test configs
   final configs = {
     'timer': timerMultiturnTest,
+    'regulation': regulationTrackingTest,
     'audio': audioPipelineTest,
     'microphone_stt': microphoneSttTest,
     'semantic': invocationSemanticTest,
