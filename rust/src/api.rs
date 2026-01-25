@@ -64,3 +64,28 @@ pub fn websocket_dispose(handle: u64) {
 pub fn websocket_state(handle: u64) -> Result<String, String> {
     WebSocketConnection::state(handle)
 }
+
+/// Start receiving messages from WebSocket.
+///
+/// Spawns a background task that reads from the WebSocket and queues messages.
+/// Call `websocket_poll_receive()` to retrieve queued messages.
+///
+/// ## Important
+/// - Must be called after `websocket_connect()`
+/// - Can only be called once per connection
+pub fn websocket_start_receive(handle: u64) -> Result<(), String> {
+    WebSocketConnection::start_receive(handle)
+}
+
+/// Poll for received messages.
+///
+/// Returns all queued messages since last poll and clears the queue.
+///
+/// ## Arguments
+/// - `handle`: Connection handle
+///
+/// ## Returns
+/// - Vec of message byte arrays (may be empty if no messages)
+pub fn websocket_poll_receive(handle: u64) -> Result<Vec<Vec<u8>>, String> {
+    WebSocketConnection::poll_receive(handle)
+}

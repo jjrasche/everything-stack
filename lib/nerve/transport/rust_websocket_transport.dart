@@ -91,11 +91,13 @@ class RustWebSocketTransport implements Transport {
       // Call Rust FFI to connect
       _handle = await rust.websocketConnect(url: url, headers: headers);
 
-      // TODO: Setup receive stream (need to implement polling or callback)
-      // For now, just mark as connected
+      // TODO: Start receive stream when bindings are regenerated
+      // For now, receive stream is not implemented
+      // See rust/src/api.rs: websocket_start_receive() and websocket_poll_receive()
 
       _setState(TransportState.connected);
       print('✅ [RustWebSocketTransport] Connected (handle: $_handle)');
+      print('⚠️ [RustWebSocketTransport] Receive stream not yet wired (bindings pending)');
     } catch (e) {
       _setState(TransportState.disconnected);
       throw ConnectionFailedException('Failed to connect: $e', e);
@@ -123,6 +125,9 @@ class RustWebSocketTransport implements Transport {
 
     _setState(TransportState.disconnecting);
 
+    // Stop receive polling
+    _receivePoller?.cancel();
+
     if (_handle != null) {
       try {
         await rust.websocketClose(handle: _handle!);
@@ -139,6 +144,31 @@ class RustWebSocketTransport implements Transport {
       _state = newState;
       _stateController.add(newState);
     }
+  }
+
+  /// Start polling for received messages from Rust queue.
+  ///
+  /// Polls every 50ms for new messages and pushes them to the received stream.
+  ///
+  /// NOTE: Disabled until FFI bindings are regenerated with new receive functions.
+  void _startReceivePolling() {
+    // TODO: Re-enable when rust/build.rs properly triggers codegen
+    // _receivePoller?.cancel();
+    // _receivePoller = Timer.periodic(const Duration(milliseconds: 50), (_) async {
+    //   if (_state != TransportState.connected || _handle == null) {
+    //     _receivePoller?.cancel();
+    //     return;
+    //   }
+    //
+    //   try {
+    //     final messages = await RustLib.instance.api.crateApiWebsocketPollReceive(handle: _handle!);
+    //     for (final msg in messages) {
+    //       _receivedController.add(Uint8List.fromList(msg));
+    //     }
+    //   } catch (e) {
+    //     print('🦀 [RustWebSocketTransport] Poll error: $e');
+    //   }
+    // });
   }
 
   /// Clean up resources.

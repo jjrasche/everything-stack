@@ -36,11 +36,17 @@ pub struct WebSocketConfig {
     pub headers: Vec<(String, String)>,
 }
 
+use futures::stream::{SplitSink, SplitStream};
+use std::sync::Arc;
+use tokio::sync::Mutex;
+
 /// WebSocket connection state.
 pub enum Connection {
     Connecting,
     Connected {
-        ws: WebSocketStream<MaybeTlsStream<TcpStream>>,
+        sink: SplitSink<WebSocketStream<MaybeTlsStream<TcpStream>>, Message>,
+        stream: Option<SplitStream<WebSocketStream<MaybeTlsStream<TcpStream>>>>,
+        received_queue: Arc<Mutex<Vec<Vec<u8>>>>,
     },
     Disconnected,
 }
@@ -66,8 +72,19 @@ impl WebSocketConnection {
 
         match result {
             Ok(ws) => {
+                // Split WebSocket into sink (send) and stream (receive)
+                use futures::StreamExt;
+                let (sink, stream) = ws.split();
+
+                // Create queue for received messages
+                let received_queue = Arc::new(Mutex::new(Vec::new()));
+
                 // Update to connected state
-                CONNECTIONS.insert(handle, Connection::Connected { ws });
+                CONNECTIONS.insert(handle, Connection::Connected {
+                    sink,
+                    stream: Some(stream),
+                    received_queue,
+                });
                 Ok(handle)
             }
             Err(e) => {
@@ -98,11 +115,11 @@ impl WebSocketConnection {
             .ok_or_else(|| "Connection not found".to_string())?;
 
         match &mut *conn {
-            Connection::Connected { ws } => {
-                // Spawn send task
+            Connection::Connected { sink, .. } => {
+                // Send via sink
                 RUNTIME.block_on(async {
                     use futures::SinkExt;
-                    ws.send(Message::Binary(data.into()))
+                    sink.send(Message::Binary(data.into()))
                         .await
                         .map_err(|e| format!("Send failed: {}", e))
                 })
@@ -118,10 +135,10 @@ impl WebSocketConnection {
             .ok_or_else(|| "Connection not found".to_string())?;
 
         match &mut *conn {
-            Connection::Connected { ws } => {
+            Connection::Connected { sink, .. } => {
                 RUNTIME.block_on(async {
                     use futures::SinkExt;
-                    ws.close(None)
+                    sink.close()
                         .await
                         .map_err(|e| format!("Close failed: {}", e))
                 })?;
@@ -152,5 +169,89 @@ impl WebSocketConnection {
         };
 
         Ok(state_str.to_string())
+    }
+
+    /// Start receiving data from WebSocket and push to queue.
+    ///
+    /// Takes ownership of the receive stream and spawns a task that reads
+    /// messages and queues them for Dart to poll.
+    ///
+    /// ## Important
+    /// - Can only be called once per connection
+    /// - Subsequent calls will fail (stream already taken)
+    pub fn start_receive(handle: u64) -> Result<(), String> {
+        // Get connection and extract stream + queue
+        let mut conn = CONNECTIONS
+            .get_mut(&handle)
+            .ok_or_else(|| "Connection not found".to_string())?;
+
+        let (stream, queue) = match &mut *conn {
+            Connection::Connected { stream, received_queue, .. } => {
+                let s = stream.take().ok_or_else(|| "Receive already started".to_string())?;
+                let q = Arc::clone(received_queue);
+                (s, q)
+            }
+            _ => return Err("Not connected".to_string()),
+        };
+
+        // Drop the mutex guard before spawning task
+        drop(conn);
+
+        // Spawn receive task
+        RUNTIME.spawn(async move {
+            use futures::StreamExt;
+            let mut stream = stream;
+
+            while let Some(msg_result) = stream.next().await {
+                match msg_result {
+                    Ok(Message::Binary(data)) => {
+                        // Push to queue
+                        let mut q = queue.lock().await;
+                        q.push(data);
+                    }
+                    Ok(Message::Text(text)) => {
+                        // Convert text to bytes and push
+                        let mut q = queue.lock().await;
+                        q.push(text.into_bytes());
+                    }
+                    Ok(Message::Close(_)) => {
+                        println!("🦀 WebSocket closed by server");
+                        break;
+                    }
+                    Ok(_) => {} // Ping/Pong handled automatically
+                    Err(e) => {
+                        eprintln!("🦀 Receive error: {}", e);
+                        break;
+                    }
+                }
+            }
+
+            // Clean up connection when stream ends
+            CONNECTIONS.remove(&handle);
+        });
+
+        Ok(())
+    }
+
+    /// Poll for received messages.
+    ///
+    /// Returns all queued messages and clears the queue.
+    pub fn poll_receive(handle: u64) -> Result<Vec<Vec<u8>>, String> {
+        let conn = CONNECTIONS
+            .get(&handle)
+            .ok_or_else(|| "Connection not found".to_string())?;
+
+        match &*conn {
+            Connection::Connected { received_queue, .. } => {
+                // Get all messages from queue
+                let messages = RUNTIME.block_on(async {
+                    let mut q = received_queue.lock().await;
+                    let messages = q.drain(..).collect();
+                    messages
+                });
+                Ok(messages)
+            }
+            _ => Err("Not connected".to_string()),
+        }
     }
 }
