@@ -16,6 +16,10 @@ import 'package:everything_stack_template/core/invocation_repository.dart';
 import 'package:everything_stack_template/core/invocation.dart';
 import 'package:everything_stack_template/core/entity_repository.dart';
 import 'package:everything_stack_template/tools/task/repositories/task_repository.dart';
+import 'package:everything_stack_template/tools/regulation/repositories/person_repository.dart';
+import 'package:everything_stack_template/tools/regulation/repositories/regulation_entry_repository.dart';
+import 'package:everything_stack_template/tools/regulation/repositories/commitment_repository.dart';
+import 'package:everything_stack_template/tools/regulation/repositories/commitment_log_repository.dart';
 import 'package:everything_stack_template/core/enrichment_queue_repository.dart';
 import 'package:everything_stack_template/services/enrichment/enrichment_runner.dart';
 import 'package:everything_stack_template/services/chunking_service.dart';
@@ -42,6 +46,14 @@ class TestContext {
         _repos[type] = getIt<InvocationRepository<Invocation>>();
       } else if (type == TaskRepository) {
         _repos[type] = getIt<TaskRepository>();
+      } else if (type == PersonRepository) {
+        _repos[type] = getIt<PersonRepository>();
+      } else if (type == RegulationEntryRepository) {
+        _repos[type] = getIt<RegulationEntryRepository>();
+      } else if (type == CommitmentRepository) {
+        _repos[type] = getIt<CommitmentRepository>();
+      } else if (type == CommitmentLogRepository) {
+        _repos[type] = getIt<CommitmentLogRepository>();
       } else {
         throw ArgumentError('Unknown repo type: $type');
       }
@@ -55,6 +67,10 @@ class TestContext {
   TimerRepository get timerRepo => get<TimerRepository>();
   InvocationRepository<Invocation> get invocationRepo => get<InvocationRepository<Invocation>>();
   TaskRepository get taskRepo => get<TaskRepository>();
+  PersonRepository get personRepo => get<PersonRepository>();
+  RegulationEntryRepository get regulationEntryRepo => get<RegulationEntryRepository>();
+  CommitmentRepository get commitmentRepo => get<CommitmentRepository>();
+  CommitmentLogRepository get commitmentLogRepo => get<CommitmentLogRepository>();
 
   // Enrichment queue related services (always available from GetIt)
   EnrichmentQueueRepository get enrichmentQueueRepo => GetIt.instance<EnrichmentQueueRepository>();

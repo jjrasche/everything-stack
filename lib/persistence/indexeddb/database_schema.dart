@@ -52,6 +52,10 @@ class ObjectStores {
   static const String embeddingTasks = 'embedding_tasks';
   static const String enrichmentQueue = 'enrichment_queue';
   static const String trials = 'trials';
+  static const String persons = 'persons';
+  static const String regulationEntries = 'regulation_entries';
+  static const String commitments = 'commitments';
+  static const String commitmentLogs = 'commitment_logs';
 }
 
 /// Index names for each object store
@@ -116,6 +120,26 @@ class Indexes {
   static const String trialsUuid = 'uuid';
   static const String trialsSyncStatus = 'dbSyncStatus';
   static const String trialsComponentType = 'componentType';
+
+  // Person indexes
+  static const String personsId = 'id';
+  static const String personsUuid = 'uuid';
+  static const String personsSyncStatus = 'dbSyncStatus';
+
+  // RegulationEntry indexes
+  static const String regulationEntriesId = 'id';
+  static const String regulationEntriesUuid = 'uuid';
+  static const String regulationEntriesSyncStatus = 'dbSyncStatus';
+
+  // Commitment indexes
+  static const String commitmentsId = 'id';
+  static const String commitmentsUuid = 'uuid';
+  static const String commitmentsSyncStatus = 'dbSyncStatus';
+
+  // CommitmentLog indexes
+  static const String commitmentLogsId = 'id';
+  static const String commitmentLogsUuid = 'uuid';
+  static const String commitmentLogsSyncStatus = 'dbSyncStatus';
 }
 
 /// Schema definition for notes object store
@@ -438,6 +462,106 @@ class TrialsStoreSchema {
   ];
 }
 
+/// Schema definition for persons object store
+class PersonsStoreSchema {
+  static const String storeName = ObjectStores.persons;
+  static const String keyPath = 'uuid';
+  static const bool autoIncrement = false;
+
+  static const List<IndexDefinition> indexes = [
+    IndexDefinition(
+      name: Indexes.personsId,
+      keyPath: 'id',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.personsUuid,
+      keyPath: 'uuid',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.personsSyncStatus,
+      keyPath: 'dbSyncStatus',
+      unique: false,
+    ),
+  ];
+}
+
+/// Schema definition for regulation_entries object store
+class RegulationEntriesStoreSchema {
+  static const String storeName = ObjectStores.regulationEntries;
+  static const String keyPath = 'uuid';
+  static const bool autoIncrement = false;
+
+  static const List<IndexDefinition> indexes = [
+    IndexDefinition(
+      name: Indexes.regulationEntriesId,
+      keyPath: 'id',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.regulationEntriesUuid,
+      keyPath: 'uuid',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.regulationEntriesSyncStatus,
+      keyPath: 'dbSyncStatus',
+      unique: false,
+    ),
+  ];
+}
+
+/// Schema definition for commitments object store
+class CommitmentsStoreSchema {
+  static const String storeName = ObjectStores.commitments;
+  static const String keyPath = 'uuid';
+  static const bool autoIncrement = false;
+
+  static const List<IndexDefinition> indexes = [
+    IndexDefinition(
+      name: Indexes.commitmentsId,
+      keyPath: 'id',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.commitmentsUuid,
+      keyPath: 'uuid',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.commitmentsSyncStatus,
+      keyPath: 'dbSyncStatus',
+      unique: false,
+    ),
+  ];
+}
+
+/// Schema definition for commitment_logs object store
+class CommitmentLogsStoreSchema {
+  static const String storeName = ObjectStores.commitmentLogs;
+  static const String keyPath = 'uuid';
+  static const bool autoIncrement = false;
+
+  static const List<IndexDefinition> indexes = [
+    IndexDefinition(
+      name: Indexes.commitmentLogsId,
+      keyPath: 'id',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.commitmentLogsUuid,
+      keyPath: 'uuid',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.commitmentLogsSyncStatus,
+      keyPath: 'dbSyncStatus',
+      unique: false,
+    ),
+  ];
+}
+
 /// Schema definition for HNSW index metadata store
 class HnswIndexStoreSchema {
   static const String storeName = ObjectStores.hnswIndex;
@@ -542,6 +666,30 @@ class DatabaseSchema {
       keyPath: TrialsStoreSchema.keyPath,
       autoIncrement: TrialsStoreSchema.autoIncrement,
       indexes: TrialsStoreSchema.indexes,
+    ),
+    ObjectStoreDefinition(
+      name: PersonsStoreSchema.storeName,
+      keyPath: PersonsStoreSchema.keyPath,
+      autoIncrement: PersonsStoreSchema.autoIncrement,
+      indexes: PersonsStoreSchema.indexes,
+    ),
+    ObjectStoreDefinition(
+      name: RegulationEntriesStoreSchema.storeName,
+      keyPath: RegulationEntriesStoreSchema.keyPath,
+      autoIncrement: RegulationEntriesStoreSchema.autoIncrement,
+      indexes: RegulationEntriesStoreSchema.indexes,
+    ),
+    ObjectStoreDefinition(
+      name: CommitmentsStoreSchema.storeName,
+      keyPath: CommitmentsStoreSchema.keyPath,
+      autoIncrement: CommitmentsStoreSchema.autoIncrement,
+      indexes: CommitmentsStoreSchema.indexes,
+    ),
+    ObjectStoreDefinition(
+      name: CommitmentLogsStoreSchema.storeName,
+      keyPath: CommitmentLogsStoreSchema.keyPath,
+      autoIncrement: CommitmentLogsStoreSchema.autoIncrement,
+      indexes: CommitmentLogsStoreSchema.indexes,
     ),
   ];
 }

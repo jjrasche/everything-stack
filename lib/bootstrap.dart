@@ -71,9 +71,14 @@ import 'services/hnsw_index.dart';
 import 'core/persistence/persistence_adapter.dart';
 import 'tools/task/repositories/task_repository.dart';
 import 'tools/timer/repositories/timer_repository.dart';
+import 'tools/regulation/repositories/person_repository.dart';
+import 'tools/regulation/repositories/regulation_entry_repository.dart';
+import 'tools/regulation/repositories/commitment_repository.dart';
+import 'tools/regulation/repositories/commitment_log_repository.dart';
 import 'core/event_repository.dart';
 import 'tools/task/task_tools.dart';
 import 'tools/timer/timer_tools.dart';
+import 'tools/regulation/regulation_tools.dart';
 import 'core/invocation.dart';
 import 'core/invocation_repository.dart';
 import 'core/entity_repository.dart';
@@ -812,6 +817,30 @@ Future<void> setupServiceLocator() async {
     // Register timer tools with registry
     registerTimerTools(getIt<ToolRegistry>(), timerRepo);
     debugPrint('✅ [setupServiceLocator] Timer tools registered (timer.set, timer.cancel, timer.list)');
+
+    // ========== Regulation Repositories (Owns adapter selection internally) ==========
+
+    final personRepo = PersonRepository();
+    getIt.registerSingleton<PersonRepository>(personRepo);
+
+    final regulationEntryRepo = RegulationEntryRepository();
+    getIt.registerSingleton<RegulationEntryRepository>(regulationEntryRepo);
+
+    final commitmentRepo = CommitmentRepository();
+    getIt.registerSingleton<CommitmentRepository>(commitmentRepo);
+
+    final commitmentLogRepo = CommitmentLogRepository();
+    getIt.registerSingleton<CommitmentLogRepository>(commitmentLogRepo);
+
+    // Register regulation tools with registry
+    registerRegulationTools(
+      getIt<ToolRegistry>(),
+      personRepo,
+      regulationEntryRepo,
+      commitmentRepo,
+      commitmentLogRepo,
+    );
+    debugPrint('✅ [setupServiceLocator] Regulation tools registered (regulation.log_entry, regulation.log_commitment, commitment.create, commitment.list)');
 
     // ========== Event Bus (Pub/sub with persistence) ==========
     debugPrint('🔍 [setupServiceLocator] Initializing EventBus...');
