@@ -51,3 +51,26 @@ Future<void> websocketDispose({required BigInt handle}) =>
 /// Get connection state as string (for debugging).
 Future<String> websocketState({required BigInt handle}) =>
     RustLib.instance.api.crateApiWebsocketState(handle: handle);
+
+/// Start receiving messages from WebSocket.
+///
+/// Spawns a background task that reads from the WebSocket and queues messages.
+/// Call `websocket_poll_receive()` to retrieve queued messages.
+///
+/// ## Important
+/// - Must be called after `websocket_connect()`
+/// - Can only be called once per connection
+Future<void> websocketStartReceive({required BigInt handle}) =>
+    RustLib.instance.api.crateApiWebsocketStartReceive(handle: handle);
+
+/// Poll for received messages.
+///
+/// Returns all queued messages since last poll and clears the queue.
+///
+/// ## Arguments
+/// - `handle`: Connection handle
+///
+/// ## Returns
+/// - Vec of message byte arrays (may be empty if no messages)
+Future<List<Uint8List>> websocketPollReceive({required BigInt handle}) =>
+    RustLib.instance.api.crateApiWebsocketPollReceive(handle: handle);

@@ -28,6 +28,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_web.dart';
 
                   @protected String dco_decode_String(dynamic raw);
 
+@protected List<Uint8List> dco_decode_list_list_prim_u_8_strict(dynamic raw);
+
 @protected List<int> dco_decode_list_prim_u_8_loose(dynamic raw);
 
 @protected Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
@@ -43,6 +45,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_web.dart';
 @protected void dco_decode_unit(dynamic raw);
 
 @protected String sse_decode_String(SseDeserializer deserializer);
+
+@protected List<Uint8List> sse_decode_list_list_prim_u_8_strict(SseDeserializer deserializer);
 
 @protected List<int> sse_decode_list_prim_u_8_loose(SseDeserializer deserializer);
 
@@ -63,6 +67,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_web.dart';
 @protected bool sse_decode_bool(SseDeserializer deserializer);
 
 @protected void sse_encode_String(String self, SseSerializer serializer);
+
+@protected void sse_encode_list_list_prim_u_8_strict(List<Uint8List> self, SseSerializer serializer);
 
 @protected void sse_encode_list_prim_u_8_loose(List<int> self, SseSerializer serializer);
 

@@ -207,12 +207,12 @@ impl WebSocketConnection {
                     Ok(Message::Binary(data)) => {
                         // Push to queue
                         let mut q = queue.lock().await;
-                        q.push(data);
+                        q.push(data.to_vec());
                     }
                     Ok(Message::Text(text)) => {
                         // Convert text to bytes and push
                         let mut q = queue.lock().await;
-                        q.push(text.into_bytes());
+                        q.push(text.as_bytes().to_vec());
                     }
                     Ok(Message::Close(_)) => {
                         println!("🦀 WebSocket closed by server");

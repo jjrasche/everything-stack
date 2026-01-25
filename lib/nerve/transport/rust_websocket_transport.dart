@@ -91,13 +91,20 @@ class RustWebSocketTransport implements Transport {
       // Call Rust FFI to connect
       _handle = await rust.websocketConnect(url: url, headers: headers);
 
-      // TODO: Start receive stream when bindings are regenerated
-      // For now, receive stream is not implemented
-      // See rust/src/api.rs: websocket_start_receive() and websocket_poll_receive()
+      // Start receive stream - call Rust to begin listening
+      try {
+        await rust.websocketStartReceive(handle: _handle!);
+        print('🦀 [RustWebSocketTransport] Receive stream started');
+
+        // Start polling for received messages
+        _startReceivePolling();
+      } catch (e) {
+        print('⚠️ [RustWebSocketTransport] Could not start receive: $e');
+        // Continue anyway - send will still work
+      }
 
       _setState(TransportState.connected);
       print('✅ [RustWebSocketTransport] Connected (handle: $_handle)');
-      print('⚠️ [RustWebSocketTransport] Receive stream not yet wired (bindings pending)');
     } catch (e) {
       _setState(TransportState.disconnected);
       throw ConnectionFailedException('Failed to connect: $e', e);
@@ -149,26 +156,24 @@ class RustWebSocketTransport implements Transport {
   /// Start polling for received messages from Rust queue.
   ///
   /// Polls every 50ms for new messages and pushes them to the received stream.
-  ///
-  /// NOTE: Disabled until FFI bindings are regenerated with new receive functions.
   void _startReceivePolling() {
-    // TODO: Re-enable when rust/build.rs properly triggers codegen
-    // _receivePoller?.cancel();
-    // _receivePoller = Timer.periodic(const Duration(milliseconds: 50), (_) async {
-    //   if (_state != TransportState.connected || _handle == null) {
-    //     _receivePoller?.cancel();
-    //     return;
-    //   }
-    //
-    //   try {
-    //     final messages = await RustLib.instance.api.crateApiWebsocketPollReceive(handle: _handle!);
-    //     for (final msg in messages) {
-    //       _receivedController.add(Uint8List.fromList(msg));
-    //     }
-    //   } catch (e) {
-    //     print('🦀 [RustWebSocketTransport] Poll error: $e');
-    //   }
-    // });
+    _receivePoller?.cancel();
+    _receivePoller = Timer.periodic(const Duration(milliseconds: 50), (_) async {
+      if (_state != TransportState.connected || _handle == null) {
+        _receivePoller?.cancel();
+        return;
+      }
+
+      try {
+        final messages = await rust.websocketPollReceive(handle: _handle!);
+        for (final msg in messages) {
+          _receivedController.add(msg);
+        }
+      } catch (e) {
+        // Ignore poll errors (connection might be closing)
+        print('🦀 [RustWebSocketTransport] Poll error: $e');
+      }
+    });
   }
 
   /// Clean up resources.
