@@ -11,7 +11,8 @@ crate-type = ["cdylib", "staticlib"]
 flutter_rust_bridge = "=2.11.1"
 
 # WebSocket implementation (replaces dart:io on native)
-tokio-tungstenite = { version = "0.26", features = ["native-tls"] }
+# Use rustls-tls-webpki-roots for better cross-platform support (Android, iOS, etc.)
+tokio-tungstenite = { version = "0.26", features = ["rustls-tls-webpki-roots"] }
 tokio = { version = "1.43", features = ["full"] }
 
 # HTTP types for WebSocket headers

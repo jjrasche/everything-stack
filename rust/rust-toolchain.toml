@@ -1,0 +1,24 @@
+[toolchain]
+channel = "1.83.0"
+targets = [
+  # Android targets
+  "aarch64-linux-android",    # ARM64 Android
+  "armv7-linux-androideabi",  # ARM32 Android
+  "i686-linux-android",       # x86 Android
+  "x86_64-linux-android",     # x86_64 Android
+
+  # iOS targets
+  "aarch64-apple-ios",        # iOS ARM64
+  "aarch64-apple-ios-sim",    # iOS Simulator ARM64
+  "x86_64-apple-ios",         # iOS Simulator x86_64
+
+  # macOS targets
+  "aarch64-apple-darwin",     # macOS ARM64 (M1/M2/M3)
+  "x86_64-apple-darwin",      # macOS x86_64 (Intel)
+
+  # Windows targets
+  "x86_64-pc-windows-msvc",   # Windows x86_64
+
+  # Linux targets
+  "x86_64-unknown-linux-gnu", # Linux x86_64
+]

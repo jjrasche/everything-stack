@@ -81,6 +81,10 @@ dev_dependencies:
   mockito: ^5.4.0
   pubspec_checker: ^1.3.0
 
+  # Native assets build (for Rust FFI)
+  native_assets_cli: ^0.9.0
+  native_toolchain_rust: ^1.0.3
+
 flutter:
   uses-material-design: true
   assets:
