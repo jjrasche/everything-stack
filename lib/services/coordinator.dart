@@ -36,7 +36,6 @@ import 'tts_service.dart';
 import 'tool_executor.dart' show ToolExecutor, ToolCall;
 import 'event_bus.dart';
 import 'context_selector.dart';
-import 'types/context_selector_types.dart';
 import 'types/llm_types.dart';
 
 /// Result of coordinator orchestration
@@ -123,51 +122,55 @@ class Coordinator {
     print('\n🔧 [Coordinator.initialize] Wiring event listener');
     _transcriptionSubscription = eventBus.subscribe().listen(
       (event) async {
-        // Filter for transcription_complete events
-        if (event.eventType != 'transcription_complete') {
+        // Handle start_of_turn events (barge-in detection)
+        if (event.eventType == 'start_of_turn') {
+          await _handleStartOfTurn(event);
           return;
         }
 
-        try {
-          // Extract semantic input from event
-          final inputText = event.toInputString();
+        // Handle transcription_complete events (orchestration trigger)
+        if (event.eventType == 'transcription_complete') {
+          try {
+            // Extract semantic input from event
+            final inputText = event.toInputString();
 
-          print('\n📡 [Coordinator] Heard transcription_complete: "$inputText"');
-          print('🚀 [Coordinator] Starting orchestration from event...');
+            print('\n📡 [Coordinator] Heard transcription_complete: "$inputText"');
+            print('🚀 [Coordinator] Starting orchestration from event...');
 
-          final result = await _orchestrate(
-            eventId: event.uuid,
-            utterance: inputText,
-          );
-
-          print('✅ [Coordinator] Orchestration complete: ${result.success ? "SUCCESS" : "FAILED"}');
-          if (!result.success) {
-            print('⚠️ Error: ${result.errorMessage}');
-          }
-
-          // Publish orchestration_complete event for UI to update state (text appears FIRST)
-          await eventBus.publish(Event(
-            eventType: 'orchestration_complete',
-            correlationId: event.correlationId,  // Preserve correlation chain
-            source: 'coordinator',
-            payloadJson: jsonEncode({
-              'success': result.success,
-              'response': result.finalResponse,
-              'errorMessage': result.errorMessage,
-            }),
-          ));
-          print('📡 [Coordinator] Published orchestration_complete event');
-
-          // THEN synthesize TTS (user sees text before hearing audio - better UX)
-          if (result.success && result.finalResponse.isNotEmpty) {
-            print('🔊 Synthesizing response to speech...');
-            await ttsService.synthesize(
-              text: result.finalResponse,
-              eventId: event.correlationId,
+            final result = await _orchestrate(
+              eventId: event.uuid,
+              utterance: inputText,
             );
+
+            print('✅ [Coordinator] Orchestration complete: ${result.success ? "SUCCESS" : "FAILED"}');
+            if (!result.success) {
+              print('⚠️ Error: ${result.errorMessage}');
+            }
+
+            // Publish orchestration_complete event for UI to update state (text appears FIRST)
+            await eventBus.publish(Event(
+              eventType: 'orchestration_complete',
+              correlationId: event.correlationId,  // Preserve correlation chain
+              source: 'coordinator',
+              payloadJson: jsonEncode({
+                'success': result.success,
+                'response': result.finalResponse,
+                'errorMessage': result.errorMessage,
+              }),
+            ));
+            print('📡 [Coordinator] Published orchestration_complete event');
+
+            // THEN synthesize TTS (user sees text before hearing audio - better UX)
+            if (result.success && result.finalResponse.isNotEmpty) {
+              print('🔊 Synthesizing response to speech...');
+              await ttsService.synthesize(
+                text: result.finalResponse,
+                eventId: event.correlationId,
+              );
+            }
+          } catch (e) {
+            print('❌ [Coordinator] Failed to orchestrate from event: $e');
           }
-        } catch (e) {
-          print('❌ [Coordinator] Failed to orchestrate from event: $e');
         }
       },
       onError: (error) {
@@ -182,6 +185,28 @@ class Coordinator {
     print('🛑 [Coordinator.dispose] Cleaning up event listener');
     _transcriptionSubscription?.cancel();
     print('✅ [Coordinator.dispose] Disposed');
+  }
+
+  /// Handle start_of_turn event (barge-in detection)
+  ///
+  /// When user starts speaking while TTS is playing, stop TTS immediately.
+  /// This enables natural conversation flow where user can interrupt the assistant.
+  ///
+  /// Pure event routing - no trainable parameters, no learning surface.
+  Future<void> _handleStartOfTurn(Event event) async {
+    // Check if TTS is currently playing
+    if (!ttsService.isPlaying) {
+      // TTS not playing, nothing to do
+      return;
+    }
+
+    print('⚠️ [Coordinator] BARGE-IN detected - user started speaking while TTS playing');
+    print('🛑 [Coordinator] Stopping TTS immediately');
+
+    // Stop TTS playback
+    await ttsService.stop();
+
+    print('✅ [Coordinator] Barge-in handled, TTS stopped');
   }
 
   /// Orchestrate voice assistant pipeline
@@ -217,6 +242,8 @@ class Coordinator {
       print('✅ Messages built: ${messages.length} messages');
 
       print('\n[3/4] Getting available tools...');
+      // TODO: Integrate ToolSelector once semantic indexing is implemented
+      // Currently ToolSelector is a stub that returns all tools anyway
       final tools = toolExecutor.toolRegistry
           .getAllTools()
           .map((t) => LLMTool(

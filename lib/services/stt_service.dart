@@ -16,6 +16,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import '../core/invocation.dart';
 import '../core/invocation_repository.dart';
@@ -52,12 +53,82 @@ class STTService with Trainable<STTAdaptationData> {
     }
   }
 
-  /// Recognize audio using adaptation-aware parameters.
+  /// Start live recognition by streaming audio chunks as they arrive.
+  ///
+  /// This is for real-time streaming mode where audio is sent to the STT service
+  /// as it's being recorded, not after recording completes.
+  ///
+  /// Flow:
+  /// 1. Select implementer (specified or default)
+  /// 2. Load adaptation state
+  /// 3. Call implementer's startLiveRecognition() with audio stream
+  /// 4. Implementer connects to API and streams chunks in real-time
+  /// 5. When EndOfTurn detected → auto-stop (handled by voice screen listening to events)
+  /// 6. Log invocation for training feedback
+  /// 7. Return final transcription
+  ///
+  /// NOTE: Only DeepgramFluxImplementer currently supports live streaming.
+  /// Other implementers will throw UnsupportedError.
+  Future<String> startLiveRecognition({
+    required Stream<Uint8List> audioStream,
+    required String eventId,
+    String? implementerName,
+    String? userId,
+  }) async {
+    // 1. Get implementer (specified or default)
+    final implementer = _implementers[implementerName ?? _defaultImplementer]!;
+
+    // 2. Read adaptation state for this implementer + user
+    final state = await _getAdaptationState(implementer.implementerName, userId);
+
+    // 3. Call implementer with live audio stream and adaptation parameters
+    final output = await implementer.startLiveRecognition(
+      audioStream: audioStream,
+      eventId: eventId,
+      eotThreshold: state.eotThreshold,
+      eagerEotThreshold: state.eagerEotThreshold,
+      eotTimeoutMs: state.eotTimeoutMs,
+      enablePartialTranscripts: state.enablePartialTranscripts,
+      enableEagerProcessing: state.enableEagerProcessing,
+    );
+
+    // 4. Log invocation for training feedback
+    await recordInvocation(
+      eventId,
+      Invocation(
+        eventId: eventId,
+        componentType: ComponentType.stt,
+        implementer: implementer.implementerName,
+        success: output.confidence >= state.confidenceThreshold,
+        confidence: output.confidence,
+        input: STTInvocationInput(
+          audioId: 'live_stream', // No saved audioId for live streaming
+          durationSeconds: 0.0,    // Duration unknown until EndOfTurn
+        ).toJson(),
+        output: output.toJson(),
+      ),
+    );
+
+    // 5. Publish transcription_complete event (STTService owns this domain event)
+    final eventBus = GetIt.instance<EventBus>();
+    await eventBus.publish(Event(
+      eventType: 'transcription_complete',
+      correlationId: eventId,
+      source: 'stt',
+      payloadJson: jsonEncode({'transcript': output.transcription}),
+    ));
+    debugPrint('   📡 Published transcription_complete event');
+
+    // 6. Return transcription
+    return output.transcription;
+  }
+
+  /// Recognize audio using adaptation-aware parameters (batch mode).
   ///
   /// Flow:
   /// 1. Select implementer (specified or default)
   /// 2. Load adaptation state (confidence threshold, feedback count)
-  /// 3. Call implementer with audio
+  /// 3. Call implementer with saved audio
   /// 4. Log invocation for training feedback
   /// 5. Return transcription
   Future<String> recognize({

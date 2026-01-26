@@ -36,8 +36,56 @@ System observes its own performance, gets feedback, adapts. Not randomly. Empiri
 
 ### ❌ Not Started
 - **Remote execution:** Service plugin selection not yet trainable
-- **Multi-device sync:** v2 roadmap
+- **Multi-device sync:** Supabase integration pending (v2 roadmap)
 - **Team collaboration:** v3 roadmap
+
+---
+
+## Pre-Production Checklist (Daily Use Readiness)
+
+Before deploying for daily multi-device use, complete these items:
+
+### Phase 3: Live Streaming STT (IN PROGRESS)
+- [ ] Implement `startLiveRecognition()` method in STTService
+- [ ] Stream audio chunks to Deepgram as they arrive (not buffered)
+- [ ] Publish `end_of_turn` events to EventBus
+- [ ] Voice screen listens for EndOfTurn → auto-stops recording
+- [ ] Test: Speak → auto-stop → transcription (no manual STOP button)
+
+### Multi-Device Sync
+- [ ] Supabase schema setup (Invocation, Event, Person, RegulationEntry, Commitment)
+- [ ] Sync adapter implementation (ObjectBox ↔ Supabase)
+- [ ] Conflict resolution strategy (last-write-wins or operational transform)
+- [ ] Test: Create data on Android → syncs to Web/Windows
+- [ ] Test: Offline changes → sync when reconnected
+
+### Multi-Turn Conversations
+- [ ] Verify conversation context flows through multiple turns
+- [ ] Test: Ask question → response → follow-up → context maintained
+- [ ] Integration test for 3+ turn conversation
+
+### Regulation Tool Testing
+- [ ] Test `regulation.log_entry` tool (dysregulation events)
+- [ ] Test `regulation.log_commitment` tool (create commitments)
+- [ ] Test `commitment.create` and `commitment.list` tools
+- [ ] Verify Person entity auto-creation
+- [ ] Test: LLM can use regulation tools in conversation
+
+### CI/CD & Deployment
+- [ ] GitHub Actions workflow for Android APK build
+- [ ] Firebase App Distribution setup (test group)
+- [ ] Automated deployment on push to main
+- [ ] Environment secrets configured (GROQ_API_KEY, DEEPGRAM_API_KEY)
+- [ ] Test: Push to main → builds → deploys to App Distribution
+- [ ] Install from App Distribution on physical Android device
+
+### Production Readiness
+- [ ] Error logging (Sentry or Firebase Crashlytics)
+- [ ] Analytics (Firebase Analytics or PostHog)
+- [ ] API key management (not hardcoded in builds)
+- [ ] Privacy policy + terms of service (required for Play Store)
+
+**Current Priority:** Phase 3 (Live Streaming STT) to enable auto-stop UX.
 
 ---
 

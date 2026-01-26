@@ -17,6 +17,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:get_it/get_it.dart';
 
 import '../core/invocation.dart';
 import '../core/invocation_repository.dart';
@@ -26,8 +27,11 @@ import '../core/feedback_repository.dart';
 import '../core/trainable.dart';
 import '../core/component_types.dart';
 import '../core/platform_detector.dart';
+import '../core/event.dart';
 import './implementations/tts_implementer.dart';
+import './implementations/flutter_tts_implementer.dart';
 import './types/tts_types.dart';
+import './event_bus.dart';
 
 class TTSService with Trainable<TTSAdaptationData> {
   final Map<String, TTSImplementer> _implementers;
@@ -35,6 +39,10 @@ class TTSService with Trainable<TTSAdaptationData> {
   final InvocationRepository invocationRepo;
   final AdaptationStateRepository adaptationStateRepo;
   final FeedbackRepository feedbackRepo;
+
+  // Track playback state for barge-in
+  bool _isPlaying = false;
+  String? _currentEventId;
 
   TTSService({
     required Map<String, TTSImplementer> implementers,
@@ -80,7 +88,21 @@ class TTSService with Trainable<TTSAdaptationData> {
     // 2. Read adaptation state for this implementer + user
     final state = await _getAdaptationState(implementer.implementerName, userId);
 
-    // 3. Call implementer with text
+    // 3. Track playback state
+    _isPlaying = true;
+    _currentEventId = eventId;
+
+    // 4. Publish tts_started event (for barge-in detection)
+    final eventBus = GetIt.instance<EventBus>();
+    await eventBus.publish(Event(
+      eventType: 'tts_started',
+      correlationId: eventId,
+      source: 'tts',
+      payloadJson: jsonEncode({'text': text}),
+    ));
+    debugPrint('🔊 [TTSService] TTS started');
+
+    // 4. Call implementer with text
     final output = await implementer.synthesize(
       text: text,
       voiceId: state.voiceId,
@@ -88,7 +110,23 @@ class TTSService with Trainable<TTSAdaptationData> {
       pitch: state.pitch,
     );
 
-    // 4. Log invocation for training feedback
+    // 5. Update playback state
+    _isPlaying = false;
+    _currentEventId = null;
+
+    // 6. Publish tts_completed event (for auto-resume listening)
+    await eventBus.publish(Event(
+      eventType: 'tts_completed',
+      correlationId: eventId,
+      source: 'tts',
+      payloadJson: jsonEncode({
+        'text': text,
+        'duration_seconds': output.durationSeconds,
+      }),
+    ));
+    debugPrint('✅ [TTSService] TTS completed');
+
+    // 7. Log invocation for training feedback
     await recordInvocation(
       eventId,
       Invocation(
@@ -102,9 +140,46 @@ class TTSService with Trainable<TTSAdaptationData> {
       ),
     );
 
-    // 5. Return audio output
+    // 8. Return audio output
     return output;
   }
+
+  /// Stop TTS playback (for barge-in).
+  ///
+  /// Called by Coordinator when user starts speaking during TTS.
+  /// Publishes tts_stopped event for logging/debugging.
+  Future<void> stop() async {
+    if (!_isPlaying) {
+      debugPrint('ℹ️ [TTSService] stop() called but not playing');
+      return;
+    }
+
+    debugPrint('🛑 [TTSService] Stopping TTS (barge-in)');
+
+    // Stop the implementer
+    final implementer = _implementers[_defaultImplementer]!;
+    if (implementer is FlutterTtsImplementer) {
+      await implementer.stop();
+    }
+
+    // Publish tts_stopped event
+    final eventBus = GetIt.instance<EventBus>();
+    await eventBus.publish(Event(
+      eventType: 'tts_stopped',
+      correlationId: _currentEventId ?? 'unknown',
+      source: 'tts',
+      payloadJson: jsonEncode({'reason': 'barge_in'}),
+    ));
+
+    // Update state
+    _isPlaying = false;
+    _currentEventId = null;
+
+    debugPrint('✅ [TTSService] TTS stopped');
+  }
+
+  /// Whether TTS is currently playing (for barge-in detection).
+  bool get isPlaying => _isPlaying;
 
   /// Get adaptation state for this implementer, or defaults if not found.
   Future<TTSAdaptationData> _getAdaptationState(

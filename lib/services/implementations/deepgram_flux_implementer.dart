@@ -63,6 +63,72 @@ class DeepgramFluxImplementer implements STTImplementer {
     this.timeout = const Duration(seconds: 30),
   });
 
+  /// Start live recognition by streaming audio chunks as they arrive.
+  ///
+  /// This is for real-time streaming mode where audio is sent to Deepgram
+  /// as it's being recorded, not after recording completes.
+  ///
+  /// Flow:
+  /// 1. Connect to Deepgram immediately
+  /// 2. Listen to audioStream and forward each chunk to Deepgram
+  /// 3. Receive partial transcripts in real-time
+  /// 4. When Deepgram sends EndOfTurn → publish end_of_turn event → auto-stop
+  /// 5. Return final transcription
+  ///
+  /// The key difference from batch recognize():
+  /// - Batch: record → save → connect → send all → wait
+  /// - Live: connect → record + send each chunk → EndOfTurn → auto-stop
+  Future<STTInvocationOutput> startLiveRecognition({
+    required Stream<Uint8List> audioStream,
+    required String eventId,
+    double? eotThreshold,
+    double? eagerEotThreshold,
+    int? eotTimeoutMs,
+    bool? enablePartialTranscripts,
+    bool? enableEagerProcessing,
+  }) async {
+    try {
+      // Store eventId and flags for event publishing
+      _currentEventId = eventId;
+      _enablePartialTranscripts = enablePartialTranscripts ?? true;
+      _enableEagerProcessing = enableEagerProcessing ?? false;
+
+      // Reset state
+      _partialTranscripts.clear();
+      _partialConfidences.clear();
+      _allWords.clear();
+      _firstByteTime = null;
+      _recognitionCompleter = Completer<STTInvocationOutput>();
+
+      // Connect WebSocket with adaptation parameters BEFORE streaming starts
+      await _ensureWebSocketConnected(
+        eotThreshold: eotThreshold ?? 0.7,
+        eagerEotThreshold: eagerEotThreshold,
+        eotTimeoutMs: eotTimeoutMs,
+      );
+
+      // Start streaming audio chunks as they arrive
+      _firstByteTime = DateTime.now();
+      _streamLiveAudioChunks(audioStream);
+
+      // Wait for EndOfTurn event (handled in _setupMessageHandler)
+      if (_recognitionCompleter == null) {
+        throw DeepgramException('Recognition completer not initialized (WebSocket connection may have failed)');
+      }
+
+      final result = await _recognitionCompleter!.future
+          .timeout(timeout, onTimeout: () {
+        throw DeepgramException('Recognition timeout after ${timeout.inSeconds}s');
+      });
+
+      return result;
+    } on DeepgramException {
+      rethrow;
+    } catch (e) {
+      throw DeepgramException('Unexpected error: $e');
+    }
+  }
+
   @override
   String get implementerName => 'deepgram_flux';
 
@@ -247,6 +313,8 @@ class DeepgramFluxImplementer implements STTImplementer {
   /// Handle incoming text message from Deepgram Flux v2 API.
   void _handleTextMessage(String text) {
     try {
+      print('📨 [DeepgramFluxImplementer] Received message: ${text.substring(0, text.length > 200 ? 200 : text.length)}...');
+
       final data = jsonDecode(text) as Map<String, dynamic>;
       final type = data['type'] as String?;
 
@@ -255,6 +323,7 @@ class DeepgramFluxImplementer implements STTImplementer {
         print('✅ [DeepgramFluxImplementer] Deepgram connected: ${data['request_id']}');
       } else if (type == 'TurnInfo') {
         // Flux v2: Transcription update with event type
+        print('📝 [DeepgramFluxImplementer] TurnInfo received (processing...)');
         _handleFluxTurnInfo(data);
       } else if (type == 'Error') {
         // Flux v2: Fatal error
@@ -264,6 +333,7 @@ class DeepgramFluxImplementer implements STTImplementer {
       }
     } catch (e) {
       print('⚠️ [DeepgramFluxImplementer] Error parsing message: $e');
+      print('   Raw message: $text');
     }
   }
 
@@ -289,14 +359,42 @@ class DeepgramFluxImplementer implements STTImplementer {
     // Handle event types
     if (event == 'EndOfTurn') {
       // User finished speaking - finalize recognition
-      _handleEndOfTurn();
+      _handleEndOfTurn();  // Fire-and-forget (async, but we don't block here)
     } else if (event == 'EagerEndOfTurn' && _enableEagerProcessing) {
       // Eager end of turn (if enabled)
       print('⚡ [DeepgramFluxImplementer] EagerEndOfTurn: "$transcript"');
-    } else if (event == 'Update' || event == 'StartOfTurn' || event == 'TurnResumed') {
+    } else if (event == 'StartOfTurn') {
+      // User STARTED speaking - critical for barge-in detection!
+      final eventBus = GetIt.instance<EventBus>();
+      eventBus.publish(Event(
+        eventType: 'start_of_turn',
+        correlationId: _currentEventId ?? 'unknown',
+        source: 'stt',
+        payloadJson: jsonEncode({
+          'transcript': transcript,
+          'confidence': endOfTurnConfidence,
+        }),
+      ));
+      print('🎙️ [DeepgramFluxImplementer] StartOfTurn detected (BARGE-IN signal)');
+
+      // Also publish partial for UI display
+      if (_enablePartialTranscripts) {
+        eventBus.publish(Event(
+          eventType: 'transcription_partial',
+          correlationId: _currentEventId ?? 'unknown',
+          source: 'stt',
+          payloadJson: jsonEncode({
+            'transcript': transcript,
+            'confidence': endOfTurnConfidence,
+            'event': event,
+          }),
+        ));
+      }
+    } else if (event == 'Update' || event == 'TurnResumed') {
       // Partial transcript - publish event for UI (if enabled)
       if (_enablePartialTranscripts) {
         final eventBus = GetIt.instance<EventBus>();
+        // Fire-and-forget for partial transcripts (don't block message handling)
         eventBus.publish(Event(
           eventType: 'transcription_partial',
           correlationId: _currentEventId ?? 'unknown',
@@ -314,7 +412,7 @@ class DeepgramFluxImplementer implements STTImplementer {
   }
 
   /// Handle EndOfTurn event (final transcript).
-  void _handleEndOfTurn() {
+  Future<void> _handleEndOfTurn() async {
     if (_recognitionCompleter == null || _recognitionCompleter!.isCompleted) {
       return;
     }
@@ -336,6 +434,20 @@ class DeepgramFluxImplementer implements STTImplementer {
 
     print('✅ [DeepgramFluxImplementer] EndOfTurn: "$finalTranscript" (latency: ${latencyMs.toStringAsFixed(0)}ms)');
 
+    // Publish end_of_turn event to EventBus for voice screen to auto-stop
+    final eventBus = GetIt.instance<EventBus>();
+    await eventBus.publish(Event(
+      eventType: 'end_of_turn',
+      correlationId: _currentEventId ?? 'unknown',
+      source: 'stt',
+      payloadJson: jsonEncode({
+        'transcript': finalTranscript,
+        'confidence': avgConfidence,
+        'latency_ms': latencyMs,
+      }),
+    ));
+    print('📡 [DeepgramFluxImplementer] Published end_of_turn event');
+
     _recognitionCompleter!.complete(STTInvocationOutput(
       transcription: finalTranscript,
       confidence: avgConfidence,
@@ -345,6 +457,7 @@ class DeepgramFluxImplementer implements STTImplementer {
   }
 
   /// Stream audio chunks via Nerve Channel (8KB chunks, 10ms throttle).
+  /// Used for batch mode (saved audio from AudioStorage).
   Future<void> _streamAudioChunks(Uint8List audioData) async {
     const chunkSize = 8192; // 8KB chunks
     const throttleMs = 10;   // 10ms between chunks
@@ -365,6 +478,44 @@ class DeepgramFluxImplementer implements STTImplementer {
     // Send CloseStream message to signal end of audio
     await _channel!.sendText(jsonEncode({'type': 'CloseStream'}));
     print('📤 [DeepgramFluxImplementer] Finished streaming ${audioData.length} bytes');
+  }
+
+  /// Stream live audio chunks as they arrive from microphone.
+  /// Used for live streaming mode (audio sent in real-time).
+  ///
+  /// NOTE: Does NOT send CloseStream - EndOfTurn will be detected by Deepgram
+  /// based on silence/eot_threshold. Voice screen will auto-stop when EndOfTurn received.
+  void _streamLiveAudioChunks(Stream<Uint8List> audioStream) {
+    int totalBytes = 0;
+    int chunkCount = 0;
+
+    print('🎙️ [DeepgramFluxImplementer] Starting to listen to audio stream...');
+
+    audioStream.listen(
+      (chunk) {
+        // Send chunk immediately to Deepgram
+        _channel?.sendBinary(chunk);
+        totalBytes += chunk.length;
+        chunkCount++;
+
+        // Log first few chunks and then periodically
+        if (chunkCount <= 3 || chunkCount % 50 == 0) {
+          print('📤 [DeepgramFluxImplementer] Sent chunk #$chunkCount: ${chunk.length} bytes (total: $totalBytes bytes)');
+        }
+      },
+      onError: (error) {
+        print('❌ [DeepgramFluxImplementer] Audio stream error: $error');
+        if (_recognitionCompleter != null && !_recognitionCompleter!.isCompleted) {
+          _recognitionCompleter!.completeError(DeepgramException('Audio stream error: $error'));
+        }
+      },
+      onDone: () {
+        print('📤 [DeepgramFluxImplementer] Audio stream ended: $totalBytes bytes streamed ($chunkCount chunks)');
+        // Send CloseStream to signal end of recording
+        _channel?.sendText(jsonEncode({'type': 'CloseStream'}));
+      },
+      cancelOnError: true,
+    );
   }
 
   /// Extract Word objects from Flux v2 TurnInfo response.

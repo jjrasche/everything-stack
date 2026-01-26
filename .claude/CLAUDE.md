@@ -335,6 +335,14 @@ This section tracks active development, blockers, and work in progress. It chang
 - ContextManager blueprint exists (.claude/ARCHITECTURE_TRANSITION.md), implementation pending
 - Plugin selection training: Invocation logs captured, feedback training loop not yet active
 - Multi-device sync: requires Supabase schema updates + conflict resolution
+- **Echo Cancellation** (deferred from MVP): Prevents audio feedback loop when using single device (speaker + mic)
+  - **Current workaround**: Use headphones to isolate mic from speaker output
+  - **Future approaches**:
+    - OS-level audio routing (separate output devices, app-level isolation)
+    - Hardware AEC (device-specific acoustic echo cancellation)
+    - Software AEC via Rust (WASAPI on Windows, similar APIs on other platforms)
+  - **Research needed**: Cross-platform AEC library integration, latency impact, trade-offs
+  - **Priority**: Post-MVP (barge-in + sync are higher priority for phone usage)
 
 ### What's Working
 - **Regulation Tracking Tool Domain** (✅ Complete, merged to main)

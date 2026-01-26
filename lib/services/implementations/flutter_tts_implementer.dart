@@ -181,6 +181,23 @@ class FlutterTtsImplementer implements TTSImplementer {
     final wordsPerSecond = (150 / 60) / speechRate; // 2.5 words/sec at 1.0 rate
     return wordCount / wordsPerSecond;
   }
+
+  /// Stop TTS playback immediately (for barge-in).
+  Future<void> stop() async {
+    if (!_isInitialized) {
+      print('   ℹ️ FlutterTtsImplementer not initialized, nothing to stop');
+      return;
+    }
+
+    try {
+      print('🛑 [FlutterTtsImplementer] Stopping TTS playback');
+      await _flutterTts.stop();
+      print('   ✅ TTS stopped');
+    } catch (e) {
+      print('   ⚠️ Error stopping TTS: $e');
+      // Don't throw - barge-in should be best-effort
+    }
+  }
 }
 
 // ============ Exceptions ============

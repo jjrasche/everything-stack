@@ -7,6 +7,7 @@
 
 import 'dart:convert';
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:get_it/get_it.dart';
 
@@ -129,6 +130,19 @@ class DeepgramImplementer implements STTImplementer {
     } catch (e) {
       throw DeepgramException('Unexpected error: $e');
     }
+  }
+
+  @override
+  Future<STTInvocationOutput> startLiveRecognition({
+    required Stream<Uint8List> audioStream,
+    required String eventId,
+    double? eotThreshold,
+    double? eagerEotThreshold,
+    int? eotTimeoutMs,
+    bool? enablePartialTranscripts,
+    bool? enableEagerProcessing,
+  }) {
+    throw UnsupportedError('$implementerName does not support live streaming. Use DeepgramFluxImplementer instead.');
   }
 
   /// Load audio data from audioId.

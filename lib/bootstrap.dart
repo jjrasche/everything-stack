@@ -862,6 +862,10 @@ Future<void> setupServiceLocator() async {
       ),
     );
 
+    // ========== Tool Selector (Deferred - needs semantic indexing) ==========
+    // TODO: Register ToolSelector once semantic indexing of tool invocations is implemented
+    // Currently it's just a stub that returns all tools
+
     // ========== Context Selector (Trainable context gathering) ==========
     debugPrint('🔍 [setupServiceLocator] Registering ContextSelector...');
 
@@ -892,6 +896,7 @@ Future<void> setupServiceLocator() async {
     } else {
       debugPrint('⏭️ [setupServiceLocator] Coordinator skipped (InferenceService/TTSService not registered)');
     }
+
     debugPrint('🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY');
   } catch (e, st) {
     debugPrint('❌ [setupServiceLocator] ERROR: $e');

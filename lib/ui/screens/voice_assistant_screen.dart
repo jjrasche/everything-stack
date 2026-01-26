@@ -95,6 +95,13 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
           return;  // Don't process further
         }
 
+        // End of turn → auto-stop recording (Phase 3: Live Streaming)
+        if (event.eventType == 'end_of_turn') {
+          debugPrint('🛑 [EndOfTurn] Auto-stopping recording');
+          _stopRecording();
+          return;
+        }
+
         // Transcription complete → add user message, clear live display
         if (event.eventType == 'transcription_complete') {
           setState(() {
@@ -280,80 +287,67 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
     }
   }
 
-  void _toggleListening() async {
+  /// Start live streaming audio to STT service (Phase 3: Auto-stop mode).
+  ///
+  /// Flow:
+  /// 1. Connect to Deepgram immediately
+  /// 2. Stream audio chunks in real-time as they arrive from mic
+  /// 3. Deepgram sends partial transcripts → shown in live display
+  /// 4. When Deepgram detects EndOfTurn → publishes end_of_turn event
+  /// 5. EventBus listener calls _stopRecording() → auto-stop
+  void _startRecording() async {
+    try {
+      debugPrint('🎤 Starting live streaming audio recording...');
+      setState(() => _isListening = true);
+
+      // Generate event ID upfront (needed for correlation)
+      final eventId = 'turn_${DateTime.now().millisecondsSinceEpoch}';
+
+      // Start recording stream
+      final audioStream = AudioRecordingService.instance.startRecording();
+
+      // Start live recognition (streams chunks to Deepgram in real-time)
+      // NOTE: This is fire-and-forget - we don't await the result here.
+      // The result will come via events: partial transcripts, then end_of_turn.
+      _sttService.startLiveRecognition(
+        audioStream: audioStream,
+        eventId: eventId,
+      ).catchError((error) {
+        debugPrint('❌ Live recognition error: $error');
+        _stopRecording();
+      });
+
+      debugPrint('   ✅ Live streaming started (eventId: $eventId)');
+    } catch (e) {
+      debugPrint('❌ Failed to start live recording: $e');
+      setState(() => _isListening = false);
+    }
+  }
+
+  /// Stop recording (triggered by manual stop OR auto-stop on EndOfTurn).
+  void _stopRecording() async {
+    if (!_isListening) return;
+
+    try {
+      debugPrint('⏹️  Stopping audio recording...');
+      setState(() => _isListening = false);
+
+      // Stop recording service
+      await AudioRecordingService.instance.stopRecording();
+      await _audioStreamSubscription?.cancel();
+      _audioStreamSubscription = null;
+
+      debugPrint('   ✅ Recording stopped');
+    } catch (e) {
+      debugPrint('❌ Failed to stop recording: $e');
+    }
+  }
+
+  void _toggleListening() {
     if (!_isListening) {
-      // Start recording
-      try {
-        debugPrint('🎤 Starting audio recording...');
-        setState(() => _isListening = true);
-
-        // Clear buffer
-        _audioBuffer.clear();
-        _recordingStartTime = DateTime.now();
-
-        // Start recording stream
-        final audioStream = AudioRecordingService.instance.startRecording();
-        _audioStreamSubscription = audioStream.listen(
-          (chunk) {
-            _audioBuffer.addAll(chunk);
-            debugPrint('   📊 Audio chunk received: ${chunk.length} bytes');
-          },
-          onError: (error) {
-            debugPrint('❌ Audio recording error: $error');
-            setState(() => _isListening = false);
-          },
-          onDone: () {
-            debugPrint('   ✅ Audio stream closed');
-          },
-        );
-      } catch (e) {
-        debugPrint('❌ Failed to start recording: $e');
-        setState(() => _isListening = false);
-      }
+      _startRecording();
     } else {
-      // Stop recording and process
-      try {
-        debugPrint('⏹️  Stopping audio recording...');
-        setState(() => _isListening = false);
-
-        // Stop recording
-        await AudioRecordingService.instance.stopRecording();
-        await _audioStreamSubscription?.cancel();
-        _audioStreamSubscription = null;
-
-        // Calculate duration
-        final duration = DateTime.now().difference(_recordingStartTime!).inMilliseconds / 1000.0;
-        debugPrint('   📏 Recording duration: ${duration}s');
-        debugPrint('   📦 Total bytes captured: ${_audioBuffer.length}');
-
-        if (_audioBuffer.isEmpty) {
-          debugPrint('⚠️  No audio data captured');
-          return;
-        }
-
-        // Save audio to storage
-        final audioBytes = Uint8List.fromList(_audioBuffer);
-        final eventId = 'turn_${DateTime.now().millisecondsSinceEpoch}';
-        final audioId = await _audioStorage.saveAudio(
-          audioBytes: audioBytes,
-          durationSeconds: duration,
-          eventId: eventId,
-        );
-        debugPrint('   💾 Audio saved with ID: $audioId');
-
-        // Transcribe using STT service
-        // Note: STTService now publishes transcription_complete event itself (service owns domain events)
-        debugPrint('   🎤 Calling STT service...');
-        final transcription = await _sttService.recognize(
-          eventId: eventId,
-          audioId: audioId,
-          durationSeconds: duration,
-        );
-        debugPrint('   📝 Transcription: "$transcription"');
-      } catch (e, st) {
-        debugPrint('❌ Failed to process recording: $e');
-        debugPrint('   Stack trace: $st');
-      }
+      _stopRecording();
     }
   }
 
