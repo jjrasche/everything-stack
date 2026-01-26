@@ -587,6 +587,7 @@ dependencies = [
  "flutter_rust_bridge",
  "flutter_rust_bridge_codegen",
  "futures",
+ "http",
  "once_cell",
  "tokio",
  "tokio-tungstenite",

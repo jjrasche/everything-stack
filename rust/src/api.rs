@@ -22,12 +22,21 @@ pub fn hello_from_rust() -> String {
 /// ## Arguments
 /// - `url`: Full WebSocket URL (ws:// or wss://)
 /// - `headers`: Optional HTTP headers for handshake
+/// - `subprotocols`: Optional WebSocket subprotocols (for Sec-WebSocket-Protocol)
 ///
 /// ## Returns
 /// - Connection handle (u64) on success
 /// - Error string on failure
-pub fn websocket_connect(url: String, headers: Vec<(String, String)>) -> Result<u64, String> {
-    let config = WebSocketConfig { url, headers };
+pub fn websocket_connect(
+    url: String,
+    headers: Vec<(String, String)>,
+    subprotocols: Vec<String>,
+) -> Result<u64, String> {
+    let config = WebSocketConfig {
+        url,
+        headers,
+        subprotocols,
+    };
     WebSocketConnection::connect(config)
 }
 

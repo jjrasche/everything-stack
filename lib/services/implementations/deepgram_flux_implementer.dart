@@ -156,17 +156,14 @@ class DeepgramFluxImplementer implements STTImplementer {
     }
 
     try {
-      // Build query parameters
+      // Build query parameters for Flux model
+      // NOTE: Flux only supports model, encoding, sample_rate, eot_* params
+      // DO NOT use punctuate/utterances/smart_format/interim_results (Nova params)
       final queryParams = {
         'model': model,
         'encoding': 'linear16',
         'sample_rate': '16000',
-        'punctuate': 'true',
-        'utterances': 'true',
-        'smart_format': 'true',
-        'interim_results': 'true',
         'eot_threshold': eotThreshold.toString(),
-        'token': apiKey, // Deepgram accepts token in URL
       };
 
       if (eagerEotThreshold != null) {
@@ -176,13 +173,16 @@ class DeepgramFluxImplementer implements STTImplementer {
         queryParams['eot_timeout_ms'] = eotTimeoutMs.toString();
       }
 
-      // Create Transport config
+      // Create Transport config with WebSocket subprotocols
+      // Deepgram authentication: protocols = ["token", "API_KEY"]
+      // This sets Sec-WebSocket-Protocol header during handshake
       final transportConfig = TransportConfig(
         host: 'api.deepgram.com',
         port: 443,
         useTls: true,
-        path: '/v2/listen',
+        path: '/v2/listen', // v2 REQUIRED for flux model
         queryParams: queryParams,
+        subprotocols: ['token', apiKey], // Deepgram auth: "token, API_KEY"
         connectTimeout: const Duration(seconds: 10),
       );
 
@@ -244,19 +244,21 @@ class DeepgramFluxImplementer implements STTImplementer {
     );
   }
 
-  /// Handle incoming text message from Deepgram.
+  /// Handle incoming text message from Deepgram Flux v2 API.
   void _handleTextMessage(String text) {
     try {
       final data = jsonDecode(text) as Map<String, dynamic>;
       final type = data['type'] as String?;
 
-      if (type == 'Results') {
-        _handleListenV2TurnInfo(data);
-      } else if (type == 'Metadata') {
-        // Ignore metadata for now
-      } else if (type == 'UtteranceEnd') {
-        // This is EndOfTurn - finalize recognition
-        _handleEndOfTurn();
+      if (type == 'Connected') {
+        // Flux v2: Connection confirmation
+        print('✅ [DeepgramFluxImplementer] Deepgram connected: ${data['request_id']}');
+      } else if (type == 'TurnInfo') {
+        // Flux v2: Transcription update with event type
+        _handleFluxTurnInfo(data);
+      } else if (type == 'Error') {
+        // Flux v2: Fatal error
+        print('❌ [DeepgramFluxImplementer] Deepgram error: ${data['description']}');
       } else {
         print('🔍 [DeepgramFluxImplementer] Unknown message type: $type');
       }
@@ -265,44 +267,49 @@ class DeepgramFluxImplementer implements STTImplementer {
     }
   }
 
-  /// Handle ListenV2TurnInfo message (partial transcript).
-  void _handleListenV2TurnInfo(Map<String, dynamic> data) {
-    final channel = data['channel'] as Map<String, dynamic>?;
-    if (channel == null) return;
-
-    final alternatives = channel['alternatives'] as List?;
-    if (alternatives == null || alternatives.isEmpty) return;
-
-    final firstAlt = alternatives.first as Map<String, dynamic>;
-    final transcript = firstAlt['transcript'] as String? ?? '';
-    final confidence = (firstAlt['confidence'] as num?)?.toDouble() ?? 0.0;
-    final isFinal = data['is_final'] as bool? ?? false;
+  /// Handle Flux v2 TurnInfo message (transcription with event type).
+  void _handleFluxTurnInfo(Map<String, dynamic> data) {
+    final event = data['event'] as String?;
+    final transcript = data['transcript'] as String? ?? '';
+    final endOfTurnConfidence = (data['end_of_turn_confidence'] as num?)?.toDouble() ?? 0.0;
 
     if (transcript.isEmpty) return;
 
     // Store partial results
     _partialTranscripts.add(transcript);
-    _partialConfidences.add(confidence);
+    _partialConfidences.add(endOfTurnConfidence);
 
-    // Extract words
-    final words = _extractWords(firstAlt);
-    _allWords.addAll(words);
+    // Extract words from Flux v2 format
+    final wordsJson = data['words'] as List?;
+    if (wordsJson != null) {
+      final words = _extractFluxWords(wordsJson);
+      _allWords.addAll(words);
+    }
 
-    // Publish transcription_partial event for UI (if enabled)
-    if (_enablePartialTranscripts) {
-      final eventBus = GetIt.instance<EventBus>();
-      eventBus.publish(Event(
-        eventType: 'transcription_partial',
-        correlationId: _currentEventId ?? 'unknown',
-        source: 'stt',
-        payloadJson: jsonEncode({
-          'transcript': transcript,
-          'confidence': confidence,
-          'is_final': isFinal,
-        }),
-      ));
+    // Handle event types
+    if (event == 'EndOfTurn') {
+      // User finished speaking - finalize recognition
+      _handleEndOfTurn();
+    } else if (event == 'EagerEndOfTurn' && _enableEagerProcessing) {
+      // Eager end of turn (if enabled)
+      print('⚡ [DeepgramFluxImplementer] EagerEndOfTurn: "$transcript"');
+    } else if (event == 'Update' || event == 'StartOfTurn' || event == 'TurnResumed') {
+      // Partial transcript - publish event for UI (if enabled)
+      if (_enablePartialTranscripts) {
+        final eventBus = GetIt.instance<EventBus>();
+        eventBus.publish(Event(
+          eventType: 'transcription_partial',
+          correlationId: _currentEventId ?? 'unknown',
+          source: 'stt',
+          payloadJson: jsonEncode({
+            'transcript': transcript,
+            'confidence': endOfTurnConfidence,
+            'event': event,
+          }),
+        ));
 
-      print('📝 [DeepgramFluxImplementer] Partial: "$transcript" (confidence: ${confidence.toStringAsFixed(2)})');
+        print('📝 [DeepgramFluxImplementer] $event: "$transcript" (confidence: ${endOfTurnConfidence.toStringAsFixed(2)})');
+      }
     }
   }
 
@@ -360,18 +367,18 @@ class DeepgramFluxImplementer implements STTImplementer {
     print('📤 [DeepgramFluxImplementer] Finished streaming ${audioData.length} bytes');
   }
 
-  /// Extract Word objects from Deepgram response.
-  List<Word> _extractWords(Map<String, dynamic> alternative) {
+  /// Extract Word objects from Flux v2 TurnInfo response.
+  /// Note: Flux v2 doesn't include start/end timestamps for individual words.
+  List<Word> _extractFluxWords(List wordsJson) {
     final wordsList = <Word>[];
-    final words = alternative['words'] as List? ?? [];
 
-    for (final wordJson in words) {
+    for (final wordJson in wordsJson) {
       if (wordJson is Map<String, dynamic>) {
         final word = Word(
           text: wordJson['word'] as String? ?? '',
           confidence: (wordJson['confidence'] as num?)?.toDouble() ?? 0.0,
-          startTime: (wordJson['start'] as num?)?.toDouble() ?? 0.0,
-          endTime: (wordJson['end'] as num?)?.toDouble() ?? 0.0,
+          startTime: 0.0, // Flux v2 doesn't provide word-level timestamps
+          endTime: 0.0,
         );
         wordsList.add(word);
       }

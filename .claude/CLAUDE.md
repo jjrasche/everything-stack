@@ -79,6 +79,74 @@ If you started the app with `flutter run -d {platform}` in background mode:
 
 **Never tell user to manually apply hot reload - you should do it for them.**
 
+## Rust Code Changes (flutter_rust_bridge)
+
+**CRITICAL: Rust code changes require special rebuild procedures due to multi-layer caching.**
+
+### The Problem
+
+Flutter and Cargo have independent build caches that don't always synchronize:
+- **Flutter cache**: Compiled native libraries (`.dll`, `.so`, `.dylib`) in `build/`
+- **Cargo cache**: Rust compilation artifacts in `rust/target/`
+- **The gap**: Flutter doesn't track Rust source file changes, only the final library timestamp
+
+**Result**: Modifying `.rs` files doesn't automatically trigger Flutter to rebuild the native library.
+
+### Reliable Rebuild Method
+
+**When you modify ANY Rust code** (files in `rust/src/`), use the rebuild script:
+
+```bash
+# Windows
+rebuild_rust.bat
+
+# Linux/macOS
+./rebuild_rust.sh
+```
+
+This script:
+1. Cleans Rust artifacts (`cargo clean`)
+2. Rebuilds Rust library (`cargo build --release`)
+3. Regenerates FFI bindings (`flutter_rust_bridge_codegen`)
+4. Forces Flutter to see changes (removes cached `.dll`/`.so`)
+
+### Manual Steps (if script fails)
+
+```bash
+# 1. Clean Rust build
+cd rust && cargo clean && cd ..
+
+# 2. Rebuild Rust library
+cd rust && cargo build --release && cd ..
+
+# 3. Regenerate FFI bindings
+flutter_rust_bridge_codegen generate \
+  --rust-input "crate::api" \
+  --rust-root rust/ \
+  --dart-output lib/bridge/
+
+# 4. Remove Flutter's cached native library
+rm -rf build/windows/x64/runner/Debug/*.dll  # Windows
+rm -rf build/macos/Build/Products/Debug/*.dylib  # macOS
+rm -rf build/linux/x64/debug/bundle/lib/*.so  # Linux
+
+# 5. Run test/app
+flutter test integration_test/ -d windows
+flutter run -d windows
+```
+
+### When NOT to Use Full Clean
+
+**DON'T use `flutter clean` unless absolutely necessary** - it's slow and rebuilds everything.
+
+**DO use `rebuild_rust.bat`** - targeted, fast, rebuilds only what changed.
+
+### Build System Files
+
+- `rust/build.rs` - Tells Cargo when to rebuild (monitors `src/` changes)
+- `rebuild_rust.bat` / `rebuild_rust.sh` - Reliable rebuild script
+- `lib/bridge/frb_generated.dart` - Generated FFI bindings (auto-generated, don't edit)
+
 ## Development Workflow
 
 Follow ASD workflow for all features:

@@ -85,11 +85,15 @@ class RustWebSocketTransport implements Transport {
 
       final url = config.url;
       final headers = config.headers?.entries.map((e) => (e.key, e.value)).toList() ?? [];
+      final subprotocols = config.subprotocols ?? [];
 
       print('🦀 [RustWebSocketTransport] Connecting to: $url');
+      if (subprotocols.isNotEmpty) {
+        print('🦀 [RustWebSocketTransport] Subprotocols: ${subprotocols.join(", ")}');
+      }
 
       // Call Rust FFI to connect
-      _handle = await rust.websocketConnect(url: url, headers: headers);
+      _handle = await rust.websocketConnect(url: url, headers: headers, subprotocols: subprotocols);
 
       // Start receive stream - call Rust to begin listening
       try {

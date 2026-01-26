@@ -15,9 +15,7 @@ use dashmap::DashMap;
 use once_cell::sync::Lazy;
 use std::sync::atomic::{AtomicU64, Ordering};
 use tokio::net::TcpStream;
-use tokio_tungstenite::{
-    connect_async, tungstenite::protocol::Message, MaybeTlsStream, WebSocketStream,
-};
+use tokio_tungstenite::{connect_async, tungstenite::protocol::Message, MaybeTlsStream, WebSocketStream};
 use url::Url;
 
 use crate::runtime::RUNTIME;
@@ -34,6 +32,7 @@ static NEXT_HANDLE: AtomicU64 = AtomicU64::new(1);
 pub struct WebSocketConfig {
     pub url: String,
     pub headers: Vec<(String, String)>,
+    pub subprotocols: Vec<String>,
 }
 
 use futures::stream::{SplitSink, SplitStream};
@@ -67,7 +66,7 @@ impl WebSocketConnection {
 
         // Connect synchronously (block until complete)
         let result = RUNTIME.block_on(async move {
-            Self::connect_async(url, config.headers).await
+            Self::connect_async(url, config.headers, config.subprotocols).await
         });
 
         match result {
@@ -95,16 +94,92 @@ impl WebSocketConnection {
         }
     }
 
-    /// Async connect using tungstenite.
+    /// Async connect using tokio-tungstenite with custom headers and subprotocols.
     async fn connect_async(
         url: Url,
-        _headers: Vec<(String, String)>,
+        headers: Vec<(String, String)>,
+        subprotocols: Vec<String>,
     ) -> Result<WebSocketStream<MaybeTlsStream<TcpStream>>, String> {
-        // Convert Url to string for tungstenite
-        let (ws_stream, _response) = connect_async(url.as_str())
-            .await
-            .map_err(|e| format!("Connection failed: {}", e))?;
+        use tokio_tungstenite::tungstenite::client::IntoClientRequest;
 
+        // Create request from URL
+        let mut request = url
+            .as_str()
+            .into_client_request()
+            .map_err(|e| format!("Invalid request: {}", e))?;
+
+        // Add custom HTTP headers
+        for (key, value) in headers {
+            use http::{HeaderName, HeaderValue};
+
+            let header_name: HeaderName = key
+                .parse()
+                .map_err(|_| format!("Invalid header name: {}", key))?;
+            let header_value: HeaderValue = value
+                .parse()
+                .map_err(|_| format!("Invalid header value: {}", value))?;
+            request.headers_mut().insert(header_name, header_value);
+        }
+
+        // Add WebSocket subprotocols (Sec-WebSocket-Protocol header)
+        if !subprotocols.is_empty() {
+            let protocols_value = subprotocols.join(", ");
+            println!("🦀 [Rust] Setting Sec-WebSocket-Protocol: {}", protocols_value);
+            request.headers_mut().insert(
+                "Sec-WebSocket-Protocol",
+                protocols_value
+                    .parse()
+                    .map_err(|_| "Invalid subprotocol value".to_string())?,
+            );
+        }
+
+        println!("🦀 [Rust] Attempting WebSocket connection...");
+
+        // Connect with request
+        let (ws_stream, _response) = connect_async(request)
+            .await
+            .map_err(|e| {
+                // CRITICAL: tungstenite errors may contain raw HTTP response bytes
+                // that are NOT valid UTF-8. The FFI codec will panic if we return them.
+
+                // Extract UTF-8 safe error description
+                use tokio_tungstenite::tungstenite::Error as WsError;
+                let error_msg = match &e {
+                    WsError::Http(response) => {
+                        let status = response.status();
+                        eprintln!("🦀 [Rust] HTTP error: {} {}", status.as_u16(), status.canonical_reason().unwrap_or(""));
+                        format!("HTTP {} {}", status.as_u16(), status.canonical_reason().unwrap_or("Unknown"))
+                    }
+                    WsError::Io(io_err) => {
+                        eprintln!("🦀 [Rust] IO error: {}", io_err);
+                        format!("IO error: {}", io_err.kind())
+                    }
+                    WsError::Tls(tls_err) => {
+                        eprintln!("🦀 [Rust] TLS error: {}", tls_err);
+                        "TLS handshake failed".to_string()
+                    }
+                    WsError::Capacity(cap_err) => {
+                        eprintln!("🦀 [Rust] Capacity error: {}", cap_err);
+                        format!("Capacity error: {}", cap_err)
+                    }
+                    WsError::Protocol(proto_err) => {
+                        eprintln!("🦀 [Rust] Protocol error: {}", proto_err);
+                        format!("Protocol error: {}", proto_err)
+                    }
+                    WsError::Url(url_err) => {
+                        eprintln!("🦀 [Rust] URL error: {}", url_err);
+                        format!("URL error: {}", url_err)
+                    }
+                    _ => {
+                        eprintln!("🦀 [Rust] Unknown WebSocket error: {:?}", e);
+                        "WebSocket connection failed".to_string()
+                    }
+                };
+
+                error_msg
+            })?;
+
+        println!("🦀 [Rust] WebSocket connected successfully");
         Ok(ws_stream)
     }
 

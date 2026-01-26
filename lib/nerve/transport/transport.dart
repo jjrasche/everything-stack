@@ -64,6 +64,10 @@ class TransportConfig {
   /// Optional query parameters.
   final Map<String, String>? queryParams;
 
+  /// Optional WebSocket subprotocols (for Sec-WebSocket-Protocol header).
+  /// Example: ['token', 'api_key'] for Deepgram authentication.
+  final List<String>? subprotocols;
+
   const TransportConfig({
     required this.host,
     required this.port,
@@ -72,18 +76,22 @@ class TransportConfig {
     this.headers,
     this.path,
     this.queryParams,
+    this.subprotocols,
   });
 
   /// Construct full URL for this config.
   String get url {
     final scheme = useTls ? 'wss' : 'ws';
+    final defaultPort = useTls ? 443 : 80;
+    // Only include port if non-default (Deepgram rejects wss://host:443/path format)
+    final portPart = (port == defaultPort) ? '' : ':$port';
     final pathPart = path ?? '';
     final queryPart = queryParams?.entries
             .map((e) => '${e.key}=${Uri.encodeComponent(e.value)}')
             .join('&') ??
         '';
     final queryString = queryPart.isNotEmpty ? '?$queryPart' : '';
-    return '$scheme://$host:$port$pathPart$queryString';
+    return '$scheme://$host$portPart$pathPart$queryString';
   }
 
   @override
