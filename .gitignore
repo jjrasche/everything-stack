@@ -126,7 +126,9 @@ rust/target/              # Cargo build output (all profiles)
 rust/**/*.rs.bk           # Rustfmt backup files
 rust/*.pdb                # MSVC Windows builds
 rust/**/mutants.out*/     # Mutation testing output
-rust/Cargo.lock           # Dependency lockfile (library crate, ignore per Cargo docs)
+
+# Note: rust/Cargo.lock IS committed (binary crate, not library)
+# See: https://doc.rust-lang.org/cargo/guide/cargo-toml-vs-cargo-lock.html
 
 # Note: flutter_rust_bridge generated files (frb_generated.*, bridge/*.dart) ARE committed
 # per https://cjycode.com/flutter_rust_bridge/guides/how-to/gitignore - works immediately
