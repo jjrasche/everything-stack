@@ -122,6 +122,7 @@ test_fixtures/audio/*.wav
 
 # Rust FFI (Phase 2) - https://github.com/github/gitignore/blob/main/Rust.gitignore
 rust/debug/               # Cargo debug builds
+rust/target               # Cargo build output (all profiles)
 rust/target/              # Cargo build output (all profiles)
 rust/**/*.rs.bk           # Rustfmt backup files
 rust/*.pdb                # MSVC Windows builds

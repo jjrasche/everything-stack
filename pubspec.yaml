@@ -7,7 +7,7 @@ version: 0.2.1
 # description: Your project description
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.3.0 <4.0.0'  # Requires 3.3+ for extension type syntax
   flutter: '>=3.24.0'
 
 dependencies:
@@ -67,9 +67,9 @@ dev_dependencies:
     sdk: flutter
 
   # Code generation for JSON serialization
-  json_serializable: ^6.7.0
-  build_runner: ^2.4.0
-  analyzer: ^5.13.0
+  json_serializable: ^6.8.0
+  build_runner: ^2.4.13
+  analyzer: ^6.0.0  # Updated to support extension type syntax
 
   # ObjectBox code generation
   objectbox_generator: ^4.0.3
