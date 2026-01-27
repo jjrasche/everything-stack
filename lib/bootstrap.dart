@@ -33,7 +33,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 // import 'package:sentry_flutter/sentry_flutter.dart';  // DISABLED: Pulls in JNI (Java) on Windows
-import 'package:objectbox/objectbox.dart' hide HnswIndex;
+
+// Conditional Store import: Stub on Web (default), ObjectBox on native (dart.library.io)
+import 'bootstrap/objectbox_stub.dart';
+// ignore: uri_does_not_exist
+import 'package:objectbox/objectbox.dart' as objectbox
+    if (dart.library.html) 'bootstrap/objectbox_stub_ignore.dart';
 
 import 'services/blob_store.dart';
 import 'services/sync_service.dart';
@@ -530,10 +535,12 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
     );
 
     // 14. Initialize Semantic Search Infrastructure (ChunkingService + SemanticSearchService)
-    debugPrint('🔍 Initializing semantic search infrastructure...');
-    try {
-      // Create HNSW index
-      final hnswIndex = HnswIndex(dimensions: 384);
+    // NOTE: Disabled on Web - ObjectBox (dart:ffi) not available on Web platform
+    if (!kIsWeb) {
+      debugPrint('🔍 Initializing semantic search infrastructure...');
+      try {
+        // Create HNSW index
+        final hnswIndex = HnswIndex(dimensions: 384);
 
       // Create parent and child chunkers
       final parentChunker = SemanticChunker(config: ChunkingConfig.parent());
@@ -634,11 +641,16 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
         debugPrint('⚠️ Failed to wire InvocationRepository handler: $e');
         // Don't rethrow - handler wiring is optional, semantic search works without it
       }
-    } catch (e) {
-      debugPrint('⚠️ Semantic search initialization failed: $e');
+      } catch (e) {
+        debugPrint('⚠️ Semantic search initialization failed: $e');
+      }
+    } else {
+      debugPrint(
+          '⚠️  Semantic search disabled on Web (ObjectBox/dart:ffi not available)');
+      debugPrint('   App will function without semantic search capabilities');
     }
 
-    // 14. Initialize Audio Recording Service (Microphone Input)
+    // 15. Initialize Audio Recording Service (Microphone Input)
     try {
       await AudioRecordingService.instance.initialize();
       debugPrint('✅ Audio: AudioRecordingService');
