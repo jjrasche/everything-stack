@@ -1,21 +1,31 @@
-/// Focused test for Deepgram Flux WebSocket streaming
+/// # Deepgram Flux WebSocket Integration Test
 ///
-/// Tests ONLY the WebSocket connection and transcription.
-/// No UI, no TTS, no Windows-specific dependencies.
-/// Runs as regular test (not integration test) to avoid platform build issues.
+/// Tests ONLY the Deepgram Flux WebSocket connection and transcription.
+/// Minimal setup: ObjectBox + AudioStorage + Deepgram implementer.
+/// No full app bootstrap to keep test focused and fast.
 
 import 'dart:typed_data';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:everything_stack_template/services/implementations/deepgram_flux_implementer.dart';
 import 'package:everything_stack_template/services/audio_storage.dart';
 import 'package:everything_stack_template/persistence/objectbox/audio_file_objectbox_adapter.dart';
-import 'package:everything_stack_template/services/embedding_service.dart';
-import 'package:everything_stack_template/core/invocation_repository.dart';
+import 'package:everything_stack_template/core/entity_repository.dart';
 import 'package:everything_stack_template/domain/audio_file.dart';
-import 'package:everything_stack_template/bootstrap/persistence_native.dart';
+import 'package:everything_stack_template/bootstrap/objectbox_store_factory.dart';
+import 'package:everything_stack_template/services/embedding_service.dart';
+
+/// Mock embedding service for this focused test (AudioFile doesn't use embeddings)
+class _MockEmbeddingService extends EmbeddingService {
+  _MockEmbeddingService() : super(implementer: null);
+
+  @override
+  Future<List<double>> embed(String text) async {
+    return List.filled(768, 0.0); // Dummy embedding, never called
+  }
+}
 
 void main() {
   late DeepgramFluxImplementer implementer;
@@ -36,13 +46,13 @@ void main() {
     }
 
     // Initialize minimal persistence (just ObjectBox, no full bootstrap)
-    final store = await initializePersistenceNative();
+    final store = await openObjectBoxStore();
 
     // Setup minimal services
     final audioFileAdapter = AudioFileObjectBoxAdapter(store);
     final audioFileRepo = EntityRepository<AudioFile>(
       adapter: audioFileAdapter,
-      embeddingService: null, // Not needed for this test
+      embeddingService: _MockEmbeddingService(),
     );
 
     audioStorage = AudioStorage(audioFileRepo);
@@ -76,7 +86,7 @@ void main() {
     for (int i = 0; i < samples; i++) {
       final t = i / sampleRate;
       final value =
-          (0.3 * 32767 * Math.sin(2 * Math.pi * frequency * t)).toInt();
+          (0.3 * 32767 * _Math.sin(2 * _Math.pi * frequency * t)).toInt();
       // Little-endian 16-bit
       audioBytes[i * 2] = value & 0xFF;
       audioBytes[i * 2 + 1] = (value >> 8) & 0xFF;
@@ -120,7 +130,7 @@ void main() {
 }
 
 // Simple Math class for sine wave generation
-class Math {
+class _Math {
   static const double pi = 3.14159265359;
 
   static double sin(double x) {

@@ -159,7 +159,9 @@ void main() {
           componentType: 'context_selector',
           paramsJson: jsonEncode({
             'conversationThreadSize': 0.2, // Normalized
+            'conversationHalfLifeHours': 0.5,
             'maxSemanticResults': 0.5,
+            'semanticHalfLifeHours': 0.5,
             'semanticThreshold': 0.5,
           }),
           reward: 0.3,
@@ -168,7 +170,9 @@ void main() {
           componentType: 'context_selector',
           paramsJson: jsonEncode({
             'conversationThreadSize': 0.4,
+            'conversationHalfLifeHours': 0.5,
             'maxSemanticResults': 0.5,
+            'semanticHalfLifeHours': 0.5,
             'semanticThreshold': 0.5,
           }),
           reward: 0.5,
@@ -177,7 +181,9 @@ void main() {
           componentType: 'context_selector',
           paramsJson: jsonEncode({
             'conversationThreadSize': 0.6,
+            'conversationHalfLifeHours': 0.5,
             'maxSemanticResults': 0.5,
+            'semanticHalfLifeHours': 0.5,
             'semanticThreshold': 0.5,
           }),
           reward: 0.7,
@@ -186,7 +192,9 @@ void main() {
           componentType: 'context_selector',
           paramsJson: jsonEncode({
             'conversationThreadSize': 0.8,
+            'conversationHalfLifeHours': 0.5,
             'maxSemanticResults': 0.5,
+            'semanticHalfLifeHours': 0.5,
             'semanticThreshold': 0.5,
           }),
           reward: 0.9,
@@ -195,7 +203,9 @@ void main() {
           componentType: 'context_selector',
           paramsJson: jsonEncode({
             'conversationThreadSize': 1.0,
+            'conversationHalfLifeHours': 0.5,
             'maxSemanticResults': 0.5,
+            'semanticHalfLifeHours': 0.5,
             'semanticThreshold': 0.5,
           }),
           reward: 1.0,

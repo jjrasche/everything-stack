@@ -1,6 +1,7 @@
-/// # FFI Bridge Test
+/// # FFI Bridge Smoke Test
 ///
-/// Tests Rust FFI bridge to verify it's working before using for WebSocket.
+/// Verifies Rust FFI bridge loads and basic function calls work.
+/// Runs as integration test with native library available.
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:everything_stack_template/bridge/native.dart/api.dart';
