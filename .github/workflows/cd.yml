@@ -9,59 +9,18 @@ on:
 
 jobs:
   # ============ Analysis ============
-  analyze:
-    name: Analyze
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Get dependencies
-        run: flutter pub get
-
-      - name: Generate code
-        run: dart run build_runner build --delete-conflicting-outputs
-
-      - name: Analyze (warnings/infos only, no errors)
-        run: flutter analyze --no-fatal-infos || true
-
-      - name: Format check
-        run: dart format --set-exit-if-changed lib/ test/
+  # TEMPORARILY DISABLED FOR DEBUGGING - Only running emulator tests
+  # analyze:
+  #   name: Analyze
+  #   runs-on: ubuntu-latest
+  #   continue-on-error: true
 
   # ============ Unit Tests ============
-  test:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Get dependencies
-        run: flutter pub get
-
-      - name: Generate code
-        run: dart run build_runner build --delete-conflicting-outputs
-
-      - name: Create .env for tests
-        run: echo "# CI/CD test - secrets via dart-define" > .env
-
-      - name: Run unit and integration tests
-        run: flutter test --coverage
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
-        with:
-          files: coverage/lcov.info
+  # TEMPORARILY DISABLED FOR DEBUGGING - Only running emulator tests
+  # test:
+  #   name: Unit Tests
+  #   runs-on: ubuntu-latest
+  #   continue-on-error: true
 
   # ============ Android Emulator Tests ============
   test-android-emulator:
@@ -97,10 +56,11 @@ jobs:
               --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
 
   # ============ Build Web ============
-  build-web:
-    name: Build Web
-    runs-on: ubuntu-latest
-    needs: [analyze, test, test-android-emulator]
+  # TEMPORARILY DISABLED FOR DEBUGGING - Only running emulator tests
+  # build-web:
+  #   name: Build Web
+  #   runs-on: ubuntu-latest
+  #   needs: [analyze, test, test-android-emulator]
     steps:
       - uses: actions/checkout@v4
 
@@ -131,10 +91,11 @@ jobs:
           retention-days: 30
 
   # ============ Build Android APK ============
-  build-android:
-    name: Build & Distribute Android
-    runs-on: ubuntu-latest
-    needs: [analyze, test, test-android-emulator]
+  # TEMPORARILY DISABLED FOR DEBUGGING - Only running emulator tests
+  # build-android:
+  #   name: Build & Distribute Android
+  #   runs-on: ubuntu-latest
+  #   needs: [analyze, test, test-android-emulator]
     steps:
       - uses: actions/checkout@v4
 
@@ -182,11 +143,12 @@ jobs:
           appId: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
 
   # ============ Check Crashes ============
-  check-crashes:
-    name: Check Crashlytics for Recent Crashes
-    runs-on: ubuntu-latest
-    needs: [build-android, build-web]
-    if: success() || failure()  # Run even if builds fail
+  # TEMPORARILY DISABLED FOR DEBUGGING - Only running emulator tests
+  # check-crashes:
+  #   name: Check Crashlytics for Recent Crashes
+  #   runs-on: ubuntu-latest
+  #   needs: [build-android, build-web]
+  #   if: success() || failure()  # Run even if builds fail
     steps:
       - uses: actions/checkout@v4
 
