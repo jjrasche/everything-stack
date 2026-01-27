@@ -9,22 +9,42 @@ on:
 
 jobs:
   # ============ Analysis ============
-  # TEMPORARILY DISABLED FOR DEBUGGING - Only running emulator tests
-  # analyze:
-  #   name: Analyze
-  #   runs-on: ubuntu-latest
-  #   continue-on-error: true
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: flutter analyze
 
   # ============ Unit Tests ============
-  # TEMPORARILY DISABLED FOR DEBUGGING - Only running emulator tests
-  # test:
-  #   name: Unit Tests
-  #   runs-on: ubuntu-latest
-  #   continue-on-error: true
+  test-unit:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
 
-  # ============ Android Emulator Tests ============
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: flutter test test/
+
+  # ============ Android Emulator Integration Tests ============
   test-android-emulator:
-    name: Android Emulator Tests
+    name: Android Emulator Integration Tests
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -46,8 +66,7 @@ jobs:
             dart run build_runner build --delete-conflicting-outputs
             echo "# CI/CD test - secrets via dart-define" > .env
 
-            # Run all integration tests
-            echo "Running integration test suite..."
+            # Run integration tests on emulator
             flutter test integration_test/ -d emulator-5554 \
               --dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }} \
               --dart-define=DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }} \
@@ -56,11 +75,65 @@ jobs:
               --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
 
   # ============ Build Web ============
-  # TEMPORARILY DISABLED FOR DEBUGGING - Only running emulator tests
+  build-web:
+    name: Build Web
+    needs: [analyze, test-unit]
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: flutter build web --release
 
   # ============ Build Android APK ============
-  # TEMPORARILY DISABLED FOR DEBUGGING - Only running emulator tests
+  build-android:
+    name: Build Android APK
+    needs: [analyze, test-unit, test-android-emulator]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: flutter build apk --release \
+              --dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }} \
+              --dart-define=DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }} \
+              --dart-define=JINA_API_KEY=${{ secrets.JINA_API_KEY }} \
+              --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
+              --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
 
   # ============ Check Crashes ============
-  # TEMPORARILY DISABLED FOR DEBUGGING - Only running emulator tests
+  check-crashes:
+    name: Check for Crashes
+    needs: [build-android]
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          if grep -r "throw.*Exception\|crash\|fatal" lib/ --include="*.dart" | grep -v "test\|mock"; then
+            echo "::warning::Found potential crash sources"
+          fi
 
