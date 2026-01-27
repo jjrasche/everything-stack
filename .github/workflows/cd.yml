@@ -86,13 +86,23 @@ jobs:
             flutter pub get
             dart run build_runner build --delete-conflicting-outputs
             echo "# CI/CD test - secrets via dart-define" > .env
-            echo "Running integration tests on Android emulator..."
+
+            # Run main integration test suite
+            echo "Running main integration test suite..."
             flutter test integration_test/shared/generic_test.dart -d emulator-5554 \
               --dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }} \
               --dart-define=DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }} \
               --dart-define=JINA_API_KEY=${{ secrets.JINA_API_KEY }} \
               --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
               --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+
+            # Run standalone integration tests separately
+            echo "Running FFI bridge smoke test..."
+            flutter test integration_test/ffi_bridge_smoke_logic.dart -d emulator-5554
+
+            echo "Running Deepgram Flux WebSocket test..."
+            flutter test integration_test/deepgram_flux_websocket_logic.dart -d emulator-5554 \
+              --dart-define=DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }}
 
   # ============ Build Web ============
   build-web:
