@@ -213,8 +213,10 @@ class BrowserWebSocketTransport implements Transport {
 /// Factory for creating [BrowserWebSocketTransport] instances.
 class BrowserWebSocketTransportFactory implements TransportFactory {
   @override
-  Transport create(TransportConfig config) => BrowserWebSocketTransport(config: config);
+  Transport create(TransportConfig config) =>
+      BrowserWebSocketTransport(config: config);
 }
 
 /// Create platform-specific transport factory (web implementation).
-TransportFactory createPlatformTransportFactory() => BrowserWebSocketTransportFactory();
+TransportFactory createPlatformTransportFactory() =>
+    BrowserWebSocketTransportFactory();

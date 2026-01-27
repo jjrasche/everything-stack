@@ -25,8 +25,7 @@ class TrialObjectBoxAdapter extends BaseObjectBoxAdapter<Trial, TrialOB>
       TrialOB_.uuid.equals(uuid);
 
   @override
-  Condition<TrialOB> syncStatusLocalCondition() =>
-      TrialOB_.syncId.notNull();
+  Condition<TrialOB> syncStatusLocalCondition() => TrialOB_.syncId.notNull();
 
   // ============ TrialRepository Implementation ============
 

@@ -38,7 +38,8 @@ import 'package:get_it/get_it.dart';
 /// The test queries EmbeddingService from GetIt, so the caller controls
 /// whether it's real (smoke test) or mocked (e2e test).
 Future<void> runInvocationSemanticTest() async {
-  debugPrint('🚀 [Semantic Search Test] Starting invocation semantic search test...');
+  debugPrint(
+      '🚀 [Semantic Search Test] Starting invocation semantic search test...');
 
   // Get services from GetIt
   final chunkingService = GetIt.instance<ChunkingService>();
@@ -59,8 +60,7 @@ Future<void> runInvocationSemanticTest() async {
       success: true,
       confidence: 0.95,
       output: {
-        if (componentType == 'stt') 'transcription': text
-        else 'response': text,
+        if (componentType == 'stt') 'transcription': text else 'response': text,
       },
       metadata: {},
     );
@@ -83,7 +83,8 @@ Future<void> runInvocationSemanticTest() async {
   debugPrint('\n📝 Test 2: Index medium LLM invocation');
   final invocation2 = _createInvocation(
     componentType: 'llm',
-    text: 'The meeting is scheduled for 2 PM tomorrow in the main conference room. '
+    text:
+        'The meeting is scheduled for 2 PM tomorrow in the main conference room. '
         'Please prepare the presentation slides and bring the Q3 reports. '
         'We will discuss budget allocation and timeline for the new project.',
   );
@@ -136,9 +137,11 @@ Future<void> runInvocationSemanticTest() async {
   // ========== TEST 7-9: Index Management ==========
 
   debugPrint('\n📝 Test 7: ChunkingService queries chunks by entity ID');
-  final entityChunks = await chunkingService.getChunksForEntity(invocation1.uuid);
+  final entityChunks =
+      await chunkingService.getChunksForEntity(invocation1.uuid);
   expect(entityChunks, isNotEmpty);
-  expect(entityChunks.map((c) => c.sourceEntityId).toSet().first, equals(invocation1.uuid));
+  expect(entityChunks.map((c) => c.sourceEntityId).toSet().first,
+      equals(invocation1.uuid));
   debugPrint('✅ Test 7 passed');
 
   debugPrint('\n📝 Test 8: Delete chunks removes from HNSW index');
@@ -232,7 +235,8 @@ Future<void> runInvocationSemanticTest() async {
 
   debugPrint('\n📝 Test 14: Multiple index/delete cycles');
   // Index
-  final cycleInv1 = _createInvocation(componentType: 'stt', text: 'Test cycle one');
+  final cycleInv1 =
+      _createInvocation(componentType: 'stt', text: 'Test cycle one');
   final cycleChunks1 = await chunkingService.indexEntity(cycleInv1);
   expect(cycleChunks1, isNotEmpty);
 

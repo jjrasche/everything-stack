@@ -55,37 +55,39 @@ class STTAdaptationData extends AdaptationData {
 
   /// Default adaptation state (untrained).
   factory STTAdaptationData.defaults() => STTAdaptationData(
-    confidenceThreshold: 0.65,
-    minFeedbackCount: 10,
-    eotThreshold: 0.7,                  // Balanced default
-    eagerEotThreshold: null,            // Disabled by default
-    eotTimeoutMs: null,                 // No timeout by default
-    enablePartialTranscripts: true,     // Show live typing
-    enableEagerProcessing: false,       // Conservative default
-  );
+        confidenceThreshold: 0.65,
+        minFeedbackCount: 10,
+        eotThreshold: 0.7, // Balanced default
+        eagerEotThreshold: null, // Disabled by default
+        eotTimeoutMs: null, // No timeout by default
+        enablePartialTranscripts: true, // Show live typing
+        enableEagerProcessing: false, // Conservative default
+      );
 
   /// Deserialize from JSON.
-  factory STTAdaptationData.fromJson(Map<String, dynamic> json) => STTAdaptationData(
-    confidenceThreshold: json['confidenceThreshold'] as double? ?? 0.65,
-    minFeedbackCount: json['minFeedbackCount'] as int? ?? 10,
-    eotThreshold: json['eotThreshold'] as double? ?? 0.7,
-    eagerEotThreshold: json['eagerEotThreshold'] as double?,
-    eotTimeoutMs: json['eotTimeoutMs'] as int?,
-    enablePartialTranscripts: json['enablePartialTranscripts'] as bool? ?? true,
-    enableEagerProcessing: json['enableEagerProcessing'] as bool? ?? false,
-  );
+  factory STTAdaptationData.fromJson(Map<String, dynamic> json) =>
+      STTAdaptationData(
+        confidenceThreshold: json['confidenceThreshold'] as double? ?? 0.65,
+        minFeedbackCount: json['minFeedbackCount'] as int? ?? 10,
+        eotThreshold: json['eotThreshold'] as double? ?? 0.7,
+        eagerEotThreshold: json['eagerEotThreshold'] as double?,
+        eotTimeoutMs: json['eotTimeoutMs'] as int?,
+        enablePartialTranscripts:
+            json['enablePartialTranscripts'] as bool? ?? true,
+        enableEagerProcessing: json['enableEagerProcessing'] as bool? ?? false,
+      );
 
   /// Serialize to JSON string.
   @override
   String toJson() => jsonEncode({
-    'confidenceThreshold': confidenceThreshold,
-    'minFeedbackCount': minFeedbackCount,
-    'eotThreshold': eotThreshold,
-    if (eagerEotThreshold != null) 'eagerEotThreshold': eagerEotThreshold,
-    if (eotTimeoutMs != null) 'eotTimeoutMs': eotTimeoutMs,
-    'enablePartialTranscripts': enablePartialTranscripts,
-    'enableEagerProcessing': enableEagerProcessing,
-  });
+        'confidenceThreshold': confidenceThreshold,
+        'minFeedbackCount': minFeedbackCount,
+        'eotThreshold': eotThreshold,
+        if (eagerEotThreshold != null) 'eagerEotThreshold': eagerEotThreshold,
+        if (eotTimeoutMs != null) 'eotTimeoutMs': eotTimeoutMs,
+        'enablePartialTranscripts': enablePartialTranscripts,
+        'enableEagerProcessing': enableEagerProcessing,
+      });
 
   /// Create a copy with updated parameters (for GP optimization).
   /// GP will test variations of eotThreshold to find optimal value.
@@ -104,8 +106,10 @@ class STTAdaptationData extends AdaptationData {
       eotThreshold: eotThreshold ?? this.eotThreshold,
       eagerEotThreshold: eagerEotThreshold ?? this.eagerEotThreshold,
       eotTimeoutMs: eotTimeoutMs ?? this.eotTimeoutMs,
-      enablePartialTranscripts: enablePartialTranscripts ?? this.enablePartialTranscripts,
-      enableEagerProcessing: enableEagerProcessing ?? this.enableEagerProcessing,
+      enablePartialTranscripts:
+          enablePartialTranscripts ?? this.enablePartialTranscripts,
+      enableEagerProcessing:
+          enableEagerProcessing ?? this.enableEagerProcessing,
     );
   }
 }
@@ -125,15 +129,16 @@ class STTInvocationInput {
 
   /// Serialize to JSON.
   Map<String, dynamic> toJson() => {
-    'audioId': audioId,
-    'durationSeconds': durationSeconds,
-  };
+        'audioId': audioId,
+        'durationSeconds': durationSeconds,
+      };
 
   /// Deserialize from JSON.
-  factory STTInvocationInput.fromJson(Map<String, dynamic> json) => STTInvocationInput(
-    audioId: json['audioId'] as String,
-    durationSeconds: json['durationSeconds'] as double,
-  );
+  factory STTInvocationInput.fromJson(Map<String, dynamic> json) =>
+      STTInvocationInput(
+        audioId: json['audioId'] as String,
+        durationSeconds: json['durationSeconds'] as double,
+      );
 }
 
 /// STT invocation output (transcription result from implementer).
@@ -161,19 +166,22 @@ class STTInvocationOutput {
 
   /// Serialize to JSON.
   Map<String, dynamic> toJson() => {
-    'transcription': transcription,
-    'confidence': confidence,
-    'words': words.map((w) => w.toJson()).toList(),
-    'latencyMs': latencyMs,
-  };
+        'transcription': transcription,
+        'confidence': confidence,
+        'words': words.map((w) => w.toJson()).toList(),
+        'latencyMs': latencyMs,
+      };
 
   /// Deserialize from JSON.
-  factory STTInvocationOutput.fromJson(Map<String, dynamic> json) => STTInvocationOutput(
-    transcription: json['transcription'] as String,
-    confidence: json['confidence'] as double,
-    words: (json['words'] as List).map((w) => Word.fromJson(w as Map<String, dynamic>)).toList(),
-    latencyMs: json['latencyMs'] as double,
-  );
+  factory STTInvocationOutput.fromJson(Map<String, dynamic> json) =>
+      STTInvocationOutput(
+        transcription: json['transcription'] as String,
+        confidence: json['confidence'] as double,
+        words: (json['words'] as List)
+            .map((w) => Word.fromJson(w as Map<String, dynamic>))
+            .toList(),
+        latencyMs: json['latencyMs'] as double,
+      );
 }
 
 /// STT feedback (user confirmation or correction).
@@ -196,15 +204,16 @@ class STTFeedback {
 
   /// Serialize to JSON (stored in Feedback.correctedData).
   Map<String, dynamic> toJson() => {
-    'transcriptionCorrect': transcriptionCorrect,
-    if (correctedTranscription != null) 'correctedTranscription': correctedTranscription,
-    if (wordErrorRate != null) 'wordErrorRate': wordErrorRate,
-  };
+        'transcriptionCorrect': transcriptionCorrect,
+        if (correctedTranscription != null)
+          'correctedTranscription': correctedTranscription,
+        if (wordErrorRate != null) 'wordErrorRate': wordErrorRate,
+      };
 
   /// Deserialize from JSON.
   factory STTFeedback.fromJson(Map<String, dynamic> json) => STTFeedback(
-    transcriptionCorrect: json['transcriptionCorrect'] as bool? ?? false,
-    correctedTranscription: json['correctedTranscription'] as String?,
-    wordErrorRate: json['wordErrorRate'] as double?,
-  );
+        transcriptionCorrect: json['transcriptionCorrect'] as bool? ?? false,
+        correctedTranscription: json['correctedTranscription'] as String?,
+        wordErrorRate: json['wordErrorRate'] as double?,
+      );
 }

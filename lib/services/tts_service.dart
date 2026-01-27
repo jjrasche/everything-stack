@@ -86,7 +86,8 @@ class TTSService with Trainable<TTSAdaptationData> {
     final implementer = _implementers[implementerName ?? _defaultImplementer]!;
 
     // 2. Read adaptation state for this implementer + user
-    final state = await _getAdaptationState(implementer.implementerName, userId);
+    final state =
+        await _getAdaptationState(implementer.implementerName, userId);
 
     // 3. Track playback state
     _isPlaying = true;
@@ -208,7 +209,8 @@ class TTSService with Trainable<TTSAdaptationData> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Text Synthesized:', style: Theme.of(context).textTheme.labelLarge),
+        Text('Text Synthesized:',
+            style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.all(12),
@@ -222,7 +224,8 @@ class TTSService with Trainable<TTSAdaptationData> {
         Text('Audio Duration: ${output.durationSeconds.toStringAsFixed(1)}s',
             style: Theme.of(context).textTheme.bodySmall),
         const SizedBox(height: 16),
-        Text('Was this voice appropriate?', style: Theme.of(context).textTheme.labelLarge),
+        Text('Was this voice appropriate?',
+            style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -246,7 +249,8 @@ class TTSService with Trainable<TTSAdaptationData> {
   }
 
   @override
-  Future<void> trainFromFeedback(Invocation invocation, core_feedback.Feedback feedback) async {
+  Future<void> trainFromFeedback(
+      Invocation invocation, core_feedback.Feedback feedback) async {
     // TODO: Implement training algorithm
     // 1. Parse typed feedback: TTSFeedback.fromJson(feedback.correctedData)
     // 2. Get current AdaptationState for feedback.implementer

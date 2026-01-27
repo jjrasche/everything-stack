@@ -175,11 +175,12 @@ void main() {
       initialState.dataJson = ContextSelectorAdaptationData.defaults().toJson();
       await adaptationRepo.save(initialState);
 
-      final initialParams =
-          ContextSelectorAdaptationData.fromJson(jsonDecode(initialState.dataJson!) as Map<String, dynamic>);
+      final initialParams = ContextSelectorAdaptationData.fromJson(
+          jsonDecode(initialState.dataJson!) as Map<String, dynamic>);
 
       print('\n📊 Initial parameters:');
-      print('   conversationThreadSize: ${initialParams.conversationThreadSize}');
+      print(
+          '   conversationThreadSize: ${initialParams.conversationThreadSize}');
       print('   maxSemanticResults: ${initialParams.maxSemanticResults}');
       print('   semanticThreshold: ${initialParams.semanticThreshold}');
 
@@ -195,7 +196,8 @@ void main() {
         );
 
         final params = state!.dataJson != null
-            ? ContextSelectorAdaptationData.fromJson(jsonDecode(state.dataJson!) as Map<String, dynamic>)
+            ? ContextSelectorAdaptationData.fromJson(
+                jsonDecode(state.dataJson!) as Map<String, dynamic>)
             : ContextSelectorAdaptationData.defaults();
 
         // Simulate reward based on how close we are to optimal (threadSize=12)
@@ -203,17 +205,16 @@ void main() {
         final distance = (threadSize - 12).abs() / 12.0;
         final reward = 1.0 - distance;
 
-        print('Cycle $i: threadSize=$threadSize, reward=${reward.toStringAsFixed(3)}');
+        print(
+            'Cycle $i: threadSize=$threadSize, reward=${reward.toStringAsFixed(3)}');
 
         // Record trial
         final trial = Trial(
           componentType: 'context_selector',
           paramsJson: jsonEncode({
             'conversationThreadSize': (threadSize - 3) / (15 - 3),
-            'maxSemanticResults':
-                (params.maxSemanticResults - 5) / (25 - 5),
-            'semanticThreshold':
-                (params.semanticThreshold - 0.5) / (0.9 - 0.5),
+            'maxSemanticResults': (params.maxSemanticResults - 5) / (25 - 5),
+            'semanticThreshold': (params.semanticThreshold - 0.5) / (0.9 - 0.5),
           }),
           reward: reward,
           userId: null,
@@ -250,8 +251,8 @@ void main() {
         userId: null,
       );
 
-      final finalParams =
-          ContextSelectorAdaptationData.fromJson(jsonDecode(finalState!.dataJson!) as Map<String, dynamic>);
+      final finalParams = ContextSelectorAdaptationData.fromJson(
+          jsonDecode(finalState!.dataJson!) as Map<String, dynamic>);
 
       print('\n📊 Final parameters:');
       print('   conversationThreadSize: ${finalParams.conversationThreadSize}');
@@ -277,7 +278,8 @@ void main() {
       expect(finalState.version, greaterThan(1));
       expect(finalState.lastUpdateReason, 'trainFromFeedback');
 
-      print('\n✅ Feedback loop verified: Parameters improved, trials recorded, state updated!');
+      print(
+          '\n✅ Feedback loop verified: Parameters improved, trials recorded, state updated!');
     });
 
     test('multiple feedback cycles converge parameters', () async {
@@ -329,7 +331,11 @@ void main() {
         // Simulate GP update (move toward optimal)
         if (i >= 4) {
           final current = params.conversationThreadSize;
-          final step = (current < 12) ? 1 : (current > 12) ? -1 : 0;
+          final step = (current < 12)
+              ? 1
+              : (current > 12)
+                  ? -1
+                  : 0;
           final newThreadSize = (current + step).clamp(3, 15);
 
           final newParams = params.copyWith(

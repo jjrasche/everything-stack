@@ -50,11 +50,11 @@ class EventBusImpl implements EventBus {
 
   /// Dummy event for initializing ring buffer
   static Event _DummyEvent() => Event(
-    eventType: '__dummy__',
-    correlationId: '',
-    source: '',
-    payloadJson: '{}',
-  );
+        eventType: '__dummy__',
+        correlationId: '',
+        source: '',
+        payloadJson: '{}',
+      );
 
   @override
   Future<void> publish(Event event) async {
@@ -73,7 +73,8 @@ class EventBusImpl implements EventBus {
       _eventStream.add(event);
       debugPrint('📤 EventBus: Published ${event.eventType}');
     } catch (e) {
-      debugPrint('⚠️ EventBus: Error notifying listeners for ${event.eventType}: $e');
+      debugPrint(
+          '⚠️ EventBus: Error notifying listeners for ${event.eventType}: $e');
     }
   }
 
@@ -85,7 +86,8 @@ class EventBusImpl implements EventBus {
   @override
   List<Event> getEventsByCorrelationId(String correlationId) {
     return _eventLog
-        .where((e) => e.eventType != '__dummy__' && e.correlationId == correlationId)
+        .where((e) =>
+            e.eventType != '__dummy__' && e.correlationId == correlationId)
         .toList();
   }
 
@@ -99,7 +101,8 @@ class EventBusImpl implements EventBus {
   @override
   List<Event> getEventsSince(DateTime timestamp) {
     return _eventLog
-        .where((e) => e.eventType != '__dummy__' && e.createdAt.isAfter(timestamp))
+        .where(
+            (e) => e.eventType != '__dummy__' && e.createdAt.isAfter(timestamp))
         .toList();
   }
 
@@ -117,5 +120,4 @@ class EventBusImpl implements EventBus {
     _eventStream.close();
     debugPrint('✅ EventBus: Disposed');
   }
-
 }

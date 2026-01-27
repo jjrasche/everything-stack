@@ -104,7 +104,8 @@ class ToolExecutor with Trainable<ToolExecutorAdaptationData> {
   String get componentType => 'tool_executor';
 
   @override
-  ToolExecutorAdaptationData createDefaultData() => ToolExecutorAdaptationData();
+  ToolExecutorAdaptationData createDefaultData() =>
+      ToolExecutorAdaptationData();
 
   @override
   ToolExecutorAdaptationData deserializeData(String json) =>
@@ -291,5 +292,4 @@ class ToolExecutor with Trainable<ToolExecutorAdaptationData> {
       );
     }
   }
-
 }

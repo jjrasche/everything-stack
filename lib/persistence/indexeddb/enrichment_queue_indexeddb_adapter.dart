@@ -9,7 +9,8 @@ import '../../core/enrichment_queue_repository.dart';
 import 'base_indexeddb_adapter.dart';
 import 'database_schema.dart';
 
-class EnrichmentQueueIndexedDBAdapter extends BaseIndexedDBAdapter<EnrichmentQueueItem>
+class EnrichmentQueueIndexedDBAdapter
+    extends BaseIndexedDBAdapter<EnrichmentQueueItem>
     implements EnrichmentQueueAdapter {
   EnrichmentQueueIndexedDBAdapter(Database db) : super(db);
 

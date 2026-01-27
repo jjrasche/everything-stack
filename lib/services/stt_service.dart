@@ -79,7 +79,8 @@ class STTService with Trainable<STTAdaptationData> {
     final implementer = _implementers[implementerName ?? _defaultImplementer]!;
 
     // 2. Read adaptation state for this implementer + user
-    final state = await _getAdaptationState(implementer.implementerName, userId);
+    final state =
+        await _getAdaptationState(implementer.implementerName, userId);
 
     // 3. Call implementer with live audio stream and adaptation parameters
     final output = await implementer.startLiveRecognition(
@@ -103,7 +104,7 @@ class STTService with Trainable<STTAdaptationData> {
         confidence: output.confidence,
         input: STTInvocationInput(
           audioId: 'live_stream', // No saved audioId for live streaming
-          durationSeconds: 0.0,    // Duration unknown until EndOfTurn
+          durationSeconds: 0.0, // Duration unknown until EndOfTurn
         ).toJson(),
         output: output.toJson(),
       ),
@@ -142,7 +143,8 @@ class STTService with Trainable<STTAdaptationData> {
     final implementer = _implementers[implementerName ?? _defaultImplementer]!;
 
     // 2. Read adaptation state for this implementer + user
-    final state = await _getAdaptationState(implementer.implementerName, userId);
+    final state =
+        await _getAdaptationState(implementer.implementerName, userId);
 
     // 3. Call implementer with audio and adaptation parameters
     final output = await implementer.recognize(
@@ -199,7 +201,8 @@ class STTService with Trainable<STTAdaptationData> {
     );
 
     return state != null
-        ? STTAdaptationData.fromJson(jsonDecode(state.dataJson ?? '{}') as Map<String, dynamic>)
+        ? STTAdaptationData.fromJson(
+            jsonDecode(state.dataJson ?? '{}') as Map<String, dynamic>)
         : STTAdaptationData.defaults();
   }
 
@@ -224,7 +227,8 @@ class STTService with Trainable<STTAdaptationData> {
           child: Text(output.transcription),
         ),
         const SizedBox(height: 16),
-        Text('Was this transcription correct?', style: Theme.of(context).textTheme.labelLarge),
+        Text('Was this transcription correct?',
+            style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -248,7 +252,8 @@ class STTService with Trainable<STTAdaptationData> {
   }
 
   @override
-  Future<void> trainFromFeedback(Invocation invocation, core_feedback.Feedback feedback) async {
+  Future<void> trainFromFeedback(
+      Invocation invocation, core_feedback.Feedback feedback) async {
     // TODO: Implement training algorithm
     // 1. Parse typed feedback: STTFeedback.fromJson(feedback.correctedData)
     // 2. Get current AdaptationState for feedback.implementer

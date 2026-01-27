@@ -6,8 +6,7 @@
 
 import '../types/message.dart';
 import '../types/llm_types.dart';
-import '../../core/implementer.dart'
-    show Implementer;
+import '../../core/implementer.dart' show Implementer;
 
 abstract class LLMImplementer implements Implementer {
   /// Hard token limit for this implementer (e.g., Groq 8K, Claude 200K).

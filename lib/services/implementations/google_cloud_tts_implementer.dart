@@ -87,7 +87,8 @@ class GoogleCloudTTSImplementer implements TTSImplementer {
         'audioConfig': {
           'audioEncoding': 'MP3',
           'speakingRate': speechRate,
-          'pitch': (pitch - 1.0) * 20.0, // Convert 0.5-2.0 → -10 to +10 semitones
+          'pitch':
+              (pitch - 1.0) * 20.0, // Convert 0.5-2.0 → -10 to +10 semitones
         },
       });
 
@@ -125,7 +126,8 @@ class GoogleCloudTTSImplementer implements TTSImplementer {
         format: 'mp3',
       );
 
-      debugPrint('   ✅ Synthesis complete: ${latencyMs}ms, ${audioBytes.length} bytes');
+      debugPrint(
+          '   ✅ Synthesis complete: ${latencyMs}ms, ${audioBytes.length} bytes');
       return TTSInvocationOutput(
         audioId: audioId,
         durationSeconds: durationSeconds,

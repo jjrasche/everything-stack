@@ -8,7 +8,8 @@ import 'package:everything_stack_template/services/context_selector.dart';
 import 'package:everything_stack_template/core/event.dart';
 import 'package:everything_stack_template/core/invocation.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
-import 'package:everything_stack_template/domain/feedback.dart' as domain_feedback;
+import 'package:everything_stack_template/domain/feedback.dart'
+    as domain_feedback;
 import 'package:everything_stack_template/core/feedback_repository.dart';
 
 /// Voice Assistant Screen
@@ -52,7 +53,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   // late STTService _sttService;
   // late AudioRecordingService _audioService;
 
-  String _interimText = ''; // Gray, updating text (what user is currently saying)
+  String _interimText =
+      ''; // Gray, updating text (what user is currently saying)
   String _finalText = ''; // Black, locked text (last complete utterance)
   String _responseText = ''; // AI response
   ConversationState _conversationState = ConversationState.idle;
@@ -90,7 +92,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
 
   /// Subscribe to events from EventBus
   void _subscribeToEvents() {
-    debugPrint('📡 [_subscribeToEvents] Subscribing to orchestration events...');
+    debugPrint(
+        '📡 [_subscribeToEvents] Subscribing to orchestration events...');
 
     _eventSubscription = _eventBus.subscribe().listen(
       (event) {
@@ -98,7 +101,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
 
         // Handle transcription_complete events (show what user said)
         if (event.eventType == 'transcription_complete') {
-          final utterance = event.toInputString(); // Extract transcript from payload
+          final utterance =
+              event.toInputString(); // Extract transcript from payload
           if (utterance.isNotEmpty && mounted) {
             debugPrint('   Utterance: "$utterance"');
             setState(() {
@@ -149,8 +153,11 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
       // Find the context_selector invocation for this turn
       final invocations = await _invocationRepo.findAll();
       final contextInvocation = invocations.firstWhere(
-        (inv) => inv.eventId == _currentEventId && inv.componentType == 'context_selector',
-        orElse: () => throw Exception('Context invocation not found for eventId: $_currentEventId'),
+        (inv) =>
+            inv.eventId == _currentEventId &&
+            inv.componentType == 'context_selector',
+        orElse: () => throw Exception(
+            'Context invocation not found for eventId: $_currentEventId'),
       );
 
       // Create positive feedback
@@ -203,8 +210,11 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
       // Find the context_selector invocation for this turn
       final invocations = await _invocationRepo.findAll();
       final contextInvocation = invocations.firstWhere(
-        (inv) => inv.eventId == _currentEventId && inv.componentType == 'context_selector',
-        orElse: () => throw Exception('Context invocation not found for eventId: $_currentEventId'),
+        (inv) =>
+            inv.eventId == _currentEventId &&
+            inv.componentType == 'context_selector',
+        orElse: () => throw Exception(
+            'Context invocation not found for eventId: $_currentEventId'),
       );
 
       // Create negative feedback
@@ -559,7 +569,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
                       children: [
                         const Text(
                           'Was this helpful?',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w500),
                         ),
                         const SizedBox(width: 16),
                         IconButton(
@@ -580,7 +591,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.check_circle, color: Colors.green.shade700, size: 20),
+                        Icon(Icons.check_circle,
+                            color: Colors.green.shade700, size: 20),
                         const SizedBox(width: 8),
                         Text(
                           'Feedback recorded - System is learning!',

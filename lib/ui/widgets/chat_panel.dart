@@ -10,11 +10,11 @@ import 'tool_call_message.dart';
 
 /// Chat message in the conversation (text or tool call)
 class ChatMessage {
-  final String id;           // Unique ID (eventId for linking to invocations)
-  final String role;         // 'user', 'assistant', or 'tool'
-  final String content;      // Message text (empty for tool calls)
-  final DateTime timestamp;  // When message was created
-  final bool feedbackGiven;  // Has user rated this message?
+  final String id; // Unique ID (eventId for linking to invocations)
+  final String role; // 'user', 'assistant', or 'tool'
+  final String content; // Message text (empty for tool calls)
+  final DateTime timestamp; // When message was created
+  final bool feedbackGiven; // Has user rated this message?
 
   // Tool call fields (only for role == 'tool')
   final String? toolName;
@@ -89,7 +89,8 @@ class ChatPanel extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.green.shade50,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(8)),
             ),
             child: Row(
               children: [

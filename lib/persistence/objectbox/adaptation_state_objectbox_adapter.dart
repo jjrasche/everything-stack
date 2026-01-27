@@ -17,8 +17,7 @@ class AdaptationStateObjectBoxAdapter
       AdaptationStateOB.fromAdaptationState(entity);
 
   @override
-  AdaptationState fromOB(AdaptationStateOB ob) =>
-      ob.toAdaptationState();
+  AdaptationState fromOB(AdaptationStateOB ob) => ob.toAdaptationState();
 
   @override
   Condition<AdaptationStateOB> uuidEqualsCondition(String uuid) =>
@@ -42,21 +41,25 @@ class AdaptationStateObjectBoxAdapter
     if (userId != null) {
       // User-scoped state
       if (implementer != null) {
-        condition = AdaptationStateOB_.componentType.equals(componentType)
+        condition = AdaptationStateOB_.componentType
+            .equals(componentType)
             .and(AdaptationStateOB_.implementer.equals(implementer))
             .and(AdaptationStateOB_.userId.equals(userId));
       } else {
-        condition = AdaptationStateOB_.componentType.equals(componentType)
+        condition = AdaptationStateOB_.componentType
+            .equals(componentType)
             .and(AdaptationStateOB_.implementer.isNull())
             .and(AdaptationStateOB_.userId.equals(userId));
       }
     } else {
       // No user filtering (shouldn't happen, but handle it)
       if (implementer != null) {
-        condition = AdaptationStateOB_.componentType.equals(componentType)
+        condition = AdaptationStateOB_.componentType
+            .equals(componentType)
             .and(AdaptationStateOB_.implementer.equals(implementer));
       } else {
-        condition = AdaptationStateOB_.componentType.equals(componentType)
+        condition = AdaptationStateOB_.componentType
+            .equals(componentType)
             .and(AdaptationStateOB_.implementer.isNull());
       }
     }
@@ -77,10 +80,12 @@ class AdaptationStateObjectBoxAdapter
   }) async {
     late Condition<AdaptationStateOB> condition;
     if (implementer != null) {
-      condition = AdaptationStateOB_.componentType.equals(componentType)
+      condition = AdaptationStateOB_.componentType
+          .equals(componentType)
           .and(AdaptationStateOB_.implementer.equals(implementer));
     } else {
-      condition = AdaptationStateOB_.componentType.equals(componentType)
+      condition = AdaptationStateOB_.componentType
+          .equals(componentType)
           .and(AdaptationStateOB_.implementer.isNull());
     }
 

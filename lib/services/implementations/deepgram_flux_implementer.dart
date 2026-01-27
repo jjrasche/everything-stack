@@ -113,12 +113,14 @@ class DeepgramFluxImplementer implements STTImplementer {
 
       // Wait for EndOfTurn event (handled in _setupMessageHandler)
       if (_recognitionCompleter == null) {
-        throw DeepgramException('Recognition completer not initialized (WebSocket connection may have failed)');
+        throw DeepgramException(
+            'Recognition completer not initialized (WebSocket connection may have failed)');
       }
 
-      final result = await _recognitionCompleter!.future
-          .timeout(timeout, onTimeout: () {
-        throw DeepgramException('Recognition timeout after ${timeout.inSeconds}s');
+      final result =
+          await _recognitionCompleter!.future.timeout(timeout, onTimeout: () {
+        throw DeepgramException(
+            'Recognition timeout after ${timeout.inSeconds}s');
       });
 
       return result;
@@ -183,12 +185,14 @@ class DeepgramFluxImplementer implements STTImplementer {
 
       // Wait for EndOfTurn event (handled in _setupMessageHandler)
       if (_recognitionCompleter == null) {
-        throw DeepgramException('Recognition completer not initialized (WebSocket connection may have failed)');
+        throw DeepgramException(
+            'Recognition completer not initialized (WebSocket connection may have failed)');
       }
 
-      final result = await _recognitionCompleter!.future
-          .timeout(timeout, onTimeout: () {
-        throw DeepgramException('Recognition timeout after ${timeout.inSeconds}s');
+      final result =
+          await _recognitionCompleter!.future.timeout(timeout, onTimeout: () {
+        throw DeepgramException(
+            'Recognition timeout after ${timeout.inSeconds}s');
       });
 
       return result;
@@ -206,7 +210,8 @@ class DeepgramFluxImplementer implements STTImplementer {
       final audioBytes = await audioStorage.loadAudio(audioId);
       return audioBytes;
     } catch (e) {
-      throw DeepgramException('Failed to load audio data for audioId=$audioId: $e');
+      throw DeepgramException(
+          'Failed to load audio data for audioId=$audioId: $e');
     }
   }
 
@@ -300,8 +305,10 @@ class DeepgramFluxImplementer implements STTImplementer {
       },
       onError: (error) {
         print('❌ [DeepgramFluxImplementer] Channel error: $error');
-        if (_recognitionCompleter != null && !_recognitionCompleter!.isCompleted) {
-          _recognitionCompleter!.completeError(DeepgramException('Channel error: $error'));
+        if (_recognitionCompleter != null &&
+            !_recognitionCompleter!.isCompleted) {
+          _recognitionCompleter!
+              .completeError(DeepgramException('Channel error: $error'));
         }
       },
       onDone: () {
@@ -313,21 +320,24 @@ class DeepgramFluxImplementer implements STTImplementer {
   /// Handle incoming text message from Deepgram Flux v2 API.
   void _handleTextMessage(String text) {
     try {
-      print('📨 [DeepgramFluxImplementer] Received message: ${text.substring(0, text.length > 200 ? 200 : text.length)}...');
+      print(
+          '📨 [DeepgramFluxImplementer] Received message: ${text.substring(0, text.length > 200 ? 200 : text.length)}...');
 
       final data = jsonDecode(text) as Map<String, dynamic>;
       final type = data['type'] as String?;
 
       if (type == 'Connected') {
         // Flux v2: Connection confirmation
-        print('✅ [DeepgramFluxImplementer] Deepgram connected: ${data['request_id']}');
+        print(
+            '✅ [DeepgramFluxImplementer] Deepgram connected: ${data['request_id']}');
       } else if (type == 'TurnInfo') {
         // Flux v2: Transcription update with event type
         print('📝 [DeepgramFluxImplementer] TurnInfo received (processing...)');
         _handleFluxTurnInfo(data);
       } else if (type == 'Error') {
         // Flux v2: Fatal error
-        print('❌ [DeepgramFluxImplementer] Deepgram error: ${data['description']}');
+        print(
+            '❌ [DeepgramFluxImplementer] Deepgram error: ${data['description']}');
       } else {
         print('🔍 [DeepgramFluxImplementer] Unknown message type: $type');
       }
@@ -341,7 +351,8 @@ class DeepgramFluxImplementer implements STTImplementer {
   void _handleFluxTurnInfo(Map<String, dynamic> data) {
     final event = data['event'] as String?;
     final transcript = data['transcript'] as String? ?? '';
-    final endOfTurnConfidence = (data['end_of_turn_confidence'] as num?)?.toDouble() ?? 0.0;
+    final endOfTurnConfidence =
+        (data['end_of_turn_confidence'] as num?)?.toDouble() ?? 0.0;
 
     if (transcript.isEmpty) return;
 
@@ -359,7 +370,7 @@ class DeepgramFluxImplementer implements STTImplementer {
     // Handle event types
     if (event == 'EndOfTurn') {
       // User finished speaking - finalize recognition
-      _handleEndOfTurn();  // Fire-and-forget (async, but we don't block here)
+      _handleEndOfTurn(); // Fire-and-forget (async, but we don't block here)
     } else if (event == 'EagerEndOfTurn' && _enableEagerProcessing) {
       // Eager end of turn (if enabled)
       print('⚡ [DeepgramFluxImplementer] EagerEndOfTurn: "$transcript"');
@@ -375,7 +386,8 @@ class DeepgramFluxImplementer implements STTImplementer {
           'confidence': endOfTurnConfidence,
         }),
       ));
-      print('🎙️ [DeepgramFluxImplementer] StartOfTurn detected (BARGE-IN signal)');
+      print(
+          '🎙️ [DeepgramFluxImplementer] StartOfTurn detected (BARGE-IN signal)');
 
       // Also publish partial for UI display
       if (_enablePartialTranscripts) {
@@ -406,7 +418,8 @@ class DeepgramFluxImplementer implements STTImplementer {
           }),
         ));
 
-        print('📝 [DeepgramFluxImplementer] $event: "$transcript" (confidence: ${endOfTurnConfidence.toStringAsFixed(2)})');
+        print(
+            '📝 [DeepgramFluxImplementer] $event: "$transcript" (confidence: ${endOfTurnConfidence.toStringAsFixed(2)})');
       }
     }
   }
@@ -418,13 +431,13 @@ class DeepgramFluxImplementer implements STTImplementer {
     }
 
     // Calculate final transcript (last partial is usually the most complete)
-    final finalTranscript = _partialTranscripts.isNotEmpty
-        ? _partialTranscripts.last
-        : '';
+    final finalTranscript =
+        _partialTranscripts.isNotEmpty ? _partialTranscripts.last : '';
 
     // Calculate average confidence
     final avgConfidence = _partialConfidences.isNotEmpty
-        ? _partialConfidences.reduce((a, b) => a + b) / _partialConfidences.length
+        ? _partialConfidences.reduce((a, b) => a + b) /
+            _partialConfidences.length
         : 0.0;
 
     // Calculate latency
@@ -432,7 +445,8 @@ class DeepgramFluxImplementer implements STTImplementer {
         ? DateTime.now().difference(_firstByteTime!).inMilliseconds.toDouble()
         : 0.0;
 
-    print('✅ [DeepgramFluxImplementer] EndOfTurn: "$finalTranscript" (latency: ${latencyMs.toStringAsFixed(0)}ms)');
+    print(
+        '✅ [DeepgramFluxImplementer] EndOfTurn: "$finalTranscript" (latency: ${latencyMs.toStringAsFixed(0)}ms)');
 
     // Publish end_of_turn event to EventBus for voice screen to auto-stop
     final eventBus = GetIt.instance<EventBus>();
@@ -460,10 +474,11 @@ class DeepgramFluxImplementer implements STTImplementer {
   /// Used for batch mode (saved audio from AudioStorage).
   Future<void> _streamAudioChunks(Uint8List audioData) async {
     const chunkSize = 8192; // 8KB chunks
-    const throttleMs = 10;   // 10ms between chunks
+    const throttleMs = 10; // 10ms between chunks
 
     for (int i = 0; i < audioData.length; i += chunkSize) {
-      final end = (i + chunkSize < audioData.length) ? i + chunkSize : audioData.length;
+      final end =
+          (i + chunkSize < audioData.length) ? i + chunkSize : audioData.length;
       final chunk = Uint8List.sublistView(audioData, i, end);
 
       // Send binary chunk via Channel
@@ -477,7 +492,8 @@ class DeepgramFluxImplementer implements STTImplementer {
 
     // Send CloseStream message to signal end of audio
     await _channel!.sendText(jsonEncode({'type': 'CloseStream'}));
-    print('📤 [DeepgramFluxImplementer] Finished streaming ${audioData.length} bytes');
+    print(
+        '📤 [DeepgramFluxImplementer] Finished streaming ${audioData.length} bytes');
   }
 
   /// Stream live audio chunks as they arrive from microphone.
@@ -489,7 +505,8 @@ class DeepgramFluxImplementer implements STTImplementer {
     int totalBytes = 0;
     int chunkCount = 0;
 
-    print('🎙️ [DeepgramFluxImplementer] Starting to listen to audio stream...');
+    print(
+        '🎙️ [DeepgramFluxImplementer] Starting to listen to audio stream...');
 
     audioStream.listen(
       (chunk) {
@@ -500,17 +517,21 @@ class DeepgramFluxImplementer implements STTImplementer {
 
         // Log first few chunks and then periodically
         if (chunkCount <= 3 || chunkCount % 50 == 0) {
-          print('📤 [DeepgramFluxImplementer] Sent chunk #$chunkCount: ${chunk.length} bytes (total: $totalBytes bytes)');
+          print(
+              '📤 [DeepgramFluxImplementer] Sent chunk #$chunkCount: ${chunk.length} bytes (total: $totalBytes bytes)');
         }
       },
       onError: (error) {
         print('❌ [DeepgramFluxImplementer] Audio stream error: $error');
-        if (_recognitionCompleter != null && !_recognitionCompleter!.isCompleted) {
-          _recognitionCompleter!.completeError(DeepgramException('Audio stream error: $error'));
+        if (_recognitionCompleter != null &&
+            !_recognitionCompleter!.isCompleted) {
+          _recognitionCompleter!
+              .completeError(DeepgramException('Audio stream error: $error'));
         }
       },
       onDone: () {
-        print('📤 [DeepgramFluxImplementer] Audio stream ended: $totalBytes bytes streamed ($chunkCount chunks)');
+        print(
+            '📤 [DeepgramFluxImplementer] Audio stream ended: $totalBytes bytes streamed ($chunkCount chunks)');
         // Send CloseStream to signal end of recording
         _channel?.sendText(jsonEncode({'type': 'CloseStream'}));
       },

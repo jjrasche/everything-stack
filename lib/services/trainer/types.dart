@@ -28,5 +28,6 @@ class OptimizerException implements Exception {
   OptimizerException(this.message, {this.cause});
 
   @override
-  String toString() => 'OptimizerException: $message${cause != null ? ' (caused by: $cause)' : ''}';
+  String toString() =>
+      'OptimizerException: $message${cause != null ? ' (caused by: $cause)' : ''}';
 }

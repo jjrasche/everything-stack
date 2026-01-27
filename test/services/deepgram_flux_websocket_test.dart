@@ -75,13 +75,15 @@ void main() {
     final audioBytes = Uint8List(samples * 2); // 16-bit samples
     for (int i = 0; i < samples; i++) {
       final t = i / sampleRate;
-      final value = (0.3 * 32767 * Math.sin(2 * Math.pi * frequency * t)).toInt();
+      final value =
+          (0.3 * 32767 * Math.sin(2 * Math.pi * frequency * t)).toInt();
       // Little-endian 16-bit
       audioBytes[i * 2] = value & 0xFF;
       audioBytes[i * 2 + 1] = (value >> 8) & 0xFF;
     }
 
-    print('📊 Generated ${audioBytes.length} bytes of test audio (${duration}s sine wave)');
+    print(
+        '📊 Generated ${audioBytes.length} bytes of test audio (${duration}s sine wave)');
 
     // Save audio
     final audioId = await audioStorage.saveAudio(
@@ -108,11 +110,10 @@ void main() {
 
     // Assertions
     expect(output.transcription, isNotEmpty,
-      reason: 'Transcription should not be empty');
+        reason: 'Transcription should not be empty');
     expect(output.confidence, greaterThan(0.0),
-      reason: 'Confidence should be > 0');
-    expect(output.latencyMs, greaterThan(0.0),
-      reason: 'Latency should be > 0');
+        reason: 'Confidence should be > 0');
+    expect(output.latencyMs, greaterThan(0.0), reason: 'Latency should be > 0');
 
     print('\n✅ All assertions passed - Flux WebSocket working!\n');
   });

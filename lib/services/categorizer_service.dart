@@ -62,9 +62,10 @@ class CategorizerService with Trainable<CategorizerAdaptationData> {
   }) async {
     // 1. Load adaptation state
     final adaptationState = await getAdaptationState(userId: userId);
-    final adaptationData = adaptationState.dataJson.isNotEmpty && adaptationState.dataJson != '{}'
-        ? deserializeData(adaptationState.dataJson)
-        : createDefaultData();
+    final adaptationData =
+        adaptationState.dataJson.isNotEmpty && adaptationState.dataJson != '{}'
+            ? deserializeData(adaptationState.dataJson)
+            : createDefaultData();
 
     // 2. Extract content from entity
     final content = _extractContent(entity);
@@ -107,7 +108,8 @@ class CategorizerService with Trainable<CategorizerAdaptationData> {
         implementer: null,
         success: true,
         confidence: finalTags.isNotEmpty
-            ? confidenceByTag.values.reduce((a, b) => a + b) / confidenceByTag.length
+            ? confidenceByTag.values.reduce((a, b) => a + b) /
+                confidenceByTag.length
             : 0.0,
         input: CategorizerInvocationInput(
           entityId: entity.uuid,
@@ -133,7 +135,8 @@ class CategorizerService with Trainable<CategorizerAdaptationData> {
     // Try to call toCategorizableContent() if entity supports it
     try {
       final dynamic dynamicEntity = entity;
-      if (dynamicEntity is dynamic && dynamicEntity.toCategorizableContent != null) {
+      if (dynamicEntity is dynamic &&
+          dynamicEntity.toCategorizableContent != null) {
         return (dynamicEntity as dynamic).toCategorizableContent() as String;
       }
     } catch (e) {
@@ -157,7 +160,8 @@ class CategorizerService with Trainable<CategorizerAdaptationData> {
     final contentLower = content.toLowerCase();
 
     // 1. Check preferred tags for this entity type
-    final preferredTags = adaptationData.preferredTagsByEntityType[entityType] ?? [];
+    final preferredTags =
+        adaptationData.preferredTagsByEntityType[entityType] ?? [];
     for (final tag in preferredTags) {
       if (contentLower.contains(tag.toLowerCase())) {
         tagConfidences[tag] = 0.9; // High confidence for learned preferences
@@ -188,7 +192,8 @@ class CategorizerService with Trainable<CategorizerAdaptationData> {
     for (final entry in defaultKeywords.entries) {
       final keyword = entry.key;
       final confidence = entry.value;
-      if (contentLower.contains(keyword) && !tagConfidences.containsKey(keyword)) {
+      if (contentLower.contains(keyword) &&
+          !tagConfidences.containsKey(keyword)) {
         tagConfidences[keyword] = confidence;
       }
     }
@@ -202,11 +207,13 @@ class CategorizerService with Trainable<CategorizerAdaptationData> {
   String get componentType => 'categorizer';
 
   @override
-  CategorizerAdaptationData createDefaultData() => CategorizerAdaptationData.defaults();
+  CategorizerAdaptationData createDefaultData() =>
+      CategorizerAdaptationData.defaults();
 
   @override
   CategorizerAdaptationData deserializeData(String json) =>
-      CategorizerAdaptationData.fromJson(jsonDecode(json) as Map<String, dynamic>);
+      CategorizerAdaptationData.fromJson(
+          jsonDecode(json) as Map<String, dynamic>);
 
   @override
   Widget buildFeedbackUI(BuildContext context, Invocation invocation) {
@@ -217,7 +224,8 @@ class CategorizerService with Trainable<CategorizerAdaptationData> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Categorized Entity:', style: Theme.of(context).textTheme.labelLarge),
+        Text('Categorized Entity:',
+            style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.all(12),
@@ -232,14 +240,15 @@ class CategorizerService with Trainable<CategorizerAdaptationData> {
               Text('Tags: ${output.tags.join(", ")}'),
               const SizedBox(height: 8),
               ...output.tags.map((tag) => Text(
-                '$tag: ${(output.confidenceByTag[tag]! * 100).toStringAsFixed(0)}% confidence',
-                style: Theme.of(context).textTheme.bodySmall,
-              )),
+                    '$tag: ${(output.confidenceByTag[tag]! * 100).toStringAsFixed(0)}% confidence',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  )),
             ],
           ),
         ),
         const SizedBox(height: 16),
-        Text('Were tags appropriate?', style: Theme.of(context).textTheme.labelLarge),
+        Text('Were tags appropriate?',
+            style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -263,7 +272,8 @@ class CategorizerService with Trainable<CategorizerAdaptationData> {
   }
 
   @override
-  Future<void> trainFromFeedback(Invocation invocation, core_feedback.Feedback feedback) async {
+  Future<void> trainFromFeedback(
+      Invocation invocation, core_feedback.Feedback feedback) async {
     // TODO: Implement training algorithm
     // 1. Parse typed feedback: user corrections to tags
     // 2. Get current AdaptationState for categorizer

@@ -64,12 +64,12 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
 
   @override
   Map<String, (double, double)> getParameterBounds() => {
-    'conversationThreadSize': (3.0, 15.0),
-    'conversationHalfLifeHours': (1.0, 72.0),      // 1 hour to 3 days
-    'maxSemanticResults': (5.0, 25.0),
-    'semanticHalfLifeHours': (168.0, 2160.0),      // 1 week to 3 months
-    'semanticThreshold': (0.5, 0.9),
-  };
+        'conversationThreadSize': (3.0, 15.0),
+        'conversationHalfLifeHours': (1.0, 72.0), // 1 hour to 3 days
+        'maxSemanticResults': (5.0, 25.0),
+        'semanticHalfLifeHours': (168.0, 2160.0), // 1 week to 3 months
+        'semanticThreshold': (0.5, 0.9),
+      };
 
   @override
   Future<void> trainFromFeedback(
@@ -90,7 +90,8 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
         : createDefaultData();
 
     // Convert feedback to reward
-    final reward = feedback.action == domain_feedback.FeedbackAction.confirm ? 1.0 : -1.0;
+    final reward =
+        feedback.action == domain_feedback.FeedbackAction.confirm ? 1.0 : -1.0;
 
     // Record trial (persists to database)
     await optimizer.recordTrial({
@@ -107,7 +108,8 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
     // Update AdaptationState with new parameters
     final newParams = params.copyWith(
       conversationThreadSize: suggested['conversationThreadSize'] as int,
-      conversationHalfLifeHours: suggested['conversationHalfLifeHours'] as double,
+      conversationHalfLifeHours:
+          suggested['conversationHalfLifeHours'] as double,
       maxSemanticResults: suggested['maxSemanticResults'] as int,
       semanticHalfLifeHours: suggested['semanticHalfLifeHours'] as double,
       semanticThreshold: suggested['semanticThreshold'] as double,
@@ -122,11 +124,16 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
     await GetIt.I<AdaptationStateRepository>().save(state);
 
     print('✅ [ContextSelector.trainFromFeedback] Updated parameters:');
-    print('   conversationThreadSize: ${params.conversationThreadSize} → ${newParams.conversationThreadSize}');
-    print('   conversationHalfLifeHours: ${params.conversationHalfLifeHours.toStringAsFixed(1)}h → ${newParams.conversationHalfLifeHours.toStringAsFixed(1)}h');
-    print('   maxSemanticResults: ${params.maxSemanticResults} → ${newParams.maxSemanticResults}');
-    print('   semanticHalfLifeHours: ${params.semanticHalfLifeHours.toStringAsFixed(1)}h → ${newParams.semanticHalfLifeHours.toStringAsFixed(1)}h');
-    print('   semanticThreshold: ${params.semanticThreshold.toStringAsFixed(2)} → ${newParams.semanticThreshold.toStringAsFixed(2)}');
+    print(
+        '   conversationThreadSize: ${params.conversationThreadSize} → ${newParams.conversationThreadSize}');
+    print(
+        '   conversationHalfLifeHours: ${params.conversationHalfLifeHours.toStringAsFixed(1)}h → ${newParams.conversationHalfLifeHours.toStringAsFixed(1)}h');
+    print(
+        '   maxSemanticResults: ${params.maxSemanticResults} → ${newParams.maxSemanticResults}');
+    print(
+        '   semanticHalfLifeHours: ${params.semanticHalfLifeHours.toStringAsFixed(1)}h → ${newParams.semanticHalfLifeHours.toStringAsFixed(1)}h');
+    print(
+        '   semanticThreshold: ${params.semanticThreshold.toStringAsFixed(2)} → ${newParams.semanticThreshold.toStringAsFixed(2)}');
   }
 
   // ============ GP Optimizer Management ============
@@ -185,7 +192,8 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
     final conversationThread = sttLlmInvocations
         .take(params.conversationThreadSize)
         .toList()
-      ..sort((a, b) => a.createdAt.compareTo(b.createdAt)); // Chronological order
+      ..sort(
+          (a, b) => a.createdAt.compareTo(b.createdAt)); // Chronological order
 
     print('✅ Conversation thread: ${conversationThread.length} invocations');
 
@@ -193,8 +201,10 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
     final now = DateTime.now();
     for (final inv in conversationThread) {
       final ageHours = now.difference(inv.updatedAt).inMinutes / 60.0;
-      final decayScore = _computeDecay(ageHours, params.conversationHalfLifeHours);
-      print('   ${inv.componentType} (${ageHours.toStringAsFixed(1)}h ago): decay=${decayScore.toStringAsFixed(3)}');
+      final decayScore =
+          _computeDecay(ageHours, params.conversationHalfLifeHours);
+      print(
+          '   ${inv.componentType} (${ageHours.toStringAsFixed(1)}h ago): decay=${decayScore.toStringAsFixed(3)}');
     }
 
     // 4. Semantic search ALL embeddable entities
@@ -207,8 +217,10 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
     print('✅ Semantic search returned ${semanticResults.length} candidates');
 
     // 5. Filter out conversation thread (dedup)
-    print('\n[4/6] Deduplicating (removing conversation thread from semantic results)...');
-    final uuidsInConversation = conversationThread.map((inv) => inv.uuid).toSet();
+    print(
+        '\n[4/6] Deduplicating (removing conversation thread from semantic results)...');
+    final uuidsInConversation =
+        conversationThread.map((inv) => inv.uuid).toSet();
     final filteredResults = semanticResults
         .where((inv) => !uuidsInConversation.contains(inv.uuid))
         .toList();
@@ -232,7 +244,9 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
     // 7. Filter by semantic threshold and sort by fused score
     print('\n[6/6] Filtering by threshold and selecting top results...');
     final topResults = scored
-        .where((item) => item.$3 >= params.semanticThreshold) // Filter by semantic similarity
+        .where((item) =>
+            item.$3 >=
+            params.semanticThreshold) // Filter by semantic similarity
         .toList()
       ..sort((a, b) => b.$2.compareTo(a.$2)) // Sort by fused score
       ..take(params.maxSemanticResults).toList();

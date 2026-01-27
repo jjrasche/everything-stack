@@ -183,7 +183,9 @@ class Event extends BaseEntity with Ownable {
         case 'orchestration_complete':
           final response = payload['response'] as String? ?? '';
           final success = payload['success'] as bool? ?? false;
-          return success ? response : '❌ ${payload["errorMessage"] ?? "Processing failed"}';
+          return success
+              ? response
+              : '❌ ${payload["errorMessage"] ?? "Processing failed"}';
 
         case 'text_input':
           return payload['text'] as String? ?? '';

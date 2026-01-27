@@ -81,8 +81,7 @@ class EnrichmentQueueItemOB {
     final item = EnrichmentQueueItem(
       entityUuid: entityUuid,
       entityType: entityType,
-      pendingSteps:
-          pendingStepsStr.isEmpty ? [] : pendingStepsStr.split(','),
+      pendingSteps: pendingStepsStr.isEmpty ? [] : pendingStepsStr.split(','),
       completedSteps:
           completedStepsStr.isEmpty ? [] : completedStepsStr.split(','),
       currentStep: currentStep,

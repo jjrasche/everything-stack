@@ -26,20 +26,21 @@ class Word {
 
   /// Serialize to JSON.
   Map<String, dynamic> toJson() => {
-    'text': text,
-    'confidence': confidence,
-    'startTime': startTime,
-    'endTime': endTime,
-  };
+        'text': text,
+        'confidence': confidence,
+        'startTime': startTime,
+        'endTime': endTime,
+      };
 
   /// Deserialize from JSON.
   factory Word.fromJson(Map<String, dynamic> json) => Word(
-    text: json['text'] as String,
-    confidence: json['confidence'] as double,
-    startTime: json['startTime'] as double,
-    endTime: json['endTime'] as double,
-  );
+        text: json['text'] as String,
+        confidence: json['confidence'] as double,
+        startTime: json['startTime'] as double,
+        endTime: json['endTime'] as double,
+      );
 
   @override
-  String toString() => 'Word(text: $text, confidence: $confidence, start: ${startTime}s, end: ${endTime}s)';
+  String toString() =>
+      'Word(text: $text, confidence: $confidence, start: ${startTime}s, end: ${endTime}s)';
 }

@@ -39,33 +39,36 @@ class ContextSelectorAdaptationData extends AdaptationData {
   });
 
   /// Default adaptation state (untrained).
-  factory ContextSelectorAdaptationData.defaults() => ContextSelectorAdaptationData(
-    conversationThreadSize: 5,
-    conversationHalfLifeHours: 24.0,  // 1 day
-    maxSemanticResults: 10,
-    semanticHalfLifeHours: 720.0,  // 1 month
-    semanticThreshold: 0.7,
-  );
+  factory ContextSelectorAdaptationData.defaults() =>
+      ContextSelectorAdaptationData(
+        conversationThreadSize: 5,
+        conversationHalfLifeHours: 24.0, // 1 day
+        maxSemanticResults: 10,
+        semanticHalfLifeHours: 720.0, // 1 month
+        semanticThreshold: 0.7,
+      );
 
   /// Deserialize from JSON.
   factory ContextSelectorAdaptationData.fromJson(Map<String, dynamic> json) =>
       ContextSelectorAdaptationData(
         conversationThreadSize: json['conversationThreadSize'] as int? ?? 5,
-        conversationHalfLifeHours: json['conversationHalfLifeHours'] as double? ?? 24.0,
+        conversationHalfLifeHours:
+            json['conversationHalfLifeHours'] as double? ?? 24.0,
         maxSemanticResults: json['maxSemanticResults'] as int? ?? 10,
-        semanticHalfLifeHours: json['semanticHalfLifeHours'] as double? ?? 720.0,
+        semanticHalfLifeHours:
+            json['semanticHalfLifeHours'] as double? ?? 720.0,
         semanticThreshold: json['semanticThreshold'] as double? ?? 0.7,
       );
 
   /// Serialize to JSON string.
   @override
   String toJson() => jsonEncode({
-    'conversationThreadSize': conversationThreadSize,
-    'conversationHalfLifeHours': conversationHalfLifeHours,
-    'maxSemanticResults': maxSemanticResults,
-    'semanticHalfLifeHours': semanticHalfLifeHours,
-    'semanticThreshold': semanticThreshold,
-  });
+        'conversationThreadSize': conversationThreadSize,
+        'conversationHalfLifeHours': conversationHalfLifeHours,
+        'maxSemanticResults': maxSemanticResults,
+        'semanticHalfLifeHours': semanticHalfLifeHours,
+        'semanticThreshold': semanticThreshold,
+      });
 
   /// Create a copy with modified fields (for GP optimizer updates).
   ContextSelectorAdaptationData copyWith({
@@ -76,10 +79,13 @@ class ContextSelectorAdaptationData extends AdaptationData {
     double? semanticThreshold,
   }) {
     return ContextSelectorAdaptationData(
-      conversationThreadSize: conversationThreadSize ?? this.conversationThreadSize,
-      conversationHalfLifeHours: conversationHalfLifeHours ?? this.conversationHalfLifeHours,
+      conversationThreadSize:
+          conversationThreadSize ?? this.conversationThreadSize,
+      conversationHalfLifeHours:
+          conversationHalfLifeHours ?? this.conversationHalfLifeHours,
       maxSemanticResults: maxSemanticResults ?? this.maxSemanticResults,
-      semanticHalfLifeHours: semanticHalfLifeHours ?? this.semanticHalfLifeHours,
+      semanticHalfLifeHours:
+          semanticHalfLifeHours ?? this.semanticHalfLifeHours,
       semanticThreshold: semanticThreshold ?? this.semanticThreshold,
     );
   }
@@ -106,7 +112,8 @@ class ContextBundle {
   });
 
   /// Total invocations in bundle
-  int get totalInvocations => conversationThread.length + semanticContext.length;
+  int get totalInvocations =>
+      conversationThread.length + semanticContext.length;
 
   /// Debug string showing bundle composition
   String get summary =>

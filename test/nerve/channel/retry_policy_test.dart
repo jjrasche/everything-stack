@@ -61,7 +61,8 @@ void main() {
         expect(policy.delayForAttempt(1), Duration(seconds: 2));
         expect(policy.delayForAttempt(2), Duration(seconds: 4));
         expect(policy.delayForAttempt(3), Duration(seconds: 5)); // Capped
-        expect(policy.delayForAttempt(10), Duration(seconds: 5)); // Still capped
+        expect(
+            policy.delayForAttempt(10), Duration(seconds: 5)); // Still capped
       });
 
       test('returns zero for negative attempts', () {
@@ -136,7 +137,8 @@ void main() {
 
       test('aggressive has more retries', () {
         expect(RetryPolicy.aggressive.maxAttempts, 10);
-        expect(RetryPolicy.aggressive.initialDelay, Duration(milliseconds: 500));
+        expect(
+            RetryPolicy.aggressive.initialDelay, Duration(milliseconds: 500));
       });
     });
 

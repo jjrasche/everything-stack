@@ -186,7 +186,8 @@ class ChannelImpl implements Channel {
       if (!config.retryPolicy.shouldRetry(_reconnectAttempt)) {
         _setState(ChannelState.failed);
         if (e is NerveException) rethrow;
-        throw ConnectionFailedException('Connection failed after ${_reconnectAttempt + 1} attempts', e);
+        throw ConnectionFailedException(
+            'Connection failed after ${_reconnectAttempt + 1} attempts', e);
       }
 
       // Schedule retry
@@ -217,7 +218,8 @@ class ChannelImpl implements Channel {
       },
       onDone: () {
         if (!_intentionalDisconnect && config.autoReconnect) {
-          _handleConnectionLost(ConnectionLostException('Protocol stream closed'));
+          _handleConnectionLost(
+              ConnectionLostException('Protocol stream closed'));
         }
       },
     );
@@ -227,7 +229,8 @@ class ChannelImpl implements Channel {
     if (_intentionalDisconnect) return;
     if (_state == ChannelState.failed) return;
 
-    if (config.autoReconnect && config.retryPolicy.shouldRetry(_reconnectAttempt)) {
+    if (config.autoReconnect &&
+        config.retryPolicy.shouldRetry(_reconnectAttempt)) {
       _attemptReconnect();
     } else {
       _setState(ChannelState.failed);

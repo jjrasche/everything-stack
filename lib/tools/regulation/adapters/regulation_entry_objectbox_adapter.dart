@@ -252,8 +252,7 @@ class RegulationEntryObjectBoxAdapter
   Future<List<RegulationEntry>> findByDateRange(
       DateTime start, DateTime end) async {
     final query = _box
-        .query(RegulationEntry_.createdAt
-            .betweenDate(start, end))
+        .query(RegulationEntry_.createdAt.betweenDate(start, end))
         .order(RegulationEntry_.createdAt)
         .build();
     try {

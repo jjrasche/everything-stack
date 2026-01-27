@@ -208,8 +208,6 @@ class GaussianProcessOptimizer implements ParameterOptimizer {
 
   /// Generate random normalized parameters in [0, 1]
   Map<String, double> _randomNormalizedParams() {
-    return {
-      for (var name in paramBounds.keys) name: _random.nextDouble()
-    };
+    return {for (var name in paramBounds.keys) name: _random.nextDouble()};
   }
 }

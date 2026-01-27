@@ -76,7 +76,8 @@ class NamespaceSelector implements Trainable {
     }
 
     // Multiple namespaces - use adaptation state to score
-    var state = await adaptationStateRepo.getForComponent('namespace_selector', implementer: null);
+    var state = await adaptationStateRepo.getForComponent('namespace_selector',
+        implementer: null);
     if (state == null) {
       // No adaptation state, return first namespace
       return availableNamespaces.first;
@@ -126,7 +127,8 @@ class NamespaceSelector implements Trainable {
     if (feedbackList.isEmpty) return;
 
     // Get current adaptation state
-    var state = await adaptationStateRepo.getForComponent('namespace_selector', implementer: null, userId: userId);
+    var state = await adaptationStateRepo.getForComponent('namespace_selector',
+        implementer: null, userId: userId);
     if (state == null) return;
     state.loadData();
 
@@ -148,17 +150,20 @@ class NamespaceSelector implements Trainable {
 
       if (corrected['namespace'] is String) {
         final correctNamespace = corrected['namespace'] as String;
-        final selectedNamespace = invocation.output?['selectedNamespace'] as String?;
+        final selectedNamespace =
+            invocation.output?['selectedNamespace'] as String?;
 
         // Update state data (increment feedback count for correct namespace)
         Map<String, dynamic> data = state.data;
-        if (selectedNamespace != null && selectedNamespace != correctNamespace) {
+        if (selectedNamespace != null &&
+            selectedNamespace != correctNamespace) {
           // Track wrong selections
           data['wrongSelections'] = (data['wrongSelections'] as int? ?? 0) + 1;
         }
 
         // Track correct selections
-        data['correctSelections'] = (data['correctSelections'] as int? ?? 0) + 1;
+        data['correctSelections'] =
+            (data['correctSelections'] as int? ?? 0) + 1;
 
         state.data = data;
         state.version++;
@@ -173,7 +178,8 @@ class NamespaceSelector implements Trainable {
 
   @override
   Future<Map<String, dynamic>> getAdaptationState({String? userId}) async {
-    var state = await adaptationStateRepo.getForComponent('namespace_selector', implementer: null, userId: userId);
+    var state = await adaptationStateRepo.getForComponent('namespace_selector',
+        implementer: null, userId: userId);
     if (state == null) return {};
     state.loadData();
     return state.data;

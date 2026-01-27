@@ -106,8 +106,7 @@ class FlutterTtsImplementer implements TTSImplementer {
       final stopwatch = Stopwatch()..start();
 
       // Generate cache key
-      final cacheKey =
-          _generateCacheKey(text, voiceId, speechRate, pitch);
+      final cacheKey = _generateCacheKey(text, voiceId, speechRate, pitch);
 
       // Check cache first
       String audioId;
@@ -164,8 +163,7 @@ class FlutterTtsImplementer implements TTSImplementer {
     double speechRate,
     double pitch,
   ) {
-    final key =
-        '$text|$voiceId|$speechRate|$pitch';
+    final key = '$text|$voiceId|$speechRate|$pitch';
     return md5.convert(utf8.encode(key)).toString();
   }
 

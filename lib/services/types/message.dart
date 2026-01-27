@@ -24,20 +24,21 @@ class Message {
 
   /// Serialize to JSON.
   Map<String, dynamic> toJson() => {
-    'role': role,
-    'content': content,
-    if (timestamp != null) 'timestamp': timestamp!.toIso8601String(),
-  };
+        'role': role,
+        'content': content,
+        if (timestamp != null) 'timestamp': timestamp!.toIso8601String(),
+      };
 
   /// Deserialize from JSON.
   factory Message.fromJson(Map<String, dynamic> json) => Message(
-    role: json['role'] as String,
-    content: json['content'] as String,
-    timestamp: json['timestamp'] != null
-        ? DateTime.parse(json['timestamp'] as String)
-        : null,
-  );
+        role: json['role'] as String,
+        content: json['content'] as String,
+        timestamp: json['timestamp'] != null
+            ? DateTime.parse(json['timestamp'] as String)
+            : null,
+      );
 
   @override
-  String toString() => 'Message(role: $role, content: ${content.substring(0, min(50, content.length))}...)';
+  String toString() =>
+      'Message(role: $role, content: ${content.substring(0, min(50, content.length))}...)';
 }

@@ -235,9 +235,8 @@ class PersonObjectBoxAdapter implements PersistenceAdapter<Person> {
 
   /// Find person by name (case-insensitive)
   Future<Person?> findByName(String name) async {
-    final query = _box
-        .query(Person_.name.equals(name, caseSensitive: false))
-        .build();
+    final query =
+        _box.query(Person_.name.equals(name, caseSensitive: false)).build();
     try {
       return query.findFirst();
     } finally {

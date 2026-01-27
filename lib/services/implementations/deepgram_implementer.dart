@@ -64,15 +64,14 @@ class DeepgramImplementer implements STTImplementer {
 
       final response = await http
           .post(
-            Uri.parse(
-              '$baseUrl/listen?'
-              'model=$model&'
-              'encoding=linear16&'
-              'sample_rate=16000&'
-              'punctuate=true&'           // Better punctuation for conversations
-              'utterances=true&'          // Detect natural speech utterances
-              'smart_format=true'         // Auto-format numbers, dates, etc
-            ),
+            Uri.parse('$baseUrl/listen?'
+                'model=$model&'
+                'encoding=linear16&'
+                'sample_rate=16000&'
+                'punctuate=true&' // Better punctuation for conversations
+                'utterances=true&' // Detect natural speech utterances
+                'smart_format=true' // Auto-format numbers, dates, etc
+                ),
             headers: {
               'Authorization': 'Token $apiKey',
               'Content-Type': 'application/octet-stream',
@@ -99,7 +98,8 @@ class DeepgramImplementer implements STTImplementer {
           if (alternatives != null && alternatives.isNotEmpty) {
             final firstAlt = alternatives.first as Map<String, dynamic>;
             final transcript = firstAlt['transcript'] as String? ?? '';
-            final confidence = (firstAlt['confidence'] as num?)?.toDouble() ?? 0.5;
+            final confidence =
+                (firstAlt['confidence'] as num?)?.toDouble() ?? 0.5;
             final words = _extractWords(firstAlt);
 
             return STTInvocationOutput(
@@ -142,7 +142,8 @@ class DeepgramImplementer implements STTImplementer {
     bool? enablePartialTranscripts,
     bool? enableEagerProcessing,
   }) {
-    throw UnsupportedError('$implementerName does not support live streaming. Use DeepgramFluxImplementer instead.');
+    throw UnsupportedError(
+        '$implementerName does not support live streaming. Use DeepgramFluxImplementer instead.');
   }
 
   /// Load audio data from audioId.
@@ -153,7 +154,8 @@ class DeepgramImplementer implements STTImplementer {
       final audioBytes = await audioStorage.loadAudio(audioId);
       return audioBytes.toList();
     } catch (e) {
-      throw DeepgramException('Failed to load audio data for audioId=$audioId: $e');
+      throw DeepgramException(
+          'Failed to load audio data for audioId=$audioId: $e');
     }
   }
 

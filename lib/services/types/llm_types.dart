@@ -42,31 +42,32 @@ class InferenceAdaptationData extends AdaptationData {
 
   /// Default adaptation state (untrained).
   factory InferenceAdaptationData.defaults() => InferenceAdaptationData(
-    temperature: 0.7,
-    topP: 1.0,
-    frequencyPenalty: 0.0,
-    presencePenalty: 0.0,
-    maxTokens: 1024,
-  );
+        temperature: 0.7,
+        topP: 1.0,
+        frequencyPenalty: 0.0,
+        presencePenalty: 0.0,
+        maxTokens: 1024,
+      );
 
   /// Deserialize from JSON.
-  factory InferenceAdaptationData.fromJson(Map<String, dynamic> json) => InferenceAdaptationData(
-    temperature: json['temperature'] as double? ?? 0.7,
-    topP: json['topP'] as double? ?? 1.0,
-    frequencyPenalty: json['frequencyPenalty'] as double? ?? 0.0,
-    presencePenalty: json['presencePenalty'] as double? ?? 0.0,
-    maxTokens: json['maxTokens'] as int? ?? 1024,
-  );
+  factory InferenceAdaptationData.fromJson(Map<String, dynamic> json) =>
+      InferenceAdaptationData(
+        temperature: json['temperature'] as double? ?? 0.7,
+        topP: json['topP'] as double? ?? 1.0,
+        frequencyPenalty: json['frequencyPenalty'] as double? ?? 0.0,
+        presencePenalty: json['presencePenalty'] as double? ?? 0.0,
+        maxTokens: json['maxTokens'] as int? ?? 1024,
+      );
 
   /// Serialize to JSON string.
   @override
   String toJson() => jsonEncode({
-    'temperature': temperature,
-    'topP': topP,
-    'frequencyPenalty': frequencyPenalty,
-    'presencePenalty': presencePenalty,
-    'maxTokens': maxTokens,
-  });
+        'temperature': temperature,
+        'topP': topP,
+        'frequencyPenalty': frequencyPenalty,
+        'presencePenalty': presencePenalty,
+        'maxTokens': maxTokens,
+      });
 
   /// Create a copy with modified fields (for GP optimizer updates).
   InferenceAdaptationData copyWith({
@@ -102,15 +103,18 @@ class LLMInvocationInput {
 
   /// Serialize to JSON.
   Map<String, dynamic> toJson() => {
-    'messages': messages.map((m) => m.toJson()).toList(),
-    if (systemPrompt != null) 'systemPrompt': systemPrompt,
-  };
+        'messages': messages.map((m) => m.toJson()).toList(),
+        if (systemPrompt != null) 'systemPrompt': systemPrompt,
+      };
 
   /// Deserialize from JSON.
-  factory LLMInvocationInput.fromJson(Map<String, dynamic> json) => LLMInvocationInput(
-    messages: (json['messages'] as List).map((m) => Message.fromJson(m as Map<String, dynamic>)).toList(),
-    systemPrompt: json['systemPrompt'] as String?,
-  );
+  factory LLMInvocationInput.fromJson(Map<String, dynamic> json) =>
+      LLMInvocationInput(
+        messages: (json['messages'] as List)
+            .map((m) => Message.fromJson(m as Map<String, dynamic>))
+            .toList(),
+        systemPrompt: json['systemPrompt'] as String?,
+      );
 }
 
 /// LLM invocation output (what the LLM returned).
@@ -133,17 +137,18 @@ class LLMInvocationOutput {
 
   /// Serialize to JSON.
   Map<String, dynamic> toJson() => {
-    'response': response,
-    'tokensUsed': tokensUsed,
-    'latencyMs': latencyMs,
-  };
+        'response': response,
+        'tokensUsed': tokensUsed,
+        'latencyMs': latencyMs,
+      };
 
   /// Deserialize from JSON.
-  factory LLMInvocationOutput.fromJson(Map<String, dynamic> json) => LLMInvocationOutput(
-    response: json['response'] as String,
-    tokensUsed: json['tokensUsed'] as int,
-    latencyMs: json['latencyMs'] as double,
-  );
+  factory LLMInvocationOutput.fromJson(Map<String, dynamic> json) =>
+      LLMInvocationOutput(
+        response: json['response'] as String,
+        tokensUsed: json['tokensUsed'] as int,
+        latencyMs: json['latencyMs'] as double,
+      );
 }
 
 /// LLM feedback (what user thought of the response).
@@ -170,19 +175,19 @@ class LLMFeedback {
 
   /// Serialize to JSON (stored in Feedback.correctedData).
   Map<String, dynamic> toJson() => {
-    'tooVerbose': tooVerbose,
-    'tooTerse': tooTerse,
-    'accurate': accurate,
-    if (correctedResponse != null) 'correctedResponse': correctedResponse,
-  };
+        'tooVerbose': tooVerbose,
+        'tooTerse': tooTerse,
+        'accurate': accurate,
+        if (correctedResponse != null) 'correctedResponse': correctedResponse,
+      };
 
   /// Deserialize from JSON.
   factory LLMFeedback.fromJson(Map<String, dynamic> json) => LLMFeedback(
-    tooVerbose: json['tooVerbose'] as bool? ?? false,
-    tooTerse: json['tooTerse'] as bool? ?? false,
-    accurate: json['accurate'] as bool? ?? false,
-    correctedResponse: json['correctedResponse'] as String?,
-  );
+        tooVerbose: json['tooVerbose'] as bool? ?? false,
+        tooTerse: json['tooTerse'] as bool? ?? false,
+        accurate: json['accurate'] as bool? ?? false,
+        correctedResponse: json['correctedResponse'] as String?,
+      );
 }
 
 /// LLM response from chatWithTools (includes tool calls, not just text).
@@ -248,13 +253,13 @@ class LLMTool {
 
   /// Convert to JSON for Groq/Claude API.
   Map<String, dynamic> toJson() => {
-    'type': 'function',
-    'function': {
-      'name': name,
-      'description': description,
-      'parameters': parametersSchema,
-    },
-  };
+        'type': 'function',
+        'function': {
+          'name': name,
+          'description': description,
+          'parameters': parametersSchema,
+        },
+      };
 }
 
 /// Backward compatibility alias

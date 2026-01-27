@@ -132,8 +132,9 @@ class Commitment extends BaseEntity {
       timeOfDay: json['timeOfDay'] != null
           ? DateTime.parse(json['timeOfDay'] as String)
           : null,
-      verificationConditions:
-          (json['verificationConditions'] as List).map((e) => e as String).toList(),
+      verificationConditions: (json['verificationConditions'] as List)
+          .map((e) => e as String)
+          .toList(),
       personIds: (json['personIds'] as List).map((e) => e as String).toList(),
       active: json['active'] as bool? ?? true,
     );

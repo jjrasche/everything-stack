@@ -70,9 +70,12 @@ class ChunkEntity {
   /// Validate chunk data before storage.
   void validate() {
     if (chunkId.isEmpty) throw ArgumentError('chunkId cannot be empty');
-    if (sourceEntityId.isEmpty) throw ArgumentError('sourceEntityId cannot be empty');
-    if (sourceEntityType.isEmpty) throw ArgumentError('sourceEntityType cannot be empty');
-    if (endToken <= startToken) throw ArgumentError('endToken must be > startToken');
+    if (sourceEntityId.isEmpty)
+      throw ArgumentError('sourceEntityId cannot be empty');
+    if (sourceEntityType.isEmpty)
+      throw ArgumentError('sourceEntityType cannot be empty');
+    if (endToken <= startToken)
+      throw ArgumentError('endToken must be > startToken');
     if (config != 'parent' && config != 'child') {
       throw ArgumentError('config must be "parent" or "child"');
     }

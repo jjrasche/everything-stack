@@ -12,8 +12,7 @@ import 'repositories/person_repository.dart';
 import 'repositories/regulation_entry_repository.dart';
 import 'repositories/commitment_repository.dart';
 import 'repositories/commitment_log_repository.dart';
-import 'entities/person_stub.dart'
-    if (dart.library.io) 'entities/person.dart';
+import 'entities/person_stub.dart' if (dart.library.io) 'entities/person.dart';
 import 'entities/regulation_entry_stub.dart'
     if (dart.library.io) 'entities/regulation_entry.dart';
 import 'entities/commitment_stub.dart'
@@ -368,7 +367,12 @@ void registerRegulationTools(
             'description': 'Optional: Additional notes',
           },
         },
-        'required': ['entry_type', 'person_names', 'raw_transcript', 'severity'],
+        'required': [
+          'entry_type',
+          'person_names',
+          'raw_transcript',
+          'severity'
+        ],
       },
     ),
     (params) => regulationLogEntry(params, personRepo, entryRepo),
@@ -405,7 +409,8 @@ void registerRegulationTools(
         'required': ['commitment_name'],
       },
     ),
-    (params) => regulationLogCommitment(params, commitmentRepo, logRepo, personRepo),
+    (params) =>
+        regulationLogCommitment(params, commitmentRepo, logRepo, personRepo),
   );
 
   registry.register(

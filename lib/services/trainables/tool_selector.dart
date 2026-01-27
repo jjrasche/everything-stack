@@ -100,7 +100,8 @@ class ToolSelector implements Trainable {
     if (feedbackList.isEmpty) return;
 
     // Get current adaptation state
-    var state = await adaptationStateRepo.getForComponent('tool_selector', implementer: null, userId: userId);
+    var state = await adaptationStateRepo.getForComponent('tool_selector',
+        implementer: null, userId: userId);
     if (state == null) return;
     state.loadData();
 
@@ -123,7 +124,8 @@ class ToolSelector implements Trainable {
       if (corrected['tools'] is List) {
         final correctTools = (corrected['tools'] as List).cast<String>();
         final selectedTools =
-            (invocation.output?['selectedTools'] as List?)?.cast<String>() ?? [];
+            (invocation.output?['selectedTools'] as List?)?.cast<String>() ??
+                [];
 
         // Update state data (track tool selection accuracy)
         Map<String, dynamic> data = state.data;
@@ -135,7 +137,8 @@ class ToolSelector implements Trainable {
         final truePositives = selectedSet.intersection(correctSet).length;
         final falsePositives = selectedSet.difference(correctSet).length;
 
-        data['correctTools'] = (data['correctTools'] as int? ?? 0) + truePositives;
+        data['correctTools'] =
+            (data['correctTools'] as int? ?? 0) + truePositives;
         data['wrongTools'] = (data['wrongTools'] as int? ?? 0) + falsePositives;
 
         state.data = data;
@@ -151,7 +154,8 @@ class ToolSelector implements Trainable {
 
   @override
   Future<Map<String, dynamic>> getAdaptationState({String? userId}) async {
-    var state = await adaptationStateRepo.getForComponent('tool_selector', implementer: null, userId: userId);
+    var state = await adaptationStateRepo.getForComponent('tool_selector',
+        implementer: null, userId: userId);
     if (state == null) return {};
     state.loadData();
     return state.data;

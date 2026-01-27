@@ -96,7 +96,8 @@ class LLMConfigSelector implements Trainable {
     if (feedbackList.isEmpty) return;
 
     // Get current adaptation state
-    var state = await adaptationStateRepo.getForComponent('llm_config_selector', implementer: null, userId: userId);
+    var state = await adaptationStateRepo.getForComponent('llm_config_selector',
+        implementer: null, userId: userId);
     if (state == null) return;
     state.loadData();
 
@@ -152,7 +153,8 @@ class LLMConfigSelector implements Trainable {
 
   @override
   Future<Map<String, dynamic>> getAdaptationState({String? userId}) async {
-    var state = await adaptationStateRepo.getForComponent('llm_config_selector', implementer: null, userId: userId);
+    var state = await adaptationStateRepo.getForComponent('llm_config_selector',
+        implementer: null, userId: userId);
     if (state == null) return {};
     state.loadData();
     return state.data;

@@ -31,8 +31,7 @@ class CommitmentIndexedDBAdapter extends BaseIndexedDBAdapter<Commitment> {
   String get objectStoreName => 'commitments';
 
   @override
-  Commitment fromJson(Map<String, dynamic> json) =>
-      Commitment.fromJson(json);
+  Commitment fromJson(Map<String, dynamic> json) => Commitment.fromJson(json);
 
   // ============ Commitment-Specific Query Methods ============
 
@@ -53,8 +52,6 @@ class CommitmentIndexedDBAdapter extends BaseIndexedDBAdapter<Commitment> {
   /// Find commitments by interval
   Future<List<Commitment>> findByInterval(String interval) async {
     final all = await findAll();
-    return all
-        .where((commitment) => commitment.interval == interval)
-        .toList();
+    return all.where((commitment) => commitment.interval == interval).toList();
   }
 }

@@ -327,14 +327,17 @@ Future<void> initializeEverythingStack({
     debugPrint('✅ [Bootstrap] Loaded .env with API keys');
   } catch (e) {
     // .env file is optional - may not exist on fresh clone
-    debugPrint('ℹ️ [Bootstrap] .env not found, falling back to compile-time env vars');
+    debugPrint(
+        'ℹ️ [Bootstrap] .env not found, falling back to compile-time env vars');
   }
 
   try {
     final cfg = config ?? EverythingStackConfig.fromEnvironment();
     debugPrint('✅ [Bootstrap] Configuration loaded successfully');
-    debugPrint('🔑 Config loaded - Deepgram key present: ${cfg.deepgramApiKey != null}');
-    debugPrint('🔑 Config loaded - Groq key present: ${cfg.groqApiKey != null}');
+    debugPrint(
+        '🔑 Config loaded - Deepgram key present: ${cfg.deepgramApiKey != null}');
+    debugPrint(
+        '🔑 Config loaded - Groq key present: ${cfg.groqApiKey != null}');
     return _initializeServices(cfg);
   } catch (e, st) {
     debugPrint('❌ [Bootstrap] FATAL ERROR during initialization: $e');
@@ -345,10 +348,9 @@ Future<void> initializeEverythingStack({
 
 Future<void> _initializeServices(EverythingStackConfig cfg) async {
   try {
-
-  // 0. Initialize Sentry (DISABLED: Pulls in JNI/Java on Windows)
-  // Re-enable for production when Sentry crash reporting needed
-  /*
+    // 0. Initialize Sentry (DISABLED: Pulls in JNI/Java on Windows)
+    // Re-enable for production when Sentry crash reporting needed
+    /*
   const isTestMode = bool.fromEnvironment('TEST_MODE', defaultValue: false);
   if (isTestMode) {
     debugPrint('⚠️ Skipping Sentry initialization (TEST_MODE=true)');
@@ -367,339 +369,347 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
   }
   */
 
-  // 1. Create timeout-wrapped HTTP client (Layer 1 defense)
-  // Note: Currently unused. Will be used for embedding service HTTP client in future phases.
-  // final timeoutClient = TimeoutHttpClient(http.Client());
-  // final wrappedHttpClient = _wrapHttpClientWithTimeout(timeoutClient);
+    // 1. Create timeout-wrapped HTTP client (Layer 1 defense)
+    // Note: Currently unused. Will be used for embedding service HTTP client in future phases.
+    // final timeoutClient = TimeoutHttpClient(http.Client());
+    // final wrappedHttpClient = _wrapHttpClientWithTimeout(timeoutClient);
 
-  // 2. Initialize Persistence (platform-specific: ObjectBox or IndexedDB)
-  debugPrint('💾 Initializing persistence layer...');
-  await initializePersistence(getIt);
+    // 2. Initialize Persistence (platform-specific: ObjectBox or IndexedDB)
+    debugPrint('💾 Initializing persistence layer...');
+    await initializePersistence(getIt);
 
-  // 3. Initialize BlobStore (platform-specific)
-  final blobStore = createPlatformBlobStore();
-  await blobStore.initialize();
-  BlobStore.instance = blobStore;
+    // 3. Initialize BlobStore (platform-specific)
+    final blobStore = createPlatformBlobStore();
+    await blobStore.initialize();
+    BlobStore.instance = blobStore;
 
-  // 4. Initialize ConnectivityService
-  final connectivityService = ConnectivityPlusService();
-  await connectivityService.initialize();
-  ConnectivityService.instance = connectivityService;
+    // 4. Initialize ConnectivityService
+    final connectivityService = ConnectivityPlusService();
+    await connectivityService.initialize();
+    ConnectivityService.instance = connectivityService;
 
-  // 5. Initialize SyncService (optional - requires Supabase config)
-  if (cfg.hasSyncConfig) {
-    final syncService = SupabaseSyncService(
-      supabaseUrl: cfg.supabaseUrl!,
-      supabaseAnonKey: cfg.supabaseAnonKey!,
+    // 5. Initialize SyncService (optional - requires Supabase config)
+    if (cfg.hasSyncConfig) {
+      final syncService = SupabaseSyncService(
+        supabaseUrl: cfg.supabaseUrl!,
+        supabaseAnonKey: cfg.supabaseAnonKey!,
+      );
+      await syncService.initialize();
+      SyncService.instance = syncService;
+    }
+    // else: keeps MockSyncService default
+
+    // 6. EmbeddingQueueService deferred to Phase 1 (Note entity not yet implemented)
+
+    // 8-11. STT/TTS/LLM Services (platform-specific)
+    // Web platform: Uses browser APIs (SpeechSynthesis for TTS, Web Speech API for STT)
+    // Native platforms: Uses external APIs (Google Cloud TTS, Deepgram STT)
+
+    // 9. Register invocation repository in service registry (shared by all services)
+    // Note: Repository is already registered as singleton in GetIt above.
+    // This registers it in the old ServiceRegistry for backward compatibility.
+    final invocationRepo = getIt<InvocationRepository<Invocation>>();
+    ServiceRegistry.register<InvocationRepository<Invocation>>(
+      'invocation_repo',
+      invocationRepo,
     );
-    await syncService.initialize();
-    SyncService.instance = syncService;
-  }
-  // else: keeps MockSyncService default
 
-  // 6. EmbeddingQueueService deferred to Phase 1 (Note entity not yet implemented)
+    // 10. STT Service (Speech-to-Text)
+    debugPrint('🎤 [STT] Initializing STTService with implementers');
+    final sttImplementers = <String, STTImplementer>{};
+    if (cfg.deepgramApiKey != null && cfg.deepgramApiKey!.isNotEmpty) {
+      // Batch API (legacy) - uses POST to /v1/listen
+      sttImplementers['deepgram_batch'] = DeepgramImplementer(
+        apiKey: cfg.deepgramApiKey!,
+        model: 'nova-2', // Batch model
+      );
+      debugPrint('   ✅ DeepgramImplementer (batch) registered');
 
-  // 8-11. STT/TTS/LLM Services (platform-specific)
-  // Web platform: Uses browser APIs (SpeechSynthesis for TTS, Web Speech API for STT)
-  // Native platforms: Uses external APIs (Google Cloud TTS, Deepgram STT)
+      // Flux WebSocket API (default) - real-time streaming with turn detection
+      sttImplementers['deepgram_flux'] = DeepgramFluxImplementer(
+        apiKey: cfg.deepgramApiKey!,
+        model: 'flux-general-en', // Flux model for streaming STT
+      );
+      debugPrint('   ✅ DeepgramFluxImplementer (streaming) registered');
+    }
 
-  // 9. Register invocation repository in service registry (shared by all services)
-  // Note: Repository is already registered as singleton in GetIt above.
-  // This registers it in the old ServiceRegistry for backward compatibility.
-  final invocationRepo = getIt<InvocationRepository<Invocation>>();
-  ServiceRegistry.register<InvocationRepository<Invocation>>(
-    'invocation_repo',
-    invocationRepo,
-  );
+    if (sttImplementers.isNotEmpty) {
+      // Use Flux as default (streaming with turn detection)
+      // Fall back to batch if Flux not available
+      final defaultSTT = sttImplementers.containsKey('deepgram_flux')
+          ? 'deepgram_flux'
+          : selectCompatibleImplementer(sttImplementers, 'STT');
+      debugPrint('   📍 Platform: $currentPlatform, Selected: $defaultSTT');
 
-  // 10. STT Service (Speech-to-Text)
-  debugPrint('🎤 [STT] Initializing STTService with implementers');
-  final sttImplementers = <String, STTImplementer>{};
-  if (cfg.deepgramApiKey != null && cfg.deepgramApiKey!.isNotEmpty) {
-    // Batch API (legacy) - uses POST to /v1/listen
-    sttImplementers['deepgram_batch'] = DeepgramImplementer(
-      apiKey: cfg.deepgramApiKey!,
-      model: 'nova-2',  // Batch model
-    );
-    debugPrint('   ✅ DeepgramImplementer (batch) registered');
+      final sttService = STTService(
+        implementers: sttImplementers,
+        defaultImplementer: defaultSTT,
+        invocationRepo: invocationRepo,
+        adaptationStateRepo: getIt<AdaptationStateRepository>(),
+        feedbackRepo: getIt<FeedbackRepository>(),
+      );
+      getIt.registerSingleton<STTService>(sttService);
+      debugPrint(
+          '   ✅ STTService registered with ${sttImplementers.length} implementer(s)');
+    } else {
+      debugPrint('   ⏭️  STTService skipped (no API key configured)');
+    }
 
-    // Flux WebSocket API (default) - real-time streaming with turn detection
-    sttImplementers['deepgram_flux'] = DeepgramFluxImplementer(
-      apiKey: cfg.deepgramApiKey!,
-      model: 'flux-general-en',  // Flux model for streaming STT
-    );
-    debugPrint('   ✅ DeepgramFluxImplementer (streaming) registered');
-  }
+    // 11. TTS Service (Text-to-Speech)
+    debugPrint('🔊 [TTS] Initializing TTSService with implementers');
+    final ttsImplementers = <String, TTSImplementer>{
+      'flutter_tts': FlutterTtsImplementer(),
+    };
 
-  if (sttImplementers.isNotEmpty) {
-    // Use Flux as default (streaming with turn detection)
-    // Fall back to batch if Flux not available
-    final defaultSTT = sttImplementers.containsKey('deepgram_flux')
-      ? 'deepgram_flux'
-      : selectCompatibleImplementer(sttImplementers, 'STT');
-    debugPrint('   📍 Platform: $currentPlatform, Selected: $defaultSTT');
+    // Add Google Cloud TTS if API key provided (fallback for Linux, works everywhere)
+    if (cfg.googleTtsApiKey != null && cfg.googleTtsApiKey!.isNotEmpty) {
+      ttsImplementers['google_cloud_tts'] = GoogleCloudTTSImplementer(
+        apiKey: cfg.googleTtsApiKey!,
+      );
+      debugPrint('   ✅ GoogleCloudTTSImplementer registered');
+    }
 
-    final sttService = STTService(
-      implementers: sttImplementers,
-      defaultImplementer: defaultSTT,
-      invocationRepo: invocationRepo,
-      adaptationStateRepo: getIt<AdaptationStateRepository>(),
-      feedbackRepo: getIt<FeedbackRepository>(),
-    );
-    getIt.registerSingleton<STTService>(sttService);
-    debugPrint('   ✅ STTService registered with ${sttImplementers.length} implementer(s)');
-  } else {
-    debugPrint('   ⏭️  STTService skipped (no API key configured)');
-  }
-
-  // 11. TTS Service (Text-to-Speech)
-  debugPrint('🔊 [TTS] Initializing TTSService with implementers');
-  final ttsImplementers = <String, TTSImplementer>{
-    'flutter_tts': FlutterTtsImplementer(),
-  };
-
-  // Add Google Cloud TTS if API key provided (fallback for Linux, works everywhere)
-  if (cfg.googleTtsApiKey != null && cfg.googleTtsApiKey!.isNotEmpty) {
-    ttsImplementers['google_cloud_tts'] = GoogleCloudTTSImplementer(
-      apiKey: cfg.googleTtsApiKey!,
-    );
-    debugPrint('   ✅ GoogleCloudTTSImplementer registered');
-  }
-
-  // Auto-select first implementer compatible with current platform
-  final defaultTTS = selectCompatibleImplementer(ttsImplementers, 'TTS');
-  debugPrint('   📍 Platform: $currentPlatform, Selected: $defaultTTS');
-
-  final ttsService = TTSService(
-    implementers: ttsImplementers,
-    defaultImplementer: defaultTTS,
-    invocationRepo: invocationRepo,
-    adaptationStateRepo: getIt<AdaptationStateRepository>(),
-    feedbackRepo: getIt<FeedbackRepository>(),
-  );
-  getIt.registerSingleton<TTSService>(ttsService);
-  debugPrint('   ✅ TTSService registered with ${ttsImplementers.length} implementer(s)');
-
-  // 12. LLM Service (Inference)
-  debugPrint('🧠 [LLM] Initializing InferenceService with implementers');
-  final llmImplementers = <String, LLMImplementer>{};
-  if (cfg.groqApiKey != null && cfg.groqApiKey!.isNotEmpty) {
-    llmImplementers['groq'] = GroqImplementer(apiKey: cfg.groqApiKey!);
-    debugPrint('   ✅ GroqImplementer registered');
-  }
-
-  if (llmImplementers.isNotEmpty) {
     // Auto-select first implementer compatible with current platform
-    final defaultLLM = selectCompatibleImplementer(llmImplementers, 'LLM');
-    debugPrint('   📍 Platform: $currentPlatform, Selected: $defaultLLM');
+    final defaultTTS = selectCompatibleImplementer(ttsImplementers, 'TTS');
+    debugPrint('   📍 Platform: $currentPlatform, Selected: $defaultTTS');
 
-    final llmService = InferenceService(
-      implementers: llmImplementers,
-      defaultImplementer: defaultLLM,
+    final ttsService = TTSService(
+      implementers: ttsImplementers,
+      defaultImplementer: defaultTTS,
       invocationRepo: invocationRepo,
       adaptationStateRepo: getIt<AdaptationStateRepository>(),
       feedbackRepo: getIt<FeedbackRepository>(),
     );
-    getIt.registerSingleton<InferenceService>(llmService);
-    debugPrint('   ✅ InferenceService registered with ${llmImplementers.length} implementer(s)');
-  } else {
-    debugPrint('   ⏭️  InferenceService skipped (no API key configured)');
-  }
+    getIt.registerSingleton<TTSService>(ttsService);
+    debugPrint(
+        '   ✅ TTSService registered with ${ttsImplementers.length} implementer(s)');
 
-  // 13. Initialize Embedding Service
-  final embeddingConfig = ServiceConfig(
-    provider: cfg.embeddingProvider ?? 'jina',
-    credentials: {
-      if (cfg.jinaApiKey != null) 'apiKey': cfg.jinaApiKey!,
-      if (cfg.geminiApiKey != null) 'apiKey': cfg.geminiApiKey!,
-    },
-  );
-  await _initializeService<EmbeddingService>(
-    serviceName: 'embedding',
-    config: embeddingConfig,
-    setInstance: (service) { EmbeddingService.instance = service; },
-    shouldInitialize: (service) => service is! NullEmbeddingService,
-    getType: (service) => service.runtimeType,
-  );
-
-  // 14. Initialize Semantic Search Infrastructure (ChunkingService + SemanticSearchService)
-  debugPrint('🔍 Initializing semantic search infrastructure...');
-  try {
-    // Create HNSW index
-    final hnswIndex = HnswIndex(dimensions: 384);
-
-    // Create parent and child chunkers
-    final parentChunker = SemanticChunker(config: ChunkingConfig.parent());
-    final childChunker = SemanticChunker(config: ChunkingConfig.child());
-
-    // Get ChunkEntity box from persistence
-    final store = getIt<Store>();
-    final chunkBox = store.box<ChunkEntity>();
-
-    // Create ChunkingService
-    final chunkingService = ChunkingService(
-      index: hnswIndex,
-      embeddingService: EmbeddingService.instance,
-      parentChunker: parentChunker,
-      childChunker: childChunker,
-      chunkBox: chunkBox,
-    );
-    getIt.registerSingleton<ChunkingService>(chunkingService);
-    debugPrint('✅ ChunkingService initialized');
-
-    // Register HNSW index for direct access
-    getIt.registerSingleton<HnswIndex>(hnswIndex);
-    debugPrint('✅ HNSW index registered');
-
-    // Create SemanticSearchService
-    final entityLoader = EntityLoaderImpl();
-    final semanticSearchService = SemanticSearchService(
-      index: hnswIndex,
-      embeddingService: EmbeddingService.instance,
-      entityLoader: entityLoader,
-      chunkingService: chunkingService,
-    );
-    getIt.registerSingleton<SemanticSearchService>(semanticSearchService);
-    debugPrint('✅ SemanticSearchService initialized');
-
-    // Create RepositoryRegistry for worker entity lookups
-    final repoRegistry = RepositoryRegistry();
-    getIt.registerSingleton<RepositoryRegistry>(repoRegistry);
-    debugPrint('✅ RepositoryRegistry initialized');
-
-    // Create EnrichmentQueueRepository (adapter created by platform-specific code)
-    // Note: EnrichmentQueue adapter is registered by persistence initialization
-    EnrichmentQueueRepository? enrichmentQueueRepo;
-    EnrichmentRunner? enrichmentRunner;
-    try {
-      final enrichmentQueueAdapter = getIt<EnrichmentQueueAdapter>();
-      enrichmentQueueRepo = EnrichmentQueueRepository(adapter: enrichmentQueueAdapter);
-      getIt.registerSingleton<EnrichmentQueueRepository>(enrichmentQueueRepo);
-      debugPrint('✅ EnrichmentQueueRepository initialized');
-
-      // Create EnrichmentRunner with workers
-      enrichmentRunner = EnrichmentRunner(
-        queueRepo: enrichmentQueueRepo,
-        workers: [
-          SemanticEnrichmentWorker(
-            chunkingService: chunkingService,
-            repoRegistry: repoRegistry,
-          ),
-        ],
-        batchSize: 10,
-      );
-      getIt.registerSingleton<EnrichmentRunner>(enrichmentRunner);
-      debugPrint('✅ EnrichmentRunner initialized with SemanticEnrichmentWorker');
-
-      // Initialize runner (startup recovery)
-      await enrichmentRunner.initialize();
-      debugPrint('✅ EnrichmentRunner startup recovery complete');
-    } catch (e) {
-      debugPrint('⚠️ EnrichmentRunner initialization failed: $e');
-      debugPrint('   Continuing without async enrichment...');
+    // 12. LLM Service (Inference)
+    debugPrint('🧠 [LLM] Initializing InferenceService with implementers');
+    final llmImplementers = <String, LLMImplementer>{};
+    if (cfg.groqApiKey != null && cfg.groqApiKey!.isNotEmpty) {
+      llmImplementers['groq'] = GroqImplementer(apiKey: cfg.groqApiKey!);
+      debugPrint('   ✅ GroqImplementer registered');
     }
 
-    // Wire InvocationRepository with SemanticIndexableHandler and EnrichmentRunner
-    try {
-      final adapterRegistration = getIt<InvocationRepository<Invocation>>();
+    if (llmImplementers.isNotEmpty) {
+      // Auto-select first implementer compatible with current platform
+      final defaultLLM = selectCompatibleImplementer(llmImplementers, 'LLM');
+      debugPrint('   📍 Platform: $currentPlatform, Selected: $defaultLLM');
 
-      // Create EntityRepository with semantic indexing handler and enrichment runner
-      // This wraps the adapter with SemanticIndexableHandler for automatic chunking
-      final invocationRepo = createInvocationRepository(
-        adapter: adapterRegistration as PersistenceAdapter<Invocation>,
+      final llmService = InferenceService(
+        implementers: llmImplementers,
+        defaultImplementer: defaultLLM,
+        invocationRepo: invocationRepo,
+        adaptationStateRepo: getIt<AdaptationStateRepository>(),
+        feedbackRepo: getIt<FeedbackRepository>(),
+      );
+      getIt.registerSingleton<InferenceService>(llmService);
+      debugPrint(
+          '   ✅ InferenceService registered with ${llmImplementers.length} implementer(s)');
+    } else {
+      debugPrint('   ⏭️  InferenceService skipped (no API key configured)');
+    }
+
+    // 13. Initialize Embedding Service
+    final embeddingConfig = ServiceConfig(
+      provider: cfg.embeddingProvider ?? 'jina',
+      credentials: {
+        if (cfg.jinaApiKey != null) 'apiKey': cfg.jinaApiKey!,
+        if (cfg.geminiApiKey != null) 'apiKey': cfg.geminiApiKey!,
+      },
+    );
+    await _initializeService<EmbeddingService>(
+      serviceName: 'embedding',
+      config: embeddingConfig,
+      setInstance: (service) {
+        EmbeddingService.instance = service;
+      },
+      shouldInitialize: (service) => service is! NullEmbeddingService,
+      getType: (service) => service.runtimeType,
+    );
+
+    // 14. Initialize Semantic Search Infrastructure (ChunkingService + SemanticSearchService)
+    debugPrint('🔍 Initializing semantic search infrastructure...');
+    try {
+      // Create HNSW index
+      final hnswIndex = HnswIndex(dimensions: 384);
+
+      // Create parent and child chunkers
+      final parentChunker = SemanticChunker(config: ChunkingConfig.parent());
+      final childChunker = SemanticChunker(config: ChunkingConfig.child());
+
+      // Get ChunkEntity box from persistence
+      final store = getIt<Store>();
+      final chunkBox = store.box<ChunkEntity>();
+
+      // Create ChunkingService
+      final chunkingService = ChunkingService(
+        index: hnswIndex,
         embeddingService: EmbeddingService.instance,
-        chunkingService: chunkingService,
-        enrichmentRunner: enrichmentRunner,
+        parentChunker: parentChunker,
+        childChunker: childChunker,
+        chunkBox: chunkBox,
       );
+      getIt.registerSingleton<ChunkingService>(chunkingService);
+      debugPrint('✅ ChunkingService initialized');
 
-      // Register EntityRepository (NOT InvocationRepository - different types!)
-      // EntityRepository has the handlers, InvocationRepository is the bare adapter
-      getIt.registerSingleton<EntityRepository<Invocation>>(invocationRepo);
-      debugPrint('✅ InvocationRepository wired with SemanticIndexableHandler (EntityRepository)');
+      // Register HNSW index for direct access
+      getIt.registerSingleton<HnswIndex>(hnswIndex);
+      debugPrint('✅ HNSW index registered');
 
-      // Register invocation repo in RepositoryRegistry for worker entity lookups
-      repoRegistry.register<Invocation>(invocationRepo);
-      debugPrint('✅ Invocation registered in RepositoryRegistry');
+      // Create SemanticSearchService
+      final entityLoader = EntityLoaderImpl();
+      final semanticSearchService = SemanticSearchService(
+        index: hnswIndex,
+        embeddingService: EmbeddingService.instance,
+        entityLoader: entityLoader,
+        chunkingService: chunkingService,
+      );
+      getIt.registerSingleton<SemanticSearchService>(semanticSearchService);
+      debugPrint('✅ SemanticSearchService initialized');
+
+      // Create RepositoryRegistry for worker entity lookups
+      final repoRegistry = RepositoryRegistry();
+      getIt.registerSingleton<RepositoryRegistry>(repoRegistry);
+      debugPrint('✅ RepositoryRegistry initialized');
+
+      // Create EnrichmentQueueRepository (adapter created by platform-specific code)
+      // Note: EnrichmentQueue adapter is registered by persistence initialization
+      EnrichmentQueueRepository? enrichmentQueueRepo;
+      EnrichmentRunner? enrichmentRunner;
+      try {
+        final enrichmentQueueAdapter = getIt<EnrichmentQueueAdapter>();
+        enrichmentQueueRepo =
+            EnrichmentQueueRepository(adapter: enrichmentQueueAdapter);
+        getIt.registerSingleton<EnrichmentQueueRepository>(enrichmentQueueRepo);
+        debugPrint('✅ EnrichmentQueueRepository initialized');
+
+        // Create EnrichmentRunner with workers
+        enrichmentRunner = EnrichmentRunner(
+          queueRepo: enrichmentQueueRepo,
+          workers: [
+            SemanticEnrichmentWorker(
+              chunkingService: chunkingService,
+              repoRegistry: repoRegistry,
+            ),
+          ],
+          batchSize: 10,
+        );
+        getIt.registerSingleton<EnrichmentRunner>(enrichmentRunner);
+        debugPrint(
+            '✅ EnrichmentRunner initialized with SemanticEnrichmentWorker');
+
+        // Initialize runner (startup recovery)
+        await enrichmentRunner.initialize();
+        debugPrint('✅ EnrichmentRunner startup recovery complete');
+      } catch (e) {
+        debugPrint('⚠️ EnrichmentRunner initialization failed: $e');
+        debugPrint('   Continuing without async enrichment...');
+      }
+
+      // Wire InvocationRepository with SemanticIndexableHandler and EnrichmentRunner
+      try {
+        final adapterRegistration = getIt<InvocationRepository<Invocation>>();
+
+        // Create EntityRepository with semantic indexing handler and enrichment runner
+        // This wraps the adapter with SemanticIndexableHandler for automatic chunking
+        final invocationRepo = createInvocationRepository(
+          adapter: adapterRegistration as PersistenceAdapter<Invocation>,
+          embeddingService: EmbeddingService.instance,
+          chunkingService: chunkingService,
+          enrichmentRunner: enrichmentRunner,
+        );
+
+        // Register EntityRepository (NOT InvocationRepository - different types!)
+        // EntityRepository has the handlers, InvocationRepository is the bare adapter
+        getIt.registerSingleton<EntityRepository<Invocation>>(invocationRepo);
+        debugPrint(
+            '✅ InvocationRepository wired with SemanticIndexableHandler (EntityRepository)');
+
+        // Register invocation repo in RepositoryRegistry for worker entity lookups
+        repoRegistry.register<Invocation>(invocationRepo);
+        debugPrint('✅ Invocation registered in RepositoryRegistry');
+      } catch (e) {
+        debugPrint('⚠️ Failed to wire InvocationRepository handler: $e');
+        // Don't rethrow - handler wiring is optional, semantic search works without it
+      }
     } catch (e) {
-      debugPrint('⚠️ Failed to wire InvocationRepository handler: $e');
-      // Don't rethrow - handler wiring is optional, semantic search works without it
+      debugPrint('⚠️ Semantic search initialization failed: $e');
     }
-  } catch (e) {
-    debugPrint('⚠️ Semantic search initialization failed: $e');
-  }
 
-  // 14. Initialize Audio Recording Service (Microphone Input)
-  try {
-    await AudioRecordingService.instance.initialize();
-    debugPrint('✅ Audio: AudioRecordingService');
-  } catch (e) {
-    debugPrint('⚠️ Audio recording service init failed: $e');
-  }
+    // 14. Initialize Audio Recording Service (Microphone Input)
+    try {
+      await AudioRecordingService.instance.initialize();
+      debugPrint('✅ Audio: AudioRecordingService');
+    } catch (e) {
+      debugPrint('⚠️ Audio recording service init failed: $e');
+    }
 
-  // 15. Initialize Audio Storage Service
-  try {
-    // Wrap AudioFile adapter in EntityRepository now that EmbeddingService is ready
-    final audioFileAdapter = getIt<AudioFileObjectBoxAdapter>();
-    final audioFileRepo = EntityRepository<AudioFile>(
-      adapter: audioFileAdapter,
-      embeddingService: EmbeddingService.instance,
-    );
-    getIt.registerSingleton<EntityRepository<AudioFile>>(audioFileRepo);
+    // 15. Initialize Audio Storage Service
+    try {
+      // Wrap AudioFile adapter in EntityRepository now that EmbeddingService is ready
+      final audioFileAdapter = getIt<AudioFileObjectBoxAdapter>();
+      final audioFileRepo = EntityRepository<AudioFile>(
+        adapter: audioFileAdapter,
+        embeddingService: EmbeddingService.instance,
+      );
+      getIt.registerSingleton<EntityRepository<AudioFile>>(audioFileRepo);
 
-    final audioStorage = AudioStorage(audioFileRepo);
-    getIt.registerSingleton<AudioStorage>(audioStorage);
-    debugPrint('✅ Audio: AudioStorage');
-  } catch (e) {
-    debugPrint('⚠️ Audio storage service init failed: $e');
-  }
+      final audioStorage = AudioStorage(audioFileRepo);
+      getIt.registerSingleton<AudioStorage>(audioStorage);
+      debugPrint('✅ Audio: AudioStorage');
+    } catch (e) {
+      debugPrint('⚠️ Audio storage service init failed: $e');
+    }
 
-  // 14. Initialize STT Service (Speech-to-Text) with implementers
-  // TODO: STTService initialization
-  // Requires concrete implementation (STTService is abstract)
-  // debugPrint('🎤 [STT] Initializing STTService with implementers');
-  // final sttImplementers = <String, STTImplementer>{};
-  //
-  // // Add Deepgram implementer if API key provided
-  // if (cfg.deepgramApiKey != null && cfg.deepgramApiKey!.isNotEmpty) {
-  //   sttImplementers['deepgram'] = DeepgramImplementer(apiKey: cfg.deepgramApiKey!);
-  //   debugPrint('✅ STT: DeepgramImplementer registered');
-  // }
-  //
-  // // Only register if we have implementers
-  // if (sttImplementers.isNotEmpty) {
-  //   final sttService = STTService(
-  //     implementers: sttImplementers,
-  //     defaultImplementer: 'deepgram',
-  //     invocationRepo: getIt<InvocationRepository<Invocation>>(),
-  //     adaptationStateRepo: getIt<AdaptationStateRepository>(),
-  //     feedbackRepo: getIt<FeedbackRepository>(),
-  //   );
-  //   getIt.registerSingleton<STTService>(sttService);
-  //   debugPrint('✅ STT: STTService (deepgram)');
-  // } else {
-  //   debugPrint('⚠️ Deepgram API key missing');
-  //   debugPrint('ℹ️ STT: disabled');
-  //   // Register a disabled STT service (empty implementer map)
-  //   final nullSttService = STTService(
-  //     implementers: {},
-  //     defaultImplementer: 'null',
-  //     invocationRepo: getIt<InvocationRepository<Invocation>>(),
-  //     adaptationStateRepo: getIt<AdaptationStateRepository>(),
-  //     feedbackRepo: getIt<FeedbackRepository>(),
-  //   );
-  //   getIt.registerSingleton<STTService>(nullSttService);
-  // }
+    // 14. Initialize STT Service (Speech-to-Text) with implementers
+    // TODO: STTService initialization
+    // Requires concrete implementation (STTService is abstract)
+    // debugPrint('🎤 [STT] Initializing STTService with implementers');
+    // final sttImplementers = <String, STTImplementer>{};
+    //
+    // // Add Deepgram implementer if API key provided
+    // if (cfg.deepgramApiKey != null && cfg.deepgramApiKey!.isNotEmpty) {
+    //   sttImplementers['deepgram'] = DeepgramImplementer(apiKey: cfg.deepgramApiKey!);
+    //   debugPrint('✅ STT: DeepgramImplementer registered');
+    // }
+    //
+    // // Only register if we have implementers
+    // if (sttImplementers.isNotEmpty) {
+    //   final sttService = STTService(
+    //     implementers: sttImplementers,
+    //     defaultImplementer: 'deepgram',
+    //     invocationRepo: getIt<InvocationRepository<Invocation>>(),
+    //     adaptationStateRepo: getIt<AdaptationStateRepository>(),
+    //     feedbackRepo: getIt<FeedbackRepository>(),
+    //   );
+    //   getIt.registerSingleton<STTService>(sttService);
+    //   debugPrint('✅ STT: STTService (deepgram)');
+    // } else {
+    //   debugPrint('⚠️ Deepgram API key missing');
+    //   debugPrint('ℹ️ STT: disabled');
+    //   // Register a disabled STT service (empty implementer map)
+    //   final nullSttService = STTService(
+    //     implementers: {},
+    //     defaultImplementer: 'null',
+    //     invocationRepo: getIt<InvocationRepository<Invocation>>(),
+    //     adaptationStateRepo: getIt<AdaptationStateRepository>(),
+    //     feedbackRepo: getIt<FeedbackRepository>(),
+    //   );
+    //   getIt.registerSingleton<STTService>(nullSttService);
+    // }
 
-  // Note: Domain repositories (Task, Timer, Personality, Namespace) are initialized
-  // by the application layer, not bootstrap. This allows for platform-specific
-  // persistence handling and dependency injection.
-  //
-  // Bootstrap sets up infrastructure services (Persistence, BlobStore, Sync, etc).
-  // Application layer creates domain repositories and ContextManager.
-  //
-  // See: lib/providers/ for Riverpod provider setup with repositories
-  // See: lib/main.dart for ContextManager initialization
-  debugPrint('\n✅ Bootstrap complete: infrastructure services initialized');
+    // Note: Domain repositories (Task, Timer, Personality, Namespace) are initialized
+    // by the application layer, not bootstrap. This allows for platform-specific
+    // persistence handling and dependency injection.
+    //
+    // Bootstrap sets up infrastructure services (Persistence, BlobStore, Sync, etc).
+    // Application layer creates domain repositories and ContextManager.
+    //
+    // See: lib/providers/ for Riverpod provider setup with repositories
+    // See: lib/main.dart for ContextManager initialization
+    debugPrint('\n✅ Bootstrap complete: infrastructure services initialized');
   } catch (e, st) {
     debugPrint('❌ [Bootstrap] FATAL ERROR during service initialization: $e');
     debugPrint('Stack trace:\n$st');
@@ -765,7 +775,8 @@ final getIt = GetIt.instance;
 /// }
 /// ```
 Future<void> setupServiceLocator() async {
-  debugPrint('[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION');
+  debugPrint(
+      '[setupServiceLocator] 🚀🚀🚀 FUNCTION CALLED - STARTING SERVICE REGISTRATION');
   debugPrint('🚀 [setupServiceLocator] Starting service registration...');
 
   try {
@@ -773,7 +784,7 @@ Future<void> setupServiceLocator() async {
 
     // EmbeddingService - loaded from config, respects abstraction
     getIt.registerSingleton<EmbeddingService>(
-      EmbeddingService.instance,  // Already initialized by bootstrap
+      EmbeddingService.instance, // Already initialized by bootstrap
     );
     debugPrint('✅ [setupServiceLocator] EmbeddingService registered');
 
@@ -781,7 +792,8 @@ Future<void> setupServiceLocator() async {
     final hasInference = getIt.isRegistered<InferenceService>();
     final hasTTS = getIt.isRegistered<TTSService>();
     final hasSTT = getIt.isRegistered<STTService>();
-    debugPrint('📊 [setupServiceLocator] Service status: Inference=$hasInference, TTS=$hasTTS, STT=$hasSTT');
+    debugPrint(
+        '📊 [setupServiceLocator] Service status: Inference=$hasInference, TTS=$hasTTS, STT=$hasSTT');
 
     // ========== Domain Repositories (Already registered in initializeEverythingStack) ==========
     // InvocationRepository, AdaptationStateRepository, FeedbackRepository, TurnRepository
@@ -816,7 +828,8 @@ Future<void> setupServiceLocator() async {
 
     // Register timer tools with registry
     registerTimerTools(getIt<ToolRegistry>(), timerRepo);
-    debugPrint('✅ [setupServiceLocator] Timer tools registered (timer.set, timer.cancel, timer.list)');
+    debugPrint(
+        '✅ [setupServiceLocator] Timer tools registered (timer.set, timer.cancel, timer.list)');
 
     // ========== Regulation Repositories (Owns adapter selection internally) ==========
 
@@ -840,7 +853,8 @@ Future<void> setupServiceLocator() async {
       commitmentRepo,
       commitmentLogRepo,
     );
-    debugPrint('✅ [setupServiceLocator] Regulation tools registered (regulation.log_entry, regulation.log_commitment, commitment.create, commitment.list)');
+    debugPrint(
+        '✅ [setupServiceLocator] Regulation tools registered (regulation.log_entry, regulation.log_commitment, commitment.create, commitment.list)');
 
     // ========== Event Bus (Pub/sub with persistence) ==========
     debugPrint('🔍 [setupServiceLocator] Initializing EventBus...');
@@ -878,7 +892,8 @@ Future<void> setupServiceLocator() async {
 
     // ========== Coordinator (Multi-turn context management) ==========
     // Only register if InferenceService and TTSService exist
-    if (getIt.isRegistered<InferenceService>() && getIt.isRegistered<TTSService>()) {
+    if (getIt.isRegistered<InferenceService>() &&
+        getIt.isRegistered<TTSService>()) {
       debugPrint('🔍 [setupServiceLocator] Registering Coordinator...');
 
       final coordinator = Coordinator(
@@ -892,9 +907,11 @@ Future<void> setupServiceLocator() async {
       );
       getIt.registerSingleton<Coordinator>(coordinator);
       coordinator.initialize();
-      debugPrint('✅ [setupServiceLocator] Coordinator registered and initialized');
+      debugPrint(
+          '✅ [setupServiceLocator] Coordinator registered and initialized');
     } else {
-      debugPrint('⏭️ [setupServiceLocator] Coordinator skipped (InferenceService/TTSService not registered)');
+      debugPrint(
+          '⏭️ [setupServiceLocator] Coordinator skipped (InferenceService/TTSService not registered)');
     }
 
     debugPrint('🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY');

@@ -34,7 +34,8 @@ import 'package:everything_stack_template/services/stt_service.dart';
 /// The test verifies that multiple turns can be processed sequentially,
 /// proving the listening bug is fixed.
 Future<void> runAudioPipelineTest(WidgetTester tester) async {
-  print('\n🚀 [Audio Pipeline Test] Starting event-driven audio pipeline test...');
+  print(
+      '\n🚀 [Audio Pipeline Test] Starting event-driven audio pipeline test...');
 
   // ========== SETUP: Build app and initialize ==========
   print('🏗️ Building MyApp...');
@@ -91,14 +92,17 @@ Future<void> runAudioPipelineTest(WidgetTester tester) async {
   await turn1Subscription.cancel();
 
   print('✅ [Turn 1] Complete: success=${turn1Result.success}');
-  print('   Response: "${turn1Result.response.length > 50 ? turn1Result.response.substring(0, 50) + "..." : turn1Result.response}"');
+  print(
+      '   Response: "${turn1Result.response.length > 50 ? turn1Result.response.substring(0, 50) + "..." : turn1Result.response}"');
 
   // Verify Turn 1 invocations
-  final turn1Invocations = await _getInvocationsForCorrelation(invocationRepo, turn1Result.correlationId);
+  final turn1Invocations = await _getInvocationsForCorrelation(
+      invocationRepo, turn1Result.correlationId);
   print('📋 [Turn 1] Invocations recorded: ${turn1Invocations.length}');
 
   expect(turn1Result.success, isTrue, reason: 'Turn 1 should succeed');
-  expect(turn1Invocations.length, greaterThan(0), reason: 'Turn 1 should have invocations');
+  expect(turn1Invocations.length, greaterThan(0),
+      reason: 'Turn 1 should have invocations');
 
   // ========== TURN 2: Second utterance (proves multi-turn works) ==========
   print('\n' + '=' * 60);
@@ -135,14 +139,17 @@ Future<void> runAudioPipelineTest(WidgetTester tester) async {
   await turn2Subscription.cancel();
 
   print('✅ [Turn 2] Complete: success=${turn2Result.success}');
-  print('   Response: "${turn2Result.response.length > 50 ? turn2Result.response.substring(0, 50) + "..." : turn2Result.response}"');
+  print(
+      '   Response: "${turn2Result.response.length > 50 ? turn2Result.response.substring(0, 50) + "..." : turn2Result.response}"');
 
   // Verify Turn 2 invocations
-  final turn2Invocations = await _getInvocationsForCorrelation(invocationRepo, turn2Result.correlationId);
+  final turn2Invocations = await _getInvocationsForCorrelation(
+      invocationRepo, turn2Result.correlationId);
   print('📋 [Turn 2] Invocations recorded: ${turn2Invocations.length}');
 
   expect(turn2Result.success, isTrue, reason: 'Turn 2 should succeed');
-  expect(turn2Invocations.length, greaterThan(0), reason: 'Turn 2 should have invocations');
+  expect(turn2Invocations.length, greaterThan(0),
+      reason: 'Turn 2 should have invocations');
 
   // ========== ASSERTIONS ==========
   print('\n' + '=' * 60);
@@ -158,30 +165,41 @@ Future<void> runAudioPipelineTest(WidgetTester tester) async {
   // Assert 2: Events were persisted
   print('📋 Assert: Events persisted...');
   final allEvents = await eventRepository.getAll();
-  final transcriptionEvents = allEvents.whereType<TranscriptionComplete>().toList();
-  expect(transcriptionEvents.length, greaterThanOrEqualTo(2), reason: 'Should have at least 2 TranscriptionComplete events');
+  final transcriptionEvents =
+      allEvents.whereType<TranscriptionComplete>().toList();
+  expect(transcriptionEvents.length, greaterThanOrEqualTo(2),
+      reason: 'Should have at least 2 TranscriptionComplete events');
   print('  ✓ ${transcriptionEvents.length} TranscriptionComplete events found');
 
   // Assert 3: Invocations recorded
   print('📋 Assert: Invocations recorded for training...');
   final allInvocations = await invocationRepo.findAll();
   final recentInvocations = allInvocations
-      .where((inv) => inv.createdAt.isAfter(DateTime.now().subtract(const Duration(seconds: 30))))
+      .where((inv) => inv.createdAt
+          .isAfter(DateTime.now().subtract(const Duration(seconds: 30))))
       .toList();
   print('  Total recent invocations: ${recentInvocations.length}');
 
-  final componentTypes = recentInvocations.map((inv) => inv.componentType).toSet();
+  final componentTypes =
+      recentInvocations.map((inv) => inv.componentType).toSet();
   print('  Components executed: ${componentTypes.join(", ")}');
 
-  expect(componentTypes.contains('tts'), isTrue, reason: 'TTS should be invoked');
+  expect(componentTypes.contains('tts'), isTrue,
+      reason: 'TTS should be invoked');
   print('  ✓ TTS invocations present');
 
   // Assert 4: No duplicate processing
   print('📋 Assert: No duplicate processing...');
-  final turn1LLMInvocations = turn1Invocations.where((inv) => inv.componentType == 'llm_orchestrator').toList();
-  final turn2LLMInvocations = turn2Invocations.where((inv) => inv.componentType == 'llm_orchestrator').toList();
-  expect(turn1LLMInvocations.length, lessThanOrEqualTo(1), reason: 'Turn 1 should have at most 1 LLM invocation');
-  expect(turn2LLMInvocations.length, lessThanOrEqualTo(1), reason: 'Turn 2 should have at most 1 LLM invocation');
+  final turn1LLMInvocations = turn1Invocations
+      .where((inv) => inv.componentType == 'llm_orchestrator')
+      .toList();
+  final turn2LLMInvocations = turn2Invocations
+      .where((inv) => inv.componentType == 'llm_orchestrator')
+      .toList();
+  expect(turn1LLMInvocations.length, lessThanOrEqualTo(1),
+      reason: 'Turn 1 should have at most 1 LLM invocation');
+  expect(turn2LLMInvocations.length, lessThanOrEqualTo(1),
+      reason: 'Turn 2 should have at most 1 LLM invocation');
   print('  ✓ No duplicate LLM calls');
 
   print('\n🎉 Audio pipeline E2E test complete');

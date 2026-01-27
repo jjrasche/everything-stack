@@ -32,8 +32,9 @@ class EnrichmentQueueObjectBoxAdapter implements EnrichmentQueueAdapter {
 
   @override
   Future<EnrichmentQueueItem?> findByEntityUuid(String entityUuid) async {
-    final query =
-        _box.query(EnrichmentQueueItemOB_.entityUuid.equals(entityUuid)).build();
+    final query = _box
+        .query(EnrichmentQueueItemOB_.entityUuid.equals(entityUuid))
+        .build();
     try {
       final ob = query.findFirst();
       return ob?.toItem();
@@ -117,7 +118,8 @@ class EnrichmentQueueObjectBoxAdapter implements EnrichmentQueueAdapter {
         // pendingSteps contains stepType (exact match)
         if (!item.pendingSteps.contains(stepType)) return false;
         // completedSteps contains all required steps (exact match)
-        return requiredSteps.every((step) => item.completedSteps.contains(step));
+        return requiredSteps
+            .every((step) => item.completedSteps.contains(step));
       }).toList();
     } finally {
       query.close();

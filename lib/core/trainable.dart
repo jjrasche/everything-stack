@@ -88,15 +88,18 @@ mixin class Trainable<D extends AdaptationData> {
 
   /// Component identifier: 'stt', 'llm', 'tts', 'namespace_selector', etc.
   /// Must be overridden by implementing classes
-  String get componentType => throw UnimplementedError('componentType must be implemented');
+  String get componentType =>
+      throw UnimplementedError('componentType must be implemented');
 
   /// Create default adaptation data (new component with no training)
   /// Must be overridden by implementing classes
-  D createDefaultData() => throw UnimplementedError('createDefaultData must be implemented');
+  D createDefaultData() =>
+      throw UnimplementedError('createDefaultData must be implemented');
 
   /// Deserialize adaptation data from JSON string
   /// Must be overridden by implementing classes
-  D deserializeData(String json) => throw UnimplementedError('deserializeData must be implemented');
+  D deserializeData(String json) =>
+      throw UnimplementedError('deserializeData must be implemented');
 
   /// Get parameter bounds for Gaussian Process optimization.
   /// Must be overridden by trainable components that use GP optimizer.
@@ -185,7 +188,8 @@ mixin class Trainable<D extends AdaptationData> {
   /// Train component from user feedback.
   /// Must be implemented by subclass.
   /// Called after user provides corrections/ratings for an invocation.
-  Future<void> trainFromFeedback(Invocation invocation, domain_feedback.Feedback feedback) async {
+  Future<void> trainFromFeedback(
+      Invocation invocation, domain_feedback.Feedback feedback) async {
     // Placeholder: learning logic deferred to Phase 2.
     // When implemented, this will:
     // 1. Parse typed feedback (LLMFeedback, STTFeedback, etc.)

@@ -61,6 +61,7 @@ abstract class STTImplementer implements Implementer {
     bool? enablePartialTranscripts,
     bool? enableEagerProcessing,
   }) {
-    throw UnsupportedError('${implementerName} does not support live streaming');
+    throw UnsupportedError(
+        '${implementerName} does not support live streaming');
   }
 }

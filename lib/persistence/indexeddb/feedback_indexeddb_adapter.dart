@@ -14,17 +14,14 @@ class FeedbackIndexedDBAdapter extends BaseIndexedDBAdapter<Feedback>
   String get objectStoreName => ObjectStores.feedback;
 
   @override
-  Feedback fromJson(Map<String, dynamic> json) =>
-      Feedback.fromJson(json);
+  Feedback fromJson(Map<String, dynamic> json) => Feedback.fromJson(json);
 
   // ============ FeedbackRepository Implementation ============
 
   @override
   Future<List<Feedback>> findByInvocationId(String invocationId) async {
     final allFeedback = await findAll();
-    return allFeedback
-        .where((f) => f.invocationId == invocationId)
-        .toList();
+    return allFeedback.where((f) => f.invocationId == invocationId).toList();
   }
 
   @override
@@ -48,17 +45,14 @@ class FeedbackIndexedDBAdapter extends BaseIndexedDBAdapter<Feedback>
   ) async {
     final allFeedback = await findAll();
     return allFeedback
-        .where((f) =>
-            f.turnId == turnId && f.componentType == componentType)
+        .where((f) => f.turnId == turnId && f.componentType == componentType)
         .toList();
   }
 
   @override
   Future<List<Feedback>> findByContextType(String contextType) async {
     final allFeedback = await findAll();
-    return allFeedback
-        .where((f) => f.componentType == contextType)
-        .toList();
+    return allFeedback.where((f) => f.componentType == contextType).toList();
   }
 
   @override
@@ -76,8 +70,7 @@ class FeedbackIndexedDBAdapter extends BaseIndexedDBAdapter<Feedback>
   @override
   Future<int> deleteByTurn(String turnId) async {
     final allFeedback = await findAll();
-    final toDelete =
-        allFeedback.where((f) => f.turnId == turnId).toList();
+    final toDelete = allFeedback.where((f) => f.turnId == turnId).toList();
     int deletedCount = 0;
     for (final f in toDelete) {
       if (await delete(f.uuid)) {

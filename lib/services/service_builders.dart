@@ -63,14 +63,16 @@ InferenceService createInferenceService(ServiceConfig config) {
     'groq' => _buildGroqLLM(config),
     'claude' => _buildClaudeLLM(config),
     'local' => _buildLocalLLM(config),
-    _ => throw UnknownServiceException('Unknown LLM provider: ${config.provider}'),
+    _ =>
+      throw UnknownServiceException('Unknown LLM provider: ${config.provider}'),
   };
 }
 
 InferenceService _buildGroqLLM(ServiceConfig config) {
   // TODO: InferenceService requires concrete implementation
   // InferenceService is abstract and cannot be instantiated
-  print('⚠️ Groq LLM service builder - awaiting concrete InferenceService implementation');
+  print(
+      '⚠️ Groq LLM service builder - awaiting concrete InferenceService implementation');
   throw UnimplementedError('Groq LLM service builder not yet implemented');
 
   // final apiKey = config.credentials['apiKey'] as String?;
@@ -121,14 +123,16 @@ TTSService createTTSService(ServiceConfig config) {
   return switch (config.provider.toLowerCase()) {
     'flutter' => _buildFlutterTTS(config),
     'google' => _buildGoogleTTS(config),
-    _ => throw UnknownServiceException('Unknown TTS provider: ${config.provider}'),
+    _ =>
+      throw UnknownServiceException('Unknown TTS provider: ${config.provider}'),
   };
 }
 
 TTSService _buildFlutterTTS(ServiceConfig config) {
   // TODO: TTSService requires concrete implementation
   // TTSService is abstract and cannot be instantiated
-  print('⚠️ Flutter TTS service builder - awaiting concrete TTSService implementation');
+  print(
+      '⚠️ Flutter TTS service builder - awaiting concrete TTSService implementation');
   throw UnimplementedError('Flutter TTS service builder not yet implemented');
 
   // final invocationRepo = ServiceRegistry.getOrNull<InvocationRepository<Invocation>>('invocation_repo');
@@ -173,7 +177,8 @@ EmbeddingService createEmbeddingService(ServiceConfig config) {
     'jina' => _buildJinaEmbedding(config),
     'gemini' => _buildGeminiEmbedding(config),
     'local' => _buildLocalEmbedding(config),
-    _ => throw UnknownServiceException('Unknown embedding provider: ${config.provider}'),
+    _ => throw UnknownServiceException(
+        'Unknown embedding provider: ${config.provider}'),
   };
 }
 
@@ -193,7 +198,8 @@ EmbeddingService _buildJinaEmbedding(ServiceConfig config) {
         body: body,
       );
       if (response.statusCode != 200) {
-        throw Exception('Jina API error: ${response.statusCode} ${response.body}');
+        throw Exception(
+            'Jina API error: ${response.statusCode} ${response.body}');
       }
       return response.body;
     },

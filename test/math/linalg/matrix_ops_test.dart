@@ -133,7 +133,8 @@ void main() {
         for (int j = 0; j < 10; j++) {
           expect(
             reconstructed[i][j],
-            closeTo(A[i][j], 1e-5), // Relaxed tolerance for accumulated floating point errors
+            closeTo(A[i][j],
+                1e-5), // Relaxed tolerance for accumulated floating point errors
             reason: 'Element [$i][$j] mismatch',
           );
         }

@@ -18,8 +18,8 @@
 import 'transport.dart';
 
 // Conditional import: Rust on native, browser WebSocket on web
-import 'rust_websocket_transport.dart' if (dart.library.html) 'web_websocket_transport.dart'
-    as platform;
+import 'rust_websocket_transport.dart'
+    if (dart.library.html) 'web_websocket_transport.dart' as platform;
 
 /// Create a platform-appropriate [TransportFactory].
 ///

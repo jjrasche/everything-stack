@@ -9,8 +9,8 @@ import 'matrix.dart';
 import 'matrix_ops_dart.dart';
 
 // Conditional import for FFI implementation (native platforms only)
-import 'matrix_ops_dart.dart'
-    if (dart.library.io) 'matrix_ops_ffi.dart' as impl;
+import 'matrix_ops_dart.dart' if (dart.library.io) 'matrix_ops_ffi.dart'
+    as impl;
 
 /// Exception thrown when matrix operations fail
 class MatrixOperationException implements Exception {

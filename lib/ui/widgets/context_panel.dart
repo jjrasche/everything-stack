@@ -33,13 +33,15 @@ class _ContextPanelState extends State<ContextPanel> {
   @override
   Widget build(BuildContext context) {
     // Calculate total context count and filter semantic matches
-    final conversationCount = widget.contextBundle?.conversationThread.length ?? 0;
+    final conversationCount =
+        widget.contextBundle?.conversationThread.length ?? 0;
     final allSemanticMatches = widget.contextBundle?.semanticContext ?? [];
 
     // Filter semantic matches by similarity threshold
     // Note: ContextBundle doesn't store similarity scores yet, so we'll use decay as proxy
     final filteredSemanticMatches = allSemanticMatches.where((inv) {
-      final ageHours = DateTime.now().difference(inv.updatedAt).inHours.toDouble();
+      final ageHours =
+          DateTime.now().difference(inv.updatedAt).inHours.toDouble();
       final score = _computeDecay(ageHours, 720.0); // semantic half-life
       return score >= _similarityThreshold;
     }).toList();
@@ -60,7 +62,8 @@ class _ContextPanelState extends State<ContextPanel> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.blue.shade50,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(8)),
               ),
               child: Column(
                 children: [
@@ -77,7 +80,8 @@ class _ContextPanelState extends State<ContextPanel> {
                       ),
                       const Spacer(),
                       if (widget.feedbackGiven)
-                        Icon(Icons.check_circle, color: Colors.green.shade700, size: 20)
+                        Icon(Icons.check_circle,
+                            color: Colors.green.shade700, size: 20)
                       else
                         const Text(
                           'Long-press to rate',
@@ -87,7 +91,8 @@ class _ContextPanelState extends State<ContextPanel> {
                   ),
 
                   // Similarity threshold slider
-                  if (widget.contextBundle != null && allSemanticMatches.isNotEmpty) ...[
+                  if (widget.contextBundle != null &&
+                      allSemanticMatches.isNotEmpty) ...[
                     const SizedBox(height: 12),
                     Row(
                       children: [
@@ -213,7 +218,8 @@ class _ContextPanelState extends State<ContextPanel> {
     final timeAgo = timeago.format(inv.updatedAt);
 
     // Calculate decay score (simplified - actual score would come from ContextSelector)
-    final ageHours = DateTime.now().difference(inv.updatedAt).inHours.toDouble();
+    final ageHours =
+        DateTime.now().difference(inv.updatedAt).inHours.toDouble();
     final halfLife = showDecay ? 24.0 : 720.0; // conversation vs semantic
     final decayScore = _computeDecay(ageHours, halfLife);
 
@@ -285,7 +291,8 @@ class _ContextPanelState extends State<ContextPanel> {
 
   double _computeDecay(double ageHours, double halfLifeHours) {
     if (ageHours <= 0) return 1.0;
-    return 0.5 * (ageHours / halfLifeHours); // Simplified linear decay for display
+    return 0.5 *
+        (ageHours / halfLifeHours); // Simplified linear decay for display
   }
 
   Color _getScoreColor(double score) {
@@ -295,14 +302,17 @@ class _ContextPanelState extends State<ContextPanel> {
   }
 
   Future<void> _handleLongPress(BuildContext context) async {
-    if (widget.contextBundle == null || widget.feedbackGiven || widget.onFeedback == null) {
+    if (widget.contextBundle == null ||
+        widget.feedbackGiven ||
+        widget.onFeedback == null) {
       return;
     }
 
     final result = await showFeedbackBottomSheet(
       context,
       title: 'Rate Context Selection',
-      description: 'Was this context selection helpful for generating a good response?',
+      description:
+          'Was this context selection helpful for generating a good response?',
     );
 
     if (result != null) {

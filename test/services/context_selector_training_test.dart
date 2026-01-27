@@ -264,7 +264,8 @@ void main() {
       Map<String, dynamic>? bestParams;
 
       // Run 20 trials
-      print('\n🧪 Starting GP optimization (target: threadSize=12, semantic=20, threshold=0.8)\n');
+      print(
+          '\n🧪 Starting GP optimization (target: threadSize=12, semantic=20, threshold=0.8)\n');
 
       for (int i = 0; i < 20; i++) {
         final params = await optimizer.suggestNext();
@@ -289,7 +290,8 @@ void main() {
 
       print('\n✅ FINAL RESULT:');
       print('   Best reward: ${bestReward.toStringAsFixed(3)}');
-      print('   Best params: threadSize=${bestParams!['conversationThreadSize']}, '
+      print(
+          '   Best params: threadSize=${bestParams!['conversationThreadSize']}, '
           'semantic=${bestParams['maxSemanticResults']}, '
           'threshold=${(bestParams['semanticThreshold'] as double).toStringAsFixed(2)}');
       print('   Target:      threadSize=12, semantic=20, threshold=0.80\n');

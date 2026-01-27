@@ -35,9 +35,7 @@ class _ToolCallMessageState extends State<ToolCallMessage> {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       child: Material(
-        color: widget.success
-            ? Colors.green.shade50
-            : Colors.red.shade50,
+        color: widget.success ? Colors.green.shade50 : Colors.red.shade50,
         borderRadius: BorderRadius.circular(8),
         child: InkWell(
           onTap: () => setState(() => _isExpanded = !_isExpanded),

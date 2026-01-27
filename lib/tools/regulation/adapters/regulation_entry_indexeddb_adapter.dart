@@ -40,9 +40,7 @@ class RegulationEntryIndexedDBAdapter
   /// Find all entries for a specific person (by UUID in personIds list)
   Future<List<RegulationEntry>> findByPerson(String personId) async {
     final all = await findAll();
-    return all
-        .where((entry) => entry.personIds.contains(personId))
-        .toList();
+    return all.where((entry) => entry.personIds.contains(personId)).toList();
   }
 
   /// Find entries within a date range
@@ -50,8 +48,7 @@ class RegulationEntryIndexedDBAdapter
       DateTime start, DateTime end) async {
     final all = await findAll();
     return all.where((entry) {
-      return entry.createdAt.isAfter(start) &&
-          entry.createdAt.isBefore(end);
+      return entry.createdAt.isAfter(start) && entry.createdAt.isBefore(end);
     }).toList()
       ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
   }
@@ -59,18 +56,14 @@ class RegulationEntryIndexedDBAdapter
   /// Find entries by entry type
   Future<List<RegulationEntry>> findByType(EntryType type) async {
     final all = await findAll();
-    return all
-        .where((entry) => entry.entryType == type)
-        .toList()
+    return all.where((entry) => entry.entryType == type).toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
   }
 
   /// Find entries by severity
   Future<List<RegulationEntry>> findBySeverity(Severity severity) async {
     final all = await findAll();
-    return all
-        .where((entry) => entry.severity == severity)
-        .toList()
+    return all.where((entry) => entry.severity == severity).toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
   }
 

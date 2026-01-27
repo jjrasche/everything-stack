@@ -99,7 +99,8 @@ class ContextInjector implements Trainable {
     if (feedbackList.isEmpty) return;
 
     // Get current adaptation state
-    var state = await adaptationStateRepo.getForComponent('context_injector', implementer: null, userId: userId);
+    var state = await adaptationStateRepo.getForComponent('context_injector',
+        implementer: null, userId: userId);
     if (state == null) return;
 
     state.loadData();
@@ -141,7 +142,8 @@ class ContextInjector implements Trainable {
 
   @override
   Future<Map<String, dynamic>> getAdaptationState({String? userId}) async {
-    final state = await adaptationStateRepo.getForComponent('context_injector', implementer: null, userId: userId);
+    final state = await adaptationStateRepo.getForComponent('context_injector',
+        implementer: null, userId: userId);
     if (state == null) return {};
     state.loadData();
     return state.data;

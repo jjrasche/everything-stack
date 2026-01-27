@@ -111,9 +111,10 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
 
     // 1. Load adaptation state for adaptive chunk sizes
     final adaptationState = await getAdaptationState();
-    final adaptationData = adaptationState.dataJson.isNotEmpty && adaptationState.dataJson != '{}'
-        ? deserializeData(adaptationState.dataJson)
-        : createDefaultData();
+    final adaptationData =
+        adaptationState.dataJson.isNotEmpty && adaptationState.dataJson != '{}'
+            ? deserializeData(adaptationState.dataJson)
+            : createDefaultData();
 
     // Get entity-specific parent chunk size (falls back to default)
     final entityType = entity.runtimeType.toString();
@@ -201,7 +202,9 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
         input: ChunkingInvocationInput(
           entityId: entity.uuid,
           entityType: entityType,
-          chunkableInput: input.substring(0, input.length > 200 ? 200 : input.length) + '...',
+          chunkableInput:
+              input.substring(0, input.length > 200 ? 200 : input.length) +
+                  '...',
           inputTokenCount: inputTokenCount,
         ).toJson(),
         output: ChunkingInvocationOutput(
@@ -360,7 +363,8 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
   String get componentType => 'chunking';
 
   @override
-  ChunkingAdaptationData createDefaultData() => ChunkingAdaptationData.defaults();
+  ChunkingAdaptationData createDefaultData() =>
+      ChunkingAdaptationData.defaults();
 
   @override
   ChunkingAdaptationData deserializeData(String json) =>
@@ -395,7 +399,8 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
           ),
         ),
         const SizedBox(height: 16),
-        Text('Were chunks appropriate?', style: Theme.of(context).textTheme.labelLarge),
+        Text('Were chunks appropriate?',
+            style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -426,7 +431,8 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
   }
 
   @override
-  Future<void> trainFromFeedback(Invocation invocation, core_feedback.Feedback feedback) async {
+  Future<void> trainFromFeedback(
+      Invocation invocation, core_feedback.Feedback feedback) async {
     // TODO: Implement training algorithm
     // 1. Parse typed feedback: determine if chunks too large/small
     // 2. Get current AdaptationState for chunking

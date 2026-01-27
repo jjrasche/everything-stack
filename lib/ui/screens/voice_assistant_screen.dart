@@ -22,7 +22,8 @@ import 'package:everything_stack_template/services/audio_storage.dart';
 import 'package:everything_stack_template/core/event.dart';
 import 'package:everything_stack_template/core/invocation.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
-import 'package:everything_stack_template/domain/feedback.dart' as domain_feedback;
+import 'package:everything_stack_template/domain/feedback.dart'
+    as domain_feedback;
 import 'package:everything_stack_template/core/feedback_repository.dart';
 import 'package:everything_stack_template/services/types/context_selector_types.dart';
 import '../widgets/context_panel.dart';
@@ -49,7 +50,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   ContextBundle? _currentContextBundle;
   bool _contextFeedbackGiven = false;
   bool _isListening = false;
-  String _liveTranscript = '';  // Real-time partial transcription
+  String _liveTranscript = ''; // Real-time partial transcription
 
   // Audio recording state
   StreamSubscription<Uint8List>? _audioStreamSubscription;
@@ -92,7 +93,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
           setState(() {
             _liveTranscript = transcript;
           });
-          return;  // Don't process further
+          return; // Don't process further
         }
 
         // End of turn → auto-stop recording (Phase 3: Live Streaming)
@@ -105,7 +106,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
         // Transcription complete → add user message, clear live display
         if (event.eventType == 'transcription_complete') {
           setState(() {
-            _liveTranscript = '';  // Clear live display
+            _liveTranscript = ''; // Clear live display
           });
           final utterance = event.toInputString();
           if (utterance.isNotEmpty) {
@@ -142,7 +143,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
         // Tool call executed → add tool call message
         if (event.eventType == 'tool_call_executed') {
           try {
-            final payload = jsonDecode(event.payloadJson ?? '{}') as Map<String, dynamic>;
+            final payload =
+                jsonDecode(event.payloadJson ?? '{}') as Map<String, dynamic>;
             setState(() {
               _messages.add(ChatMessage(
                 id: '${event.uuid}_tool',
@@ -169,7 +171,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
       // Find the context_selector invocation for this event
       final invocations = await _invocationRepo.findAll();
       final contextInvocation = invocations.firstWhere(
-        (inv) => inv.eventId == eventId && inv.componentType == 'context_selector',
+        (inv) =>
+            inv.eventId == eventId && inv.componentType == 'context_selector',
         orElse: () => throw Exception('Context invocation not found'),
       );
 
@@ -216,7 +219,9 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
 
       // Fire-and-forget training (async, no blocking)
       unawaited(
-        _contextSelector.trainFromFeedback(contextInvocation, feedback).catchError((e) {
+        _contextSelector
+            .trainFromFeedback(contextInvocation, feedback)
+            .catchError((e) {
           debugPrint('❌ [Training] Context training error: $e');
         }),
       );
@@ -243,7 +248,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
       final invocations = await _invocationRepo.findAll();
       final llmInvocation = invocations.firstWhere(
         (inv) => inv.eventId == messageId && inv.componentType == 'llm',
-        orElse: () => throw Exception('LLM invocation not found for message: $messageId'),
+        orElse: () =>
+            throw Exception('LLM invocation not found for message: $messageId'),
       );
 
       // Create feedback
@@ -259,7 +265,9 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
 
       // Fire-and-forget training (async, no blocking)
       unawaited(
-        _inferenceService.trainFromFeedback(llmInvocation, feedback).catchError((e) {
+        _inferenceService
+            .trainFromFeedback(llmInvocation, feedback)
+            .catchError((e) {
           debugPrint('❌ [Training] Inference training error: $e');
         }),
       );
@@ -309,10 +317,12 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
       // Start live recognition (streams chunks to Deepgram in real-time)
       // NOTE: This is fire-and-forget - we don't await the result here.
       // The result will come via events: partial transcripts, then end_of_turn.
-      _sttService.startLiveRecognition(
+      _sttService
+          .startLiveRecognition(
         audioStream: audioStream,
         eventId: eventId,
-      ).catchError((error) {
+      )
+          .catchError((error) {
         debugPrint('❌ Live recognition error: $error');
         _stopRecording();
       });
@@ -390,7 +400,8 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
                   height: 16,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.grey[600]!),
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Colors.grey[600]!),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -440,9 +451,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: isMobile
-            ? _buildMobileLayout()
-            : _buildDesktopLayout(),
+        child: isMobile ? _buildMobileLayout() : _buildDesktopLayout(),
       ),
     );
   }

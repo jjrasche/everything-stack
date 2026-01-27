@@ -33,10 +33,10 @@ class ChunkingAdaptationData extends AdaptationData {
 
   /// Default adaptation state (untrained).
   factory ChunkingAdaptationData.defaults() => ChunkingAdaptationData(
-    parentTargetTokens: 200,
-    childTargetTokens: 25,
-    categorySpecificSizes: {},
-  );
+        parentTargetTokens: 200,
+        childTargetTokens: 25,
+        categorySpecificSizes: {},
+      );
 
   /// Deserialize from JSON.
   factory ChunkingAdaptationData.fromJson(Map<String, dynamic> json) =>
@@ -51,10 +51,10 @@ class ChunkingAdaptationData extends AdaptationData {
   /// Serialize to JSON string.
   @override
   String toJson() => jsonEncode({
-    'parentTargetTokens': parentTargetTokens,
-    'childTargetTokens': childTargetTokens,
-    'categorySpecificSizes': categorySpecificSizes,
-  });
+        'parentTargetTokens': parentTargetTokens,
+        'childTargetTokens': childTargetTokens,
+        'categorySpecificSizes': categorySpecificSizes,
+      });
 
   /// Get parent chunk size for a specific entity type.
   /// Falls back to default if no category-specific size exists.
@@ -78,11 +78,11 @@ class ChunkingInvocationInput {
   });
 
   Map<String, dynamic> toJson() => {
-    'entityId': entityId,
-    'entityType': entityType,
-    'chunkableInput': chunkableInput,
-    'inputTokenCount': inputTokenCount,
-  };
+        'entityId': entityId,
+        'entityType': entityType,
+        'chunkableInput': chunkableInput,
+        'inputTokenCount': inputTokenCount,
+      };
 
   factory ChunkingInvocationInput.fromJson(Map<String, dynamic> json) =>
       ChunkingInvocationInput(
@@ -108,11 +108,11 @@ class ChunkingInvocationOutput {
   });
 
   Map<String, dynamic> toJson() => {
-    'parentChunkCount': parentChunkCount,
-    'childChunkCount': childChunkCount,
-    'totalChunks': totalChunks,
-    'chunkSizesTokens': chunkSizesTokens,
-  };
+        'parentChunkCount': parentChunkCount,
+        'childChunkCount': childChunkCount,
+        'totalChunks': totalChunks,
+        'chunkSizesTokens': chunkSizesTokens,
+      };
 
   factory ChunkingInvocationOutput.fromJson(Map<String, dynamic> json) =>
       ChunkingInvocationOutput(

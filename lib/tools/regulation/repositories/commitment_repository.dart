@@ -52,9 +52,7 @@ class CommitmentRepository extends EntityRepository<Commitment> {
   /// Find commitments by interval
   Future<List<Commitment>> findByInterval(String interval) async {
     final all = await findAll();
-    return all
-        .where((commitment) => commitment.interval == interval)
-        .toList()
+    return all.where((commitment) => commitment.interval == interval).toList()
       ..sort((a, b) => a.name.compareTo(b.name));
   }
 }

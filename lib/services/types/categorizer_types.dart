@@ -38,19 +38,20 @@ class CategorizerAdaptationData extends AdaptationData {
 
   /// Default adaptation state (untrained).
   factory CategorizerAdaptationData.defaults() => CategorizerAdaptationData(
-    autoTagThreshold: 0.7,
-    maxTagsPerEntity: 5,
-    preferredTagsByEntityType: {},
-    customTaxonomy: {},
-  );
+        autoTagThreshold: 0.7,
+        maxTagsPerEntity: 5,
+        preferredTagsByEntityType: {},
+        customTaxonomy: {},
+      );
 
   /// Deserialize from JSON.
   factory CategorizerAdaptationData.fromJson(Map<String, dynamic> json) =>
       CategorizerAdaptationData(
         autoTagThreshold: json['autoTagThreshold'] as double? ?? 0.7,
         maxTagsPerEntity: json['maxTagsPerEntity'] as int? ?? 5,
-        preferredTagsByEntityType: (json['preferredTagsByEntityType'] as Map<String, dynamic>? ?? {})
-            .map((k, v) => MapEntry(k, List<String>.from(v as List))),
+        preferredTagsByEntityType:
+            (json['preferredTagsByEntityType'] as Map<String, dynamic>? ?? {})
+                .map((k, v) => MapEntry(k, List<String>.from(v as List))),
         customTaxonomy: (json['customTaxonomy'] as Map<String, dynamic>? ?? {})
             .map((k, v) => MapEntry(k, List<String>.from(v as List))),
       );
@@ -58,11 +59,11 @@ class CategorizerAdaptationData extends AdaptationData {
   /// Serialize to JSON string.
   @override
   String toJson() => jsonEncode({
-    'autoTagThreshold': autoTagThreshold,
-    'maxTagsPerEntity': maxTagsPerEntity,
-    'preferredTagsByEntityType': preferredTagsByEntityType,
-    'customTaxonomy': customTaxonomy,
-  });
+        'autoTagThreshold': autoTagThreshold,
+        'maxTagsPerEntity': maxTagsPerEntity,
+        'preferredTagsByEntityType': preferredTagsByEntityType,
+        'customTaxonomy': customTaxonomy,
+      });
 }
 
 /// Input to categorization operation (what entity was categorized).
@@ -78,10 +79,12 @@ class CategorizerInvocationInput {
   });
 
   Map<String, dynamic> toJson() => {
-    'entityId': entityId,
-    'entityType': entityType,
-    'content': content.substring(0, content.length > 200 ? 200 : content.length) + '...',
-  };
+        'entityId': entityId,
+        'entityType': entityType,
+        'content':
+            content.substring(0, content.length > 200 ? 200 : content.length) +
+                '...',
+      };
 
   factory CategorizerInvocationInput.fromJson(Map<String, dynamic> json) =>
       CategorizerInvocationInput(
@@ -104,15 +107,16 @@ class CategorizerInvocationOutput {
   });
 
   Map<String, dynamic> toJson() => {
-    'tags': tags,
-    'confidenceByTag': confidenceByTag,
-    'autoApplied': autoApplied,
-  };
+        'tags': tags,
+        'confidenceByTag': confidenceByTag,
+        'autoApplied': autoApplied,
+      };
 
   factory CategorizerInvocationOutput.fromJson(Map<String, dynamic> json) =>
       CategorizerInvocationOutput(
         tags: List<String>.from(json['tags'] as List),
-        confidenceByTag: Map<String, double>.from(json['confidenceByTag'] as Map),
+        confidenceByTag:
+            Map<String, double>.from(json['confidenceByTag'] as Map),
         autoApplied: json['autoApplied'] as bool,
       );
 }

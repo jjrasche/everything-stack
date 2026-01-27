@@ -64,15 +64,17 @@ class SemanticChunker extends ChunkingStrategy {
         return chunks;
       }
 
-      return [Chunk(
-        id: const Uuid().v4(),
-        sourceEntityId: '',
-        sourceEntityType: '',
-        text: text,
-        startToken: 0,
-        endToken: tokenCount,
-        config: 'parent',
-      )];
+      return [
+        Chunk(
+          id: const Uuid().v4(),
+          sourceEntityId: '',
+          sourceEntityType: '',
+          text: text,
+          startToken: 0,
+          endToken: tokenCount,
+          config: 'parent',
+        )
+      ];
     }
 
     // Step 2: Generate embeddings for all segments

@@ -84,16 +84,19 @@ class RustWebSocketTransport implements Transport {
       await _ensureRustInitialized();
 
       final url = config.url;
-      final headers = config.headers?.entries.map((e) => (e.key, e.value)).toList() ?? [];
+      final headers =
+          config.headers?.entries.map((e) => (e.key, e.value)).toList() ?? [];
       final subprotocols = config.subprotocols ?? [];
 
       print('🦀 [RustWebSocketTransport] Connecting to: $url');
       if (subprotocols.isNotEmpty) {
-        print('🦀 [RustWebSocketTransport] Subprotocols: ${subprotocols.join(", ")}');
+        print(
+            '🦀 [RustWebSocketTransport] Subprotocols: ${subprotocols.join(", ")}');
       }
 
       // Call Rust FFI to connect
-      _handle = await rust.websocketConnect(url: url, headers: headers, subprotocols: subprotocols);
+      _handle = await rust.websocketConnect(
+          url: url, headers: headers, subprotocols: subprotocols);
 
       // Start receive stream - call Rust to begin listening
       try {
@@ -162,7 +165,8 @@ class RustWebSocketTransport implements Transport {
   /// Polls every 50ms for new messages and pushes them to the received stream.
   void _startReceivePolling() {
     _receivePoller?.cancel();
-    _receivePoller = Timer.periodic(const Duration(milliseconds: 50), (_) async {
+    _receivePoller =
+        Timer.periodic(const Duration(milliseconds: 50), (_) async {
       if (_state != TransportState.connected || _handle == null) {
         _receivePoller?.cancel();
         return;

@@ -36,9 +36,7 @@ class CommitmentLogRepository extends EntityRepository<CommitmentLog> {
   /// Find all logs for a specific commitment
   Future<List<CommitmentLog>> findByCommitment(String commitmentId) async {
     final all = await findAll();
-    return all
-        .where((log) => log.commitmentId == commitmentId)
-        .toList()
+    return all.where((log) => log.commitmentId == commitmentId).toList()
       ..sort((a, b) => b.date.compareTo(a.date));
   }
 

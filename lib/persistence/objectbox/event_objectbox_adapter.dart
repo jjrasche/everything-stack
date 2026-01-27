@@ -28,19 +28,14 @@ class EventObjectBoxAdapter implements EventRepository {
 
   @override
   Future<List<Event>> getByCorrelationId(String correlationId) async {
-    final obs = box
-        .query(EventOB_.correlationId.equals(correlationId))
-        .build()
-        .find();
+    final obs =
+        box.query(EventOB_.correlationId.equals(correlationId)).build().find();
     return obs.map(_fromOB).toList();
   }
 
   @override
   Future<List<Event>> getByType(String eventType) async {
-    final obs = box
-        .query(EventOB_.eventType.equals(eventType))
-        .build()
-        .find();
+    final obs = box.query(EventOB_.eventType.equals(eventType)).build().find();
     return obs.map(_fromOB).toList();
   }
 
@@ -60,10 +55,7 @@ class EventObjectBoxAdapter implements EventRepository {
 
   @override
   Future<bool> delete(String uuid) async {
-    final ob = box
-        .query(EventOB_.uuid.equals(uuid))
-        .build()
-        .findFirst();
+    final ob = box.query(EventOB_.uuid.equals(uuid)).build().findFirst();
     if (ob != null) {
       box.remove(ob.id);
       return true;

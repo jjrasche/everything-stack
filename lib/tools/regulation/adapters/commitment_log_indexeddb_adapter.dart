@@ -40,9 +40,7 @@ class CommitmentLogIndexedDBAdapter
   /// Find all logs for a specific commitment
   Future<List<CommitmentLog>> findByCommitment(String commitmentId) async {
     final all = await findAll();
-    return all
-        .where((log) => log.commitmentId == commitmentId)
-        .toList();
+    return all.where((log) => log.commitmentId == commitmentId).toList();
   }
 
   /// Find log for a commitment on a specific date

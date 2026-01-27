@@ -106,7 +106,8 @@ class _LazyIndexedDBAdapter implements PersistenceAdapter<Commitment> {
     double minSimilarity = 0.0,
   }) async {
     await _ensureInitialized();
-    return _delegate.semanticSearch(queryVector, limit: limit, minSimilarity: minSimilarity);
+    return _delegate.semanticSearch(queryVector,
+        limit: limit, minSimilarity: minSimilarity);
   }
 
   @override
@@ -122,37 +123,47 @@ class _LazyIndexedDBAdapter implements PersistenceAdapter<Commitment> {
 
   @override
   Commitment? findByIdInTx(TransactionContext ctx, String uuid) =>
-      throw UnsupportedError('Synchronous operations not supported with lazy adapter');
+      throw UnsupportedError(
+          'Synchronous operations not supported with lazy adapter');
 
   @override
   @deprecated
   Commitment? findByIntIdInTx(TransactionContext ctx, int id) =>
-      throw UnsupportedError('Synchronous operations not supported with lazy adapter');
+      throw UnsupportedError(
+          'Synchronous operations not supported with lazy adapter');
 
   @override
   List<Commitment> findAllInTx(TransactionContext ctx) =>
-      throw UnsupportedError('Synchronous operations not supported with lazy adapter');
+      throw UnsupportedError(
+          'Synchronous operations not supported with lazy adapter');
 
   @override
-  Commitment saveInTx(TransactionContext ctx, Commitment entity, {bool touch = true}) =>
-      throw UnsupportedError('Synchronous operations not supported with lazy adapter');
+  Commitment saveInTx(TransactionContext ctx, Commitment entity,
+          {bool touch = true}) =>
+      throw UnsupportedError(
+          'Synchronous operations not supported with lazy adapter');
 
   @override
-  List<Commitment> saveAllInTx(TransactionContext ctx, List<Commitment> entities) =>
-      throw UnsupportedError('Synchronous operations not supported with lazy adapter');
+  List<Commitment> saveAllInTx(
+          TransactionContext ctx, List<Commitment> entities) =>
+      throw UnsupportedError(
+          'Synchronous operations not supported with lazy adapter');
 
   @override
   bool deleteInTx(TransactionContext ctx, String uuid) =>
-      throw UnsupportedError('Synchronous operations not supported with lazy adapter');
+      throw UnsupportedError(
+          'Synchronous operations not supported with lazy adapter');
 
   @override
   @deprecated
   bool deleteByIntIdInTx(TransactionContext ctx, int id) =>
-      throw UnsupportedError('Synchronous operations not supported with lazy adapter');
+      throw UnsupportedError(
+          'Synchronous operations not supported with lazy adapter');
 
   @override
   void deleteAllInTx(TransactionContext ctx, List<String> uuids) =>
-      throw UnsupportedError('Synchronous operations not supported with lazy adapter');
+      throw UnsupportedError(
+          'Synchronous operations not supported with lazy adapter');
 
   @override
   Future<void> close() async {

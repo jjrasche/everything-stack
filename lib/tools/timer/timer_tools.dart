@@ -132,13 +132,15 @@ void registerTimerTools(ToolRegistry registry, TimerRepository repo) {
     ToolDefinition(
       name: 'timer.cancel',
       namespace: 'timer',
-      description: 'Cancel a timer. If timer_id omitted, cancels most recent active timer',
+      description:
+          'Cancel a timer. If timer_id omitted, cancels most recent active timer',
       parameters: {
         'type': 'object',
         'properties': {
           'timer_id': {
             'type': 'string',
-            'description': 'UUID of timer to cancel. If omitted, cancels most recent active timer',
+            'description':
+                'UUID of timer to cancel. If omitted, cancels most recent active timer',
           },
         },
       },

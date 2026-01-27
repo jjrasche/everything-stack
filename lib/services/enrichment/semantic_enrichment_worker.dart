@@ -68,7 +68,8 @@ class SemanticEnrichmentWorker implements EnrichmentWorker {
 
       if (entity == null) {
         // Entity was deleted during enrichment
-        item.lastError = 'Entity not found: ${item.entityType}:${item.entityUuid}';
+        item.lastError =
+            'Entity not found: ${item.entityType}:${item.entityUuid}';
         item.currentStep = null;
         await queueRepo.save(item);
         return;

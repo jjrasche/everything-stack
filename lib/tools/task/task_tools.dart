@@ -83,15 +83,15 @@ Future<Map<String, dynamic>> taskList(
     'incomplete' => allTasks.where((t) => !t.completed).toList(),
     'completed' => allTasks.where((t) => t.completed).toList(),
     'overdue' => allTasks
-        .where((t) => !t.completed && (t.dueDate?.isBefore(DateTime.now()) ?? false))
+        .where((t) =>
+            !t.completed && (t.dueDate?.isBefore(DateTime.now()) ?? false))
         .toList(),
-    'today' => allTasks
-        .where((t) => !t.completed && _isToday(t.dueDate))
-        .toList(),
-    'soon' => allTasks
-        .where((t) => !t.completed && _isDueSoon(t.dueDate))
-        .toList(),
-    'high_priority' => allTasks.where((t) => !t.completed && t.priority == 'high').toList(),
+    'today' =>
+      allTasks.where((t) => !t.completed && _isToday(t.dueDate)).toList(),
+    'soon' =>
+      allTasks.where((t) => !t.completed && _isDueSoon(t.dueDate)).toList(),
+    'high_priority' =>
+      allTasks.where((t) => !t.completed && t.priority == 'high').toList(),
     _ => allTasks,
   };
 
@@ -110,7 +110,8 @@ void registerTaskTools(ToolRegistry registry, TaskRepository repo) {
     ToolDefinition(
       name: 'task.create',
       namespace: 'task',
-      description: 'Create a new task with title, optional priority and due date',
+      description:
+          'Create a new task with title, optional priority and due date',
       parameters: {
         'type': 'object',
         'properties': {
@@ -168,7 +169,15 @@ void registerTaskTools(ToolRegistry registry, TaskRepository repo) {
         'properties': {
           'filter': {
             'type': 'string',
-            'enum': ['all', 'incomplete', 'completed', 'overdue', 'today', 'soon', 'high_priority'],
+            'enum': [
+              'all',
+              'incomplete',
+              'completed',
+              'overdue',
+              'today',
+              'soon',
+              'high_priority'
+            ],
             'description': 'Filter for which tasks to return',
           },
         },

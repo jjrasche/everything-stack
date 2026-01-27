@@ -134,7 +134,8 @@ class Coordinator {
             // Extract semantic input from event
             final inputText = event.toInputString();
 
-            print('\n📡 [Coordinator] Heard transcription_complete: "$inputText"');
+            print(
+                '\n📡 [Coordinator] Heard transcription_complete: "$inputText"');
             print('🚀 [Coordinator] Starting orchestration from event...');
 
             final result = await _orchestrate(
@@ -142,7 +143,8 @@ class Coordinator {
               utterance: inputText,
             );
 
-            print('✅ [Coordinator] Orchestration complete: ${result.success ? "SUCCESS" : "FAILED"}');
+            print(
+                '✅ [Coordinator] Orchestration complete: ${result.success ? "SUCCESS" : "FAILED"}');
             if (!result.success) {
               print('⚠️ Error: ${result.errorMessage}');
             }
@@ -150,7 +152,7 @@ class Coordinator {
             // Publish orchestration_complete event for UI to update state (text appears FIRST)
             await eventBus.publish(Event(
               eventType: 'orchestration_complete',
-              correlationId: event.correlationId,  // Preserve correlation chain
+              correlationId: event.correlationId, // Preserve correlation chain
               source: 'coordinator',
               payloadJson: jsonEncode({
                 'success': result.success,
@@ -200,7 +202,8 @@ class Coordinator {
       return;
     }
 
-    print('⚠️ [Coordinator] BARGE-IN detected - user started speaking while TTS playing');
+    print(
+        '⚠️ [Coordinator] BARGE-IN detected - user started speaking while TTS playing');
     print('🛑 [Coordinator] Stopping TTS immediately');
 
     // Stop TTS playback
@@ -257,7 +260,8 @@ class Coordinator {
       print('\n[4/4] Calling LLM service with context...');
       print('📡 LLM call starting...');
       final llmResponse = await llmService.chatWithTools(
-        model: 'llama-3.3-70b-versatile',  // Best Groq model for function calling
+        model:
+            'llama-3.3-70b-versatile', // Best Groq model for function calling
         messages: messages,
         tools: tools,
         temperature: 0.7,
@@ -270,7 +274,8 @@ class Coordinator {
       String finalResponse = llmResponse.content ?? '';
 
       if (llmResponse.toolCalls.isNotEmpty) {
-        print('\n[Tool Execution] LLM requested ${llmResponse.toolCalls.length} tool calls');
+        print(
+            '\n[Tool Execution] LLM requested ${llmResponse.toolCalls.length} tool calls');
 
         // Execute all tool calls and collect results
         final toolResults = <Map<String, dynamic>>[];
@@ -282,7 +287,8 @@ class Coordinator {
             callId: llmToolCall.id,
             confidence: 1.0,
           );
-          final result = await toolExecutor.executeTool(toolCall, eventId: eventId);
+          final result =
+              await toolExecutor.executeTool(toolCall, eventId: eventId);
 
           if (result.success) {
             executedTools.add(llmToolCall.toolName);
@@ -305,20 +311,23 @@ class Coordinator {
         }
 
         // Send tool results back to LLM for verbal confirmation
-        print('\n[Agentic Loop] Sending tool results back to LLM for confirmation...');
+        print(
+            '\n[Agentic Loop] Sending tool results back to LLM for confirmation...');
         final followUpMessages = [
           ...messages,
           {
             'role': 'assistant',
             'content': llmResponse.content,
-            'tool_calls': llmResponse.toolCalls.map((tc) => {
-              'id': tc.id,
-              'type': 'function',
-              'function': {
-                'name': tc.toolName,
-                'arguments': jsonEncode(tc.params),
-              }
-            }).toList(),
+            'tool_calls': llmResponse.toolCalls
+                .map((tc) => {
+                      'id': tc.id,
+                      'type': 'function',
+                      'function': {
+                        'name': tc.toolName,
+                        'arguments': jsonEncode(tc.params),
+                      }
+                    })
+                .toList(),
           },
           ...toolResults,
         ];

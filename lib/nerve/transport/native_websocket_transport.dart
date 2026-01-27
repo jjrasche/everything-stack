@@ -63,8 +63,10 @@ class NativeWebSocketTransport implements Transport {
 
     // Warn on Windows
     if (Platform.isWindows) {
-      print('⚠️ [NativeWebSocketTransport] WARNING: dart:io WebSocket is BROKEN on Windows!');
-      print('   WSS connections will fail due to Dart SDK bug (wss:// → https:// conversion).');
+      print(
+          '⚠️ [NativeWebSocketTransport] WARNING: dart:io WebSocket is BROKEN on Windows!');
+      print(
+          '   WSS connections will fail due to Dart SDK bug (wss:// → https:// conversion).');
       print('   Use web platform or wait for Rust FFI (Phase 2).');
     }
 
