@@ -20,11 +20,9 @@ import 'package:everything_stack_template/services/embedding_service.dart';
 
 /// Mock embedding service for this focused test (AudioFile doesn't use embeddings)
 class _MockEmbeddingService extends EmbeddingService {
-  _MockEmbeddingService() : super(implementer: null);
-
   @override
-  Future<List<double>> embed(String text) async {
-    return List.filled(768, 0.0); // Dummy embedding, never called
+  Future<List<double>> generate(String text) async {
+    return List.filled(384, 0.0); // Dummy embedding for AudioFile (doesn't use embeddings)
   }
 }
 
