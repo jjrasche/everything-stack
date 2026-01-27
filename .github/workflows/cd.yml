@@ -23,6 +23,7 @@ jobs:
 
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
+      - run: echo "# CI/CD analyze - no secrets needed" > .env
       - run: flutter analyze
 
   # ============ Unit Tests ============
@@ -40,6 +41,7 @@ jobs:
 
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
+      - run: echo "# CI/CD unit tests - no secrets needed" > .env
       - run: flutter test test/
 
   # ============ Android Emulator Integration Tests ============
@@ -90,6 +92,7 @@ jobs:
 
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
+      - run: echo "# CI/CD web build - no secrets needed" > .env
       - run: flutter build web --release
 
   # ============ Build Android APK ============
@@ -112,6 +115,7 @@ jobs:
 
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
+      - run: echo "# CI/CD android build - secrets via dart-define" > .env
       - run: flutter build apk --release \
               --dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }} \
               --dart-define=DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }} \
