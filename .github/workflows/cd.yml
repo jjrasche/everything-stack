@@ -68,21 +68,17 @@ jobs:
             dart run build_runner build --delete-conflicting-outputs
             echo "# CI/CD test - secrets via dart-define" > .env
 
-            # WORKAROUND: Flutter CI bug - hides test/ dir to prevent mixed test detection
-            # Even when running integration_test/shared/generic_test.dart directly,
-            # Flutter scans entire project and detects both test types
-            mv test test_TEMP_HIDDEN
-
-            # Run integration tests
-            flutter test integration_test/shared/generic_test.dart -d emulator-5554 \
+            # Run integration tests using flutter drive (proper way for device tests)
+            # flutter test -d <device> doesn't work when both test/ and integration_test/ exist
+            flutter drive \
+              --driver=test_driver/integration_test.dart \
+              --target=integration_test/shared/generic_test.dart \
+              -d emulator-5554 \
               --dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }} \
               --dart-define=DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }} \
               --dart-define=JINA_API_KEY=${{ secrets.JINA_API_KEY }} \
               --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
               --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
-
-            # Restore test/ directory
-            mv test_TEMP_HIDDEN test
 
   # ============ Build Web ============
   build-web:
