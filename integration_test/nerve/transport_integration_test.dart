@@ -7,7 +7,12 @@
 ///   flutter test integration_test/nerve/transport_integration_test.dart -d windows
 ///   flutter test integration_test/nerve/transport_integration_test.dart -d chrome
 ///
-/// Note: Tests both native (NativeWebSocketTransport) and web (BrowserWebSocketTransport)
+/// ## Echo Server
+///
+/// Echo server starts automatically via test_server.dart infrastructure.
+/// Falls back to public server if Node.js unavailable.
+///
+/// Note: Tests both native (RustWebSocketTransport) and web (BrowserWebSocketTransport)
 
 import 'dart:async';
 import 'dart:typed_data';
@@ -18,9 +23,10 @@ import 'package:integration_test/integration_test.dart';
 import 'package:everything_stack_template/nerve/transport/transport.dart';
 import 'package:everything_stack_template/nerve/transport/transport_factory.dart';
 import 'package:everything_stack_template/nerve/nerve_exception.dart';
+import '../shared/test_server.dart';
 
 /// Local echo server (test/nerve/echo_server).
-/// Start with: cd test/nerve/echo_server && npm start
+/// Started automatically by test_server.dart in setUpAll().
 ///
 /// Falls back to public echo server if local not available.
 const localEchoHost = 'localhost';
@@ -40,32 +46,43 @@ const echoServerTls = localEchoTls;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Print which transport is being used
-  setUpAll(() {
+  // Start echo server and print platform info
+  setUpAll(() async {
+    // Start echo server
+    final serverStarted = await startEchoServer();
+    if (!serverStarted) {
+      print('⚠️ Echo server unavailable - controllable tests will be skipped');
+    }
+
+    // Print which transport is being used
     if (kIsWeb) {
       print('🌐 [Transport Tests] Running on WEB - using BrowserWebSocketTransport');
     } else {
       final platform = defaultTargetPlatform;
       switch (platform) {
         case TargetPlatform.windows:
-          print('🪟 [Transport Tests] Running on WINDOWS - using NativeWebSocketTransport');
+          print('🪟 [Transport Tests] Running on WINDOWS - using RustWebSocketTransport');
           break;
         case TargetPlatform.macOS:
-          print('🍎 [Transport Tests] Running on macOS - using NativeWebSocketTransport');
+          print('🍎 [Transport Tests] Running on macOS - using RustWebSocketTransport');
           break;
         case TargetPlatform.linux:
-          print('🐧 [Transport Tests] Running on Linux - using NativeWebSocketTransport');
+          print('🐧 [Transport Tests] Running on Linux - using RustWebSocketTransport');
           break;
         case TargetPlatform.android:
-          print('🤖 [Transport Tests] Running on Android - using NativeWebSocketTransport');
+          print('🤖 [Transport Tests] Running on Android - using RustWebSocketTransport');
           break;
         case TargetPlatform.iOS:
-          print('📱 [Transport Tests] Running on iOS - using NativeWebSocketTransport');
+          print('📱 [Transport Tests] Running on iOS - using RustWebSocketTransport');
           break;
         default:
-          print('❓ [Transport Tests] Running on $platform - using NativeWebSocketTransport');
+          print('❓ [Transport Tests] Running on $platform - using RustWebSocketTransport');
       }
     }
+  });
+
+  tearDownAll(() async {
+    await stopEchoServer();
   });
 
   group('Transport Integration Tests', () {

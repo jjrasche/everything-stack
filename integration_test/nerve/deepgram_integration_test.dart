@@ -28,6 +28,14 @@ void main() {
   });
 
   group('Deepgram WebSocket Integration', () {
+    late Transport transport;
+
+    tearDown(() async {
+      // Proper cleanup: close connection AND dispose resources
+      await transport.close();
+      transport.dispose();
+    });
+
     test('connects with subprotocol authentication', () async {
       // ARRANGE: Get API key from environment
       final apiKey = dotenv.env['DEEPGRAM_API_KEY'];
@@ -51,7 +59,7 @@ void main() {
       );
 
       final factory = createTransportFactory();
-      final transport = factory.create(config);
+      transport = factory.create(config);
 
       // ACT: Connect to Deepgram
       await transport.connect();
@@ -59,8 +67,7 @@ void main() {
       // ASSERT: Should be connected
       expect(transport.state, TransportState.connected);
 
-      // CLEANUP
-      await transport.close();
+      // Cleanup happens in tearDown
     }, timeout: const Timeout(Duration(seconds: 30)));
 
     test('sends audio and receives transcription', () async {
@@ -86,7 +93,7 @@ void main() {
       );
 
       final factory = createTransportFactory();
-      final transport = factory.create(config);
+      transport = factory.create(config);
 
       // Track received messages
       final receivedMessages = <Uint8List>[];
@@ -117,9 +124,10 @@ void main() {
         print('   No messages received (expected for silent audio)');
       }
 
-      // CLEANUP
+      // Cancel subscription before tearDown cleanup
       await subscription.cancel();
-      await transport.close();
+
+      // Cleanup happens in tearDown
     }, timeout: const Timeout(Duration(seconds: 30)));
   });
 }
