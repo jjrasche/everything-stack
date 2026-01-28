@@ -15,8 +15,7 @@ import 'dart:indexed_db' as idb;
 import '../../../persistence/indexeddb/base_indexeddb_adapter.dart';
 import '../../../persistence/indexeddb/database_init.dart';
 import '../../../persistence/indexeddb/idb_types.dart';
-import '../entities/regulation_entry_stub.dart'
-    if (dart.library.io) '../entities/regulation_entry.dart';
+import '../entities/regulation_entry.dart';
 
 class RegulationEntryIndexedDBAdapter
     extends BaseIndexedDBAdapter<RegulationEntry> {

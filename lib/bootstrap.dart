@@ -34,8 +34,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 // import 'package:sentry_flutter/sentry_flutter.dart';  // DISABLED: Pulls in JNI (Java) on Windows
 
-// Conditional Store import: Stub on Web (default), ObjectBox on native (dart.library.io)
-import 'bootstrap/objectbox_stub.dart';
+// Conditional ObjectBox import: Real package on native, stub on web
+// IMPORTANT: Do NOT import stubs unconditionally - causes type mismatch bugs!
+// The stub Store class conflicts with the real ObjectBox Store type.
 // ignore: uri_does_not_exist
 import 'package:objectbox/objectbox.dart' as objectbox
     if (dart.library.html) 'bootstrap/objectbox_stub_ignore.dart';
@@ -381,7 +382,14 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
 
     // 2. Initialize Persistence (platform-specific: ObjectBox or IndexedDB)
     debugPrint('💾 Initializing persistence layer...');
+    debugPrint('🔍 [bootstrap] Before calling initializePersistence:');
+    debugPrint('   getIt hashCode: ${getIt.hashCode}');
+    debugPrint('   GetIt.instance hashCode: ${GetIt.instance.hashCode}');
     await initializePersistence(getIt);
+    debugPrint('🔍 [bootstrap] After initializePersistence:');
+    debugPrint('   getIt hashCode: ${getIt.hashCode}');
+    debugPrint('   objectbox.Store registered in getIt? ${getIt.isRegistered<objectbox.Store>()}');
+    debugPrint('   objectbox.Store registered in GetIt.instance? ${GetIt.instance.isRegistered<objectbox.Store>()}');
 
     // 3. Initialize BlobStore (platform-specific)
     final blobStore = createPlatformBlobStore();
@@ -517,6 +525,7 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
     }
 
     // 13. Initialize Embedding Service
+    debugPrint('🔍 [bootstrap] Before EmbeddingService init: objectbox.Store registered? ${getIt.isRegistered<objectbox.Store>()}');
     final embeddingConfig = ServiceConfig(
       provider: cfg.embeddingProvider ?? 'jina',
       credentials: {
@@ -533,6 +542,7 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
       shouldInitialize: (service) => service is! NullEmbeddingService,
       getType: (service) => service.runtimeType,
     );
+    debugPrint('🔍 [bootstrap] After EmbeddingService init: objectbox.Store registered? ${getIt.isRegistered<objectbox.Store>()}');
 
     // 14. Initialize Semantic Search Infrastructure (ChunkingService + SemanticSearchService)
     // NOTE: Disabled on Web - ObjectBox (dart:ffi) not available on Web platform
@@ -547,7 +557,10 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
       final childChunker = SemanticChunker(config: ChunkingConfig.child());
 
       // Get ChunkEntity box from persistence
-      final store = getIt<Store>();
+      debugPrint('🔍 [semantic search] Attempting to retrieve Store from GetIt...');
+      debugPrint('   objectbox.Store registered? ${getIt.isRegistered<objectbox.Store>()}');
+      final store = getIt<objectbox.Store>();
+      debugPrint('   ✓ Store retrieved successfully');
       final chunkBox = store.box<ChunkEntity>();
 
       // Create ChunkingService
@@ -617,19 +630,24 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
 
       // Wire InvocationRepository with SemanticIndexableHandler and EnrichmentRunner
       try {
+        debugPrint('🔍 Attempting to wire InvocationRepository...');
         final adapterRegistration = getIt<InvocationRepository<Invocation>>();
+        debugPrint('   ✓ Retrieved InvocationRepository from GetIt');
 
         // Create EntityRepository with semantic indexing handler and enrichment runner
         // This wraps the adapter with SemanticIndexableHandler for automatic chunking
+        debugPrint('   🔍 Creating EntityRepository wrapper...');
         final invocationRepo = createInvocationRepository(
           adapter: adapterRegistration as PersistenceAdapter<Invocation>,
           embeddingService: EmbeddingService.instance,
           chunkingService: chunkingService,
           enrichmentRunner: enrichmentRunner,
         );
+        debugPrint('   ✓ EntityRepository created successfully');
 
         // Register EntityRepository (NOT InvocationRepository - different types!)
         // EntityRepository has the handlers, InvocationRepository is the bare adapter
+        debugPrint('   🔍 Registering EntityRepository<Invocation>...');
         getIt.registerSingleton<EntityRepository<Invocation>>(invocationRepo);
         debugPrint(
             '✅ InvocationRepository wired with SemanticIndexableHandler (EntityRepository)');
@@ -637,12 +655,21 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
         // Register invocation repo in RepositoryRegistry for worker entity lookups
         repoRegistry.register<Invocation>(invocationRepo);
         debugPrint('✅ Invocation registered in RepositoryRegistry');
-      } catch (e) {
+      } catch (e, stackTrace) {
         debugPrint('⚠️ Failed to wire InvocationRepository handler: $e');
-        // Don't rethrow - handler wiring is optional, semantic search works without it
+        debugPrint('   Stack trace: $stackTrace');
+        // CRITICAL: Rethrow because ContextSelector requires EntityRepository<Invocation>
+        rethrow;
       }
-      } catch (e) {
+      } catch (e, stackTrace) {
         debugPrint('⚠️ Semantic search initialization failed: $e');
+        debugPrint('   Stack trace: $stackTrace');
+        // CRITICAL: If EntityRepository<Invocation> wasn't registered, tests will fail
+        // Check if EntityRepository is registered, if not, rethrow
+        if (!getIt.isRegistered<EntityRepository<Invocation>>()) {
+          debugPrint('   ❌ FATAL: EntityRepository<Invocation> not registered - rethrowing');
+          rethrow;
+        }
       }
     } else {
       debugPrint(

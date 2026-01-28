@@ -6,7 +6,7 @@ import 'package:objectbox/objectbox.dart';
 
 import '../../../core/persistence/persistence_adapter.dart';
 import '../entities/regulation_entry.dart';
-import '../adapters/regulation_entry_objectbox_adapter.dart';
+import '../../../persistence/objectbox/regulation_entry_objectbox_adapter.dart';
 
 PersistenceAdapter<RegulationEntry> createRegulationEntryAdapter() {
   final getIt = GetIt.instance;

@@ -4,6 +4,11 @@
 /// Represents an MCP tool within a namespace.
 /// Tools are the actual functions that can be invoked (e.g., "task.create").
 ///
+/// ## Domain Entity Pattern
+/// This is a pure Dart domain entity with NO ObjectBox decorators.
+/// ObjectBox decorators belong on the wrapper class (ToolOB) in the adapters directory.
+/// This allows the same entity to work on native (ObjectBox) and web (IndexedDB) platforms.
+///
 /// ## Key Design
 /// - namespaceId: Links to parent Namespace
 /// - fullName: Computed as "namespaceId.name" (e.g., "task.create")
@@ -34,27 +39,20 @@
 /// print(createTool.fullName); // "task.create"
 /// ```
 
-import 'package:objectbox/objectbox.dart';
-
 import '../core/base_entity.dart';
 
-@Entity()
 class Tool extends BaseEntity {
   // ============ BaseEntity field overrides ============
   @override
-  @Id()
   int id = 0;
 
   @override
-  @Unique()
   String uuid = '';
 
   @override
-  @Property(type: PropertyType.date)
   DateTime createdAt = DateTime.now();
 
   @override
-  @Property(type: PropertyType.date)
   DateTime updatedAt = DateTime.now();
 
   @override
@@ -79,19 +77,11 @@ class Tool extends BaseEntity {
 
   /// JSON Schema for tool parameters
   /// Defines what inputs the tool accepts
-  @Transient()
   Map<String, dynamic> parameters;
-
-  /// JSON storage for parameters
-  String parametersJson = '{}';
 
   /// Semantic centroid computed from description
   /// Null until computed during registration
-  @Transient()
   List<double>? semanticCentroid;
-
-  /// JSON storage for semanticCentroid
-  String? semanticCentroidJson;
 
   // ============ Constructor ============
 

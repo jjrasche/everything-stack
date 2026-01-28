@@ -6,7 +6,7 @@ import 'package:objectbox/objectbox.dart';
 
 import '../../../core/persistence/persistence_adapter.dart';
 import '../entities/commitment_log.dart';
-import '../adapters/commitment_log_objectbox_adapter.dart';
+import '../../../persistence/objectbox/commitment_log_objectbox_adapter.dart';
 
 PersistenceAdapter<CommitmentLog> createCommitmentLogAdapter() {
   final getIt = GetIt.instance;

@@ -9,7 +9,7 @@ import 'package:objectbox/objectbox.dart';
 
 import '../../../core/persistence/persistence_adapter.dart';
 import '../entities/person.dart';
-import '../adapters/person_objectbox_adapter.dart';
+import '../../../persistence/objectbox/person_objectbox_adapter.dart';
 
 /// Create the appropriate adapter for native platforms (ObjectBox)
 PersistenceAdapter<Person> createPersonAdapter() {

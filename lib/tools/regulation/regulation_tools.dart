@@ -12,7 +12,7 @@ import 'repositories/person_repository.dart';
 import 'repositories/regulation_entry_repository.dart';
 import 'repositories/commitment_repository.dart';
 import 'repositories/commitment_log_repository.dart';
-import 'entities/person_stub.dart' if (dart.library.io) 'entities/person.dart';
+import 'entities/person.dart';
 import 'entities/regulation_entry_stub.dart'
     if (dart.library.io) 'entities/regulation_entry.dart';
 import 'entities/commitment_stub.dart'

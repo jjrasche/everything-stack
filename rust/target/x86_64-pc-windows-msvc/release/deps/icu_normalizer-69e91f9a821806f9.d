@@ -1,0 +1,10 @@
+C:\Users\rasche_j\Documents\workspace\everything-stack\rust\target\x86_64-pc-windows-msvc\release\deps\libicu_normalizer-69e91f9a821806f9.rmeta: C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\icu_normalizer-2.1.1\src/lib.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\icu_normalizer-2.1.1\src\properties.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\icu_normalizer-2.1.1\src\provider.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\icu_normalizer-2.1.1\src\uts46.rs
+
+C:\Users\rasche_j\Documents\workspace\everything-stack\rust\target\x86_64-pc-windows-msvc\release\deps\libicu_normalizer-69e91f9a821806f9.rlib: C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\icu_normalizer-2.1.1\src/lib.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\icu_normalizer-2.1.1\src\properties.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\icu_normalizer-2.1.1\src\provider.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\icu_normalizer-2.1.1\src\uts46.rs
+
+C:\Users\rasche_j\Documents\workspace\everything-stack\rust\target\x86_64-pc-windows-msvc\release\deps\icu_normalizer-69e91f9a821806f9.d: C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\icu_normalizer-2.1.1\src/lib.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\icu_normalizer-2.1.1\src\properties.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\icu_normalizer-2.1.1\src\provider.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\icu_normalizer-2.1.1\src\uts46.rs
+
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\icu_normalizer-2.1.1\src/lib.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\icu_normalizer-2.1.1\src\properties.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\icu_normalizer-2.1.1\src\provider.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\icu_normalizer-2.1.1\src\uts46.rs:

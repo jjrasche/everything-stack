@@ -4,6 +4,11 @@
 /// Records a single regulation event (dysregulation catch, intervention, rupture, etc.).
 /// Links to people involved and tracks strategies used.
 ///
+/// ## Domain Entity Pattern
+/// This is a pure Dart domain entity with NO ObjectBox decorators.
+/// ObjectBox decorators belong on the wrapper class (RegulationEntryOB) in the adapters directory.
+/// This allows the same entity to work on native (ObjectBox) and web (IndexedDB) platforms.
+///
 /// ## Usage
 /// ```dart
 /// final entry = RegulationEntry(
@@ -15,8 +20,6 @@
 ///   category: 'frustration',
 /// );
 /// ```
-
-import 'package:objectbox/objectbox.dart';
 
 import '../../../core/base_entity.dart';
 
@@ -36,23 +39,18 @@ enum Severity {
   major,
 }
 
-@Entity()
 class RegulationEntry extends BaseEntity {
   // ============ BaseEntity field overrides ============
   @override
-  @Id()
   int id = 0;
 
   @override
-  @Unique()
   String uuid = '';
 
   @override
-  @Property(type: PropertyType.date)
   DateTime createdAt = DateTime.now();
 
   @override
-  @Property(type: PropertyType.date)
   DateTime updatedAt = DateTime.now();
 
   @override
@@ -60,28 +58,11 @@ class RegulationEntry extends BaseEntity {
 
   // ============ RegulationEntry fields ============
 
-  /// Entry type (stored as int, accessed via enum)
-  @Property(type: PropertyType.byte)
-  int dbEntryType;
+  /// Entry type
+  EntryType entryType;
 
-  /// Entry type getter/setter
-  @Transient()
-  EntryType get entryType => EntryType.values[dbEntryType];
-  set entryType(EntryType value) => dbEntryType = value.index;
-
-  /// Person UUIDs (many-to-many, stored as comma-separated string)
-  String dbPersonIds = '';
-
-  /// Person IDs getter/setter
-  @Transient()
-  List<String> get personIds {
-    if (dbPersonIds.isEmpty) return [];
-    return dbPersonIds.split(',');
-  }
-
-  set personIds(List<String> value) {
-    dbPersonIds = value.join(',');
-  }
+  /// Person UUIDs
+  List<String> personIds;
 
   /// Raw transcript from STT
   String rawTranscript;
@@ -89,14 +70,8 @@ class RegulationEntry extends BaseEntity {
   /// What strategy was used? (e.g., "walked away", "deep breathing")
   String? regulationStrategy;
 
-  /// Severity (stored as int, accessed via enum)
-  @Property(type: PropertyType.byte)
-  int dbSeverity;
-
-  /// Severity getter/setter
-  @Transient()
-  Severity get severity => Severity.values[dbSeverity];
-  set severity(Severity value) => dbSeverity = value.index;
+  /// Severity
+  Severity severity;
 
   /// Category (e.g., "incredulous", "dismissive", "flooded")
   String? category;
@@ -107,19 +82,17 @@ class RegulationEntry extends BaseEntity {
   // ============ Constructor ============
 
   RegulationEntry({
-    EntryType? entryType,
+    required this.entryType,
     List<String>? personIds,
     required this.rawTranscript,
     this.regulationStrategy,
-    Severity? severity,
+    required this.severity,
     this.category,
     this.notes,
-  })  : dbEntryType = entryType?.index ?? 0,
-        dbSeverity = severity?.index ?? 0 {
+  }) : personIds = personIds ?? [] {
     if (uuid.isEmpty) {
       uuid = super.uuid;
     }
-    this.personIds = personIds ?? []; // Use setter
   }
 
   // ============ JSON serialization ============

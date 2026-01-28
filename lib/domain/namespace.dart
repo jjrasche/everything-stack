@@ -6,6 +6,11 @@
 /// 1. LLM picks namespace based on semantic match
 /// 2. Statistical classifier picks tool within namespace
 ///
+/// ## Domain Entity Pattern
+/// This is a pure Dart domain entity with NO ObjectBox decorators.
+/// ObjectBox decorators belong on the wrapper class (NamespaceOB) in the adapters directory.
+/// This allows the same entity to work on native (ObjectBox) and web (IndexedDB) platforms.
+///
 /// ## Key Design
 /// - keywords: Static registration keywords for initial matching
 /// - semanticCentroid: Computed from all tool descriptions at registration
@@ -20,27 +25,20 @@
 /// );
 /// ```
 
-import 'package:objectbox/objectbox.dart';
-
 import '../core/base_entity.dart';
 
-@Entity()
 class Namespace extends BaseEntity {
   // ============ BaseEntity field overrides ============
   @override
-  @Id()
   int id = 0;
 
   @override
-  @Unique()
   String uuid = '';
 
   @override
-  @Property(type: PropertyType.date)
   DateTime createdAt = DateTime.now();
 
   @override
-  @Property(type: PropertyType.date)
   DateTime updatedAt = DateTime.now();
 
   @override
@@ -60,11 +58,7 @@ class Namespace extends BaseEntity {
 
   /// Semantic centroid computed from all tool descriptions
   /// Null until computed during registration
-  @Transient()
   List<double>? semanticCentroid;
-
-  /// JSON storage for semanticCentroid
-  String? semanticCentroidJson;
 
   // ============ Constructor ============
 

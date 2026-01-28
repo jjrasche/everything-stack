@@ -4,6 +4,11 @@
 /// Represents a countdown timer set by the user via voice or text.
 /// Persists across app restarts. Fires events when countdown completes.
 ///
+/// ## Domain Entity Pattern
+/// This is a pure Dart domain entity with NO ObjectBox decorators.
+/// ObjectBox decorators belong on the wrapper class (TimerOB) in the adapters directory.
+/// This allows the same entity to work on native (ObjectBox) and web (IndexedDB) platforms.
+///
 /// ## Why persisted
 /// - App may be killed during countdown
 /// - Device may restart
@@ -19,27 +24,20 @@
 /// );
 /// ```
 
-import 'package:objectbox/objectbox.dart';
-
 import '../../../core/base_entity.dart';
 
-@Entity()
 class Timer extends BaseEntity {
   // ============ BaseEntity field overrides ============
   @override
-  @Id()
   int id = 0;
 
   @override
-  @Unique()
   String uuid = '';
 
   @override
-  @Property(type: PropertyType.date)
   DateTime createdAt = DateTime.now();
 
   @override
-  @Property(type: PropertyType.date)
   DateTime updatedAt = DateTime.now();
 
   @override
@@ -55,18 +53,15 @@ class Timer extends BaseEntity {
   int durationSeconds;
 
   /// When the timer was set
-  @Property(type: PropertyType.date)
   DateTime setAt;
 
   /// When the timer will end (setAt + duration)
-  @Property(type: PropertyType.date)
   DateTime endsAt;
 
   /// Has this timer fired (completed)?
   bool fired;
 
   /// When did it fire? (null if not yet fired)
-  @Property(type: PropertyType.date)
   DateTime? firedAt;
 
   // ============ Constructor ============

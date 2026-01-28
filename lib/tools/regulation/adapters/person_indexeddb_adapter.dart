@@ -15,8 +15,7 @@ import 'dart:indexed_db' as idb;
 import '../../../persistence/indexeddb/base_indexeddb_adapter.dart';
 import '../../../persistence/indexeddb/database_init.dart';
 import '../../../persistence/indexeddb/idb_types.dart';
-import '../entities/person_stub.dart'
-    if (dart.library.io) '../entities/person.dart';
+import '../entities/person.dart';
 
 class PersonIndexedDBAdapter extends BaseIndexedDBAdapter<Person> {
   PersonIndexedDBAdapter(Database db) : super(db);

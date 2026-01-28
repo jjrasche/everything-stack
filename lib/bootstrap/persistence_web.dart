@@ -25,6 +25,10 @@ import 'indexeddb_factory.dart';
 ///
 /// Creates and registers all repository adapters backed by IndexedDB.
 Future<void> initializePersistence(GetIt getIt) async {
+  print('🔍 [persistence_WEB] Function called! (IndexedDB version)');
+  print('   Passed getIt: ${getIt.hashCode}');
+  print('   GetIt.instance: ${GetIt.instance.hashCode}');
+
   final db = await openIndexedDB();
 
   // Create and register adapters

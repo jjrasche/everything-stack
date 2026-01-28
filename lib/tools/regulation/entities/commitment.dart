@@ -4,6 +4,11 @@
 /// Represents a commitment that people make (daily meditation, kitchen clean, etc.).
 /// Tracks who is responsible and how to verify completion.
 ///
+/// ## Domain Entity Pattern
+/// This is a pure Dart domain entity with NO ObjectBox decorators.
+/// ObjectBox decorators belong on the wrapper class (CommitmentOB) in the adapters directory.
+/// This allows the same entity to work on native (ObjectBox) and web (IndexedDB) platforms.
+///
 /// ## Usage
 /// ```dart
 /// final commitment = Commitment(
@@ -17,27 +22,20 @@
 /// );
 /// ```
 
-import 'package:objectbox/objectbox.dart';
-
 import '../../../core/base_entity.dart';
 
-@Entity()
 class Commitment extends BaseEntity {
   // ============ BaseEntity field overrides ============
   @override
-  @Id()
   int id = 0;
 
   @override
-  @Unique()
   String uuid = '';
 
   @override
-  @Property(type: PropertyType.date)
   DateTime createdAt = DateTime.now();
 
   @override
-  @Property(type: PropertyType.date)
   DateTime updatedAt = DateTime.now();
 
   @override
@@ -55,36 +53,13 @@ class Commitment extends BaseEntity {
   String interval;
 
   /// Optional scheduled time of day
-  @Property(type: PropertyType.date)
   DateTime? timeOfDay;
 
-  /// Conditions to verify completion (stored as comma-separated string)
-  String dbVerificationConditions = '';
+  /// Verification conditions as list
+  List<String> verificationConditions;
 
-  /// Verification conditions getter/setter
-  @Transient()
-  List<String> get verificationConditions {
-    if (dbVerificationConditions.isEmpty) return [];
-    return dbVerificationConditions.split(',');
-  }
-
-  set verificationConditions(List<String> value) {
-    dbVerificationConditions = value.join(',');
-  }
-
-  /// Person UUIDs (many-to-many, stored as comma-separated string)
-  String dbPersonIds = '';
-
-  /// Person IDs getter/setter
-  @Transient()
-  List<String> get personIds {
-    if (dbPersonIds.isEmpty) return [];
-    return dbPersonIds.split(',');
-  }
-
-  set personIds(List<String> value) {
-    dbPersonIds = value.join(',');
-  }
+  /// Person UUIDs
+  List<String> personIds;
 
   /// Is this commitment active?
   bool active;
@@ -99,12 +74,11 @@ class Commitment extends BaseEntity {
     List<String>? verificationConditions,
     List<String>? personIds,
     this.active = true,
-  }) {
+  })  : verificationConditions = verificationConditions ?? [],
+        personIds = personIds ?? [] {
     if (uuid.isEmpty) {
       uuid = super.uuid;
     }
-    this.verificationConditions = verificationConditions ?? []; // Use setter
-    this.personIds = personIds ?? []; // Use setter
   }
 
   // ============ JSON serialization ============

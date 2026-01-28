@@ -1,0 +1,10 @@
+C:\Users\rasche_j\Documents\workspace\everything-stack\rust\target\release\deps\libcargo_toml-99ace4f6636d6403.rmeta: C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\cargo_toml-0.21.0\src/cargo_toml.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\cargo_toml-0.21.0\src\afs.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\cargo_toml-0.21.0\src\error.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\cargo_toml-0.21.0\src\inheritable.rs
+
+C:\Users\rasche_j\Documents\workspace\everything-stack\rust\target\release\deps\libcargo_toml-99ace4f6636d6403.rlib: C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\cargo_toml-0.21.0\src/cargo_toml.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\cargo_toml-0.21.0\src\afs.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\cargo_toml-0.21.0\src\error.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\cargo_toml-0.21.0\src\inheritable.rs
+
+C:\Users\rasche_j\Documents\workspace\everything-stack\rust\target\release\deps\cargo_toml-99ace4f6636d6403.d: C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\cargo_toml-0.21.0\src/cargo_toml.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\cargo_toml-0.21.0\src\afs.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\cargo_toml-0.21.0\src\error.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\cargo_toml-0.21.0\src\inheritable.rs
+
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\cargo_toml-0.21.0\src/cargo_toml.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\cargo_toml-0.21.0\src\afs.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\cargo_toml-0.21.0\src\error.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\cargo_toml-0.21.0\src\inheritable.rs:

@@ -1,0 +1,10 @@
+C:\Users\rasche_j\Documents\workspace\everything-stack\rust\target\release\deps\libanstyle_wincon-846dd437734d0c32.rmeta: C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-wincon-3.0.11\src/lib.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-wincon-3.0.11\src\ansi.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-wincon-3.0.11\src\stream.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-wincon-3.0.11\src\windows.rs
+
+C:\Users\rasche_j\Documents\workspace\everything-stack\rust\target\release\deps\libanstyle_wincon-846dd437734d0c32.rlib: C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-wincon-3.0.11\src/lib.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-wincon-3.0.11\src\ansi.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-wincon-3.0.11\src\stream.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-wincon-3.0.11\src\windows.rs
+
+C:\Users\rasche_j\Documents\workspace\everything-stack\rust\target\release\deps\anstyle_wincon-846dd437734d0c32.d: C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-wincon-3.0.11\src/lib.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-wincon-3.0.11\src\ansi.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-wincon-3.0.11\src\stream.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-wincon-3.0.11\src\windows.rs
+
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-wincon-3.0.11\src/lib.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-wincon-3.0.11\src\ansi.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-wincon-3.0.11\src\stream.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-wincon-3.0.11\src\windows.rs:

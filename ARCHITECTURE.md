@@ -385,6 +385,164 @@ class InvocationObjectBoxAdapter
 - Domain entities stay clean for web compilation (no dart:ffi imports)
 - Supports synchronous transactions for data consistency guarantees
 
+### Cross-Platform File Architecture
+
+**CRITICAL CONSTRAINT**: Domain entities CANNOT have platform-specific decorators (e.g., ObjectBox `@Entity`, `@Id`, `@Property`) because they must compile for both native and web platforms.
+
+#### Why This Matters
+
+Web compilation fails if domain entity files import `package:objectbox/objectbox.dart`:
+- ObjectBox depends on `dart:ffi` (Foreign Function Interface)
+- `dart:ffi` does not exist on web platform
+- Any file importing ObjectBox cannot be compiled to web
+
+#### The Solution: Wrapper Pattern
+
+All ObjectBox decorators live on **wrapper classes** in `lib/persistence/objectbox/wrappers/`:
+
+```
+Domain Entity (Pure Dart)
+  ↓
+lib/tools/regulation/entities/person.dart
+  - NO imports of objectbox
+  - NO @Entity, @Id, @Property decorators
+  - Works on ALL platforms (native + web)
+
+Wrapper Class (ObjectBox-Specific)
+  ↓
+lib/persistence/objectbox/wrappers/person_ob.dart
+  - Imports package:objectbox/objectbox.dart
+  - Has ALL @Entity, @Id, @Property decorators
+  - Conversion methods: fromPerson(Person) / toPerson()
+  - ONLY compiled for native platforms
+```
+
+#### File Organization Rules
+
+1. **Domain entities** (`lib/tools/*/entities/*.dart`, `lib/domain/*.dart`):
+   - Pure Dart classes extending BaseEntity
+   - NO ObjectBox imports or decorators
+   - NO conditional imports (e.g., `if (dart.library.io)`)
+   - Compile for ALL platforms (native + web)
+
+2. **ObjectBox wrappers** (`lib/persistence/objectbox/wrappers/*_ob.dart`):
+   - Import `package:objectbox/objectbox.dart`
+   - ALL ObjectBox decorators go here
+   - Conversion methods to/from domain entity
+   - ONLY compiled for native platforms (excluded from web builds)
+
+3. **ObjectBox adapters** (`lib/persistence/objectbox/*_objectbox_adapter.dart`):
+   - Extend `BaseObjectBoxAdapter<DomainEntity, WrapperOB>`
+   - Implement `toOB(entity)` and `fromOB(ob)` conversion
+   - ONLY compiled for native platforms
+
+4. **IndexedDB adapters** (`lib/tools/*/adapters/*_indexeddb_adapter.dart`):
+   - Extend `BaseIndexedDBAdapter<DomainEntity>`
+   - Import domain entity directly (no wrappers needed)
+   - ONLY compiled for web platform
+
+5. **Adapter factories** (`lib/tools/*/repositories/*_adapter_native.dart`, `*_adapter_web.dart`):
+   - Use conditional imports to select correct adapter:
+     ```dart
+     import 'adapter_native.dart' if (dart.library.html) 'adapter_web.dart';
+     ```
+   - Native factory returns ObjectBox adapter
+   - Web factory returns IndexedDB adapter
+
+#### Example: Person Entity
+
+**Domain Entity** (Pure Dart):
+```dart
+// lib/tools/regulation/entities/person.dart
+import '../../../core/base_entity.dart';
+
+class Person extends BaseEntity {
+  String name;
+  String? role;
+  String? notes;
+
+  Person({required this.name, this.role, this.notes});
+}
+```
+
+**ObjectBox Wrapper** (Native Only):
+```dart
+// lib/persistence/objectbox/wrappers/person_ob.dart
+import 'package:objectbox/objectbox.dart';
+import 'package:everything_stack_template/tools/regulation/entities/person.dart';
+
+@Entity()
+class PersonOB {
+  @Id()
+  int id = 0;
+
+  @Unique()
+  String uuid = '';
+
+  String name;
+  String? role;
+  String? notes;
+
+  PersonOB({required this.name, this.role, this.notes});
+
+  factory PersonOB.fromPerson(Person person) => PersonOB(
+    name: person.name,
+    role: person.role,
+    notes: person.notes,
+  )..uuid = person.uuid;
+
+  Person toPerson() {
+    final person = Person(name: name, role: role, notes: notes);
+    person.uuid = uuid;
+    return person;
+  }
+}
+```
+
+**ObjectBox Adapter** (Native Only):
+```dart
+// lib/persistence/objectbox/person_objectbox_adapter.dart
+class PersonObjectBoxAdapter extends BaseObjectBoxAdapter<Person, PersonOB> {
+  @override
+  PersonOB toOB(Person entity) => PersonOB.fromPerson(entity);
+
+  @override
+  Person fromOB(PersonOB ob) => ob.toPerson();
+}
+```
+
+#### What NOT to Do
+
+❌ **NEVER** add ObjectBox decorators directly to domain entities:
+```dart
+// lib/tools/regulation/entities/person.dart
+import 'package:objectbox/objectbox.dart'; // ❌ BREAKS WEB COMPILATION
+
+@Entity() // ❌ BREAKS WEB COMPILATION
+class Person extends BaseEntity {
+  @Id() // ❌ BREAKS WEB COMPILATION
+  int id = 0;
+  // ...
+}
+```
+
+❌ **NEVER** use conditional imports in domain entities:
+```dart
+// lib/tools/regulation/entities/person.dart
+import 'person_stub.dart' if (dart.library.io) 'person.dart'; // ❌ UNNECESSARY COMPLEXITY
+```
+
+✅ **ALWAYS** keep domain entities pure Dart:
+```dart
+// lib/tools/regulation/entities/person.dart
+import '../../../core/base_entity.dart'; // ✅ Pure Dart
+
+class Person extends BaseEntity {
+  String name; // ✅ No decorators
+  // ...
+}
+```
+
 ### Repository Interface
 
 All repositories extend `EntityRepository<T>`:

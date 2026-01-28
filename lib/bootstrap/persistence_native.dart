@@ -30,12 +30,22 @@ import 'objectbox_store_factory.dart';
 /// Creates and registers all repository adapters backed by ObjectBox.
 /// Note: Handler wiring (like SemanticIndexableHandler) happens in bootstrap.dart
 Future<void> initializePersistence(GetIt getIt) async {
+  print('🔍 [persistence_NATIVE] Function called! (Native ObjectBox version)');
+  print('   Passed getIt: ${getIt.hashCode}');
+  print('   GetIt.instance: ${GetIt.instance.hashCode}');
+
   final store = await openObjectBoxStore();
 
   // Register store for direct access (TaskRepository needs it)
   // Register both with and without name for compatibility
+  print('🔍 [persistence_native] Registering objectbox.Store in GetIt...');
+
   getIt.registerSingleton<Store>(store);
+  print('   ✓ objectbox.Store registered (no instance name)');
+  print('   Verify immediately: objectbox.Store registered? ${getIt.isRegistered<Store>()}');
+
   getIt.registerSingleton<Store>(store, instanceName: 'objectBoxStore');
+  print('   ✓ Store registered (instanceName: objectBoxStore)');
 
   // Create and register adapters
   final invocationAdapter = InvocationObjectBoxAdapter(store);

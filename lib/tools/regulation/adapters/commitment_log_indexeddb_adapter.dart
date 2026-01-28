@@ -15,8 +15,7 @@ import 'dart:indexed_db' as idb;
 import '../../../persistence/indexeddb/base_indexeddb_adapter.dart';
 import '../../../persistence/indexeddb/database_init.dart';
 import '../../../persistence/indexeddb/idb_types.dart';
-import '../entities/commitment_log_stub.dart'
-    if (dart.library.io) '../entities/commitment_log.dart';
+import '../entities/commitment_log.dart';
 
 class CommitmentLogIndexedDBAdapter
     extends BaseIndexedDBAdapter<CommitmentLog> {

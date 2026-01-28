@@ -1,0 +1,10 @@
+C:\Users\rasche_j\Documents\workspace\everything-stack\rust\target\x86_64-pc-windows-msvc\release\deps\libsha1-e42da7e85f3e7682.rmeta: C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha1-0.10.6\src\lib.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha1-0.10.6\src\compress.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha1-0.10.6\src\compress\soft.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha1-0.10.6\src\compress\x86.rs
+
+C:\Users\rasche_j\Documents\workspace\everything-stack\rust\target\x86_64-pc-windows-msvc\release\deps\libsha1-e42da7e85f3e7682.rlib: C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha1-0.10.6\src\lib.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha1-0.10.6\src\compress.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha1-0.10.6\src\compress\soft.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha1-0.10.6\src\compress\x86.rs
+
+C:\Users\rasche_j\Documents\workspace\everything-stack\rust\target\x86_64-pc-windows-msvc\release\deps\sha1-e42da7e85f3e7682.d: C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha1-0.10.6\src\lib.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha1-0.10.6\src\compress.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha1-0.10.6\src\compress\soft.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha1-0.10.6\src\compress\x86.rs
+
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha1-0.10.6\src\lib.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha1-0.10.6\src\compress.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha1-0.10.6\src\compress\soft.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha1-0.10.6\src\compress\x86.rs:

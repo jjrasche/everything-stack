@@ -1,0 +1,11 @@
+C:\Users\rasche_j\Documents\workspace\everything-stack\rust\target\release\deps\libtoml_write-c824faedeeeb30b5.rmeta: C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src/lib.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src\key.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src\string.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src\value.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src\write.rs
+
+C:\Users\rasche_j\Documents\workspace\everything-stack\rust\target\release\deps\libtoml_write-c824faedeeeb30b5.rlib: C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src/lib.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src\key.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src\string.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src\value.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src\write.rs
+
+C:\Users\rasche_j\Documents\workspace\everything-stack\rust\target\release\deps\toml_write-c824faedeeeb30b5.d: C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src/lib.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src\key.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src\string.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src\value.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src\write.rs
+
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src/lib.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src\key.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src\string.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src\value.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml_write-0.1.2\src\write.rs:

@@ -4,6 +4,11 @@
 /// Records daily tracking of commitment completion.
 /// Tracks who completed it and when.
 ///
+/// ## Domain Entity Pattern
+/// This is a pure Dart domain entity with NO ObjectBox decorators.
+/// ObjectBox decorators belong on the wrapper class (CommitmentLogOB) in the adapters directory.
+/// This allows the same entity to work on native (ObjectBox) and web (IndexedDB) platforms.
+///
 /// ## Usage
 /// ```dart
 /// final log = CommitmentLog(
@@ -15,27 +20,20 @@
 /// );
 /// ```
 
-import 'package:objectbox/objectbox.dart';
-
 import '../../../core/base_entity.dart';
 
-@Entity()
 class CommitmentLog extends BaseEntity {
   // ============ BaseEntity field overrides ============
   @override
-  @Id()
   int id = 0;
 
   @override
-  @Unique()
   String uuid = '';
 
   @override
-  @Property(type: PropertyType.date)
   DateTime createdAt = DateTime.now();
 
   @override
-  @Property(type: PropertyType.date)
   DateTime updatedAt = DateTime.now();
 
   @override
@@ -47,7 +45,6 @@ class CommitmentLog extends BaseEntity {
   String commitmentId;
 
   /// Date this log entry is for
-  @Property(type: PropertyType.date)
   DateTime date;
 
   /// Was the commitment completed?

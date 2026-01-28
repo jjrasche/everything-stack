@@ -1,0 +1,10 @@
+C:\Users\rasche_j\Documents\workspace\everything-stack\rust\target\x86_64-pc-windows-msvc\release\deps\liblock_api-e1d7b803061deeb1.rmeta: C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.14\src/lib.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.14\src\mutex.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.14\src\remutex.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.14\src\rwlock.rs
+
+C:\Users\rasche_j\Documents\workspace\everything-stack\rust\target\x86_64-pc-windows-msvc\release\deps\liblock_api-e1d7b803061deeb1.rlib: C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.14\src/lib.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.14\src\mutex.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.14\src\remutex.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.14\src\rwlock.rs
+
+C:\Users\rasche_j\Documents\workspace\everything-stack\rust\target\x86_64-pc-windows-msvc\release\deps\lock_api-e1d7b803061deeb1.d: C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.14\src/lib.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.14\src\mutex.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.14\src\remutex.rs C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.14\src\rwlock.rs
+
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.14\src/lib.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.14\src\mutex.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.14\src\remutex.rs:
+C:\Users\rasche_j\.cargo\registry\src\index.crates.io-6f17d22bba15001f\lock_api-0.4.14\src\rwlock.rs:
