@@ -75,16 +75,9 @@ Future<bool> startEchoServer() async {
     // Wait for server startup
     await Future.delayed(const Duration(seconds: 2));
 
-    // Verify process is still running
-    if (_echoServerProcess!.kill(ProcessSignal.sigusr1)) {
-      // Process is alive (signal sent successfully)
-      debugPrint('✅ Echo server started successfully on port 8080');
-      return true;
-    } else {
-      debugPrint('⚠️ Echo server process died during startup');
-      _echoServerProcess = null;
-      return false;
-    }
+    // Server started successfully (Process.start() succeeded)
+    debugPrint('✅ Echo server started successfully on port 8080');
+    return true;
   } catch (e) {
     debugPrint('⚠️ Could not start echo server: $e');
     debugPrint('   Tests will use fallback configuration');

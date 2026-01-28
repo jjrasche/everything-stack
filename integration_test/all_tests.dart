@@ -22,6 +22,9 @@
 ///
 /// Workaround: Import all test files into a single entry point with one main().
 
+import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
+
 import 'shared/generic_test.dart' as generic;
 import 'nerve/channel_integration_test.dart' as channel;
 import 'nerve/deepgram_integration_test.dart' as deepgram;
@@ -29,8 +32,24 @@ import 'nerve/protocol_integration_test.dart' as protocol;
 import 'nerve/transport_integration_test.dart' as transport;
 import 'nerve/websocket_subprotocol_test.dart' as websocket;
 import 'services/barge_in_test.dart' as barge_in;
+import 'shared/test_server.dart';
 
 void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  // Start echo server once for ALL nerve tests
+  setUpAll(() async {
+    final serverStarted = await startEchoServer();
+    if (!serverStarted) {
+      print('⚠️ Echo server unavailable - some transport tests will be skipped');
+    }
+  });
+
+  // Stop echo server after ALL tests complete
+  tearDownAll(() async {
+    await stopEchoServer();
+  });
+
   // Test harness tests (timer, regulation, audio, etc.)
   generic.main();
 

@@ -68,9 +68,9 @@ jobs:
             dart run build_runner build --delete-conflicting-outputs
             echo "# CI/CD test - secrets via dart-define" > .env
 
-            # Run integration tests using flutter drive (proper way for device tests)
+            # Run ALL integration tests using consolidated entry point (solves Flutter bug #135673)
             # flutter test -d <device> doesn't work when both test/ and integration_test/ exist
-            flutter drive --driver=test_driver/integration_test.dart --target=integration_test/shared/generic_test.dart -d emulator-5554 --dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }} --dart-define=DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }} --dart-define=JINA_API_KEY=${{ secrets.JINA_API_KEY }} --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+            flutter drive --driver=test_driver/integration_test.dart --target=integration_test/all_tests.dart -d emulator-5554 --dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }} --dart-define=DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }} --dart-define=JINA_API_KEY=${{ secrets.JINA_API_KEY }} --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
 
   # ============ Build Web ============
   build-web:

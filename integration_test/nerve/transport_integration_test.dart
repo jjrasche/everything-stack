@@ -81,9 +81,8 @@ void main() {
     }
   });
 
-  tearDownAll(() async {
-    await stopEchoServer();
-  });
+  // Echo server lifecycle now managed by all_tests.dart top-level
+  // tearDownAll removed to keep server running for other test groups
 
   group('Transport Integration Tests', () {
     late Transport transport;

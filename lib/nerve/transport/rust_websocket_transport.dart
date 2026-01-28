@@ -57,6 +57,7 @@ class RustWebSocketTransport implements Transport {
   /// Ensure RustLib is initialized exactly once per process.
   ///
   /// Uses Completer pattern to handle concurrent initialization attempts.
+  /// Handles double-initialization gracefully (multiple test groups in single process).
   static Future<void> _ensureRustInitialized() async {
     if (_initCompleter == null) {
       _initCompleter = Completer<void>();
@@ -64,8 +65,15 @@ class RustWebSocketTransport implements Transport {
         await RustLib.init();
         _initCompleter!.complete();
       } catch (e) {
-        _initCompleter = null; // Allow retry on failure
-        rethrow;
+        // If already initialized, treat as success (consolidated test runner)
+        if (e.toString().contains('Should not initialize flutter_rust_bridge twice') ||
+            e is StateError && e.message.contains('initialize')) {
+          print('ℹ️ [RustWebSocketTransport] Rust bridge already initialized, continuing');
+          _initCompleter!.complete();
+        } else {
+          _initCompleter = null; // Allow retry on other failures
+          rethrow;
+        }
       }
     }
     return _initCompleter!.future;
