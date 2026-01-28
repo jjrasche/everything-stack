@@ -5,6 +5,7 @@
 ///
 /// Supports failure mode for error handling tests via shouldFail parameter.
 
+import 'dart:typed_data';
 import 'package:everything_stack_template/services/implementations/stt_implementer.dart';
 import 'package:everything_stack_template/services/types/stt_types.dart';
 import 'package:everything_stack_template/services/types/word.dart';
@@ -61,6 +62,19 @@ class MockDeepgramImplementer implements STTImplementer {
       words: words,
       latencyMs: 50,
     );
+  }
+
+  @override
+  Future<STTInvocationOutput> startLiveRecognition({
+    required Stream<Uint8List> audioStream,
+    required String eventId,
+    double? eotThreshold,
+    double? eagerEotThreshold,
+    int? eotTimeoutMs,
+    bool? enablePartialTranscripts,
+    bool? enableEagerProcessing,
+  }) {
+    throw UnsupportedError('MockDeepgramImplementer does not support live streaming');
   }
 }
 
@@ -135,5 +149,18 @@ class EnhancedMockDeepgramImplementer implements STTImplementer {
       words: words,
       latencyMs: processingDelay.inMilliseconds.toDouble(),
     );
+  }
+
+  @override
+  Future<STTInvocationOutput> startLiveRecognition({
+    required Stream<Uint8List> audioStream,
+    required String eventId,
+    double? eotThreshold,
+    double? eagerEotThreshold,
+    int? eotTimeoutMs,
+    bool? enablePartialTranscripts,
+    bool? enableEagerProcessing,
+  }) {
+    throw UnsupportedError('EnhancedMockDeepgramImplementer does not support live streaming');
   }
 }
