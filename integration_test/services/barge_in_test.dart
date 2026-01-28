@@ -34,7 +34,8 @@ void main() {
 
     setUpAll(() async {
       // Bootstrap the app (full services, real persistence)
-      await app.main();
+      await app.initializeEverythingStack();
+      await app.setupServiceLocator();
 
       // Get services from DI container
       final getIt = GetIt.instance;

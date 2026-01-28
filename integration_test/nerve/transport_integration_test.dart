@@ -11,9 +11,8 @@
 
 import 'dart:async';
 import 'dart:typed_data';
-import 'dart:io' show Platform;
 
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:everything_stack_template/nerve/transport/transport.dart';
@@ -45,14 +44,27 @@ void main() {
   setUpAll(() {
     if (kIsWeb) {
       print('🌐 [Transport Tests] Running on WEB - using BrowserWebSocketTransport');
-    } else if (Platform.isWindows) {
-      print('🪟 [Transport Tests] Running on WINDOWS - using NativeWebSocketTransport');
-    } else if (Platform.isMacOS) {
-      print('🍎 [Transport Tests] Running on macOS - using NativeWebSocketTransport');
-    } else if (Platform.isLinux) {
-      print('🐧 [Transport Tests] Running on Linux - using NativeWebSocketTransport');
     } else {
-      print('📱 [Transport Tests] Running on ${Platform.operatingSystem} - using NativeWebSocketTransport');
+      final platform = defaultTargetPlatform;
+      switch (platform) {
+        case TargetPlatform.windows:
+          print('🪟 [Transport Tests] Running on WINDOWS - using NativeWebSocketTransport');
+          break;
+        case TargetPlatform.macOS:
+          print('🍎 [Transport Tests] Running on macOS - using NativeWebSocketTransport');
+          break;
+        case TargetPlatform.linux:
+          print('🐧 [Transport Tests] Running on Linux - using NativeWebSocketTransport');
+          break;
+        case TargetPlatform.android:
+          print('🤖 [Transport Tests] Running on Android - using NativeWebSocketTransport');
+          break;
+        case TargetPlatform.iOS:
+          print('📱 [Transport Tests] Running on iOS - using NativeWebSocketTransport');
+          break;
+        default:
+          print('❓ [Transport Tests] Running on $platform - using NativeWebSocketTransport');
+      }
     }
   });
 
@@ -278,7 +290,7 @@ void main() {
           if (errorStr.contains('was not upgraded to websocket') || errorStr.contains('HTTP status code: 400')) {
             print('⚠️ CONFIRMED: Windows dart:io WebSocket bug');
             print('   dart:io is sending HTTP request instead of WebSocket upgrade');
-            if (Platform.isWindows && !kIsWeb) {
+            if (defaultTargetPlatform == TargetPlatform.windows && !kIsWeb) {
               // Expected on Windows - bug confirmed
               expect(e, isA<ConnectionFailedException>());
             } else {
