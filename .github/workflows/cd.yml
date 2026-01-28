@@ -70,15 +70,7 @@ jobs:
 
             # Run integration tests using flutter drive (proper way for device tests)
             # flutter test -d <device> doesn't work when both test/ and integration_test/ exist
-            flutter drive \
-              --driver=test_driver/integration_test.dart \
-              --target=integration_test/shared/generic_test.dart \
-              -d emulator-5554 \
-              --dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }} \
-              --dart-define=DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }} \
-              --dart-define=JINA_API_KEY=${{ secrets.JINA_API_KEY }} \
-              --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
-              --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+            flutter drive --driver=test_driver/integration_test.dart --target=integration_test/shared/generic_test.dart -d emulator-5554 --dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }} --dart-define=DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }} --dart-define=JINA_API_KEY=${{ secrets.JINA_API_KEY }} --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
 
   # ============ Build Web ============
   build-web:
