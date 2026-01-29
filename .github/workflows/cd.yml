@@ -89,7 +89,7 @@ jobs:
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: echo "# CI/CD web build - no secrets needed" > .env
-      - run: flutter build web --release
+      - run: flutter build web --release --web-renderer html
 
   # ============ Build Android APK ============
   build-android:
