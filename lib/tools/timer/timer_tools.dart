@@ -10,6 +10,10 @@ import 'entities/timer.dart';
 // ============ Tool Functions ============
 
 /// Set a countdown timer
+///
+/// Auto-cancels existing active timers before creating new one.
+/// Rationale: "Set a timer for 10 minutes" means "I want ONE timer for 10 minutes",
+/// not "add a second timer". User intent is to replace, not accumulate.
 Future<Map<String, dynamic>> timerSet(
   Map<String, dynamic> params,
   TimerRepository repo,
@@ -20,6 +24,13 @@ Future<Map<String, dynamic>> timerSet(
   }
 
   final label = params['label'] as String?;
+
+  // Cancel existing active timers (user wants to replace, not add)
+  final activeTimers = await repo.findActive();
+  for (final existingTimer in activeTimers) {
+    existingTimer.cancel();
+    await repo.save(existingTimer);
+  }
 
   final now = DateTime.now();
   final timer = Timer(
@@ -38,6 +49,7 @@ Future<Map<String, dynamic>> timerSet(
     'set_at': timer.setAt.toIso8601String(),
     'ends_at': timer.endsAt.toIso8601String(),
     'status': 'active',
+    'cancelled_previous': activeTimers.length,
   };
 }
 

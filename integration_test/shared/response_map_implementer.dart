@@ -53,18 +53,13 @@ class ResponseMapLLMImplementer implements LLMImplementer {
     );
     final utterance = (lastUserMsg['content'] as String?) ?? '';
 
-    print('🔍 [ResponseMapLLMImplementer] Looking up utterance: "$utterance"');
-    print('🔍 [ResponseMapLLMImplementer] Available responses: ${responses.keys.toList()}');
-
     // Lookup in response map
     final response = responses[utterance];
     if (response != null) {
-      print('✅ [ResponseMapLLMImplementer] Found response with ${response.toolCalls.length} tool calls');
       return response;
     }
 
     // Default response if not found
-    print('⚠️ [ResponseMapLLMImplementer] No match found, returning default');
     return LLMResponse(
       id: 'mock_${DateTime.now().millisecondsSinceEpoch}',
       content: 'Mock LLM response (no match found)',
