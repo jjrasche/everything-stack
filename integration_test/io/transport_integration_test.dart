@@ -20,9 +20,9 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:everything_stack_template/nerve/transport/transport.dart';
-import 'package:everything_stack_template/nerve/transport/transport_factory.dart';
-import 'package:everything_stack_template/nerve/nerve_exception.dart';
+import 'package:everything_stack_template/io/transport/transport.dart';
+import 'package:everything_stack_template/io/transport/transport_factory.dart';
+import 'package:everything_stack_template/io/io_exception.dart';
 import '../shared/test_server.dart';
 
 /// Local echo server (test/nerve/echo_server).
