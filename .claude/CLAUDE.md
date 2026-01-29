@@ -193,33 +193,7 @@ flutter build ipa \
 
 flutter build macos --dart-define=... # macOS
 flutter build windows --dart-define=... # Windows
-flutter build web --dart-define=... --web-renderer html  # Web (requires HTML renderer)
-```
-
-### Web Build Requirements
-
-**CRITICAL:** Web builds MUST use `--web-renderer html` flag. Wasm renderer is NOT supported.
-
-**Why:**
-- Flutter now defaults to Wasm compilation for web
-- Wasm doesn't support `dart:html` or `dart:ffi`
-- This project uses `dart:html` for IndexedDB persistence on web
-
-**Files requiring dart:html (web-only compilation):**
-- `lib/persistence/indexeddb/event_indexeddb_adapter.dart`
-- `lib/persistence/indexeddb/database_init.dart`
-- `lib/bootstrap/indexeddb_factory.dart`
-- `lib/services/blob_store_web.dart`
-- `lib/nerve/transport/web_websocket_transport.dart`
-
-**Correct command:**
-```bash
-flutter build web --release --web-renderer html
-```
-
-**Incorrect (will fail):**
-```bash
-flutter build web --release  # Uses Wasm by default, fails on dart:html imports
+flutter build web --dart-define=...   # Web
 ```
 
 ### Environment Variables (Priority Order)
