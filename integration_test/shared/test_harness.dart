@@ -17,6 +17,7 @@ import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/event_bus.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
 import 'package:everything_stack_template/core/invocation.dart';
+import 'package:everything_stack_template/core/entity_repository.dart';
 import 'package:everything_stack_template/core/adaptation_state_repository.dart';
 import 'package:everything_stack_template/core/feedback_repository.dart';
 import 'test_context.dart';
@@ -183,10 +184,24 @@ class IntegrationTestConfig {
   Future<void> _registerCoordinator() async {
     final getIt = GetIt.instance;
 
-    // Only register if not already registered
+    // Unregister ContextSelector if exists (has cached EmbeddingService reference)
+    if (getIt.isRegistered<ContextSelector>()) {
+      print('ℹ️ ContextSelector already registered, unregistering to re-register with swapped EmbeddingService');
+      getIt.unregister<ContextSelector>();
+    }
+
+    // Re-register ContextSelector with swapped EmbeddingService
+    final contextSelector = ContextSelector(
+      invocationRepo: getIt<EntityRepository<Invocation>>(),
+      embeddingService: EmbeddingService.instance, // Uses swapped mock
+    );
+    getIt.registerSingleton<ContextSelector>(contextSelector);
+    print('✅ ContextSelector re-registered with swapped EmbeddingService');
+
+    // Unregister Coordinator if exists (has cached service references)
     if (getIt.isRegistered<Coordinator>()) {
-      print('ℹ️ Coordinator already registered, skipping');
-      return;
+      print('ℹ️ Coordinator already registered, unregistering to re-register with swapped services');
+      getIt.unregister<Coordinator>();
     }
 
     print('🔍 Registering Coordinator...');
@@ -195,7 +210,7 @@ class IntegrationTestConfig {
       llmService: getIt<InferenceService>(),
       ttsService: getIt<TTSService>(),
       toolExecutor: getIt<ToolExecutor>(),
-      contextSelector: getIt<ContextSelector>(),
+      contextSelector: getIt<ContextSelector>(), // Now gets the re-registered one
       invocationRepo: getIt<InvocationRepository<Invocation>>(),
       eventBus: getIt<EventBus>(),
     );

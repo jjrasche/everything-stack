@@ -99,6 +99,22 @@ final regulationTrackingTest = IntegrationTestConfig(
   },
 
   testLogic: (t) async {
+    // Clear any leftover regulation entities from previous test runs
+    final existingPersons = await t.personRepo.findAll();
+    for (final person in existingPersons) {
+      await t.personRepo.deleteByUuid(person.uuid);
+    }
+
+    final existingEntries = await t.regulationEntryRepo.findAll();
+    for (final entry in existingEntries) {
+      await t.regulationEntryRepo.deleteByUuid(entry.uuid);
+    }
+
+    final existingCommitments = await t.commitmentRepo.findAll();
+    for (final commitment in existingCommitments) {
+      await t.commitmentRepo.deleteByUuid(commitment.uuid);
+    }
+
     // ===== TURN 1: Log dysregulation catch =====
     await t.stt('turn1');
 
