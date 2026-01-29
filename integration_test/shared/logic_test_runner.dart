@@ -1,20 +1,20 @@
-/// # Generic Integration Test Entry Point
+/// # Logic Test Runner
 ///
-/// Single entry point for all integration tests.
+/// Entry point for test harness tests (*_logic.dart files).
 ///
-/// Run all tests:
+/// Run all logic tests:
 /// ```bash
-/// flutter test integration_test/shared/generic_test.dart -d <platform>
+/// flutter test integration_test/shared/logic_test_runner.dart -d <platform>
 /// ```
 ///
-/// Run single test:
+/// Run single logic test:
 /// ```bash
-/// flutter test integration_test/shared/generic_test.dart --dart-define=TEST=timer -d <platform>
+/// flutter test integration_test/shared/logic_test_runner.dart --dart-define=TEST=timer -d <platform>
 /// ```
 ///
 /// Smoke mode (real APIs):
 /// ```bash
-/// flutter test integration_test/shared/generic_test.dart --dart-define=SMOKE_TEST=true -d <platform>
+/// flutter test integration_test/shared/logic_test_runner.dart --dart-define=SMOKE_TEST=true -d <platform>
 /// ```
 
 import 'package:flutter_test/flutter_test.dart';

@@ -443,6 +443,29 @@ Since your system *learns* from execution, you want it learning from real execut
 
 ---
 
+## Future: LLM Benchmark Suite (Not Yet Implemented)
+
+**Current Gap:** Integration tests verify tool execution, but NOT prompt quality or LLM understanding.
+
+**Example:** Timer test mocks LLM response with `[timer.cancel, timer.set]`, so we test IF the system executes those tools correctly. We don't test WHETHER the LLM would actually produce those tools given "Make it 10 minutes instead".
+
+**Proposed Solution:** Benchmark suite that measures prompt quality at scale:
+- Corpus of test cases (utterances + expected tool calls + slot values)
+- Real LLM calls (parallelized for speed)
+- Metrics: precision, recall, F1, slot-filling accuracy
+- Regression detection (track results over time)
+
+**Why Not Now:** The training system itself (Invocation logs + feedback) will reveal prompt quality issues organically through real usage. Benchmarks are premature optimization until we have baseline prompt performance data from production.
+
+**When to Build:**
+- After 100+ real user interactions logged
+- When we identify specific prompt failure patterns
+- Before making system prompt changes (regression testing)
+
+**Note:** This differs from smoke tests (which verify APIs work) - benchmarks would specifically test prompt engineering quality and tool selection accuracy.
+
+---
+
 ## References
 
 - **ARCHITECTURE.md** - How Invocations are logged, how AdaptationState learns, execution fungibility

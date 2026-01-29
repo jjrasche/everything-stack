@@ -17,10 +17,10 @@ integration_test/
 
 ```bash
 # All tests
-flutter test integration_test/shared/generic_test.dart -d windows
+flutter test integration_test/shared/logic_test_runner.dart -d windows
 
 # Single test
-flutter test integration_test/shared/generic_test.dart --dart-define=TEST=timer -d windows
+flutter test integration_test/shared/logic_test_runner.dart --dart-define=TEST=timer -d windows
 ```
 
 **What's mocked**: External APIs (Groq, Deepgram, TTS)
@@ -30,7 +30,7 @@ flutter test integration_test/shared/generic_test.dart --dart-define=TEST=timer 
 
 ```bash
 # All tests with real APIs
-flutter test integration_test/shared/generic_test.dart --dart-define=SMOKE_TEST=true -d windows
+flutter test integration_test/shared/logic_test_runner.dart --dart-define=SMOKE_TEST=true -d windows
 ```
 
 **Use case**: Verify real API integrations work (rate-limited, slower, requires API keys in .env)
@@ -82,7 +82,7 @@ final mathTest = IntegrationTestConfig(
 );
 ```
 
-**2. Register in `generic_test.dart`**
+**2. Register in `logic_test_runner.dart`**
 
 ```dart
 import '../my_feature_logic.dart';
@@ -223,13 +223,13 @@ Run individual error tests:
 
 ```bash
 # LLM failure
-flutter test integration_test/shared/generic_test.dart --dart-define=TEST=llm_failure -d windows
+flutter test integration_test/shared/logic_test_runner.dart --dart-define=TEST=llm_failure -d windows
 
 # STT failure
-flutter test integration_test/shared/generic_test.dart --dart-define=TEST=stt_failure -d windows
+flutter test integration_test/shared/logic_test_runner.dart --dart-define=TEST=stt_failure -d windows
 
 # TTS failure
-flutter test integration_test/shared/generic_test.dart --dart-define=TEST=tts_failure -d windows
+flutter test integration_test/shared/logic_test_runner.dart --dart-define=TEST=tts_failure -d windows
 ```
 
 **What's tested**:

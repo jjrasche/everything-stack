@@ -11,7 +11,7 @@
 /// ## Architecture
 ///
 /// This file imports and runs:
-/// - Test harness tests (via shared/generic_test.dart)
+/// - Test harness tests (via shared/logic_test_runner.dart)
 /// - Standalone nerve tests (channel, deepgram, protocol, transport, websocket)
 /// - Standalone service tests (barge_in)
 ///
@@ -25,7 +25,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'shared/generic_test.dart' as generic;
+import 'shared/logic_test_runner.dart' as logic_tests;
 import 'nerve/channel_integration_test.dart' as channel;
 import 'nerve/deepgram_integration_test.dart' as deepgram;
 import 'nerve/protocol_integration_test.dart' as protocol;
@@ -51,7 +51,7 @@ void main() {
   });
 
   // Test harness tests (timer, regulation, audio, etc.)
-  generic.main();
+  logic_tests.main();
 
   // Nerve layer tests
   channel.main();
