@@ -20,7 +20,7 @@ import 'dart:async';
 import 'dart:io' show WebSocket, Platform;
 import 'dart:typed_data';
 
-import '../nerve_exception.dart';
+import '../io_exception.dart';
 import 'transport.dart';
 
 /// Native WebSocket transport using dart:io.

@@ -1,7 +1,7 @@
-/// # Nerve System
+/// # IO System
 ///
-/// Cross-platform communication layer for real-time WebSocket connections.
-/// Replaces broken dart:io WebSocket with a three-layer architecture:
+/// Cross-platform communication layer for ALL digital communication.
+/// Currently implements WebSocket with a three-layer architecture:
 ///
 /// ```
 /// ┌─────────────────────────────────────────────────────────────────┐
@@ -16,7 +16,7 @@
 /// ## Usage
 ///
 /// ```dart
-/// import 'package:everything_stack_template/nerve/nerve.dart';
+/// import 'package:everything_stack_template/io/io.dart';
 ///
 /// // Create transport using factory
 /// final transportFactory = createTransportFactory();
@@ -54,10 +54,10 @@
 /// ## Platform Support
 /// - Web: Browser WebSocket API (dart:html)
 /// - Native: Rust FFI (Phase 2, not yet implemented)
-library nerve;
+library io;
 
 // Exceptions
-export 'nerve_exception.dart';
+export 'io_exception.dart';
 
 // Transport layer
 export 'transport/transport.dart';

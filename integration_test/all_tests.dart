@@ -12,7 +12,7 @@
 ///
 /// This file imports and runs:
 /// - Test harness tests (via shared/logic_test_runner.dart)
-/// - Standalone nerve tests (channel, deepgram, protocol, transport, websocket)
+/// - Standalone IO tests (channel, deepgram, protocol, transport, websocket)
 /// - Standalone service tests (barge_in)
 ///
 /// ## Why This Exists
@@ -26,18 +26,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'shared/logic_test_runner.dart' as logic_tests;
-import 'nerve/channel_integration_test.dart' as channel;
-import 'nerve/deepgram_integration_test.dart' as deepgram;
-import 'nerve/protocol_integration_test.dart' as protocol;
-import 'nerve/transport_integration_test.dart' as transport;
-import 'nerve/websocket_subprotocol_test.dart' as websocket;
+import 'io/channel_integration_test.dart' as channel;
+import 'io/deepgram_integration_test.dart' as deepgram;
+import 'io/protocol_integration_test.dart' as protocol;
+import 'io/transport_integration_test.dart' as transport;
+import 'io/websocket_subprotocol_test.dart' as websocket;
 import 'services/barge_in_test.dart' as barge_in;
 import 'shared/test_server.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Start echo server once for ALL nerve tests
+  // Start echo server once for ALL IO tests
   setUpAll(() async {
     final serverStarted = await startEchoServer();
     if (!serverStarted) {
@@ -53,7 +53,7 @@ void main() {
   // Test harness tests (timer, regulation, audio, etc.)
   logic_tests.main();
 
-  // Nerve layer tests
+  // IO layer tests
   channel.main();
   deepgram.main();
   protocol.main();

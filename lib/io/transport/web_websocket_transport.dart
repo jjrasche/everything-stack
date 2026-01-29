@@ -16,7 +16,7 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:html' as html;
 
-import '../nerve_exception.dart';
+import '../io_exception.dart';
 import 'transport.dart';
 
 /// Browser WebSocket implementation of [Transport].

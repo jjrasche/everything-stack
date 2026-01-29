@@ -16,7 +16,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import '../nerve_exception.dart';
+import '../io_exception.dart';
 import 'transport.dart';
 import '../../bridge/native.dart/api.dart' as rust;
 import '../../bridge/native.dart/frb_generated.dart';

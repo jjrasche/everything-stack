@@ -21,7 +21,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import '../nerve_exception.dart';
+import '../io_exception.dart';
 import '../transport/transport.dart';
 
 /// A message that can be sent/received over a Protocol.

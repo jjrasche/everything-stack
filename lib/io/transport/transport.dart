@@ -24,7 +24,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import '../nerve_exception.dart';
+import '../io_exception.dart';
 
 /// Connection state for a Transport.
 enum TransportState {

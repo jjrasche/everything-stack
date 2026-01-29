@@ -22,7 +22,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import '../nerve_exception.dart';
+import '../io_exception.dart';
 import '../transport/transport.dart';
 import 'protocol.dart';
 

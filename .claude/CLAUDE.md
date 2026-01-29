@@ -3,6 +3,23 @@
 ## Project Type
 Everything Stack template - Dart/Flutter cross-platform application
 
+## Distribution Model
+
+**Current approach:** Template repository (clone and fork)
+
+**How to use:**
+1. Clone this repository for your new app
+2. Delete example code (lib/example/)
+3. Add your domain logic
+4. Maintain as fork - can pull upstream infrastructure updates
+
+**Future evolution:** Extract stable infrastructure to package when:
+- Core infrastructure stabilizes (rare breaking changes)
+- Multiple apps exist and benefit from shared updates
+- Version management becomes necessary
+
+**For now:** Fork model with expectation that infrastructure will stabilize.
+
 ## Non-Negotiable Principles
 
 **Read these first. They override all other guidance.**
@@ -281,7 +298,21 @@ final defaultTTS = TTSService.selectCompatibleImplementer(ttsImplementers);
 - Offline-first with ObjectBox (native) + IndexedDB (web), sync via Supabase
 - Cross-platform code only - no platform-specific logic outside adapters
 - Dual persistence: adapters implement common interfaces, domain code is platform-agnostic
+- **IO layer handles ALL digital communication** - WebSocket, HTTP, gRPC, MQTT, Bluetooth, serial, etc.
+  - NOT a leaf dependency - it's a foundational layer between app and external world
+  - All external communication (STT, LLM, APIs, devices) goes through IO
+  - See `lib/io/README.md` for communication architecture
 - See `lib/tools/README.md` for tool domain architecture and ORM decorator separation
+
+## Future Considerations
+
+**Test Logic Co-location:**
+Test logic (IntegrationTestConfig) is currently pure - no flutter_test dependency. Could be moved to lib/ alongside implementation:
+- Current: `integration_test/regulation_logic.dart` (separate from code)
+- Potential: `lib/tools/regulation/regulation_test.dart` (next to implementation)
+- Benefit: Test config lives with code it tests (better for AI code reading/generation)
+- Cost: Requires moving IntegrationTestConfig to lib/testing/
+- Decision: Deferred - benefit unclear for AI-augmented development
 
 ## Current Work
 

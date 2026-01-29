@@ -20,7 +20,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import '../nerve_exception.dart';
+import '../io_exception.dart';
 import '../protocol/protocol.dart';
 import 'retry_policy.dart';
 

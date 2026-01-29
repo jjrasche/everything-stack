@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:everything_stack_template/nerve/channel/retry_policy.dart';
+import 'package:everything_stack_template/io/channel/retry_policy.dart';
 
 void main() {
   group('RetryPolicy', () {

@@ -1,16 +1,16 @@
 /// # DeepgramFluxImplementer
 ///
-/// Real-time WebSocket STT using Deepgram Flux model via Nerve System.
+/// Real-time WebSocket STT using Deepgram Flux model via IO layer.
 /// Streams audio chunks and publishes partial transcripts via EventBus.
 /// Handles turn detection (EndOfTurn, EagerEndOfTurn, TurnResumed).
 ///
 /// ## Platform Support
 /// - Web: Browser WebSocket (works)
 /// - macOS/iOS/Android/Linux: dart:io WebSocket (works)
-/// - Windows: Uses Nerve with browser WebSocket internally (works around dart:io bug)
+/// - Windows: Uses IO layer with browser WebSocket internally (works around dart:io bug)
 ///
 /// ## Flow:
-/// 1. Connect via Nerve Channel (Transport → Protocol → Channel)
+/// 1. Connect via IO Channel (Transport → Protocol → Channel)
 /// 2. Load audio from AudioStorage
 /// 3. Stream chunks (8KB each, 10ms throttle)
 /// 4. Receive ListenV2TurnInfo → publish transcription_partial events
@@ -31,7 +31,7 @@ import '../types/word.dart';
 import '../audio_storage.dart';
 import '../event_bus.dart';
 import '../../core/event.dart';
-import '../../nerve/nerve.dart';
+import '../../io/io.dart';
 
 class DeepgramFluxImplementer implements STTImplementer {
   final String apiKey;
