@@ -4,7 +4,7 @@
 /// NO MOCKS - real network calls.
 ///
 /// Run with:
-///   flutter test integration_test/nerve/protocol_integration_test.dart -d chrome
+///   flutter test integration_test/io/protocol_integration_test.dart -d chrome
 ///
 /// Note: Only runs on web platform (BrowserWebSocketTransport uses dart:html)
 
@@ -23,8 +23,8 @@ import 'package:everything_stack_template/io/protocol/protocol.dart';
 import 'package:everything_stack_template/io/protocol/websocket_protocol.dart';
 import 'package:everything_stack_template/io/io_exception.dart';
 
-/// Local echo server (test/nerve/echo_server).
-/// Start with: cd test/nerve/echo_server && npm start
+/// Local echo server (pure Dart, no external dependencies).
+/// Started automatically by test_server.dart.
 const localEchoHost = 'localhost';
 const localEchoPort = 8080;
 const localEchoTls = false;

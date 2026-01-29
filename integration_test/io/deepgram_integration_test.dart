@@ -4,7 +4,7 @@
 /// Verifies authentication, bidirectional communication, and transcription.
 ///
 /// Run with:
-///   flutter test integration_test/nerve/deepgram_integration_test.dart -d windows
+///   flutter test integration_test/io/deepgram_integration_test.dart -d windows
 
 import 'dart:async';
 import 'dart:typed_data';

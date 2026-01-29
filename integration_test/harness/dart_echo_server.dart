@@ -51,6 +51,16 @@ Future<bool> startDartEchoServer() async {
         return;
       }
 
+      // Reject /fail-connect before WebSocket upgrade
+      if (path == '/fail-connect') {
+        debugPrint('[echo-server] Rejecting connection: /fail-connect');
+        request.response
+          ..statusCode = HttpStatus.forbidden
+          ..write('Connection rejected')
+          ..close();
+        return;
+      }
+
       // Upgrade to WebSocket
       WebSocketTransformer.upgrade(request).then((WebSocket socket) {
         _handleWebSocket(socket, path);
@@ -72,12 +82,6 @@ Future<bool> startDartEchoServer() async {
 void _handleWebSocket(WebSocket socket, String path) {
   debugPrint('[echo-server] Client connected: $path');
 
-  if (path == '/fail-connect') {
-    // Immediate rejection
-    socket.close(WebSocketStatus.goingAway, 'Connection rejected');
-    return;
-  }
-
   // Parse disconnect-after endpoint
   final disconnectMatch = RegExp(r'/disconnect-after/(\d+)').firstMatch(path);
   int? disconnectAfter = disconnectMatch != null
@@ -98,7 +102,8 @@ void _handleWebSocket(WebSocket socket, String path) {
       // Check disconnect condition
       if (disconnectAfter != null && messageCount >= disconnectAfter) {
         debugPrint('[echo-server] Disconnect after $messageCount messages');
-        socket.close(WebSocketStatus.normalClosure, 'Reached message limit');
+        // Use goingAway (1001) to trigger ConnectionLostException in transport
+        socket.close(WebSocketStatus.goingAway, 'Reached message limit');
         return;
       }
 

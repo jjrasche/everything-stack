@@ -96,7 +96,7 @@ void main() {
   });
 
   group('Exception hierarchy behavior', () {
-    test('can catch all nerve exceptions with base type', () {
+    test('can catch all IO exceptions with base type', () {
       final exceptions = <NerveException>[
         ConnectionFailedException('test'),
         ConnectionLostException('test'),

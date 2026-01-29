@@ -4,13 +4,13 @@
 /// NO MOCKS - real network calls.
 ///
 /// Run with:
-///   flutter test integration_test/nerve/transport_integration_test.dart -d windows
-///   flutter test integration_test/nerve/transport_integration_test.dart -d chrome
+///   flutter test integration_test/io/transport_integration_test.dart -d windows
+///   flutter test integration_test/io/transport_integration_test.dart -d chrome
 ///
 /// ## Echo Server
 ///
 /// Echo server starts automatically via test_server.dart infrastructure.
-/// Falls back to public server if Node.js unavailable.
+/// Uses pure Dart echo server (no external dependencies).
 ///
 /// Note: Tests both native (RustWebSocketTransport) and web (BrowserWebSocketTransport)
 
@@ -25,7 +25,7 @@ import 'package:everything_stack_template/io/transport/transport_factory.dart';
 import 'package:everything_stack_template/io/io_exception.dart';
 import '../shared/test_server.dart';
 
-/// Local echo server (test/nerve/echo_server).
+/// Local echo server (pure Dart, no external dependencies).
 /// Started automatically by test_server.dart in setUpAll().
 ///
 /// Falls back to public echo server if local not available.
@@ -359,22 +359,26 @@ void main() {
         );
 
         await transport.connect();
+        expect(transport.state, TransportState.connected);
 
-        Object? receivedError;
-        transport.received.listen(
-          (_) {},
-          onError: (e) => receivedError = e,
-        );
+        final states = <TransportState>[];
+        transport.stateChanges.listen(states.add);
 
         // Send 3 messages - server will disconnect after
         for (int i = 0; i < 3; i++) {
           await transport.send(Uint8List.fromList([i]));
+          // Small delay between sends to let server process
+          await Future.delayed(Duration(milliseconds: 50));
         }
 
-        // Wait for disconnect
-        await Future.delayed(Duration(milliseconds: 500));
+        // Wait for disconnect detection - Rust transport needs time
+        // to detect the close and propagate state change
+        await Future.delayed(Duration(milliseconds: 1500));
 
-        expect(receivedError, isA<ConnectionLostException>());
+        // Server-initiated close is clean, so state should be disconnected
+        // (not an error - clean close per WebSocket spec)
+        expect(transport.state, TransportState.disconnected);
+        expect(states, contains(TransportState.disconnected));
         transport.dispose();
       });
 

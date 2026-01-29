@@ -1,7 +1,7 @@
-/// # Nerve System Exception Hierarchy
+/// # IO Exception Hierarchy
 ///
-/// All exceptions thrown by the Nerve communication layer extend [NerveException].
-/// This allows callers to catch all nerve-related errors with a single catch block,
+/// All exceptions thrown by the IO communication layer extend [NerveException].
+/// This allows callers to catch all IO-related errors with a single catch block,
 /// or handle specific failure modes individually.
 ///
 /// ## Exception Types
@@ -17,7 +17,7 @@
 /// } on ConnectionFailedException catch (e) {
 ///   // Handle connection failure specifically
 /// } on NerveException catch (e) {
-///   // Handle any nerve error
+///   // Handle any IO error
 /// }
 /// ```
 

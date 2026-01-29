@@ -36,5 +36,5 @@ if exist build\windows\x64\runner\Release\*.dll del /q build\windows\x64\runner\
 echo ✅ [Rebuild Rust] Complete! Rust changes will be reflected in next Flutter run/test.
 echo.
 echo Next steps:
-echo   flutter test integration_test\nerve\deepgram_integration_test.dart -d windows
+echo   flutter test integration_test\io\deepgram_integration_test.dart -d windows
 echo   flutter run -d windows

@@ -4,7 +4,7 @@
 /// Uses minimal mocks ONLY for retry edge cases (can't control echo server to fail).
 ///
 /// Run with:
-///   flutter test integration_test/nerve/channel_integration_test.dart -d chrome
+///   flutter test integration_test/io/channel_integration_test.dart -d chrome
 ///
 /// Note: Only runs on web platform (BrowserWebSocketTransport uses dart:html)
 
@@ -25,8 +25,8 @@ import 'package:everything_stack_template/io/channel/channel.dart';
 import 'package:everything_stack_template/io/channel/retry_policy.dart';
 import 'package:everything_stack_template/io/io_exception.dart';
 
-/// Local echo server (test/nerve/echo_server).
-/// Start with: cd test/nerve/echo_server && npm start
+/// Local echo server (pure Dart, no external dependencies).
+/// Started automatically by test_server.dart.
 const localEchoHost = 'localhost';
 const localEchoPort = 8080;
 const localEchoTls = false;

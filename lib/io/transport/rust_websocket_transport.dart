@@ -171,6 +171,7 @@ class RustWebSocketTransport implements Transport {
   /// Start polling for received messages from Rust queue.
   ///
   /// Polls every 50ms for new messages and pushes them to the received stream.
+  /// Detects connection closure via poll errors and transitions to disconnected.
   void _startReceivePolling() {
     _receivePoller?.cancel();
     _receivePoller =
@@ -186,8 +187,22 @@ class RustWebSocketTransport implements Transport {
           _receivedController.add(msg);
         }
       } catch (e) {
-        // Ignore poll errors (connection might be closing)
+        // Poll error indicates connection closed (server-initiated or network failure)
         print('🦀 [RustWebSocketTransport] Poll error: $e');
+
+        // Detect "connection not found" or similar errors indicating closed connection
+        final errorStr = e.toString().toLowerCase();
+        if (errorStr.contains('not found') ||
+            errorStr.contains('closed') ||
+            errorStr.contains('eof') ||
+            errorStr.contains('connection')) {
+          _receivePoller?.cancel();
+          _setState(TransportState.disconnected);
+          _receivedController.addError(ConnectionLostException(
+            'Connection closed by server',
+            e,
+          ));
+        }
       }
     });
   }
