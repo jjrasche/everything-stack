@@ -98,7 +98,7 @@ class MyEntity with Trainable {
 
 **Rationale**:
 - Decouples feedback collection from component implementation
-- Enables feedback on any entity (Invocation, Turn, Feedback, AdaptationState)
+- Enables feedback on any trainable component (STT, LLM, TTS, ContextSelector, etc.)
 - Shared interface across diverse components
 - Feedback is first-class, not bolted on
 
@@ -108,62 +108,6 @@ class MyEntity with Trainable {
 
 **Why This Matters**:
 The entire learning system depends on "entities can learn from feedback." Making this a generic mixin (vs baked into specific types) means new entities can be trainable without framework changes.
-
----
-
-## Turn Entity Inclusion
-
-**Decision**: Keep Turn as atomic feedback boundary (not flatten to Event + Invocation only)
-
-**What is a Turn?**
-One complete conversational exchange:
-- User speaks
-- STT processes
-- LLM generates response
-- TTS speaks back
-- User rates result
-
-This is ONE turn. Three Invocations. One feedback.
-
-**Why Turn Matters**:
-
-1. **Feedback Collected at Turn Level**
-   - User rates entire exchange ("Your response was unhelpful")
-   - NOT rated per component ("STT was 90% confident, LLM was unsure, TTS sounded weird")
-   - Without Turn, three feedback records (confusing, fragmented)
-
-2. **Training is Systemic, Not Isolated**
-   - "This turn failed" means these three components working together failed
-   - STT might have misheard, LLM misunderstood, TTS mispronounced - systemic failure
-   - Training components in isolation loses context ("why did STT fail?")
-
-3. **Latency Tracking End-to-End**
-   - `Turn.latencyMs` = "how long did user's interaction take?" (including network, scheduling, waiting)
-   - `Invocation.latencyMs` = component time only (30-40% of user experience)
-   - Users care about total experience, not component performance
-
-4. **Feedback Queue is Clear**
-   - `Turn.markedForFeedback` = user requested review
-   - Without Turn: three items in queue from one interaction (confusing)
-   - With Turn: one item per exchange (clear, actionable)
-
-5. **Query Patterns Matter**
-   - "Show me failed turns" = one query
-   - "Show me turns with >5s latency" = actionable insight
-   - Without Turn: reconstruct from scattered Invocations (lossy)
-
-**Alternative (Rejected)**: Flatten to Event + Invocation only
-- Loses atomic feedback boundary
-- Makes queries harder (reconstruct turn from invocations)
-- Fragments training context (per-component feedback)
-- Removes latency tracking at interaction level
-
-**Trade-off**:
-- Additional entity (more schema, more storage)
-- Must maintain Turn←→Invocation relationship
-
-**Why This Matters**:
-Feedback is the core of the learning system. Where feedback lives shapes everything: training, queries, debugging. Atomic turns make feedback actionable.
 
 ---
 

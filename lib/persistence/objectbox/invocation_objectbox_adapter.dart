@@ -31,20 +31,6 @@ class InvocationObjectBoxAdapter
   // ============ InvocationRepository Implementation ============
 
   @override
-  Future<List<Invocation>> findByTurn(String turnId) async {
-    final query = box
-        .query(InvocationOB_.turnId.equals(turnId))
-        .order(InvocationOB_.createdAt)
-        .build();
-    try {
-      final obList = query.find();
-      return obList.map((ob) => fromOB(ob)).toList();
-    } finally {
-      query.close();
-    }
-  }
-
-  @override
   Future<List<Invocation>> findByContextType(String contextType) async {
     final query =
         box.query(InvocationOB_.componentType.equals(contextType)).build();
@@ -60,15 +46,5 @@ class InvocationObjectBoxAdapter
   Future<List<Invocation>> findByIds(List<String> ids) async {
     final allInvocations = await findAll();
     return allInvocations.where((inv) => ids.contains(inv.uuid)).toList();
-  }
-
-  @override
-  Future<int> deleteByTurn(String turnId) async {
-    final query = box.query(InvocationOB_.turnId.equals(turnId)).build();
-    try {
-      return query.remove();
-    } finally {
-      query.close();
-    }
   }
 }

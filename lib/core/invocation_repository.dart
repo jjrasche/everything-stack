@@ -34,14 +34,6 @@ abstract class InvocationRepository<T> {
   /// Returns: Invocation or null if not found
   Future<T?> findById(String id);
 
-  /// Find all invocations for a specific turn
-  ///
-  /// Parameters:
-  /// - [turnId] Which turn
-  ///
-  /// Returns: List of invocations (may be empty)
-  Future<List<T>> findByTurn(String turnId);
-
   /// Find all invocations of a specific context type
   ///
   /// Parameters:
@@ -51,8 +43,6 @@ abstract class InvocationRepository<T> {
   Future<List<T>> findByContextType(String contextType);
 
   /// Find invocations by IDs
-  ///
-  /// Used when Turn.invocationIds contains specific IDs to load.
   ///
   /// Parameters:
   /// - [ids] List of invocation IDs
@@ -75,14 +65,6 @@ abstract class InvocationRepository<T> {
   ///
   /// Returns: true if deleted, false if not found
   Future<bool> delete(String id);
-
-  /// Delete all invocations for a turn
-  ///
-  /// Parameters:
-  /// - [turnId] Which turn to clear
-  ///
-  /// Returns: Number of invocations deleted
-  Future<int> deleteByTurn(String turnId);
 
   /// Find all invocations (for cleanup/archival)
   ///

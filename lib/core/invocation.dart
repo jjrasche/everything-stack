@@ -6,8 +6,8 @@
 ///
 /// ## Standardized Fields
 /// Every invocation has these fields:
-/// - eventId: Links to the triggering event/turn
-/// - componentType: Which component executed ('stt', 'llm', 'tts', 'context_manager', 'namespace_selector', etc.)
+/// - eventId: Links to the triggering event
+/// - componentType: Which component executed ('stt', 'llm', 'tts', 'context_selector', etc.)
 /// - implementer: Which implementation executed this (e.g., 'groq', 'deepgram', 'flutter_tts'). Null for single-implementation components.
 /// - success: Did the component succeed?
 /// - confidence: How confident was the component (0.0-1.0)?
@@ -70,16 +70,13 @@ class Invocation extends BaseEntity
   String eventId;
 
   /// Which component executed this invocation?
-  /// Examples: 'stt', 'llm', 'tts', 'context_manager', 'namespace_selector', 'tool_selector'
+  /// Examples: 'stt', 'llm', 'tts', 'context_selector', 'tool_executor'
   String componentType;
 
   /// Which implementer executed this invocation?
   /// Examples: 'groq', 'claude', 'deepgram', 'flutter_tts'
   /// Null for single-implementation components (tool_selector, namespace_selector)
   String? implementer;
-
-  /// FK to Turn - links invocation to conversation turn (null for background/test invocations)
-  String? turnId;
 
   /// Did the component succeed?
   bool success;
@@ -119,7 +116,6 @@ class Invocation extends BaseEntity
     required this.success,
     required this.confidence,
     this.implementer,
-    this.turnId,
     this.input,
     this.output,
     this.metadata,
@@ -163,7 +159,6 @@ class Invocation extends BaseEntity
         'eventId': eventId,
         'componentType': componentType,
         'implementer': implementer,
-        'turnId': turnId,
         'success': success,
         'confidence': confidence,
         'input': input,
@@ -178,7 +173,6 @@ class Invocation extends BaseEntity
       success: json['success'] as bool,
       confidence: (json['confidence'] as num).toDouble(),
       implementer: json['implementer'] as String?,
-      turnId: json['turnId'] as String?,
       input: json['input'] != null
           ? Map<String, dynamic>.from(json['input'] as Map)
           : null,

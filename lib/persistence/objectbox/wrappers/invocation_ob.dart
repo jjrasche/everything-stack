@@ -29,7 +29,6 @@ class InvocationOB {
   String eventId;
   String componentType;
   String? implementer;
-  String? turnId;
   bool success;
   double confidence;
 
@@ -50,7 +49,6 @@ class InvocationOB {
     required this.success,
     required this.confidence,
     this.implementer,
-    this.turnId,
     this.inputJson,
     this.outputJson,
     this.metadataJson,
@@ -68,7 +66,6 @@ class InvocationOB {
       implementer: invocation.implementer,
       success: invocation.success,
       confidence: invocation.confidence,
-      turnId: invocation.turnId,
       inputJson: invocation.inputJson,
       outputJson: invocation.outputJson,
       metadataJson: invocation.metadataJson,
@@ -118,7 +115,6 @@ class InvocationOB {
       success: success,
       confidence: confidence,
       implementer: implementer,
-      turnId: turnId,
       input: inputMap,
       output: outputMap,
       metadata: metadataMap,

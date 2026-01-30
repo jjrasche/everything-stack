@@ -58,14 +58,17 @@ class STTService with Trainable<STTAdaptationData> {
   /// This is for real-time streaming mode where audio is sent to the STT service
   /// as it's being recorded, not after recording completes.
   ///
+  /// IMPORTANT: Audio is buffered and persisted for training/debugging purposes.
+  ///
   /// Flow:
   /// 1. Select implementer (specified or default)
   /// 2. Load adaptation state
-  /// 3. Call implementer's startLiveRecognition() with audio stream
+  /// 3. Buffer audio chunks while streaming to implementer
   /// 4. Implementer connects to API and streams chunks in real-time
-  /// 5. When EndOfTurn detected → auto-stop (handled by voice screen listening to events)
-  /// 6. Log invocation for training feedback
-  /// 7. Return final transcription
+  /// 5. When EndOfTurn detected → persist buffered audio
+  /// 6. Log invocation with saved audioId
+  /// 7. Publish transcription_complete event
+  /// 8. Return final transcription
   ///
   /// NOTE: Only DeepgramFluxImplementer currently supports live streaming.
   /// Other implementers will throw UnsupportedError.
@@ -82,9 +85,25 @@ class STTService with Trainable<STTAdaptationData> {
     final state =
         await _getAdaptationState(implementer.implementerName, userId);
 
-    // 3. Call implementer with live audio stream and adaptation parameters
+    // 3. Set up audio buffering: stream to implementer AND accumulate for persistence
+    final audioBuffer = <int>[];
+    final startTime = DateTime.now();
+    final StreamController<Uint8List> bufferedController = StreamController();
+
+    // Listen to original stream, forward to implementer AND buffer for saving
+    audioStream.listen(
+      (chunk) {
+        bufferedController.add(chunk); // Forward to implementer
+        audioBuffer.addAll(chunk);     // Buffer for persistence
+      },
+      onDone: bufferedController.close,
+      onError: (error) => bufferedController.addError(error),
+      cancelOnError: true,
+    );
+
+    // 4. Call implementer with buffered stream
     final output = await implementer.startLiveRecognition(
-      audioStream: audioStream,
+      audioStream: bufferedController.stream,
       eventId: eventId,
       eotThreshold: state.eotThreshold,
       eagerEotThreshold: state.eagerEotThreshold,
@@ -93,7 +112,16 @@ class STTService with Trainable<STTAdaptationData> {
       enableEagerProcessing: state.enableEagerProcessing,
     );
 
-    // 4. Log invocation for training feedback
+    // 5. Persist buffered audio to AudioStorage (for training/debugging)
+    final audioId = 'audio_$eventId';
+    final audioBytes = Uint8List.fromList(audioBuffer);
+    final duration = DateTime.now().difference(startTime).inSeconds.toDouble();
+
+    final audioStorage = GetIt.instance.get<AudioStorage>();
+    await audioStorage.save(audioId, audioBytes);
+    debugPrint('   💾 Saved audio: $audioId (${audioBytes.length} bytes, ${duration}s)');
+
+    // 6. Log invocation with saved audioId
     await recordInvocation(
       eventId,
       Invocation(
@@ -103,14 +131,14 @@ class STTService with Trainable<STTAdaptationData> {
         success: output.confidence >= state.confidenceThreshold,
         confidence: output.confidence,
         input: STTInvocationInput(
-          audioId: 'live_stream', // No saved audioId for live streaming
-          durationSeconds: 0.0, // Duration unknown until EndOfTurn
+          audioId: audioId,           // ✅ Audio persisted and referenced
+          durationSeconds: duration,
         ).toJson(),
         output: output.toJson(),
       ),
     );
 
-    // 5. Publish transcription_complete event (STTService owns this domain event)
+    // 7. Publish transcription_complete event (STTService owns this domain event)
     final eventBus = GetIt.instance<EventBus>();
     await eventBus.publish(Event(
       eventType: 'transcription_complete',
@@ -120,7 +148,7 @@ class STTService with Trainable<STTAdaptationData> {
     ));
     debugPrint('   📡 Published transcription_complete event');
 
-    // 6. Return transcription
+    // 8. Return transcription
     return output.transcription;
   }
 

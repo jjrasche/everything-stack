@@ -38,6 +38,7 @@ Everything Stack template - Dart/Flutter cross-platform application
 - How to build: `PATTERNS.md` (entities, services, adaptation, examples)
 - How to test: `TESTING.md` (E2E testing, platforms, learning signals)
 - Templates for new projects: `docs/templates/` (VISION_TEMPLATE.md, ARCHITECTURE_TEMPLATE.md)
+- Flutter dev workflow: `~/.claude/FLUTTER.md` (background run, logging, hot reload)
 
 ## Project Initialization
 

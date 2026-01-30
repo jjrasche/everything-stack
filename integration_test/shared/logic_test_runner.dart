@@ -28,6 +28,7 @@ import '../invocation_semantic_logic.dart';
 import '../error_handling_logic.dart';
 import '../enrichment_queue_logic.dart';
 import '../enrichment_advanced_logic.dart';
+import '../conversational_flow_logic.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -36,6 +37,7 @@ void main() {
 
   // Aggregate all test configs
   final configs = {
+    'conversational_flow': conversationalFlowTest,
     'timer': timerMultiturnTest,
     'regulation': regulationTrackingTest,
     'audio': audioPipelineTest,

@@ -19,13 +19,6 @@ class InvocationIndexedDBAdapter extends BaseIndexedDBAdapter<Invocation>
   // ============ InvocationRepository Implementation ============
 
   @override
-  Future<List<Invocation>> findByTurn(String turnId) async {
-    final allInvocations = await findAll();
-    return allInvocations.where((inv) => inv.turnId == turnId).toList()
-      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
-  }
-
-  @override
   Future<List<Invocation>> findByContextType(String contextType) async {
     final allInvocations = await findAll();
     return allInvocations
@@ -37,19 +30,5 @@ class InvocationIndexedDBAdapter extends BaseIndexedDBAdapter<Invocation>
   Future<List<Invocation>> findByIds(List<String> ids) async {
     final allInvocations = await findAll();
     return allInvocations.where((inv) => ids.contains(inv.uuid)).toList();
-  }
-
-  @override
-  Future<int> deleteByTurn(String turnId) async {
-    final allInvocations = await findAll();
-    final toDelete =
-        allInvocations.where((inv) => inv.turnId == turnId).toList();
-    int deletedCount = 0;
-    for (final inv in toDelete) {
-      if (await delete(inv.uuid)) {
-        deletedCount++;
-      }
-    }
-    return deletedCount;
   }
 }

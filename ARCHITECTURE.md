@@ -207,9 +207,9 @@ Core entities represent the trainable conversation pipeline. Each is fully typed
 An invocation is the atomic unit of work: one component receives input and produces output (success or failure).
 
 - **Fields**:
-  - `correlationId: String` - Links to Event
-  - `componentType: String` - Which component: 'stt', 'llm', 'tts', 'context_manager'
-  - `turnId: String?` - Links to Turn (for conversation context)
+  - `eventId: String` - Links to Event (what triggered this?)
+  - `componentType: String` - Which component: 'stt', 'llm', 'tts', 'context_selector'
+  - `implementer: String?` - Which implementation ('groq', 'deepgram', etc.)
   - `success: bool` - Did it succeed?
   - `confidence: double` - How confident was the result? (0.0 to 1.0)
   - `input: String?` - What was requested (typed, component-specific)
@@ -221,44 +221,13 @@ An invocation is the atomic unit of work: one component receives input and produ
 - **Persistence**: UUID as primary key
 - **Notes**: Input and output are fully typed at the component level (STTInvocationPayload, LLMInvocationPayload, etc.)
 
-### Turn
-**Purpose**: Atomic boundary for user feedback and training
-
-A Turn represents one complete conversational exchange: user speaks → STT processes → LLM responds → TTS plays. This boundary is crucial because:
-
-1. **Feedback is collected at Turn level, not component level** - User rates the entire exchange: "Your response was unhelpful." They're not rating STT separately from LLM separately from TTS. Without Turn, you'd store one feedback per invocation (confusing - which one matters?) or reconstruct the boundary from Invocations (lossy, error-prone).
-
-2. **Training is systemic, not isolated** - When feedback says "this turn failed", you're saying "these three components working together failed." STT might have misheard, LLM misunderstood, TTS mispronounced - but the failure was systemic. Without Turn, you train components in isolation, losing that context.
-
-3. **Performance metrics matter at interaction granularity** - `Turn.latencyMs` is "how long did the user's interaction take?" That includes network, scheduling, waiting for responses. If you only track `Invocation.latencyMs`, you miss 30% of the time (overhead between components). Users care about total experience, not component performance in isolation.
-
-4. **markedForFeedback is the feedback queue** - Where does "this needs human review" live? If it's on Invocation, you could have 3 items in the feedback queue from one user interaction (confusing). If it's on Turn, you have one item per exchange (clear).
-
-5. **Query patterns matter** - "Show me failed turns" or "Turns with >5s latency" are gold for debugging. Without Turn, you need complex reconstructions from scattered Invocations.
-
-- **Fields**:
-  - `correlationId: String` - Ties together all invocations in this exchange
-  - `conversationId: String` - FK to Conversation
-  - `sttInvocationId: String?`, `llmInvocationId: String?`, `ttsInvocationId: String?` - Links to invocations
-  - `result: String` - 'success', 'error', 'partial'
-  - `errorMessage: String?`, `failureComponent: String?` - Debug info
-  - `latencyMs: int` - Total turn time (ms)
-  - `markedForFeedback: bool` - User marked this for review
-  - `markedAt: DateTime?`, `feedbackTrainedAt: DateTime?` - Feedback lifecycle
-- **Patterns**:
-  - `Trainable` - Can be trained from feedback
-  - `Temporal` - Turn sequence in conversation
-- **Persistence**: UUID as primary key
-- **Notes**: Turn is the feedback boundary. Remove it, and you atomize feedback, lose training context, and make queries harder.
-
 ### Feedback
-**Purpose**: Records user feedback on an invocation or turn
+**Purpose**: Records user feedback on an invocation
 
-Feedback enables day-one trainability. Every invocation and turn can be fed back on.
+Feedback enables day-one trainability. Every invocation can be fed back on.
 
 - **Fields**:
-  - `invocationId: String?` - Which invocation this feedback is about (nullable for turn-level feedback)
-  - `turnId: String?` - Which turn this feedback is about (nullable for background feedback)
+  - `invocationId: String` - Which invocation this feedback is about
   - `componentType: String` - Which component this feedback trains
   - `rating: int` - 1-5 rating
   - `comment: String?` - User's text feedback
@@ -291,10 +260,10 @@ As the system collects feedback, components improve by learning from that feedba
 ### Trainable
 **Enables**: User feedback loops to train components
 - **Methods**:
-  - `trainFromFeedback(correlationId)` - Train from feedback on this turn
-  - Can be mixed into any entity
-- **Used By**: Invocation, Turn, Feedback, AdaptationState
-- **Notes**: Generic mixin providing shared training interface. Feedback is collected at Event/Invocation/Turn level, training happens at Turn/Component level, adaptation state stores learned changes.
+  - `trainFromFeedback(invocation, feedback)` - Train from feedback on an invocation
+  - Can be mixed into any component
+- **Used By**: All trainable components (STT, LLM, TTS, ContextSelector, etc.)
+- **Notes**: Generic mixin providing shared training interface. Feedback is collected at invocation level, training happens at component level, adaptation state stores learned changes.
 
 ### Embeddable
 **Enables**: Semantic search via vector embeddings
@@ -302,7 +271,7 @@ As the system collects feedback, components improve by learning from that feedba
   - `generateEmbedding(text)` - Create vector from text
   - `updateEmbedding(vector)` - Store vector
   - `semanticSearch(queryVector)` - Find similar entities
-- **Used By**: Invocation (search by semantic similarity across turns)
+- **Used By**: Invocation (search by semantic similarity)
 - **Notes**: Native (ObjectBox HNSW) and Web (pure Dart) implementations included
 
 ### Temporal (Not Used Yet)
@@ -327,7 +296,7 @@ Domain entities are **pure Dart** (no ORM decorators). Platform-specific persist
 
 ```
 Domain Layer
-  Event, Invocation, Turn, Feedback, AdaptationState (pure Dart, no decorators)
+  Event, Invocation, Feedback, AdaptationState (pure Dart, no decorators)
         ↓
 Repository Layer
   EntityRepository<T> (generic CRUD + handlers + lifecycle hooks)
@@ -355,10 +324,8 @@ All entities use `uuid: String` as primary key:
 class InvocationIndexedDBAdapter extends BaseIndexedDBAdapter<Invocation>
     implements InvocationRepository<Invocation> {
   // Provides all async queries for web platform
-  // - findByTurn(turnId)
   // - findByContextType(componentType)
   // - findByIds(List<String>)
-  // - deleteByTurn(turnId)
 }
 ```
 
@@ -779,8 +746,8 @@ New adapters can be added without framework changes.
 |-----------|-----------|-----------|
 | Users | Single user per device (v1) | Multi-user requires CRDT sync, not yet implemented |
 | Data/User | <1GB per device | ObjectBox/IndexedDB support multi-GB datasets |
-| Invocations/Turn | <100 | Typical conversation stays <50 invocations |
-| Turns/Day | <10,000 | Reasonable voice interaction volume |
+| Invocations/Event | <10 | Typical event triggers <10 invocations |
+| Events/Day | <10,000 | Reasonable voice interaction volume |
 | Conversation History | <1 year | Can be archived/pruned for storage |
 | Embedding Dimension | 1536 (OpenAI) or lower | Most HNSW implementations support this well |
 
@@ -884,7 +851,7 @@ See TESTING.md for complete E2E patterns, platforms, and debugging.
 
 ## Why These Decisions?
 
-See **DECISIONS.md** for the reasoning behind major architectural choices: UUID keys, adapter pattern, dual persistence, trainable mixins, Turn entities, type safety, execution fungibility, and infrastructure completeness.
+See **DECISIONS.md** for the reasoning behind major architectural choices: UUID keys, adapter pattern, dual persistence, trainable mixins, type safety, execution fungibility, and infrastructure completeness.
 
 DECISIONS.md explains the trade-offs that shaped this architecture.
 
