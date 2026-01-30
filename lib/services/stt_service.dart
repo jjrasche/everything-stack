@@ -15,6 +15,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -30,6 +31,7 @@ import '../core/event.dart';
 import './implementations/stt_implementer.dart';
 import './types/stt_types.dart';
 import './event_bus.dart';
+import './audio_storage.dart';
 
 class STTService with Trainable<STTAdaptationData> {
   final Map<String, STTImplementer> _implementers;
@@ -113,12 +115,15 @@ class STTService with Trainable<STTAdaptationData> {
     );
 
     // 5. Persist buffered audio to AudioStorage (for training/debugging)
-    final audioId = 'audio_$eventId';
     final audioBytes = Uint8List.fromList(audioBuffer);
     final duration = DateTime.now().difference(startTime).inSeconds.toDouble();
 
     final audioStorage = GetIt.instance.get<AudioStorage>();
-    await audioStorage.save(audioId, audioBytes);
+    final audioId = await audioStorage.saveAudio(
+      audioBytes: audioBytes,
+      durationSeconds: duration,
+      eventId: eventId,
+    );
     debugPrint('   💾 Saved audio: $audioId (${audioBytes.length} bytes, ${duration}s)');
 
     // 6. Log invocation with saved audioId

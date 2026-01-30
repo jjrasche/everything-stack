@@ -42,7 +42,6 @@ final invocationSemanticTest = IntegrationTestConfig(
   }) {
     return Invocation(
       eventId: 'test-event-${DateTime.now().millisecondsSinceEpoch}',
-      turnId: 'test-turn',
       componentType: componentType,
       success: true,
       confidence: 0.95,

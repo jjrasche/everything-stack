@@ -1,14 +1,15 @@
 /// # Conversational Flow Integration Test
 ///
-/// Tests continuous STT with multiple sequential events.
+/// Tests multi-event conversational flow through the pipeline.
 /// Verifies:
-/// - Multiple events complete successfully
-/// - Audio persisted for each event
-/// - Invocations logged correctly
-/// - Barge-in stops TTS during playback
+/// - Multiple events complete successfully (3 sequential turns)
+/// - Coordinator → LLM → TTS pipeline works for each event
+/// - Invocations logged correctly for each component
+/// - Barge-in stops TTS during playback (REAL FlutterTtsImplementer)
 ///
-/// This is the unified test for multi-turn conversations + barge-in.
-/// Replaces: barge_in_test.dart, timer_multiturn_logic.dart (multi-turn aspect)
+/// Note: This test uses mock transcriptions (t.stt() publishes transcription_complete events)
+/// and mock LLM responses, but uses REAL FlutterTtsImplementer to test barge-in logic.
+/// For STT-specific testing (including audio persistence), see microphone_stt_logic.dart.
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:everything_stack_template/services/types/llm_types.dart';
@@ -24,13 +25,13 @@ import 'dart:async';
 import 'shared/test_harness.dart';
 import 'shared/test_context.dart';
 import 'shared/response_map_implementer.dart';
-import 'mocks/mock_flutter_tts_implementer.dart';
 
 // Define utterances once - used in both test logic and mock responses
 final _utterances = {
   'turn1': 'What time is it?',
   'turn2': 'Set a timer for 5 minutes',
   'turn3': 'Cancel the timer',
+  'long_story': 'Tell me a long story',
 };
 
 final _responses = {
@@ -52,6 +53,12 @@ final _responses = {
     toolCalls: [],
     tokensUsed: 10,
   ),
+  _utterances['long_story']!: LLMResponse(
+    id: 'mock_4',
+    content: 'Once upon a time, in a land far away, there lived a brave knight who embarked on an epic quest to find the legendary sword of truth.',
+    toolCalls: [],
+    tokensUsed: 30,
+  ),
 };
 
 final conversationalFlowTest = IntegrationTestConfig(
@@ -65,13 +72,12 @@ final conversationalFlowTest = IntegrationTestConfig(
 
   mockImplementers: {
     'groq': ResponseMapLLMImplementer(_responses),
-    'tts': MockFlutterTTSImplementer(),
+    // Use real FlutterTtsImplementer for barge-in testing
   },
 
   testLogic: (t) async {
     print('\n=== TEST: Conversational Flow ===');
 
-    final audioStorage = GetIt.instance<AudioStorage>();
     final testStartTime = DateTime.now();
 
     // ===== TEST 1: Three Sequential Events =====
@@ -86,37 +92,12 @@ final conversationalFlowTest = IntegrationTestConfig(
     await t.stt('turn3');
     await Future.delayed(const Duration(milliseconds: 500)); // Final processing
 
-    // Verify: 3 STT invocations logged
+    // Verify: Pipeline invocations logged (LLM and TTS for each event)
     final invocations = await t.invocationRepo.findAll();
     final recentInvocations = invocations
         .where((i) => i.createdAt.isAfter(testStartTime))
         .toList();
 
-    final sttInvocations = recentInvocations
-        .where((i) => i.componentType == 'stt')
-        .toList();
-
-    expect(sttInvocations.length, equals(3),
-        reason: 'Should have 3 STT invocations (one per event)');
-
-    // Verify: All succeeded
-    expect(sttInvocations.every((i) => i.success), isTrue,
-        reason: 'All STT invocations should succeed');
-
-    // Verify: Audio persisted for each event
-    print('\n[Test 1] Verifying audio persistence');
-    for (final sttInv in sttInvocations) {
-      final audioId = sttInv.input?['audioId'] as String?;
-      expect(audioId, isNotNull, reason: 'STT invocation should have audioId');
-
-      final audioBytes = await audioStorage.loadAudio(audioId!);
-      expect(audioBytes.length, greaterThan(0),
-          reason: 'Audio should be saved for audioId: $audioId');
-
-      print('   ✅ Audio saved: $audioId (${audioBytes.length} bytes)');
-    }
-
-    // Verify: LLM and TTS invocations also logged
     final llmInvocations = recentInvocations
         .where((i) => i.componentType == 'llm')
         .toList();
@@ -124,10 +105,22 @@ final conversationalFlowTest = IntegrationTestConfig(
         .where((i) => i.componentType == 'tts')
         .toList();
 
+    print('\n[Test 1] Verifying pipeline invocations:');
+    print('   📊 LLM invocations: ${llmInvocations.length}');
+    print('   🔊 TTS invocations: ${ttsInvocations.length}');
+
+    // Expect at least 3 LLM invocations (one per event, possibly more due to tool calls)
     expect(llmInvocations.length, greaterThanOrEqualTo(3),
-        reason: 'Should have at least 3 LLM invocations');
+        reason: 'Should have at least 3 LLM invocations (one per event)');
+
+    // Expect at least 3 TTS invocations (one per event)
     expect(ttsInvocations.length, greaterThanOrEqualTo(3),
-        reason: 'Should have at least 3 TTS invocations');
+        reason: 'Should have at least 3 TTS invocations (one per event)');
+
+    // Verify: All LLM invocations succeeded
+    final llmSuccesses = llmInvocations.where((i) => i.success).length;
+    expect(llmSuccesses, equals(llmInvocations.length),
+        reason: 'All LLM invocations should succeed');
 
     print('\n✅ [Test 1] Three sequential events completed successfully');
 
@@ -137,40 +130,40 @@ final conversationalFlowTest = IntegrationTestConfig(
     final eventBus = GetIt.instance<EventBus>();
     final ttsService = GetIt.instance<TTSService>();
 
-    // Trigger a turn that will play TTS
-    final bargeInEventId = 'barge_in_test_${DateTime.now().millisecondsSinceEpoch}';
+    // Create correlation ID for this test
+    final bargeInEventId = 'barge_in_${DateTime.now().millisecondsSinceEpoch}';
 
-    // Publish transcription_complete (will trigger orchestration → TTS)
+    // Trigger a turn with long response (so TTS has time to start)
     await eventBus.publish(Event(
       eventType: 'transcription_complete',
       correlationId: bargeInEventId,
       source: 'stt',
-      payloadJson: jsonEncode({'transcript': 'Tell me a long story'}),
+      payloadJson: jsonEncode({'transcript': _utterances['long_story']}),
     ));
 
-    // Wait for TTS to start
-    await Future.delayed(const Duration(milliseconds: 500));
+    // Wait for TTS to start (Coordinator → LLM → TTS pipeline)
+    await Future.delayed(const Duration(milliseconds: 800));
 
-    // Verify TTS is playing
+    // Verify TTS is actually playing
     expect(ttsService.isPlaying, isTrue,
         reason: 'TTS should be playing before barge-in');
-    print('   🔊 TTS is playing');
+    print('   🔊 TTS is playing (real FlutterTtsImplementer)');
 
     // Simulate barge-in: user starts speaking
     await eventBus.publish(Event(
       eventType: 'start_of_turn',
       correlationId: bargeInEventId,
       source: 'stt',
-      payloadJson: jsonEncode({'reason': 'barge_in_test'}),
+      payloadJson: jsonEncode({'reason': 'user_interrupted'}),
     ));
 
-    // Wait for event processing
+    // Wait for event processing and stop to complete
     await Future.delayed(const Duration(milliseconds: 200));
 
-    // Verify: TTS stopped
+    // Verify: TTS stopped (real stop() called on real implementer)
     expect(ttsService.isPlaying, isFalse,
         reason: 'TTS should stop immediately on barge-in');
-    print('   ✅ TTS stopped on barge-in');
+    print('   ✅ TTS stopped on barge-in (real event handling verified)');
 
     print('\n✅ [Test 2] Barge-in successfully interrupted TTS');
 
