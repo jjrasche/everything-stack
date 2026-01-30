@@ -43,6 +43,7 @@ void main() {
     'semantic': invocationSemanticTest,
     'llm_failure': llmFailureTest,
     'stt_failure': sttFailureTest,
+    'stt_live_timeout': sttLiveStreamingTimeoutTest,
     'tts_failure': ttsFailureTest,
     'enrichment_queue': enrichmentQueueTest,
     'startup_recovery': startupRecoveryTest,

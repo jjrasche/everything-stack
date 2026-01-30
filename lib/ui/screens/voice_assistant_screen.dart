@@ -325,6 +325,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
           .catchError((error) {
         debugPrint('❌ Live recognition error: $error');
         _stopRecording();
+        return ''; // Required: catchError must return Future's type (String)
       });
 
       debugPrint('   ✅ Live streaming started (eventId: $eventId)');

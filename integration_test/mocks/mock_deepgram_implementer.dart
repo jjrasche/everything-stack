@@ -164,3 +164,135 @@ class EnhancedMockDeepgramImplementer implements STTImplementer {
     throw UnsupportedError('EnhancedMockDeepgramImplementer does not support live streaming');
   }
 }
+
+/// Custom exception for Deepgram errors (matches real DeepgramException behavior)
+class DeepgramException implements Exception {
+  final String message;
+  DeepgramException(this.message);
+
+  @override
+  String toString() => 'DeepgramException: $message';
+}
+
+/// Live Streaming Mock Deepgram Implementer
+///
+/// Supports startLiveRecognition for testing live audio streaming scenarios.
+/// Can simulate:
+/// - Successful transcription
+/// - Timeout errors (simulates 30s recognition timeout)
+/// - Connection errors
+///
+/// Use this for testing UI error handling of live streaming failures.
+class LiveStreamingMockDeepgramImplementer implements STTImplementer {
+  final String transcriptToEmit;
+  final bool shouldTimeout;
+  final bool shouldFail;
+  final Duration? processingDelay;
+
+  LiveStreamingMockDeepgramImplementer({
+    this.transcriptToEmit = 'live mock transcription',
+    this.shouldTimeout = false,
+    this.shouldFail = false,
+    this.processingDelay,
+  });
+
+  @override
+  String get implementerName => 'deepgram_flux';
+
+  @override
+  Set<String> get supportedPlatforms => {
+        'android',
+        'ios',
+        'macos',
+        'windows',
+        'linux',
+        'web',
+      };
+
+  @override
+  Future<STTInvocationOutput> recognize({
+    required String audioId,
+    required double durationSeconds,
+    String? eventId,
+    double? eotThreshold,
+    double? eagerEotThreshold,
+    int? eotTimeoutMs,
+    bool? enablePartialTranscripts,
+    bool? enableEagerProcessing,
+  }) async {
+    if (shouldFail) {
+      throw Exception('Mock STT failure: Simulated transcription error');
+    }
+
+    final words = transcriptToEmit.split(' ').asMap().entries.map((e) {
+      return Word(
+        text: e.value,
+        confidence: 0.95,
+        startTime: e.key * 0.5,
+        endTime: (e.key + 1) * 0.5,
+      );
+    }).toList();
+
+    return STTInvocationOutput(
+      transcription: transcriptToEmit,
+      confidence: 0.95,
+      words: words,
+      latencyMs: 50,
+    );
+  }
+
+  @override
+  Future<STTInvocationOutput> startLiveRecognition({
+    required Stream<Uint8List> audioStream,
+    required String eventId,
+    double? eotThreshold,
+    double? eagerEotThreshold,
+    int? eotTimeoutMs,
+    bool? enablePartialTranscripts,
+    bool? enableEagerProcessing,
+  }) async {
+    print('🎤 LiveStreamingMockDeepgramImplementer.startLiveRecognition()');
+    print('   eventId: $eventId');
+    print('   shouldTimeout: $shouldTimeout, shouldFail: $shouldFail');
+
+    // Simulate processing delay if specified
+    if (processingDelay != null) {
+      await Future.delayed(processingDelay!);
+    }
+
+    // Simulate timeout (matches real Deepgram behavior)
+    if (shouldTimeout) {
+      print('💥 Simulating recognition timeout');
+      throw DeepgramException('Recognition timeout after 30s');
+    }
+
+    // Simulate generic failure
+    if (shouldFail) {
+      print('💥 Simulating connection failure');
+      throw DeepgramException('WebSocket connection failed');
+    }
+
+    // Consume the audio stream (required for proper cleanup)
+    await for (final _ in audioStream) {
+      // Discard chunks
+    }
+
+    print('✅ Returning mock transcription: "$transcriptToEmit"');
+
+    final words = transcriptToEmit.split(' ').asMap().entries.map((e) {
+      return Word(
+        text: e.value,
+        confidence: 0.95,
+        startTime: e.key * 0.5,
+        endTime: (e.key + 1) * 0.5,
+      );
+    }).toList();
+
+    return STTInvocationOutput(
+      transcription: transcriptToEmit,
+      confidence: 0.95,
+      words: words,
+      latencyMs: 100,
+    );
+  }
+}
