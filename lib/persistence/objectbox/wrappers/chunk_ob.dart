@@ -1,16 +1,16 @@
+/// # ChunkOB - ObjectBox Wrapper
+///
+/// ObjectBox-decorated version of Chunk domain class.
+/// Contains all ObjectBox decorators (@Entity, @Id, @Index, etc.)
+///
+/// Domain entity: services/semantic_search/chunk.dart
+/// This wrapper: persistence/objectbox/wrappers/chunk_ob.dart
+
 import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/services/semantic_search/chunk.dart';
 
-/// ObjectBox entity for persisting chunks to database.
-///
-/// Enables:
-/// - Rebuilding HNSW index if lost or corrupted
-/// - Querying chunks by entity for debugging
-/// - Cross-session chunk history
-///
-/// See Chunk model for the domain representation.
 @Entity()
-class ChunkEntity {
+class ChunkOB {
   @Id()
   int id = 0;
 
@@ -40,22 +40,28 @@ class ChunkEntity {
   late String text;
 
   /// Creation timestamp.
+  @Property(type: PropertyType.date)
   late DateTime createdAt;
 
-  ChunkEntity({
-    required this.chunkId,
-    required this.sourceEntityId,
-    required this.sourceEntityType,
-    required this.startToken,
-    required this.endToken,
-    required this.config,
-    required this.text,
-  }) {
-    createdAt = DateTime.now();
+  ChunkOB();
+
+  // ============ Conversion Methods ============
+
+  /// Convert from domain Chunk to ObjectBox wrapper
+  factory ChunkOB.fromChunk(Chunk chunk) {
+    return ChunkOB()
+      ..chunkId = chunk.id
+      ..sourceEntityId = chunk.sourceEntityId
+      ..sourceEntityType = chunk.sourceEntityType
+      ..startToken = chunk.startToken
+      ..endToken = chunk.endToken
+      ..config = chunk.config
+      ..text = chunk.text
+      ..createdAt = DateTime.now();
   }
 
-  /// Convert to domain Chunk model.
-  Chunk toDomain() {
+  /// Convert from ObjectBox wrapper back to domain Chunk
+  Chunk toChunk() {
     return Chunk(
       id: chunkId,
       sourceEntityId: sourceEntityId,
@@ -70,12 +76,15 @@ class ChunkEntity {
   /// Validate chunk data before storage.
   void validate() {
     if (chunkId.isEmpty) throw ArgumentError('chunkId cannot be empty');
-    if (sourceEntityId.isEmpty)
+    if (sourceEntityId.isEmpty) {
       throw ArgumentError('sourceEntityId cannot be empty');
-    if (sourceEntityType.isEmpty)
+    }
+    if (sourceEntityType.isEmpty) {
       throw ArgumentError('sourceEntityType cannot be empty');
-    if (endToken <= startToken)
+    }
+    if (endToken <= startToken) {
       throw ArgumentError('endToken must be > startToken');
+    }
     if (config != 'parent' && config != 'child') {
       throw ArgumentError('config must be "parent" or "child"');
     }
@@ -84,5 +93,5 @@ class ChunkEntity {
 
   @override
   String toString() =>
-      'ChunkEntity($chunkId, $sourceEntityType, tokens: ${endToken - startToken}, config: $config)';
+      'ChunkOB($chunkId, $sourceEntityType, tokens: ${endToken - startToken}, config: $config)';
 }

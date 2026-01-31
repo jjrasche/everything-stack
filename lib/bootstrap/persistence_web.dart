@@ -13,7 +13,9 @@ import '../core/feedback_repository.dart';
 import '../core/event_repository.dart';
 import '../core/enrichment_queue_repository.dart';
 import '../core/trial_repository.dart';
+import '../core/chunk_repository.dart';
 import '../persistence/indexeddb/invocation_indexeddb_adapter.dart';
+import '../persistence/indexeddb/chunk_indexeddb_adapter.dart';
 import '../persistence/indexeddb/adaptation_state_indexeddb_adapter.dart';
 import '../persistence/indexeddb/feedback_indexeddb_adapter.dart';
 import '../persistence/indexeddb/event_indexeddb_adapter.dart';
@@ -54,6 +56,10 @@ Future<void> initializePersistence(GetIt getIt) async {
   // Create and register EnrichmentQueue adapter
   final enrichmentQueueAdapter = EnrichmentQueueIndexedDBAdapter(db);
   getIt.registerSingleton<EnrichmentQueueAdapter>(enrichmentQueueAdapter);
+
+  // Register stub ChunkRepository (semantic search disabled on web)
+  final chunkAdapter = ChunkObjectBoxAdapter(null);
+  getIt.registerSingleton<ChunkRepository>(chunkAdapter);
 }
 
 /// Create EventRepository for web platform using IndexedDB.

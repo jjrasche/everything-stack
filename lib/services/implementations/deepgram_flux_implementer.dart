@@ -354,11 +354,13 @@ class DeepgramFluxImplementer implements STTImplementer {
     final endOfTurnConfidence =
         (data['end_of_turn_confidence'] as num?)?.toDouble() ?? 0.0;
 
-    if (transcript.isEmpty) return;
-
-    // Store partial results
-    _partialTranscripts.add(transcript);
-    _partialConfidences.add(endOfTurnConfidence);
+    // Store partial results (only if transcript is non-empty)
+    // NOTE: Don't return early on empty transcript - EndOfTurn events may have
+    // empty transcript when final text was sent in previous Update message.
+    if (transcript.isNotEmpty) {
+      _partialTranscripts.add(transcript);
+      _partialConfidences.add(endOfTurnConfidence);
+    }
 
     // Extract words from Flux v2 format
     final wordsJson = data['words'] as List?;

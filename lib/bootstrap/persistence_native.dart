@@ -23,6 +23,8 @@ import '../persistence/objectbox/event_objectbox_adapter.dart';
 import '../persistence/objectbox/enrichment_queue_objectbox_adapter.dart';
 import '../persistence/objectbox/trial_objectbox_adapter.dart';
 import '../persistence/objectbox/audio_file_objectbox_adapter.dart';
+import '../persistence/objectbox/chunk_objectbox_adapter.dart';
+import '../core/chunk_repository.dart';
 import 'objectbox_store_factory.dart';
 
 /// Initialize persistence layer for native platforms using ObjectBox.
@@ -74,6 +76,10 @@ Future<void> initializePersistence(GetIt getIt) async {
   // Create and register EnrichmentQueue adapter
   final enrichmentQueueAdapter = EnrichmentQueueObjectBoxAdapter(store);
   getIt.registerSingleton<EnrichmentQueueAdapter>(enrichmentQueueAdapter);
+
+  // Create and register Chunk adapter (for semantic search)
+  final chunkAdapter = ChunkObjectBoxAdapter(store);
+  getIt.registerSingleton<ChunkRepository>(chunkAdapter);
 }
 
 /// Create EventRepository for native platforms using ObjectBox.

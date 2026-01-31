@@ -45,11 +45,12 @@ System observes its own performance, gets feedback, adapts. Not randomly. Empiri
 
 Before deploying for daily multi-device use, complete these items:
 
-### Phase 3: Live Streaming STT (IN PROGRESS)
-- [ ] Implement `startLiveRecognition()` method in STTService
-- [ ] Stream audio chunks to Deepgram as they arrive (not buffered)
-- [ ] Publish `end_of_turn` events to EventBus
-- [ ] Voice screen listens for EndOfTurn → auto-stops recording
+### Phase 3: Live Streaming STT (COMPLETE)
+- [x] Implement `startLiveRecognition()` method in STTService
+- [x] Stream audio chunks to Deepgram as they arrive (not buffered)
+- [x] Publish `end_of_turn` events to EventBus
+- [x] Voice screen listens for EndOfTurn → auto-stops recording
+- [x] Continuous mode: auto-restart listening after TTS completes
 - [ ] Test: Speak → auto-stop → transcription (no manual STOP button)
 
 ### Multi-Device Sync

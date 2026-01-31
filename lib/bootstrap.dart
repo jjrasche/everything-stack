@@ -34,12 +34,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 // import 'package:sentry_flutter/sentry_flutter.dart';  // DISABLED: Pulls in JNI (Java) on Windows
 
-// Conditional ObjectBox import: Real package on native, stub on web
+// Conditional ObjectBox import: Stub on web (default), real package on native
 // IMPORTANT: Do NOT import stubs unconditionally - causes type mismatch bugs!
 // The stub Store class conflicts with the real ObjectBox Store type.
-// ignore: uri_does_not_exist
-import 'package:objectbox/objectbox.dart' as objectbox
-    if (dart.library.html) 'bootstrap/objectbox_stub_ignore.dart';
+import 'bootstrap/objectbox_stub_ignore.dart' as objectbox
+    if (dart.library.io) 'package:objectbox/objectbox.dart';
 
 import 'services/blob_store.dart';
 import 'services/sync_service.dart';
@@ -70,7 +69,10 @@ import 'services/event_bus_impl.dart';
 import 'services/chunking_service.dart';
 import 'services/chunking/semantic_chunker.dart';
 import 'services/chunking/chunking_config.dart';
-import 'services/chunking/chunk_entity.dart';
+import 'core/chunk_repository.dart';
+// Conditional import: web stub default, native adapter if dart.library.io
+import 'persistence/indexeddb/chunk_indexeddb_adapter.dart'
+    if (dart.library.io) 'persistence/objectbox/chunk_objectbox_adapter.dart';
 import 'services/semantic_search/semantic_search_service.dart';
 import 'services/semantic_search/entity_loader_impl.dart';
 import 'services/hnsw_index.dart';
@@ -99,8 +101,8 @@ import 'services/enrichment/semantic_enrichment_worker.dart';
 import 'core/enrichment_queue_item.dart';
 import 'core/enrichment_queue_repository.dart';
 import 'core/repository_registry.dart';
-import 'persistence/objectbox/audio_file_objectbox_adapter.dart'
-    if (dart.library.html) 'persistence/indexeddb/stub.dart';
+import 'persistence/indexeddb/stub.dart'
+    if (dart.library.io) 'persistence/objectbox/audio_file_objectbox_adapter.dart';
 
 // Platform-specific persistence initialization (ObjectBox or IndexedDB)
 import 'bootstrap/persistence_web.dart'
@@ -556,12 +558,10 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
       final parentChunker = SemanticChunker(config: ChunkingConfig.parent());
       final childChunker = SemanticChunker(config: ChunkingConfig.child());
 
-      // Get ChunkEntity box from persistence
-      debugPrint('🔍 [semantic search] Attempting to retrieve Store from GetIt...');
-      debugPrint('   objectbox.Store registered? ${getIt.isRegistered<objectbox.Store>()}');
-      final store = getIt<objectbox.Store>();
-      debugPrint('   ✓ Store retrieved successfully');
-      final chunkBox = store.box<ChunkEntity>();
+      // Get ChunkRepository from GetIt (registered in persistence_native.dart)
+      debugPrint('🔍 [semantic search] Retrieving ChunkRepository from GetIt...');
+      final chunkRepo = getIt<ChunkRepository>();
+      debugPrint('   ✓ ChunkRepository retrieved successfully');
 
       // Create ChunkingService
       final chunkingService = ChunkingService(
@@ -569,7 +569,7 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
         embeddingService: EmbeddingService.instance,
         parentChunker: parentChunker,
         childChunker: childChunker,
-        chunkBox: chunkBox,
+        chunkRepo: chunkRepo,
       );
       getIt.registerSingleton<ChunkingService>(chunkingService);
       debugPrint('✅ ChunkingService initialized');

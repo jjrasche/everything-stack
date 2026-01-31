@@ -51,6 +51,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   bool _contextFeedbackGiven = false;
   bool _isListening = false;
   String _liveTranscript = ''; // Real-time partial transcription
+  bool _continuousMode = true; // Auto-restart listening after TTS completes
 
   // Audio recording state
   StreamSubscription<Uint8List>? _audioStreamSubscription;
@@ -98,8 +99,9 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
 
         // End of turn → auto-stop recording (Phase 3: Live Streaming)
         if (event.eventType == 'end_of_turn') {
-          debugPrint('🛑 [EndOfTurn] Auto-stopping recording');
+          debugPrint('🛑 [EndOfTurn] Auto-stopping recording (current _isListening=$_isListening)');
           _stopRecording();
+          debugPrint('🛑 [EndOfTurn] After _stopRecording, _isListening=$_isListening');
           return;
         }
 
@@ -138,6 +140,41 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
               _contextFeedbackGiven = false; // Reset for new turn
             });
           }
+        }
+
+        // TTS started → start listening for barge-in detection
+        // This enables user to interrupt the assistant while it's speaking
+        if (event.eventType == 'tts_started') {
+          if (!_isListening) {
+            debugPrint('🎤 [BargeIn] TTS started, enabling barge-in detection');
+            _startRecording();
+          }
+          return;
+        }
+
+        // TTS stopped (barge-in occurred) → STT already listening, continue
+        if (event.eventType == 'tts_stopped') {
+          debugPrint('🛑 [BargeIn] TTS stopped (user interrupted), STT continues listening');
+          return;
+        }
+
+        // TTS completed → ensure listening continues (for continuous mode)
+        // Note: STT should already be listening (started on tts_started for barge-in)
+        if (event.eventType == 'tts_completed') {
+          debugPrint('🔄 [TTS] tts_completed: continuousMode=$_continuousMode, isListening=$_isListening');
+          if (_isListening) {
+            debugPrint('🔄 [TTS] Already listening (barge-in mode active), continuing...');
+          } else if (_continuousMode) {
+            debugPrint('🔄 [ContinuousMode] TTS completed, starting listening');
+            // Small delay to ensure TTS audio output is fully finished
+            Future.delayed(const Duration(milliseconds: 300), () {
+              if (mounted && _continuousMode && !_isListening) {
+                debugPrint('🔄 [ContinuousMode] Starting recording after delay');
+                _startRecording();
+              }
+            });
+          }
+          return;
         }
 
         // Tool call executed → add tool call message
@@ -435,6 +472,26 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
         title: const Text('Voice Assistant'),
         centerTitle: true,
         actions: [
+          // Continuous mode toggle
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _continuousMode = !_continuousMode;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(_continuousMode
+                      ? 'Continuous mode ON - will auto-listen after responses'
+                      : 'Continuous mode OFF - tap mic to speak'),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
+            icon: Icon(_continuousMode ? Icons.loop : Icons.loop_outlined),
+            tooltip: _continuousMode
+                ? 'Continuous mode ON'
+                : 'Continuous mode OFF',
+          ),
           // Clear button
           if (_messages.isNotEmpty)
             IconButton(

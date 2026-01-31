@@ -5,7 +5,11 @@
 ///
 /// Supports failure mode for error handling tests via shouldFail parameter.
 
+import 'dart:convert';
 import 'dart:typed_data';
+import 'package:get_it/get_it.dart';
+import 'package:everything_stack_template/services/event_bus.dart';
+import 'package:everything_stack_template/core/event.dart';
 import 'package:everything_stack_template/services/implementations/stt_implementer.dart';
 import 'package:everything_stack_template/services/types/stt_types.dart';
 import 'package:everything_stack_template/services/types/word.dart';
@@ -182,18 +186,25 @@ class DeepgramException implements Exception {
 /// - Timeout errors (simulates 30s recognition timeout)
 /// - Connection errors
 ///
+/// IMPORTANT: This mock publishes the same EventBus events as the real
+/// DeepgramFluxImplementer to ensure tests catch event-related regressions:
+/// - start_of_turn: When user starts speaking (barge-in detection)
+/// - end_of_turn: When user finishes speaking (auto-stop recording)
+///
 /// Use this for testing UI error handling of live streaming failures.
 class LiveStreamingMockDeepgramImplementer implements STTImplementer {
   final String transcriptToEmit;
   final bool shouldTimeout;
   final bool shouldFail;
   final Duration? processingDelay;
+  final bool publishEvents; // Whether to publish EventBus events like real implementer
 
   LiveStreamingMockDeepgramImplementer({
     this.transcriptToEmit = 'live mock transcription',
     this.shouldTimeout = false,
     this.shouldFail = false,
     this.processingDelay,
+    this.publishEvents = true, // Default: mirror real implementer behavior
   });
 
   @override
@@ -254,6 +265,7 @@ class LiveStreamingMockDeepgramImplementer implements STTImplementer {
     print('🎤 LiveStreamingMockDeepgramImplementer.startLiveRecognition()');
     print('   eventId: $eventId');
     print('   shouldTimeout: $shouldTimeout, shouldFail: $shouldFail');
+    print('   publishEvents: $publishEvents');
 
     // Simulate processing delay if specified
     if (processingDelay != null) {
@@ -272,9 +284,42 @@ class LiveStreamingMockDeepgramImplementer implements STTImplementer {
       throw DeepgramException('WebSocket connection failed');
     }
 
+    // Publish start_of_turn event (mirrors real DeepgramFluxImplementer)
+    // This is critical for barge-in detection
+    if (publishEvents) {
+      final eventBus = GetIt.instance<EventBus>();
+      await eventBus.publish(Event(
+        eventType: 'start_of_turn',
+        correlationId: eventId,
+        source: 'stt',
+        payloadJson: jsonEncode({
+          'transcript': '',
+          'confidence': 0.0,
+        }),
+      ));
+      print('📡 [Mock] Published start_of_turn event');
+    }
+
     // Consume the audio stream (required for proper cleanup)
     await for (final _ in audioStream) {
       // Discard chunks
+    }
+
+    // Publish end_of_turn event (mirrors real DeepgramFluxImplementer)
+    // This is critical for continuous conversation mode
+    if (publishEvents) {
+      final eventBus = GetIt.instance<EventBus>();
+      await eventBus.publish(Event(
+        eventType: 'end_of_turn',
+        correlationId: eventId,
+        source: 'stt',
+        payloadJson: jsonEncode({
+          'transcript': transcriptToEmit,
+          'confidence': 0.95,
+          'latency_ms': 100.0,
+        }),
+      ));
+      print('📡 [Mock] Published end_of_turn event');
     }
 
     print('✅ Returning mock transcription: "$transcriptToEmit"');

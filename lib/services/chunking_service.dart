@@ -2,9 +2,9 @@ import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:everything_stack_template/core/base_entity.dart';
+import 'package:everything_stack_template/core/chunk_repository.dart';
 import 'package:everything_stack_template/patterns/semantic_indexable.dart';
 import 'package:everything_stack_template/services/chunking/semantic_chunker.dart';
-import 'package:everything_stack_template/services/chunking/chunk_entity.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/hnsw_index.dart';
 import 'package:everything_stack_template/services/semantic_search/chunk.dart';
@@ -70,8 +70,8 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
   /// Child-level chunker (~25 tokens)
   final SemanticChunker childChunker;
 
-  /// ObjectBox store for persisting chunks to database
-  final dynamic chunkBox;
+  /// Repository for persisting chunks to database (platform-specific)
+  final ChunkRepository chunkRepo;
 
   /// In-memory registry of chunk IDs by entity ID
   /// Maps entityId -> [chunkId1, chunkId2, ...]
@@ -83,7 +83,7 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
     required this.embeddingService,
     required this.parentChunker,
     required this.childChunker,
-    required this.chunkBox,
+    required this.chunkRepo,
   });
 
   /// Index a SemanticIndexable entity by chunking and embedding.
@@ -152,7 +152,7 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
       index.insert(parentChunkId, parentEmbedding);
 
       // Persist parent chunk to database
-      _persistChunk(parentChunk);
+      await _persistChunk(parentChunk);
 
       // Generate child chunks from this parent
       final childChunkTexts = await childChunker.chunk(parentChunkText.text);
@@ -180,7 +180,7 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
         index.insert(childChunkId, childEmbedding);
 
         // Persist child chunk to database
-        _persistChunk(childChunk);
+        await _persistChunk(childChunk);
       }
     }
 
@@ -233,8 +233,8 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
       index.delete(chunkId);
     }
 
-    // Delete from database using dynamic query to avoid ObjectBox import
-    _deleteChunksFromDb(entityId);
+    // Delete from database via repository
+    await _deleteChunksFromDb(entityId);
 
     _chunkRegistry.remove(entityId);
   }
@@ -283,21 +283,10 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
     return index.size > 0;
   }
 
-  /// Persist a chunk to database.
-  /// Uses dynamic dispatch to avoid direct ObjectBox import.
-  void _persistChunk(Chunk chunk) {
+  /// Persist a chunk to database via repository.
+  Future<void> _persistChunk(Chunk chunk) async {
     try {
-      final entity = ChunkEntity(
-        chunkId: chunk.id,
-        sourceEntityId: chunk.sourceEntityId,
-        sourceEntityType: chunk.sourceEntityType,
-        startToken: chunk.startToken,
-        endToken: chunk.endToken,
-        config: chunk.config,
-        text: chunk.text,
-      );
-      entity.validate();
-      (chunkBox as dynamic).put(entity);
+      await chunkRepo.put(chunk);
     } catch (e) {
       print('⚠️ Failed to persist chunk ${chunk.id}: $e');
       // Don't throw - chunking should not fail if DB write fails
@@ -306,18 +295,9 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
   }
 
   /// Delete all chunks for an entity from database.
-  void _deleteChunksFromDb(String entityId) {
+  Future<void> _deleteChunksFromDb(String entityId) async {
     try {
-      final allChunks = (chunkBox as dynamic).getAll() as List<dynamic>;
-      final toDelete = <int>[];
-      for (final chunk in allChunks) {
-        if ((chunk as dynamic).sourceEntityId == entityId) {
-          toDelete.add((chunk as dynamic).id as int);
-        }
-      }
-      if (toDelete.isNotEmpty) {
-        (chunkBox as dynamic).removeMany(toDelete);
-      }
+      await chunkRepo.removeForEntity(entityId);
     } catch (e) {
       print('⚠️ Failed to delete chunks from DB for entity $entityId: $e');
       // Don't throw - deletion should be best-effort
@@ -327,14 +307,7 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
   /// Get all chunks for an entity from database.
   Future<List<Chunk>> getChunksForEntity(String entityId) async {
     try {
-      final allChunks = (chunkBox as dynamic).getAll() as List<dynamic>;
-      final matching = <Chunk>[];
-      for (final entity in allChunks) {
-        if ((entity as dynamic).sourceEntityId == entityId) {
-          matching.add((entity as ChunkEntity).toDomain());
-        }
-      }
-      return matching;
+      return await chunkRepo.getForEntity(entityId);
     } catch (e) {
       print('⚠️ Failed to load chunks for entity $entityId: $e');
       return [];
@@ -342,15 +315,9 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
   }
 
   /// Get a specific chunk by ID from database.
-  Chunk? getChunkById(String chunkId) {
+  Future<Chunk?> getChunkById(String chunkId) async {
     try {
-      final allChunks = (chunkBox as dynamic).getAll() as List<dynamic>;
-      for (final entity in allChunks) {
-        if ((entity as dynamic).chunkId == chunkId) {
-          return (entity as ChunkEntity).toDomain();
-        }
-      }
-      return null;
+      return await chunkRepo.getById(chunkId);
     } catch (e) {
       print('⚠️ Failed to load chunk $chunkId: $e');
       return null;

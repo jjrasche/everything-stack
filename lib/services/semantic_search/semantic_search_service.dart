@@ -141,7 +141,7 @@ class SemanticSearchService {
     // Load chunk metadata for top results
     // Note: Chunks are not persisted, so this would load from ChunkingService cache
     // For now, we reconstruct from chunk IDs
-    final chunks = _reconstructChunks(hnswResults.take(limit).toList());
+    final chunks = await _reconstructChunks(hnswResults.take(limit).toList());
 
     // Load source entities
     final entityMap = <String, BaseEntity?>{};
@@ -183,7 +183,7 @@ class SemanticSearchService {
 
   /// Reconstruct chunks from HNSW search results.
   /// Looks up chunk metadata from ChunkingService's database store.
-  List<Chunk> _reconstructChunks(List<SearchResult> hnswResults) {
+  Future<List<Chunk>> _reconstructChunks(List<SearchResult> hnswResults) async {
     final chunks = <Chunk>[];
 
     for (final result in hnswResults) {
@@ -191,7 +191,7 @@ class SemanticSearchService {
 
       // Look up chunk from ChunkingService database store
       if (chunkingService != null) {
-        final chunk = (chunkingService as dynamic).getChunkById(chunkId);
+        final chunk = await (chunkingService as dynamic).getChunkById(chunkId);
         if (chunk != null) {
           chunks.add(chunk);
         }
