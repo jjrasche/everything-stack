@@ -95,10 +95,10 @@ class ModelSelectorAdaptationData extends AdaptationData {
 
   /// Default adaptation state with Groq models.
   factory ModelSelectorAdaptationData.defaults() {
+    // Note: mixtral-8x7b-32768 was decommissioned by Groq (Jan 2025)
     const defaultModels = [
       'groq:llama-3.3-70b-versatile',
       'groq:llama-3.1-8b-instant',
-      'groq:mixtral-8x7b-32768',
     ];
 
     return ModelSelectorAdaptationData(
