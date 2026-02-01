@@ -65,6 +65,7 @@ import 'services/coordinator.dart';
 import 'services/context_selector.dart';
 import 'services/trainables/model_selector.dart';
 import 'services/voice_traits.dart';
+import 'services/context_capacity.dart';
 import 'services/tool_executor.dart';
 import 'services/tool_registry.dart';
 import 'services/event_bus.dart';
@@ -973,6 +974,12 @@ Future<void> setupServiceLocator() async {
       debugPrint('⏭️ [setupServiceLocator] VoiceTraits skipped (dependencies not registered)');
     }
 
+    // ========== ContextCapacity (Token budget management) ==========
+    debugPrint('🔍 [setupServiceLocator] Registering ContextCapacity...');
+    final contextCapacity = ContextCapacity();
+    getIt.registerSingleton<ContextCapacity>(contextCapacity);
+    debugPrint('✅ [setupServiceLocator] ContextCapacity registered');
+
     // ========== Coordinator (Multi-turn context management) ==========
     // Only register if InferenceService and TTSService exist
     if (getIt.isRegistered<InferenceService>() &&
@@ -987,6 +994,7 @@ Future<void> setupServiceLocator() async {
         contextSelector: getIt<ContextSelector>(),
         modelSelector: getIt<ModelSelector>(),
         voiceTraits: voiceTraits,
+        contextCapacity: contextCapacity,
         invocationRepo: getIt<InvocationRepository<Invocation>>(),
         eventBus: getIt<EventBus>(),
       );

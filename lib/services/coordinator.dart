@@ -38,6 +38,7 @@ import 'event_bus.dart';
 import 'context_selector.dart';
 import 'trainables/model_selector.dart';
 import 'voice_traits.dart';
+import 'context_capacity.dart';
 import 'types/llm_types.dart';
 
 /// Result of coordinator orchestration
@@ -95,6 +96,7 @@ class Coordinator {
   final ContextSelector contextSelector;
   final ModelSelector modelSelector;
   final VoiceTraits? voiceTraits; // Optional for backwards compatibility
+  final ContextCapacity? contextCapacity; // Optional for backwards compatibility
 
   final InvocationRepository<Invocation> invocationRepo;
   final EventBus eventBus;
@@ -113,6 +115,7 @@ class Coordinator {
     required this.contextSelector,
     required this.modelSelector,
     this.voiceTraits,
+    this.contextCapacity,
     required this.invocationRepo,
     required this.eventBus,
   });
@@ -234,7 +237,7 @@ class Coordinator {
 
     try {
       // 1. Get context
-      print('\n[1/4] Selecting context via ContextSelector...');
+      print('\n[1/7] Selecting context via ContextSelector...');
       final context = await contextSelector.selectContext(
         eventId: eventId,
         transcription: utterance,
@@ -242,15 +245,15 @@ class Coordinator {
       );
       print('✅ Context selected: ${context.summary}');
 
-      // 2. Build messages + call LLM
-      print('\n[2/4] Building message array from context...');
+      // 2. Build messages
+      print('\n[2/7] Building message array from context...');
       final messages = llmService.buildMessagesFromContext(
         contextBundle: context,
         currentUtterance: utterance,
       );
       print('✅ Messages built: ${messages.length} messages');
 
-      print('\n[3/5] Getting available tools...');
+      print('\n[3/7] Getting available tools...');
       // TODO: Integrate ToolSelector once semantic indexing is implemented
       // Currently ToolSelector is a stub that returns all tools anyway
       final tools = toolExecutor.toolRegistry
@@ -263,7 +266,7 @@ class Coordinator {
           .toList();
       print('✅ Available tools: ${tools.length} tools');
 
-      print('\n[4/6] Selecting model via ModelSelector...');
+      print('\n[4/7] Selecting model via ModelSelector...');
       final modelSelection = await modelSelector.selectModel(
         eventId: eventId,
         utterance: utterance,
@@ -272,7 +275,7 @@ class Coordinator {
           '(confidence: ${(modelSelection.confidence * 100).toStringAsFixed(1)}%)');
 
       // 5. Get voice traits (contrastive few-shot examples)
-      print('\n[5/6] Getting voice traits examples...');
+      print('\n[5/7] Getting voice traits examples...');
       var finalMessages = messages;
       if (voiceTraits != null) {
         try {
@@ -296,7 +299,31 @@ class Coordinator {
         print('ℹ️ VoiceTraits not configured');
       }
 
-      print('\n[6/6] Calling LLM service with context...');
+      // 6. Truncate context to fit token budget (ContextCapacity)
+      print('\n[6/7] Truncating context to token budget...');
+      if (contextCapacity != null) {
+        try {
+          final modelKey = '${modelSelection.implementer}:${modelSelection.model}';
+          final truncationResult = await contextCapacity!.truncateMessages(
+            messages: finalMessages,
+            model: modelKey,
+            eventId: eventId,
+          );
+          finalMessages = truncationResult.messages;
+          if (truncationResult.wasTruncated) {
+            print('✂️ Context truncated: ${truncationResult.summary}');
+          } else {
+            print('✅ Context within budget: ${truncationResult.totalTokens}/${truncationResult.tokenBudget} tokens');
+          }
+        } catch (e) {
+          // Degrade gracefully if context capacity fails
+          print('⚠️ ContextCapacity failed (degraded gracefully): $e');
+        }
+      } else {
+        print('ℹ️ ContextCapacity not configured');
+      }
+
+      print('\n[7/7] Calling LLM service with context...');
       print('📡 LLM call starting...');
       final llmResponse = await llmService.chatWithTools(
         model: modelSelection.model,

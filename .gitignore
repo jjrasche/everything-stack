@@ -97,6 +97,7 @@ coverage/
 
 # Test and build logs
 *.log
+logs/
 
 # Dependencies
 pubspec.lock
