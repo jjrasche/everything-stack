@@ -119,14 +119,15 @@ final voiceTraitsTest = IntegrationTestConfig(
     );
     final timerGoodInv = timerGoodInvocations.first;
 
-    // Add positive feedback
+    // Add positive feedback (with turnId to make it conversational)
     final positiveFeedback = Feedback(
       invocationId: timerGoodInv.uuid,
       componentType: 'llm',
       action: FeedbackAction.confirm,
+      turnId: timerGoodInv.eventId, // Link to conversation turn
     );
     await feedbackRepo.save(positiveFeedback);
-    print('   ✅ Positive feedback added to timer_good');
+    print('   ✅ Positive feedback added to timer_good (turnId=${timerGoodInv.eventId})');
 
     // Bad weather example (will get negative feedback)
     print('   [Bad] ${_utterances['weather_bad']}');
@@ -147,14 +148,15 @@ final voiceTraitsTest = IntegrationTestConfig(
     );
     final weatherBadInv = weatherBadInvocations.first;
 
-    // Add negative feedback
+    // Add negative feedback (with turnId to make it conversational)
     final negativeFeedback = Feedback(
       invocationId: weatherBadInv.uuid,
       componentType: 'llm',
       action: FeedbackAction.deny,
+      turnId: weatherBadInv.eventId, // Link to conversation turn
     );
     await feedbackRepo.save(negativeFeedback);
-    print('   ❌ Negative feedback added to weather_bad');
+    print('   ❌ Negative feedback added to weather_bad (turnId=${weatherBadInv.eventId})');
 
     // Wait for chunking/indexing to complete
     await Future.delayed(const Duration(seconds: 3));
@@ -163,6 +165,8 @@ final voiceTraitsTest = IntegrationTestConfig(
     print('\n[Verify] Checking feedback was persisted...');
     final allFeedbackAfterSave = await feedbackRepo.findAllConversational();
     print('   Total feedback records: ${allFeedbackAfterSave.length}');
+    print('   Timer good invocation UUID: ${timerGoodInv.uuid}');
+    print('   Weather bad invocation UUID: ${weatherBadInv.uuid}');
     for (final fb in allFeedbackAfterSave) {
       print('     - Feedback ${fb.uuid}: invocation=${fb.invocationId}, action=${fb.action}, component=${fb.componentType}');
     }
@@ -187,35 +191,26 @@ final voiceTraitsTest = IntegrationTestConfig(
     print('   Positive examples: ${examples.positive.length}');
     print('   Negative examples: ${examples.negative.length}');
 
-    // If no examples found, this might be a timing/indexing issue
-    // Log details for debugging but don't fail the test yet
-    if (!examples.hasExamples) {
-      print('   ⚠️ WARNING: No examples found - this may be a timing/indexing issue');
-      print('   Checking invocation and feedback state...');
-
-      final allInvsNow = await invocationRepo.findAll();
-      final llmInvsNow = allInvsNow.where((inv) => inv.componentType == 'llm').toList();
-      print('   Total LLM invocations: ${llmInvsNow.length}');
-
-      final allFbNow = await feedbackRepo.findAllConversational();
-      print('   Total feedback records: ${allFbNow.length}');
-
-      // Skip example verification tests if no examples found
-      print('   ⚠️ Skipping example content verification due to no examples');
-      print('\n=== VoiceTraits Test PASSED (with warnings) ===');
-      return;
-    }
+    // STRONG ASSERTION: Test architecture, not workarounds
+    // If this fails, fix the root cause in VoiceTraits/feedback/indexing
+    expect(
+      examples.hasExamples,
+      isTrue,
+      reason: 'ARCHITECTURE ISSUE: VoiceTraits should retrieve examples when feedback exists. '
+          'If this fails, debug why feedback records are not being found for indexed invocations. '
+          'Check: (1) Feedback persistence, (2) Invocation chunking/indexing, (3) Search→feedback lookup.',
+    );
 
     expect(
       examples.positive.isNotEmpty,
       isTrue,
-      reason: 'Should retrieve at least one positive example when examples exist',
+      reason: 'Should retrieve at least one positive example',
     );
 
     expect(
       examples.negative.isNotEmpty,
       isTrue,
-      reason: 'Should retrieve at least one negative example when examples exist',
+      reason: 'Should retrieve at least one negative example',
     );
 
     // ===== TEST 2: Positive example contains timer_good content =====

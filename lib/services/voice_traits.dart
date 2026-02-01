@@ -92,8 +92,13 @@ class VoiceTraits {
           .map((r) => r.sourceEntity!.uuid)
           .toList();
 
+      print('   Invocation IDs from search: ${invocationIds.take(3).join(", ")}...');
+
       final feedbackList = await feedbackRepo.findByInvocationIds(invocationIds);
       print('   Found ${feedbackList.length} feedback records');
+      if (feedbackList.isNotEmpty) {
+        print('   Feedback invocation IDs: ${feedbackList.map((f) => f.invocationId).join(", ")}');
+      }
 
       // 3. Build map of invocation -> feedback
       final feedbackMap = <String, Feedback>{};

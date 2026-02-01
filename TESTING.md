@@ -2,6 +2,12 @@
 
 ## Philosophy
 
+**Production-ready, always.** Every test you write, every assertion you make, every architectural decision - it's not a short-term fix to pass CI. It's production code that will ship and work in harmony with the system.
+
+**Assertions are bedrock.** When a test fails, fix the architecture - not the test. Weakening assertions to pass tests is technical debt. Strong assertions reveal architectural issues. Debug them. Fix the root cause. The test is telling you something is broken.
+
+**Big picture thinking.** Don't fix individual test cases in isolation. Fix the overall architecture so components work in harmony. If VoiceTraits can't find feedback, don't skip the assertion - fix why feedback isn't being found.
+
 Tests are truth. A feature is done when E2E tests pass and real execution produces the right Invocation logs.
 
 No mocks. No abstraction layers between test and reality. What you test is what ships.
