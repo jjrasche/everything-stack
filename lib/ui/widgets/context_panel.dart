@@ -5,9 +5,11 @@
 /// Long-press to provide feedback on context selection quality.
 /// Includes real-time similarity threshold slider for testing.
 
+import 'dart:math' show exp, ln2;
 import 'package:flutter/material.dart';
 import 'package:everything_stack_template/services/types/context_selector_types.dart';
 import 'package:everything_stack_template/core/invocation.dart';
+import 'package:everything_stack_template/services/semantic_search/search_result.dart';
 import 'feedback_bottom_sheet.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -37,13 +39,9 @@ class _ContextPanelState extends State<ContextPanel> {
         widget.contextBundle?.conversationThread.length ?? 0;
     final allSemanticMatches = widget.contextBundle?.semanticContext ?? [];
 
-    // Filter semantic matches by similarity threshold
-    // Note: ContextBundle doesn't store similarity scores yet, so we'll use decay as proxy
-    final filteredSemanticMatches = allSemanticMatches.where((inv) {
-      final ageHours =
-          DateTime.now().difference(inv.updatedAt).inHours.toDouble();
-      final score = _computeDecay(ageHours, 720.0); // semantic half-life
-      return score >= _similarityThreshold;
+    // Filter semantic matches by similarity threshold (now using actual similarity scores)
+    final filteredSemanticMatches = allSemanticMatches.where((result) {
+      return result.similarity >= _similarityThreshold;
     }).toList();
 
     final totalCount = conversationCount + filteredSemanticMatches.length;
@@ -151,11 +149,12 @@ class _ContextPanelState extends State<ContextPanel> {
                         const SizedBox(height: 24),
 
                         // Semantic Matches (filtered by threshold)
-                        _buildSection(
+                        _buildSemanticSection(
                           context,
                           title: 'Semantic Matches',
                           items: filteredSemanticMatches,
-                          showDecay: false,
+                          semanticHalfLifeHours:
+                              widget.contextBundle!.params.semanticHalfLifeHours,
                         ),
                       ],
                     ),
@@ -205,6 +204,171 @@ class _ContextPanelState extends State<ContextPanel> {
         const SizedBox(height: 8),
         ...items.map((inv) => _buildContextItem(context, inv, showDecay)),
       ],
+    );
+  }
+
+  Widget _buildSemanticSection(
+    BuildContext context, {
+    required String title,
+    required List<SemanticSearchResult> items,
+    required double semanticHalfLifeHours,
+  }) {
+    if (items.isEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'None',
+            style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+          ),
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '$title (${items.length})',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ...items.map((result) =>
+            _buildSemanticItem(context, result, semanticHalfLifeHours)),
+      ],
+    );
+  }
+
+  Widget _buildSemanticItem(
+    BuildContext context,
+    SemanticSearchResult result,
+    double semanticHalfLifeHours,
+  ) {
+    // Get content from chunk
+    final content = result.chunk.text;
+    final entityType = result.chunk.sourceEntityType;
+    final similarity = result.similarity;
+
+    // Get timestamp from source entity if available
+    final now = DateTime.now();
+    final entityTime = result.sourceEntity?.updatedAt ?? now;
+    final ageHours = now.difference(entityTime).inMinutes / 60.0;
+    final decay = _computeDecay(ageHours, semanticHalfLifeHours);
+    final fusedScore = similarity * decay;
+
+    final timeAgo = result.sourceEntity != null
+        ? timeago.format(result.sourceEntity!.updatedAt)
+        : 'unknown';
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Score badges: Similarity | Decay | Fused + entity type + timestamp
+          Row(
+            children: [
+              // Similarity badge
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                decoration: BoxDecoration(
+                  color: _getScoreColor(similarity),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  'S:${(similarity * 100).toStringAsFixed(0)}%',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 4),
+              // Decay badge
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                decoration: BoxDecoration(
+                  color: _getScoreColor(decay),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  'D:${(decay * 100).toStringAsFixed(0)}%',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 4),
+              // Fused score badge (similarity * decay)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.purple,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  'F:${(fusedScore * 100).toStringAsFixed(0)}%',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                entityType.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.grey.shade600,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                timeAgo,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.grey.shade500,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 6),
+
+          // Content
+          Text(
+            content.length > 150 ? '${content.substring(0, 150)}...' : content,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey.shade800,
+            ),
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
     );
   }
 
@@ -289,10 +453,11 @@ class _ContextPanelState extends State<ContextPanel> {
     );
   }
 
+  /// Compute temporal decay score using exponential half-life formula
+  /// (matches ContextSelector._computeDecay for consistency)
   double _computeDecay(double ageHours, double halfLifeHours) {
     if (ageHours <= 0) return 1.0;
-    return 0.5 *
-        (ageHours / halfLifeHours); // Simplified linear decay for display
+    return exp(-ln2 * ageHours / halfLifeHours);
   }
 
   Color _getScoreColor(double score) {

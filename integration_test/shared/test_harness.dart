@@ -15,6 +15,7 @@ import 'package:everything_stack_template/services/context_selector.dart';
 import 'package:everything_stack_template/services/tool_executor.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/event_bus.dart';
+import 'package:everything_stack_template/services/semantic_search/semantic_search_service.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
 import 'package:everything_stack_template/core/invocation.dart';
 import 'package:everything_stack_template/core/entity_repository.dart';
@@ -194,6 +195,7 @@ class IntegrationTestConfig {
     final contextSelector = ContextSelector(
       invocationRepo: getIt<EntityRepository<Invocation>>(),
       embeddingService: EmbeddingService.instance, // Uses swapped mock
+      semanticSearchService: getIt<SemanticSearchService>(),
     );
     getIt.registerSingleton<ContextSelector>(contextSelector);
     print('✅ ContextSelector re-registered with swapped EmbeddingService');

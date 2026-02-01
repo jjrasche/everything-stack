@@ -29,6 +29,9 @@ import '../error_handling_logic.dart';
 import '../enrichment_queue_logic.dart';
 import '../enrichment_advanced_logic.dart';
 import '../conversational_flow_logic.dart';
+import '../context_selection_logic.dart';
+import '../invocation_chunking_logic.dart';
+import '../tokenizer_logic.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +40,9 @@ void main() {
 
   // Aggregate all test configs
   final configs = {
+    'context_selection': contextSelectionTest,
+    'invocation_chunking': invocationChunkingTest,
+    'tokenizer': tokenizerTest,
     'conversational_flow': conversationalFlowTest,
     'timer': timerMultiturnTest,
     'regulation': regulationTrackingTest,

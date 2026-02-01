@@ -294,6 +294,8 @@ void main() {
         maxSemanticResults: 10,
         semanticHalfLifeHours: 720.0,
         semanticThreshold: 0.7,
+        similarityAlpha: 1.0,
+        decayBeta: 0.5,
       ).toJson();
       await adaptationRepo.save(initialState);
 

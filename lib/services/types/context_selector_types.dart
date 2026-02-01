@@ -5,6 +5,7 @@
 import 'dart:convert';
 import '../../core/adaptation_data.dart';
 import '../../core/invocation.dart';
+import '../semantic_search/search_result.dart';
 
 /// Learned context selection preferences (trainable parameters).
 class ContextSelectorAdaptationData extends AdaptationData {
@@ -30,12 +31,26 @@ class ContextSelectorAdaptationData extends AdaptationData {
   /// Minimum semantic similarity score to include
   final double semanticThreshold;
 
+  /// Exponent for similarity in conversation thread scoring
+  /// score = similarity^α × decay^β
+  /// Higher α = similarity matters more
+  /// α=0 ignores similarity, α=2 squares similarity
+  final double similarityAlpha;
+
+  /// Exponent for decay in conversation thread scoring
+  /// score = similarity^α × decay^β
+  /// Higher β = recency matters more
+  /// β=0 ignores recency, β=2 squares decay
+  final double decayBeta;
+
   ContextSelectorAdaptationData({
     required this.conversationThreadSize,
     required this.conversationHalfLifeHours,
     required this.maxSemanticResults,
     required this.semanticHalfLifeHours,
     required this.semanticThreshold,
+    required this.similarityAlpha,
+    required this.decayBeta,
   });
 
   /// Default adaptation state (untrained).
@@ -46,6 +61,8 @@ class ContextSelectorAdaptationData extends AdaptationData {
         maxSemanticResults: 10,
         semanticHalfLifeHours: 720.0, // 1 month
         semanticThreshold: 0.7,
+        similarityAlpha: 1.0, // Linear similarity
+        decayBeta: 0.5, // Decay matters less than similarity
       );
 
   /// Deserialize from JSON.
@@ -58,6 +75,8 @@ class ContextSelectorAdaptationData extends AdaptationData {
         semanticHalfLifeHours:
             json['semanticHalfLifeHours'] as double? ?? 720.0,
         semanticThreshold: json['semanticThreshold'] as double? ?? 0.7,
+        similarityAlpha: json['similarityAlpha'] as double? ?? 1.0,
+        decayBeta: json['decayBeta'] as double? ?? 0.5,
       );
 
   /// Serialize to JSON string.
@@ -68,6 +87,8 @@ class ContextSelectorAdaptationData extends AdaptationData {
         'maxSemanticResults': maxSemanticResults,
         'semanticHalfLifeHours': semanticHalfLifeHours,
         'semanticThreshold': semanticThreshold,
+        'similarityAlpha': similarityAlpha,
+        'decayBeta': decayBeta,
       });
 
   /// Create a copy with modified fields (for GP optimizer updates).
@@ -77,6 +98,8 @@ class ContextSelectorAdaptationData extends AdaptationData {
     int? maxSemanticResults,
     double? semanticHalfLifeHours,
     double? semanticThreshold,
+    double? similarityAlpha,
+    double? decayBeta,
   }) {
     return ContextSelectorAdaptationData(
       conversationThreadSize:
@@ -87,6 +110,8 @@ class ContextSelectorAdaptationData extends AdaptationData {
       semanticHalfLifeHours:
           semanticHalfLifeHours ?? this.semanticHalfLifeHours,
       semanticThreshold: semanticThreshold ?? this.semanticThreshold,
+      similarityAlpha: similarityAlpha ?? this.similarityAlpha,
+      decayBeta: decayBeta ?? this.decayBeta,
     );
   }
 }
@@ -94,13 +119,15 @@ class ContextSelectorAdaptationData extends AdaptationData {
 /// Context bundle returned by ContextSelector.
 /// Contains both conversation thread and relevant semantic context.
 class ContextBundle {
-  /// Recent STT/LLM invocations forming conversation thread
+  /// Recent LLM invocations forming conversation thread
   /// Maps cleanly to user/assistant message pairs
+  /// Each LLM invocation has input.prompt (user) and output.response (assistant)
   final List<Invocation> conversationThread;
 
-  /// Semantically relevant invocations from any time
+  /// Semantically relevant chunks from ANY chunkable entity
+  /// Includes chunk text, source entity, and similarity score
   /// Gets summarized into system message
-  final List<Invocation> semanticContext;
+  final List<SemanticSearchResult> semanticContext;
 
   /// Adaptation state that generated this bundle
   final ContextSelectorAdaptationData params;
@@ -111,8 +138,8 @@ class ContextBundle {
     required this.params,
   });
 
-  /// Total invocations in bundle
-  int get totalInvocations =>
+  /// Total items in bundle
+  int get totalItems =>
       conversationThread.length + semanticContext.length;
 
   /// Debug string showing bundle composition

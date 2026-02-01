@@ -22,7 +22,7 @@
 /// // bundle.semanticContext: Relevant facts from across system
 /// ```
 
-import 'dart:math' show exp, ln2, sqrt;
+import 'dart:math' show exp, ln2, pow, sqrt;
 import 'dart:convert';
 import 'package:get_it/get_it.dart';
 
@@ -34,14 +34,18 @@ import '../core/adaptation_state_repository.dart';
 import 'embedding_service.dart';
 import 'types/context_selector_types.dart';
 import 'trainer/gaussian_process_optimizer.dart';
+import 'semantic_search/semantic_search_service.dart';
+import 'semantic_search/search_result.dart';
 
 class ContextSelector with Trainable<ContextSelectorAdaptationData> {
   final EntityRepository<Invocation> invocationRepo;
   final EmbeddingService embeddingService;
+  final SemanticSearchService semanticSearchService;
 
   ContextSelector({
     required this.invocationRepo,
     required this.embeddingService,
+    required this.semanticSearchService,
   });
 
   // ============ Trainable Implementation ============
@@ -69,6 +73,8 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
         'maxSemanticResults': (5.0, 25.0),
         'semanticHalfLifeHours': (168.0, 2160.0), // 1 week to 3 months
         'semanticThreshold': (0.5, 0.9),
+        'similarityAlpha': (0.0, 2.0), // 0 = ignore similarity, 2 = similarity^2
+        'decayBeta': (0.0, 2.0), // 0 = ignore recency, 2 = decay^2
       };
 
   @override
@@ -100,6 +106,8 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
       'maxSemanticResults': params.maxSemanticResults,
       'semanticHalfLifeHours': params.semanticHalfLifeHours,
       'semanticThreshold': params.semanticThreshold,
+      'similarityAlpha': params.similarityAlpha,
+      'decayBeta': params.decayBeta,
     }, reward);
 
     // Get GP suggestion (loads historical trials from database)
@@ -113,6 +121,8 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
       maxSemanticResults: suggested['maxSemanticResults'] as int,
       semanticHalfLifeHours: suggested['semanticHalfLifeHours'] as double,
       semanticThreshold: suggested['semanticThreshold'] as double,
+      similarityAlpha: suggested['similarityAlpha'] as double,
+      decayBeta: suggested['decayBeta'] as double,
     );
 
     state.dataJson = newParams.toJson();
@@ -157,8 +167,8 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
   /// Select relevant context for current transcription
   ///
   /// Returns ContextBundle with:
-  /// - conversationThread: Recent STT/LLM pairs (chronological order)
-  /// - semanticContext: Relevant invocations from across system (scored by relevance)
+  /// - conversationThread: Recent LLM invocations (each has input.prompt + output.response)
+  /// - semanticContext: Relevant chunks from ANY entity (via SemanticSearchService)
   Future<ContextBundle> selectContext({
     required String eventId,
     required String transcription,
@@ -174,99 +184,139 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
     print('   Params: threadSize=${params.conversationThreadSize}, '
         'convHalfLife=${params.conversationHalfLifeHours}h, '
         'semanticHalfLife=${params.semanticHalfLifeHours}h, '
-        'threshold=${params.semanticThreshold}');
+        'threshold=${params.semanticThreshold}, '
+        'α=${params.similarityAlpha}, β=${params.decayBeta}');
 
-    // 1. Get embedding of transcription
-    print('\n[1/6] Generating embedding for transcription...');
-    final embedding = await embeddingService.generate(transcription);
-    print('✅ Embedding generated: ${embedding.length} dimensions');
-
-    // 2. Get all invocations, filter for STT/LLM (conversation thread)
-    print('\n[2/6] Loading conversation thread (STT/LLM invocations)...');
-    final allInvocations = await invocationRepo.findAll();
-    final sttLlmInvocations = allInvocations
-        .where((inv) => ['stt', 'llm'].contains(inv.componentType))
-        .toList()
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt)); // Most recent first
-
-    final conversationThread = sttLlmInvocations
-        .take(params.conversationThreadSize)
-        .toList()
-      ..sort(
-          (a, b) => a.createdAt.compareTo(b.createdAt)); // Chronological order
-
-    print('✅ Conversation thread: ${conversationThread.length} invocations');
-
-    // 3. Apply decay to conversation thread (for debugging/logging)
     final now = DateTime.now();
-    for (final inv in conversationThread) {
+
+    // 1. Get conversation thread with similarity × decay scoring
+    print('\n[1/4] Loading and scoring conversation thread (LLM invocations)...');
+    final allInvocations = await invocationRepo.findAll();
+    final llmInvocations = allInvocations
+        .where((inv) => inv.componentType == 'llm')
+        .toList();
+
+    // Apply time cutoff: only consider invocations within 3x half-life window
+    // This limits embedding API calls while covering relevant candidates
+    final cutoffHours = params.conversationHalfLifeHours * 3;
+    final cutoffTime = now.subtract(Duration(hours: cutoffHours.round()));
+    final candidates = llmInvocations
+        .where((inv) => inv.updatedAt.isAfter(cutoffTime))
+        .toList();
+
+    print('   ${candidates.length} candidates within ${cutoffHours.toStringAsFixed(0)}h window');
+
+    // Generate query embedding
+    final queryEmbedding = await embeddingService.generate(transcription);
+
+    // Score each candidate: similarity^α × decay^β
+    final scoredCandidates = <(Invocation, double, double, double)>[];
+    for (final inv in candidates) {
+      // Get embeddable content from invocation
+      final content = inv.toChunkableInput();
+      if (content.isEmpty) continue;
+
+      // Generate embedding for this invocation
+      final invEmbedding = await embeddingService.generate(content);
+
+      // Compute cosine similarity
+      final similarity = _cosineSimilarity(queryEmbedding, invEmbedding);
+
+      // Compute temporal decay
       final ageHours = now.difference(inv.updatedAt).inMinutes / 60.0;
-      final decayScore =
-          _computeDecay(ageHours, params.conversationHalfLifeHours);
-      print(
-          '   ${inv.componentType} (${ageHours.toStringAsFixed(1)}h ago): decay=${decayScore.toStringAsFixed(3)}');
+      final decay = _computeDecay(ageHours, params.conversationHalfLifeHours);
+
+      // Compute fused score: similarity^α × decay^β
+      final fusedScore = pow(similarity, params.similarityAlpha) *
+          pow(decay, params.decayBeta);
+
+      scoredCandidates.add((inv, similarity, decay, fusedScore.toDouble()));
     }
 
-    // 4. Semantic search ALL embeddable entities
-    print('\n[3/6] Semantic search across all embeddable entities...');
-    final semanticResults = await invocationRepo.semanticSearch(
-      transcription, // Note: This regenerates embedding internally, but keeps code simple
-      limit: 100, // Get more candidates, we'll filter down
-      minSimilarity: 0.0, // Apply threshold after decay scoring
-    );
-    print('✅ Semantic search returned ${semanticResults.length} candidates');
+    // Sort by fused score (highest first) and take top N
+    scoredCandidates.sort((a, b) => b.$4.compareTo(a.$4));
+    final topCandidates =
+        scoredCandidates.take(params.conversationThreadSize).toList();
 
-    // 5. Filter out conversation thread (dedup)
-    print(
-        '\n[4/6] Deduplicating (removing conversation thread from semantic results)...');
+    // Extract invocations and sort chronologically for context
+    final conversationThread = topCandidates.map((c) => c.$1).toList()
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+
+    print('✅ Conversation thread: ${conversationThread.length} LLM invocations');
+
+    // Log conversation thread with similarity and decay scores
+    for (final candidate in topCandidates) {
+      final inv = candidate.$1;
+      final similarity = candidate.$2;
+      final decay = candidate.$3;
+      final fusedScore = candidate.$4;
+      final ageHours = now.difference(inv.updatedAt).inMinutes / 60.0;
+      print('   LLM (${ageHours.toStringAsFixed(1)}h ago): '
+          'sim=${similarity.toStringAsFixed(3)}, '
+          'decay=${decay.toStringAsFixed(3)}, '
+          'fused=${fusedScore.toStringAsFixed(3)}');
+    }
+
+    // 2. Semantic search via SemanticSearchService (searches chunks from ALL entities)
+    print('\n[2/4] Semantic search across all chunkable entities...');
+    List<SemanticSearchResult> semanticResults = [];
+
+    try {
+      semanticResults = await semanticSearchService.search(
+        transcription,
+        limit: 100, // Get more candidates, we'll filter down
+      );
+      print('✅ Semantic search returned ${semanticResults.length} chunks');
+    } catch (e) {
+      print('⚠️ Semantic search failed (index may need rebuild): $e');
+      // Continue with empty results - search failure shouldn't block response
+    }
+
+    // 3. Filter out chunks from conversation thread entities (dedup)
+    print('\n[3/4] Deduplicating (removing conversation thread from semantic results)...');
     final uuidsInConversation =
         conversationThread.map((inv) => inv.uuid).toSet();
     final filteredResults = semanticResults
-        .where((inv) => !uuidsInConversation.contains(inv.uuid))
+        .where((result) =>
+            result.sourceEntity == null ||
+            !uuidsInConversation.contains(result.sourceEntity!.uuid))
         .toList();
-    print('✅ After dedup: ${filteredResults.length} candidates');
+    print('✅ After dedup: ${filteredResults.length} chunks');
 
-    // 6. Apply fused score: semantic similarity * temporal decay
-    print('\n[5/6] Applying fused scoring (semantic * temporal decay)...');
-    final scored = filteredResults.map((inv) {
-      final ageHours = now.difference(inv.updatedAt).inMinutes / 60.0;
+    // 4. Apply fused score: semantic similarity * temporal decay, then filter
+    print('\n[4/4] Applying fused scoring and filtering...');
+    final scored = filteredResults.map((result) {
+      // Get timestamp from source entity if available
+      final entityTime = result.sourceEntity?.updatedAt ?? now;
+      final ageHours = now.difference(entityTime).inMinutes / 60.0;
       final decay = _computeDecay(ageHours, params.semanticHalfLifeHours);
-
-      // Compute semantic similarity (cosine similarity between embeddings)
-      final semanticScore = inv.embedding != null
-          ? _cosineSimilarity(embedding, inv.embedding!)
-          : 0.0;
-
-      final fusedScore = semanticScore * decay;
-      return (inv, fusedScore, semanticScore, decay);
+      final fusedScore = result.similarity * decay;
+      return (result, fusedScore, decay);
     }).toList();
 
-    // 7. Filter by semantic threshold and sort by fused score
-    print('\n[6/6] Filtering by threshold and selecting top results...');
+    // Filter by threshold and sort by fused score
     final topResults = scored
-        .where((item) =>
-            item.$3 >=
-            params.semanticThreshold) // Filter by semantic similarity
+        .where((item) => item.$1.similarity >= params.semanticThreshold)
         .toList()
-      ..sort((a, b) => b.$2.compareTo(a.$2)) // Sort by fused score
-      ..take(params.maxSemanticResults).toList();
+      ..sort((a, b) => b.$2.compareTo(a.$2)); // Sort by fused score
 
-    print('✅ Top semantic context: ${topResults.length} invocations');
-    for (final item in topResults.take(5)) {
-      final inv = item.$1;
+    final limitedResults = topResults.take(params.maxSemanticResults).toList();
+
+    print('✅ Top semantic context: ${limitedResults.length} chunks');
+    for (final item in limitedResults.take(5)) {
+      final result = item.$1;
       final fusedScore = item.$2;
-      final semanticScore = item.$3;
-      final decay = item.$4;
-      final ageHours = now.difference(inv.updatedAt).inMinutes / 60.0;
-      print('   ${inv.componentType} (${ageHours.toStringAsFixed(1)}h ago): '
-          'semantic=${semanticScore.toStringAsFixed(3)}, '
+      final decay = item.$3;
+      final entityType = result.chunk.sourceEntityType;
+      print('   $entityType chunk: '
+          'similarity=${result.similarity.toStringAsFixed(3)}, '
           'decay=${decay.toStringAsFixed(3)}, '
           'fused=${fusedScore.toStringAsFixed(3)}');
     }
 
     final bundle = ContextBundle(
       conversationThread: conversationThread,
-      semanticContext: topResults.map((item) => item.$1).toList(),
+      semanticContext: limitedResults.map((item) => item.$1).toList(),
       params: params,
     );
 
@@ -302,27 +352,27 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
     return exp(-ln2 * ageHours / halfLifeHours);
   }
 
-  /// Compute cosine similarity between two embeddings
+  /// Compute cosine similarity between two embedding vectors
   ///
-  /// Returns value between -1 and 1 (typically 0 to 1 for embeddings)
-  /// - 1.0: Identical vectors
-  /// - 0.0: Orthogonal vectors
-  /// - -1.0: Opposite vectors
+  /// Returns value in [0, 1] where 1 = identical direction
+  /// Normalized embeddings give similarity = dot product
   double _cosineSimilarity(List<double> a, List<double> b) {
     if (a.length != b.length) return 0.0;
 
-    double dotProduct = 0.0;
-    double normA = 0.0;
-    double normB = 0.0;
+    var dot = 0.0;
+    var normA = 0.0;
+    var normB = 0.0;
 
-    for (int i = 0; i < a.length; i++) {
-      dotProduct += a[i] * b[i];
+    for (var i = 0; i < a.length; i++) {
+      dot += a[i] * b[i];
       normA += a[i] * a[i];
       normB += b[i] * b[i];
     }
 
-    if (normA == 0.0 || normB == 0.0) return 0.0;
+    if (normA == 0 || normB == 0) return 0.0;
 
-    return dotProduct / (sqrt(normA) * sqrt(normB));
+    final similarity = dot / (sqrt(normA) * sqrt(normB));
+    // Clamp to [0, 1] (cosine can be negative for opposing directions)
+    return similarity.clamp(0.0, 1.0);
   }
 }

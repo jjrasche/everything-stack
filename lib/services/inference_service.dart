@@ -153,25 +153,31 @@ class InferenceService with Trainable<InferenceAdaptationData> {
         '\nStyle: Short, direct answers. 1-2 sentences max unless asked for details. Avoid verbose explanations.');
 
     if (contextBundle.semanticContext.isNotEmpty) {
-      systemPrompt.writeln('\n# Relevant Context (from past interactions):');
-      for (final inv in contextBundle.semanticContext) {
-        final summary = inv.toEmbeddingInput();
-        systemPrompt.writeln('- ${inv.componentType}: $summary');
+      systemPrompt.writeln('\n# Relevant Context (from semantic search):');
+      for (final result in contextBundle.semanticContext) {
+        // Use chunk text directly (it's the matched content)
+        final chunkText = result.chunk.text;
+        final entityType = result.chunk.sourceEntityType;
+        final similarity = (result.similarity * 100).toStringAsFixed(0);
+        systemPrompt.writeln('- [$entityType, $similarity% match]: $chunkText');
       }
     }
 
     messages.add({'role': 'system', 'content': systemPrompt.toString()});
 
-    // 2. Conversation thread (STT/LLM pairs → user/assistant messages)
+    // 2. Conversation thread (LLM invocations → user/assistant message pairs)
+    // Each LLM invocation has input.prompt (user) and output.response (assistant)
     for (final inv in contextBundle.conversationThread) {
-      if (inv.componentType == 'stt') {
-        // STT invocation → user message
-        final userMessage = inv.toEmbeddingInput();
-        messages.add({'role': 'user', 'content': userMessage});
-      } else if (inv.componentType == 'llm') {
-        // LLM invocation → assistant message
-        final assistantMessage = inv.toEmbeddingInput();
-        messages.add({'role': 'assistant', 'content': assistantMessage});
+      // Extract user prompt from input
+      final userPrompt = inv.input?['prompt'] as String?;
+      if (userPrompt != null && userPrompt.isNotEmpty) {
+        messages.add({'role': 'user', 'content': userPrompt});
+      }
+
+      // Extract assistant response from output
+      final assistantResponse = inv.output?['response'] as String?;
+      if (assistantResponse != null && assistantResponse.isNotEmpty) {
+        messages.add({'role': 'assistant', 'content': assistantResponse});
       }
     }
 
@@ -202,7 +208,14 @@ class InferenceService with Trainable<InferenceAdaptationData> {
       maxTokens: maxTokens,
     );
 
-    // Log invocation for training (raw messages as JSON)
+    // Log invocation for training
+    // Extract last user message as prompt for semantic indexing
+    final lastUserMsg = messages.lastWhere(
+      (msg) => msg['role'] == 'user',
+      orElse: () => <String, dynamic>{'content': ''},
+    );
+    final prompt = (lastUserMsg['content'] as String?) ?? '';
+
     await recordInvocation(
       'unknown', // TODO: Pass eventId from Coordinator
       Invocation(
@@ -211,8 +224,8 @@ class InferenceService with Trainable<InferenceAdaptationData> {
         implementer: implementer.implementerName,
         success: true,
         confidence: 1.0,
-        input: {'messages': messages},
-        output: {'content': response.content},
+        input: {'prompt': prompt, 'messages': messages},
+        output: {'response': response.content},
       ),
     );
 

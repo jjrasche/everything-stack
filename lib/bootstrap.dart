@@ -44,6 +44,7 @@ import 'services/blob_store.dart';
 import 'services/sync_service.dart';
 import 'services/connectivity_service.dart';
 import 'services/embedding_service.dart';
+import 'services/tokenizer_service.dart';
 import 'services/embedding_queue_service.dart';
 import 'services/audio_recording_service.dart';
 import 'services/audio_storage.dart';
@@ -567,6 +568,7 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
       final chunkingService = ChunkingService(
         index: hnswIndex,
         embeddingService: EmbeddingService.instance,
+        tokenizerService: TokenizerService.instance,
         parentChunker: parentChunker,
         childChunker: childChunker,
         chunkRepo: chunkRepo,
@@ -827,6 +829,10 @@ Future<void> setupServiceLocator() async {
     );
     debugPrint('✅ [setupServiceLocator] EmbeddingService registered');
 
+    // TokenizerService - for accurate GPT token counting
+    getIt.registerSingleton<TokenizerService>(TokenizerService.instance);
+    debugPrint('✅ [setupServiceLocator] TokenizerService registered');
+
     // Check service registration status (registered in bootstrap if API keys present)
     final hasInference = getIt.isRegistered<InferenceService>();
     final hasTTS = getIt.isRegistered<TTSService>();
@@ -925,6 +931,7 @@ Future<void> setupServiceLocator() async {
     final contextSelector = ContextSelector(
       invocationRepo: getIt<EntityRepository<Invocation>>(),
       embeddingService: EmbeddingService.instance,
+      semanticSearchService: getIt<SemanticSearchService>(),
     );
     getIt.registerSingleton<ContextSelector>(contextSelector);
     debugPrint('✅ [setupServiceLocator] ContextSelector registered');

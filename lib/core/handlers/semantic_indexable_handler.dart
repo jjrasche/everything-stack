@@ -44,8 +44,10 @@ class SemanticIndexableHandler<T extends BaseEntity>
     // Delete old chunks for this entity
     try {
       await chunkingService.deleteByEntityId(entity.uuid);
-    } catch (e) {
+    } catch (e, stackTrace) {
       // Safe to fail - entity will still be saved
+      print('⚠️ [SemanticIndexableHandler] beforeSave chunk deletion failed for ${entity.uuid}: $e');
+      print('   Stack: $stackTrace');
     }
   }
 
@@ -61,10 +63,12 @@ class SemanticIndexableHandler<T extends BaseEntity>
 
     try {
       // Create chunks from entity content and index them
-      await chunkingService.indexEntity(entity);
-    } catch (e) {
-      // Silently fail - entity is persisted and valid
-      // Index can be rebuilt later by SyncService
+      final chunks = await chunkingService.indexEntity(entity);
+      print('✓ [SemanticIndexableHandler] Indexed ${chunks.length} chunks for ${entity.runtimeType} ${entity.uuid}');
+    } catch (e, stackTrace) {
+      // Entity is persisted and valid - index can be rebuilt later by SyncService
+      print('⚠️ [SemanticIndexableHandler] afterSave indexing failed for ${entity.uuid}: $e');
+      print('   Stack: $stackTrace');
     }
   }
 
@@ -78,8 +82,11 @@ class SemanticIndexableHandler<T extends BaseEntity>
 
     try {
       await chunkingService.deleteByEntityId(entity.uuid);
-    } catch (e) {
-      // Silently fail - entity deletion should proceed
+      print('✓ [SemanticIndexableHandler] Deleted chunks for ${entity.runtimeType} ${entity.uuid}');
+    } catch (e, stackTrace) {
+      // Entity deletion should proceed
+      print('⚠️ [SemanticIndexableHandler] beforeDelete chunk deletion failed for ${entity.uuid}: $e');
+      print('   Stack: $stackTrace');
     }
   }
 }

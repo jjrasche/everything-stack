@@ -80,7 +80,7 @@ import 'adaptation_data.dart';
 import 'adaptation_state.dart';
 import 'invocation.dart';
 import '../domain/feedback.dart' as domain_feedback;
-import 'invocation_repository.dart';
+import 'entity_repository.dart';
 import 'adaptation_state_repository.dart';
 
 mixin class Trainable<D extends AdaptationData> {
@@ -132,8 +132,10 @@ mixin class Trainable<D extends AdaptationData> {
 
   // ============ Repository Access (GetIt) ============
 
-  InvocationRepository<Invocation> get _invocationRepo =>
-      GetIt.instance<InvocationRepository<Invocation>>();
+  /// Get the EntityRepository with handlers (not the bare adapter).
+  /// EntityRepository has SemanticIndexableHandler wired for automatic chunking.
+  EntityRepository<Invocation> get _invocationRepo =>
+      GetIt.instance<EntityRepository<Invocation>>();
 
   AdaptationStateRepository get _adaptationStateRepo =>
       GetIt.instance<AdaptationStateRepository>();

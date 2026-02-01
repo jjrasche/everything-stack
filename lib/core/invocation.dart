@@ -231,9 +231,15 @@ class Invocation extends BaseEntity
       return 'User: $transcription';
     }
 
-    // LLM: Assistant response
+    // LLM: User prompt + Assistant response
+    // This captures the full conversation turn for semantic search
+    // (essential for imported conversations from ChatGPT, Claude.ai, etc.)
     if (componentType == 'llm') {
+      final prompt = input?['prompt'] as String? ?? '';
       final response = output!['response'] as String? ?? '';
+      if (prompt.isNotEmpty) {
+        return 'User: $prompt\nAssistant: $response';
+      }
       return 'Assistant: $response';
     }
 
@@ -242,9 +248,17 @@ class Invocation extends BaseEntity
   }
 
   /// Return chunking configuration level for this invocation.
-  /// Child chunks (20 tokens) are optimized for precise conversational units.
+  ///
+  /// LLM invocations use 'invocation' config for whole-unit chunks.
+  /// This enables VoiceTraits to retrieve complete conversation examples.
+  /// Other invocation types use 'child' for fine-grained semantic units.
   @override
-  String getChunkingConfig() => 'child';
+  String getChunkingConfig() {
+    if (componentType == 'llm') {
+      return 'invocation';
+    }
+    return 'child';
+  }
 
   // ============ Enrichable Implementation ============
 

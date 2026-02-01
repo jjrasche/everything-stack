@@ -85,8 +85,8 @@ class ChunkOB {
     if (endToken <= startToken) {
       throw ArgumentError('endToken must be > startToken');
     }
-    if (config != 'parent' && config != 'child') {
-      throw ArgumentError('config must be "parent" or "child"');
+    if (config != 'parent' && config != 'child' && config != 'invocation') {
+      throw ArgumentError('config must be "parent", "child", or "invocation"');
     }
     if (text.isEmpty) throw ArgumentError('text cannot be empty');
   }

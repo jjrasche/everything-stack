@@ -41,6 +41,9 @@ dependencies:
   flutter_dotenv: ^5.1.0
   timeago: ^3.7.0
 
+  # Tokenization (for ContextCapacity token counting)
+  tiktoken_tokenizer_gpt4o_o1: ^1.2.1
+
   # WebSocket support (for Deepgram STT)
   web_socket_channel: ^3.0.0
   universal_io: ^2.2.2  # Pure Dart WebSocket (fixes Flutter Windows wss:// bug)

@@ -107,6 +107,24 @@ class ChunkingConfig {
     );
   }
 
+  /// Invocation-level configuration for whole conversation turns
+  ///
+  /// Use for VoiceTraits retrieval - complete examples for few-shot learning.
+  /// Produces 1 chunk per conversation turn (query + response as a unit).
+  /// Settings are designed to rarely split:
+  /// - Very large maxChunkSize (2000 tokens)
+  /// - Very low similarityThreshold (0.1 = almost never detects boundary)
+  factory ChunkingConfig.invocation() {
+    return ChunkingConfig(
+      windowSize: 1000,
+      overlap: 0,
+      minChunkSize: 1,
+      maxChunkSize: 2000,
+      similarityThreshold: 0.1, // Rarely triggers a split
+      name: 'invocation',
+    );
+  }
+
   @override
   String toString() =>
       'ChunkingConfig($name: window=$windowSize, overlap=$overlap)';

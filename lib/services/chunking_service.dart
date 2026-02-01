@@ -7,6 +7,7 @@ import 'package:everything_stack_template/patterns/semantic_indexable.dart';
 import 'package:everything_stack_template/services/chunking/semantic_chunker.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/hnsw_index.dart';
+import 'package:everything_stack_template/services/tokenizer_service.dart';
 import 'package:everything_stack_template/services/semantic_search/chunk.dart';
 import 'package:everything_stack_template/core/trainable.dart';
 import 'package:everything_stack_template/core/invocation.dart';
@@ -64,6 +65,9 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
   /// Embedding service for generating vectors
   final EmbeddingService embeddingService;
 
+  /// Tokenizer for accurate token counting
+  final TokenizerService tokenizerService;
+
   /// Parent-level chunker (~200 tokens)
   final SemanticChunker parentChunker;
 
@@ -81,6 +85,7 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
   ChunkingService({
     required this.index,
     required this.embeddingService,
+    required this.tokenizerService,
     required this.parentChunker,
     required this.childChunker,
     required this.chunkRepo,
@@ -89,13 +94,12 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
   /// Index a SemanticIndexable entity by chunking and embedding.
   ///
   /// Process:
-  /// 1. Load adaptation state (adaptive chunk sizes)
-  /// 2. Extract chunkable input from entity (title + content, etc.)
-  /// 3. Generate parent chunks (adaptive size based on entity type)
-  /// 4. For each parent chunk, generate child chunks (adaptive size)
-  /// 5. Generate embeddings for all chunks (batch)
-  /// 6. Insert chunks into HNSW index
-  /// 7. Record invocation for training feedback
+  /// 1. Check entity's chunking config ('invocation', 'parent', 'child')
+  /// 2. For 'invocation' config: create 1 chunk for entire text (whole unit)
+  /// 3. For other configs: use parent/child two-level chunking
+  /// 4. Generate embeddings for all chunks
+  /// 5. Insert chunks into HNSW index
+  /// 6. Record invocation for training feedback
   ///
   /// Returns list of created Chunk objects with HNSW IDs
   Future<List<Chunk>> indexEntity(BaseEntity entity) async {
@@ -109,6 +113,86 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
       return [];
     }
 
+    // Check entity's preferred chunking config
+    final chunkingConfig = semanticEntity.getChunkingConfig();
+
+    // For 'invocation' config, create a single whole-unit chunk
+    if (chunkingConfig == 'invocation') {
+      return _indexAsWholeUnit(entity, semanticEntity, input);
+    }
+
+    // Standard two-level chunking for other configs
+    return _indexWithTwoLevelChunking(entity, semanticEntity, input);
+  }
+
+  /// Index entity as a single whole-unit chunk (for VoiceTraits retrieval).
+  Future<List<Chunk>> _indexAsWholeUnit(
+    BaseEntity entity,
+    SemanticIndexable semanticEntity,
+    String input,
+  ) async {
+    final chunks = <Chunk>[];
+    final chunkIds = <String>[];
+
+    // Create single chunk for entire content
+    final chunkId = const Uuid().v4();
+    final chunk = Chunk(
+      id: chunkId,
+      sourceEntityId: entity.uuid,
+      sourceEntityType: entity.runtimeType.toString(),
+      startToken: 0,
+      endToken: tokenizerService.countTokens(input),
+      config: 'invocation',
+      text: input,
+    );
+    chunks.add(chunk);
+    chunkIds.add(chunkId);
+
+    // Generate and insert embedding
+    final embedding = await embeddingService.generate(input);
+    index.insert(chunkId, embedding);
+
+    // Persist chunk to database
+    await _persistChunk(chunk);
+
+    // Track chunk IDs for this entity
+    _chunkRegistry[entity.uuid] = chunkIds;
+
+    // Record invocation for training feedback
+    await recordInvocation(
+      entity.uuid,
+      Invocation(
+        eventId: entity.uuid,
+        componentType: componentType,
+        implementer: null,
+        success: true,
+        confidence: 1.0,
+        input: ChunkingInvocationInput(
+          entityId: entity.uuid,
+          entityType: entity.runtimeType.toString(),
+          chunkableInput:
+              input.substring(0, input.length > 200 ? 200 : input.length) +
+                  '...',
+          inputTokenCount: tokenizerService.countTokens(input),
+        ).toJson(),
+        output: ChunkingInvocationOutput(
+          parentChunkCount: 0,
+          childChunkCount: 0,
+          totalChunks: 1,
+          chunkSizesTokens: [tokenizerService.countTokens(input)],
+        ).toJson(),
+      ),
+    );
+
+    return chunks;
+  }
+
+  /// Index entity with standard two-level (parent/child) chunking.
+  Future<List<Chunk>> _indexWithTwoLevelChunking(
+    BaseEntity entity,
+    SemanticIndexable semanticEntity,
+    String input,
+  ) async {
     // 1. Load adaptation state for adaptive chunk sizes
     final adaptationState = await getAdaptationState();
     final adaptationData =
@@ -121,7 +205,7 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
     final parentSize = adaptationData.getParentSizeForCategory(entityType);
 
     // Estimate token count (rough heuristic: 1 token ≈ 4 chars)
-    final inputTokenCount = (input.length / 4).round();
+    final inputTokenCount = tokenizerService.countTokens(input);
 
     final chunks = <Chunk>[];
     final chunkIds = <String>[];
@@ -172,7 +256,7 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
         chunkIds.add(childChunkId);
 
         // Track chunk size for invocation logging
-        chunkSizes.add((childChunkText.text.length / 4).round());
+        chunkSizes.add(tokenizerService.countTokens(childChunkText.text));
 
         // Generate and insert child embedding
         final childEmbedding =
