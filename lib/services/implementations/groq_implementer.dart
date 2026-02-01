@@ -45,6 +45,15 @@ class GroqImplementer implements LLMImplementer {
   @override
   int get maxTokensLimit => 8192;
 
+  /// Available Groq models for model selection.
+  /// These are the production models available via the Groq API.
+  @override
+  List<String> get availableModels => const [
+        'llama-3.3-70b-versatile', // Best for function calling
+        'llama-3.1-8b-instant', // Fast, good for simple tasks
+        // Note: mixtral-8x7b-32768 was decommissioned by Groq (Jan 2025)
+      ];
+
   @override
   Future<LLMInvocationOutput> chat({
     required List<Message> messages,

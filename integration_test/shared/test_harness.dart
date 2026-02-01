@@ -21,6 +21,7 @@ import 'package:everything_stack_template/core/invocation.dart';
 import 'package:everything_stack_template/core/entity_repository.dart';
 import 'package:everything_stack_template/core/adaptation_state_repository.dart';
 import 'package:everything_stack_template/core/feedback_repository.dart';
+import 'package:everything_stack_template/services/trainables/model_selector.dart';
 import 'test_context.dart';
 import 'response_map_implementer.dart';
 import '../mocks/mock_flutter_tts_implementer.dart';
@@ -202,17 +203,32 @@ class IntegrationTestConfig {
 
     // Unregister Coordinator if exists (has cached service references)
     if (getIt.isRegistered<Coordinator>()) {
-      print('ℹ️ Coordinator already registered, unregistering to re-register with swapped services');
+      print('ℹ️ Coordinator already registered, disposing and unregistering...');
+      final oldCoordinator = getIt<Coordinator>();
+      oldCoordinator.dispose(); // Cancel event listener to prevent double-handling
       getIt.unregister<Coordinator>();
     }
 
     print('🔍 Registering Coordinator...');
+
+    // Get or create ModelSelector
+    ModelSelector modelSelector;
+    if (getIt.isRegistered<ModelSelector>()) {
+      modelSelector = getIt<ModelSelector>();
+    } else {
+      // Create ModelSelector with available models from InferenceService
+      final availableModels = getIt<InferenceService>().getAvailableModels();
+      modelSelector = ModelSelector(availableModels: availableModels);
+      getIt.registerSingleton<ModelSelector>(modelSelector);
+    }
+
     final coordinator = Coordinator(
       embeddingService: EmbeddingService.instance,
       llmService: getIt<InferenceService>(),
       ttsService: getIt<TTSService>(),
       toolExecutor: getIt<ToolExecutor>(),
       contextSelector: getIt<ContextSelector>(), // Now gets the re-registered one
+      modelSelector: modelSelector,
       invocationRepo: getIt<InvocationRepository<Invocation>>(),
       eventBus: getIt<EventBus>(),
     );

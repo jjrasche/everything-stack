@@ -79,6 +79,14 @@ class InferenceService with Trainable<InferenceAdaptationData> {
     }
   }
 
+  /// Get available models per implementer.
+  /// Used by ModelSelector to know which models can be selected.
+  Map<String, List<String>> getAvailableModels() {
+    return _implementers.map(
+      (name, impl) => MapEntry(name, impl.availableModels),
+    );
+  }
+
   /// Chat with LLM using adaptation-aware parameters.
   ///
   /// Flow:

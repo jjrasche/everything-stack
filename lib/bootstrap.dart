@@ -63,6 +63,7 @@ import 'services/service_registry.dart';
 import 'services/service_builders.dart';
 import 'services/coordinator.dart';
 import 'services/context_selector.dart';
+import 'services/trainables/model_selector.dart';
 import 'services/tool_executor.dart';
 import 'services/tool_registry.dart';
 import 'services/event_bus.dart';
@@ -936,6 +937,25 @@ Future<void> setupServiceLocator() async {
     getIt.registerSingleton<ContextSelector>(contextSelector);
     debugPrint('✅ [setupServiceLocator] ContextSelector registered');
 
+    // ========== Model Selector (Thompson Sampling model selection) ==========
+    debugPrint('🔍 [setupServiceLocator] Registering ModelSelector...');
+
+    // Get available models from InferenceService implementers
+    Map<String, List<String>> availableModels = {};
+    if (getIt.isRegistered<InferenceService>()) {
+      availableModels = getIt<InferenceService>().getAvailableModels();
+      debugPrint('   📋 Available models from implementers:');
+      for (final entry in availableModels.entries) {
+        debugPrint('      ${entry.key}: ${entry.value.join(", ")}');
+      }
+    } else {
+      debugPrint('   ⚠️ InferenceService not registered, using empty model list');
+    }
+
+    final modelSelector = ModelSelector(availableModels: availableModels);
+    getIt.registerSingleton<ModelSelector>(modelSelector);
+    debugPrint('✅ [setupServiceLocator] ModelSelector registered');
+
     // ========== Coordinator (Multi-turn context management) ==========
     // Only register if InferenceService and TTSService exist
     if (getIt.isRegistered<InferenceService>() &&
@@ -948,6 +968,7 @@ Future<void> setupServiceLocator() async {
         ttsService: getIt<TTSService>(),
         toolExecutor: getIt<ToolExecutor>(),
         contextSelector: getIt<ContextSelector>(),
+        modelSelector: getIt<ModelSelector>(),
         invocationRepo: getIt<InvocationRepository<Invocation>>(),
         eventBus: getIt<EventBus>(),
       );

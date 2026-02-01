@@ -36,6 +36,7 @@ import 'tts_service.dart';
 import 'tool_executor.dart' show ToolExecutor, ToolCall;
 import 'event_bus.dart';
 import 'context_selector.dart';
+import 'trainables/model_selector.dart';
 import 'types/llm_types.dart';
 
 /// Result of coordinator orchestration
@@ -91,6 +92,7 @@ class Coordinator {
   final TTSService ttsService;
   final ToolExecutor toolExecutor;
   final ContextSelector contextSelector;
+  final ModelSelector modelSelector;
 
   final InvocationRepository<Invocation> invocationRepo;
   final EventBus eventBus;
@@ -107,6 +109,7 @@ class Coordinator {
     required this.ttsService,
     required this.toolExecutor,
     required this.contextSelector,
+    required this.modelSelector,
     required this.invocationRepo,
     required this.eventBus,
   });
@@ -244,7 +247,7 @@ class Coordinator {
       );
       print('✅ Messages built: ${messages.length} messages');
 
-      print('\n[3/4] Getting available tools...');
+      print('\n[3/5] Getting available tools...');
       // TODO: Integrate ToolSelector once semantic indexing is implemented
       // Currently ToolSelector is a stub that returns all tools anyway
       final tools = toolExecutor.toolRegistry
@@ -257,11 +260,18 @@ class Coordinator {
           .toList();
       print('✅ Available tools: ${tools.length} tools');
 
-      print('\n[4/4] Calling LLM service with context...');
+      print('\n[4/5] Selecting model via ModelSelector...');
+      final modelSelection = await modelSelector.selectModel(
+        eventId: eventId,
+        utterance: utterance,
+      );
+      print('✅ Model selected: ${modelSelection.model} '
+          '(confidence: ${(modelSelection.confidence * 100).toStringAsFixed(1)}%)');
+
+      print('\n[5/5] Calling LLM service with context...');
       print('📡 LLM call starting...');
       final llmResponse = await llmService.chatWithTools(
-        model:
-            'llama-3.3-70b-versatile', // Best Groq model for function calling
+        model: modelSelection.model,
         messages: messages,
         tools: tools,
         temperature: 0.7,
@@ -333,7 +343,7 @@ class Coordinator {
         ];
 
         final followUpResponse = await llmService.chatWithTools(
-          model: 'llama-3.3-70b-versatile',
+          model: modelSelection.model,
           messages: followUpMessages,
           tools: tools,
           temperature: 0.7,
@@ -359,7 +369,12 @@ class Coordinator {
           'conversationThreadSize': context.conversationThread.length,
           'semanticContextSize': context.semanticContext.length,
         },
-        llmConfig: {'model': 'llama-3.3-70b-versatile', 'temperature': 0.7},
+        llmConfig: {
+          'model': modelSelection.model,
+          'implementer': modelSelection.implementer,
+          'confidence': modelSelection.confidence,
+          'temperature': 0.7,
+        },
         finalResponse: finalResponse,
         invocationIds: ['tts_synthesis_invocation'],
         success: true,

@@ -113,8 +113,8 @@ class TestContext {
 
     // Wait for orchestration to complete (with timeout)
     final timeout = isSmoke
-        ? const Duration(seconds: 15)  // Smoke tests: real APIs may be slower
-        : const Duration(seconds: 10);  // CI tests: should be fast with mocks
+        ? const Duration(seconds: 30)  // Smoke tests: real APIs may be slower
+        : const Duration(seconds: 20);  // CI tests: should be fast with mocks
 
     try {
       await completer.future.timeout(

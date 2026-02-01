@@ -13,6 +13,11 @@ abstract class LLMImplementer implements Implementer {
   /// Service uses this to constrain preferredResponseLength from adaptation state.
   int get maxTokensLimit;
 
+  /// Available models for this implementer.
+  /// Used by ModelSelector to know which models can be selected.
+  /// Returns list of model identifiers (e.g., ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'])
+  List<String> get availableModels;
+
   /// Call the LLM with typed messages and adaptation parameters.
   ///
   /// Parameters:
