@@ -22,6 +22,7 @@ import 'package:everything_stack_template/core/entity_repository.dart';
 import 'package:everything_stack_template/core/adaptation_state_repository.dart';
 import 'package:everything_stack_template/core/feedback_repository.dart';
 import 'package:everything_stack_template/services/trainables/model_selector.dart';
+import 'package:everything_stack_template/services/voice_traits.dart';
 import 'test_context.dart';
 import 'response_map_implementer.dart';
 import '../mocks/mock_flutter_tts_implementer.dart';
@@ -229,6 +230,7 @@ class IntegrationTestConfig {
       toolExecutor: getIt<ToolExecutor>(),
       contextSelector: getIt<ContextSelector>(), // Now gets the re-registered one
       modelSelector: modelSelector,
+      voiceTraits: getIt.isRegistered<VoiceTraits>() ? getIt<VoiceTraits>() : null,
       invocationRepo: getIt<InvocationRepository<Invocation>>(),
       eventBus: getIt<EventBus>(),
     );

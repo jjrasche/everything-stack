@@ -37,6 +37,7 @@ import 'tool_executor.dart' show ToolExecutor, ToolCall;
 import 'event_bus.dart';
 import 'context_selector.dart';
 import 'trainables/model_selector.dart';
+import 'voice_traits.dart';
 import 'types/llm_types.dart';
 
 /// Result of coordinator orchestration
@@ -93,6 +94,7 @@ class Coordinator {
   final ToolExecutor toolExecutor;
   final ContextSelector contextSelector;
   final ModelSelector modelSelector;
+  final VoiceTraits? voiceTraits; // Optional for backwards compatibility
 
   final InvocationRepository<Invocation> invocationRepo;
   final EventBus eventBus;
@@ -110,6 +112,7 @@ class Coordinator {
     required this.toolExecutor,
     required this.contextSelector,
     required this.modelSelector,
+    this.voiceTraits,
     required this.invocationRepo,
     required this.eventBus,
   });
@@ -260,7 +263,7 @@ class Coordinator {
           .toList();
       print('✅ Available tools: ${tools.length} tools');
 
-      print('\n[4/5] Selecting model via ModelSelector...');
+      print('\n[4/6] Selecting model via ModelSelector...');
       final modelSelection = await modelSelector.selectModel(
         eventId: eventId,
         utterance: utterance,
@@ -268,11 +271,36 @@ class Coordinator {
       print('✅ Model selected: ${modelSelection.model} '
           '(confidence: ${(modelSelection.confidence * 100).toStringAsFixed(1)}%)');
 
-      print('\n[5/5] Calling LLM service with context...');
+      // 5. Get voice traits (contrastive few-shot examples)
+      print('\n[5/6] Getting voice traits examples...');
+      var finalMessages = messages;
+      if (voiceTraits != null) {
+        try {
+          final examples = await voiceTraits!.getExamples(
+            query: utterance,
+            eventId: eventId,
+          );
+          if (examples.hasExamples) {
+            final traitsPrompt = voiceTraits!.formatPrompt(examples);
+            // Inject into system message
+            finalMessages = _injectVoiceTraits(messages, traitsPrompt);
+            print('✅ Voice traits injected: ${examples.totalCount} examples');
+          } else {
+            print('ℹ️ No voice traits examples found');
+          }
+        } catch (e) {
+          // Degrade gracefully if voice traits fails
+          print('⚠️ Voice traits failed (degraded gracefully): $e');
+        }
+      } else {
+        print('ℹ️ VoiceTraits not configured');
+      }
+
+      print('\n[6/6] Calling LLM service with context...');
       print('📡 LLM call starting...');
       final llmResponse = await llmService.chatWithTools(
         model: modelSelection.model,
-        messages: messages,
+        messages: finalMessages,
         tools: tools,
         temperature: 0.7,
       );
@@ -407,5 +435,35 @@ class Coordinator {
         latencyMs: latency,
       );
     }
+  }
+
+  /// Inject voice traits prompt into messages.
+  ///
+  /// Appends voice traits to the system message, or creates one if not present.
+  List<Map<String, dynamic>> _injectVoiceTraits(
+    List<Map<String, dynamic>> messages,
+    String traitsPrompt,
+  ) {
+    if (traitsPrompt.isEmpty) return messages;
+
+    final result = List<Map<String, dynamic>>.from(messages);
+
+    // Find system message and append traits
+    final systemIndex = result.indexWhere((m) => m['role'] == 'system');
+    if (systemIndex >= 0) {
+      final existing = result[systemIndex]['content'] as String? ?? '';
+      result[systemIndex] = {
+        ...result[systemIndex],
+        'content': '$existing\n\n$traitsPrompt',
+      };
+    } else {
+      // No system message, add one at the beginning
+      result.insert(0, {
+        'role': 'system',
+        'content': traitsPrompt,
+      });
+    }
+
+    return result;
   }
 }

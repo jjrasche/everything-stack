@@ -64,6 +64,7 @@ import 'services/service_builders.dart';
 import 'services/coordinator.dart';
 import 'services/context_selector.dart';
 import 'services/trainables/model_selector.dart';
+import 'services/voice_traits.dart';
 import 'services/tool_executor.dart';
 import 'services/tool_registry.dart';
 import 'services/event_bus.dart';
@@ -956,6 +957,22 @@ Future<void> setupServiceLocator() async {
     getIt.registerSingleton<ModelSelector>(modelSelector);
     debugPrint('✅ [setupServiceLocator] ModelSelector registered');
 
+    // ========== VoiceTraits (Contrastive few-shot examples) ==========
+    debugPrint('🔍 [setupServiceLocator] Registering VoiceTraits...');
+    VoiceTraits? voiceTraits;
+    if (getIt.isRegistered<SemanticSearchService>() &&
+        getIt.isRegistered<FeedbackRepository>()) {
+      voiceTraits = VoiceTraits(
+        searchService: getIt<SemanticSearchService>(),
+        invocationRepo: getIt<InvocationRepository<Invocation>>(),
+        feedbackRepo: getIt<FeedbackRepository>(),
+      );
+      getIt.registerSingleton<VoiceTraits>(voiceTraits);
+      debugPrint('✅ [setupServiceLocator] VoiceTraits registered');
+    } else {
+      debugPrint('⏭️ [setupServiceLocator] VoiceTraits skipped (dependencies not registered)');
+    }
+
     // ========== Coordinator (Multi-turn context management) ==========
     // Only register if InferenceService and TTSService exist
     if (getIt.isRegistered<InferenceService>() &&
@@ -969,6 +986,7 @@ Future<void> setupServiceLocator() async {
         toolExecutor: getIt<ToolExecutor>(),
         contextSelector: getIt<ContextSelector>(),
         modelSelector: getIt<ModelSelector>(),
+        voiceTraits: voiceTraits,
         invocationRepo: getIt<InvocationRepository<Invocation>>(),
         eventBus: getIt<EventBus>(),
       );
