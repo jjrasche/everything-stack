@@ -227,6 +227,7 @@ class ContextCapacity with Trainable<ContextCapacityAdaptationData> {
     required String model,
     required String eventId,
     String? userId,
+    int? customTokenBudget, // Optional: override learned budget (for testing)
   }) async {
     // 1. Get adaptation state
     final state = await getAdaptationState(userId: userId);
@@ -236,7 +237,7 @@ class ContextCapacity with Trainable<ContextCapacityAdaptationData> {
 
     // 2. Get config for this model
     final config = params.getConfigForModel(model);
-    final tokenBudget = config.effectiveContextBudget;
+    final tokenBudget = customTokenBudget ?? config.effectiveContextBudget;
 
     print('\n📏 [ContextCapacity] Truncating for $model');
     print('   Budget: $tokenBudget tokens');

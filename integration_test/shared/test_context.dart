@@ -21,6 +21,7 @@ import 'package:everything_stack_template/tools/regulation/repositories/regulati
 import 'package:everything_stack_template/tools/regulation/repositories/commitment_repository.dart';
 import 'package:everything_stack_template/tools/regulation/repositories/commitment_log_repository.dart';
 import 'package:everything_stack_template/core/enrichment_queue_repository.dart';
+import 'package:everything_stack_template/core/feedback_repository.dart';
 import 'package:everything_stack_template/services/enrichment/enrichment_runner.dart';
 import 'package:everything_stack_template/services/chunking_service.dart';
 import 'package:everything_stack_template/services/hnsw_index.dart';
@@ -54,6 +55,8 @@ class TestContext {
         _repos[type] = getIt<CommitmentRepository>();
       } else if (type == CommitmentLogRepository) {
         _repos[type] = getIt<CommitmentLogRepository>();
+      } else if (type == FeedbackRepository) {
+        _repos[type] = getIt<FeedbackRepository>();
       } else {
         throw ArgumentError('Unknown repo type: $type');
       }
@@ -71,6 +74,7 @@ class TestContext {
   RegulationEntryRepository get regulationEntryRepo => get<RegulationEntryRepository>();
   CommitmentRepository get commitmentRepo => get<CommitmentRepository>();
   CommitmentLogRepository get commitmentLogRepo => get<CommitmentLogRepository>();
+  FeedbackRepository get feedbackRepo => get<FeedbackRepository>();
 
   // Enrichment queue related services (always available from GetIt)
   EnrichmentQueueRepository get enrichmentQueueRepo => GetIt.instance<EnrichmentQueueRepository>();

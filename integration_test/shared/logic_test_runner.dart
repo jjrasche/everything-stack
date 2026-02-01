@@ -33,6 +33,8 @@ import '../context_selection_logic.dart';
 import '../invocation_chunking_logic.dart';
 import '../tokenizer_logic.dart';
 import '../model_selection_logic.dart';
+import '../voice_traits_logic.dart';
+import '../context_capacity_logic.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +44,8 @@ void main() {
   // Aggregate all test configs
   final configs = {
     'model_selection': modelSelectionTest,
+    'voice_traits': voiceTraitsTest,
+    'context_capacity': contextCapacityTest,
     'context_selection': contextSelectionTest,
     'invocation_chunking': invocationChunkingTest,
     'tokenizer': tokenizerTest,
