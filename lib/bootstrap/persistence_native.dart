@@ -15,7 +15,9 @@ import '../core/enrichment_queue_repository.dart';
 import '../core/trial_repository.dart';
 import '../core/entity_repository.dart';
 import '../core/invocation.dart';
+import '../core/persistence/persistence_adapter.dart';
 import '../domain/audio_file.dart';
+import '../domain/atomic_insight.dart';
 import '../persistence/objectbox/invocation_objectbox_adapter.dart';
 import '../persistence/objectbox/adaptation_state_objectbox_adapter.dart';
 import '../persistence/objectbox/feedback_objectbox_adapter.dart';
@@ -24,6 +26,7 @@ import '../persistence/objectbox/enrichment_queue_objectbox_adapter.dart';
 import '../persistence/objectbox/trial_objectbox_adapter.dart';
 import '../persistence/objectbox/audio_file_objectbox_adapter.dart';
 import '../persistence/objectbox/chunk_objectbox_adapter.dart';
+import '../persistence/objectbox/atomic_insight_objectbox_adapter.dart';
 import '../core/chunk_repository.dart';
 import 'objectbox_store_factory.dart';
 
@@ -71,7 +74,8 @@ Future<void> initializePersistence(GetIt getIt) async {
   );
 
   // Register AudioFile adapter (repository created later after EmbeddingService is ready)
-  getIt.registerSingleton<AudioFileObjectBoxAdapter>(audioFileAdapter);
+  // Using PersistenceAdapter<AudioFile> for platform-agnostic access
+  getIt.registerSingleton<PersistenceAdapter<AudioFile>>(audioFileAdapter);
 
   // Create and register EnrichmentQueue adapter
   final enrichmentQueueAdapter = EnrichmentQueueObjectBoxAdapter(store);
@@ -80,6 +84,10 @@ Future<void> initializePersistence(GetIt getIt) async {
   // Create and register Chunk adapter (for semantic search)
   final chunkAdapter = ChunkObjectBoxAdapter(store);
   getIt.registerSingleton<ChunkRepository>(chunkAdapter);
+
+  // Create and register AtomicInsight adapter
+  final atomicInsightAdapter = AtomicInsightObjectBoxAdapter(store);
+  getIt.registerSingleton<PersistenceAdapter<AtomicInsight>>(atomicInsightAdapter);
 }
 
 /// Create EventRepository for native platforms using ObjectBox.

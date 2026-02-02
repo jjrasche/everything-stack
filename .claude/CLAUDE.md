@@ -228,6 +228,77 @@ flutter build web --dart-define=...   # Web
 
 **CI/CD:** Set secrets in GitHub → pass to build as `--dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}`
 
+## Debug Infrastructure (AI-Driven Debugging)
+
+HTTP debug server on `localhost:9999` enables autonomous debugging without screenshots.
+
+### Quick Reference
+```bash
+# Discovery
+curl http://localhost:9999/state              # Full app state
+curl http://localhost:9999/action/listActions # Available actions
+
+# Component actions (via DebugRegistry)
+curl http://localhost:9999/action/invoke?target=chunking.getStats
+curl http://localhost:9999/action/invoke?target=chunking.rebuild
+
+# Direct actions
+curl http://localhost:9999/search?q=hello&limit=5
+curl http://localhost:9999/entity/{uuid}
+curl http://localhost:9999/screenshot
+curl http://localhost:9999/action/findOrphanedChunks
+curl http://localhost:9999/action/deleteOrphanedChunks
+
+# VLM screenshot analysis (requires ANTHROPIC_API_KEY or OPENAI_API_KEY)
+curl "http://localhost:9999/action/analyzeScreenshot"
+curl "http://localhost:9999/action/analyzeScreenshot?prompt=describe any errors"
+```
+
+### Architecture
+```
+lib/core/debug/
+├── debug.dart              # Barrel export
+├── debug_introspectable.dart  # Mixin for components
+└── debug_registry.dart     # Central registry
+
+lib/services/debug/
+├── debug_server.dart       # HTTP transport
+├── debug_bootstrap.dart    # Wires everything
+└── screenshot_service.dart # UI capture
+```
+
+### Adding Debug to a Component
+```dart
+class MyService with DebugIntrospectable {
+  @override
+  String get debugName => 'myservice';
+
+  @override
+  Map<String, dynamic> getDebugState() => {
+    'someMetric': value,
+  };
+
+  @override
+  Map<String, DebugAction> getDebugActions() => {
+    'doThing': DebugAction(
+      description: 'Does something useful',
+      mutates: true,
+      handler: (params) async => {'result': 'done'},
+    ),
+  };
+}
+
+// In debug_bootstrap.dart:
+registry.register(getIt<MyService>());
+```
+
+### When to Use
+- Diagnosing entity loading issues
+- Checking index consistency
+- Cleaning up orphaned data
+- Triggering index rebuilds without app restart
+- Getting detailed stats on chunks, embeddings, etc.
+
 ## Permissions
 
 **Run without asking:**
@@ -307,6 +378,26 @@ final defaultTTS = TTSService.selectCompatibleImplementer(ttsImplementers);
 
 ## Future Considerations
 
+**Narrative Identity System (Deferred):**
+Separate memory system for tracking user identity, goals, and values across time scopes:
+- NarrativeEntry: Identity/goal patterns with temporal scope (session/day/week/project/life)
+- NarrativeThinker: LLM extraction focused on WHO the user is (not general facts)
+- NarrativeRetriever: Semantic search across scoped narratives for coordinator context
+- NarrativeCheckpoint: Training UI for user review/refinement of narratives
+- Distinction: AtomicInsight = semantic memory (factual knowledge), NarrativeEntry = identity memory
+- Research: Amazon Bedrock AgentCore episodic memory, Mem0 preference/identity models
+- Priority: After AtomicInsight extraction and clustering prove out
+
+**MomentState System (Deferred):**
+Real-time working memory for conversational context (ephemeral, turn-level):
+- Conversational posture (collaborative, adversarial, exploratory)
+- Current focus/topic, engagement level, turn dynamics
+- Inputs: Voice prosody (pitch, pace, tone) + emotion analysis + recent turns
+- Process: Real-time emotion classifier (91-98% accuracy, 300ms response like Hume EVI)
+- Use case: Context for coordinator pipeline (affects tool selection, response style)
+- Research: Multi-modal emotion recognition (text+audio fusion), Hume AI empathic voice
+- Priority: After core semantic memory and narrative systems operational
+
 **Test Logic Co-location:**
 Test logic (IntegrationTestConfig) is currently pure - no flutter_test dependency. Could be moved to lib/ alongside implementation:
 - Current: `integration_test/regulation_logic.dart` (separate from code)
@@ -320,11 +411,15 @@ Test logic (IntegrationTestConfig) is currently pure - no flutter_test dependenc
 This section tracks active development, blockers, and work in progress. It changes daily. **When a feature is finished, delete it from this section.** If the work is architecturally significant, document the decision in DECISIONS.md instead.
 
 ### Active Development
-- **Tool Discoverability System** (NEXT PRIORITY) - Trainable component for LLM tool selection
-  - Currently: All tools registered in ToolRegistry, but no semantic filtering/discovery
-  - Needed: Component that learns which tools to surface based on user intent
-  - NOT hardcoded system prompt rules - trainable via invocation feedback
-  - Pattern: Semantic tool search + relevance scoring + invocation logging
+- **AtomicInsight Extraction** (CURRENT PRIORITY) - LLM-based semantic memory from conversation history
+  - Goal: Denoise raw conversation transcripts into high-signal semantic facts
+  - Entity: AtomicInsight (content: "[Fact]. Because [reason].", embedding, no scope)
+  - Service: AtomicInsightExtractor (Llama 3.3 70B on Groq for extraction quality)
+  - Status: Foundation complete (entity, repository, persistence), TDD extraction tests next
+  - Cost: ~$18 for 10k historical turns, ~$0.0018 per ongoing turn
+  - Phase 2: Golden test data for extraction accuracy (format compliance, deduplication)
+  - Phase 3: Clustering (K-means → L1 InsightCluster → L2 MetaCluster)
+  - Phase 4: context.explore tool for agentic LLM drill-down (L1+L2 initial, L0 on demand)
 - Trainable component migration (9 components to mixin pattern, ~60% done)
 - ContextManager service integration
 - Invocation logging wired throughout pipeline

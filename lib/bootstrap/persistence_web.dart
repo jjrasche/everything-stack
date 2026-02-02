@@ -14,6 +14,9 @@ import '../core/event_repository.dart';
 import '../core/enrichment_queue_repository.dart';
 import '../core/trial_repository.dart';
 import '../core/chunk_repository.dart';
+import '../core/persistence/persistence_adapter.dart';
+import '../domain/audio_file.dart';
+import '../domain/atomic_insight.dart';
 import '../persistence/indexeddb/invocation_indexeddb_adapter.dart';
 import '../persistence/indexeddb/chunk_indexeddb_adapter.dart';
 import '../persistence/indexeddb/adaptation_state_indexeddb_adapter.dart';
@@ -21,6 +24,8 @@ import '../persistence/indexeddb/feedback_indexeddb_adapter.dart';
 import '../persistence/indexeddb/event_indexeddb_adapter.dart';
 import '../persistence/indexeddb/enrichment_queue_indexeddb_adapter.dart';
 import '../persistence/indexeddb/trial_indexeddb_adapter.dart';
+import '../persistence/indexeddb/audio_file_indexeddb_adapter.dart';
+import '../persistence/indexeddb/atomic_insight_indexeddb_adapter.dart';
 import 'indexeddb_factory.dart';
 
 /// Initialize persistence layer for web platform using IndexedDB.
@@ -60,6 +65,15 @@ Future<void> initializePersistence(GetIt getIt) async {
   // Register stub ChunkRepository (semantic search disabled on web)
   final chunkAdapter = ChunkObjectBoxAdapter(null);
   getIt.registerSingleton<ChunkRepository>(chunkAdapter);
+
+  // Register AudioFile adapter (repository created later after EmbeddingService is ready)
+  // Using PersistenceAdapter<AudioFile> for platform-agnostic access
+  final audioFileAdapter = AudioFileIndexedDBAdapter(db);
+  getIt.registerSingleton<PersistenceAdapter<AudioFile>>(audioFileAdapter);
+
+  // Register AtomicInsight adapter
+  final atomicInsightAdapter = AtomicInsightIndexedDBAdapter(db);
+  getIt.registerSingleton<PersistenceAdapter<AtomicInsight>>(atomicInsightAdapter);
 }
 
 /// Create EventRepository for web platform using IndexedDB.

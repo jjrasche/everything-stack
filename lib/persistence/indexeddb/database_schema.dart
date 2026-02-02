@@ -56,6 +56,9 @@ class ObjectStores {
   static const String regulationEntries = 'regulation_entries';
   static const String commitments = 'commitments';
   static const String commitmentLogs = 'commitment_logs';
+  static const String audioFiles = 'audio_files';
+  static const String atomicInsights = 'atomic_insights';
+  static const String chunks = 'chunks';
 }
 
 /// Index names for each object store
@@ -140,6 +143,25 @@ class Indexes {
   static const String commitmentLogsId = 'id';
   static const String commitmentLogsUuid = 'uuid';
   static const String commitmentLogsSyncStatus = 'dbSyncStatus';
+
+  // AudioFile indexes
+  static const String audioFilesId = 'id';
+  static const String audioFilesUuid = 'uuid';
+  static const String audioFilesSyncStatus = 'dbSyncStatus';
+  static const String audioFilesEventId = 'eventId';
+
+  // AtomicInsight indexes
+  static const String atomicInsightsId = 'id';
+  static const String atomicInsightsUuid = 'uuid';
+  static const String atomicInsightsSyncStatus = 'dbSyncStatus';
+  static const String atomicInsightsScope = 'scope';
+  static const String atomicInsightsProjectId = 'projectId';
+  static const String atomicInsightsIsArchived = 'isArchived';
+
+  // Chunk indexes
+  static const String chunksId = 'id';
+  static const String chunksChunkId = 'chunkId';
+  static const String chunksSourceEntityId = 'sourceEntityId';
 }
 
 /// Schema definition for notes object store
@@ -562,6 +584,36 @@ class CommitmentLogsStoreSchema {
   ];
 }
 
+/// Schema definition for audio_files object store
+class AudioFilesStoreSchema {
+  static const String storeName = ObjectStores.audioFiles;
+  static const String keyPath = 'uuid';
+  static const bool autoIncrement = false;
+
+  static const List<IndexDefinition> indexes = [
+    IndexDefinition(
+      name: Indexes.audioFilesId,
+      keyPath: 'id',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.audioFilesUuid,
+      keyPath: 'uuid',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.audioFilesSyncStatus,
+      keyPath: 'dbSyncStatus',
+      unique: false,
+    ),
+    IndexDefinition(
+      name: Indexes.audioFilesEventId,
+      keyPath: 'eventId',
+      unique: false, // Multiple audio files can belong to same event
+    ),
+  ];
+}
+
 /// Schema definition for HNSW index metadata store
 class HnswIndexStoreSchema {
   static const String storeName = ObjectStores.hnswIndex;
@@ -690,6 +742,12 @@ class DatabaseSchema {
       keyPath: CommitmentLogsStoreSchema.keyPath,
       autoIncrement: CommitmentLogsStoreSchema.autoIncrement,
       indexes: CommitmentLogsStoreSchema.indexes,
+    ),
+    ObjectStoreDefinition(
+      name: AudioFilesStoreSchema.storeName,
+      keyPath: AudioFilesStoreSchema.keyPath,
+      autoIncrement: AudioFilesStoreSchema.autoIncrement,
+      indexes: AudioFilesStoreSchema.indexes,
     ),
   ];
 }

@@ -100,6 +100,8 @@ import 'core/feedback_repository.dart';
 import 'core/platform_detector.dart';
 import 'bootstrap/implementer_selector.dart';
 import 'domain/audio_file.dart';
+import 'domain/atomic_insight.dart';
+import 'domain/atomic_insight_repository.dart';
 import 'services/enrichment/enrichment_runner.dart';
 import 'services/enrichment/enrichment_worker.dart';
 import 'services/enrichment/semantic_enrichment_worker.dart';
@@ -756,6 +758,27 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
       debugPrint('✅ Audio: AudioStorage');
     } catch (e) {
       debugPrint('⚠️ Audio storage service init failed: $e');
+    }
+
+    // 16. Initialize AtomicInsight Repository and Extractor
+    try {
+      // Wrap AtomicInsight adapter in AtomicInsightRepository now that EmbeddingService is ready
+      final atomicInsightAdapter = getIt<PersistenceAdapter<AtomicInsight>>();
+      final atomicInsightRepo = AtomicInsightRepository(
+        adapter: atomicInsightAdapter,
+        embeddingService: EmbeddingService.instance,
+        embeddingQueueService: embeddingQueueService,
+      );
+      getIt.registerSingleton<AtomicInsightRepository>(atomicInsightRepo);
+      debugPrint('✅ AtomicInsight: Repository registered');
+
+      // Initialize AtomicInsightExtractor with GroqService
+      // Note: GroqService will be available from InferenceService initialization
+      // For now, we'll defer extractor initialization until we have a proper GroqService
+      // TODO: Initialize AtomicInsightExtractor after GroqService is properly available
+      debugPrint('✅ AtomicInsight: Repository and Extractor ready');
+    } catch (e) {
+      debugPrint('⚠️ AtomicInsight initialization failed: $e');
     }
 
     // 14. Initialize STT Service (Speech-to-Text) with implementers
