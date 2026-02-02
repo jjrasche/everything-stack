@@ -39,6 +39,7 @@ dependencies:
   json_annotation: ^4.8.0
   http: ^1.1.0
   flutter_dotenv: ^5.1.0
+  web: ^1.0.0  # Modern web APIs (replaces dart:html)
   timeago: ^3.7.0
 
   # Tokenization (for ContextCapacity token counting)

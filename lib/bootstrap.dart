@@ -46,6 +46,7 @@ import 'services/connectivity_service.dart';
 import 'services/embedding_service.dart';
 import 'services/tokenizer_service.dart';
 import 'services/embedding_queue_service.dart';
+import 'services/debug/debug_bootstrap.dart';
 import 'services/audio_recording_service.dart';
 import 'services/audio_storage.dart';
 import 'services/stt_service.dart';
@@ -105,8 +106,9 @@ import 'services/enrichment/semantic_enrichment_worker.dart';
 import 'core/enrichment_queue_item.dart';
 import 'core/enrichment_queue_repository.dart';
 import 'core/repository_registry.dart';
-import 'persistence/indexeddb/stub.dart'
-    if (dart.library.io) 'persistence/objectbox/audio_file_objectbox_adapter.dart';
+// AudioFile adapter registered in platform-specific persistence files
+// Native: persistence/objectbox/audio_file_objectbox_adapter.dart
+// Web: persistence/indexeddb/audio_file_indexeddb_adapter.dart
 
 // Platform-specific persistence initialization (ObjectBox or IndexedDB)
 import 'bootstrap/persistence_web.dart'
@@ -119,6 +121,11 @@ import 'bootstrap/blob_store_factory_web.dart'
 // Platform-specific EmbeddingTaskStore factory
 import 'services/embedding_task_store_web.dart'
     if (dart.library.io) 'services/embedding_task_store_native.dart';
+
+// Platform-specific HnswIndexStore (persistence for pre-built HNSW index)
+import 'services/hnsw_index_store.dart';
+import 'services/hnsw_index_store_web.dart'
+    if (dart.library.io) 'services/hnsw_index_store_native.dart';
 
 /// Configuration for Everything Stack initialization.
 class EverythingStackConfig {
@@ -555,8 +562,29 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
     if (!kIsWeb) {
       debugPrint('🔍 Initializing semantic search infrastructure...');
       try {
-        // Create HNSW index
-        final hnswIndex = HnswIndex(dimensions: 384);
+        // Try loading pre-built HNSW index from cache (fast path: ~100ms)
+        // Fall back to creating empty index if not cached
+        final indexStore = createHnswIndexStore(_getIndexStorePath());
+        final loadResult = await indexStore.loadIndex();
+
+        HnswIndex hnswIndex;
+        bool needsRebuild = false;
+
+        if (loadResult.isLoaded) {
+          // Fast path: Use cached index directly
+          hnswIndex = loadResult.index!;
+          debugPrint('⚡ HNSW index loaded from cache: ${hnswIndex.size} vectors');
+          debugPrint('   ${loadResult.metadata}');
+        } else {
+          // Cache not available - will need to rebuild
+          hnswIndex = HnswIndex(dimensions: 384);
+          needsRebuild = true;
+          if (loadResult.hasFailed) {
+            debugPrint('⚠️ Cache load failed: ${loadResult.error}');
+          } else {
+            debugPrint('📭 No cached index found');
+          }
+        }
 
       // Create parent and child chunkers
       final parentChunker = SemanticChunker(config: ChunkingConfig.parent());
@@ -579,12 +607,35 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
       getIt.registerSingleton<ChunkingService>(chunkingService);
       debugPrint('✅ ChunkingService initialized');
 
+      // Rebuild from database if cache wasn't available
+      if (needsRebuild) {
+        debugPrint('🔄 Rebuilding HNSW index from database...');
+        final stopwatch = Stopwatch()..start();
+
+        final loadedChunks = await chunkingService.rebuildIndexFromStorage();
+        stopwatch.stop();
+        debugPrint('✅ HNSW index rebuilt with $loadedChunks chunks (${stopwatch.elapsedMilliseconds}ms)');
+
+        // Save for next startup (background, don't block)
+        if (hnswIndex.size > 0) {
+          indexStore.saveIndex(hnswIndex).then((_) {
+            debugPrint('💾 HNSW index cached for next startup');
+          }).catchError((e) {
+            debugPrint('⚠️ Failed to cache HNSW index: $e');
+          });
+        }
+      }
+
+      // Register index store for later updates (e.g., after new entities indexed)
+      getIt.registerSingleton<HnswIndexStore>(indexStore);
+
       // Register HNSW index for direct access
       getIt.registerSingleton<HnswIndex>(hnswIndex);
-      debugPrint('✅ HNSW index registered');
+      debugPrint('✅ HNSW index registered (${hnswIndex.size} vectors)');
 
-      // Create SemanticSearchService
+      // Create SemanticSearchService with entity loader registry
       final entityLoader = EntityLoaderImpl();
+      entityLoader.registerDefaults(); // Register Invocation lookup (add more as needed)
       final semanticSearchService = SemanticSearchService(
         index: hnswIndex,
         embeddingService: EmbeddingService.instance,
@@ -693,7 +744,7 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
     // 15. Initialize Audio Storage Service
     try {
       // Wrap AudioFile adapter in EntityRepository now that EmbeddingService is ready
-      final audioFileAdapter = getIt<AudioFileObjectBoxAdapter>();
+      final audioFileAdapter = getIt<PersistenceAdapter<AudioFile>>();
       final audioFileRepo = EntityRepository<AudioFile>(
         adapter: audioFileAdapter,
         embeddingService: EmbeddingService.instance,
@@ -753,6 +804,10 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
     //
     // See: lib/providers/ for Riverpod provider setup with repositories
     // See: lib/main.dart for ContextManager initialization
+    // Initialize debug infrastructure (HTTP server, screenshot capture)
+    // This enables AI-driven debugging via curl http://localhost:9999/
+    await initializeDebugInfrastructure();
+
     debugPrint('\n✅ Bootstrap complete: infrastructure services initialized');
   } catch (e, st) {
     debugPrint('❌ [Bootstrap] FATAL ERROR during service initialization: $e');
@@ -1013,4 +1068,20 @@ Future<void> setupServiceLocator() async {
     debugPrint('Stack trace: $st');
     rethrow;
   }
+}
+
+/// Get the path for storing the HNSW index cache.
+///
+/// On native platforms, this returns the ObjectBox database directory
+/// so the index is stored alongside the database data.
+/// On web, returns empty string (web store ignores path).
+String _getIndexStorePath() {
+  if (kIsWeb) {
+    return ''; // Web store doesn't use file path
+  }
+
+  // On native platforms, use the default ObjectBox directory
+  // The HNSW index file will be stored alongside the ObjectBox database
+  // This avoids needing to access the Store instance before it's fully initialized
+  return 'objectbox';
 }
