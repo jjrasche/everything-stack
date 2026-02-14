@@ -1,0 +1,371 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
+
+import '../../domain/atomic_insight.dart';
+import '../../domain/atomic_insight_repository.dart';
+import '../../core/debug/debug_introspectable.dart';
+import '../prompt/prompt_registry.dart';
+import '../inference_service.dart';
+
+class AtomicInsightExtractor with DebugIntrospectable {
+  static const String _extractionModel = 'llama-3.3-70b-versatile';
+
+  /// Cosine similarity threshold for deduplication (empirically tuned)
+  static const double _dedupThreshold = 0.7;
+
+  /// Max existing insights shown in dedup context to keep prompt size bounded
+  static const int _dedupContextLimit = 30;
+
+  static const int _contentPreviewLength = 100;
+
+  final AtomicInsightRepository _insightRepo;
+  final InferenceService _inferenceService;
+  PromptRegistry? _promptRegistry;
+
+  int _extractionCount = 0;
+  int _insightsSaved = 0;
+  int _duplicatesSkipped = 0;
+  DateTime? _lastExtractionAt;
+
+  AtomicInsightExtractor({
+    required AtomicInsightRepository insightRepo,
+    required InferenceService inferenceService,
+    PromptRegistry? promptRegistry,
+  })  : _insightRepo = insightRepo,
+        _inferenceService = inferenceService,
+        _promptRegistry = promptRegistry;
+
+  set promptRegistry(PromptRegistry registry) =>
+      _promptRegistry = registry;
+
+  /// Process a live conversation turn and extract/update atomic insights.
+  Future<List<AtomicInsight>> updateFromTurn({
+    required String utterance,
+    required Map<String, dynamic> intentOutput,
+    required List<Map<String, dynamic>> chatHistory,
+    required List<AtomicInsight> previousInsights,
+  }) async {
+    try {
+      final context = _buildLiveContext(
+        utterance: utterance,
+        intentOutput: intentOutput,
+        chatHistory: chatHistory,
+        previousInsights: previousInsights,
+      );
+
+      final extracted = await _extract(context);
+      return _deduplicateAndSave(extracted);
+    } catch (e, st) {
+      debugPrint('AtomicInsightExtractor.updateFromTurn failed: $e\n$st');
+      return [];
+    }
+  }
+
+  /// Extract insights from imported conversation history in batches.
+  ///
+  /// [overridePrompt] allows testing a candidate prompt without changing
+  /// the registry — fixes the bug where both baseline and candidate
+  /// extractions used the same registry prompt.
+  Future<List<AtomicInsight>> extractFromConversation({
+    required List<Map<String, dynamic>> turns,
+    int batchSize = 5,
+    String? overridePrompt,
+  }) async {
+    final allInsights = <AtomicInsight>[];
+
+    for (var i = 0; i < turns.length; i += batchSize) {
+      final batch = turns.sublist(
+        i,
+        (i + batchSize).clamp(0, turns.length),
+      );
+
+      final context = _buildBatchContext(
+        batch: batch,
+        batchIndex: i ~/ batchSize,
+        totalTurns: turns.length,
+        previousInsights: allInsights,
+      );
+
+      try {
+        final extracted = await _extract(context, overridePrompt: overridePrompt);
+        final saved = await _deduplicateAndSave(extracted);
+        allInsights.addAll(saved);
+      } catch (e, st) {
+        debugPrint(
+          'AtomicInsightExtractor: Batch ${i ~/ batchSize} failed: $e\n$st',
+        );
+      }
+    }
+
+    return allInsights;
+  }
+
+  String _buildLiveContext({
+    required String utterance,
+    required Map<String, dynamic> intentOutput,
+    required List<Map<String, dynamic>> chatHistory,
+    required List<AtomicInsight> previousInsights,
+  }) {
+    final buffer = StringBuffer();
+
+    buffer.writeln('=== CURRENT UTTERANCE ===');
+    buffer.writeln(utterance);
+    buffer.writeln();
+
+    buffer.writeln('=== INTENT ANALYSIS ===');
+    buffer.writeln('Classification: ${intentOutput['classification'] ?? 'unknown'}');
+    buffer.writeln('Confidence: ${intentOutput['confidence'] ?? 'N/A'}');
+    if (intentOutput['reasoning'] != null) {
+      buffer.writeln('Reasoning: ${intentOutput['reasoning']}');
+    }
+    buffer.writeln();
+
+    buffer.writeln('=== RECENT CHAT HISTORY ===');
+    for (final msg in chatHistory.take(10)) {
+      final role = msg['role'] ?? 'unknown';
+      final content = (msg['content'] ?? '').toString();
+      final preview = content.length > 200 ? content.substring(0, 200) : content;
+      buffer.writeln('$role: $preview');
+    }
+    buffer.writeln();
+
+    _appendExistingInsights(buffer, previousInsights);
+
+    return buffer.toString();
+  }
+
+  String _buildBatchContext({
+    required List<Map<String, dynamic>> batch,
+    required int batchIndex,
+    required int totalTurns,
+    required List<AtomicInsight> previousInsights,
+  }) {
+    final buffer = StringBuffer();
+
+    buffer.writeln('=== CONVERSATION BATCH ${batchIndex + 1} ===');
+    buffer.writeln('(Turns ${batchIndex * batch.length + 1}-${batchIndex * batch.length + batch.length} of $totalTurns)');
+    buffer.writeln();
+
+    for (var i = 0; i < batch.length; i++) {
+      final turn = batch[i];
+      final prompt = turn['prompt'] as String? ?? '';
+      final response = turn['response'] as String? ?? '';
+
+      buffer.writeln('--- Turn ${batchIndex * batch.length + i + 1} ---');
+      buffer.writeln('Human: $prompt');
+      buffer.writeln();
+      final responsePreview = response.length > 500
+          ? '${response.substring(0, 500)}...'
+          : response;
+      buffer.writeln('Assistant: $responsePreview');
+      buffer.writeln();
+    }
+
+    _appendExistingInsights(buffer, previousInsights);
+
+    return buffer.toString();
+  }
+
+  void _appendExistingInsights(
+    StringBuffer buffer,
+    List<AtomicInsight> insights,
+  ) {
+    buffer.writeln('=== EXISTING INSIGHTS (for deduplication) ===');
+    if (insights.isEmpty) {
+      buffer.writeln('(None)');
+    } else {
+      for (final insight in insights.take(_dedupContextLimit)) {
+        final preview = insight.content.length > _contentPreviewLength
+            ? insight.content.substring(0, _contentPreviewLength)
+            : insight.content;
+        buffer.writeln('- [${insight.scope}] $preview');
+      }
+    }
+    buffer.writeln();
+  }
+
+  /// Call LLM via streaming to extract new atomic insights.
+  ///
+  /// [overridePrompt] bypasses the registry when testing candidate prompts.
+  Future<List<AtomicInsight>> _extract(
+    String context, {
+    String? overridePrompt,
+  }) async {
+    final prompt = overridePrompt ?? await _getSystemPrompt();
+    final messages = <Map<String, dynamic>>[
+      {'role': 'system', 'content': prompt},
+      {'role': 'user', 'content': context},
+    ];
+
+    final tokens = <String>[];
+    await for (final token in _inferenceService.chatStream(
+      model: _extractionModel,
+      messages: messages,
+      temperature: 0.3,
+      maxTokens: 1000,
+    )) {
+      tokens.add(token);
+    }
+
+    _extractionCount++;
+    _lastExtractionAt = DateTime.now();
+
+    final response = tokens.join();
+    return _parseResponse(response);
+  }
+
+  Future<List<AtomicInsight>> _deduplicateAndSave(
+    List<AtomicInsight> extracted,
+  ) async {
+    final saved = <AtomicInsight>[];
+
+    for (final insight in extracted) {
+      final similar = await _insightRepo.findRelevant(
+        insight.content,
+        topK: 3,
+        threshold: _dedupThreshold,
+      );
+
+      if (similar.isNotEmpty) {
+        _duplicatesSkipped++;
+        debugPrint(
+          'AtomicInsightExtractor: Skipped duplicate '
+          '(${(similar.first).content.length > 50 ? similar.first.content.substring(0, 50) : similar.first.content}...)',
+        );
+        continue;
+      }
+
+      // Only persist session/day scopes — week/project/life require
+      // consolidation logic that doesn't exist yet (see CLAUDE.md Future Considerations)
+      if (insight.scope == 'session' || insight.scope == 'day') {
+        await _insightRepo.save(insight);
+        saved.add(insight);
+        _insightsSaved++;
+        debugPrint(
+          'AtomicInsightExtractor: Saved ${insight.scope} insight: '
+          '"${insight.content.length > 60 ? insight.content.substring(0, 60) : insight.content}..."',
+        );
+      }
+    }
+
+    return saved;
+  }
+
+  Future<String> _getSystemPrompt() async {
+    if (_promptRegistry != null) {
+      return _promptRegistry!.getActivePrompt();
+    }
+    return _defaultSystemPrompt;
+  }
+
+  static const String _defaultSystemPrompt =
+      '''You are the system's atomic insight extractor. Your job is to identify new insights about the user's identity, goals, and reasoning from conversation.
+
+Rules:
+1. Extract NEW atomic insights ONLY. Skip if redundant with existing insights.
+2. Format: "[Atomic idea]. Because [reasoning]."
+3. Be concise. One sentence per insight.
+4. Only extract facts that would materially change how an AI responds to this user in future conversations. Skip trivial or ephemeral observations.
+5. Identify insight type: 'learning', 'project', or 'exploration'.
+6. Assign scope:
+   - 'session': Current conversation (always Session if new)
+   - 'day': Multi-conversation pattern within a day
+   - 'week': Weekly themes
+   - 'project': User-defined project context (ONLY if explicitly stated)
+   - 'life': Identity-level patterns (ONLY if profound/core)
+7. Return JSON array:
+   [
+     {
+       "content": "[idea]. Because [reason].",
+       "scope": "session|day|week|project|life",
+       "type": "learning|project|exploration"
+     }
+   ]
+8. Return empty array [] if nothing new.
+9. Never invent projects or life insights. Only surface what's evident.
+
+Example response:
+[
+  {
+    "content": "User prioritizes data sovereignty in AI systems. Because they repeatedly emphasize keeping data local and under user control.",
+    "scope": "session",
+    "type": "project"
+  }
+]''';
+
+  static String get defaultSystemPrompt => _defaultSystemPrompt;
+
+  List<AtomicInsight> _parseResponse(String response) {
+    try {
+      final jsonMatch =
+          RegExp(r'\[\s*\{.*\}\s*\]', dotAll: true).firstMatch(response);
+      if (jsonMatch == null) {
+        if (RegExp(r'\[\s*\]').hasMatch(response)) return [];
+        debugPrint('AtomicInsightExtractor: No JSON found in response');
+        return [];
+      }
+
+      final jsonStr = jsonMatch.group(0)!;
+      final parsed = jsonDecode(jsonStr) as List<dynamic>;
+
+      return parsed
+          .whereType<Map<String, dynamic>>()
+          .map((json) => AtomicInsight(
+                content: json['content'] ?? '',
+                scope: json['scope'] ?? 'session',
+                type: json['type'],
+              ))
+          .where((insight) => insight.content.isNotEmpty)
+          .toList();
+    } catch (e) {
+      debugPrint('AtomicInsightExtractor: Failed to parse response: $e');
+      return [];
+    }
+  }
+
+  // ============ DebugIntrospectable ============
+
+  @override
+  String get debugName => 'extractor';
+
+  @override
+  Map<String, dynamic> getDebugState() => {
+        'extractionCount': _extractionCount,
+        'insightsSaved': _insightsSaved,
+        'duplicatesSkipped': _duplicatesSkipped,
+        'lastExtractionAt': _lastExtractionAt?.toIso8601String(),
+      };
+
+  @override
+  Map<String, DebugAction> getDebugActions() => {
+        'getStats': DebugAction(
+          description: 'Get extraction statistics',
+          handler: (params) async {
+            final allInsights = await _insightRepo.findAll();
+            final withEmbeddings =
+                allInsights.where((i) => i.embedding != null).length;
+            final byScope = <String, int>{};
+            for (final insight in allInsights) {
+              byScope[insight.scope] = (byScope[insight.scope] ?? 0) + 1;
+            }
+            return {
+              'totalInsights': allInsights.length,
+              'withEmbeddings': withEmbeddings,
+              'byScope': byScope,
+              'extractionCount': _extractionCount,
+              'insightsSaved': _insightsSaved,
+              'duplicatesSkipped': _duplicatesSkipped,
+              'lastExtractionAt': _lastExtractionAt?.toIso8601String(),
+            };
+          },
+        ),
+        'extractSample': DebugAction(
+          description: 'Extract insights from the most recent imported conversation',
+          mutates: true,
+          handler: (params) async {
+            return {'error': 'Use extractor.extractFromConversation with a conversation UUID'};
+          },
+        ),
+      };
+}

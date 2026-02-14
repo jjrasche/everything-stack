@@ -37,7 +37,7 @@
 const String kDatabaseName = 'everything_stack';
 
 /// Current schema version
-const int kDatabaseVersion = 1;
+const int kDatabaseVersion = 2;
 
 /// Object store names
 class ObjectStores {
@@ -59,6 +59,7 @@ class ObjectStores {
   static const String audioFiles = 'audio_files';
   static const String atomicInsights = 'atomic_insights';
   static const String chunks = 'chunks';
+  static const String promptVersions = 'prompt_versions';
 }
 
 /// Index names for each object store
@@ -162,6 +163,14 @@ class Indexes {
   static const String chunksId = 'id';
   static const String chunksChunkId = 'chunkId';
   static const String chunksSourceEntityId = 'sourceEntityId';
+
+  // PromptVersion indexes
+  static const String promptVersionsId = 'id';
+  static const String promptVersionsUuid = 'uuid';
+  static const String promptVersionsSyncStatus = 'dbSyncStatus';
+  static const String promptVersionsComponentType = 'componentType';
+  static const String promptVersionsVersion = 'version';
+  static const String promptVersionsIsActive = 'isActive';
 }
 
 /// Schema definition for notes object store
@@ -614,6 +623,46 @@ class AudioFilesStoreSchema {
   ];
 }
 
+/// Schema definition for prompt_versions object store
+class PromptVersionsStoreSchema {
+  static const String storeName = ObjectStores.promptVersions;
+  static const String keyPath = 'uuid';
+  static const bool autoIncrement = false;
+
+  static const List<IndexDefinition> indexes = [
+    IndexDefinition(
+      name: Indexes.promptVersionsId,
+      keyPath: 'id',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.promptVersionsUuid,
+      keyPath: 'uuid',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.promptVersionsSyncStatus,
+      keyPath: 'dbSyncStatus',
+      unique: false,
+    ),
+    IndexDefinition(
+      name: Indexes.promptVersionsComponentType,
+      keyPath: 'componentType',
+      unique: false,
+    ),
+    IndexDefinition(
+      name: Indexes.promptVersionsVersion,
+      keyPath: 'version',
+      unique: false,
+    ),
+    IndexDefinition(
+      name: Indexes.promptVersionsIsActive,
+      keyPath: 'isActive',
+      unique: false,
+    ),
+  ];
+}
+
 /// Schema definition for HNSW index metadata store
 class HnswIndexStoreSchema {
   static const String storeName = ObjectStores.hnswIndex;
@@ -748,6 +797,12 @@ class DatabaseSchema {
       keyPath: AudioFilesStoreSchema.keyPath,
       autoIncrement: AudioFilesStoreSchema.autoIncrement,
       indexes: AudioFilesStoreSchema.indexes,
+    ),
+    ObjectStoreDefinition(
+      name: PromptVersionsStoreSchema.storeName,
+      keyPath: PromptVersionsStoreSchema.keyPath,
+      autoIncrement: PromptVersionsStoreSchema.autoIncrement,
+      indexes: PromptVersionsStoreSchema.indexes,
     ),
   ];
 }

@@ -1331,10 +1331,83 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "42:7369038829847260244",
+      "lastPropertyId": "12:1813526499105481505",
+      "name": "PromptVersionOB",
+      "properties": [
+        {
+          "id": "1:5205436823847035231",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:5732163747487353527",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "63:1971844458337065101"
+        },
+        {
+          "id": "3:5901836185004833157",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "4:7710067245941899850",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "5:1565758459697720478",
+          "name": "syncId",
+          "type": 9
+        },
+        {
+          "id": "6:4571623948571078205",
+          "name": "componentType",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "64:5287395165466852642"
+        },
+        {
+          "id": "7:8881207514728108360",
+          "name": "version",
+          "type": 6
+        },
+        {
+          "id": "8:6288036564494829951",
+          "name": "promptText",
+          "type": 9
+        },
+        {
+          "id": "9:1857982648452699862",
+          "name": "reason",
+          "type": 9
+        },
+        {
+          "id": "10:3081806268656403325",
+          "name": "isActive",
+          "type": 1
+        },
+        {
+          "id": "11:3466461816532269829",
+          "name": "metricsJson",
+          "type": 9
+        },
+        {
+          "id": "12:1813526499105481505",
+          "name": "syncStatus",
+          "type": 6
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "41:2303334603436700051",
-  "lastIndexId": "62:8483508518996166298",
+  "lastEntityId": "42:7369038829847260244",
+  "lastIndexId": "64:5287395165466852642",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

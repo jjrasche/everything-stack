@@ -102,6 +102,14 @@ import 'bootstrap/implementer_selector.dart';
 import 'domain/audio_file.dart';
 import 'domain/atomic_insight.dart';
 import 'domain/atomic_insight_repository.dart';
+import 'services/extraction/atomic_insight_extractor.dart';
+import 'services/extraction/extraction_evaluator.dart';
+import 'services/extraction/extraction_improvement_loop.dart';
+import 'services/prompt/prompt_registry.dart';
+import 'services/prompt/prompt_mutator.dart';
+import 'services/prompt/prompt_validator.dart';
+import 'domain/prompt_version.dart';
+import 'domain/prompt_version_repository.dart';
 import 'services/enrichment/enrichment_runner.dart';
 import 'services/enrichment/enrichment_worker.dart';
 import 'services/enrichment/semantic_enrichment_worker.dart';
@@ -762,7 +770,6 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
 
     // 16. Initialize AtomicInsight Repository and Extractor
     try {
-      // Wrap AtomicInsight adapter in AtomicInsightRepository now that EmbeddingService is ready
       final atomicInsightAdapter = getIt<PersistenceAdapter<AtomicInsight>>();
       final atomicInsightRepo = AtomicInsightRepository(
         adapter: atomicInsightAdapter,
@@ -772,11 +779,52 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
       getIt.registerSingleton<AtomicInsightRepository>(atomicInsightRepo);
       debugPrint('✅ AtomicInsight: Repository registered');
 
-      // Initialize AtomicInsightExtractor with GroqService
-      // Note: GroqService will be available from InferenceService initialization
-      // For now, we'll defer extractor initialization until we have a proper GroqService
-      // TODO: Initialize AtomicInsightExtractor after GroqService is properly available
-      debugPrint('✅ AtomicInsight: Repository and Extractor ready');
+      // PromptVersion repository for versioned prompt storage
+      final promptVersionAdapter = getIt<PersistenceAdapter<PromptVersion>>();
+      final promptVersionRepo = PromptVersionRepository(
+        adapter: promptVersionAdapter,
+      );
+      getIt.registerSingleton<PromptVersionRepository>(promptVersionRepo);
+      debugPrint('✅ PromptVersion: Repository registered');
+
+      if (getIt.isRegistered<InferenceService>()) {
+        final inferenceService = getIt<InferenceService>();
+
+        final promptRegistry = PromptRegistry(
+          repo: promptVersionRepo,
+          componentType: 'extraction_prompt',
+          hardcodedDefault: AtomicInsightExtractor.defaultSystemPrompt,
+        );
+        getIt.registerSingleton<PromptRegistry>(promptRegistry);
+
+        final extractor = AtomicInsightExtractor(
+          insightRepo: atomicInsightRepo,
+          inferenceService: inferenceService,
+          promptRegistry: promptRegistry,
+        );
+        getIt.registerSingleton<AtomicInsightExtractor>(extractor);
+        debugPrint('✅ AtomicInsight: Extractor registered');
+
+        final evaluator = ExtractionEvaluator(
+          inferenceService: inferenceService,
+        );
+        getIt.registerSingleton<ExtractionEvaluator>(evaluator);
+        debugPrint('✅ AtomicInsight: Evaluator registered');
+
+        final mutator = PromptMutator(inferenceService: inferenceService);
+        final validator = PromptValidator();
+        final improvementLoop = ExtractionImprovementLoop(
+          extractor: extractor,
+          evaluator: evaluator,
+          promptRegistry: promptRegistry,
+          mutator: mutator,
+          validator: validator,
+        );
+        getIt.registerSingleton<ExtractionImprovementLoop>(improvementLoop);
+        debugPrint('✅ AtomicInsight: Improvement loop registered');
+      } else {
+        debugPrint('⚠️ AtomicInsight: InferenceService not available, extractor/evaluator skipped');
+      }
     } catch (e) {
       debugPrint('⚠️ AtomicInsight initialization failed: $e');
     }

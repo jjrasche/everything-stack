@@ -27,7 +27,9 @@ import '../persistence/objectbox/trial_objectbox_adapter.dart';
 import '../persistence/objectbox/audio_file_objectbox_adapter.dart';
 import '../persistence/objectbox/chunk_objectbox_adapter.dart';
 import '../persistence/objectbox/atomic_insight_objectbox_adapter.dart';
+import '../persistence/objectbox/prompt_version_objectbox_adapter.dart';
 import '../core/chunk_repository.dart';
+import '../domain/prompt_version.dart';
 import 'objectbox_store_factory.dart';
 
 /// Initialize persistence layer for native platforms using ObjectBox.
@@ -88,6 +90,10 @@ Future<void> initializePersistence(GetIt getIt) async {
   // Create and register AtomicInsight adapter
   final atomicInsightAdapter = AtomicInsightObjectBoxAdapter(store);
   getIt.registerSingleton<PersistenceAdapter<AtomicInsight>>(atomicInsightAdapter);
+
+  // Create and register PromptVersion adapter
+  final promptVersionAdapter = PromptVersionObjectBoxAdapter(store);
+  getIt.registerSingleton<PersistenceAdapter<PromptVersion>>(promptVersionAdapter);
 }
 
 /// Create EventRepository for native platforms using ObjectBox.
