@@ -1,5 +1,3 @@
-/// # FeedbackObjectBoxAdapter
-
 import 'package:objectbox/objectbox.dart';
 import '../../core/feedback_repository.dart';
 import '../../domain/feedback.dart';

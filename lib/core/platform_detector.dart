@@ -1,7 +1,4 @@
-/// # Platform Detector
-///
 /// Cross-platform detection utility.
-/// Works on both native (dart:io) and web (dart:html) platforms.
 
 library;
 

@@ -1,5 +1,3 @@
-/// # InvocationObjectBoxAdapter
-
 import 'package:objectbox/objectbox.dart';
 import '../../core/base_entity.dart';
 import '../../core/invocation_repository.dart';

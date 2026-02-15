@@ -1,7 +1,3 @@
-/// # Context Selector Type Definitions
-///
-/// Types for ContextSelector service: adaptation data, context bundle, and results.
-
 import 'dart:convert';
 import '../../core/adaptation_data.dart';
 import '../../core/invocation.dart';

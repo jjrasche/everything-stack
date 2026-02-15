@@ -1,21 +1,3 @@
-/// # Debug Bootstrap
-///
-/// Initializes all debug infrastructure for AI-driven debugging.
-/// Call this at the end of app bootstrap.
-///
-/// ## What it sets up
-/// 1. Debug HTTP server on localhost:9999
-/// 2. State providers for all services
-/// 3. Actions for search, entity lookup, chunk queries
-/// 4. Screenshot callback integration
-///
-/// ## Claude can then:
-/// - curl http://localhost:9999/state - Get full app state
-/// - curl http://localhost:9999/search?q=hello - Run search
-/// - curl http://localhost:9999/screenshot - Capture UI
-/// - curl http://localhost:9999/entity/{uuid} - Load entity
-/// - Read logs/screenshots/*.png - View captured images
-
 import 'package:get_it/get_it.dart';
 import 'debug_server.dart';
 import 'screenshot_service.dart';

@@ -1,26 +1,3 @@
-/// # UI Interaction Schema for VLM Analysis
-///
-/// Enhanced schema that enables structured, actionable VLM responses.
-/// Instead of prose descriptions, VLM returns JSON with:
-/// - Current screen state
-/// - Extracted data values
-/// - Available affordances (what can be done)
-/// - Detected errors/warnings
-///
-/// ## Usage
-/// ```dart
-/// final schema = UiInteractionSchema.forScreen('voice_assistant');
-/// final analysis = await schema.analyzeWithVlm(
-///   vlm: VlmAnalyzer.instance,
-///   screenshotPath: path,
-///   query: 'are there search results?',
-/// );
-///
-/// if (analysis.data['resultsCount'] > 0) {
-///   // Take action based on structured data
-/// }
-/// ```
-
 import 'dart:convert';
 import 'vlm_analyzer.dart';
 

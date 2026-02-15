@@ -1,5 +1,3 @@
-/// # FeedbackIndexedDBAdapter
-
 import 'dart:indexed_db' as idb;
 import '../../core/feedback_repository.dart';
 import '../../domain/feedback.dart';

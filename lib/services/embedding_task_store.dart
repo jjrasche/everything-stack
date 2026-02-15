@@ -1,7 +1,3 @@
-/// # EmbeddingTaskStore
-///
-/// Abstract interface for persistent embedding task queue storage.
-/// Platform-specific implementations: ObjectBox (native), IndexedDB (web).
 library;
 
 /// Status of an embedding task in the queue.

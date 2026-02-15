@@ -1,7 +1,3 @@
-/// # Task Tools
-///
-/// Tool functions for task management.
-/// Registered with ToolRegistry and called by ToolExecutor.
 
 import '../../services/tool_registry.dart';
 import 'repositories/task_repository.dart';

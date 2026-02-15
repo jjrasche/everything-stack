@@ -1,37 +1,3 @@
-/// # EnrichmentWorker Interface
-///
-/// ## What it does
-/// Interface for workers that process enrichment steps.
-/// Each worker handles one type of enrichment (e.g., semantic, categorization).
-///
-/// ## Design
-/// - Worker fetches entities just-in-time (minimizes staleness)
-/// - Worker handles race condition checks (re-fetch QueueItem before saving)
-/// - Worker delegates dependency checking to getReadyItems()
-/// - Sequential processing (N=1) due to HNSW thread-safety constraints
-///
-/// ## Usage
-/// ```dart
-/// class SemanticEnrichmentWorker implements EnrichmentWorker {
-///   @override
-///   String get stepType => 'semantic_enrichment';
-///
-///   @override
-///   List<String> get requiredSteps => []; // No dependencies
-///
-///   @override
-///   Future<void> processBatch(items, queueRepo) async {
-///     for (final item in items) {
-///       // 1. Mark as processing
-///       // 2. Fetch entity fresh
-///       // 3. Do the work
-///       // 4. Race condition check
-///       // 5. Mark completed
-///     }
-///   }
-/// }
-/// ```
-
 import '../../core/enrichment_queue_item.dart';
 import '../../core/enrichment_queue_repository.dart';
 

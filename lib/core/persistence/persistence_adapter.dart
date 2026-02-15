@@ -1,29 +1,5 @@
-/// # PersistenceAdapter
-///
-/// ## What it does
-/// Abstraction layer for database operations. Allows swapping persistence
-/// backends (ObjectBox, IndexedDB) without changing repository code.
-///
-/// ## What it enables
-/// - ObjectBox on native platforms (Android, iOS, desktop)
-/// - IndexedDB on web
-/// - Same EntityRepository code works with both
-/// - Each implementation handles vector search its own way
-///
-/// ## Usage
-/// ```dart
-/// // Native platforms
-/// final adapter = ObjectBoxNoteAdapter(store);
-/// final repo = NoteRepository(adapter: adapter);
-///
-/// // Web
-/// final adapter = IndexedDBNoteAdapter(database);
-/// final repo = NoteRepository(adapter: adapter);
-///
-/// // Repository API unchanged
-/// await repo.save(note);
-/// final results = await repo.semanticSearch('query');
-/// ```
+/// Abstraction layer for database operations.
+/// Allows swapping persistence backends (ObjectBox, IndexedDB) without changing repository code.
 
 import '../base_entity.dart';
 import 'transaction_context.dart';

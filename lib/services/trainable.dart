@@ -1,35 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// # Trainable Interface
-///
-/// ## What it does
 /// Contract for components that learn from user feedback.
-/// Each component (STT, Intent, LLM, TTS) implements this interface.
-/// Enables feedback loops: invocation → user feedback → state update
-///
-/// ## Methods
-/// - recordInvocation(): Save component execution for later feedback
-/// - trainFromFeedback(): Learn from user feedback on a turn
-/// - getAdaptationState(): Return current tunable parameters
-/// - buildFeedbackUI(): Build UI for user to provide feedback
-///
-/// ## Implementation Notes
-/// - recordInvocation() is called immediately after component runs
-/// - trainFromFeedback() is called after user provides feedback
-/// - getAdaptationState() is called to display current settings
-/// - buildFeedbackUI() is called in FeedbackReviewScreen
-///
-/// ## Type Safety
-/// Each component implements Trainable with its own types:
-///
-/// ```dart
-/// class STTService implements Trainable {
-///   Future<void> recordInvocation(STTInvocation inv) async { ... }
-///   Future<STTAdaptationState> getAdaptationState() { ... }
-///   Widget buildFeedbackUI(String invocationId) { ... }
-/// }
-/// ```
-
 abstract class Trainable {
   /// Record an invocation for this component
   ///

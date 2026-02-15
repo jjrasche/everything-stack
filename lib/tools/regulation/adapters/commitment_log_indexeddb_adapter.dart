@@ -1,15 +1,3 @@
-/// # CommitmentLogIndexedDBAdapter
-///
-/// ## What it does
-/// IndexedDB implementation of PersistenceAdapter for CommitmentLog entities.
-/// Handles CRUD operations and queries for web platform.
-///
-/// ## Usage
-/// ```dart
-/// final db = await openIndexedDatabase();
-/// final adapter = CommitmentLogIndexedDBAdapter(db);
-/// final repo = CommitmentLogRepository(adapter: adapter);
-/// ```
 
 import 'dart:indexed_db' as idb;
 import '../../../persistence/indexeddb/base_indexeddb_adapter.dart';

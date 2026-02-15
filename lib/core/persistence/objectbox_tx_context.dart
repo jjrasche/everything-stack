@@ -1,21 +1,4 @@
-/// # ObjectBoxTxContext
-///
-/// ## What it does
-/// ObjectBox-specific implementation of TransactionContext.
-/// Wraps an ObjectBox Store to provide access to boxes within a transaction.
-///
-/// ## Usage
-/// ```dart
-/// class NoteObjectBoxAdapter implements PersistenceAdapter<Note> {
-///   @override
-///   Note saveInTx(TransactionContext ctx, Note entity) {
-///     final obCtx = ctx as ObjectBoxTxContext;
-///     entity.touch();
-///     obCtx.store.box<Note>().put(entity);
-///     return entity;
-///   }
-/// }
-/// ```
+/// ObjectBox-specific TransactionContext wrapping a Store for box access within transactions.
 
 import 'package:objectbox/objectbox.dart';
 import 'transaction_context.dart';

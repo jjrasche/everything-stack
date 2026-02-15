@@ -1,41 +1,7 @@
-/// # VoiceTraits
-///
-/// ## What it does
-/// Retrieves contrastive few-shot examples from past interactions
-/// based on user feedback. Uses semantic similarity to find relevant
-/// examples and feedback signals to classify as positive/negative.
-///
-/// ## How it works
-/// 1. Search chunks similar to current query (via SemanticSearchService)
-/// 2. Filter to LLM invocations only
-/// 3. Look up feedback for each invocation
-/// 4. Score by similarity × decay (learned parameters)
-/// 5. Return top examples for contrastive prompting
-///
-/// ## Why Trainable?
-/// VoiceTraits learns optimal retrieval parameters from feedback:
-/// - How many examples improve response quality
-/// - Similarity threshold for relevance
-/// - How much to weight recent vs old examples (decay)
-///
 /// ## Why contrastive few-shot?
-/// - Shows model what "good" responses look like
-/// - Shows model what to avoid
-/// - Learned from actual user feedback, not hardcoded
-/// - Personalized to user's preferences over time
-///
-/// ## Usage
-/// ```dart
-/// final examples = await voiceTraits.getExamples(
-///   query: 'Set a timer for 5 minutes',
-///   eventId: 'evt_123',
-/// );
-///
-/// // Use in prompt
-/// final prompt = voiceTraits.formatPrompt(examples);
-/// // Inject into system message or context
-/// ```
-
+/// Shows model what "good" and "bad" responses look like, learned from
+/// actual user feedback rather than hardcoded. Personalizes to user
+/// preferences over time.
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';

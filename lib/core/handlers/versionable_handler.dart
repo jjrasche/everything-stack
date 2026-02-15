@@ -1,23 +1,9 @@
-/// # VersionableHandler
+/// Records version history atomically within entity save transaction for Versionable entities.
 ///
-/// ## What it does
-/// Orchestrates version history recording for Versionable entities.
-/// Records changes atomically within entity save transaction.
-///
-/// ## Pattern
-/// Entities that implement Versionable opt-in to change tracking.
-/// Each save records entity changes in VersionRepository with delta.
-///
-/// ## Lifecycle
-/// beforeSaveInTransaction: Record version inside entity save transaction (atomic)
-/// afterSaveInTransaction: No-op (all work done in beforeSaveInTransaction)
-///
-/// ## Error Semantics
-/// Atomic: Version recording happens inside same transaction as entity save.
-/// If version recording fails, both version and entity save are rolled back.
-///
-/// Rationale: Version history must be atomic with entity. Entity without
-/// version history would be corruption. Must use transactional hooks.
+/// ## Why transactional hooks are required
+/// Version history must be atomic with entity save. An entity without its
+/// version history is data corruption, so this handler uses
+/// beforeSaveInTransaction() rather than afterSave().
 
 import 'dart:convert';
 

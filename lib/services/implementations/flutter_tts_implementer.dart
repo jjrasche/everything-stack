@@ -1,9 +1,3 @@
-/// # FlutterTtsImplementer
-///
-/// Dumb API wrapper for Flutter TTS plugin.
-/// Synthesizes text to speech using flutter_tts package.
-/// No state management - just calls plugin and returns results.
-
 import 'dart:convert';
 import 'dart:async';
 import 'package:crypto/crypto.dart';

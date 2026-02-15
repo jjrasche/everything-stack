@@ -1,7 +1,3 @@
-/// # Categorizer Service Type Definitions
-///
-/// Types for CategorizerService: adaptation data, invocation input/output.
-
 import 'dart:convert';
 import '../../core/adaptation_data.dart';
 

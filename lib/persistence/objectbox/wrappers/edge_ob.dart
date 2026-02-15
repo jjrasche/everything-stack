@@ -1,8 +1,3 @@
-/// # EdgeOB (ObjectBox Wrapper)
-///
-/// ObjectBox-specific wrapper for Edge entity.
-/// Anti-Corruption Layer pattern.
-
 import 'package:objectbox/objectbox.dart';
 import '../../../core/edge.dart';
 

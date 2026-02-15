@@ -1,10 +1,3 @@
-/// # Context Panel
-///
-/// Displays the context bundle selected by ContextSelector.
-/// Shows conversation thread + semantic matches with scores.
-/// Long-press to provide feedback on context selection quality.
-/// Includes real-time similarity threshold slider for testing.
-/// Includes search box for querying semantic index directly.
 
 import 'dart:math' show exp, ln2;
 import 'package:flutter/material.dart';

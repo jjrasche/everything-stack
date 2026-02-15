@@ -5,19 +5,8 @@ import 'chunking_config.dart';
 import 'chunking_strategy.dart';
 import 'sentence_splitter.dart';
 
-/// Semantic chunking implementation that detects topic boundaries in text.
-///
-/// Uses embedding similarity to identify where topics change, creating semantically
-/// coherent chunks. Supports configurable window sizes and overlap for two-level
-/// chunking (parent level for broad topics, child level for fine-grained units).
-///
-/// ## Key Features
-///
-/// - **Adaptive text handling**: Detects structured vs unstructured (unpunctuated) text
-/// - **Configurable granularity**: Parent/child presets for different retrieval levels
-/// - **Sliding windows**: For unpunctuated text (voice transcriptions)
-/// - **Soft + hard limits**: Respects semantic boundaries while enforcing size guardrails
-/// - **Batch embedding**: Uses EmbeddingService for efficient API usage
+/// Detects topic boundaries via embedding similarity, creating semantically
+/// coherent chunks. Supports parent/child granularity for two-level retrieval.
 class SemanticChunker extends ChunkingStrategy {
   final EmbeddingService _embeddingService;
   final ChunkingConfig config;

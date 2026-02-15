@@ -1,22 +1,3 @@
-/// # Person
-///
-/// ## What it does
-/// Represents a person involved in regulation tracking events and commitments.
-/// Used to track family members, household participants, or other relevant individuals.
-///
-/// ## Domain Entity Pattern
-/// This is a pure Dart domain entity with NO ObjectBox decorators.
-/// ObjectBox decorators belong on the wrapper class (PersonOB) in the adapters directory.
-/// This allows the same entity to work on native (ObjectBox) and web (IndexedDB) platforms.
-///
-/// ## Usage
-/// ```dart
-/// final person = Person(
-///   name: 'Alice',
-///   role: 'child',
-///   notes: 'Age 8, responds well to deep breathing techniques',
-/// );
-/// ```
 
 import '../../../core/base_entity.dart';
 

@@ -1,9 +1,3 @@
-/// # GroqImplementer
-///
-/// Dumb API wrapper for Groq LLM API.
-/// Handles authentication, retries, timeouts.
-/// No state management - just calls API and returns response.
-
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/foundation.dart';

@@ -1,29 +1,7 @@
-/// # Namespace
+/// Tool category for two-hop selection (LLM picks namespace, classifier picks tool).
 ///
-/// ## What it does
-/// Represents a category of tools (e.g., "task", "timer", "health").
-/// Namespaces organize tools and enable two-hop tool selection:
-/// 1. LLM picks namespace based on semantic match
-/// 2. Statistical classifier picks tool within namespace
-///
-/// ## Domain Entity Pattern
-/// This is a pure Dart domain entity with NO ObjectBox decorators.
-/// ObjectBox decorators belong on the wrapper class (NamespaceOB) in the adapters directory.
-/// This allows the same entity to work on native (ObjectBox) and web (IndexedDB) platforms.
-///
-/// ## Key Design
-/// - keywords: Static registration keywords for initial matching
-/// - semanticCentroid: Computed from all tool descriptions at registration
-/// - Thresholds are stored in NamespaceAdaptationState (owned by Personality)
-///
-/// ## Usage
-/// ```dart
-/// final taskNamespace = Namespace(
-///   name: 'task',
-///   description: 'Manage tasks and reminders',
-///   keywords: ['todo', 'reminder', 'schedule', 'task'],
-/// );
-/// ```
+/// Pure Dart domain entity -- ORM decorators belong on wrapper classes (NamespaceOB)
+/// so the same entity compiles on native (ObjectBox) and web (IndexedDB).
 
 import '../core/base_entity.dart';
 

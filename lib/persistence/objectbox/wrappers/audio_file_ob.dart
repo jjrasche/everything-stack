@@ -1,8 +1,3 @@
-/// # AudioFileOB - ObjectBox Wrapper
-///
-/// ObjectBox-decorated version of AudioFile domain entity.
-/// Stores audio bytes directly in database (no filesystem dependencies).
-
 import 'dart:typed_data';
 import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/domain/audio_file.dart';

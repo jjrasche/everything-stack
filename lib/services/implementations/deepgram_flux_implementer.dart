@@ -1,25 +1,6 @@
-/// # DeepgramFluxImplementer
-///
-/// Real-time WebSocket STT using Deepgram Flux model via IO layer.
-/// Streams audio chunks and publishes partial transcripts via EventBus.
-/// Handles turn detection (EndOfTurn, EagerEndOfTurn, TurnResumed).
-///
-/// ## Platform Support
-/// - Web: Browser WebSocket (works)
-/// - macOS/iOS/Android/Linux: dart:io WebSocket (works)
-/// - Windows: Uses IO layer with browser WebSocket internally (works around dart:io bug)
-///
-/// ## Flow:
-/// 1. Connect via IO Channel (Transport → Protocol → Channel)
-/// 2. Load audio from AudioStorage
-/// 3. Stream chunks (8KB each, 10ms throttle)
-/// 4. Receive ListenV2TurnInfo → publish transcription_partial events
-/// 5. Wait for EndOfTurn → return final STTInvocationOutput
-///
-/// ## Events Published:
-/// - transcription_partial: Interim transcripts while processing
-/// - transcription_eager (optional): EagerEndOfTurn events if enabled
-
+/// ## Why IO layer for Windows?
+/// dart:io WebSocket has a known bug on Windows. IO layer works around it
+/// by using browser WebSocket internally on that platform.
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';

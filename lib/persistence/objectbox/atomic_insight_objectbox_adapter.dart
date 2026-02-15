@@ -1,8 +1,3 @@
-/// # AtomicInsightObjectBoxAdapter
-///
-/// ObjectBox implementation of PersistenceAdapter for AtomicInsight.
-/// Converts between domain AtomicInsight and AtomicInsightOB wrapper.
-
 import 'package:objectbox/objectbox.dart';
 import '../../domain/atomic_insight.dart';
 import '../../core/persistence/persistence_adapter.dart';

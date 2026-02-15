@@ -1,25 +1,3 @@
-/// # RegulationEntry
-///
-/// ## What it does
-/// Records a single regulation event (dysregulation catch, intervention, rupture, etc.).
-/// Links to people involved and tracks strategies used.
-///
-/// ## Domain Entity Pattern
-/// This is a pure Dart domain entity with NO ObjectBox decorators.
-/// ObjectBox decorators belong on the wrapper class (RegulationEntryOB) in the adapters directory.
-/// This allows the same entity to work on native (ObjectBox) and web (IndexedDB) platforms.
-///
-/// ## Usage
-/// ```dart
-/// final entry = RegulationEntry(
-///   entryType: EntryType.dysregulationCatch,
-///   personIds: ['person-uuid-1', 'person-uuid-2'],
-///   rawTranscript: 'I caught myself getting frustrated with the kids',
-///   regulationStrategy: 'walked away, deep breathing',
-///   severity: Severity.minor,
-///   category: 'frustration',
-/// );
-/// ```
 
 import '../../../core/base_entity.dart';
 

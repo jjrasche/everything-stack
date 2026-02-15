@@ -1,25 +1,3 @@
-/// # IO Exception Hierarchy
-///
-/// All exceptions thrown by the IO communication layer extend [NerveException].
-/// This allows callers to catch all IO-related errors with a single catch block,
-/// or handle specific failure modes individually.
-///
-/// ## Exception Types
-/// - [ConnectionFailedException] - Initial connection attempt failed
-/// - [ConnectionLostException] - Established connection was lost
-/// - [TimeoutException] - Operation exceeded time limit
-/// - [ProtocolException] - Protocol-level error (invalid frames, handshake failure)
-///
-/// ## Usage
-/// ```dart
-/// try {
-///   await channel.connect();
-/// } on ConnectionFailedException catch (e) {
-///   // Handle connection failure specifically
-/// } on NerveException catch (e) {
-///   // Handle any IO error
-/// }
-/// ```
 
 /// Base exception for all Nerve System errors.
 class NerveException implements Exception {

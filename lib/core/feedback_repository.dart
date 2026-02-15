@@ -1,15 +1,5 @@
-/// # FeedbackRepository
-///
-/// ## What it does
 /// Manages feedback records across all components.
 /// Feedback links invocations to user corrections/confirmations.
-///
-/// ## Query Operations
-/// - findByInvocationId(): Get feedback for specific invocation
-/// - findByTurn(): Get all feedback for a turn
-/// - findByTurnAndComponent(): Get feedback for turn + component
-/// - findByContextType(): Get feedback for background/retry/test
-/// - save(): Persist feedback
 
 import '../domain/feedback.dart';
 

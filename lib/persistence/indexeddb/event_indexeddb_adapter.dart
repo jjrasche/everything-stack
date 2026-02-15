@@ -1,6 +1,3 @@
-/// # EventIndexedDBAdapter
-///
-/// IndexedDB adapter for Event entity persistence on web platform.
 library;
 
 import 'dart:indexed_db' as idb;

@@ -1,34 +1,5 @@
-/// # Persistence Exceptions
-///
-/// ## What it does
 /// Platform-agnostic exception hierarchy for persistence layer errors.
 /// Adapters translate platform-specific errors (ObjectBox, IndexedDB) to these typed exceptions.
-///
-/// ## What it enables
-/// - Repositories catch typed exceptions, not platform-specific errors
-/// - UI can handle errors without knowing the persistence backend
-/// - Same error handling code works with ObjectBox and IndexedDB
-///
-/// ## Usage
-/// ```dart
-/// // In adapter:
-/// try {
-///   return box.get(id);
-/// } catch (e) {
-///   throw EntityNotFoundException('Task', id: id, cause: e);
-/// }
-///
-/// // In repository or UI:
-/// try {
-///   await repository.findById(id);
-/// } catch (e) {
-///   if (e is EntityNotFoundException) {
-///     // Handle not found
-///   } else if (e is PersistenceException) {
-///     // Handle general persistence error
-///   }
-/// }
-/// ```
 
 /// Base exception for all persistence layer errors.
 ///

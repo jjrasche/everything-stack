@@ -1,39 +1,3 @@
-/// # CategorizerService
-///
-/// Smart tagging service that auto-categorizes entities for improved search and clustering.
-///
-/// ## What it does
-/// - Analyzes entity content to suggest relevant tags
-/// - Learns user preferences for tag taxonomy
-/// - Auto-applies tags above confidence threshold
-/// - Records invocations for training feedback
-///
-/// ## Design Pattern
-/// Service (not tool) - runs in background, not directly callable
-/// Used by repositories during entity save to automatically tag content
-///
-/// ## Trainable aspects
-/// - autoTagThreshold: Confidence level for auto-applying tags
-/// - maxTagsPerEntity: How many tags to apply per entity
-/// - preferredTagsByEntityType: Common tags for each entity type
-/// - customTaxonomy: User-defined category → tags mapping
-///
-/// ## Usage
-/// ```dart
-/// class NoteRepository extends EntityRepository<Note> {
-///   final CategorizerService categorizer;
-///
-///   @override
-///   Future<int> save(Note entity) async {
-///     // Auto-tag before saving
-///     final tags = await categorizer.categorizeEntity(entity);
-///     entity.tags = tags;
-///
-///     return await super.save(entity);
-///   }
-/// }
-/// ```
-
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import '../core/base_entity.dart';

@@ -1,20 +1,3 @@
-/// # Gaussian Process Optimizer
-///
-/// Bayesian optimization using Gaussian Process regression.
-/// Uses Upper Confidence Bound (UCB) acquisition function for exploration/exploitation.
-///
-/// **How it works:**
-/// 1. Load historical trials from database
-/// 2. Fit GP to trial data (params → reward)
-/// 3. Generate candidates and score with UCB = mean + 2*std
-/// 4. Return best candidate (denormalized)
-///
-/// **Key features:**
-/// - Persists trials to database (survives app restart)
-/// - Automatic normalization to [0,1] for GP stability
-/// - Handles discrete parameters (rounds to nearest int)
-/// - UCB balances exploration (high std) vs exploitation (high mean)
-
 import 'dart:convert';
 import 'dart:math';
 

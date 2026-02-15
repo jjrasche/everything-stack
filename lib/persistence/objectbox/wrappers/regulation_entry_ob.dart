@@ -1,13 +1,3 @@
-/// # RegulationEntryOB - ObjectBox Wrapper
-///
-/// ObjectBox-decorated version of RegulationEntry domain entity.
-/// Contains all ObjectBox decorators (@Entity, @Id, @Property, etc.)
-///
-/// This wrapper allows RegulationEntry domain entities to remain pure Dart,
-/// while providing ObjectBox persistence for native platforms.
-///
-/// Uses @Transient for enum properties with int storage.
-
 import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/tools/regulation/entities/regulation_entry.dart';
 

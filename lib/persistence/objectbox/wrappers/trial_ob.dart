@@ -1,8 +1,3 @@
-/// # TrialOB - ObjectBox Wrapper
-///
-/// ObjectBox-specific wrapper for Trial entity.
-/// Contains ORM decorators (@Entity, @Id, etc.) that domain entities must not have.
-
 import 'package:objectbox/objectbox.dart';
 import '../../../core/trial.dart';
 

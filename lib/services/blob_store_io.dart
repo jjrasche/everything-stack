@@ -1,13 +1,3 @@
-/// # FileSystemBlobStore
-///
-/// Platform-specific implementation for mobile and desktop.
-/// Uses dart:io File operations and path_provider for directories.
-///
-/// Stores blobs in app documents directory:
-/// - iOS: Documents/
-/// - Android: getFilesDir()/
-/// - Desktop: home/.appname/
-
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';

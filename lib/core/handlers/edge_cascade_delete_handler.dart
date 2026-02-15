@@ -1,23 +1,9 @@
-/// # EdgeCascadeDeleteHandler
+/// Cascades edge deletion when an entity is deleted.
 ///
-/// ## What it does
-/// Orchestrates cascading edge deletion when an entity is deleted.
-/// Ensures atomicity: all edges are deleted with the entity or nothing is deleted.
-///
-/// ## Pattern
-/// When an entity with edges is deleted, all edges (inbound and outbound)
-/// are deleted in the same transaction to maintain data consistency.
-///
-/// ## Lifecycle
-/// beforeDelete: Collect edge IDs before transaction (outside transaction)
-/// beforeDeleteInTransaction: Delete collected edges inside transaction (atomic)
-///
-/// ## Error Semantics
-/// Atomic: Edge deletion happens inside entity delete transaction.
-/// If edge deletion fails, both edges and entity delete are rolled back.
-///
-/// Rationale: Orphaned edges pointing to deleted entities cause data corruption.
-/// Must use transactional hooks.
+/// ## Why atomic deletion is required
+/// Orphaned edges pointing to deleted entities cause data corruption.
+/// All edges (inbound and outbound) are deleted in the same transaction as
+/// the entity to maintain consistency.
 
 import 'package:everything_stack_template/core/base_entity.dart';
 import 'package:everything_stack_template/core/persistence/transaction_context.dart';

@@ -1,24 +1,3 @@
-/// # ToolSelector
-///
-/// ## What it does
-/// Trainable component that selects which tools to use for a namespace.
-/// Once namespace is determined, this picks specific tools within that namespace.
-///
-/// ## Input
-/// - namespace: Which namespace (from NamespaceSelector)
-/// - utterance: User's request
-/// - embedding: Semantic embedding
-/// - availableTools: Tools available in this namespace
-///
-/// ## Output
-/// - selectedTools: List<String> of tool names to use
-///
-/// ## Training
-/// When user feedback indicates wrong tools:
-/// - Decrease confidence for unused tools
-/// - Increase confidence for used tools
-/// - Update tool selection scores based on utterance keywords
-
 import 'package:flutter/material.dart';
 import '../trainable.dart';
 import '../../core/invocation.dart';

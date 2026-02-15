@@ -1,7 +1,3 @@
-/// # Chunking Service Type Definitions
-///
-/// Types for ChunkingService: adaptation data, invocation input/output.
-
 import 'dart:convert';
 import '../../core/adaptation_data.dart';
 

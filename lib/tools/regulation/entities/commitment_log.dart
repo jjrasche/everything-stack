@@ -1,24 +1,3 @@
-/// # CommitmentLog
-///
-/// ## What it does
-/// Records daily tracking of commitment completion.
-/// Tracks who completed it and when.
-///
-/// ## Domain Entity Pattern
-/// This is a pure Dart domain entity with NO ObjectBox decorators.
-/// ObjectBox decorators belong on the wrapper class (CommitmentLogOB) in the adapters directory.
-/// This allows the same entity to work on native (ObjectBox) and web (IndexedDB) platforms.
-///
-/// ## Usage
-/// ```dart
-/// final log = CommitmentLog(
-///   commitmentId: 'commitment-uuid',
-///   date: DateTime.now(),
-///   completed: true,
-///   personId: 'person-uuid',
-///   notes: 'Completed morning meditation for 15 minutes',
-/// );
-/// ```
 
 import '../../../core/base_entity.dart';
 

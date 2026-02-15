@@ -1,16 +1,3 @@
-/// # Edgeable
-///
-/// ## What it does
-/// Enables flexible entity-to-entity connections without schema changes.
-/// Creates a shallow graph layer over relational data.
-///
-/// ## What it enables
-/// - Connect any entity to any entity
-/// - Discover relationships without foreign keys
-/// - "Related items" functionality
-/// - Flexible categorization and grouping
-/// - Human-curated and AI-inferred connections
-///
 /// ## Schema
 /// Edges stored in separate Edge entities:
 /// ```dart
@@ -44,20 +31,6 @@
 ///   targetType: 'Note',
 /// );
 /// ```
-///
-/// ## Performance
-/// - Index on (sourceType, sourceUuid) and (targetType, targetUuid)
-/// - Unique constraint on full edge prevents duplicates
-/// - 1-3 hop traversal via SQL/Dart is fine
-/// - Deep traversal (4+ hops) may need graph DB
-///
-/// ## Testing approach
-/// Traversal tests:
-/// - Create entity graph with known structure
-/// - Verify single-hop queries return correct entities
-/// - Verify multi-hop traversal follows correct path
-/// - Test edge creation idempotency (no duplicates)
-/// - Test edge deletion cascades correctly
 ///
 /// ## Integrates with
 /// - Embeddable: Find related by explicit connection + similarity

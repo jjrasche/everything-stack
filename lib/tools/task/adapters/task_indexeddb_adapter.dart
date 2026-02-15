@@ -1,15 +1,3 @@
-/// # TaskIndexedDBAdapter
-///
-/// ## What it does
-/// IndexedDB implementation of PersistenceAdapter for Task entities.
-/// Handles CRUD operations for web platform.
-///
-/// ## Usage
-/// ```dart
-/// final db = await idbFactory.open('my_database');
-/// final adapter = TaskIndexedDBAdapter(db);
-/// final repo = TaskRepository(adapter: adapter);
-/// ```
 
 import 'dart:indexed_db' as idb;
 import '../../../persistence/indexeddb/base_indexeddb_adapter.dart';

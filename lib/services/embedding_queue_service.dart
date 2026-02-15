@@ -1,36 +1,7 @@
-/// # EmbeddingQueueService
-///
-/// Background service for processing embedding generation asynchronously.
-/// Prevents blocking entity saves on API calls.
-///
-/// ## Why background
-/// Synchronous embedding during save:
-/// - Blocks UI (user waits 2-5 seconds per save)
-/// - Hangs on API timeout (no recovery)
-/// - Sequential chunking = 25+ API calls = 50+ seconds
-///
-/// Background embedding:
-/// - Save returns immediately
-/// - Batch API calls (efficient)
-/// - Retry on failure (resilient)
-/// - Persistent queue (survives crashes)
-///
-/// ## Lifecycle
-/// 1. start() - Called on app init, starts timer
-/// 2. Process batch every 2s OR when queue reaches 10 items
-/// 3. flush() - Process all pending (on app shutdown, in tests)
-/// 4. stop() - Cancel timer, optionally flush pending
-///
-/// ## Error handling
-/// - Batch fails → Split into individual calls
-/// - Individual call fails → Retry up to 3 times with backoff
-/// - After 3 retries → Mark as failed, log, remove from queue
-/// - Entity deleted → Mark as completed, skip
-///
-/// ## Implementation notes
-/// - Persistent queue (EmbeddingTaskData stored via platform-specific adapter)
-/// - Uses adapter.save(touch: false) to avoid updatedAt collision
-/// - Direct adapter access bypasses repository handlers (intentional)
+/// ## Why background embedding instead of synchronous
+/// Synchronous embedding during save blocks UI (2-5s per save),
+/// hangs on API timeout, and sequential chunking means 25+ API calls.
+/// Background queue: save returns immediately, batch API calls, retry on failure.
 
 import 'dart:async';
 import 'embedding_service.dart';

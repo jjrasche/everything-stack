@@ -1,7 +1,3 @@
-/// # STT Service Type Definitions
-///
-/// Typed payloads for STT (speech-to-text) service adaptation, invocations, and feedback.
-
 import 'dart:convert';
 import 'package:everything_stack_template/core/adaptation_data.dart';
 import 'word.dart';

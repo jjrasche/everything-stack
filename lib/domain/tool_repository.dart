@@ -1,20 +1,3 @@
-/// # ToolRepository
-///
-/// ## What it does
-/// Repository for Tool entities. Manages MCP tools within namespaces.
-///
-/// ## Usage
-/// ```dart
-/// final adapter = ToolObjectBoxAdapter(store);
-/// final repo = ToolRepository(adapter: adapter);
-///
-/// // Find tools in a namespace
-/// final taskTools = await repo.findByNamespace('task');
-///
-/// // Find specific tool
-/// final createTool = await repo.findByFullName('task.create');
-/// ```
-
 import '../core/entity_repository.dart';
 import '../core/persistence/persistence_adapter.dart';
 import '../services/embedding_service.dart';

@@ -1,23 +1,3 @@
-/// # LLMConfigSelector
-///
-/// ## What it does
-/// Trainable component that selects LLM configuration for a request.
-/// Learns which temperature, model, and parameters work best for different requests.
-///
-/// ## Input
-/// - utterance: User's request
-/// - namespace: Selected namespace
-/// - tools: Tools that will be available
-///
-/// ## Output
-/// - config: Selected LLM configuration {temperature, model, maxTokens, etc.}
-///
-/// ## Training
-/// When user feedback indicates poor LLM response:
-/// - Adjust temperature (higher for creative, lower for factual)
-/// - Track response quality scores
-/// - Learn which configurations work for different namespaces
-
 import 'package:flutter/material.dart';
 import '../trainable.dart';
 import '../../core/invocation.dart';

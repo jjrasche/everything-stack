@@ -1,21 +1,3 @@
-/// # CommitmentObjectBoxAdapter
-///
-/// ## What it does
-/// ObjectBox implementation of PersistenceAdapter for Commitment entities.
-/// Uses wrapper pattern (CommitmentOB) to keep domain entity clean.
-///
-/// ## Pattern
-/// - Domain entity (Commitment) has NO ObjectBox decorators
-/// - Wrapper class (CommitmentOB) has ALL decorators
-/// - Adapter converts between Commitment <-> CommitmentOB
-///
-/// ## Usage
-/// ```dart
-/// final store = await openStore();
-/// final adapter = CommitmentObjectBoxAdapter(store);
-/// final repo = CommitmentRepository(adapter: adapter);
-/// ```
-
 import 'package:objectbox/objectbox.dart';
 import '../../core/persistence/persistence_adapter.dart';
 import '../../tools/regulation/entities/commitment.dart';

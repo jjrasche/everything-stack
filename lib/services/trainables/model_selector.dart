@@ -1,30 +1,8 @@
-/// # ModelSelector
-///
-/// ## What it does
-/// Selects the best LLM model for a query using Thompson Sampling.
-/// Learns from user feedback to optimize model selection over time.
-///
-/// ## Algorithm
-/// 1. Maintain Beta(α, β) posterior for each model from binary feedback
-/// 2. Sample from each model's posterior distribution
-/// 3. Select model with highest sampled value
-/// 4. Update posterior based on feedback (success/failure)
-///
 /// ## Why Thompson Sampling?
 /// - Handles exploration/exploitation tradeoff naturally
 /// - Converges to optimal arm with good regret bounds
 /// - Simple update rule: just increment success or failure count
 /// - Graceful cold start (uniform prior)
-///
-/// ## Usage
-/// ```dart
-/// final selection = await modelSelector.selectModel(
-///   eventId: 'evt_123',
-///   utterance: 'Set a timer for 5 minutes',
-/// );
-/// print('Selected: ${selection.model}');
-/// // Use selection.model in LLM call
-/// ```
 
 import 'dart:convert';
 import 'package:flutter/material.dart';

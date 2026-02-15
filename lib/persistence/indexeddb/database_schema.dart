@@ -1,9 +1,3 @@
-/// # IndexedDB Database Schema
-///
-/// ## What it does
-/// Defines the IndexedDB database schema for web platform persistence.
-/// Mirrors ObjectBox schema but adapted for IndexedDB capabilities.
-///
 /// ## Design decisions
 ///
 /// ### HNSW Semantic Search

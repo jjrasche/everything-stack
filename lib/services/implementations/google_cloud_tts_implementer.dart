@@ -1,28 +1,3 @@
-/// # GoogleCloudTTSImplementer
-///
-/// Dumb API wrapper for Google Cloud Text-to-Speech API.
-/// Synthesizes text to speech using Google's Neural2 voices.
-/// No state management - just calls API and returns results.
-///
-/// ## Platform Support
-/// Pure Dart HTTP - works on all platforms (Android, iOS, Windows, macOS, Linux, Web).
-///
-/// ## API Key Setup
-/// 1. Go to https://console.cloud.google.com/
-/// 2. Enable "Cloud Text-to-Speech API"
-/// 3. Create API key (APIs & Services > Credentials > Create Credentials > API Key)
-/// 4. Add to .env:
-///    ```
-///    GOOGLE_TTS_API_KEY=your_api_key_here
-///    ```
-///
-/// ## Voice IDs
-/// - en-US-Neural2-A: Male, neutral
-/// - en-US-Neural2-C: Female, neutral
-/// - en-US-Neural2-D: Male, conversational
-/// - en-US-Neural2-F: Female, conversational
-/// Full list: https://cloud.google.com/text-to-speech/docs/voices
-
 library;
 
 import 'dart:convert';

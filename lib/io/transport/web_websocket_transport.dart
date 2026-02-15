@@ -1,16 +1,3 @@
-/// # Browser WebSocket Transport
-///
-/// Browser WebSocket implementation of [Transport].
-/// Uses dart:html WebSocket API directly for full-duplex communication.
-///
-/// ## Why Not dart:io WebSocket?
-/// dart:io WebSocket has a bug on Windows where it converts wss:// to https://
-/// during HTTP upgrade handshake, breaking TLS WebSocket connections.
-/// Browser WebSocket API works correctly on all platforms.
-///
-/// ## Full-Duplex Support
-/// Browser WebSocket is inherently full-duplex. The [received] stream
-/// operates independently of [send] calls via WebSocket.onMessage events.
 
 import 'dart:async';
 import 'dart:typed_data';

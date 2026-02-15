@@ -1,9 +1,3 @@
-/// # Parameter Optimizer Interface
-///
-/// Abstract interface for parameter optimization strategies.
-/// Implementations include Gaussian Process (Bayesian optimization),
-/// random search, grid search, etc.
-
 import 'types.dart';
 
 /// Base interface for parameter optimizers

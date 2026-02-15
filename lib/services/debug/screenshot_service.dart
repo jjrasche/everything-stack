@@ -1,23 +1,3 @@
-/// # ScreenshotService
-///
-/// Captures screenshots of the Flutter UI for AI debugging.
-/// Saves to logs/screenshots/ with timestamps.
-///
-/// ## How it works
-/// 1. Wraps app in RepaintBoundary (via ScreenshotWrapper widget)
-/// 2. On capture(), renders boundary to image
-/// 3. Saves PNG to logs/screenshots/{timestamp}-{context}.png
-/// 4. Returns path so Claude can read the image
-///
-/// ## Usage
-/// ```dart
-/// // In main.dart, wrap your app:
-/// ScreenshotWrapper(child: MyApp())
-///
-/// // Capture anytime:
-/// final path = await ScreenshotService.instance.capture(context: 'search-results');
-/// ```
-
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';

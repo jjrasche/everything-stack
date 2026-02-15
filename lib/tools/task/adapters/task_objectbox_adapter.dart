@@ -1,7 +1,3 @@
-/// # TaskObjectBoxAdapter
-///
-/// Stub implementation for ObjectBox on mobile/desktop platforms.
-/// Full implementation pending: Task entities need @Entity decorators.
 
 import 'package:objectbox/objectbox.dart';
 import '../../../core/persistence/persistence_adapter.dart';

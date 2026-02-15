@@ -1,7 +1,3 @@
-/// # Timer Tools
-///
-/// Tool functions for timer management.
-/// Registered with ToolRegistry and called by ToolExecutor.
 
 import '../../services/tool_registry.dart';
 import 'repositories/timer_repository.dart';

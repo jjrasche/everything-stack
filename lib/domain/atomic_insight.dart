@@ -1,31 +1,5 @@
-/// # AtomicInsight
-///
-/// ## What it does
-/// Represents a single atomic insight extracted from conversations.
-/// Insights are freeform text in "[Atomic idea]. Because [reason]." format,
-/// organized by temporal scope (session, day, week, project, life).
-///
-/// ## Patterns used
-/// - Embeddable: Semantic search across insights for relevance
-///
-/// ## Storage
-/// Insights are stored per scope in ObjectBox (native) / IndexedDB (web).
-/// Each scope maintains its own timeline. Session/Day auto-update via
-/// AtomicInsightExtractor. Projects/Life only via training checkpoints.
-///
-/// ## Usage
-/// ```dart
-/// // Create session insight during conversation
-/// final insight = AtomicInsight(
-///   content: 'Building conversational AI. Because friction between thought and execution kills what matters.',
-///   scope: 'session',
-///   type: 'learning',
-/// );
-/// await insightRepo.save(insight);
-///
-/// // Retrieve relevant insights for LLM context
-/// final relevant = await insightRepo.findRelevant(utterance, topK: 5);
-/// ```
+/// Single insight extracted from conversations in "[Fact]. Because [reason]." format.
+/// Scoped temporally (session, day, week, project, life) with Embeddable for semantic search.
 
 import 'package:json_annotation/json_annotation.dart';
 import '../core/base_entity.dart';

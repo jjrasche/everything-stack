@@ -1,22 +1,7 @@
-/// # WebSocket Protocol
-///
-/// Protocol implementation for WebSocket text/binary framing.
-///
-/// ## How it Works
-/// WebSocket already distinguishes text vs binary frames at the transport level.
-/// This protocol layer:
-/// - Converts Transport byte streams into typed [Message] objects
-/// - Handles UTF-8 encoding/decoding for text messages
-/// - Passes binary data through unchanged
-///
-/// ## No Handshake Required
-/// Unlike some protocols (e.g., Phoenix Channels, Socket.IO), plain WebSocket
-/// has no application-level handshake. The HTTP upgrade is handled by Transport.
-/// [initialize] succeeds immediately if transport is connected.
-///
-/// ## Full-Duplex
-/// Inherits full-duplex support from Transport. Send and receive operate
-/// independently.
+/// ## Why no handshake
+/// Unlike Phoenix Channels or Socket.IO, plain WebSocket has no application-level
+/// handshake. The HTTP upgrade is handled by Transport. [initialize] succeeds
+/// immediately if transport is connected.
 
 import 'dart:async';
 import 'dart:convert';

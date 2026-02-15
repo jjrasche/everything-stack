@@ -1,32 +1,3 @@
-/// # Bootstrap
-///
-/// Single entry point for initializing all Everything Stack services.
-/// Handles platform-specific setup and proper initialization order.
-///
-/// ## Usage
-/// ```dart
-/// void main() async {
-///   WidgetsFlutterBinding.ensureInitialized();
-///   await initializeEverythingStack();
-///   runApp(ProviderScope(child: MyApp()));
-/// }
-/// ```
-///
-/// ## Configuration
-/// Pass configuration via parameters or compile-time environment:
-/// ```
-/// flutter run --dart-define=SUPABASE_URL=https://xxx.supabase.co \
-///             --dart-define=SUPABASE_ANON_KEY=your-key \
-///             --dart-define=JINA_API_KEY=your-key
-/// ```
-///
-/// ## Initialization Order
-/// 1. Persistence (platform-specific: ObjectBox or IndexedDB)
-/// 2. BlobStore (platform-specific: FileSystem or IndexedDB)
-/// 3. ConnectivityService
-/// 4. SyncService (optional, requires Supabase credentials)
-/// 5. EmbeddingService (optional, requires API key)
-
 library;
 
 import 'package:flutter/foundation.dart';

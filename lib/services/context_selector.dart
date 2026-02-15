@@ -1,27 +1,3 @@
-/// # ContextSelector
-///
-/// ## What it does
-/// Selects relevant context for LLM using dual temporal decay:
-/// - Recent conversation (STT/LLM pairs) with aggressive decay (24h half-life)
-/// - Semantic context (all embeddable entities) with gentle decay (720h half-life)
-///
-/// ## Trainable aspects
-/// - conversationThreadSize: How many recent turns to include
-/// - conversationHalfLifeHours: Decay rate for conversation (default 24h)
-/// - maxSemanticResults: Max semantic context items
-/// - semanticHalfLifeHours: Decay rate for semantic context (default 720h = 1 month)
-/// - semanticThreshold: Min similarity score to include
-///
-/// ## Usage
-/// ```dart
-/// final bundle = await contextSelector.selectContext(
-///   transcription: 'Set a timer for 5 minutes',
-///   userId: 'user123',
-/// );
-/// // bundle.conversationThread: Recent STT/LLM pairs
-/// // bundle.semanticContext: Relevant facts from across system
-/// ```
-
 import 'dart:math' show exp, ln2, pow, sqrt;
 import 'dart:convert';
 import 'package:get_it/get_it.dart';

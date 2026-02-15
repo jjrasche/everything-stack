@@ -1,24 +1,3 @@
-/// # DebugServer
-///
-/// HTTP server on localhost:9999 for AI-driven debugging.
-/// Claude can curl these endpoints directly - no user interaction needed.
-///
-/// ## Endpoints
-/// - GET /state - Full app state JSON
-/// - GET /screenshot - Trigger screenshot capture (returns path)
-/// - GET /search?q=... - Run semantic search, return results
-/// - GET /entity/{uuid} - Load entity by UUID
-/// - GET /chunks?entityId=... - Get chunks for entity
-/// - GET /logs - Recent log entries
-/// - POST /action/{name} - Trigger named action
-///
-/// ## Usage
-/// ```bash
-/// curl http://localhost:9999/state
-/// curl http://localhost:9999/search?q=hello
-/// curl http://localhost:9999/screenshot
-/// ```
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';

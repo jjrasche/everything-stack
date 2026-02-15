@@ -1,16 +1,3 @@
-/// # ToolExecutor
-///
-/// ## What it does
-/// Executes tools by looking them up in the ToolRegistry and calling them.
-/// Tools are registered by domain layers (task, timer, media, etc).
-///
-/// ## Flow
-/// 1. LLM returns: {toolCalls: [{toolName: 'task.create', params: {title: 'Buy milk'}}]}
-/// 2. ToolExecutor looks up 'task.create' in registry
-/// 3. Calls the function with params
-/// 4. Records invocation for training (via Trainable mixin)
-/// 5. Returns: {results: [{toolName: 'task.create', success: true, data: {...}}]}
-
 import 'dart:convert';
 import '../core/invocation.dart';
 import '../core/trainable.dart';

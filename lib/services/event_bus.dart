@@ -1,36 +1,3 @@
-/// # EventBus Interface
-///
-/// Pub/sub event coordination for the Everything Stack.
-///
-/// ## Design: Simultaneous Persistence & Publication
-/// Every Event is:
-/// 1. Published to EventBus listeners immediately
-/// 2. Persisted to ObjectBox/IndexedDB simultaneously
-///
-/// Both operations complete before publish() returns.
-///
-/// ## Usage
-/// ```dart
-/// // Publish an event (persisted simultaneously)
-/// final event = Event(
-///   eventType: 'transcription_complete',
-///   correlationId: 'corr_001',
-///   source: 'stt',
-///   payloadJson: '{"transcript":"hello world","confidence":0.95}',
-/// );
-/// await eventBus.publish(event);
-///
-/// // Subscribe to all events and filter by eventType
-/// eventBus.subscribe().listen((event) {
-///   if (event.eventType == 'transcription_complete') {
-///     print('Heard transcription');
-///   }
-/// });
-///
-/// // Query events by correlation ID (for testing)
-/// final events = eventBus.getEventsByCorrelationId('corr_001');
-/// print('Events in turn: ${events.length}');
-/// ```
 library;
 
 import '../core/event.dart';

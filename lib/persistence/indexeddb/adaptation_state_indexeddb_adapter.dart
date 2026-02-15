@@ -1,5 +1,3 @@
-/// # AdaptationStateIndexedDBAdapter
-
 import 'dart:indexed_db' as idb;
 import '../../core/adaptation_state.dart';
 import '../../core/adaptation_state_repository.dart';

@@ -1,8 +1,3 @@
-/// # AtomicInsightIndexedDBAdapter
-///
-/// IndexedDB implementation of PersistenceAdapter for AtomicInsight (web platform).
-/// Uses BaseIndexedDBAdapter for standard CRUD operations.
-
 import 'dart:indexed_db' as idb;
 import '../../domain/atomic_insight.dart';
 import '../../core/persistence/persistence_adapter.dart';

@@ -1,17 +1,3 @@
-/// # UI Schema for VLM Analysis
-///
-/// Provides structured descriptions of UI screens to help VLM
-/// understand what it's looking at and give more precise analysis.
-///
-/// ## Usage
-/// ```dart
-/// final schema = UiSchema.forScreen('voice_assistant');
-/// final analysis = await VlmAnalyzer.instance.analyzeScreenshot(
-///   imagePath: path,
-///   prompt: schema.toPrompt('describe any errors'),
-/// );
-/// ```
-
 class UiSchema {
   final String screenName;
   final String description;

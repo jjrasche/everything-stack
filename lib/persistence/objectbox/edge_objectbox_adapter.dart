@@ -1,9 +1,3 @@
-/// # EdgeObjectBoxAdapter
-///
-/// ## What it does
-/// ObjectBox implementation of EdgePersistenceAdapter.
-/// Uses EdgeOB wrapper (Anti-Corruption Layer) to keep domain entities clean.
-
 import 'package:objectbox/objectbox.dart';
 import 'base_objectbox_adapter.dart';
 import '../../core/base_entity.dart';

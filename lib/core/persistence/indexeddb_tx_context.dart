@@ -1,22 +1,4 @@
-/// # IndexedDBTxContext
-///
-/// ## What it does
-/// IndexedDB-specific implementation of TransactionContext.
-/// Wraps an IndexedDB Transaction to provide access to object stores within a transaction.
-///
-/// ## Usage
-/// ```dart
-/// class NoteIndexedDBAdapter implements PersistenceAdapter<Note> {
-///   @override
-///   Future<Note> saveInTx(TransactionContext ctx, Note entity) async {
-///     final idbCtx = ctx as IndexedDBTxContext;
-///     entity.touch();
-///     final store = idbCtx.objectStore('notes');
-///     await store.put(entity.toJson(), entity.uuid);
-///     return entity;
-///   }
-/// }
-/// ```
+/// IndexedDB-specific TransactionContext wrapping a Transaction for object store access.
 
 import 'dart:indexed_db' as idb;
 import 'transaction_context.dart';

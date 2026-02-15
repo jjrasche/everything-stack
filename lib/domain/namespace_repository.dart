@@ -1,17 +1,3 @@
-/// # NamespaceRepository
-///
-/// ## What it does
-/// Repository for Namespace entities. Manages tool categories.
-///
-/// ## Usage
-/// ```dart
-/// final adapter = NamespaceObjectBoxAdapter(store);
-/// final repo = NamespaceRepository(adapter: adapter);
-///
-/// // Find namespace by name
-/// final taskNs = await repo.findByName('task');
-/// ```
-
 import '../core/entity_repository.dart';
 import '../core/persistence/persistence_adapter.dart';
 import '../services/embedding_service.dart';

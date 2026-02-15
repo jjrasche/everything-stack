@@ -1,17 +1,3 @@
-/// # ContextCapacity Type Definitions
-///
-/// Types for ContextCapacity service: adaptation data, truncation results.
-///
-/// ## What ContextCapacity Learns
-/// Optimal token budget per model. Different models have different
-/// context windows and performance characteristics:
-/// - Large context doesn't always mean better quality
-/// - Some models degrade with too much context
-/// - Performance (latency) scales with context size
-///
-/// The GP optimizer learns the sweet spot for each model based on
-/// user feedback on response quality.
-
 import 'dart:convert';
 import '../../core/adaptation_data.dart';
 

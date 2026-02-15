@@ -1,21 +1,3 @@
-/// # RegulationEntryObjectBoxAdapter
-///
-/// ## What it does
-/// ObjectBox implementation of PersistenceAdapter for RegulationEntry entities.
-/// Uses wrapper pattern (RegulationEntryOB) to keep domain entity clean.
-///
-/// ## Pattern
-/// - Domain entity (RegulationEntry) has NO ObjectBox decorators
-/// - Wrapper class (RegulationEntryOB) has ALL decorators
-/// - Adapter converts between RegulationEntry <-> RegulationEntryOB
-///
-/// ## Usage
-/// ```dart
-/// final store = await openStore();
-/// final adapter = RegulationEntryObjectBoxAdapter(store);
-/// final repo = RegulationEntryRepository(adapter: adapter);
-/// ```
-
 import 'package:objectbox/objectbox.dart';
 import '../../core/persistence/persistence_adapter.dart';
 import '../../tools/regulation/entities/regulation_entry.dart';

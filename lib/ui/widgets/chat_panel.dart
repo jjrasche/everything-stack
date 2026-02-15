@@ -1,8 +1,3 @@
-/// # Chat Panel
-///
-/// Displays conversation messages with user input and assistant responses.
-/// User messages: right-aligned
-/// Assistant messages: left-aligned, long-press for feedback
 
 import 'package:flutter/material.dart';
 import 'feedback_bottom_sheet.dart';

@@ -1,48 +1,10 @@
-/// # Event
-///
-/// ## What it does
 /// Represents a triggering event in the system.
-/// Events flow through the Context Manager for processing.
 ///
-/// ## Key Design
-/// - correlationId: Links all operations in a synchronous chain (Event-to-Event links)
-/// - parentEventId: Links async chains (e.g., timer fires hours later)
-/// - source: Who triggered this event ('user', 'timer', 'system')
-/// - payload: The event data (transcription, timer fire, etc.)
-///
-/// ## Naming Note: correlationId vs Invocation.eventId
-/// **Event.correlationId** groups related events together (synchronous pipeline chain)
-/// **Invocation.eventId** points to the triggering event that caused the invocation
-/// Both are essential: correlationId links events, eventId links invocations to their trigger
-///
-/// ## Chain Tracking
-/// Synchronous chain: All operations share same correlationId
-/// - User speaks → STT → Context Manager → LLM → TTS (same correlationId)
-///
-/// Async chain: New correlationId, linked via parentEventId
-/// - Timer fires → new correlationId, parentEventId = original event
-///
-/// ## Usage
-/// ```dart
-/// // User input event
-/// final event = Event(
-///   correlationId: 'corr_001',
-///   source: 'user',
-///   payload: {'transcription': 'set a timer for 5 minutes'},
-/// );
-///
-/// // Timer fire event (async, linked)
-/// final timerEvent = Event(
-///   correlationId: 'corr_002',  // New chain
-///   parentEventId: 'corr_001',   // Linked to original
-///   source: 'timer',
-///   payload: {'timerId': 'timer_001', 'label': '5 minute timer'},
-/// );
-/// ```
-///
-/// ## Note
-/// Events flow through the system, not persisted long-term for MVP.
-/// ContextManagerInvocation captures the decision log.
+/// ## Why two ID fields for chain tracking
+/// **correlationId** groups related events in a synchronous pipeline chain
+/// (User speaks -> STT -> Context Manager -> LLM -> TTS all share one correlationId).
+/// **parentEventId** links async chains (e.g., timer fires hours later with new
+/// correlationId, linked back via parentEventId).
 
 import 'dart:convert';
 import '../core/base_entity.dart';

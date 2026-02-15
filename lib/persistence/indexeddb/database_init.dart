@@ -1,28 +1,3 @@
-/// # IndexedDB Database Initialization
-///
-/// ## What it does
-/// Handles IndexedDB database initialization, schema creation, and version upgrades.
-///
-/// ## Usage
-/// ```dart
-/// // In app initialization:
-/// final db = await openIndexedDatabase();
-///
-/// // Create adapters:
-/// final noteAdapter = NoteIndexedDBAdapter(db);
-/// final edgeAdapter = EdgeIndexedDBAdapter(db);
-/// final versionAdapter = EntityVersionIndexedDBAdapter(db);
-/// ```
-///
-/// ## Version Management
-/// - Version 1: Initial schema (notes, edges, entity_versions, _hnsw_index)
-/// - Future versions: Add upgrade logic in onUpgradeNeeded
-///
-/// ## Error Handling
-/// - QuotaExceededError: User needs to grant storage permission
-/// - InvalidStateError: Database already open (reuse connection)
-/// - VersionError: Schema version mismatch (clear data or migrate)
-
 import 'dart:indexed_db' as idb;
 import 'dart:indexed_db' as idb;
 import 'dart:html' show window;

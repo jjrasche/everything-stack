@@ -14,29 +14,6 @@ typedef EntityLookup = Future<BaseEntity?> Function(String uuid);
 /// Any SemanticIndexable entity can be chunked and indexed. When semantic
 /// search returns chunks, this loader resolves sourceEntityId back to the
 /// actual entity by querying the appropriate repository.
-///
-/// ## Usage
-/// ```dart
-/// final loader = EntityLoaderImpl();
-///
-/// // Register repositories for each entity type that participates in semantic indexing
-/// loader.registerEntityType('Invocation', (uuid) async {
-///   final repo = GetIt.instance<InvocationRepository<Invocation>>();
-///   return await repo.findById(uuid);
-/// });
-///
-/// loader.registerEntityType('Task', (uuid) async {
-///   final repo = GetIt.instance<TaskRepository>();
-///   return await repo.findById(uuid);
-/// });
-///
-/// // Now getById can resolve any registered entity type
-/// final entity = await loader.getById(uuid, entityType: 'Invocation');
-/// ```
-///
-/// ## Bootstrap Registration
-/// Call registerEntityType() for each SemanticIndexable entity type
-/// during app bootstrap, before semantic search is used.
 class EntityLoaderImpl extends EntityLoader {
   /// Registry mapping entity type names to lookup functions.
   final Map<String, EntityLookup> _registry = {};

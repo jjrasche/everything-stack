@@ -1,34 +1,5 @@
-/// # EntityRepository
-///
-/// ## What it does
 /// Base repository providing common data operations for all entities.
-/// Handles CRUD, querying, and cross-cutting concerns like sync.
-/// Delegates database operations to PersistenceAdapter.
-///
-/// ## What it enables
-/// - Consistent data access patterns
-/// - Semantic search when entity is Embeddable
-/// - Automatic sync status management
-/// - Cross-type identification via uuid
-/// - Database-agnostic: ObjectBox, IndexedDB, etc.
-///
-/// ## Usage
-/// ```dart
-/// // Create adapter for your platform
-/// final adapter = NoteObjectBoxAdapter(store);  // or NoteIndexedDBAdapter
-///
-/// class NoteRepository extends EntityRepository<Note> {
-///   NoteRepository({required super.adapter, super.embeddingService});
-/// }
-///
-/// final repo = NoteRepository(adapter: adapter);
-/// await repo.save(note);  // Auto-generates embedding
-/// final results = await repo.semanticSearch('query');
-/// ```
-///
-/// ## Testing approach
-/// Test through domain repositories. Verify CRUD operations,
-/// query correctness, sync status transitions.
+/// Delegates database operations to PersistenceAdapter for platform independence.
 
 import 'base_entity.dart';
 import 'persistence/persistence_adapter.dart';

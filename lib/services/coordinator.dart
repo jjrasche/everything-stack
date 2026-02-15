@@ -1,30 +1,3 @@
-/// # Coordinator
-///
-/// ## What it does
-/// Central orchestrator for the voice assistant pipeline.
-/// Orchestrates LLM + TTS for end-to-end voice interaction:
-/// 1. Embedding generation (semantic representation)
-/// 2. InferenceService - calls LLM with tools (includes agentic loop)
-/// 3. TTSService - synthesizes response to speech
-///
-/// ## Flow (Audio In → Audio Out)
-/// 1. STT publishes Event(eventType: transcription_complete)
-/// 2. Coordinator.orchestrate() triggered by event listener
-/// 3. Generate embedding of utterance
-/// 4. Call LLM with tools available (agentic loop with tool execution)
-/// 5. TTSService synthesizes response → audio bytes → speaker
-/// 6. Publish Event(eventType: orchestration_complete) for UI
-/// 7. Record all invocations for training
-///
-/// ## Agentic Loop
-/// The LLM has tools available. If it requests tool calls:
-/// 1. Parse tool calls from LLM response
-/// 2. Execute each tool (via ToolExecutor)
-/// 3. Collect results
-/// 4. Send results back to LLM
-/// 5. LLM responds again (may call more tools or finish)
-/// 6. Repeat until LLM produces final_response (no tool calls)
-
 import 'dart:async';
 import 'dart:convert';
 import '../core/invocation.dart';

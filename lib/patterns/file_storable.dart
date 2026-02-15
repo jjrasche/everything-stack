@@ -1,17 +1,3 @@
-/// # FileStorable
-///
-/// ## What it does
-/// Enables entities to have file attachments (images, audio, video, documents).
-/// Stores metadata (filename, MIME type, thumbnail) inline.
-/// Actual file bytes managed by BlobStore service.
-///
-/// ## What it enables
-/// - Notes with images/attachments
-/// - Posts with media files
-/// - Documents with thumbnails
-/// - Forms with file uploads
-/// - Voice notes with audio
-///
 /// ## Schema addition
 /// ```dart
 /// @Embedded()
@@ -60,10 +46,6 @@
 /// ## File operations
 /// File picking, compression, thumbnail generation handled by FileService.
 /// This mixin only manages metadata.
-///
-/// ## Testing approach
-/// Test attachment CRUD, queries, filters.
-/// File operations tested in FileService.
 ///
 /// ## Integrates with
 /// - BlobStore: Stores actual file bytes

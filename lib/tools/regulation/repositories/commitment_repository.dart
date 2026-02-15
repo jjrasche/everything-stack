@@ -1,19 +1,3 @@
-/// # CommitmentRepository
-///
-/// ## What it does
-/// Repository for Commitment entities. Manages commitment tracking.
-/// Uses platform-specific adapters - ObjectBox on native, IndexedDB on web.
-///
-/// ## Usage
-/// ```dart
-/// final repo = CommitmentRepository();
-///
-/// // Find active commitments
-/// final active = await repo.findActive();
-///
-/// // Find by person
-/// final personCommitments = await repo.findByPerson(personUuid);
-/// ```
 
 import '../../../core/entity_repository.dart';
 import '../../../services/embedding_service.dart';

@@ -1,10 +1,3 @@
-/// # LLM Service Type Definitions
-///
-/// Typed payloads for LLM service adaptation, invocations, and feedback.
-/// Provides compile-time safety, IDE autocomplete, and self-documentation.
-///
-/// Note: LLMAdaptationData renamed to InferenceAdaptationData for clarity.
-
 import 'dart:convert';
 import 'package:everything_stack_template/core/adaptation_data.dart';
 import 'message.dart';

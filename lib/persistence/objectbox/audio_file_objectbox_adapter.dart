@@ -1,8 +1,3 @@
-/// # AudioFileObjectBoxAdapter
-///
-/// ObjectBox adapter for AudioFile entity.
-/// Provides AudioFileRepository implementation for native platforms.
-
 import 'package:objectbox/objectbox.dart';
 import '../../domain/audio_file.dart';
 import '../../core/entity_repository.dart';

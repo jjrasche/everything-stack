@@ -1,28 +1,3 @@
-/// # UiAutomationService
-///
-/// Programmatic UI interaction for AI-driven debugging.
-/// Walks Flutter's semantics tree to find widgets by hierarchical labels,
-/// then dispatches synthetic pointer events via GestureBinding.
-///
-/// ## Widget Addressing
-/// Widgets are addressed by semantics labels using hierarchical dot notation:
-/// - `chat_panel.mic_button` → the microphone FAB
-/// - `context_panel.search_bar` → the search TextField
-/// - `context_panel.similarity_slider` → the threshold slider
-///
-/// ## Interaction Primitives
-/// - **tap** → PointerDown + PointerUp at widget center
-/// - **type** → Set TextEditingController.text + optional onSubmitted
-/// - **slide** → PointerDown + PointerMove sequence along slider track
-///
-/// ## Usage
-/// ```bash
-/// curl "http://localhost:9999/ui/tap?target=chat_panel.mic_button"
-/// curl "http://localhost:9999/ui/type?target=context_panel.search_bar&text=hello&submit=true"
-/// curl "http://localhost:9999/ui/slide?target=context_panel.similarity_slider&value=0.7"
-/// curl "http://localhost:9999/ui/tree"
-/// ```
-
 import 'dart:ui' as ui;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';

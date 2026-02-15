@@ -1,8 +1,3 @@
-/// # AudioFileIndexedDBAdapter
-///
-/// IndexedDB adapter for AudioFile entity.
-/// Provides web-compatible persistence for audio recordings.
-
 import 'dart:indexed_db' as idb;
 import '../../domain/audio_file.dart';
 import 'base_indexeddb_adapter.dart';

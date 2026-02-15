@@ -1,45 +1,5 @@
-/// # TransactionManager
-///
-/// ## What it does
 /// Platform-agnostic interface for executing database transactions.
 /// Coordinates atomic operations across multiple adapters.
-///
-/// ## What it enables
-/// - Atomic multi-entity operations (save note + version together)
-/// - Cross-repository transactions (note + edges + versions)
-/// - Platform-specific transaction implementations
-/// - Repository code independent of persistence backend
-///
-/// ## How it works
-/// Implementations wrap platform-specific transaction APIs:
-/// - ObjectBoxTransactionManager: Uses Store.runInTransactionAsync
-/// - IndexedDBTransactionManager: Uses IdbDatabase.transaction
-///
-/// The work callback receives a TransactionContext for accessing
-/// platform-specific transaction primitives.
-///
-/// ## Usage
-/// ```dart
-/// // In EntityRepository
-/// await transactionManager.transaction(
-///   (ctx) {
-///     // All operations are atomic
-///     versionAdapter.saveInTx(ctx, version);
-///     return adapter.saveInTx(ctx, entity).id;
-///   },
-///   objectStores: ['notes', 'entity_versions'],  // For IndexedDB
-/// );
-/// ```
-///
-/// ## Platform implementations
-/// - ObjectBoxTransactionManager: lib/core/persistence/objectbox_transaction_manager.dart
-/// - IndexedDBTransactionManager: (future)
-///
-/// ## Testing approach
-/// Test through repositories. Verify:
-/// - Multi-entity saves are atomic (both succeed or both rollback)
-/// - Exceptions trigger rollback
-/// - Read-your-writes consistency within transaction
 
 import 'transaction_context.dart';
 

@@ -1,19 +1,3 @@
-/// # CommitmentLogRepository
-///
-/// ## What it does
-/// Repository for CommitmentLog entities. Manages commitment completion tracking.
-/// Uses platform-specific adapters - ObjectBox on native, IndexedDB on web.
-///
-/// ## Usage
-/// ```dart
-/// final repo = CommitmentLogRepository();
-///
-/// // Find logs for commitment
-/// final logs = await repo.findByCommitment(commitmentUuid);
-///
-/// // Get completion rate
-/// final rate = await repo.getCompletionRate(commitmentUuid);
-/// ```
 
 import '../../../core/entity_repository.dart';
 import '../../../services/embedding_service.dart';

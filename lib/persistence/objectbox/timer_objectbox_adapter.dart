@@ -1,21 +1,3 @@
-/// # TimerObjectBoxAdapter
-///
-/// ## What it does
-/// ObjectBox implementation of PersistenceAdapter for Timer entities.
-/// Uses wrapper pattern (TimerOB) to keep domain entity clean.
-///
-/// ## Pattern
-/// - Domain entity (Timer) has NO ObjectBox decorators
-/// - Wrapper class (TimerOB) has ALL decorators
-/// - Adapter converts between Timer <-> TimerOB
-///
-/// ## Usage
-/// ```dart
-/// final store = await openStore();
-/// final adapter = TimerObjectBoxAdapter(store);
-/// final repo = TimerRepository(adapter: adapter);
-/// ```
-
 import 'package:objectbox/objectbox.dart';
 import '../../core/persistence/persistence_adapter.dart';
 import '../../tools/timer/entities/timer.dart';

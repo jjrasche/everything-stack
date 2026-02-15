@@ -1,16 +1,3 @@
-/// # EdgeIndexedDBAdapter
-///
-/// ## What it does
-/// IndexedDB implementation of PersistenceAdapter for Edge entities.
-/// Handles CRUD operations for entity-to-entity connections on web platform.
-///
-/// ## Usage
-/// ```dart
-/// final db = await idbFactory.open('my_database');
-/// final adapter = EdgeIndexedDBAdapter(db);
-/// final repo = EdgeRepository(adapter: adapter);
-/// ```
-
 import 'dart:indexed_db' as idb;
 import 'base_indexeddb_adapter.dart';
 import 'database_schema.dart';

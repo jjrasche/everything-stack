@@ -1,18 +1,3 @@
-/// # TTSService
-///
-/// Smart orchestration service for text-to-speech capabilities.
-/// Holds multiple TTS implementations and coordinates adaptation learning.
-///
-/// ## Key Responsibilities
-/// - Hold Map<String, TTSImplementer> (FlutterTts, Google Cloud, etc.)
-/// - Select implementer (specified or default)
-/// - Read/apply adaptation state per implementer
-/// - Log invocations for training feedback
-/// - Train from feedback (update AdaptationState)
-///
-/// ## Design Pattern
-/// Service (smart, orchestration) = Composition of Implementers (dumb, API wrappers)
-
 library;
 
 import 'package:flutter/material.dart';

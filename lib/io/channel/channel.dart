@@ -1,21 +1,3 @@
-/// # Channel Layer
-///
-/// The Channel layer provides application-level connection management on top of Protocol.
-/// It handles retry logic, state management, and Invocation logging.
-///
-/// ## Responsibilities
-/// - Retry with exponential backoff
-/// - Connection state management
-/// - Invocation logging for connection events (Trainable)
-/// - Clean disconnect/reconnect
-///
-/// ## NOT Responsibilities (handled by Protocol)
-/// - Message framing
-/// - Protocol handshakes
-///
-/// ## NOT Responsibilities (application-specific)
-/// - Application keepalives (e.g., Deepgram's 5-second ping)
-/// - Message-level semantics
 
 import 'dart:async';
 import 'dart:typed_data';

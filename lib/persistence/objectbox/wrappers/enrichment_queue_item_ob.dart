@@ -1,5 +1,3 @@
-/// # EnrichmentQueueItemOB - ObjectBox Wrapper
-
 import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/core/enrichment_queue_item.dart';
 

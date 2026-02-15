@@ -1,8 +1,3 @@
-/// # EnrichmentQueueIndexedDBAdapter
-///
-/// IndexedDB implementation of EnrichmentQueueAdapter.
-/// Provides queries for enrichment worker and runner operations.
-
 import 'dart:indexed_db' as idb;
 import '../../core/enrichment_queue_item.dart';
 import '../../core/enrichment_queue_repository.dart';

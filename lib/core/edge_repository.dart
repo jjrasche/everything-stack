@@ -1,40 +1,4 @@
-/// # EdgeRepository
-///
-/// ## What it does
-/// Repository for Edge entities. Manages entity-to-entity connections with
-/// persistence, uniqueness enforcement, and efficient traversal.
-///
-/// ## Usage
-/// ```dart
-/// final adapter = EdgeObjectBoxAdapter(store);
-/// final repo = EdgeRepository(adapter: adapter);
-///
-/// // Connect entities
-/// final edge = Edge(
-///   sourceType: 'Note',
-///   sourceUuid: 'note-1',
-///   targetType: 'Project',
-///   targetUuid: 'project-1',
-///   edgeType: 'belongs_to',
-/// );
-/// await repo.save(edge);
-///
-/// // Query edges
-/// final outgoing = await repo.findBySource('note-1');
-/// final incoming = await repo.findByTarget('project-1');
-/// final between = await repo.findBetween('note-1', 'project-1');
-/// final byType = await repo.findByType('belongs_to');
-///
-/// // Traversal (1-3 hops)
-/// final connected = await repo.traverse(
-///   startUuid: 'note-1',
-///   depth: 2,
-///   direction: 'outgoing',
-/// ); // Returns Map<uuid, depth>
-///
-/// // Delete
-/// await repo.deleteEdge('note-1', 'project-1', 'belongs_to');
-/// ```
+/// Repository for Edge entities with uniqueness enforcement and graph traversal (1-3 hops).
 
 import 'edge.dart';
 import 'base_entity.dart' show SyncStatus;

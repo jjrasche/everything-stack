@@ -1,35 +1,3 @@
-/// # BaseObjectBoxAdapter (Path C: Anti-Corruption Layer)
-///
-/// ## What it does
-/// Base implementation of PersistenceAdapter for ObjectBox with wrapper support.
-/// Generic over BOTH domain entity (T) and ObjectBox wrapper (OB) types.
-///
-/// ## Path C Pattern
-/// Domain entities stay clean (no ObjectBox annotations).
-/// ObjectBox wrappers (NoteOB, EdgeOB, etc.) have all annotations.
-/// Base adapter handles conversion automatically.
-///
-/// ## How it works
-/// ```dart
-/// class NoteObjectBoxAdapter extends BaseObjectBoxAdapter<Note, NoteOB> {
-///   NoteObjectBoxAdapter(Store store) : super(store);
-///
-///   @override
-///   NoteOB toOB(Note entity) => NoteOB.fromNote(entity);
-///
-///   @override
-///   Note fromOB(NoteOB ob) => ob.toNote();
-///
-///   @override
-///   Condition<NoteOB> uuidEqualsCondition(String uuid) =>
-///       NoteOB_.uuid.equals(uuid);
-///
-///   @override
-///   Condition<NoteOB> syncStatusLocalCondition() =>
-///       NoteOB_.dbSyncStatus.equals(SyncStatus.local.index);
-/// }
-/// ```
-
 import 'package:meta/meta.dart';
 import 'package:objectbox/objectbox.dart';
 import '../../core/base_entity.dart';

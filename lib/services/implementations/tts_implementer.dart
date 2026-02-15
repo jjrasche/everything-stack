@@ -1,9 +1,3 @@
-/// # TTS Implementer Interface
-///
-/// Dumb API wrapper for text-to-speech providers (Flutter TTS, Google Cloud, etc.).
-/// No state management, no training logic. Just calls API and returns results.
-/// Service holds metadata about call (latencyMs) in properties.
-
 import '../../core/implementer.dart';
 import '../types/tts_types.dart';
 

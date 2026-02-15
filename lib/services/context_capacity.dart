@@ -1,32 +1,7 @@
-/// # ContextCapacity
-///
-/// ## What it does
-/// Manages token budgets for LLM context windows.
-/// Truncates context to fit within model-specific optimal token limits.
-/// Learns the ideal token budget per model from user feedback.
-///
 /// ## Why Trainable?
-/// Different models perform optimally with different amounts of context:
-/// - Too much context: slower, more expensive, may degrade quality
-/// - Too little context: misses relevant information
-/// The optimal point varies by model and use case.
-///
-/// ## Truncation Strategy
-/// Preserves most important context:
-/// 1. System message (always kept)
-/// 2. Recent user/assistant turns (most recent first)
-/// 3. Older turns (removed first when over budget)
-///
-/// ## Usage
-/// ```dart
-/// final truncated = await contextCapacity.truncateMessages(
-///   messages: messagesFromContextSelector,
-///   model: 'groq:llama-3.3-70b-versatile',
-///   eventId: 'evt_123',
-/// );
-/// // Use truncated.messages in LLM call
-/// ```
-
+/// Different models perform optimally with different amounts of context.
+/// The optimal point varies by model and use case - too much context
+/// degrades quality, too little misses relevant information.
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';

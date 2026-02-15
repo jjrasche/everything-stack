@@ -1,34 +1,4 @@
-/// # Feedback
-///
-/// ## What it does
-/// Records user feedback on component invocations.
-/// Links invocations to user corrections/confirmations.
-/// Used for training components to improve.
-///
-/// ## Actions
-/// - confirm: User says output was correct
-/// - deny: User says output was wrong (but didn't provide correction)
-/// - correct: User corrected the output (correctedData contains correction)
-/// - ignore: Don't learn from this invocation (test, sensitive, etc.)
-///
-/// ## Turn Context
-/// - turnId: Optional. If set, feedback is part of conversational context.
-///           If null, feedback is for background/retry/test invocations.
-/// - Component learns only from conversational feedback (turnId != null)
-/// - Background feedback can be learned separately if desired
-///
-/// ## Usage
-/// ```dart
-/// // User corrects STT transcription
-/// final feedback = Feedback(
-///   invocationId: 'stt_inv_001',
-///   turnId: 'turn_5',
-///   componentType: 'stt',
-///   action: FeedbackAction.correct,
-///   correctedData: 'corrected text',
-/// );
-/// await feedbackRepo.save(feedback);
-/// ```
+/// Records user feedback on component invocations for training.
 
 import 'package:json_annotation/json_annotation.dart';
 import '../core/base_entity.dart';

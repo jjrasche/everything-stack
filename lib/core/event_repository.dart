@@ -1,10 +1,4 @@
-/// # EventRepository Interface
-///
 /// Persistence layer for Event entities.
-/// Adapters implement this for platform-specific backends:
-/// - Native (Android/iOS/macOS/Windows/Linux): ObjectBox
-/// - Web: IndexedDB
-///
 /// Called synchronously by EventBusImpl.publish() before returning.
 library;
 

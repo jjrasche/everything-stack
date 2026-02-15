@@ -1,25 +1,3 @@
-/// # EnrichmentRunner
-///
-/// ## What it does
-/// Orchestrates async enrichment of entities.
-/// Creates queue items when entities are saved, spawns workers on-demand.
-///
-/// ## Design
-/// - Event-driven, NOT polling
-/// - Spawn-on-demand workers (run until empty, then exit)
-/// - No debounce - immediate check and spawn on queue add
-/// - Startup recovery - reset stuck items (currentStep not null)
-/// - Runner owns queueRepo, workers receive it as parameter
-///
-/// ## Flow
-/// ```
-/// 1. Entity saved → Repository calls enqueue()
-/// 2. enqueue() creates QueueItem, saves, calls onQueueAdd()
-/// 3. onQueueAdd() checks each worker type, spawns if not running
-/// 4. Worker runs until queue empty, then exits
-/// 5. When all steps done → delete QueueItem
-/// ```
-
 import '../../core/enrichment_queue_item.dart';
 import '../../core/enrichment_queue_repository.dart';
 import 'enrichment_worker.dart';

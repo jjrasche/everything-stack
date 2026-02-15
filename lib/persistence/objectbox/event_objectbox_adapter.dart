@@ -1,6 +1,3 @@
-/// # EventObjectBoxAdapter
-///
-/// ObjectBox adapter for Event entity persistence on native platforms.
 library;
 
 import 'package:objectbox/objectbox.dart';

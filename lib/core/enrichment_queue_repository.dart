@@ -1,20 +1,5 @@
-/// # EnrichmentQueueRepository
-///
-/// ## What it does
 /// Repository for EnrichmentQueueItem entities.
 /// Provides specialized queries for the enrichment runner and workers.
-///
-/// ## Query Operations
-/// - findByEntityUuid(): Find queue item for a specific entity
-/// - findReadyForStep(): Find items ready for a specific enrichment step
-/// - findReadyForStepWithDeps(): Find items with dependencies satisfied
-/// - findStuckItems(): Find items stuck in processing (for recovery)
-///
-/// ## Usage
-/// ```dart
-/// final repo = EnrichmentQueueRepository(adapter: adapter);
-/// final items = await repo.findReadyForStep('semantic_enrichment');
-/// ```
 
 import 'enrichment_queue_item.dart';
 

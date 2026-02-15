@@ -1,5 +1,3 @@
-/// # Enrichable Interface
-///
 /// Entities that need async enrichment implement this interface.
 /// Entity explicitly declares which enrichment steps it needs.
 ///

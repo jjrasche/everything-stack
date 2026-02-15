@@ -1,24 +1,8 @@
-/// # RepositoryRegistry
-///
-/// ## What it does
 /// Maps entity type strings to their repositories.
-/// Allows workers to fetch entities by uuid + type string.
 ///
-/// ## Why needed
-/// EnrichmentWorkers receive entityUuid and entityType (string) from QueueItem.
-/// They need to fetch the actual entity to process it.
-/// This registry provides type→repository lookup.
-///
-/// ## Usage
-/// ```dart
-/// // Bootstrap: Register repositories
-/// final registry = RepositoryRegistry();
-/// registry.register<Invocation>(invocationRepo);
-/// registry.register<Task>(taskRepo);
-///
-/// // Worker: Fetch entity
-/// final entity = await registry.fetchEntity(item.entityUuid, item.entityType);
-/// ```
+/// ## Why this exists
+/// EnrichmentWorkers receive entityUuid and entityType (string) from QueueItem
+/// and need to fetch the actual entity. This registry provides type-to-repository lookup.
 
 import 'base_entity.dart';
 import 'entity_repository.dart';

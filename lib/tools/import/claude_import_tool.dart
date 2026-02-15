@@ -1,17 +1,3 @@
-/// # Claude Import Tool
-///
-/// Imports Claude.ai conversation exports as Invocations for semantic indexing.
-/// Each human→assistant turn becomes an Invocation that gets chunked and embedded.
-///
-/// ## Usage
-/// ```dart
-/// final importer = ClaudeImportTool(invocationRepo: repo);
-/// final result = await importer.importFromExport(
-///   conversationsPath: '/path/to/conversations.json',
-///   limit: 10,  // For testing
-/// );
-/// print('Imported ${result.imported} turns from ${result.conversations} conversations');
-/// ```
 
 import '../../core/invocation.dart';
 import '../../core/entity_repository.dart';

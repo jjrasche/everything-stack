@@ -1,20 +1,7 @@
-/// # Native WebSocket Transport
-///
-/// Transport implementation using dart:io WebSocket.
-/// Works on macOS, iOS, Android, Linux. BROKEN ON WINDOWS.
-///
-/// ## Windows Bug
+/// ## Why not used on Windows
 /// dart:io WebSocket on Windows converts wss:// to https:// during
-/// HTTP upgrade handshake, causing TLS failures. This is a Dart SDK bug.
-/// See: https://github.com/dart-lang/sdk/issues/XXXXX
-///
-/// ## When to Use
-/// - macOS, iOS, Android, Linux: Use this transport
-/// - Windows: Use Rust FFI transport (Phase 2) or browser WebSocket
-/// - Web: Use [WebTransport] (browser WebSocket API)
-///
-/// ## Full-Duplex Support
-/// dart:io WebSocket is full-duplex. Send and receive operate independently.
+/// HTTP upgrade handshake, causing TLS failures (Dart SDK bug).
+/// Windows uses RustWebSocketTransport instead.
 
 import 'dart:async';
 import 'dart:io' show WebSocket, Platform;

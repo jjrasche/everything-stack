@@ -1,8 +1,3 @@
-/// # InvocationOB - ObjectBox Wrapper
-///
-/// ObjectBox-decorated version of Invocation domain entity.
-/// Contains all ObjectBox decorators (@Entity, @Id, @Property, etc.)
-
 import 'dart:convert';
 import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/core/invocation.dart';

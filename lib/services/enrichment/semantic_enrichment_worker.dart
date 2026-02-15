@@ -1,15 +1,3 @@
-/// # SemanticEnrichmentWorker
-///
-/// ## What it does
-/// Processes semantic enrichment for entities.
-/// Chunks entity content, generates embeddings, and inserts into HNSW index.
-///
-/// ## Design
-/// - Sequential processing (N=1) - HNSW not thread-safe
-/// - Fetches entities just-in-time to minimize staleness
-/// - Race condition handling via re-fetch before save
-/// - Delegates all semantic work to ChunkingService.indexEntity()
-
 import '../../core/enrichment_queue_item.dart';
 import '../../core/enrichment_queue_repository.dart';
 import '../../core/repository_registry.dart';

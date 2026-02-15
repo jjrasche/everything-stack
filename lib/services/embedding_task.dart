@@ -1,19 +1,5 @@
-/// # EmbeddingTask
-///
-/// ObjectBox entity for persistent embedding task queue (native only).
-/// Survives app crashes and restarts.
-///
-/// ## Lifecycle
-/// 1. Created when entity is saved (status: pending)
-/// 2. Processed by EmbeddingQueueService (status: processing)
-/// 3. On success: status set to completed, removed from queue
-/// 4. On failure: retryCount incremented, status back to pending
-/// 5. After 3 retries: status set to failed, removed from queue
-///
-/// ## Why persistent
-/// In-memory queue loses data on crash. User sends 50 messages, app crashes,
-/// those messages never get embeddings. Persistent queue survives crashes.
-
+/// Persistent embedding task queue entry (native only, ObjectBox).
+/// Why persistent: in-memory queue loses data on crash.
 import 'package:objectbox/objectbox.dart';
 import 'embedding_task_store.dart' show TaskStatus;
 

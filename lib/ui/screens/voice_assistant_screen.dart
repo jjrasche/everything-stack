@@ -1,12 +1,3 @@
-/// # Voice Assistant Screen (v2 - Two-Panel Layout)
-///
-/// Responsive two-panel UI:
-/// - Left panel: Context selection display
-/// - Right panel: Chat conversation
-///
-/// Layout:
-/// - Mobile (< 600px): Vertical stack (50% each)
-/// - Desktop (>= 600px): Horizontal split (50% each)
 
 import 'dart:async';
 import 'dart:convert';

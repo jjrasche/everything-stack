@@ -1,23 +1,3 @@
-/// # NamespaceSelector
-///
-/// ## What it does
-/// Trainable component that selects which namespace a user request belongs to.
-/// Learns which namespaces are more relevant to different utterances.
-///
-/// ## Input
-/// - utterance: User's spoken/typed request
-/// - embedding: Semantic embedding of utterance
-/// - availableNamespaces: List of namespace names to choose from
-///
-/// ## Output
-/// - selectedNamespace: Which namespace the request belongs to
-///
-/// ## Training
-/// When user feedback indicates wrong namespace:
-/// - Decrease confidence for wrong namespace
-/// - Increase confidence for correct namespace
-/// - Update semantic similarity scores
-
 import 'package:flutter/material.dart';
 import '../trainable.dart';
 import '../../core/invocation.dart';

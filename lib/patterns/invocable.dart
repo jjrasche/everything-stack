@@ -1,15 +1,3 @@
-/// # Invocable
-///
-/// ## What it does
-/// Adds tool invocation tracking to entities created by tools.
-/// Entities carry their own "birth certificate" - who created them, when, and why.
-///
-/// ## What it enables
-/// - Track which tool created an entity
-/// - Link entities back to their triggering event
-/// - Store invocation parameters for debugging/replay
-/// - Record invocation confidence and status
-///
 /// ## Schema addition
 /// ```dart
 /// String? invocationCorrelationId;  // Links to Event chain
@@ -42,12 +30,6 @@
 /// The entity IS the result - it carries its own birth certificate.
 /// ContextManagerInvocation tracks the decision process;
 /// Invocable tracks the outcome.
-///
-/// ## Testing approach
-/// - Create entity via tool invocation
-/// - Verify invocation fields are populated
-/// - Query entities by correlationId
-/// - Verify status reflects tool execution result
 ///
 /// ## Integrates with
 /// - Event: correlationId links to triggering event

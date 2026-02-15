@@ -1,30 +1,3 @@
-/// # Service Registry
-///
-/// Unified registry for multi-implementation services.
-/// Enables runtime provider switching without rebuilds.
-///
-/// Services supported:
-/// - LLM (groq, claude, local)
-/// - TTS (flutter, google, azure)
-/// - STT (deepgram, google, local)
-/// - Embedding (jina, gemini, local)
-///
-/// ## Usage
-/// ```dart
-/// // Register a service
-/// ServiceRegistry.register<InferenceService>('llm', groqService);
-///
-/// // Get current service
-/// final llm = ServiceRegistry.get<InferenceService>('llm');
-///
-/// // Switch provider at runtime
-/// await ServiceRegistry.switchProvider<InferenceService>(
-///   'llm',
-///   claudeConfig,
-///   InferenceServiceFactory.create,
-/// );
-/// ```
-
 import 'trainable.dart';
 
 /// Configuration for any service with multiple implementations

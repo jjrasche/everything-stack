@@ -1,24 +1,7 @@
-/// # TokenizerService
-///
-/// ## What it does
-/// Provides accurate token counting for GPT-4/o1 models.
-/// Used by ContextCapacity to know when to truncate context.
-///
-/// ## Why tiktoken?
-/// Character-based estimation (chars/4) is inaccurate for:
-/// - Code snippets (more tokens per char)
-/// - Multi-byte characters (fewer tokens per char)
-/// - Special tokens (exact mapping required)
-///
-/// tiktoken provides exact BPE tokenization matching OpenAI's API.
-///
-/// ## Usage
-/// ```dart
-/// final tokenizer = TokenizerService.instance;
-/// final tokens = tokenizer.countTokens(text);
-/// print('Text uses $tokens tokens');
-/// ```
-
+/// ## Why tiktoken over chars/4 estimation?
+/// Character-based estimation is inaccurate for code snippets (more tokens
+/// per char), multi-byte characters (fewer tokens per char), and special
+/// tokens (exact mapping required).
 import 'dart:typed_data';
 import 'package:tiktoken_tokenizer_gpt4o_o1/tiktoken_tokenizer_gpt4o_o1.dart';
 

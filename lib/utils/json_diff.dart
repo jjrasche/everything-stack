@@ -1,38 +1,3 @@
-/// # JsonDiff
-///
-/// ## What it does
-/// In-house implementation of RFC 6902 JSON Patch diff generation.
-/// Compares two JSON objects and produces a list of patch operations.
-///
-/// ## What it enables
-/// - Version history: compute delta between entity states
-/// - Sync: transmit only changes, not full entities
-/// - Audit: understand exactly what changed field-by-field
-///
-/// ## Usage
-/// ```dart
-/// final oldState = {'name': 'John', 'age': 30};
-/// final newState = {'name': 'Jane', 'age': 31};
-///
-/// final patch = JsonDiff.diff(oldState, newState);
-/// // [
-/// //   {'op': 'replace', 'path': '/name', 'value': 'Jane'},
-/// //   {'op': 'replace', 'path': '/age', 'value': 31}
-/// // ]
-///
-/// final fields = JsonDiff.extractChangedFields(oldState, newState);
-/// // ['name', 'age']
-/// ```
-///
-/// ## RFC 6902 Operations
-/// - add: new field added
-/// - remove: field deleted
-/// - replace: field value changed
-///
-/// ## Limitations
-/// - No move/copy operations (not needed for entity versioning)
-/// - No test operations (not needed for diff generation)
-/// - Designed for flat-ish entity objects, not arbitrary JSON
 
 class JsonDiff {
   /// Generate RFC 6902 JSON Patch operations to transform oldState into newState.

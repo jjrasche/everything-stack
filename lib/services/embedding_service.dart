@@ -1,47 +1,3 @@
-/// # EmbeddingService
-///
-/// ## What it does
-/// Generates vector embeddings from text. Used by Embeddable entities
-/// to enable semantic search.
-///
-/// ## Architecture
-/// Abstract interface with swappable implementations:
-/// - NullEmbeddingService: Production default when no API key configured (embeddings disabled)
-/// - JinaEmbeddingService: Production implementation using Jina AI API
-/// - GeminiEmbeddingService: Alternative using Google Gemini API
-/// - MockEmbeddingService: Test-only deterministic hash-based vectors
-///
-/// ## Usage
-/// ```dart
-/// // Use default instance (configured at startup)
-/// final embedding = await EmbeddingService.instance.generate('query');
-///
-/// // Configure at app startup (see bootstrap.dart)
-/// EmbeddingService.instance = JinaEmbeddingService(apiKey: 'your-key');
-///
-/// // Batch generation for efficiency
-/// final embeddings = await service.generateBatch(['a', 'b', 'c']);
-///
-/// // Similarity comparison
-/// final score = EmbeddingService.cosineSimilarity(a, b);
-/// ```
-///
-/// ## Configuration
-/// For JinaEmbeddingService (recommended), pass the API key to constructor:
-/// ```dart
-/// EmbeddingService.instance = JinaEmbeddingService(apiKey: 'your-key');
-/// ```
-///
-/// Or use compile-time environment variable (must be passed at build time):
-/// ```dart
-/// // Run with: flutter run --dart-define=JINA_API_KEY=your-key
-/// EmbeddingService.instance = JinaEmbeddingService.fromEnvironment();
-/// ```
-///
-/// Note: `String.fromEnvironment` is evaluated at compile time, not runtime.
-/// You cannot use `export JINA_API_KEY=xxx` - it must be passed via
-/// `--dart-define` during compilation.
-
 import 'dart:convert';
 import 'dart:math' as math;
 
@@ -262,29 +218,6 @@ class MockEmbeddingService extends EmbeddingService {
   }
 }
 
-///
-/// Requires API key passed to constructor or via compile-time environment.
-/// Uses jina-embeddings-v3 model with Matryoshka Representation Learning
-/// to output exactly 384 dimensions (matching our standard).
-///
-/// ## Features
-/// - High quality multilingual embeddings
-/// - Matryoshka dimension flexibility (32-1024)
-/// - OpenAI-compatible API format
-///
-/// ## Rate limits
-/// Check your Jina AI plan for specific limits.
-///
-/// ## Usage
-/// ```dart
-/// // Direct API key (recommended)
-/// final service = JinaEmbeddingService(apiKey: 'your-key');
-///
-/// // Or compile-time env var (requires --dart-define at build time)
-/// final service = JinaEmbeddingService.fromEnvironment();
-///
-/// EmbeddingService.instance = service;
-/// ```
 class JinaEmbeddingService extends EmbeddingService {
   final String? _apiKey;
   final String _model;
@@ -428,29 +361,8 @@ class JinaEmbeddingService extends EmbeddingService {
   }
 }
 
-/// Production implementation using Google Gemini API.
-///
-/// Requires API key passed to constructor or via compile-time environment.
-/// Uses text-embedding-004 model which outputs 384-dimensional embeddings.
-///
-/// ## Rate limits
-/// - 1500 requests per minute
-/// - 1M tokens per minute
-///
-/// ## Security note
-/// The API key is passed in the URL query string (as required by Gemini API).
+/// Gemini API passes the key in the URL query string (required by their API).
 /// Be aware this may be logged by proxies or monitoring tools.
-///
-/// ## Usage
-/// ```dart
-/// // Direct API key (recommended for most cases)
-/// final service = GeminiEmbeddingService(apiKey: 'your-key');
-///
-/// // Or compile-time env var (requires --dart-define at build time)
-/// final service = GeminiEmbeddingService.fromEnvironment();
-///
-/// EmbeddingService.instance = service;
-/// ```
 class GeminiEmbeddingService extends EmbeddingService {
   final String? _apiKey;
   final String _model;

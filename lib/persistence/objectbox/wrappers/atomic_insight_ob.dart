@@ -1,11 +1,3 @@
-/// # AtomicInsightOB - ObjectBox Wrapper
-///
-/// ObjectBox-decorated version of AtomicInsight domain entity.
-/// Contains all ObjectBox decorators (@Entity, @Id, @Property, etc.)
-///
-/// Domain entity: domain/atomic_insight.dart
-/// This wrapper: persistence/objectbox/wrappers/atomic_insight_ob.dart
-
 import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/domain/atomic_insight.dart';
 import 'package:everything_stack_template/core/base_entity.dart';

@@ -1,37 +1,5 @@
-/// # Trial
-///
-/// ## What it does
-/// Records parameter→reward trials for GP training.
-/// Persists across app restarts so GP learns from history.
-///
-/// ## Fields
-/// - componentType: Which component is being optimized ('context_selector', 'tool_selector', etc.)
-/// - paramsJson: Normalized parameters as JSON {"param1": 0.5, "param2": 0.8}
-/// - reward: Feedback signal (1.0 = positive, -1.0 = negative)
-/// - userId: Optional for multi-user isolation
-///
-/// ## Normalization
-/// Parameters are normalized to [0,1] before storage.
-/// GP operates in normalized space for numerical stability.
-///
-/// ## Usage
-/// ```dart
-/// // Record trial after user feedback
-/// final trial = Trial(
-///   componentType: 'context_selector',
-///   paramsJson: jsonEncode({'conversationThreadSize': 0.5, 'semanticThreshold': 0.7}),
-///   reward: 1.0, // User confirmed output was good
-///   userId: 'user_123',
-/// );
-/// await trialRepo.save(trial);
-///
-/// // Load historical trials for GP training
-/// final trials = await trialRepo.getRecent(
-///   userId: 'user_123',
-///   componentType: 'context_selector',
-///   limit: 100,
-/// );
-/// ```
+/// Records parameter-to-reward trials for Gaussian Process training.
+/// Parameters are normalized to [0,1] for GP numerical stability.
 
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';

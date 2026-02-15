@@ -1,24 +1,4 @@
-/// Configuration for semantic chunking with window size and overlap control.
-///
-/// SemanticChunker uses configurable parameters to chunk text at different
-/// granularities - from broad topic detection (parent) to fine-grained semantic
-/// units (child).
-///
-/// ## Two-Level Chunking
-///
-/// Parent level (broad topics):
-/// ```dart
-/// final parentChunker = SemanticChunker(config: ChunkingConfig.parent());
-/// final parentChunks = await parentChunker.chunk(text);
-/// ```
-///
-/// Child level (precise semantic units):
-/// ```dart
-/// final childChunker = SemanticChunker(config: ChunkingConfig.child());
-/// for (final parentChunk in parentChunks) {
-///   final childChunks = await childChunker.chunk(parentChunk.text);
-/// }
-/// ```
+/// Configurable parameters for semantic chunking granularity (parent vs child level).
 class ChunkingConfig {
   /// Size of sliding window for segmenting text (in tokens)
   ///

@@ -1,9 +1,3 @@
-/// # STT Implementer Interface
-///
-/// Dumb API wrapper for speech-to-text providers (Deepgram, Google Cloud, etc.).
-/// No state management, no training logic. Just calls API and returns results.
-/// Service holds metadata about call (latencyMs) in properties.
-
 import 'dart:typed_data';
 
 import '../../core/implementer.dart';

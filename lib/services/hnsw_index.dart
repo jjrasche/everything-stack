@@ -1,49 +1,8 @@
-/// # HnswIndex
+/// Pure Dart HNSW (Hierarchical Navigable Small World) for approximate
+/// nearest neighbor search. Works on all platforms including web (no FFI).
 ///
-/// ## What it does
-/// Pure Dart implementation of Hierarchical Navigable Small World (HNSW)
-/// algorithm for approximate nearest neighbor search.
-///
-/// ## What it enables
-/// - Fast semantic search across thousands of vectors
-/// - O(log n) search complexity vs O(n) brute force
-/// - Works on ALL platforms including web (no FFI required)
-/// - Offline-capable vector search
-/// - Cross-type entity identification via String UUIDs
-///
-/// ## Algorithm reference
-/// Based on: "Efficient and robust approximate nearest neighbor search
-/// using Hierarchical Navigable Small World graphs" (Malkov & Yashunin, 2016)
+/// Algorithm reference: Malkov & Yashunin, 2016
 /// https://arxiv.org/abs/1603.09320
-///
-/// ## Usage
-/// ```dart
-/// final index = HnswIndex(dimensions: 384);
-///
-/// // Insert vectors with UUID keys
-/// await index.insert('uuid-123', embedding1);
-/// await index.insert('uuid-456', embedding2);
-///
-/// // Search for k nearest neighbors
-/// final results = index.search(queryVector, k: 5);
-/// // Returns [(id: 'uuid-456', distance: 0.1), (id: 'uuid-123', distance: 0.3), ...]
-///
-/// // Serialize for persistence
-/// final bytes = index.toBytes();
-/// final restored = HnswIndex.fromBytes(bytes);
-/// ```
-///
-/// ## Parameters
-/// - M: Max connections per node (default 16). Higher = better recall, more memory
-/// - efConstruction: Build-time candidate pool (default 200). Higher = better quality, slower build
-/// - efSearch: Query-time candidate pool (default 50). Higher = better recall, slower search
-///
-/// ## Performance characteristics
-/// - Insert: O(log n) average
-/// - Search: O(log n) average
-/// - Memory: O(n * M) for connections + O(n * d) for vectors
-/// - Suitable for up to ~100k vectors in pure Dart
-
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';

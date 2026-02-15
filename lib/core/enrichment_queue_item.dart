@@ -1,33 +1,5 @@
-/// # EnrichmentQueueItem
-///
-/// ## What it does
 /// Represents an entity queued for async enrichment processing.
 /// Tracks which enrichment steps are pending, completed, or in-progress.
-///
-/// ## Fields
-/// - entityUuid: UUID of the entity being enriched
-/// - entityType: Type name of the entity (e.g., 'Invocation')
-/// - pendingSteps: Steps still to execute
-/// - completedSteps: Steps already completed
-/// - currentStep: Step currently being processed (null if idle)
-/// - retries: Number of retry attempts
-/// - lastError: Last error message (if any)
-/// - enqueuedAt: When this item was added to queue
-///
-/// ## Storage
-/// Lists are stored as comma-separated strings for ObjectBox/IndexedDB
-/// querying (e.g., "semantic_enrichment,categorization").
-///
-/// ## Usage
-/// ```dart
-/// final item = EnrichmentQueueItem(
-///   entityUuid: invocation.uuid,
-///   entityType: 'Invocation',
-///   pendingSteps: ['semantic_enrichment'],
-///   completedSteps: [],
-/// );
-/// await queueRepo.save(item);
-/// ```
 
 import 'base_entity.dart';
 

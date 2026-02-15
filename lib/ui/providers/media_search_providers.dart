@@ -1,6 +1,3 @@
-/// # Media Search Providers
-///
-/// Riverpod providers for semantic media search functionality.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

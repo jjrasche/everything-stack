@@ -1,46 +1,5 @@
-/// # VersionRepository
-///
-/// ## What it does
 /// Manages EntityVersion records for all versioned entities.
 /// Handles delta computation, snapshot creation, reconstruction, and pruning.
-///
-/// ## What it enables
-/// - Record changes with automatic delta computation
-/// - Retrieve version history for any entity
-/// - Reconstruct entity state at any point in time
-/// - Query changes in time ranges
-/// - Prune old versions while keeping snapshots
-///
-/// ## Usage
-/// ```dart
-/// final adapter = EntityVersionObjectBoxAdapter(store);
-/// final repo = VersionRepository(adapter: adapter);
-///
-/// // Record a change
-/// await repo.recordChange(
-///   entityUuid: note.uuid,
-///   entityType: 'Note',
-///   oldState: {'title': 'Old'},
-///   newState: {'title': 'New'},
-///   userId: currentUser.id,
-///   snapshotFrequency: 20,
-/// );
-///
-/// // Get history
-/// final versions = await repo.getHistory(note.uuid);
-///
-/// // Reconstruct at timestamp
-/// final state = await repo.reconstruct(note.uuid, targetTime);
-/// ```
-///
-/// ## Testing approach
-/// Integration tests cover:
-/// - Recording first version creates snapshot
-/// - Subsequent versions create deltas
-/// - Periodic snapshots at frequency intervals
-/// - Reconstruction from snapshots + deltas
-/// - Time-range queries
-/// - Pruning keeps snapshots
 
 import 'dart:convert';
 import 'package:rfc_6902/rfc_6902.dart';

@@ -1,8 +1,3 @@
-/// # Word
-///
-/// Typed representation of a single word in STT output.
-/// Includes transcription and timing/confidence data.
-
 /// A single word result from speech-to-text recognition.
 class Word {
   /// The recognized word text.

@@ -1,29 +1,3 @@
-/// # Task
-///
-/// ## What it does
-/// Represents a user task/todo with due date and priority.
-/// Can be owned by a user and shared with others (Ownable).
-///
-/// ## Key features
-/// - Priority levels: high, medium, low
-/// - Optional due date
-/// - Completion tracking
-/// - Multi-user ownership via Ownable
-///
-/// ## Usage
-/// ```dart
-/// final task = Task(
-///   title: 'Buy groceries',
-///   priority: 'medium',
-///   dueDate: DateTime.now().add(Duration(days: 1)),
-/// );
-///
-/// // Set ownership
-/// task.ownerId = currentUser.id;
-///
-/// // Complete the task
-/// task.complete();
-/// ```
 
 import '../../../core/base_entity.dart';
 import '../../../patterns/ownable.dart';

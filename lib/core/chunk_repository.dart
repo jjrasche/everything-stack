@@ -1,10 +1,7 @@
-/// # ChunkRepository
-///
 /// Abstract interface for chunk persistence operations.
-/// Implemented by platform-specific adapters (ObjectBox for native, IndexedDB for web).
 ///
-/// ChunkingService depends on this interface, not on specific persistence implementations.
-/// This allows web builds to compile without ObjectBox/dart:ffi.
+/// ChunkingService depends on this interface, not on specific persistence
+/// implementations, allowing web builds to compile without ObjectBox/dart:ffi.
 
 import '../services/semantic_search/chunk.dart';
 

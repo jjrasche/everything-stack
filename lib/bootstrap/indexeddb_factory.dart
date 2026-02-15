@@ -1,8 +1,3 @@
-/// # IndexedDB Factory
-///
-/// Single point for IndexedDB initialization.
-/// Called by bootstrap on web platform.
-
 library;
 
 import 'package:flutter/foundation.dart';

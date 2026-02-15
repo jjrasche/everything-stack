@@ -1,41 +1,5 @@
-/// # Invocation
-///
-/// ## What it does
 /// Generic record of a component's execution.
-/// Used by all trainable components to log their inputs, outputs, and results.
-///
-/// ## Standardized Fields
-/// Every invocation has these fields:
-/// - eventId: Links to the triggering event
-/// - componentType: Which component executed ('stt', 'llm', 'tts', 'context_selector', etc.)
-/// - implementer: Which implementation executed this (e.g., 'groq', 'deepgram', 'flutter_tts'). Null for single-implementation components.
-/// - success: Did the component succeed?
-/// - confidence: How confident was the component (0.0-1.0)?
-/// - createdAt: When did this happen?
-///
-/// ## Generic Data Fields
-/// - input: Component-specific input as JSON
-/// - output: Component-specific output as JSON
-/// - metadata: Optional additional data
-///
-/// ## Usage
-/// ```dart
-/// final invocation = Invocation(
-///   eventId: event.id,
-///   componentType: 'stt',
-///   implementer: 'deepgram',
-///   success: true,
-///   confidence: 0.95,
-///   input: {'audioId': 'audio_123'},
-///   output: {'transcription': 'hello world'},
-/// );
-/// await invocationRepo.save(invocation);
-/// ```
-///
-/// ## Training Flow
-/// 1. Component executes, creates Invocation with input/output
-/// 2. User provides Feedback on the Invocation
-/// 3. Trainer uses Invocation + Feedback to update AdaptationState
+/// Used by all trainable components to log inputs, outputs, and results for feedback training.
 
 import 'dart:convert';
 import 'package:everything_stack_template/patterns/embeddable.dart';

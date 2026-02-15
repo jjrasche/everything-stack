@@ -1,43 +1,5 @@
-/// # Chunk
-///
-/// ## What it does
-/// Represents a semantic chunk of text extracted from an entity.
-/// Chunks are lightweight models (not BaseEntity) used for search results.
-///
-/// ## What it enables
-/// - Store text fragments in HNSW index
-/// - Reconstruct context from source entity + token positions
-/// - Track which entity and chunking strategy produced this chunk
-/// - Return search results with precise context
-///
-/// ## Storage
-/// Persisted to database with embedding vector for fast index rebuild.
-/// Chunks are:
-/// - Generated when entity is saved (ChunkingService)
-/// - Stored with their embedding vectors
-/// - Deleted when entity is updated
-/// - Loaded on startup to rebuild HNSW index (no API calls needed)
-///
-/// ## Key Design
-/// - Full text + embedding stored for fast rebuild
-/// - sourceEntityType stored (avoids registry lookup)
-/// - UUID id doubles as HNSW index key
-/// - Token range enables context reconstruction
-///
-/// ## Usage
-/// ```dart
-/// final chunk = Chunk(
-///   id: 'uuid-123',
-///   sourceEntityId: 'note-456',
-///   sourceEntityType: 'Note',
-///   startToken: 10,
-///   endToken: 110,
-///   config: 'parent',
-///   text: 'chunk text here',
-///   embedding: [0.1, 0.2, ...], // 384-dimensional vector
-/// );
-/// ```
-
+/// Semantic text fragment with embedding, persisted for fast HNSW index rebuild
+/// without API calls on startup.
 class Chunk {
   /// Unique identifier for this chunk (UUID).
   /// Also used as key in HNSW index.

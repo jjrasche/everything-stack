@@ -1,31 +1,11 @@
 import 'package:http/http.dart';
 import '../services/timeout_config.dart';
 
-/// HTTP client wrapper that applies timeouts to all requests.
+/// HTTP client wrapper that enforces global timeouts on all requests.
 ///
-/// Layer 1 defense against hanging connections.
-/// Wraps any HTTP client and enforces a global timeout on all operations.
-///
-/// ## Usage
-/// ```dart
-/// final client = TimeoutHttpClient(Client());
-/// final response = await client.get(Uri.parse('https://api.example.com'));
-/// // Automatically times out after 30 seconds
-/// ```
-///
-/// ## Why This Exists
-/// Without timeouts, HTTP requests can hang indefinitely:
-/// - Server doesn't respond
-/// - Network drops mid-request
-/// - DNS lookup hangs
-///
-/// This prevents connection leaks and socket exhaustion.
-///
-/// ## Timeout Strategy
-/// - Default timeout: [TimeoutConfig.httpDefault] (30 seconds)
-/// - Configurable per-instance
-/// - Services can override with their own timeouts (Layer 2)
-/// - Callers can override with user-facing deadlines (Layer 3)
+/// ## Why this exists
+/// Without timeouts, HTTP requests can hang indefinitely (server unresponsive,
+/// network drop, DNS hang), causing connection leaks and socket exhaustion.
 class TimeoutHttpClient extends BaseClient {
   final Client _inner;
   final Duration timeout;

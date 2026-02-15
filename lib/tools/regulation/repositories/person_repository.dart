@@ -1,19 +1,3 @@
-/// # PersonRepository
-///
-/// ## What it does
-/// Repository for Person entities. Manages people involved in regulation tracking.
-/// Uses platform-specific adapters - ObjectBox on native, IndexedDB on web.
-///
-/// ## Usage
-/// ```dart
-/// final repo = PersonRepository();
-///
-/// // Find by name
-/// final person = await repo.findByName('Alice');
-///
-/// // Find by role
-/// final parents = await repo.findByRole('parent');
-/// ```
 
 import '../../../core/entity_repository.dart';
 import '../../../services/embedding_service.dart';

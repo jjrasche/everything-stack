@@ -1,21 +1,3 @@
-/// # AudioStorage Service
-///
-/// Manages storage and retrieval of audio files.
-/// Audio is stored as bytes in database (no filesystem dependencies).
-///
-/// ## Usage
-/// ```dart
-/// // Save audio after recording
-/// final audioId = await audioStorage.saveAudio(
-///   audioBytes: recordedBytes,
-///   durationSeconds: 3.5,
-///   eventId: 'turn_123',
-/// );
-///
-/// // Load audio for STT processing
-/// final bytes = await audioStorage.loadAudio(audioId);
-/// ```
-
 import 'dart:typed_data';
 import '../domain/audio_file.dart';
 import '../core/entity_repository.dart';

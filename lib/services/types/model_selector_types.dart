@@ -1,8 +1,3 @@
-/// # Model Selector Type Definitions
-///
-/// Types for ModelSelector service: adaptation data, model stats, and selection results.
-/// Uses Thompson Sampling with Beta-Bernoulli for learned model selection.
-
 import 'dart:convert';
 import '../../core/adaptation_data.dart';
 

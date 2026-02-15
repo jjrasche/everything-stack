@@ -1,15 +1,3 @@
-/// # Locatable
-///
-/// ## What it does
-/// Adds geographic coordinates to entities. Enables location-aware
-/// features like proximity search and mapping.
-///
-/// ## What it enables
-/// - "Find things near me"
-/// - Map visualization of entities
-/// - Distance-based sorting and filtering
-/// - Geofencing and location triggers
-///
 /// ## Schema addition
 /// ```dart
 /// double? latitude;
@@ -36,18 +24,6 @@
 /// // Get distance
 /// final km = tool.distanceTo(myLat, myLng);
 /// ```
-///
-/// ## Performance
-/// - Spatial indexing recommended for large datasets
-/// - Bounding box pre-filter before precise distance calc
-/// - Consider geohashing for efficient range queries
-///
-/// ## Testing approach
-/// Proximity tests:
-/// - Create entities at known locations
-/// - Verify distance calculations are accurate
-/// - Verify radius queries return correct results
-/// - Test edge cases: poles, date line, zero distance
 ///
 /// ## Integrates with
 /// - Embeddable: "Find similar things nearby"

@@ -1,45 +1,8 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-/// Retry helper for idempotent operations with exponential backoff.
-///
-/// Use this to wrap network operations that are safe to retry (read operations,
-/// generation operations, etc.). Do NOT use for mutations (save, delete, etc.)
-/// as they might have side effects.
-///
-/// ## Usage
-/// ```dart
-/// final result = await retryWithBackoff(
-///   operation: () => embeddingService.generate(text),
-///   maxAttempts: 3,
-///   initialDelay: Duration(seconds: 1),
-///   onAttempt: (attempt) => print('Attempt $attempt'),
-/// );
-/// ```
-///
-/// ## Exponential Backoff
-/// Delays between retries increase exponentially:
-/// - Attempt 1: No delay
-/// - Attempt 2: initialDelay (e.g., 1s)
-/// - Attempt 3: initialDelay * 2 (e.g., 2s)
-/// - Attempt 4: initialDelay * 4 (e.g., 4s)
-///
-/// This prevents overwhelming a struggling service.
-///
-/// ## When to Use
-/// ✅ **Safe to retry (idempotent):**
-/// - Embedding generation
-/// - Semantic search
-/// - File download
-/// - Read operations
-///
-/// ❌ **NOT safe to retry (side effects):**
-/// - Entity save/update/delete
-/// - File upload (might duplicate)
-/// - Payment processing
-/// - Sending emails
-///
-/// For non-idempotent operations, use queue-based reconciliation instead.
+/// Only use for idempotent operations (reads, generation).
+/// For mutations (save, delete), use queue-based reconciliation instead.
 Future<T> retryWithBackoff<T>({
   required Future<T> Function() operation,
   int maxAttempts = 3,
@@ -79,27 +42,8 @@ Future<T> retryWithBackoff<T>({
   throw StateError('Retry loop completed without return or rethrow');
 }
 
-/// Retry with jitter to prevent thundering herd.
-///
 /// Like [retryWithBackoff], but adds random jitter (0-50%) to delay
-/// to prevent multiple clients from retrying at the same time.
-///
-/// ## Usage
-/// ```dart
-/// final result = await retryWithJitter(
-///   operation: () => api.get('/users'),
-///   maxAttempts: 3,
-/// );
-/// ```
-///
-/// ## When to Use
-/// Use this when:
-/// - Multiple clients might fail simultaneously (e.g., service outage)
-/// - You want to spread out retry attempts to avoid overwhelming a recovering service
-///
-/// Don't use this when:
-/// - You're the only client (jitter adds unnecessary delay)
-/// - Timing is critical (jitter makes retry timing unpredictable)
+/// to prevent thundering herd when multiple clients fail simultaneously.
 Future<T> retryWithJitter<T>({
   required Future<T> Function() operation,
   int maxAttempts = 3,

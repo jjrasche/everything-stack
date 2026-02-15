@@ -1,19 +1,3 @@
-/// # Transport Factory
-///
-/// Platform-aware factory for creating Transport instances.
-/// Uses conditional imports to select the appropriate implementation:
-/// - Web: [BrowserWebSocketTransport] using browser WebSocket API
-/// - Native: [RustWebSocketTransport] using Rust tungstenite (fixes Windows bug)
-///
-/// ## Phase 2 Complete
-/// Native platforms now use Rust FFI transport which fixes Windows wss:// bug.
-///
-/// ## Usage
-/// ```dart
-/// final factory = createTransportFactory();
-/// final transport = factory.create(config);
-/// await transport.connect();
-/// ```
 
 import 'transport.dart';
 

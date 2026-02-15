@@ -1,30 +1,8 @@
-/// # Thompson Sampling Optimizer
-///
-/// ## What it does
-/// Implements Thompson Sampling for discrete arm selection (models, implementers, etc.).
-/// Unlike GP optimizer which handles continuous parameters, this handles discrete choices.
-///
-/// ## Algorithm
-/// For each arm:
-/// 1. Maintain Beta(alpha, beta) posterior from binary feedback
-/// 2. Sample from each arm's posterior
-/// 3. Select arm with highest sample
-///
 /// ## Why Beta-Bernoulli?
 /// - Natural conjugate prior for binary outcomes (good/bad response)
 /// - Handles cold start gracefully (uniform prior)
 /// - Simple to update: just increment success or failure count
 /// - Well-understood convergence properties
-///
-/// ## Usage
-/// ```dart
-/// final optimizer = ThompsonSamplingOptimizer();
-/// final selectedArm = optimizer.selectArm({
-///   'model_a': ModelStats(successes: 10, failures: 2),
-///   'model_b': ModelStats(successes: 5, failures: 5),
-/// });
-/// // model_a has higher expected rate, likely to be selected
-/// ```
 
 import 'dart:math';
 import '../types/model_selector_types.dart';

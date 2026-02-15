@@ -1,22 +1,3 @@
-/// # Protocol Layer
-///
-/// The Protocol layer handles message-level communication on top of Transport.
-/// It provides framing, serialization, and protocol-specific handshakes.
-///
-/// ## Responsibilities
-/// - Message framing (text vs binary)
-/// - Protocol-specific initialization (beyond transport connect)
-/// - Unified message stream for higher layers
-///
-/// ## NOT Responsibilities (handled by Transport)
-/// - Raw byte transmission
-/// - Connection establishment
-/// - TLS/SSL
-///
-/// ## NOT Responsibilities (handled by Channel)
-/// - Retry logic
-/// - Application-level keepalives
-/// - State management across reconnects
 
 import 'dart:async';
 import 'dart:typed_data';

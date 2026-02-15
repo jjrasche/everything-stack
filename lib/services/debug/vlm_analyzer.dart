@@ -1,17 +1,3 @@
-/// # VLM Analyzer
-///
-/// Analyzes screenshots using a Vision Language Model.
-/// Enables AI-driven visual debugging without human screenshot review.
-///
-/// ## Usage
-/// ```dart
-/// final analysis = await VlmAnalyzer.instance.analyzeScreenshot(
-///   imagePath: 'logs/screenshots/2024-01-15-debug.png',
-///   prompt: 'Describe any error messages or unexpected UI states',
-/// );
-/// print(analysis); // "The screen shows a search results list with..."
-/// ```
-
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

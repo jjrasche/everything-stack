@@ -1,11 +1,3 @@
-/// # ChunkOB - ObjectBox Wrapper
-///
-/// ObjectBox-decorated version of Chunk domain class.
-/// Contains all ObjectBox decorators (@Entity, @Id, @Index, etc.)
-///
-/// Domain entity: services/semantic_search/chunk.dart
-/// This wrapper: persistence/objectbox/wrappers/chunk_ob.dart
-
 import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/services/semantic_search/chunk.dart';
 

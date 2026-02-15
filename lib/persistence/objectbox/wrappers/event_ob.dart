@@ -1,5 +1,3 @@
-/// # EventOB - ObjectBox Wrapper
-
 import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/core/event.dart';
 import 'package:everything_stack_template/patterns/ownable.dart';

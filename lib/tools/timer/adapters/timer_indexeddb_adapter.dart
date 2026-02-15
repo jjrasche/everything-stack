@@ -1,15 +1,3 @@
-/// # TimerIndexedDBAdapter
-///
-/// ## What it does
-/// IndexedDB implementation of PersistenceAdapter for Timer entities.
-/// Handles CRUD operations for web platform.
-///
-/// ## Usage
-/// ```dart
-/// final db = await idbFactory.open('my_database');
-/// final adapter = TimerIndexedDBAdapter(db);
-/// final repo = TimerRepository(adapter: adapter);
-/// ```
 
 import 'dart:indexed_db' as idb;
 import '../../../persistence/indexeddb/base_indexeddb_adapter.dart';

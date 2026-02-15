@@ -1,5 +1,3 @@
-/// # InvocationIndexedDBAdapter
-
 import 'dart:indexed_db' as idb;
 import '../../core/invocation_repository.dart';
 import '../../core/invocation.dart';

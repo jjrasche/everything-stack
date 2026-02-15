@@ -1,15 +1,3 @@
-/// # RegulationEntryIndexedDBAdapter
-///
-/// ## What it does
-/// IndexedDB implementation of PersistenceAdapter for RegulationEntry entities.
-/// Handles CRUD operations and custom queries for web platform.
-///
-/// ## Usage
-/// ```dart
-/// final db = await openIndexedDatabase();
-/// final adapter = RegulationEntryIndexedDBAdapter(db);
-/// final repo = RegulationEntryRepository(adapter: adapter);
-/// ```
 
 import 'dart:indexed_db' as idb;
 import '../../../persistence/indexeddb/base_indexeddb_adapter.dart';

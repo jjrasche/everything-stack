@@ -1,7 +1,4 @@
-/// # Component Type Constants
-///
 /// Centralized constants for component types.
-/// Prevents typos, ensures consistency across the codebase.
 class ComponentType {
   // Core pipeline services
   static const String llm = 'llm';

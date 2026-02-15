@@ -1,24 +1,5 @@
-/// # VersionPersistenceAdapter
-///
-/// ## What it does
 /// Specialized persistence adapter interface for EntityVersion entities.
-/// Extends base PersistenceAdapter with version-specific query methods.
-///
-/// ## What it enables
-/// - VersionRepository can depend on interface, not concrete ObjectBox type
-/// - Same VersionRepository works with ObjectBox and IndexedDB adapters
-/// - Version-specific queries (by entity, time ranges) abstracted from implementation
-///
-/// ## Usage
-/// ```dart
-/// // ObjectBox implementation
-/// final adapter = EntityVersionObjectBoxAdapter(store);
-/// final repo = VersionRepository(adapter: adapter);
-///
-/// // Future: IndexedDB implementation
-/// final adapter = EntityVersionIndexedDBAdapter(database);
-/// final repo = VersionRepository(adapter: adapter);
-/// ```
+/// Adds version-specific query methods on top of base PersistenceAdapter.
 
 import 'persistence_adapter.dart';
 import 'transaction_context.dart';

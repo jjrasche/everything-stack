@@ -1,18 +1,3 @@
-/// # Implementer Selector
-///
-/// Bootstrap helper for selecting platform-compatible implementers.
-/// Used during service initialization to auto-select implementers that work
-/// on the current platform.
-///
-/// ## Usage
-/// ```dart
-/// final ttsImplementers = {
-///   'flutter_tts': FlutterTtsImplementer(),
-///   'remote_tts': RemoteTTSImplementer(),
-/// };
-/// final defaultTTS = selectCompatibleImplementer(ttsImplementers, 'TTS');
-/// ```
-
 library;
 
 import '../core/implementer.dart';

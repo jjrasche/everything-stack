@@ -1,20 +1,5 @@
-/// # Edge Entity
-///
-/// ## What it does
 /// Entity for storing entity-to-entity connections.
-/// Implements the Edge entity from the Edgeable pattern with persistence.
-///
-/// ## Schema
-/// - uuid: Unique ID for sync (inherited from BaseEntity)
-/// - Composite key (domain): sourceUuid + targetUuid + edgeType
-/// - Uniqueness enforced at repository level
-/// - Indexed fields: uuid, sourceUuid, targetUuid, edgeType
-/// - Metadata stored as JSON string
-/// - Timestamps: createdAt, updatedAt (inherited from BaseEntity)
-///
-/// ## Testing approach
-/// Test through EdgeRepository. Verify CRUD operations,
-/// unique constraint enforcement, indexed queries.
+/// Uniqueness enforced at repository level on composite key (sourceUuid + targetUuid + edgeType).
 
 import 'package:json_annotation/json_annotation.dart';
 import 'base_entity.dart';

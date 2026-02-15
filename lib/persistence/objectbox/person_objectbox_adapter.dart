@@ -1,21 +1,3 @@
-/// # PersonObjectBoxAdapter
-///
-/// ## What it does
-/// ObjectBox implementation of PersistenceAdapter for Person entities.
-/// Uses wrapper pattern (PersonOB) to keep domain entity clean.
-///
-/// ## Pattern
-/// - Domain entity (Person) has NO ObjectBox decorators
-/// - Wrapper class (PersonOB) has ALL decorators
-/// - Adapter converts between Person <-> PersonOB
-///
-/// ## Usage
-/// ```dart
-/// final store = await openStore();
-/// final adapter = PersonObjectBoxAdapter(store);
-/// final repo = PersonRepository(adapter: adapter);
-/// ```
-
 import 'package:objectbox/objectbox.dart';
 import '../../../core/persistence/persistence_adapter.dart';
 import '../../../tools/regulation/entities/person.dart';

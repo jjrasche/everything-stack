@@ -1,15 +1,3 @@
-/// # Ownable
-///
-/// ## What it does
-/// Adds ownership and sharing fields to entities. Enables multi-user
-/// isolation - users see only their data unless explicitly shared.
-///
-/// ## What it enables
-/// - Multi-user apps with data isolation
-/// - Sharing specific items with specific users
-/// - Public/private/shared visibility levels
-/// - "My items" vs "Shared with me" views
-///
 /// ## Schema addition
 /// ```dart
 /// String? ownerId;
@@ -36,18 +24,6 @@
 /// // Query user's accessible items
 /// final myDocs = await docRepo.findAccessibleBy(currentUser.id);
 /// ```
-///
-/// ## Performance
-/// - Index on ownerId for ownership queries
-/// - sharedWith array queries may be slower at scale
-/// - Consider denormalized "accessible by" for high-share scenarios
-///
-/// ## Testing approach
-/// Isolation tests:
-/// - Create entities owned by different users
-/// - Verify User A cannot access User B's private items
-/// - Verify shared items appear for both owner and sharee
-/// - Verify public items accessible to all
 ///
 /// ## Integrates with
 /// - Temporal: "My tasks due this week"

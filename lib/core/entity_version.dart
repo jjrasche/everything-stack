@@ -1,50 +1,6 @@
-/// # EntityVersion
-///
-/// ## What it does
 /// Stores historical changes for all entity types using Type 4 SCD with deltas.
-/// Single collection for all versioned entities, enabling cross-entity audit queries.
-///
-/// ## What it enables
-/// - Point-in-time reconstruction: "What was this Note on Dec 1?"
-/// - Audit trail: "Who changed what and when?"
-/// - Rollback: "Restore to version N"
-/// - Collaboration: Field-level merge detection
-/// - Sync efficiency: Transmit deltas, not full entities
-/// - AI integration: Semantic understanding of change streams
-///
-/// ## Architecture
-/// - Domain entities contain ONLY current state
-/// - EntityVersion stores ALL historical changes for ALL entity types
-/// - Changes stored as JSON Patch deltas (RFC 6902)
-/// - Periodic snapshots for reconstruction efficiency (every N deltas)
-///
-/// ## Reconstruction
-/// Forward-only: Find nearest snapshot before target → apply deltas forward → done
-///
-/// Example timeline:
-/// ```
-/// [S₀ v1]--d2--d3--d4--[S₁ v5]--d6--d7--CURRENT
-///
-/// To reconstruct at v6:
-/// - Find snapshot S₁ (v5)
-/// - Apply d6
-/// - Return reconstructed state
-/// ```
-///
-/// ## Testing approach
-/// Integration tests:
-/// - Create entity, record multiple changes
-/// - Verify version numbers increment
-/// - Verify deltas stored correctly
-/// - Verify snapshots created at frequency intervals
-/// - Test reconstruction at various points in time
-/// - Test pruning old versions
-///
-/// ## Integrates with
-/// - Versionable mixin: Entities opt-in to versioning
-/// - VersionRepository: Manages version records
-/// - EntityRepository: Calls recordChange() on save for Versionable entities
-/// - Sync: Versions sync to remote database
+/// Changes stored as JSON Patch deltas (RFC 6902) with periodic snapshots
+/// for reconstruction efficiency.
 
 import 'package:json_annotation/json_annotation.dart';
 import 'base_entity.dart';

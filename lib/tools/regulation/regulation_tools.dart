@@ -1,10 +1,3 @@
-/// # Regulation Tools
-///
-/// Tool functions for regulation tracking management.
-/// Registered with ToolRegistry and called by ToolExecutor.
-///
-/// These tools are deterministic (NOT trainable) - they handle data entry.
-/// LLM tool selection (Coordinator) handles adaptation.
 library;
 
 import '../../services/tool_registry.dart';

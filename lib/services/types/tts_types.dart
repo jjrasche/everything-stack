@@ -1,7 +1,3 @@
-/// # TTS Service Type Definitions
-///
-/// Typed payloads for TTS (text-to-speech) service adaptation, invocations, and feedback.
-
 import 'dart:convert';
 import 'package:everything_stack_template/core/adaptation_data.dart';
 

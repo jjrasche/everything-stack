@@ -1,27 +1,3 @@
-/// # Retry Policy
-///
-/// Defines retry behavior for Channel reconnection attempts.
-/// Uses exponential backoff with jitter to prevent thundering herd.
-///
-/// ## Usage
-/// ```dart
-/// final policy = RetryPolicy(
-///   maxAttempts: 5,
-///   initialDelay: Duration(seconds: 1),
-///   backoffMultiplier: 2.0,
-///   maxDelay: Duration(seconds: 30),
-/// );
-///
-/// for (int attempt = 0; attempt < policy.maxAttempts; attempt++) {
-///   try {
-///     await connect();
-///     break;
-///   } catch (e) {
-///     if (!policy.shouldRetry(attempt)) rethrow;
-///     await Future.delayed(policy.delayForAttempt(attempt));
-///   }
-/// }
-/// ```
 
 import 'dart:math';
 

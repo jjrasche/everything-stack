@@ -1,19 +1,3 @@
-/// # RegulationEntryRepository
-///
-/// ## What it does
-/// Repository for RegulationEntry entities. Manages regulation event logging.
-/// Uses platform-specific adapters - ObjectBox on native, IndexedDB on web.
-///
-/// ## Usage
-/// ```dart
-/// final repo = RegulationEntryRepository();
-///
-/// // Find entries by person
-/// final entries = await repo.findByPerson(personUuid);
-///
-/// // Get daily summary
-/// final summary = await repo.getDailySummary(DateTime.now());
-/// ```
 
 import '../../../core/entity_repository.dart';
 import '../../../services/embedding_service.dart';

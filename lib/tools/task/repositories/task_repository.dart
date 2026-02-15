@@ -1,8 +1,3 @@
-/// # TaskRepository
-///
-/// ## What it does
-/// Repository for Task entities. Manages user tasks/todos.
-/// Uses platform-specific adapters - ObjectBox on native, IndexedDB on web.
 
 import '../../../core/entity_repository.dart';
 import '../../../services/embedding_service.dart';

@@ -1,5 +1,3 @@
-/// # FeedbackOB - ObjectBox Wrapper
-
 import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/domain/feedback.dart';
 

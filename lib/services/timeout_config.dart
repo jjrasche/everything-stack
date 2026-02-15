@@ -1,18 +1,4 @@
 /// Standardized timeout values for all network operations.
-///
-/// Use these constants to ensure consistent timeout behavior across services.
-/// Organized by operation type for clarity.
-///
-/// ## Usage
-/// ```dart
-/// await http.get(url).timeout(TimeoutConfig.httpDefault);
-/// await embeddings.generate(text).timeout(TimeoutConfig.embeddingGeneration);
-/// ```
-///
-/// ## Timeout Layers (Defense in Depth)
-/// 1. HTTP client layer: [httpDefault], [httpUpload]
-/// 2. Service layer: [embeddingGeneration], [llmStreaming], etc.
-/// 3. Caller layer: User-facing deadlines (set by caller)
 class TimeoutConfig {
   // ========================================================================
   // Network Operations (HTTP Client Layer)

@@ -1,5 +1,3 @@
-/// # AdaptationStateOB - ObjectBox Wrapper
-
 import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/core/adaptation_state.dart';
 

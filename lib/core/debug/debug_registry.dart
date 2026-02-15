@@ -1,25 +1,5 @@
-/// # DebugRegistry
-///
 /// Central registry for all debug-introspectable components.
-/// Transport-agnostic - can be used by HTTP server, CLI, tests, AI agents.
-///
-/// ## How It Works
-/// 1. Components implement DebugIntrospectable mixin
-/// 2. Bootstrap registers them with DebugRegistry
-/// 3. Debug tools query registry for state/actions
-/// 4. Transport layers (HTTP, WebSocket) expose registry via their protocol
-///
-/// ## Usage
-/// ```dart
-/// // In bootstrap:
-/// final registry = DebugRegistry.instance;
-/// registry.register(chunkingService);
-/// registry.register(semanticSearchService);
-///
-/// // Anywhere:
-/// final state = registry.getAllState();  // Full snapshot
-/// final result = await registry.invokeAction('chunking', 'rebuild', {});
-/// ```
+/// Transport-agnostic: used by HTTP server, CLI, tests, AI agents.
 
 import 'debug_introspectable.dart';
 

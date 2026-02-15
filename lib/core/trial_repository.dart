@@ -1,33 +1,4 @@
-/// # TrialRepository
-///
-/// ## What it does
 /// Manages trial records for GP training across all trainable components.
-/// Trials persist parameter→reward pairs to enable learning across app restarts.
-///
-/// ## Query Operations
-/// - getRecent(): Get recent trials for a component (for GP training)
-/// - findByComponent(): Get all trials for a component
-/// - save(): Persist trial
-/// - deleteOldTrials(): Clean up old trials (keep latest N per component)
-///
-/// ## Usage
-/// ```dart
-/// // Save trial after user feedback
-/// final trial = Trial(
-///   componentType: 'context_selector',
-///   paramsJson: jsonEncode({'param1': 0.5, 'param2': 0.8}),
-///   reward: 1.0,
-///   userId: 'user_123',
-/// );
-/// await trialRepo.save(trial);
-///
-/// // Load trials for GP training
-/// final trials = await trialRepo.getRecent(
-///   userId: 'user_123',
-///   componentType: 'context_selector',
-///   limit: 100,
-/// );
-/// ```
 
 import 'trial.dart';
 

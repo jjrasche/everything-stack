@@ -1,5 +1,3 @@
-/// # AdaptationStateObjectBoxAdapter
-
 import 'package:objectbox/objectbox.dart';
 import '../../core/adaptation_state.dart';
 import '../../core/adaptation_state_repository.dart';

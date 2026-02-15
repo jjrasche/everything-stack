@@ -1,28 +1,3 @@
-/// # AtomicInsightRepository
-///
-/// ## What it does
-/// Repository for AtomicInsight entities. Manages CRUD operations,
-/// scope-based queries, and semantic search across atomic insights.
-///
-/// Uses EmbeddingService abstraction - works with any provider (Jina, Gemini, local ONNX, etc.)
-///
-/// ## Usage - Production
-/// ```dart
-/// final adapter = AtomicInsightObjectBoxAdapter(store);
-/// final repo = AtomicInsightRepository.production(
-///   adapter: adapter,
-///   // Uses global EmbeddingService.instance (configured at bootstrap)
-/// );
-/// ```
-///
-/// ## Usage - Testing
-/// ```dart
-/// final repo = AtomicInsightRepository(
-///   adapter: adapter,
-///   embeddingService: MockEmbeddingService(),
-/// );
-/// ```
-
 import '../core/entity_repository.dart';
 import '../core/persistence/persistence_adapter.dart';
 import '../core/persistence/transaction_manager.dart';

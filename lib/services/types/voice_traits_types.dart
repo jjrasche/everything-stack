@@ -1,16 +1,3 @@
-/// # VoiceTraits Type Definitions
-///
-/// Types for contrastive few-shot example retrieval.
-/// VoiceTraits retrieves positive and negative examples from past
-/// interactions based on user feedback.
-///
-/// ## Trainable Parameters
-/// VoiceTraits learns optimal retrieval settings from feedback:
-/// - maxPositiveExamples: How many good examples improve quality
-/// - maxNegativeExamples: How many bad examples help avoidance
-/// - minSimilarity: Threshold for "relevant enough"
-/// - decayAlpha: How much to weight recent examples over old ones
-
 import 'dart:convert';
 import 'dart:math' as math;
 import '../../core/adaptation_data.dart';

@@ -1,9 +1,4 @@
-/// # AudioFile Entity
-///
-/// Represents a recorded audio file stored as bytes in database.
-/// Used for STT processing and playback.
-///
-/// Storage pattern: bytes-in-database (no filesystem dependencies)
+/// Recorded audio stored as bytes in database (no filesystem dependencies).
 
 import 'dart:convert';
 import 'dart:typed_data';

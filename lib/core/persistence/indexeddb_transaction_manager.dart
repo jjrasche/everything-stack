@@ -1,47 +1,9 @@
-/// # IndexedDBTransactionManager
-///
-/// ## What it does
 /// IndexedDB implementation of TransactionManager.
-/// Wraps IdbDatabase.transaction to provide platform-agnostic transaction API.
 ///
-/// ## What it enables
-/// - ACID transactions using IndexedDB native transaction support
-/// - Automatic rollback on exception
-/// - Cross-store atomic operations (Note + EntityVersion in one transaction)
-///
-/// ## How it works
-/// Uses Database.transaction with readwrite mode.
-/// The work callback executes asynchronously within the transaction.
-/// All object store operations (put, get, query) are atomic.
-///
-/// ## Important differences from ObjectBox
-/// - Must declare object stores upfront via objectStores parameter
-/// - Work callback is async (can use await inside)
-/// - Transaction auto-commits when all promises complete
-/// - Transaction auto-aborts on uncaught exception
-///
-/// ## Usage
-/// ```dart
-/// final db = await idbFactory.open('my_database');
-/// final txManager = IndexedDBTransactionManager(db);
-///
-/// final repo = NoteRepository(
-///   adapter: NoteIndexedDBAdapter(db),
-///   transactionManager: txManager,
-/// );
-///
-/// // Must specify object stores
-/// await repo.save(note);  // Internally: objectStores: ['notes', 'entity_versions']
-/// ```
-///
-/// ## Limitations
-/// - Must know all object stores upfront (IndexedDB requirement)
-/// - Nested transactions not supported
-/// - IndexedDB-specific (not cross-platform)
-///
-/// ## Testing approach
-/// Verified in test/persistence/indexeddb_transaction_test.dart
-/// and test/persistence/cross_repository_transaction_test.dart
+/// ## Why object stores must be declared upfront
+/// IndexedDB requires declaring all object stores at transaction creation time
+/// (unlike ObjectBox which ignores this parameter). The objectStores parameter
+/// on transaction() exists specifically for this IndexedDB requirement.
 
 import 'dart:indexed_db' as idb;
 import 'transaction_context.dart';

@@ -1,43 +1,7 @@
-/// # Tool
+/// MCP tool within a namespace (e.g., "task.create").
 ///
-/// ## What it does
-/// Represents an MCP tool within a namespace.
-/// Tools are the actual functions that can be invoked (e.g., "task.create").
-///
-/// ## Domain Entity Pattern
-/// This is a pure Dart domain entity with NO ObjectBox decorators.
-/// ObjectBox decorators belong on the wrapper class (ToolOB) in the adapters directory.
-/// This allows the same entity to work on native (ObjectBox) and web (IndexedDB) platforms.
-///
-/// ## Key Design
-/// - namespaceId: Links to parent Namespace
-/// - fullName: Computed as "namespaceId.name" (e.g., "task.create")
-/// - parameters: JSON Schema defining tool parameters
-/// - semanticCentroid: Computed from description for semantic matching
-///
-/// ## Two-Hop Selection
-/// 1. LLM picks namespace (semantic match)
-/// 2. Statistical classifier picks tool within namespace
-/// 3. Tool's parameters guide slot filling
-///
-/// ## Usage
-/// ```dart
-/// final createTool = Tool(
-///   name: 'create',
-///   namespaceId: 'task',
-///   description: 'Create a new task',
-///   keywords: ['add', 'new', 'make'],
-///   parameters: {
-///     'type': 'object',
-///     'properties': {
-///       'title': {'type': 'string'},
-///       'dueDate': {'type': 'string', 'format': 'date-time'},
-///     },
-///     'required': ['title'],
-///   },
-/// );
-/// print(createTool.fullName); // "task.create"
-/// ```
+/// Pure Dart domain entity -- ORM decorators belong on wrapper classes (ToolOB)
+/// so the same entity compiles on native (ObjectBox) and web (IndexedDB).
 
 import '../core/base_entity.dart';
 

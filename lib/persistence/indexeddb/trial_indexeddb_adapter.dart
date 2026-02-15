@@ -1,8 +1,3 @@
-/// # TrialIndexedDBAdapter
-///
-/// IndexedDB adapter for Trial entity (web platform).
-/// Implements TrialRepository interface for web.
-
 import 'dart:indexed_db' as idb;
 import '../../core/trial_repository.dart';
 import '../../core/trial.dart';

@@ -1,22 +1,4 @@
-/// # Transport Layer
-///
-/// The Transport layer handles raw byte-level communication over network connections.
-/// It provides a platform-agnostic interface that can be implemented using:
-/// - Browser WebSocket API (web)
-/// - Rust FFI with tungstenite (native platforms)
-///
-/// ## Responsibilities
-/// - Establish and maintain connections
-/// - Send/receive raw bytes (full-duplex)
-/// - Report connection state changes
-/// - Handle graceful and abrupt disconnection
-///
-/// ## NOT Responsibilities (handled by Protocol layer)
-/// - Message framing
-/// - Text vs binary distinction
-/// - Protocol-specific handshakes
-///
-/// ## Full-Duplex Requirement
+/// ## Why full-duplex is required
 /// Transport MUST support simultaneous send and receive. The [received] stream
 /// operates independently of [send] calls. This is critical for protocols like
 /// WebSocket where audio can be sent while transcripts are received.

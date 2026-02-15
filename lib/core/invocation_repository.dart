@@ -1,21 +1,5 @@
-/// # InvocationRepository Base Class
-///
-/// ## What it does
-/// Abstract base for all invocation repositories.
-/// Each component (STT, Intent, LLM, TTS) has its own repo that extends this.
-///
-/// ## Why Abstract?
-/// Provides consistent interface while allowing platform-specific implementations:
-/// - ObjectBox on iOS/Android
-/// - IndexedDB on Web
-/// Different implementations, same contract.
-///
-/// ## Query Operations
-/// - findById(): Get specific invocation
-/// - findByTurn(): Get all invocations for a turn
-/// - findByContextType(): Get all invocations of a context (background, retry, etc.)
-/// - save(): Persist invocation
-/// - delete(): Remove invocation
+/// Abstract base for invocation repositories.
+/// Provides consistent interface across platform-specific implementations.
 
 import 'package:everything_stack_template/core/entity_repository.dart';
 import 'package:everything_stack_template/core/invocation.dart';
@@ -72,22 +56,7 @@ abstract class InvocationRepository<T> {
   Future<List<T>> findAll();
 }
 
-/// # InvocationRepository Adapter
-///
-/// Bridges EntityRepository to InvocationRepository interface while adding
-/// semantic indexing via SemanticIndexableHandler.
-///
-/// This adapter:
-/// - Extends EntityRepository to get CRUD operations
-/// - Implements InvocationRepository to satisfy type contracts
-/// - Wires SemanticIndexableHandler for automatic chunking on save/delete
-///
-/// Unlike a dead wrapper, this adapter performs real work: it orchestrates
-/// the handler lifecycle while implementing the required interface.
-/// Create InvocationRepository with SemanticIndexableHandler wired.
-///
-/// Returns an EntityRepository configured with semantic indexing handler.
-/// Cast to InvocationRepository<Invocation> when registering in GetIt.
+/// Creates an EntityRepository configured with SemanticIndexableHandler for invocations.
 EntityRepository<Invocation> createInvocationRepository({
   required PersistenceAdapter<Invocation> adapter,
   required EmbeddingService embeddingService,

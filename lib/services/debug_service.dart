@@ -1,18 +1,3 @@
-/// # DebugService
-///
-/// Writes diagnostic state to logs/debug-state.json for AI debugging.
-/// Claude can read this file directly instead of requiring screenshots.
-///
-/// ## What it captures
-/// - Last search query + results
-/// - Chunk statistics (counts, duplicates)
-/// - Entity loader registry state
-/// - Recent errors
-///
-/// ## Usage
-/// Call `DebugService.instance.captureSearchResult(...)` after each search.
-/// Claude reads `logs/debug-state.json` to diagnose issues.
-
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';

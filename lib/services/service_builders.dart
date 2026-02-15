@@ -1,24 +1,3 @@
-/// # Service Builders
-///
-/// Single source of truth for creating any service with multiple implementations.
-/// Used by bootstrap AND runtime switching - zero duplication.
-///
-/// One generic function handles all services.
-///
-/// Usage:
-/// ```dart
-/// // Bootstrap - create any service
-/// final llm = createService<InferenceService>('llm', llmConfig);
-/// final tts = createService<TTSService>('tts', ttsConfig);
-///
-/// // Runtime switching - same function
-/// await ServiceRegistry.switchProvider<InferenceService>(
-///   'llm',
-///   newConfig,
-///   (config) => createService<InferenceService>('llm', config),
-/// );
-/// ```
-
 import 'inference_service.dart';
 import 'tts_service.dart';
 import 'embedding_service.dart';

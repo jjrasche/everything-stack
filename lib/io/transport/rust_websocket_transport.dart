@@ -1,17 +1,6 @@
-/// # Rust WebSocket Transport
-///
-/// Transport implementation using Rust FFI (tungstenite).
-/// Fixes Windows dart:io WebSocket bug (wss:// → https:// conversion).
-///
-/// ## Architecture
-/// - Dart calls Rust FFI via flutter_rust_bridge
-/// - Rust owns WebSocket connection (tungstenite + tokio)
-/// - Dart gets handle (u64) to reference connection
-/// - Receive stream via StreamController (polling for now)
-///
-/// ## Platforms
-/// - Works on ALL native platforms: Windows, macOS, Linux, iOS, Android
-/// - Web uses BrowserWebSocketTransport instead
+/// ## Why Rust FFI instead of dart:io
+/// dart:io WebSocket on Windows converts wss:// to https:// during HTTP upgrade,
+/// breaking TLS. Rust tungstenite handles this correctly on all native platforms.
 
 import 'dart:async';
 import 'dart:typed_data';

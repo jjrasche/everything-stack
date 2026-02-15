@@ -1,21 +1,8 @@
-/// # SemanticIndexableHandler
-///
-/// ## What it does
 /// Orchestrates semantic chunking and indexing for SemanticIndexable entities.
-/// Chunks text into segments and creates embeddings for semantic search.
 ///
-/// ## Pattern
-/// Entities that implement SemanticIndexable opt-in to semantic indexing.
-/// Chunks are generated, embedded, and indexed automatically on save.
-///
-/// ## Lifecycle
-/// beforeSave: Delete old chunks (if entity already persisted)
-/// afterSave: Create new chunks and index them (best-effort, fail-safe)
-///
-/// ## Error Semantics
-/// Ephemeral: If chunking/indexing fails after save, entity is persisted.
-/// Chunks exist in database but index may be incomplete.
-/// Recovery: SyncService will rebuild index on next run.
+/// ## Why ephemeral error semantics
+/// If chunking/indexing fails after save, the entity is still persisted.
+/// SyncService will rebuild the index on next run, so failures are recoverable.
 
 import 'package:everything_stack_template/core/base_entity.dart';
 import 'package:everything_stack_template/patterns/semantic_indexable.dart';

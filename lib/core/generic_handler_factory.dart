@@ -1,35 +1,5 @@
-/// # GenericHandlerFactory
-///
-/// ## What it does
-/// Creates handler chains for ANY entity type that implements patterns.
-/// Eliminates per-entity factory boilerplate while keeping handler ordering explicit.
-///
-/// ## Design Philosophy
-/// This is the template solution: one factory for all entity types.
-/// Specific entities can override if they need custom handler ordering.
-///
-/// ## Usage
-///
-/// **Directly (most entities):**
-/// ```dart
-/// final handlers = GenericHandlerFactory<Edge>(
-///   embeddingService: embeddingService,
-///   chunkingService: chunkingService,
-///   versionRepository: versionRepository,
-///   adapter: edgeAdapter,
-/// ).createHandlers();
-/// ```
-///
-/// **Via thin wrapper (entities with custom ordering):**
-/// ```dart
-/// class NoteHandlerFactory extends GenericHandlerFactory<Note> {
-///   @override
-///   List<RepositoryPatternHandler<Note>> createHandlers() {
-///     // Custom ordering if needed
-///     return super.createHandlers();
-///   }
-/// }
-/// ```
+/// Creates handler chains for any entity type that implements patterns.
+/// One factory for all entity types; override createHandlers() for custom ordering.
 
 import 'base_entity.dart';
 import 'persistence/persistence_adapter.dart';

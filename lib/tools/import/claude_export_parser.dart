@@ -1,25 +1,3 @@
-/// # Claude Export Parser
-///
-/// Parses Claude.ai data export JSON files into structured conversation data.
-/// Extracts human→assistant turn pairs for import as Invocations.
-///
-/// ## Export Format
-/// Claude exports contain:
-/// - conversations.json: Array of conversations with chat_messages
-/// - memories.json: User profile and project memories
-/// - projects.json: Project metadata
-/// - users.json: Account info
-///
-/// ## Usage
-/// ```dart
-/// final parser = ClaudeExportParser();
-/// final conversations = await parser.parseConversationsFile(path);
-/// for (final conv in conversations.take(10)) {
-///   for (final turn in conv.turns) {
-///     // Create Invocation from turn
-///   }
-/// }
-/// ```
 
 import 'dart:convert';
 import 'dart:io';

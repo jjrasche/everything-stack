@@ -1,38 +1,9 @@
-/// # DebugIntrospectable
+/// Mixin for services/components that expose debug state and actions.
 ///
-/// Mixin for services/components that want to expose debug state and actions.
-/// Components self-describe how they should be viewed and interacted with.
-///
-/// ## Why This Exists
-/// - Components know their own internals best
-/// - Centralized debug infrastructure doesn't need component-specific knowledge
-/// - New components auto-integrate with debug tools by implementing this mixin
-/// - AI agents can discover what's available without hardcoding
-///
-/// ## Usage
-/// ```dart
-/// class ChunkingService with Trainable, DebugIntrospectable {
-///   @override
-///   String get debugName => 'chunking';
-///
-///   @override
-///   Map<String, dynamic> getDebugState() => {
-///     'indexSize': index.size,
-///     'isConsistent': isIndexConsistent(),
-///   };
-///
-///   @override
-///   Map<String, DebugAction> getDebugActions() => {
-///     'rebuild': DebugAction(
-///       description: 'Rebuild HNSW index from database',
-///       handler: (params) async {
-///         await rebuildIndexFromStorage();
-///         return {'success': true, 'newSize': index.size};
-///       },
-///     ),
-///   };
-/// }
-/// ```
+/// ## Why components self-describe
+/// Components know their own internals best. New components auto-integrate
+/// with debug tools by implementing this mixin, and AI agents can discover
+/// capabilities without hardcoding.
 
 /// Handler for debug actions.
 /// Takes parameters map, returns result map.

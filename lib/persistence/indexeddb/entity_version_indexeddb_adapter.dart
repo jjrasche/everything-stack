@@ -1,16 +1,3 @@
-/// # EntityVersionIndexedDBAdapter
-///
-/// ## What it does
-/// IndexedDB implementation of PersistenceAdapter for EntityVersion entities.
-/// Handles CRUD operations for version history on web platform.
-///
-/// ## Usage
-/// ```dart
-/// final db = await idbFactory.open('my_database');
-/// final adapter = EntityVersionIndexedDBAdapter(db);
-/// final repo = VersionRepository(adapter: adapter);
-/// ```
-
 import 'dart:indexed_db' as idb;
 import 'base_indexeddb_adapter.dart';
 import 'database_schema.dart';

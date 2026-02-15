@@ -1,9 +1,3 @@
-/// # LLM Implementer Interface
-///
-/// Dumb API wrapper for LLM providers (Groq, Claude, etc.).
-/// No state management, no training logic. Just calls API and returns results.
-/// Service holds metadata about call (tokensUsed, latencyMs) in properties.
-
 import '../types/message.dart';
 import '../types/llm_types.dart';
 import '../../core/implementer.dart' show Implementer;

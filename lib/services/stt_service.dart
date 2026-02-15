@@ -1,18 +1,3 @@
-/// # STTService
-///
-/// Smart orchestration service for speech-to-text capabilities.
-/// Holds multiple STT implementations and coordinates adaptation learning.
-///
-/// ## Key Responsibilities
-/// - Hold Map<String, STTImplementer> (Deepgram, Google Speech, etc.)
-/// - Select implementer (specified or default)
-/// - Read/apply adaptation state per implementer
-/// - Log invocations for training feedback
-/// - Train from feedback (update AdaptationState)
-///
-/// ## Design Pattern
-/// Service (smart, orchestration) = Composition of Implementers (dumb, API wrappers)
-
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'dart:async';

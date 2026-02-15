@@ -1,14 +1,3 @@
-/// # IndexedDBBlobStore
-///
-/// Web-specific implementation using browser IndexedDB via idb_shim.
-/// Provides persistent client-side storage for web applications.
-///
-/// Stores blobs in IndexedDB database:
-/// - Database name: 'blob_store'
-/// - Object store: 'blobs'
-/// - Keys: blob id (string)
-/// - Values: Uint8List stored as base64 string
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';

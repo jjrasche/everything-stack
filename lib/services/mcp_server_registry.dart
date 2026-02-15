@@ -1,20 +1,3 @@
-/// # MCPServerRegistry
-///
-/// ## What it does
-/// Maps tool names to MCP servers.
-/// Handles routing: "task.create" → task-server endpoint.
-///
-/// ## Usage
-/// ```dart
-/// final registry = MCPServerRegistry();
-/// registry.register('task', MCPServer(
-///   name: 'task-server',
-///   endpoint: 'http://localhost:3000',
-/// ));
-///
-/// final server = registry.findServer('task.create'); // Returns task-server
-/// ```
-
 class MCPServerRegistry {
   final Map<String, MCPServer> _servers = {};
 

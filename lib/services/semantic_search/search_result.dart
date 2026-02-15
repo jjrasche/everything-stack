@@ -1,40 +1,6 @@
 import 'chunk.dart';
 import '../../core/base_entity.dart';
 
-/// # SemanticSearchResult
-///
-/// ## What it does
-/// Represents a single result from semantic search.
-/// Contains the matched chunk, source entity, and similarity score.
-/// (Renamed from SearchResult to avoid collision with HNSW SearchResult)
-///
-/// ## What it enables
-/// - Return matched text fragments (chunks) to user
-/// - Show which entity the chunk came from
-/// - Display confidence (similarity score)
-/// - Reconstruct context from token positions
-///
-/// ## Usage
-/// ```dart
-/// final results = await semanticSearchService.search('AI models');
-///
-/// for (final result in results) {
-///   print('Match: ${result.chunk.config} chunk');
-///   print('Score: ${(result.similarity * 100).toStringAsFixed(1)}%');
-///   print('Source: ${result.sourceEntity.title}');
-///   print('Context: ${result.chunk.startToken}-${result.chunk.endToken}');
-/// }
-/// ```
-///
-/// ## Similarity Score
-/// Range: [0.0, 1.0]
-/// - 1.0 = identical to query
-/// - 0.5 = moderately similar
-/// - 0.0 = completely different
-///
-/// Calculated from HNSW cosine distance:
-/// similarity = 1.0 - distance (since HNSW returns distance, not similarity)
-
 class SemanticSearchResult {
   /// The matched chunk with token positions
   final Chunk chunk;

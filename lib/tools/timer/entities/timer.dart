@@ -1,28 +1,7 @@
-/// # Timer
-///
-/// ## What it does
-/// Represents a countdown timer set by the user via voice or text.
-/// Persists across app restarts. Fires events when countdown completes.
-///
-/// ## Domain Entity Pattern
-/// This is a pure Dart domain entity with NO ObjectBox decorators.
-/// ObjectBox decorators belong on the wrapper class (TimerOB) in the adapters directory.
-/// This allows the same entity to work on native (ObjectBox) and web (IndexedDB) platforms.
-///
 /// ## Why persisted
 /// - App may be killed during countdown
 /// - Device may restart
 /// - Timer should still fire (or show elapsed) when app returns
-///
-/// ## Usage
-/// ```dart
-/// final timer = Timer(
-///   label: '5 minute break',
-///   durationSeconds: 300,
-///   setAt: DateTime.now(),
-///   endsAt: DateTime.now().add(Duration(seconds: 300)),
-/// );
-/// ```
 
 import '../../../core/base_entity.dart';
 

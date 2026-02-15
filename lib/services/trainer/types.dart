@@ -1,7 +1,3 @@
-/// # Trainer Service Types
-///
-/// Shared types for parameter optimization and training infrastructure.
-
 /// Parameter bounds definition: (min, max)
 typedef ParamBounds = Map<String, (double, double)>;
 

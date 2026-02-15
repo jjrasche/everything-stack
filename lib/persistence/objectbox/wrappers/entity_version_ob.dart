@@ -1,8 +1,3 @@
-/// # EntityVersionOB (ObjectBox Wrapper)
-///
-/// ObjectBox-specific wrapper for EntityVersion entity.
-/// Anti-Corruption Layer pattern.
-
 import 'package:objectbox/objectbox.dart';
 import '../../../core/entity_version.dart';
 

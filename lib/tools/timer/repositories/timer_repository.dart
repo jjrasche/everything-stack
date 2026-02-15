@@ -1,19 +1,3 @@
-/// # TimerRepository
-///
-/// ## What it does
-/// Repository for Timer entities. Manages countdown timers.
-/// Uses platform-specific adapters - ObjectBox on native, IndexedDB on web.
-///
-/// ## Usage
-/// ```dart
-/// final repo = TimerRepository();
-///
-/// // Find active timers
-/// final active = await repo.findActive();
-///
-/// // Find expired timers that haven't fired yet
-/// final expired = await repo.findExpired();
-/// ```
 
 import '../../../core/entity_repository.dart';
 import '../../../services/embedding_service.dart';

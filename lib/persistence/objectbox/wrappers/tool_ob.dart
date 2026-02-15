@@ -1,13 +1,3 @@
-/// # ToolOB - ObjectBox Wrapper
-///
-/// ObjectBox-decorated version of Tool domain entity.
-/// Contains all ObjectBox decorators (@Entity, @Id, @Property, etc.)
-///
-/// This wrapper allows Tool domain entities to remain pure Dart,
-/// while providing ObjectBox persistence for native platforms.
-///
-/// Uses @Transient for complex types (List, Map) with JSON string storage.
-
 import 'dart:convert';
 import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/domain/tool.dart';

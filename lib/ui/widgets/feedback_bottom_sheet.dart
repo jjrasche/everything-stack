@@ -1,7 +1,3 @@
-/// # Feedback Bottom Sheet
-///
-/// Reusable bottom sheet for collecting binary feedback (thumbs up/down).
-/// Used by both ContextPanel and ChatPanel for training feedback.
 
 import 'package:flutter/material.dart';
 

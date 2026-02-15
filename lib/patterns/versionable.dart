@@ -1,16 +1,3 @@
-/// # Versionable
-///
-/// ## What it does
-/// Tracks change history for entities using Type 4 SCD with deltas.
-/// Opt-in versioning for entities that need audit trails and reconstruction.
-///
-/// ## What it enables
-/// - Point-in-time reconstruction: "What was this Note on Dec 1?"
-/// - Audit trail: "Who changed what and when?"
-/// - Rollback: "Restore to version N"
-/// - Conflict resolution in sync scenarios
-/// - Compliance and accountability
-///
 /// ## Schema addition
 /// ```dart
 /// int version = 1;
@@ -61,20 +48,6 @@
 /// - High-churn entities: 50-100
 /// - Large entities: 10
 /// - Simple configs: null (initial snapshot only)
-///
-/// ## Performance
-/// - Version number increment is O(1)
-/// - History queries scale with number of changes
-/// - Reconstruction bounded by snapshot frequency
-/// - Use prune() to clean up old versions
-///
-/// ## Testing approach
-/// Integration tests:
-/// - Modify entity multiple times
-/// - Verify version increments correctly
-/// - Verify EntityVersion records created
-/// - Test reconstruction at various points
-/// - Test conflict detection
 ///
 /// ## Integrates with
 /// - EntityRepository: Automatic recordChange() on save

@@ -1,11 +1,3 @@
-/// # TimerOB - ObjectBox Wrapper
-///
-/// ObjectBox-decorated version of Timer domain entity.
-/// Contains all ObjectBox decorators (@Entity, @Id, @Property, etc.)
-///
-/// This wrapper allows Timer domain entities to remain pure Dart,
-/// while providing ObjectBox persistence for native platforms.
-
 import 'package:objectbox/objectbox.dart';
 import 'package:everything_stack_template/tools/timer/entities/timer.dart';
 

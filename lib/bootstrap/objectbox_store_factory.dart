@@ -1,8 +1,3 @@
-/// # ObjectBox Store Factory
-///
-/// Single point for ObjectBox Store initialization.
-/// Called by bootstrap on native platforms (Android/iOS/Desktop).
-
 library;
 
 import 'dart:io';

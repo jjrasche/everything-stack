@@ -1,15 +1,3 @@
-/// # Temporal
-///
-/// ## What it does
-/// Adds time-related fields to entities: due dates, scheduled times, recurrence.
-/// Enables time-based queries and scheduling features.
-///
-/// ## What it enables
-/// - "Show me things due this week"
-/// - "What's scheduled for tomorrow"
-/// - Recurring items (daily standup, weekly review)
-/// - Time-based filtering and sorting
-///
 /// ## Schema addition
 /// ```dart
 /// DateTime? dueAt;
@@ -36,18 +24,6 @@
 /// // Recurring task
 /// task.recurrenceRule = 'FREQ=WEEKLY;BYDAY=MO,WE,FR';
 /// ```
-///
-/// ## Performance
-/// - Index on dueAt, scheduledAt for range queries
-/// - Recurrence expansion is computed, not stored
-/// - Completed items can be archived for performance
-///
-/// ## Testing approach
-/// Time-based query tests:
-/// - Create entities with various timestamps
-/// - Verify range queries return correct results
-/// - Test edge cases: midnight boundaries, timezone handling
-/// - Test recurrence expansion for common patterns
 ///
 /// ## Integrates with
 /// - Ownable: "My tasks due this week"

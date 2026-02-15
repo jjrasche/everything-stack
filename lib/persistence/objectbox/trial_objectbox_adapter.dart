@@ -1,8 +1,3 @@
-/// # TrialObjectBoxAdapter
-///
-/// ObjectBox adapter for Trial entity.
-/// Implements TrialRepository interface for native platforms.
-
 import 'package:objectbox/objectbox.dart';
 import '../../core/trial_repository.dart';
 import '../../core/trial.dart';

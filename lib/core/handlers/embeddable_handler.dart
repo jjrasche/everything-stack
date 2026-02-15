@@ -1,19 +1,5 @@
-/// # EmbeddableHandler
-///
-/// ## What it does
-/// Orchestrates embedding generation for Embeddable entities.
-/// Generates vector embeddings before persistence for semantic search.
-///
-/// ## Pattern
-/// Entities that implement Embeddable opt-in to vector embeddings.
-/// Embeddings are generated from entity text and stored with entity.
-///
-/// ## Lifecycle
-/// beforeSave: Generate embedding from entity content
-///
-/// ## Error Semantics
-/// Fail-fast: If embedding generation fails, save is aborted.
-/// The entity must have a valid embedding to be persisted.
+/// Generates vector embeddings before persistence for Embeddable entities.
+/// Fail-fast: if embedding generation fails, save is aborted.
 
 import 'package:everything_stack_template/core/base_entity.dart';
 import 'package:everything_stack_template/patterns/embeddable.dart';

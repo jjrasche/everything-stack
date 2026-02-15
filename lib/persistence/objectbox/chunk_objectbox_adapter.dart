@@ -1,8 +1,3 @@
-/// # ChunkObjectBoxAdapter
-///
-/// ObjectBox implementation of ChunkRepository.
-/// Converts between domain Chunk and ChunkOB wrapper.
-
 import 'package:objectbox/objectbox.dart';
 import '../../core/chunk_repository.dart';
 import '../../services/semantic_search/chunk.dart';

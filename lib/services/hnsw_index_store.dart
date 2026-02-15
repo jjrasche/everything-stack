@@ -1,38 +1,7 @@
-/// # HNSW Index Store
-///
-/// Persists the serialized HNSW index to avoid rebuilding on every startup.
-///
-/// ## What it does
-/// - Saves serialized HNSW index bytes to persistent storage
-/// - Loads index from storage if available
-/// - Validates loaded index integrity
-///
-/// ## Why it matters
-/// Without persistence: App startup rebuilds index from database chunks (O(n log n))
-/// - 10K chunks = ~2 minutes
-/// - 100K chunks = ~20 minutes
-///
-/// With persistence: App startup loads pre-built index (O(n) deserialize)
-/// - 10K chunks = ~100ms
-/// - 100K chunks = ~1 second
-///
-/// ## Platform support
-/// - Native (Android, iOS, macOS, Windows, Linux): File-based storage
-/// - Web: Falls back to rebuild (can be optimized with IndexedDB later)
-///
-/// ## Usage
-/// ```dart
-/// // In bootstrap (native platforms):
-/// final indexStore = HnswIndexStore(basePath: objectBoxDirectory);
-/// final cached = await indexStore.loadIndex();
-/// if (cached != null) {
-///   hnswIndex = cached;
-/// } else {
-///   await chunkingService.rebuildIndexFromStorage();
-///   await indexStore.saveIndex(hnswIndex);
-/// }
-/// ```
-
+/// ## Why persist the index?
+/// Without persistence, startup rebuilds from database chunks (O(n log n)):
+/// 10K chunks = ~2 minutes. With persistence, deserialization is O(n):
+/// 10K chunks = ~100ms.
 import 'hnsw_index.dart';
 
 /// Metadata about a cached HNSW index

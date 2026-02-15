@@ -1,37 +1,5 @@
-/// # Adaptation State (Generic)
-///
-/// ## What it does
 /// Stores learned parameters for any trainable component per implementer.
 /// Adaptation state is per-user (individual preference tuning).
-///
-/// ## Generic Data Storage
-/// - data: Component-specific parameters as JSON
-///   - For STT: { confidenceThreshold: 0.65, minFeedbackCount: 10 }
-///   - For LLM: { temperature: 0.7, preferredResponseLength: 1024, systemPrompt: null }
-///   - For TTS: { voiceId: 'default', speechRate: 1.0, pitch: 1.0 }
-///
-/// ## Version Tracking
-/// - version: Incremented on each update (optimistic locking)
-/// - lastUpdatedAt: When state was last modified
-/// - lastUpdateReason: Why it was updated (for audit trail)
-/// - feedbackCountApplied: How many feedback records went into this state?
-///
-/// ## Usage
-/// ```dart
-/// // Get or create STT adaptation state
-/// final state = await stateRepo.findByComponentType('stt') ??
-///   AdaptationState(componentType: 'stt', data: {
-///     'confidenceThreshold': 0.65,
-///     'minFeedbackCount': 10,
-///   });
-///
-/// // Train it
-/// state.data['confidenceThreshold'] = 0.72;
-/// state.version++;
-/// state.lastUpdatedAt = DateTime.now();
-/// state.lastUpdateReason = 'trainFromFeedback';
-/// await stateRepo.save(state);
-/// ```
 
 import 'dart:convert';
 import 'base_entity.dart';

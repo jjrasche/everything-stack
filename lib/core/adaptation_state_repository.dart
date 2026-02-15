@@ -1,20 +1,8 @@
-/// # AdaptationStateRepository
+/// Repository for AdaptationState entities across all components.
 ///
-/// ## What it does
-/// Repository for the single generic AdaptationState entity.
-/// Stores adaptation state for all components (STT, LLM, TTS, selectors, etc.)
-/// Each state has componentType field to identify which component it belongs to.
-///
-/// ## Query Strategy: User → Default
-/// getForComponent() implements:
-/// 1. Check user-scoped state (if userId provided)
-/// 2. Return null if not found (caller creates default)
 /// Per-implementer tracking enables implementation-level learning
-/// (e.g., Groq and Claude have separate learned parameters)
-///
-/// ## Concurrency Control
-/// Uses optimistic locking with version numbers.
-/// updateWithVersion() only succeeds if version matches.
+/// (e.g., Groq and Claude have separate learned parameters).
+/// Uses optimistic locking with version numbers for concurrency control.
 
 import 'adaptation_state.dart';
 

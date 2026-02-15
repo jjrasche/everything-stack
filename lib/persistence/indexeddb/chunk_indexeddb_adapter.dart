@@ -1,12 +1,6 @@
-/// # ChunkObjectBoxAdapter (Web Stub)
-///
-/// Web stub implementation of ChunkRepository.
+/// Web stub: class name matches native adapter for conditional import compatibility.
 /// Semantic search is disabled on web (ObjectBox/dart:ffi not available).
-///
-/// This stub exists to allow compilation but should never be called.
 /// ChunkingService is not initialized on web (see bootstrap.dart).
-///
-/// Note: Class name matches native adapter for conditional import compatibility.
 
 import '../../core/chunk_repository.dart';
 import '../../services/semantic_search/chunk.dart';

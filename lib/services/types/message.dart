@@ -1,8 +1,3 @@
-/// # Message
-///
-/// Typed representation of a conversation message.
-/// Used by LLM service for type-safe message handling.
-
 import 'dart:math' show min;
 
 /// A single message in a conversation.

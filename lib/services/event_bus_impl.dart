@@ -1,25 +1,3 @@
-/// # EventBusImpl
-///
-/// Transient in-memory pub/sub for system events.
-/// Events are NOT persisted - this is for real-time coordination only.
-///
-/// ## Architecture
-/// - Maintains type registry (no dart:mirrors - not supported in Flutter)
-/// - Each event type has its own BroadcastStreamController
-/// - publish() notifies listeners synchronously
-/// - Maintains ring buffer of recent events (bounded memory)
-/// - All StreamControllers properly disposed on cleanup
-///
-/// ## Design Pattern
-/// ```
-/// publish(event) {
-///   1. Update ring buffer (in-memory only, no persistence)
-///   2. Notify listeners (fire-and-forget)
-/// }
-/// ```
-///
-/// Events are transient - lost on app restart. Use domain Event entity
-/// for persistent event storage (Invocation, Turn, etc.).
 library;
 
 import 'dart:async';

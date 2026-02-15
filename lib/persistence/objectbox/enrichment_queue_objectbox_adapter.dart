@@ -1,8 +1,3 @@
-/// # EnrichmentQueueObjectBoxAdapter
-///
-/// ObjectBox implementation of EnrichmentQueueAdapter.
-/// Provides queries for enrichment worker and runner operations.
-
 import 'package:objectbox/objectbox.dart';
 import '../../core/enrichment_queue_item.dart';
 import '../../core/enrichment_queue_repository.dart';

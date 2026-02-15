@@ -1,10 +1,3 @@
-/// # DeepgramImplementer
-///
-/// Dumb API wrapper for Deepgram STT API.
-/// Recognizes audio files (not streaming).
-/// Handles authentication, retries, timeouts.
-/// No state management - just calls API and returns results.
-
 import 'dart:convert';
 import 'dart:async';
 import 'dart:typed_data';

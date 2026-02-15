@@ -1,15 +1,3 @@
-/// # SemanticIndexable
-///
-/// ## What it does
-/// Declares that an entity can be semantically indexed and searched.
-/// Similar to Embeddable, but for chunked semantic search.
-///
-/// ## What it enables
-/// - Automatic chunking on entity save
-/// - Semantic search across entities
-/// - Two-level indexing (parent + child chunks)
-/// - Find entities by meaning, not keywords
-///
 /// ## Relationship to Embeddable
 /// - **Embeddable:** Single embedding for whole entity (semantic matching)
 /// - **SemanticIndexable:** Multiple chunks + embeddings per entity (text search)
@@ -51,10 +39,6 @@
 /// - Chunks are generated, embedded, and indexed automatically
 /// - Repository lifecycle hooks trigger chunking
 /// - SemanticSearchService uses HNSW to find chunks
-///
-/// ## Testing approach
-/// Mock toChunkableInput() and getChunkingConfig() in tests.
-/// Verify chunks are created with correct boundaries.
 
 mixin SemanticIndexable {
   /// Define what text represents this entity for chunking.

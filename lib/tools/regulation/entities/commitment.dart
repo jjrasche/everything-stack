@@ -1,26 +1,3 @@
-/// # Commitment
-///
-/// ## What it does
-/// Represents a commitment that people make (daily meditation, kitchen clean, etc.).
-/// Tracks who is responsible and how to verify completion.
-///
-/// ## Domain Entity Pattern
-/// This is a pure Dart domain entity with NO ObjectBox decorators.
-/// ObjectBox decorators belong on the wrapper class (CommitmentOB) in the adapters directory.
-/// This allows the same entity to work on native (ObjectBox) and web (IndexedDB) platforms.
-///
-/// ## Usage
-/// ```dart
-/// final commitment = Commitment(
-///   name: 'Morning meditation',
-///   rationale: 'Helps start the day calm and focused',
-///   interval: 'daily',
-///   timeOfDay: DateTime(2024, 1, 1, 7, 0), // 7 AM
-///   verificationConditions: ['meditation app shows completion', 'sits for 10 minutes'],
-///   personIds: ['person-uuid-1'],
-///   active: true,
-/// );
-/// ```
 
 import '../../../core/base_entity.dart';
 

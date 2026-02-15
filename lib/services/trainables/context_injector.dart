@@ -1,23 +1,3 @@
-/// # ContextInjector
-///
-/// ## What it does
-/// Trainable component that injects relevant context for a namespace.
-/// Example: For 'task' namespace, inject list of incomplete tasks.
-/// Example: For 'timer' namespace, inject list of active timers.
-///
-/// ## Input
-/// - namespace: Which namespace
-/// - correlationId: For linking
-///
-/// ## Output
-/// - injectedContext: Map of context items
-///
-/// ## Training
-/// When user feedback indicates missing context:
-/// - Increase context relevance scores
-/// - Track which context items are actually used
-/// - Deprioritize irrelevant context
-
 import 'package:flutter/material.dart';
 import '../trainable.dart';
 import '../../core/invocation.dart';
