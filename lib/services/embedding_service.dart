@@ -60,24 +60,24 @@ abstract class EmbeddingService {
   ///
   /// Throws [ArgumentError] if embeddings have different dimensions.
   /// Returns 0 for zero vectors or empty lists.
-  static double cosineSimilarity(List<double> a, List<double> b) {
-    if (a.length != b.length) {
+  static double cosineSimilarity(List<double> embeddingA, List<double> embeddingB) {
+    if (embeddingA.length != embeddingB.length) {
       throw ArgumentError('Embeddings must have same dimension');
     }
 
     double dotProduct = 0;
-    double normA = 0;
-    double normB = 0;
+    double normSquaredA = 0;
+    double normSquaredB = 0;
 
-    for (int i = 0; i < a.length; i++) {
-      dotProduct += a[i] * b[i];
-      normA += a[i] * a[i];
-      normB += b[i] * b[i];
+    for (int i = 0; i < embeddingA.length; i++) {
+      dotProduct += embeddingA[i] * embeddingB[i];
+      normSquaredA += embeddingA[i] * embeddingA[i];
+      normSquaredB += embeddingB[i] * embeddingB[i];
     }
 
-    if (normA == 0 || normB == 0) return 0;
+    if (normSquaredA == 0 || normSquaredB == 0) return 0;
 
-    return dotProduct / (math.sqrt(normA) * math.sqrt(normB));
+    return dotProduct / (math.sqrt(normSquaredA) * math.sqrt(normSquaredB));
   }
 }
 
@@ -160,7 +160,7 @@ class MockEmbeddingService extends EmbeddingService {
 
   @override
   Future<List<List<double>>> generateBatch(List<String> texts) async {
-    return texts.map((t) => mockEmbedding(t)).toList();
+    return texts.map((inputText) => mockEmbedding(inputText)).toList();
   }
 
   /// Tokenize text into lowercase words
@@ -169,7 +169,7 @@ class MockEmbeddingService extends EmbeddingService {
         .toLowerCase()
         .replaceAll(RegExp(r'[^\w\s]'), ' ') // Remove punctuation
         .split(RegExp(r'\s+'))
-        .where((w) => w.isNotEmpty)
+        .where((word) => word.isNotEmpty)
         .toList();
   }
 
@@ -199,8 +199,8 @@ class MockEmbeddingService extends EmbeddingService {
   /// Normalize vector to unit length.
   List<double> _normalize(List<double> vector) {
     var sumSquares = 0.0;
-    for (final v in vector) {
-      sumSquares += v * v;
+    for (final component in vector) {
+      sumSquares += component * component;
     }
 
     if (sumSquares == 0) {
@@ -210,8 +210,8 @@ class MockEmbeddingService extends EmbeddingService {
       );
     }
 
-    final norm = sqrt(sumSquares);
-    return vector.map((v) => v / norm).toList();
+    final magnitude = sqrt(sumSquares);
+    return vector.map((component) => component / magnitude).toList();
   }
 }
 
@@ -288,21 +288,20 @@ class JinaEmbeddingService extends EmbeddingService {
 
       _checkForApiError(response);
 
-      final data = response['data'] as List;
-      final results = <List<double>>[];
+      final embeddingEntries = response['data'] as List;
+      final batchEmbeddings = <List<double>>[];
 
-      // Sort by index to ensure correct order
-      final sortedData = List<Map<String, dynamic>>.from(
-        data.map((e) => e as Map<String, dynamic>),
-      )..sort((a, b) => (a['index'] as int).compareTo(b['index'] as int));
+      final sortedEntries = List<Map<String, dynamic>>.from(
+        embeddingEntries.map((entry) => entry as Map<String, dynamic>),
+      )..sort((entryA, entryB) => (entryA['index'] as int).compareTo(entryB['index'] as int));
 
-      for (final item in sortedData) {
-        final embedding = (item['embedding'] as List).cast<num>();
-        _validateDimension(embedding.length);
-        results.add(embedding.map((v) => v.toDouble()).toList());
+      for (final embeddingEntry in sortedEntries) {
+        final embeddingValues = (embeddingEntry['embedding'] as List).cast<num>();
+        _validateDimension(embeddingValues.length);
+        batchEmbeddings.add(embeddingValues.map((numValue) => numValue.toDouble()).toList());
       }
 
-      return results;
+      return batchEmbeddings;
     } on EmbeddingServiceException {
       rethrow;
     } catch (e) {
@@ -341,13 +340,11 @@ class JinaEmbeddingService extends EmbeddingService {
   }
 
   void _checkForApiError(Map<String, dynamic> response) {
-    // Jina returns error in 'detail' field
     if (response.containsKey('detail')) {
       throw EmbeddingServiceException(
         'Jina API error: ${response['detail']}',
       );
     }
-    // Also check for standard 'error' field
     if (response.containsKey('error')) {
       final error = response['error'];
       final message = error is Map ? error['message'] : error.toString();
@@ -425,12 +422,12 @@ class GeminiEmbeddingService extends EmbeddingService {
 
       _checkForApiError(response);
 
-      final embedding = response['embedding'] as Map<String, dynamic>;
-      final values = (embedding['values'] as List).cast<num>();
+      final embeddingMap = response['embedding'] as Map<String, dynamic>;
+      final embeddingValues = (embeddingMap['values'] as List).cast<num>();
 
-      _validateDimension(values.length);
+      _validateDimension(embeddingValues.length);
 
-      return values.map((v) => v.toDouble()).toList();
+      return embeddingValues.map((numValue) => numValue.toDouble()).toList();
     } on EmbeddingServiceException {
       rethrow;
     } catch (e) {
@@ -450,11 +447,11 @@ class GeminiEmbeddingService extends EmbeddingService {
     // If no HTTP client, fall back to sequential individual calls
     // (which will each validate and potentially throw)
     if (_httpClient == null) {
-      final results = <List<double>>[];
+      final sequentialEmbeddings = <List<double>>[];
       for (final text in texts) {
-        results.add(await generate(text));
+        sequentialEmbeddings.add(await generate(text));
       }
-      return results;
+      return sequentialEmbeddings;
     }
 
     try {
@@ -478,17 +475,17 @@ class GeminiEmbeddingService extends EmbeddingService {
 
       _checkForApiError(response);
 
-      final embeddings = response['embeddings'] as List;
-      final results = <List<double>>[];
+      final embeddingEntries = response['embeddings'] as List;
+      final batchEmbeddings = <List<double>>[];
 
-      for (final e in embeddings) {
-        final values =
-            ((e as Map<String, dynamic>)['values'] as List).cast<num>();
-        _validateDimension(values.length);
-        results.add(values.map((v) => v.toDouble()).toList());
+      for (final embeddingEntry in embeddingEntries) {
+        final embeddingValues =
+            ((embeddingEntry as Map<String, dynamic>)['values'] as List).cast<num>();
+        _validateDimension(embeddingValues.length);
+        batchEmbeddings.add(embeddingValues.map((numValue) => numValue.toDouble()).toList());
       }
 
-      return results;
+      return batchEmbeddings;
     } on EmbeddingServiceException {
       rethrow;
     } catch (e) {

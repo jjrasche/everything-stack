@@ -6,8 +6,6 @@ import '../core/event.dart';
 import 'tool_registry.dart';
 import 'event_bus.dart';
 
-/// Placeholder adaptation data for ToolExecutor.
-/// Currently no trainable parameters - this is a stub for future training.
 class ToolExecutorAdaptationData extends AdaptationData {
   ToolExecutorAdaptationData();
 
@@ -19,18 +17,17 @@ class ToolExecutorAdaptationData extends AdaptationData {
   String toJson() => '{}';
 }
 
-/// Result of a single tool execution
 class ToolExecutionResult {
   final String toolName;
   final bool success;
-  final dynamic data; // Tool-specific result
+  final dynamic toolOutput;
   final String? error;
   final int? latencyMs;
 
   ToolExecutionResult({
     required this.toolName,
     required this.success,
-    this.data,
+    this.toolOutput,
     this.error,
     this.latencyMs,
   });
@@ -38,13 +35,12 @@ class ToolExecutionResult {
   Map<String, dynamic> toJson() => {
         'toolName': toolName,
         'success': success,
-        'data': data,
+        'data': toolOutput,
         'error': error,
         'latencyMs': latencyMs,
       };
 }
 
-/// Tool call request from LLM
 class ToolCall {
   final String toolName;
   final Map<String, dynamic> params;
@@ -75,7 +71,6 @@ class ToolCall {
       };
 }
 
-/// Executes LLM-requested tools via registry lookup
 class ToolExecutor with Trainable<ToolExecutorAdaptationData> {
   final ToolRegistry toolRegistry;
   final EventBus eventBus;
@@ -104,7 +99,6 @@ class ToolExecutor with Trainable<ToolExecutorAdaptationData> {
 
   // ============ Tool Execution ============
 
-  /// Execute a tool call
   Future<ToolExecutionResult> executeTool(
     ToolCall toolCall, {
     required String eventId,
@@ -112,16 +106,14 @@ class ToolExecutor with Trainable<ToolExecutorAdaptationData> {
     final startTime = DateTime.now();
 
     try {
-      // Parse tool name (format: "namespace.toolName")
-      final parts = toolCall.toolName.split('.');
-      if (parts.length != 2) {
-        final result = ToolExecutionResult(
+      final nameSegments = toolCall.toolName.split('.');
+      if (nameSegments.length != 2) {
+        final invalidNameResult = ToolExecutionResult(
           toolName: toolCall.toolName,
           success: false,
           error: 'Invalid tool name format',
         );
 
-        // Record failed execution
         await recordInvocation(
           eventId,
           Invocation(
@@ -134,18 +126,18 @@ class ToolExecutor with Trainable<ToolExecutorAdaptationData> {
               'params': toolCall.params,
             },
             output: {
-              'result': result.toJson(),
+              'result': invalidNameResult.toJson(),
             },
           ),
         );
 
-        return result;
+        return invalidNameResult;
       }
 
-      final namespace = parts[0];
-      final toolName = parts[1];
+      final namespace = nameSegments[0];
+      final toolName = nameSegments[1];
 
-      final result = await _executeToolByNamespace(
+      final namespaceResult = await _executeToolByNamespace(
         namespace: namespace,
         toolName: toolName,
         params: toolCall.params,
@@ -155,13 +147,12 @@ class ToolExecutor with Trainable<ToolExecutorAdaptationData> {
 
       final executionResult = ToolExecutionResult(
         toolName: toolCall.toolName,
-        success: result.success,
-        data: result.data,
-        error: result.error,
+        success: namespaceResult.success,
+        toolOutput: namespaceResult.toolOutput,
+        error: namespaceResult.error,
         latencyMs: DateTime.now().difference(startTime).inMilliseconds,
       );
 
-      // Record execution invocation (standardized pattern)
       await recordInvocation(
         eventId,
         Invocation(
@@ -179,7 +170,6 @@ class ToolExecutor with Trainable<ToolExecutorAdaptationData> {
         ),
       );
 
-      // Publish tool_call_executed event for UI visibility
       await eventBus.publish(Event(
         eventType: 'tool_call_executed',
         correlationId: eventId,
@@ -187,7 +177,7 @@ class ToolExecutor with Trainable<ToolExecutorAdaptationData> {
         payloadJson: jsonEncode({
           'tool_name': toolCall.toolName,
           'success': executionResult.success,
-          'result': executionResult.data,
+          'result': executionResult.toolOutput,
           'error': executionResult.error,
         }),
       ));
@@ -201,7 +191,6 @@ class ToolExecutor with Trainable<ToolExecutorAdaptationData> {
         latencyMs: DateTime.now().difference(startTime).inMilliseconds,
       );
 
-      // Record exception
       await recordInvocation(
         eventId,
         Invocation(
@@ -223,25 +212,23 @@ class ToolExecutor with Trainable<ToolExecutorAdaptationData> {
     }
   }
 
-  /// Execute multiple tool calls
   Future<List<ToolExecutionResult>> executeTools(
     List<ToolCall> toolCalls, {
     required String eventId,
   }) async {
-    final results = <ToolExecutionResult>[];
+    final executionResults = <ToolExecutionResult>[];
 
     for (final toolCall in toolCalls) {
-      final result = await executeTool(
+      final executionResult = await executeTool(
         toolCall,
         eventId: eventId,
       );
-      results.add(result);
+      executionResults.add(executionResult);
     }
 
-    return results;
+    return executionResults;
   }
 
-  /// Execute tool by registry lookup
   Future<ToolExecutionResult> _executeToolByNamespace({
     required String namespace,
     required String toolName,
@@ -252,9 +239,8 @@ class ToolExecutor with Trainable<ToolExecutorAdaptationData> {
     final fullToolName = '$namespace.$toolName';
 
     try {
-      // Look up tool in registry
-      final fn = toolRegistry.getTool(fullToolName);
-      if (fn == null) {
+      final toolFunction = toolRegistry.getTool(fullToolName);
+      if (toolFunction == null) {
         return ToolExecutionResult(
           toolName: fullToolName,
           success: false,
@@ -262,12 +248,12 @@ class ToolExecutor with Trainable<ToolExecutorAdaptationData> {
         );
       }
 
-      final data = await fn(params);
+      final toolOutput = await toolFunction(params);
 
       return ToolExecutionResult(
         toolName: fullToolName,
         success: true,
-        data: data,
+        toolOutput: toolOutput,
       );
     } catch (e) {
       return ToolExecutionResult(

@@ -49,22 +49,13 @@ class InferenceService with Trainable<InferenceAdaptationData> {
     }
   }
 
-  /// Get available models per implementer.
-  /// Used by ModelSelector to know which models can be selected.
   Map<String, List<String>> getAvailableModels() {
     return _implementers.map(
-      (name, impl) => MapEntry(name, impl.availableModels),
+      (implementerName, implementer) =>
+          MapEntry(implementerName, implementer.availableModels),
     );
   }
 
-  /// Chat with LLM using adaptation-aware parameters.
-  ///
-  /// Flow:
-  /// 1. Select implementer (specified or default)
-  /// 2. Load adaptation state (temperature, response length preferences)
-  /// 3. Call implementer with adapted parameters
-  /// 4. Log invocation for training feedback
-  /// 5. Return response
   Future<String> chat({
     required String eventId,
     required List<Message> messages,
@@ -76,7 +67,7 @@ class InferenceService with Trainable<InferenceAdaptationData> {
     final state =
         await _getAdaptationState(implementer.implementerName, userId);
 
-    final output = await implementer.chat(
+    final llmOutput = await implementer.chat(
       messages: messages,
       temperature: state.temperature,
       topP: state.topP,
@@ -94,29 +85,19 @@ class InferenceService with Trainable<InferenceAdaptationData> {
         success: true,
         confidence: 1.0,
         input: LLMInvocationInput(messages: messages).toJson(),
-        output: output.toJson(),
+        output: llmOutput.toJson(),
       ),
     );
 
-    return output.response;
+    return llmOutput.response;
   }
 
-  /// Build LLM message array from ContextBundle.
-  ///
-  /// Prompt engineering: Converts semantic context + conversation thread
-  /// into properly formatted LLM messages.
-  ///
-  /// Format:
-  /// 1. System message with semantic context (facts from across system)
-  /// 2. Conversation thread (STT -> user, LLM -> assistant)
-  /// 3. Current user utterance
   List<Map<String, dynamic>> buildMessagesFromContext({
     required ContextBundle contextBundle,
     required String currentUtterance,
   }) {
-    final messages = <Map<String, dynamic>>[];
+    final contextMessages = <Map<String, dynamic>>[];
 
-    // 1. System message with semantic context
     final systemPrompt = StringBuffer();
     systemPrompt.writeln(
         'You are a helpful voice assistant. Keep responses brief and conversational - like you\'re talking to a friend, not writing an essay.');
@@ -127,38 +108,33 @@ class InferenceService with Trainable<InferenceAdaptationData> {
 
     if (contextBundle.semanticContext.isNotEmpty) {
       systemPrompt.writeln('\n# Relevant Context (from semantic search):');
-      for (final result in contextBundle.semanticContext) {
-        final chunkText = result.chunk.text;
-        final entityType = result.chunk.sourceEntityType;
-        final similarity = (result.similarity * 100).toStringAsFixed(0);
+      for (final searchResult in contextBundle.semanticContext) {
+        final chunkText = searchResult.chunk.text;
+        final entityType = searchResult.chunk.sourceEntityType;
+        final similarity = (searchResult.similarity * 100).toStringAsFixed(0);
         systemPrompt.writeln('- [$entityType, $similarity% match]: $chunkText');
       }
     }
 
-    messages.add({'role': 'system', 'content': systemPrompt.toString()});
+    contextMessages.add({'role': 'system', 'content': systemPrompt.toString()});
 
-    // 2. Conversation thread (LLM invocations -> user/assistant message pairs)
-    // Each LLM invocation has input.prompt (user) and output.response (assistant)
-    for (final inv in contextBundle.conversationThread) {
-      final userPrompt = inv.input?['prompt'] as String?;
+    for (final llmInvocation in contextBundle.conversationThread) {
+      final userPrompt = llmInvocation.input?['prompt'] as String?;
       if (userPrompt != null && userPrompt.isNotEmpty) {
-        messages.add({'role': 'user', 'content': userPrompt});
+        contextMessages.add({'role': 'user', 'content': userPrompt});
       }
 
-      final assistantResponse = inv.output?['response'] as String?;
+      final assistantResponse = llmInvocation.output?['response'] as String?;
       if (assistantResponse != null && assistantResponse.isNotEmpty) {
-        messages.add({'role': 'assistant', 'content': assistantResponse});
+        contextMessages.add({'role': 'assistant', 'content': assistantResponse});
       }
     }
 
-    // 3. Current user utterance
-    messages.add({'role': 'user', 'content': currentUtterance});
+    contextMessages.add({'role': 'user', 'content': currentUtterance});
 
-    return messages;
+    return contextMessages;
   }
 
-  /// Call LLM with tools available for agentic workflows.
-  /// Delegates to implementer, logs invocation.
   Future<LLMResponse> chatWithTools({
     required String model,
     required List<Map<String, dynamic>> messages,
@@ -168,7 +144,7 @@ class InferenceService with Trainable<InferenceAdaptationData> {
   }) async {
     final implementer = _implementers[_defaultImplementer]!;
 
-    final response = await implementer.chatWithTools(
+    final llmResponse = await implementer.chatWithTools(
       model: model,
       messages: messages,
       tools: tools,
@@ -176,11 +152,11 @@ class InferenceService with Trainable<InferenceAdaptationData> {
       maxTokens: maxTokens,
     );
 
-    final lastUserMsg = messages.lastWhere(
+    final lastUserMessage = messages.lastWhere(
       (msg) => msg['role'] == 'user',
       orElse: () => <String, dynamic>{'content': ''},
     );
-    final prompt = (lastUserMsg['content'] as String?) ?? '';
+    final lastUserPrompt = (lastUserMessage['content'] as String?) ?? '';
 
     await recordInvocation(
       'unknown', // TODO: Pass eventId from Coordinator
@@ -190,16 +166,14 @@ class InferenceService with Trainable<InferenceAdaptationData> {
         implementer: implementer.implementerName,
         success: true,
         confidence: 1.0,
-        input: {'prompt': prompt, 'messages': messages},
-        output: {'response': response.content},
+        input: {'prompt': lastUserPrompt, 'messages': messages},
+        output: {'response': llmResponse.content},
       ),
     );
 
-    return response;
+    return llmResponse;
   }
 
-  /// Stream tokens from LLM via SSE for real-time output.
-  /// Delegates to the default implementer's streaming API.
   Stream<String> chatStream({
     required String model,
     required List<Map<String, dynamic>> messages,
@@ -215,7 +189,6 @@ class InferenceService with Trainable<InferenceAdaptationData> {
     );
   }
 
-  /// Get adaptation state for this implementer, or defaults if not found.
   Future<InferenceAdaptationData> _getAdaptationState(
     String implementerName,
     String? userId,
@@ -236,8 +209,8 @@ class InferenceService with Trainable<InferenceAdaptationData> {
 
   @override
   Widget buildFeedbackUI(BuildContext context, Invocation invocation) {
-    final input = LLMInvocationInput.fromJson(invocation.input!);
-    final output = LLMInvocationOutput.fromJson(invocation.output!);
+    final llmInput = LLMInvocationInput.fromJson(invocation.input!);
+    final llmOutput = LLMInvocationOutput.fromJson(invocation.output!);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,7 +223,7 @@ class InferenceService with Trainable<InferenceAdaptationData> {
             color: Colors.grey[100],
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Text(output.response),
+          child: Text(llmOutput.response),
         ),
         const SizedBox(height: 16),
         Text('Was this response helpful?',
@@ -290,7 +263,7 @@ class InferenceService with Trainable<InferenceAdaptationData> {
 
     final state = await _getAdaptationState(implementerName, userId);
 
-    final reward =
+    final feedbackReward =
         feedback.action == core_feedback.FeedbackAction.confirm ? 1.0 : -1.0;
 
     await optimizer.recordTrial({
@@ -299,16 +272,16 @@ class InferenceService with Trainable<InferenceAdaptationData> {
       'frequencyPenalty': state.frequencyPenalty,
       'presencePenalty': state.presencePenalty,
       'maxTokens': state.maxTokens,
-    }, reward);
+    }, feedbackReward);
 
-    final suggested = await optimizer.suggestNext();
+    final suggestedParams = await optimizer.suggestNext();
 
     final newParams = state.copyWith(
-      temperature: suggested['temperature'] as double,
-      topP: suggested['topP'] as double,
-      frequencyPenalty: suggested['frequencyPenalty'] as double,
-      presencePenalty: suggested['presencePenalty'] as double,
-      maxTokens: suggested['maxTokens'] as int,
+      temperature: suggestedParams['temperature'] as double,
+      topP: suggestedParams['topP'] as double,
+      frequencyPenalty: suggestedParams['frequencyPenalty'] as double,
+      presencePenalty: suggestedParams['presencePenalty'] as double,
+      maxTokens: suggestedParams['maxTokens'] as int,
     );
 
     final adaptationState = await adaptationStateRepo.getForComponent(

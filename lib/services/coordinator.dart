@@ -15,36 +15,16 @@ import 'context_capacity.dart';
 import 'types/llm_types.dart';
 import 'types/model_selector_types.dart';
 
-/// Result of coordinator orchestration
 class CoordinatorResult {
-  /// Unique ID for this turn
   final String turnId;
-
-  /// Selected namespace
   final String selectedNamespace;
-
-  /// Selected tools
   final List<String> selectedTools;
-
-  /// Injected context
   final Map<String, dynamic> injectedContext;
-
-  /// LLM configuration used
   final Map<String, dynamic> llmConfig;
-
-  /// Final response to user
   final String finalResponse;
-
-  /// All invocations recorded (for training)
   final List<String> invocationIds;
-
-  /// Did orchestration succeed?
-  final bool success;
-
-  /// Error message if !success
+  final bool isSuccess;
   final String? errorMessage;
-
-  /// Total latency
   final int latencyMs;
 
   CoordinatorResult({
@@ -55,7 +35,7 @@ class CoordinatorResult {
     required this.llmConfig,
     required this.finalResponse,
     required this.invocationIds,
-    required this.success,
+    required this.isSuccess,
     this.errorMessage,
     required this.latencyMs,
   });
@@ -75,10 +55,7 @@ class Coordinator {
   final InvocationRepository<Invocation> invocationRepo;
   final EventBus eventBus;
 
-  // Event listener subscription
   StreamSubscription<Event>? _transcriptionSubscription;
-
-  // Agentic loop control
   static const int maxAgentLoopIterations = 10;
 
   Coordinator({
@@ -124,8 +101,8 @@ class Coordinator {
             );
 
             print(
-                '✅ [Coordinator] Orchestration complete: ${result.success ? "SUCCESS" : "FAILED"}');
-            if (!result.success) {
+                '✅ [Coordinator] Orchestration complete: ${result.isSuccess ? "SUCCESS" : "FAILED"}');
+            if (!result.isSuccess) {
               print('⚠️ Error: ${result.errorMessage}');
             }
 
@@ -135,7 +112,7 @@ class Coordinator {
               correlationId: event.correlationId, // Preserve correlation chain
               source: 'coordinator',
               payloadJson: jsonEncode({
-                'success': result.success,
+                'success': result.isSuccess,
                 'response': result.finalResponse,
                 'errorMessage': result.errorMessage,
               }),
@@ -143,7 +120,7 @@ class Coordinator {
             print('📡 [Coordinator] Published orchestration_complete event');
 
             // THEN synthesize TTS (user sees text before hearing audio - better UX)
-            if (result.success && result.finalResponse.isNotEmpty) {
+            if (result.isSuccess && result.finalResponse.isNotEmpty) {
               print('🔊 Synthesizing response to speech...');
               await ttsService.synthesize(
                 text: result.finalResponse,
@@ -162,7 +139,6 @@ class Coordinator {
     print('✅ [Coordinator.initialize] Event listener registered');
   }
 
-  /// Dispose: cleanup event listeners
   void dispose() {
     print('🛑 [Coordinator.dispose] Cleaning up event listener');
     _transcriptionSubscription?.cancel();
@@ -190,9 +166,6 @@ class Coordinator {
     print('✅ [Coordinator] Barge-in handled, TTS stopped');
   }
 
-  /// Orchestrate voice assistant pipeline
-  /// Orchestrate a turn: context → LLM → tools → TTS
-  ///
   /// PRIVATE: Only callable through EventBus (initialize() listener)
   Future<CoordinatorResult> _orchestrate({
     required String eventId,
@@ -206,16 +179,16 @@ class Coordinator {
 
     try {
       print('\n[1/7] Selecting context via ContextSelector...');
-      final context = await contextSelector.selectContext(
+      final contextBundle = await contextSelector.selectContext(
         eventId: eventId,
         transcription: utterance,
         userId: null,
       );
-      print('✅ Context selected: ${context.summary}');
+      print('✅ Context selected: ${contextBundle.summary}');
 
       print('\n[2/7] Building message array from context...');
       final messages = llmService.buildMessagesFromContext(
-        contextBundle: context,
+        contextBundle: contextBundle,
         currentUtterance: utterance,
       );
       print('✅ Messages built: ${messages.length} messages');
@@ -268,8 +241,8 @@ class Coordinator {
         selectedNamespace: 'general',
         selectedTools: executedTools,
         injectedContext: {
-          'conversationThreadSize': context.conversationThread.length,
-          'semanticContextSize': context.semanticContext.length,
+          'conversationThreadSize': contextBundle.conversationThread.length,
+          'semanticContextSize': contextBundle.semanticContext.length,
         },
         llmConfig: {
           'model': modelSelection.model,
@@ -279,7 +252,7 @@ class Coordinator {
         },
         finalResponse: finalResponse,
         invocationIds: ['tts_synthesis_invocation'],
-        success: true,
+        isSuccess: true,
         latencyMs: latency,
       );
     } catch (e) {
@@ -304,21 +277,20 @@ class Coordinator {
         llmConfig: {},
         finalResponse: '',
         invocationIds: [],
-        success: false,
+        isSuccess: false,
         errorMessage: e.toString(),
         latencyMs: latency,
       );
     }
   }
 
-  /// Collect all registered tools as LLMTool definitions.
   List<LLMTool> _collectAvailableTools() {
     return toolExecutor.toolRegistry
         .getAllTools()
-        .map((t) => LLMTool(
-              name: t.name,
-              description: t.description,
-              parametersSchema: t.parameters,
+        .map((toolDef) => LLMTool(
+              name: toolDef.name,
+              description: toolDef.description,
+              parametersSchema: toolDef.parameters,
             ))
         .toList();
   }
@@ -340,9 +312,9 @@ class Coordinator {
       );
       if (examples.hasExamples) {
         final traitsPrompt = voiceTraits!.formatPrompt(examples);
-        final result = _injectVoiceTraits(messages, traitsPrompt);
+        final messagesWithTraits = _injectVoiceTraits(messages, traitsPrompt);
         print('✅ Voice traits injected: ${examples.totalCount} examples');
-        return result;
+        return messagesWithTraits;
       } else {
         print('ℹ️ No voice traits examples found');
         return messages;
@@ -409,25 +381,25 @@ class Coordinator {
         callId: llmToolCall.id,
         confidence: 1.0,
       );
-      final result =
+      final executionResult =
           await toolExecutor.executeTool(toolCall, eventId: eventId);
 
-      if (result.success) {
+      if (executionResult.success) {
         executedTools.add(llmToolCall.toolName);
         print('  ✅ Tool executed: ${llmToolCall.toolName}');
         toolResults.add({
           'tool_call_id': llmToolCall.id,
           'role': 'tool',
           'name': llmToolCall.toolName,
-          'content': jsonEncode(result.data),
+          'content': jsonEncode(executionResult.toolOutput),
         });
       } else {
-        print('  ❌ Tool execution failed: ${result.error}');
+        print('  ❌ Tool execution failed: ${executionResult.error}');
         toolResults.add({
           'tool_call_id': llmToolCall.id,
           'role': 'tool',
           'name': llmToolCall.toolName,
-          'content': jsonEncode({'error': result.error}),
+          'content': jsonEncode({'error': executionResult.error}),
         });
       }
     }
@@ -439,12 +411,12 @@ class Coordinator {
         'role': 'assistant',
         'content': llmResponse.content,
         'tool_calls': llmResponse.toolCalls
-            .map((tc) => {
-                  'id': tc.id,
+            .map((pendingCall) => {
+                  'id': pendingCall.id,
                   'type': 'function',
                   'function': {
-                    'name': tc.toolName,
-                    'arguments': jsonEncode(tc.params),
+                    'name': pendingCall.toolName,
+                    'arguments': jsonEncode(pendingCall.params),
                   }
                 })
             .toList(),
@@ -465,32 +437,28 @@ class Coordinator {
     return (finalResponse, executedTools);
   }
 
-  /// Inject voice traits prompt into messages.
-  ///
-  /// Appends voice traits to the system message, or creates one if not present.
   List<Map<String, dynamic>> _injectVoiceTraits(
     List<Map<String, dynamic>> messages,
     String traitsPrompt,
   ) {
     if (traitsPrompt.isEmpty) return messages;
 
-    final result = List<Map<String, dynamic>>.from(messages);
+    final augmentedMessages = List<Map<String, dynamic>>.from(messages);
 
-    final systemIndex = result.indexWhere((m) => m['role'] == 'system');
+    final systemIndex = augmentedMessages.indexWhere((m) => m['role'] == 'system');
     if (systemIndex >= 0) {
-      final existing = result[systemIndex]['content'] as String? ?? '';
-      result[systemIndex] = {
-        ...result[systemIndex],
-        'content': '$existing\n\n$traitsPrompt',
+      final existingContent = augmentedMessages[systemIndex]['content'] as String? ?? '';
+      augmentedMessages[systemIndex] = {
+        ...augmentedMessages[systemIndex],
+        'content': '$existingContent\n\n$traitsPrompt',
       };
     } else {
-      // No system message, add one at the beginning
-      result.insert(0, {
+      augmentedMessages.insert(0, {
         'role': 'system',
         'content': traitsPrompt,
       });
     }
 
-    return result;
+    return augmentedMessages;
   }
 }
