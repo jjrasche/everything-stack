@@ -1,518 +1,65 @@
-# Claude Code Configuration
+# Everything Stack
 
-## Project Type
-Everything Stack template - Dart/Flutter cross-platform application
+Cross-platform application infrastructure (Dart/Flutter). Decouples where code runs from what the system learns. Every execution is logged; the system adapts from feedback.
 
-## Distribution Model
+## Stack
+- Language: Dart 3.x / Flutter (iOS, Android, macOS, Windows, Linux, Web)
+- Database: ObjectBox (native) + IndexedDB (web)
+- Sync: Supabase (future)
+- Search: HNSW vector index (8-12ms queries)
+- AI: Groq (LLM), Deepgram (STT), Jina (embeddings)
 
-**Current approach:** Template repository (clone and fork)
+## Commands
+```bash
+cp .env.example .env              # Create env (debug mode only)
+flutter run -d windows            # Run on any platform
+flutter test                      # Unit tests (no API keys needed)
+flutter test integration_test/ -d windows  # E2E tests
+flutter analyze                   # Lint
+```
 
-**How to use:**
-1. Clone this repository for your new app
-2. Delete example code (lib/example/)
-3. Add your domain logic
-4. Maintain as fork - can pull upstream infrastructure updates
+## Architecture
 
-**Future evolution:** Extract stable infrastructure to package when:
-- Core infrastructure stabilizes (rare breaking changes)
-- Multiple apps exist and benefit from shared updates
-- Version management becomes necessary
+### Key Directories
+- `lib/core/` - Base entity, repository, debug, platform detection
+- `lib/domain/` - Pure Dart entities (no ORM decorators)
+- `lib/services/` - Business logic, extraction, training, coordinator
+- `lib/tools/` - Self-contained domains (regulation, task, timer) with own entities/repos/adapters
+- `lib/persistence/` - ObjectBox (native) + IndexedDB (web) adapters
+- `lib/patterns/` - Opt-in mixins (Trainable, Embeddable, Temporal, etc.)
+- `lib/io/` - Communication substrate (WebSocket, protocols, channels)
+- `lib/bootstrap/` - GetIt DI container setup, platform-specific initialization
 
-**For now:** Fork model with expectation that infrastructure will stabilize.
+### Data Flow
+Event -> Coordinator -> LLM (with context + voice traits) -> Tool execution -> Persistence. Enrichment pipeline indexes entities asynchronously. Invocation logs feed adaptation.
 
 ## Non-Negotiable Principles
-
-**Read these first. They override all other guidance.**
-
-1. **ALL platforms are first-class.** Android, iOS, macOS, Windows, Linux, Web. Not "native-first with web later." If you're implementing a feature that only works on some platforms, you're not done.
-
-2. **Infrastructure completeness over simplicity.** If asking "do we really need X?" - the answer is probably yes. Complexity is paid once in this template so applications don't pay it.
-
-3. **Domain developers write domain logic only.** No architectural decisions. No persistence layer design. No platform-specific code outside adapters.
-
-4. **No platform shortcuts.** "Just for Android" or "web can come later" is not acceptable. Universal or don't build it.
-
-## Foundation Documents
-- What is Everything Stack: `README.md` (overview + current status)
-- How it works: `ARCHITECTURE.md` (semantic layer, execution fungibility, learning)
-- How to build: `PATTERNS.md` (entities, services, adaptation, examples)
-- How to test: `TESTING.md` (E2E testing, platforms, learning signals)
-- Templates for new projects: `docs/templates/` (VISION_TEMPLATE.md, ARCHITECTURE_TEMPLATE.md)
-- Flutter dev workflow: `~/.claude/FLUTTER.md` (background run, logging, hot reload)
-
-## Project Initialization
-
-When instructed to initialize this template for a new project:
-
-1. **Delete example code:**
-   - Remove `lib/example/` directory
-   - Remove `test/scenarios/example_scenarios.dart`
-
-2. **Update project identity:**
-   - Update `pubspec.yaml`: name, description, version
-   - Replace this README.md with project-specific content
-   - Update `.github/workflows/ci.yml` if project name changed
-
-3. **Preserve infrastructure:**
-   - Keep `lib/core/`, `lib/patterns/`, `lib/services/`
-   - Keep `test/harness/`
-   - Keep `docs/asd/`, `docs/testing/`
-
-4. **Create domain structure:**
-   - Add entities to `lib/domain/`
-   - Add scenarios to `test/scenarios/`
-
-## Flutter Hot Reload Workflow
-
-**CRITICAL: When making code changes during active development, use hot reload instead of rebuilding.**
-
-### When App is Running in Background Task
-
-If you started the app with `flutter run -d {platform}` in background mode:
-
-1. **Make code changes** using Edit tool
-2. **Apply hot reload** by sending `r` to the background bash task:
-   ```bash
-   # Send 'r' to trigger hot reload
-   echo 'r' > /proc/{task_id}/fd/0  # Linux/macOS
-   # Or use appropriate Windows method to send input to background process
-   ```
-3. **Verify reload succeeded** by checking task output for "Reloaded" message
-4. **Iterate rapidly** - hot reload takes ~2 seconds vs 2-4 minutes for full rebuild
-
-### Hot Reload Commands
-- `r` - Hot reload (UI/code changes, preserves state) - **USE THIS FOR MOST CHANGES**
-- `R` - Hot restart (full app restart, still faster than rebuild)
-- `q` - Quit app
-
-### When to Use Full Rebuild vs Hot Reload
-- **Hot reload (`r`)**: UI changes, business logic, service implementations
-- **Hot restart (`R`)**: Changing main(), bootstrap changes, dependency injection changes
-- **Full rebuild**: Adding dependencies, changing native code, platform channels
-
-### Testing Changes
-1. Make change → hot reload → test in app
-2. If change doesn't apply: hot restart
-3. If still broken: full rebuild needed
-
-**Never tell user to manually apply hot reload - you should do it for them.**
-
-## Rust Code Changes (flutter_rust_bridge)
-
-**Rust code changes now rebuild automatically** via Flutter's native asset build hook (`hook/build.dart`).
-
-### How It Works
-
-When you modify `.rs` files in `rust/src/` and run `flutter build` or `flutter run`, the Rust library automatically recompiles for the target platform. No manual `cargo build` or rebuild scripts needed.
-
-**Build hook:** `hook/build.dart` uses `native_toolchain_rust` to compile Rust during Flutter builds
-**Toolchain:** `rust/rust-toolchain.toml` specifies Rust 1.83.0 + all platform targets
-**FFI bindings:** `lib/bridge/frb_generated.dart` (auto-generated by flutter_rust_bridge, don't edit)
-
-### When to Use Hot Reload vs Full Rebuild
-
-- **Hot reload (`r`)**: Dart code changes (UI, business logic)
-- **Hot restart (`R`)**: Dart + Rust changes that don't require recompilation
-- **Full rebuild**: Rust code changes in `rust/src/` (requires `flutter run` or `flutter build`)
-
-### Platform Support
-
-The build hook compiles Rust for:
-- **Android**: 4 ABIs (aarch64, armv7, i686, x86_64)
-- **iOS**: 3 targets (aarch64 device, aarch64-sim, x86_64-sim)
-- **macOS**: 2 targets (aarch64 M-series, x86_64 Intel)
-- **Windows**: x86_64-msvc
-- **Linux**: x86_64-gnu
-- **Web**: WASM (separate compilation path)
-
-### TLS Implementation
-
-Uses **rustls** (pure Rust TLS) instead of native-tls for better cross-platform support. See `rust/Cargo.toml`:
-```toml
-tokio-tungstenite = { version = "0.26", features = ["rustls-tls-webpki-roots"] }
-```
-
-## Development Workflow
-
-Follow ASD workflow for all features:
-
-1. **Plan against foundation** - Read VISION.md and ARCHITECTURE.md before implementing
-2. **Write BDD scenario** - Gherkin format in `test/scenarios/`
-3. **Implement tests** - Parameterized tests using harness
-4. **Implement feature** - Until tests pass
-5. **Commit and push** - CI validates cross-platform
-
-## Pattern Usage
-
-Before using any pattern from `lib/patterns/`:
-1. Read the structured comment block at top of file
-2. Understand what it enables
-3. Understand testing approach
-4. Check integration notes
-
-Patterns are opt-in. Add `with PatternName` to entity only if needed.
-
-## Testing Requirements
-
-**AUTHORITATIVE SOURCE:** `TESTING.md` (read it before any testing work)
-
-Integration tests run with FULL UI - not headless:
-- App window/browser opens like `flutter run`
-- Full bootstrap: services, repos, enrichment pipeline
-- Real execution generates Invocation logs for learning system
-- Command: `flutter test integration_test/ -d {platform}`
-
-Testing philosophy:
-- No mocks in E2E tests - what you test is what ships
-- Real components, real services, real persistence
-- Every test generates real Invocation logs
-- Test every platform: iOS, Android, Web, macOS, Windows, Linux
-
-**Before implementing any test:** Read `TESTING.md` for complete patterns, examples, and requirements.
-
-## Build and Run
-
-### Local Development
-```bash
-# 1. Create .env from template
-cp .env.example .env
-
-# 2. Edit .env with your actual API keys
-# GROQ_API_KEY=your_actual_groq_key
-# DEEPGRAM_API_KEY=your_actual_deepgram_key
-# JINA_API_KEY=your_actual_jina_key
-
-# 3. Run on any platform (loads .env in debug mode)
-flutter run -d windows  # Windows
-flutter run -d macos    # macOS
-flutter run -d ios      # iOS simulator
-flutter run -d android  # Android emulator
-flutter run -d chrome   # Web
-```
-
-**Note:** `.env` file is loaded **only in debug mode** via `flutter_dotenv`. Fallback chain: `.env` → `.env.example` → compile-time env vars.
-
-### Testing
-```bash
-flutter test                           # All tests (uses mocks, no API keys)
-flutter test integration_test/ -d ios  # Platform verification
-```
-
-### Building for Deployment
-```bash
-# Pass API keys as --dart-define (keys baked into binary)
-flutter build apk \
-  --dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }} \
-  --dart-define=DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }}
-
-flutter build ipa \
-  --dart-define=GROQ_API_KEY=xxx \
-  --dart-define=DEEPGRAM_API_KEY=xxx
-
-flutter build macos --dart-define=... # macOS
-flutter build windows --dart-define=... # Windows
-flutter build web --dart-define=...   # Web
-```
-
-### Environment Variables (Priority Order)
-
-**Debug Mode (Local Development):**
-1. `.env` file (runtime, debug only)
-2. `.env.example` fallback (if .env missing)
-3. `--dart-define` (compile-time)
-4. OS env vars (CI/CD agents)
-
-**Release Mode (Production):**
-- `--dart-define` only (compile-time, baked into binary)
-- NO file-based loading (prevents accidental secret commits)
-
-**CI/CD:** Set secrets in GitHub → pass to build as `--dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}`
-
-## Debug Infrastructure (AI-Driven Debugging)
-
-HTTP debug server on `localhost:9999` enables autonomous debugging without screenshots.
-
-### Quick Reference
-```bash
-# Discovery
-curl http://localhost:9999/state              # Full app state
-curl http://localhost:9999/action/listActions # Available actions
-
-# Component actions (via DebugRegistry)
-curl http://localhost:9999/action/invoke?target=chunking.getStats
-curl http://localhost:9999/action/invoke?target=chunking.rebuild
-
-# Direct actions
-curl http://localhost:9999/search?q=hello&limit=5
-curl http://localhost:9999/entity/{uuid}
-curl http://localhost:9999/screenshot
-curl http://localhost:9999/action/findOrphanedChunks
-curl http://localhost:9999/action/deleteOrphanedChunks
-
-# VLM screenshot analysis (requires ANTHROPIC_API_KEY or OPENAI_API_KEY)
-curl "http://localhost:9999/action/analyzeScreenshot"
-curl "http://localhost:9999/action/analyzeScreenshot?prompt=describe any errors"
-```
-
-### Architecture
-```
-lib/core/debug/
-├── debug.dart              # Barrel export
-├── debug_introspectable.dart  # Mixin for components
-└── debug_registry.dart     # Central registry
-
-lib/services/debug/
-├── debug_server.dart       # HTTP transport
-├── debug_bootstrap.dart    # Wires everything
-└── screenshot_service.dart # UI capture
-```
-
-### Adding Debug to a Component
-```dart
-class MyService with DebugIntrospectable {
-  @override
-  String get debugName => 'myservice';
-
-  @override
-  Map<String, dynamic> getDebugState() => {
-    'someMetric': value,
-  };
-
-  @override
-  Map<String, DebugAction> getDebugActions() => {
-    'doThing': DebugAction(
-      description: 'Does something useful',
-      mutates: true,
-      handler: (params) async => {'result': 'done'},
-    ),
-  };
-}
-
-// In debug_bootstrap.dart:
-registry.register(getIt<MyService>());
-```
-
-### When to Use
-- Diagnosing entity loading issues
-- Checking index consistency
-- Cleaning up orphaned data
-- Triggering index rebuilds without app restart
-- Getting detailed stats on chunks, embeddings, etc.
+1. ALL platforms first-class. If it only works on some platforms, it's not done.
+2. Infrastructure completeness over simplicity. Complexity paid once in the template.
+3. Domain developers write domain logic only. No persistence design, no platform code.
+4. Entities are pure Dart. ORM decorators belong in adapters only.
 
 ## Permissions
-
-**Run without asking:**
-- Read operations (file viewing, grep, find)
-- Test commands (`flutter test`)
-- Build commands (`flutter build`)
-- Lint and format
-- Git commit, push, branch, PR creation
-
-**Ask before:**
-- Deleting files outside `lib/domain/` and `test/scenarios/`
-- Modifying pattern files in `lib/patterns/`
-- Modifying base infrastructure in `lib/core/`
-- Changing CI/CD configuration
-- Adding new dependencies to pubspec.yaml
-
-## Cross-Platform Dependency Management
-
-**CRITICAL RULE:** Every package added to `pubspec.yaml` MUST support all 6 platforms: Android, iOS, Windows, macOS, Linux, Web.
-
-### Before Adding Any Package
-
-```bash
-# 1. Check pub.dev badges (verify manually on website)
-https://pub.dev/packages/{package_name}
-
-# 2. Run checker (can have false positives)
-dart run pubspec_checker all -s -l
-```
-
-### Platform Detection System (Built-in)
-
-All implementers declare supported platforms via `supportedPlatforms` property:
-
-```dart
-class FlutterTtsImplementer implements TTSImplementer {
-  @override
-  Set<String> get supportedPlatforms => {'android', 'ios', 'macos', 'windows', 'web'};
-}
-```
-
-Services auto-select compatible implementers at bootstrap:
-```dart
-final defaultTTS = TTSService.selectCompatibleImplementer(ttsImplementers);
-// Picks first implementer that supports currentPlatform
-```
-
-### If Package Missing Platform
-
-1. **Replace:** Find alternative with full support
-2. **Add fallback implementer:** Register multiple implementations, auto-select by platform
-3. **Document:** Last resort - add limitation to ARCHITECTURE.md
-
-### Pending Package Fixes
-
-- `just_audio` (no Windows/Linux) → Replace with `audioplayers`
-- `firebase_crashlytics` (no Windows/Linux/Web) → Replace with `sentry_flutter`
-- `flutter_tts` (no Linux) → Add RemoteTTSImplementer (ElevenLabs/Google Cloud)
+**Run without asking:** read ops, `flutter test`, `flutter build`, lint, git commit/push/branch/PR
+**Ask before:** deleting files outside `lib/domain/` and `test/scenarios/`, modifying `lib/patterns/` or `lib/core/`, changing CI, adding dependencies
 
 ## Architecture Constraints
+- All entities extend `BaseEntity`, all repos extend `EntityRepository`
+- No `dynamic` in public APIs. Typed payloads at boundaries.
+- File storage: bytes-in-database (no filesystem)
+- IO layer handles ALL external communication (see `lib/io/README.md`)
+- Every package in `pubspec.yaml` must support all 6 platforms
+- Use `debugPrint()` (no Logger class exists)
 
-- All entities extend `BaseEntity`
-- All repositories extend `EntityRepository`
-- **Entities are pure Dart classes with NO ORM-specific decorators** (@Entity, @Id, @Property, @Transient)
-  - ObjectBox decorators belong in adapters only, not domain entities
-  - This ensures web compilation succeeds (no dart:ffi imports in domain code)
-  - Same entity works with ObjectBox, IndexedDB, or other backends
-- File storage uses bytes-in-database pattern (no filesystem)
-- Offline-first with ObjectBox (native) + IndexedDB (web), sync via Supabase
-- Cross-platform code only - no platform-specific logic outside adapters
-- Dual persistence: adapters implement common interfaces, domain code is platform-agnostic
-- **IO layer handles ALL digital communication** - WebSocket, HTTP, gRPC, MQTT, Bluetooth, serial, etc.
-  - NOT a leaf dependency - it's a foundational layer between app and external world
-  - All external communication (STT, LLM, APIs, devices) goes through IO
-  - See `lib/io/README.md` for communication architecture
-- See `lib/tools/README.md` for tool domain architecture and ORM decorator separation
+## Global References
+Read from `~/.claude/references/` when relevant:
+- `coding-standards.md` - Naming, comments, test patterns
+- `dart-flutter.md` - Widget lifecycle, platform quirks, state
+- `flutter-workflow.md` - Hot reload, background run, debug workflow
 
-## Future Considerations
-
-**Memory Architecture Layers:**
-Three distinct memory systems, each with different scope and purpose:
-
-1. **Whiteboard (Session Rolling Summary)** - SHORT-TERM CONTEXT
-   - Purpose: Compression for extraction optimization (prevents re-reading all messages)
-   - Content: "In this conversation, user discussed X, Y, Z"
-   - Scope: Current session only (resets when session ends)
-   - Storage: Ephemeral (in-memory or temp file)
-   - Implementation: Async background refresh (Mem0 pattern), non-blocking
-   - Status: Part of AtomicInsightExtractor implementation
-
-2. **AtomicInsight (Semantic Memory)** - LONG-TERM FACTS
-   - Purpose: Persistent knowledge extracted from conversations
-   - Content: "[Fact]. Because [reason]." format
-   - Scope: None (or "semantic" constant - facts have no temporal scope)
-   - Storage: Database with embeddings for semantic search
-   - Implementation: CURRENT PRIORITY (entity + repository complete, extraction service in progress)
-   - Pattern: Turn-by-turn extraction with deduplication (test single-pass vs 2-phase vs extract-then-dedup)
-
-3. **NarrativeEntry (Identity Memory)** - WHO USER IS (DEFERRED)
-   - Purpose: Identity, goals, values evolution
-   - Content: "User is building X because they believe Y"
-   - Scope: day → week → project → life (NOT session - whiteboard handles that)
-   - Storage: Database with scoped retrieval
-   - Research: Amazon Bedrock AgentCore episodic memory, Mem0 preference/identity models
-   - Priority: After AtomicInsight extraction and clustering prove out
-
-**MomentState System (Deferred):**
-Real-time working memory for conversational context (ephemeral, turn-level):
-- Conversational posture (collaborative, adversarial, exploratory)
-- Current focus/topic, engagement level, turn dynamics
-- Inputs: Voice prosody (pitch, pace, tone) + emotion analysis + recent turns
-- Process: Real-time emotion classifier (91-98% accuracy, 300ms response like Hume EVI)
-- Use case: Context for coordinator pipeline (affects tool selection, response style)
-- Research: Multi-modal emotion recognition (text+audio fusion), Hume AI empathic voice
-- Priority: After core semantic memory and narrative systems operational
-
-**Test Logic Co-location:**
-Test logic (IntegrationTestConfig) is currently pure - no flutter_test dependency. Could be moved to lib/ alongside implementation:
-- Current: `integration_test/regulation_logic.dart` (separate from code)
-- Potential: `lib/tools/regulation/regulation_test.dart` (next to implementation)
-- Benefit: Test config lives with code it tests (better for AI code reading/generation)
-- Cost: Requires moving IntegrationTestConfig to lib/testing/
-- Decision: Deferred - benefit unclear for AI-augmented development
-
-## Current Work
-
-This section tracks active development, blockers, and work in progress. It changes daily. **When a feature is finished, delete it from this section.** If the work is architecturally significant, document the decision in DECISIONS.md instead.
-
-### Active Development
-- **AtomicInsight Extraction Pipeline** (CURRENT PRIORITY) - Full extraction + evaluation + auto-improvement
-  - **Extraction** (COMPLETE): `services/extraction/atomic_insight_extractor.dart` with SSE streaming, batch + live modes, dedup, overridePrompt param
-  - **Evaluation** (COMPLETE): `services/extraction/extraction_evaluator.dart` with 6-dimension binary rubric, LLM-as-judge, F_insight metric
-  - **Generic Prompt Improvement** (COMPLETE): Decoupled from extraction, reusable for any LLM prompt
-    - `services/prompt/prompt_registry.dart`: Versioned prompts backed by PromptVersion entity (not AdaptationState)
-    - `services/prompt/prompt_mutator.dart`: Generic, uses PromptFailure + DimensionSpec
-    - `services/prompt/prompt_validator.dart`: Synchronous regression gate on MetricMaps
-    - `services/prompt/prompt_improvement_loop.dart`: Generic Generate-Evaluate-Mutate with callbacks
-    - `services/extraction/extraction_improvement_loop.dart`: Thin wrapper providing extraction callbacks
-  - **PromptVersion Entity** (COMPLETE): Full entity with OB + IDB adapters, repository with component queries
-  - **Next**: Run golden data evaluation, validate loop end-to-end, write integration test
-  - **Future phases**: Consolidation (emergent hierarchy), entity extraction + graph, A/B testing
-- Trainable component migration (9 components to mixin pattern, ~60% done)
-- ContextManager service integration
-- Invocation logging wired throughout pipeline
-
-### Blockers
-- **Golden data collection needed**: Select 30-50 diverse conversations, export via `query_imported_conversations.dart --export`, hand-verify rubric catches bad extractions
-- ContextManager blueprint exists (.claude/ARCHITECTURE_TRANSITION.md), implementation pending
-- Plugin selection training: Invocation logs captured, feedback training loop not yet active
-- Multi-device sync: requires Supabase schema updates + conflict resolution
-- **Echo Cancellation** (deferred from MVP): Prevents audio feedback loop when using single device (speaker + mic)
-  - **Current workaround**: Use headphones to isolate mic from speaker output
-  - **Priority**: Post-MVP (barge-in + sync are higher priority for phone usage)
-
-### What's Working
-- **Regulation Tracking Tool Domain** (✅ Complete, merged to main)
-  - 4 entities: Person, RegulationEntry, Commitment, CommitmentLog
-  - 4 tools: regulation.log_entry, regulation.log_commitment, commitment.create, commitment.list
-  - 8 adapters (ObjectBox + IndexedDB), 4 repositories, full E2E test
-  - Demonstrates event bus pattern: STT → LLM → ToolExecutor → Persistence
-  - Auto-creates Person entities, tracks dysregulation events and commitments
-- Event/Invocation/Turn entity model (typed, no dynamic fields)
-- Dual persistence (ObjectBox native, IndexedDB web) with identical schemas
-- Semantic search (HNSW, 8-12ms queries)
-- Offline-first architecture with Supabase sync
-- Trainable mixin pattern for feedback collection
-- Plugin pattern for execution fungibility (local vs remote, not yet trainable)
-- All 6 platforms (iOS, Android, macOS, Windows, Linux, Web)
-- 372+ integration tests passing, E2E approach
-
----
-
-## Workflows (Phase 5D+)
-
-**Definition:** Automated grouping of tasks with conditional logic and decision points. Inherently trainable, triggered by user, LLM selection, or system automation.
-
-**Key Pattern:**
-```
-Workflow = Sequence of Tasks + Decision Logic + Trainable Aspects
-```
-
-**Integration with Coordinator:**
-- Workflows appear as tools in ToolSelector
-- LLM can select: individual tasks OR workflow.invoke_workflow_name
-- Each task in workflow creates Invocation (same as individual tool)
-- Conditional branches log as workflow_decision invocations
-- Feedback on workflow success/failure trains future selection
-
-**Tool Selection Logging (Trainable):**
-When LLM chooses tools (including workflows), log:
-```dart
-Invocation(
-  componentType: 'tool_selector',
-  output: {
-    'selected_tools': [
-      {
-        'tool': 'workflow.prepare_meeting',
-        'confidence': 0.92,
-        'reasoning': 'User asked to prepare meeting - handles all prep tasks'
-      }
-    ]
-  },
-)
-```
-
-**Invocation Types in Workflows:**
-- `workflow_task` - individual task execution
-- `workflow_decision` - conditional branch taken
-- `tool_selector` - LLM chose this workflow (includes reasoning)
-
-**Trainable Aspects:**
-- Task ordering (feedback: "too slow" → parallelize)
-- Task selection (feedback: "didn't need this task" → adjust conditional)
-- Conditional thresholds (feedback: "send agenda for longer meetings" → adjust threshold)
-- LLM tool selection (feedback: "wrong workflow" → lower confidence)
-
-**NOT Self-Modifying:** Workflows improve through user feedback only, no autonomous self-training.
+## Project References
+- `ARCHITECTURE.md` - Entity model, persistence, plugins, sync, scale
+- `PATTERNS.md` - How to build: entities, services, testing, examples
+- `TESTING.md` - E2E testing: no mocks, real persistence, all platforms
+- `DECISIONS.md` - Rationale for major architectural choices
+- `docs/DEVELOPMENT.md` - Build details, Rust/FFI, debug server, dependency management

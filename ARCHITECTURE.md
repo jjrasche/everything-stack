@@ -863,12 +863,77 @@ DECISIONS.md explains the trade-offs that shaped this architecture.
 - **DECISIONS.md** - Why we chose this architecture (rationales and trade-offs)
 - **PATTERNS.md** - How to build: entities, services, patterns, examples
 - **TESTING.md** - How to test: E2E approach, platforms, debugging
-- **.claude/CLAUDE.md** - Project initialization, permissions, current work, build commands
-- **lib/patterns/README.md** - Pattern usage and integration guide
-- **lib/bootstrap.dart** - Service initialization and platform detection
-- **lib/persistence/README.md** - Adapter implementation details
+- **docs/DEVELOPMENT.md** - Build details, Rust/FFI, debug server, dependency management
+- **.claude/CLAUDE.md** - Project definition, permissions, architecture constraints
 
 ---
 
-**Last Updated**: December 26, 2025
-**Status**: Current state architecture. For work in progress, blockers, and active development, see .claude/CLAUDE.md
+## Distribution Model
+
+**Current approach:** Template repository (clone and fork). Maintain as fork to pull upstream infrastructure updates.
+
+**Future evolution:** Extract stable infrastructure to a package when:
+- Core infrastructure stabilizes (rare breaking changes)
+- Multiple apps exist and benefit from shared updates
+- Version management becomes necessary
+
+---
+
+## Future Considerations
+
+### Memory Architecture Layers
+
+Three distinct memory systems, each with different scope and purpose:
+
+1. **Whiteboard (Session Rolling Summary)** - Short-term context
+   - Compression for extraction optimization (prevents re-reading all messages)
+   - Scope: current session only (resets when session ends)
+   - Storage: ephemeral (in-memory or temp file)
+   - Async background refresh (Mem0 pattern), non-blocking
+
+2. **AtomicInsight (Semantic Memory)** - Long-term facts
+   - Persistent knowledge extracted from conversations
+   - Format: "[Fact]. Because [reason]."
+   - Storage: database with embeddings for semantic search
+   - Turn-by-turn extraction with deduplication
+
+3. **NarrativeEntry (Identity Memory)** - Who user is (deferred)
+   - Identity, goals, values evolution
+   - Scope: day -> week -> project -> life
+   - Research: Amazon Bedrock AgentCore episodic memory, Mem0 preference/identity models
+
+### MomentState System (Deferred)
+
+Real-time working memory for conversational context (ephemeral, turn-level):
+- Conversational posture, current focus/topic, engagement level
+- Inputs: voice prosody + emotion analysis + recent turns
+- Research: multi-modal emotion recognition, Hume AI empathic voice
+
+---
+
+## Workflows (Phase 5D+)
+
+Automated grouping of tasks with conditional logic and decision points. Inherently trainable.
+
+```
+Workflow = Sequence of Tasks + Decision Logic + Trainable Aspects
+```
+
+### Integration with Coordinator
+- Workflows appear as tools in ToolSelector
+- LLM can select individual tasks OR `workflow.invoke_workflow_name`
+- Each task in workflow creates an Invocation (same as individual tool)
+- Conditional branches log as `workflow_decision` invocations
+- Feedback on workflow success/failure trains future selection
+
+### Trainable Aspects
+- Task ordering (feedback: "too slow" -> parallelize)
+- Task selection (feedback: "didn't need this task" -> adjust conditional)
+- Conditional thresholds (feedback: "send agenda for longer meetings" -> adjust threshold)
+- LLM tool selection (feedback: "wrong workflow" -> lower confidence)
+
+Workflows improve through user feedback only, no autonomous self-training.
+
+---
+
+**Last Updated**: February 14, 2026
