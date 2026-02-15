@@ -14,7 +14,7 @@ No mocks. No abstraction layers between test and reality. What you test is what 
 
 This aligns with the learning architecture (see ARCHITECTURE.md): the system learns from real execution feedback. E2E tests generate real Invocation logs that feed the training loop. Unit test mocks generate fake logs that teach the system nothing.
 
-See `.claude/CLAUDE.md` for how testing gates the ASD workflow (contract-first, AI-built, universal).
+See PATTERNS.md for the development workflow (test-first, implement, verify).
 
 ---
 
@@ -390,7 +390,7 @@ Reference ARCHITECTURE.md "Execution Fungibility" for how plugin choice affects 
 ### Service doesn't run
 - Verify UI triggers the action: `await tester.tap(find.byIcon(Icons.mic))`
 - Check service is wired: See PATTERNS.md "Service Architecture"
-- Verify API keys are set (see `.claude/CLAUDE.md` "Build and Run")
+- Verify API keys are set (see `docs/DEVELOPMENT.md` "Build and Run")
 
 ### Feedback not stored
 - Check `InvocationRepository.findByComponent()` finds it
@@ -424,7 +424,7 @@ A feature is done when:
 - ✅ Invocation logs show real execution
 - ✅ Feedback collection works (user can rate)
 - ✅ AdaptationState updates from feedback
-- ✅ Manual review confirms behavior matches intent (see `.claude/CLAUDE.md` ASD Workflow, "Verification" phase)
+- ✅ Manual review confirms behavior matches intent
 
 Then commit. No further testing needed.
 
@@ -476,7 +476,4 @@ Since your system *learns* from execution, you want it learning from real execut
 
 - **ARCHITECTURE.md** - How Invocations are logged, how AdaptationState learns, execution fungibility
 - **PATTERNS.md** - Service architecture, testing with mocks (if you need them), plugin pattern
-- **.claude/CLAUDE.md** - ASD Workflow, verification gates, permissions for test automation
-- **README.md** - Quick start, build commands, environment variables
-
-See those for complete context.
+- **docs/DEVELOPMENT.md** - Build commands, environment variables, debug server

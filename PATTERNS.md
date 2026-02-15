@@ -547,4 +547,4 @@ See DECISIONS.md for why we chose these patterns.
 
 ---
 
-**Last Updated**: December 26, 2025
+**Last Updated**: February 14, 2026

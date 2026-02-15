@@ -10,107 +10,21 @@ Everything Stack is complete application infrastructure that decouples WHERE cod
 Services don't care where they run. Embedding extraction runs on-device one day, server the next. The Invocation log captures both. Learning treats them the same.
 
 ### Learning Persistent
-Every execution logged: what happened, why we think it happened, what the user thought. Feedback flows back. System learns which execution choices → better results. Over time, architecture reshapes itself.
+Every execution logged: what happened, why we think it happened, what the user thought. Feedback flows back. System learns which execution choices produce better results. Over time, architecture reshapes itself.
 
 ### Self-Adapting
 System observes its own performance, gets feedback, adapts. Not randomly. Empirically. You don't pre-decide "embeddings run server-side." You experiment. Logs show tradeoffs. System learns them.
 
 ---
 
-## Current Implementation Status
-
-### ✅ What Works
-- **Dual persistence:** ObjectBox (native) + IndexedDB (web) with identical schemas
-- **Semantic search:** HNSW vector indexing, 8-12ms queries
-- **Offline-first:** Changes persist locally, sync when online
-- **All platforms:** iOS, Android, macOS, Windows, Linux, Web
-- **Version history:** Reconstruct past state from deltas
-- **Graph relationships:** Link entities, multi-hop queries
-- **372 integration tests passing**
-
-### ⚠️ Partial
-- **Narrative services:** Core extraction working (3 tests), ObjectBox integration pending
-- **Phase 6 trainable components:** Migration underway (~60% done), mixin-based pattern
-- **Execution fungibility plugins:** Blueprint exists, not yet implemented
-- **Learning adaptation loop:** AdaptationState model defined, training not yet active
-
-### ❌ Not Started
-- **Remote execution:** Service plugin selection not yet trainable
-- **Multi-device sync:** Supabase integration pending (v2 roadmap)
-- **Team collaboration:** v3 roadmap
-
----
-
-## Pre-Production Checklist (Daily Use Readiness)
-
-Before deploying for daily multi-device use, complete these items:
-
-### Phase 3: Live Streaming STT (COMPLETE)
-- [x] Implement `startLiveRecognition()` method in STTService
-- [x] Stream audio chunks to Deepgram as they arrive (not buffered)
-- [x] Publish `end_of_turn` events to EventBus
-- [x] Voice screen listens for EndOfTurn → auto-stops recording
-- [x] Continuous mode: auto-restart listening after TTS completes
-- [ ] Test: Speak → auto-stop → transcription (no manual STOP button)
-
-### Multi-Device Sync
-- [ ] Supabase schema setup (Invocation, Event, Person, RegulationEntry, Commitment)
-- [ ] Sync adapter implementation (ObjectBox ↔ Supabase)
-- [ ] Conflict resolution strategy (last-write-wins or operational transform)
-- [ ] Test: Create data on Android → syncs to Web/Windows
-- [ ] Test: Offline changes → sync when reconnected
-
-### Multi-Turn Conversations
-- [ ] Verify conversation context flows through multiple turns
-- [ ] Test: Ask question → response → follow-up → context maintained
-- [ ] Integration test for 3+ turn conversation
-
-### Regulation Tool Testing
-- [ ] Test `regulation.log_entry` tool (dysregulation events)
-- [ ] Test `regulation.log_commitment` tool (create commitments)
-- [ ] Test `commitment.create` and `commitment.list` tools
-- [ ] Verify Person entity auto-creation
-- [ ] Test: LLM can use regulation tools in conversation
-
-### CI/CD & Deployment
-- [ ] GitHub Actions workflow for Android APK build
-- [ ] Firebase App Distribution setup (test group)
-- [ ] Automated deployment on push to main
-- [ ] Environment secrets configured (GROQ_API_KEY, DEEPGRAM_API_KEY)
-- [ ] Test: Push to main → builds → deploys to App Distribution
-- [ ] Install from App Distribution on physical Android device
-
-### Production Readiness
-- [ ] Error logging (Sentry or Firebase Crashlytics)
-- [ ] Analytics (Firebase Analytics or PostHog)
-- [ ] API key management (not hardcoded in builds)
-- [ ] Privacy policy + terms of service (required for Play Store)
-
-**Current Priority:** Phase 3 (Live Streaming STT) to enable auto-stop UX.
-
----
-
 ## Quick Start
 
 ```bash
-# 1. Clone
 git clone <repo>
-
-# 2. Create environment
-cp .env.example .env
-# Edit .env with your Groq API key, etc.
-
-# 3. Run on any platform
-flutter run -d android    # Android emulator
-flutter run -d ios        # iOS simulator
-flutter run -d chrome     # Web browser
-flutter run -d macos      # macOS desktop
-flutter run -d windows    # Windows desktop
-flutter run -d linux      # Linux desktop
-
-# 4. Run tests
-flutter test              # All tests (uses mocks)
-flutter test integration_test/ -d chrome  # E2E on web
+cp .env.example .env          # Add API keys (GROQ_API_KEY, DEEPGRAM_API_KEY, JINA_API_KEY)
+flutter run -d windows         # Or: android, ios, chrome, macos, linux
+flutter test                   # Unit tests (no API keys needed)
+flutter test integration_test/ -d chrome  # E2E tests
 ```
 
 ---
@@ -118,9 +32,8 @@ flutter test integration_test/ -d chrome  # E2E on web
 ## How It Works
 
 ### For AI Models
-When a small model builds an app on Everything Stack:
-1. Define entities (lib/domain/)
-2. Write E2E tests (integration_test/)
+1. Define entities (`lib/domain/`)
+2. Write E2E tests (`integration_test/`)
 3. Implement features until tests pass
 4. Never choose databases, design sync, or solve platform problems
 5. Application works on all platforms
@@ -133,7 +46,9 @@ Every execution creates an Invocation:
 - User feedback (what they thought)
 - Next time: AdaptationState guides decisions
 
-See ARCHITECTURE.md for complete entity model.
+The loop: **execute -> log -> learn -> adapt -> execute (better)**
+
+See ARCHITECTURE.md for the complete entity model.
 
 ---
 
@@ -141,114 +56,45 @@ See ARCHITECTURE.md for complete entity model.
 
 | Layer | Choice |
 |-------|--------|
-| Language | Dart |
+| Language | Dart 3.x |
 | Framework | Flutter (mobile, web, desktop) |
 | Native DB | ObjectBox |
 | Web DB | IndexedDB |
 | Sync | Supabase |
-| Vector Search | HNSW (semantic) |
-| AI Services | Groq (LLM), Deepgram (speech), Jina (embeddings) |
-| Testing | Flutter (unit/integration/E2E) |
+| Vector Search | HNSW (semantic, 8-12ms) |
+| AI Services | Groq (LLM), Deepgram (STT), Jina (embeddings) |
+| Testing | Flutter E2E (no mocks) |
 | CI | GitHub Actions |
 
 ---
 
 ## Documentation
 
-**Foundation Documents:**
-- **README.md** (you are here) - What is this, current status, quick start
-- **ARCHITECTURE.md** - How it works: semantic layer, invocations, adaptation, execution fungibility
-- **PATTERNS.md** - How to build: entities, services, testing, plugins, examples
-- **TESTING.md** - How to test: E2E approach, platforms, debugging
-- **.claude/CLAUDE.md** - Project initialization, permissions, build commands
+- **ARCHITECTURE.md** - Entity model, persistence, plugins, sync, scale
+- **PATTERNS.md** - How to build: entities, services, testing, examples
+- **TESTING.md** - E2E testing: no mocks, real persistence, all platforms
+- **DECISIONS.md** - Rationale for major architectural choices
+- **docs/DEVELOPMENT.md** - Build details, Rust/FFI, debug server, dependency management
+- **.claude/CLAUDE.md** - Project definition, permissions, architecture constraints
 
-**For New Projects:**
-- **docs/templates/VISION_TEMPLATE.md** - Discover why your project exists
-- **docs/templates/ARCHITECTURE_TEMPLATE.md** - Define what gets built
-
----
-
-## Testing
-
-Test your code through real E2E execution. No mocks. What you test is what ships.
-
-E2E tests generate real Invocation logs that feed the learning system. Mocks generate fake signals.
-
-**All Platforms:**
-```bash
-flutter test integration_test/ -d android   # Android emulator
-flutter test integration_test/ -d ios       # iOS simulator
-flutter test integration_test/ -d chrome    # Web browser
-flutter test integration_test/ -d macos     # macOS desktop
-flutter test integration_test/ -d windows   # Windows desktop
-flutter test integration_test/ -d linux     # Linux desktop
-```
-
-See TESTING.md for complete E2E testing patterns.
+### Template Usage
+See `docs/DEVELOPMENT.md` for initializing this template for a new project.
 
 ---
 
-## Core Philosophy
-
-**Infrastructure completeness over simplicity.** Dual persistence, multi-platform abstractions, vector search, offline sync - complexity is paid ONCE in this template. Every application built on it inherits that infrastructure.
-
-**All platforms are first-class.** Android, iOS, macOS, Windows, Linux, Web. Not native-first with web later. Complete or don't build it.
-
-**Domain logic only.** When a small model builds an app, it defines entities and writes business logic. It never chooses databases, designs sync, or solves platform problems. Those are already solved.
-
----
-
-## Why This Matters
-
-Traditional architectures are static. You design once. It stays that way.
-
-Everything Stack makes architecture a first-class learnable thing. The system observes its own performance, gets feedback, reshapes itself. Not randomly. Empirically.
-
-The power isn't in any single layer. It's in the loop:
-**execute → log → learn → adapt → execute (better next time)**
-
----
-
-## Recent Changes
-
-**Phase 6: Trainable Components** - Migrating from interface-based to mixin-based pattern
-- Services now support pluggable implementations (local vs remote)
-- Feedback collection automatic
-- Next: Train plugin selection based on performance
-
-**Consolidated Documentation** - Reduced from 41 files to 6 core docs
-- Removed 4-layer testing pyramid (E2E only)
-- Made execution fungibility explicit
-- Added learning architecture overview
-
----
-
-## Getting Started
-
-1. Read ARCHITECTURE.md (understand how it works)
-2. Read PATTERNS.md (learn how to build with it)
-3. Read TESTING.md (understand E2E approach)
-4. Run a test: `flutter test integration_test/ -d chrome`
-5. Clone this as a new project: `git clone <repo> my-app`
-6. Replace this README with project-specific content
-7. Delete lib/example/ and test/scenarios/example_scenarios.dart
-8. Add your entities to lib/domain/
-9. Add your E2E tests to integration_test/
-10. Implement until tests pass
-
-See .claude/CLAUDE.md for project initialization checklist.
+## What Works
+- Dual persistence: ObjectBox (native) + IndexedDB (web) with identical schemas
+- Semantic search: HNSW vector indexing, 8-12ms queries
+- Offline-first: changes persist locally, sync when online
+- All 6 platforms: iOS, Android, macOS, Windows, Linux, Web
+- Version history: reconstruct past state from deltas
+- Graph relationships: link entities, multi-hop queries
+- AtomicInsight extraction pipeline with auto-improving prompts
+- Trainable mixin pattern for feedback collection
+- 372+ integration tests passing
 
 ---
 
 ## License
 
-MIT - Use as template for your own applications.
-
----
-
-## Questions?
-
-See ARCHITECTURE.md for how execution fungibility works.
-See PATTERNS.md for service and entity patterns.
-See TESTING.md for testing approach.
-See .claude/CLAUDE.md for initialization and build commands.
+MIT
