@@ -57,4 +57,21 @@ abstract class LLMImplementer implements Implementer {
     double temperature = 0.7,
     int? maxTokens,
   });
+
+  /// Stream tokens from LLM via SSE for real-time output.
+  ///
+  /// Parameters:
+  /// - [model] Which model to use
+  /// - [messages] Conversation (as Maps for raw API pass-through)
+  /// - [temperature] Creativity level
+  /// - [maxTokens] Optional hard token limit
+  ///
+  /// Yields individual token strings as they arrive from the API.
+  /// Completes when the stream ends or an error occurs.
+  Stream<String> chatStream({
+    required String model,
+    required List<Map<String, dynamic>> messages,
+    double temperature = 0.7,
+    int? maxTokens,
+  });
 }

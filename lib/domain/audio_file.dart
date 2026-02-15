@@ -5,6 +5,7 @@
 ///
 /// Storage pattern: bytes-in-database (no filesystem dependencies)
 
+import 'dart:convert';
 import 'dart:typed_data';
 import '../core/base_entity.dart';
 
@@ -58,4 +59,39 @@ class AudioFile extends BaseEntity {
 
   /// Size in bytes
   int get sizeBytes => audioBytes.length;
+
+  /// Serialize to JSON for IndexedDB persistence.
+  ///
+  /// Note: audioBytes are base64 encoded for JSON compatibility.
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'uuid': uuid,
+        'createdAt': createdAt.toIso8601String(),
+        'updatedAt': updatedAt.toIso8601String(),
+        'syncId': syncId,
+        'audioBytes': base64Encode(audioBytes),
+        'durationSeconds': durationSeconds,
+        'format': format,
+        'eventId': eventId,
+      };
+
+  /// Deserialize from JSON for IndexedDB persistence.
+  factory AudioFile.fromJson(Map<String, dynamic> json) {
+    final audioFile = AudioFile(
+      audioBytes: base64Decode(json['audioBytes'] as String),
+      durationSeconds: (json['durationSeconds'] as num).toDouble(),
+      format: json['format'] as String? ?? 'pcm16_16khz_mono',
+      eventId: json['eventId'] as String?,
+    );
+    audioFile.id = json['id'] as int? ?? 0;
+    audioFile.uuid = json['uuid'] as String? ?? '';
+    audioFile.createdAt = json['createdAt'] != null
+        ? DateTime.parse(json['createdAt'] as String)
+        : DateTime.now();
+    audioFile.updatedAt = json['updatedAt'] != null
+        ? DateTime.parse(json['updatedAt'] as String)
+        : DateTime.now();
+    audioFile.syncId = json['syncId'] as String?;
+    return audioFile;
+  }
 }

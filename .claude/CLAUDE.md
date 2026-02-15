@@ -378,15 +378,32 @@ final defaultTTS = TTSService.selectCompatibleImplementer(ttsImplementers);
 
 ## Future Considerations
 
-**Narrative Identity System (Deferred):**
-Separate memory system for tracking user identity, goals, and values across time scopes:
-- NarrativeEntry: Identity/goal patterns with temporal scope (session/day/week/project/life)
-- NarrativeThinker: LLM extraction focused on WHO the user is (not general facts)
-- NarrativeRetriever: Semantic search across scoped narratives for coordinator context
-- NarrativeCheckpoint: Training UI for user review/refinement of narratives
-- Distinction: AtomicInsight = semantic memory (factual knowledge), NarrativeEntry = identity memory
-- Research: Amazon Bedrock AgentCore episodic memory, Mem0 preference/identity models
-- Priority: After AtomicInsight extraction and clustering prove out
+**Memory Architecture Layers:**
+Three distinct memory systems, each with different scope and purpose:
+
+1. **Whiteboard (Session Rolling Summary)** - SHORT-TERM CONTEXT
+   - Purpose: Compression for extraction optimization (prevents re-reading all messages)
+   - Content: "In this conversation, user discussed X, Y, Z"
+   - Scope: Current session only (resets when session ends)
+   - Storage: Ephemeral (in-memory or temp file)
+   - Implementation: Async background refresh (Mem0 pattern), non-blocking
+   - Status: Part of AtomicInsightExtractor implementation
+
+2. **AtomicInsight (Semantic Memory)** - LONG-TERM FACTS
+   - Purpose: Persistent knowledge extracted from conversations
+   - Content: "[Fact]. Because [reason]." format
+   - Scope: None (or "semantic" constant - facts have no temporal scope)
+   - Storage: Database with embeddings for semantic search
+   - Implementation: CURRENT PRIORITY (entity + repository complete, extraction service in progress)
+   - Pattern: Turn-by-turn extraction with deduplication (test single-pass vs 2-phase vs extract-then-dedup)
+
+3. **NarrativeEntry (Identity Memory)** - WHO USER IS (DEFERRED)
+   - Purpose: Identity, goals, values evolution
+   - Content: "User is building X because they believe Y"
+   - Scope: day → week → project → life (NOT session - whiteboard handles that)
+   - Storage: Database with scoped retrieval
+   - Research: Amazon Bedrock AgentCore episodic memory, Mem0 preference/identity models
+   - Priority: After AtomicInsight extraction and clustering prove out
 
 **MomentState System (Deferred):**
 Real-time working memory for conversational context (ephemeral, turn-level):
@@ -411,31 +428,29 @@ Test logic (IntegrationTestConfig) is currently pure - no flutter_test dependenc
 This section tracks active development, blockers, and work in progress. It changes daily. **When a feature is finished, delete it from this section.** If the work is architecturally significant, document the decision in DECISIONS.md instead.
 
 ### Active Development
-- **AtomicInsight Extraction** (CURRENT PRIORITY) - LLM-based semantic memory from conversation history
-  - Goal: Denoise raw conversation transcripts into high-signal semantic facts
-  - Entity: AtomicInsight (content: "[Fact]. Because [reason].", embedding, no scope)
-  - Service: AtomicInsightExtractor (Llama 3.3 70B on Groq for extraction quality)
-  - Status: Foundation complete (entity, repository, persistence), TDD extraction tests next
-  - Cost: ~$18 for 10k historical turns, ~$0.0018 per ongoing turn
-  - Phase 2: Golden test data for extraction accuracy (format compliance, deduplication)
-  - Phase 3: Clustering (K-means → L1 InsightCluster → L2 MetaCluster)
-  - Phase 4: context.explore tool for agentic LLM drill-down (L1+L2 initial, L0 on demand)
+- **AtomicInsight Extraction Pipeline** (CURRENT PRIORITY) - Full extraction + evaluation + auto-improvement
+  - **Extraction** (COMPLETE): `services/extraction/atomic_insight_extractor.dart` with SSE streaming, batch + live modes, dedup, overridePrompt param
+  - **Evaluation** (COMPLETE): `services/extraction/extraction_evaluator.dart` with 6-dimension binary rubric, LLM-as-judge, F_insight metric
+  - **Generic Prompt Improvement** (COMPLETE): Decoupled from extraction, reusable for any LLM prompt
+    - `services/prompt/prompt_registry.dart`: Versioned prompts backed by PromptVersion entity (not AdaptationState)
+    - `services/prompt/prompt_mutator.dart`: Generic, uses PromptFailure + DimensionSpec
+    - `services/prompt/prompt_validator.dart`: Synchronous regression gate on MetricMaps
+    - `services/prompt/prompt_improvement_loop.dart`: Generic Generate-Evaluate-Mutate with callbacks
+    - `services/extraction/extraction_improvement_loop.dart`: Thin wrapper providing extraction callbacks
+  - **PromptVersion Entity** (COMPLETE): Full entity with OB + IDB adapters, repository with component queries
+  - **Next**: Run golden data evaluation, validate loop end-to-end, write integration test
+  - **Future phases**: Consolidation (emergent hierarchy), entity extraction + graph, A/B testing
 - Trainable component migration (9 components to mixin pattern, ~60% done)
 - ContextManager service integration
 - Invocation logging wired throughout pipeline
 
 ### Blockers
-- Tool discoverability: Design needed for semantic tool filtering (embedding-based? keyword-based? hybrid?)
+- **Golden data collection needed**: Select 30-50 diverse conversations, export via `query_imported_conversations.dart --export`, hand-verify rubric catches bad extractions
 - ContextManager blueprint exists (.claude/ARCHITECTURE_TRANSITION.md), implementation pending
 - Plugin selection training: Invocation logs captured, feedback training loop not yet active
 - Multi-device sync: requires Supabase schema updates + conflict resolution
 - **Echo Cancellation** (deferred from MVP): Prevents audio feedback loop when using single device (speaker + mic)
   - **Current workaround**: Use headphones to isolate mic from speaker output
-  - **Future approaches**:
-    - OS-level audio routing (separate output devices, app-level isolation)
-    - Hardware AEC (device-specific acoustic echo cancellation)
-    - Software AEC via Rust (WASAPI on Windows, similar APIs on other platforms)
-  - **Research needed**: Cross-platform AEC library integration, latency impact, trade-offs
   - **Priority**: Post-MVP (barge-in + sync are higher priority for phone usage)
 
 ### What's Working

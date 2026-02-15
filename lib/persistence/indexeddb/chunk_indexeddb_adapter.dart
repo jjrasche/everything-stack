@@ -24,6 +24,11 @@ class ChunkObjectBoxAdapter implements ChunkRepository {
   }
 
   @override
+  Future<void> updateEmbedding(String chunkId, List<double> embedding) async {
+    throw UnsupportedError('Chunk persistence not supported on web');
+  }
+
+  @override
   Future<List<Chunk>> getAll() async {
     throw UnsupportedError('Chunk persistence not supported on web');
   }
@@ -45,6 +50,11 @@ class ChunkObjectBoxAdapter implements ChunkRepository {
 
   @override
   Future<void> removeMany(List<String> chunkIds) async {
+    throw UnsupportedError('Chunk persistence not supported on web');
+  }
+
+  @override
+  Future<int> removeDuplicates() async {
     throw UnsupportedError('Chunk persistence not supported on web');
   }
 }

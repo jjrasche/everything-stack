@@ -9,19 +9,20 @@
 /// 1. Search chunks similar to current query (via SemanticSearchService)
 /// 2. Filter to LLM invocations only
 /// 3. Look up feedback for each invocation
-/// 4. Separate into positive (confirm) and negative (deny)
+/// 4. Score by similarity × decay (learned parameters)
 /// 5. Return top examples for contrastive prompting
+///
+/// ## Why Trainable?
+/// VoiceTraits learns optimal retrieval parameters from feedback:
+/// - How many examples improve response quality
+/// - Similarity threshold for relevance
+/// - How much to weight recent vs old examples (decay)
 ///
 /// ## Why contrastive few-shot?
 /// - Shows model what "good" responses look like
 /// - Shows model what to avoid
 /// - Learned from actual user feedback, not hardcoded
 /// - Personalized to user's preferences over time
-///
-/// ## NOT a Trainable
-/// Unlike ModelSelector, VoiceTraits doesn't have adaptation state.
-/// It retrieves from existing entities (Invocation + Feedback).
-/// Learning happens implicitly through accumulated feedback.
 ///
 /// ## Usage
 /// ```dart
@@ -36,43 +37,202 @@
 /// ```
 
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+
+import '../core/trainable.dart';
 import '../core/invocation.dart';
 import '../core/invocation_repository.dart';
+import '../core/adaptation_state_repository.dart';
 import '../core/feedback_repository.dart';
-import '../domain/feedback.dart';
+import '../domain/feedback.dart' as domain_feedback;
 import 'semantic_search/semantic_search_service.dart';
 import 'types/voice_traits_types.dart';
 
-class VoiceTraits {
+class VoiceTraits with Trainable<VoiceTraitsAdaptationData> {
   final SemanticSearchService searchService;
   final InvocationRepository<Invocation> invocationRepo;
   final FeedbackRepository feedbackRepo;
-  final VoiceTraitsConfig config;
 
   VoiceTraits({
     required this.searchService,
     required this.invocationRepo,
     required this.feedbackRepo,
-    this.config = VoiceTraitsConfig.defaults,
   });
+
+  // ============ Trainable Implementation ============
+
+  @override
+  String get componentType => 'voice_traits';
+
+  @override
+  VoiceTraitsAdaptationData createDefaultData() =>
+      VoiceTraitsAdaptationData.defaults();
+
+  @override
+  VoiceTraitsAdaptationData deserializeData(String json) {
+    if (json.isEmpty || json == '{}') {
+      return createDefaultData();
+    }
+    return VoiceTraitsAdaptationData.fromJson(
+      Map<String, dynamic>.from(
+        const JsonDecoder().convert(json) as Map,
+      ),
+    );
+  }
+
+  @override
+  Map<String, (double, double)> getParameterBounds() {
+    return {
+      'maxPositiveExamples': (1.0, 5.0),
+      'maxNegativeExamples': (0.0, 3.0),
+      'minSimilarity': (0.1, 0.7),
+      'decayAlpha': (0.5, 2.0),
+      'decayRate': (0.01, 0.5),
+    };
+  }
+
+  @override
+  Widget buildFeedbackUI(BuildContext context, Invocation invocation) {
+    final output = invocation.output;
+    final positiveCount = output?['positiveCount'] as int? ?? 0;
+    final negativeCount = output?['negativeCount'] as int? ?? 0;
+    final avgScore = output?['avgScore'] as double? ?? 0.0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Voice Traits:',
+            style: Theme.of(context).textTheme.labelLarge),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Positive examples: $positiveCount'),
+              Text('Negative examples: $negativeCount'),
+              Text('Avg score: ${(avgScore * 100).toStringAsFixed(1)}%'),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text('Were the examples helpful?',
+            style: Theme.of(context).textTheme.labelLarge),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                // TODO: Record positive feedback
+              },
+              child: const Text('Yes, helpful'),
+            ),
+            OutlinedButton(
+              onPressed: () {
+                // TODO: Record "need more" feedback
+              },
+              child: const Text('Need more examples'),
+            ),
+            OutlinedButton(
+              onPressed: () {
+                // TODO: Record "too many" feedback
+              },
+              child: const Text('Too many examples'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  @override
+  Future<void> trainFromFeedback(
+    Invocation invocation,
+    domain_feedback.Feedback feedback,
+  ) async {
+    // 1. Get current adaptation state
+    final adaptationStateRepo = GetIt.instance<AdaptationStateRepository>();
+    final state = await getAdaptationState();
+    final params = state.dataJson.isNotEmpty
+        ? deserializeData(state.dataJson)
+        : createDefaultData();
+
+    // 2. Adjust based on feedback
+    var newParams = params;
+    final feedbackText = feedback.correctedData?.toLowerCase() ?? '';
+
+    if (feedback.action == domain_feedback.FeedbackAction.confirm) {
+      // Positive feedback - current settings work well
+      print('📊 [VoiceTraits] Positive feedback for current settings');
+    } else if (feedback.action == domain_feedback.FeedbackAction.deny) {
+      // Negative feedback - adjust based on correction text
+      if (feedbackText.contains('more') || feedbackText.contains('few')) {
+        // Need more examples
+        newParams = params.copyWith(
+          maxPositiveExamples: (params.maxPositiveExamples + 1).clamp(1, 5),
+        );
+        print('📊 [VoiceTraits] Increasing positive examples: ${params.maxPositiveExamples} → ${newParams.maxPositiveExamples}');
+      } else if (feedbackText.contains('many') || feedbackText.contains('too')) {
+        // Too many examples
+        newParams = params.copyWith(
+          maxPositiveExamples: (params.maxPositiveExamples - 1).clamp(1, 5),
+        );
+        print('📊 [VoiceTraits] Decreasing positive examples: ${params.maxPositiveExamples} → ${newParams.maxPositiveExamples}');
+      } else if (feedbackText.contains('old') || feedbackText.contains('stale')) {
+        // Examples too old - increase decay rate
+        newParams = params.copyWith(
+          decayRate: (params.decayRate * 1.2).clamp(0.01, 0.5),
+        );
+        print('📊 [VoiceTraits] Increasing decay rate: ${params.decayRate} → ${newParams.decayRate}');
+      }
+    }
+
+    // 3. Save updated state if changed
+    if (newParams != params) {
+      state.dataJson = newParams.toJson();
+      state.version++;
+      state.lastUpdatedAt = DateTime.now();
+      state.lastUpdateReason = 'trainFromFeedback';
+      state.feedbackCountApplied++;
+
+      await adaptationStateRepo.save(state);
+      print('✅ [VoiceTraits] Adaptation state saved');
+    }
+  }
+
+  // ============ Example Retrieval ============
 
   /// Retrieve contrastive examples similar to query.
   ///
   /// Searches for past LLM invocations similar to the current query,
   /// then filters by feedback to get positive and negative examples.
-  ///
-  /// Returns [ContrastiveExamples] with up to [config.maxPositiveExamples]
-  /// positive and [config.maxNegativeExamples] negative examples.
+  /// Uses learned parameters for similarity threshold, example counts,
+  /// and decay scoring.
   Future<ContrastiveExamples> getExamples({
     required String query,
     required String eventId,
+    String? userId,
   }) async {
     print('\n🎭 [VoiceTraits] Searching for contrastive examples...');
     print('   Query: "${query.length > 50 ? '${query.substring(0, 50)}...' : query}"');
 
     try {
-      // 1. Search for similar chunks (search more than we need for filtering)
-      final searchLimit = (config.maxPositiveExamples + config.maxNegativeExamples) * 5;
+      // 1. Get learned parameters
+      final state = await getAdaptationState(userId: userId);
+      final params = state.dataJson.isNotEmpty
+          ? deserializeData(state.dataJson)
+          : createDefaultData();
+
+      print('   Params: max+=${params.maxPositiveExamples}, max-=${params.maxNegativeExamples}, sim>=${params.minSimilarity}');
+
+      // 2. Search for similar chunks (search more than we need for filtering)
+      final searchLimit = (params.maxPositiveExamples + params.maxNegativeExamples) * 5;
       final searchResults = await searchService.search(
         query,
         entityTypes: ['Invocation'],
@@ -83,25 +243,32 @@ class VoiceTraits {
 
       if (searchResults.isEmpty) {
         print('   ⚠️ No similar invocations found');
+        await _recordInvocation(eventId, query, 0, ContrastiveExamples.empty());
         return ContrastiveExamples.empty();
       }
 
-      // 2. Get invocation UUIDs and look up feedback
+      // 3. Get invocation UUIDs and look up feedback
       final invocationIds = searchResults
           .where((r) => r.sourceEntity != null)
           .map((r) => r.sourceEntity!.uuid)
           .toList();
 
-      print('   Invocation IDs from search: ${invocationIds.take(3).join(", ")}...');
+      print('   Invocation IDs from search (${invocationIds.length} total):');
+      for (var i = 0; i < invocationIds.length && i < 3; i++) {
+        print('     [$i] ${invocationIds[i]}');
+      }
 
       final feedbackList = await feedbackRepo.findByInvocationIds(invocationIds);
       print('   Found ${feedbackList.length} feedback records');
       if (feedbackList.isNotEmpty) {
-        print('   Feedback invocation IDs: ${feedbackList.map((f) => f.invocationId).join(", ")}');
+        print('   Feedback invocation IDs:');
+        for (final fb in feedbackList) {
+          print('     - ${fb.invocationId} (action=${fb.action})');
+        }
       }
 
-      // 3. Build map of invocation -> feedback
-      final feedbackMap = <String, Feedback>{};
+      // 4. Build map of invocation -> feedback
+      final feedbackMap = <String, domain_feedback.Feedback>{};
       for (final f in feedbackList) {
         // Only consider LLM feedback, prefer most recent
         if (f.componentType == 'llm') {
@@ -112,13 +279,14 @@ class VoiceTraits {
         }
       }
 
-      // 4. Build examples with feedback
-      final positiveExamples = <FeedbackExample>[];
-      final negativeExamples = <FeedbackExample>[];
+      // 5. Build examples with feedback and decay scoring
+      final now = DateTime.now();
+      final allPositive = <FeedbackExample>[];
+      final allNegative = <FeedbackExample>[];
 
       for (final result in searchResults) {
         if (result.sourceEntity == null) continue;
-        if (result.similarity < config.minSimilarity) continue;
+        if (result.similarity < params.minSimilarity) continue;
 
         final invocation = result.sourceEntity as Invocation;
         final feedback = feedbackMap[invocation.uuid];
@@ -127,7 +295,7 @@ class VoiceTraits {
         if (feedback == null) continue;
 
         // Skip ignored feedback
-        if (feedback.action == FeedbackAction.ignore) continue;
+        if (feedback.action == domain_feedback.FeedbackAction.ignore) continue;
 
         // Extract query and response from invocation
         final invQuery = _extractQuery(invocation);
@@ -135,11 +303,9 @@ class VoiceTraits {
 
         if (invQuery == null || invResponse == null) continue;
 
-        // Check age limit
-        if (config.maxAge != null) {
-          final age = DateTime.now().difference(invocation.createdAt);
-          if (age > config.maxAge!) continue;
-        }
+        // Compute age and score with decay
+        final age = now.difference(invocation.createdAt);
+        final score = params.computeScore(result.similarity, age);
 
         final example = FeedbackExample(
           query: invQuery,
@@ -148,37 +314,74 @@ class VoiceTraits {
           similarity: result.similarity,
           invocationId: invocation.uuid,
           timestamp: invocation.createdAt,
+          score: score,
         );
 
         // Classify by feedback action
-        if (feedback.action == FeedbackAction.confirm) {
-          if (positiveExamples.length < config.maxPositiveExamples) {
-            positiveExamples.add(example);
-          }
-        } else if (feedback.action == FeedbackAction.deny) {
-          if (negativeExamples.length < config.maxNegativeExamples) {
-            negativeExamples.add(example);
-          }
-        }
-
-        // Stop early if we have enough
-        if (positiveExamples.length >= config.maxPositiveExamples &&
-            negativeExamples.length >= config.maxNegativeExamples) {
-          break;
+        if (feedback.action == domain_feedback.FeedbackAction.confirm) {
+          allPositive.add(example);
+        } else if (feedback.action == domain_feedback.FeedbackAction.deny) {
+          allNegative.add(example);
         }
       }
 
+      // 6. Sort by score and take top-k
+      allPositive.sort((a, b) => b.score.compareTo(a.score));
+      allNegative.sort((a, b) => b.score.compareTo(a.score));
+
+      final positiveExamples = allPositive.take(params.maxPositiveExamples).toList();
+      final negativeExamples = allNegative.take(params.maxNegativeExamples).toList();
+
       print('   ✅ Found ${positiveExamples.length} positive, ${negativeExamples.length} negative examples');
 
-      return ContrastiveExamples(
+      final examples = ContrastiveExamples(
         positive: positiveExamples,
         negative: negativeExamples,
       );
+
+      // 7. Record invocation for training
+      await _recordInvocation(eventId, query, searchResults.length, examples);
+
+      return examples;
     } catch (e) {
       // Search may fail if index is stale - degrade gracefully
       print('   ⚠️ VoiceTraits search failed: $e');
       return ContrastiveExamples.empty();
     }
+  }
+
+  /// Record invocation for training.
+  Future<void> _recordInvocation(
+    String eventId,
+    String query,
+    int candidatesSearched,
+    ContrastiveExamples examples,
+  ) async {
+    final allExamples = [...examples.positive, ...examples.negative];
+    final avgScore = allExamples.isEmpty
+        ? 0.0
+        : allExamples.map((e) => e.score).reduce((a, b) => a + b) / allExamples.length;
+
+    await recordInvocation(
+      eventId,
+      Invocation(
+        eventId: eventId,
+        componentType: componentType,
+        implementer: null,
+        success: true,
+        confidence: avgScore,
+        input: VoiceTraitsInvocationInput(
+          query: query,
+          candidatesSearched: candidatesSearched,
+        ).toJson(),
+        output: VoiceTraitsInvocationOutput(
+          positiveCount: examples.positive.length,
+          negativeCount: examples.negative.length,
+          exampleIds: allExamples.map((e) => e.invocationId).toList(),
+          avgScore: avgScore,
+        ).toJson(),
+      ),
+    );
   }
 
   /// Format contrastive examples as a prompt section.

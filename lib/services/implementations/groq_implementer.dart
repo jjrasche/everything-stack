@@ -6,6 +6,7 @@
 
 import 'dart:convert';
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import 'llm_implementer.dart';
@@ -174,6 +175,84 @@ class GroqImplementer implements LLMImplementer {
       rethrow;
     } on GroqException {
       rethrow;
+    }
+  }
+
+  @override
+  Stream<String> chatStream({
+    required String model,
+    required List<Map<String, dynamic>> messages,
+    double temperature = 0.7,
+    int? maxTokens,
+  }) async* {
+    final body = {
+      'model': model,
+      'messages': messages,
+      'temperature': temperature,
+      'stream': true,
+      if (maxTokens != null) 'max_tokens': maxTokens,
+    };
+
+    final request = http.Request(
+      'POST',
+      Uri.parse('$baseUrl/chat/completions'),
+    );
+    request.headers['Authorization'] = 'Bearer $apiKey';
+    request.headers['Content-Type'] = 'application/json';
+    request.body = jsonEncode(body);
+
+    try {
+      final client = http.Client();
+      try {
+        final response = await client.send(request).timeout(timeout);
+
+        if (response.statusCode != 200) {
+          final body = await response.stream.bytesToString();
+          throw GroqException('Stream error ${response.statusCode}: $body');
+        }
+
+        // Parse SSE: each line starts with "data: " followed by JSON
+        // Stream ends with "data: [DONE]"
+        String buffer = '';
+        await for (final chunk in response.stream.transform(utf8.decoder)) {
+          buffer += chunk;
+
+          // Process complete lines
+          while (buffer.contains('\n')) {
+            final newlineIndex = buffer.indexOf('\n');
+            final line = buffer.substring(0, newlineIndex).trim();
+            buffer = buffer.substring(newlineIndex + 1);
+
+            if (line.isEmpty) continue;
+            if (line == 'data: [DONE]') return;
+            if (!line.startsWith('data: ')) continue;
+
+            final jsonStr = line.substring(6); // Remove "data: " prefix
+            try {
+              final data = jsonDecode(jsonStr) as Map<String, dynamic>;
+              final choices = data['choices'] as List?;
+              if (choices != null && choices.isNotEmpty) {
+                final delta =
+                    (choices[0] as Map<String, dynamic>)['delta'] as Map<String, dynamic>?;
+                final content = delta?['content'] as String?;
+                if (content != null && content.isNotEmpty) {
+                  yield content;
+                }
+              }
+            } catch (e) {
+              debugPrint('GroqImplementer.chatStream: SSE parse error: $e');
+            }
+          }
+        }
+      } finally {
+        client.close();
+      }
+    } on TimeoutException {
+      throw GroqTimeoutException('Stream timeout after ${timeout.inSeconds}s');
+    } on GroqException {
+      rethrow;
+    } catch (e) {
+      throw GroqException('Stream failed: $e');
     }
   }
 

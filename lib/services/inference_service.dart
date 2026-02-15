@@ -240,6 +240,23 @@ class InferenceService with Trainable<InferenceAdaptationData> {
     return response;
   }
 
+  /// Stream tokens from LLM via SSE for real-time output.
+  /// Delegates to the default implementer's streaming API.
+  Stream<String> chatStream({
+    required String model,
+    required List<Map<String, dynamic>> messages,
+    double temperature = 0.7,
+    int? maxTokens,
+  }) {
+    final implementer = _implementers[_defaultImplementer]!;
+    return implementer.chatStream(
+      model: model,
+      messages: messages,
+      temperature: temperature,
+      maxTokens: maxTokens,
+    );
+  }
+
   /// Get adaptation state for this implementer, or defaults if not found.
   Future<InferenceAdaptationData> _getAdaptationState(
     String implementerName,

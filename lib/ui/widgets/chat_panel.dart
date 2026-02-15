@@ -138,9 +138,12 @@ class ChatPanel extends StatelessWidget {
                 : ListView.builder(
                     padding: const EdgeInsets.all(16),
                     itemCount: messages.length,
-                    itemBuilder: (context, index) => _buildMessage(
-                      context,
-                      messages[index],
+                    itemBuilder: (context, index) => Semantics(
+                      label: 'chat_panel.message_$index',
+                      child: _buildMessage(
+                        context,
+                        messages[index],
+                      ),
                     ),
                   ),
           ),
@@ -155,12 +158,16 @@ class ChatPanel extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                FloatingActionButton(
-                  onPressed: onMicrophonePressed,
-                  backgroundColor: isListening ? Colors.red : Colors.blue,
-                  child: Icon(
-                    isListening ? Icons.stop : Icons.mic,
-                    size: 28,
+                Semantics(
+                  label: 'chat_panel.mic_button',
+                  button: true,
+                  child: FloatingActionButton(
+                    onPressed: onMicrophonePressed,
+                    backgroundColor: isListening ? Colors.red : Colors.blue,
+                    child: Icon(
+                      isListening ? Icons.stop : Icons.mic,
+                      size: 28,
+                    ),
                   ),
                 ),
               ],

@@ -4,12 +4,15 @@
 /// Shows conversation thread + semantic matches with scores.
 /// Long-press to provide feedback on context selection quality.
 /// Includes real-time similarity threshold slider for testing.
+/// Includes search box for querying semantic index directly.
 
 import 'dart:math' show exp, ln2;
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:everything_stack_template/services/types/context_selector_types.dart';
 import 'package:everything_stack_template/core/invocation.dart';
 import 'package:everything_stack_template/services/semantic_search/search_result.dart';
+import 'package:everything_stack_template/services/semantic_search/semantic_search_service.dart';
 import 'feedback_bottom_sheet.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -32,6 +35,82 @@ class ContextPanel extends StatefulWidget {
 class _ContextPanelState extends State<ContextPanel> {
   double _similarityThreshold = 0.0; // Start at 0.0 to show all
 
+  // Search state
+  final TextEditingController _searchController = TextEditingController();
+  List<SemanticSearchResult> _searchResults = [];
+  bool _isSearching = false;
+  String? _searchError;
+  bool _showSearchResults = false;
+
+  SemanticSearchService? get _searchService {
+    try {
+      return GetIt.instance<SemanticSearchService>();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _performSearch(String query) async {
+    print('🔎 [ContextPanel] Search triggered with query: "$query"');
+
+    if (query.trim().isEmpty) {
+      print('🔎 [ContextPanel] Empty query, clearing results');
+      setState(() {
+        _searchResults = [];
+        _showSearchResults = false;
+        _searchError = null;
+      });
+      return;
+    }
+
+    final searchService = _searchService;
+    if (searchService == null) {
+      print('❌ [ContextPanel] Search service not available from GetIt');
+      setState(() {
+        _searchError = 'Search service not available';
+        _isSearching = false;
+      });
+      return;
+    }
+
+    setState(() {
+      _isSearching = true;
+      _searchError = null;
+    });
+
+    try {
+      print('🔎 [ContextPanel] Calling searchService.search("${query.trim()}")...');
+      final results = await searchService.search(
+        query.trim(),
+        limit: 10,
+      );
+      print('✅ [ContextPanel] Search returned ${results.length} results');
+      for (int i = 0; i < results.length; i++) {
+        final r = results[i];
+        print('   [$i] similarity=${r.similarity.toStringAsFixed(3)} entity=${r.sourceEntity?.runtimeType}');
+      }
+      setState(() {
+        _searchResults = results;
+        _showSearchResults = true;
+        _isSearching = false;
+      });
+    } catch (e, stack) {
+      print('❌ [ContextPanel] Search error: $e');
+      print('   Stack: $stack');
+      setState(() {
+        _searchError = e.toString();
+        _isSearching = false;
+        _showSearchResults = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Calculate total context count and filter semantic matches
@@ -46,122 +125,276 @@ class _ContextPanelState extends State<ContextPanel> {
 
     final totalCount = conversationCount + filteredSemanticMatches.length;
 
-    return GestureDetector(
-      onLongPress: () => _handleLongPress(context),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          children: [
-            // Header
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(8)),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.psychology, size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Context Selection ($totalCount)',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+    return Semantics(
+      explicitChildNodes: true,
+      child: GestureDetector(
+        onLongPress: () => _handleLongPress(context),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            children: [
+              // Header with Search
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(8)),
+                ),
+                child: Column(
+                  children: [
+                    // Search Box
+                    Semantics(
+                      label: 'context_panel.search_bar',
+                      textField: true,
+                      container: true,
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          hintText: 'Search semantic index...',
+                          prefixIcon: const Icon(Icons.search, size: 20),
+                          suffixIcon: _searchController.text.isNotEmpty
+                              ? Semantics(
+                                  label: 'context_panel.search_clear',
+                                  button: true,
+                                  container: true,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.clear, size: 18),
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      _performSearch('');
+                                    },
+                                  ),
+                                )
+                              : null,
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 10,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
                         ),
+                        style: const TextStyle(fontSize: 14),
+                        onSubmitted: _performSearch,
+                        onChanged: (value) {
+                          // Rebuild to show/hide clear button
+                          setState(() {});
+                        },
                       ),
-                      const Spacer(),
-                      if (widget.feedbackGiven)
-                        Icon(Icons.check_circle,
-                            color: Colors.green.shade700, size: 20)
-                      else
-                        const Text(
-                          'Long-press to rate',
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
-                    ],
-                  ),
+                    ),
 
-                  // Similarity threshold slider
-                  if (widget.contextBundle != null &&
-                      allSemanticMatches.isNotEmpty) ...[
                     const SizedBox(height: 12),
+
+                    // Title Row
                     Row(
                       children: [
-                        const Text(
-                          'Similarity Filter:',
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        Icon(
+                          _showSearchResults ? Icons.search : Icons.psychology,
+                          size: 20,
                         ),
-                        Expanded(
-                          child: Slider(
-                            value: _similarityThreshold,
-                            min: 0.0,
-                            max: 1.0,
-                            divisions: 20,
-                            label: _similarityThreshold.toStringAsFixed(2),
-                            onChanged: (value) {
+                        const SizedBox(width: 8),
+                        Text(
+                          _showSearchResults
+                              ? 'Search Results (${_searchResults.length})'
+                              : 'Context Selection ($totalCount)',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const Spacer(),
+                        if (_showSearchResults)
+                          TextButton(
+                            onPressed: () {
+                              _searchController.clear();
                               setState(() {
-                                _similarityThreshold = value;
+                                _searchResults = [];
+                                _showSearchResults = false;
+                                _searchError = null;
                               });
                             },
+                            child: const Text('Back to Context'),
+                          )
+                        else if (widget.feedbackGiven)
+                          Icon(Icons.check_circle,
+                              color: Colors.green.shade700, size: 20)
+                        else
+                          const Text(
+                            'Long-press to rate',
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
                           ),
-                        ),
-                        Text(
-                          _similarityThreshold.toStringAsFixed(2),
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
                       ],
                     ),
-                  ],
-                ],
-              ),
-            ),
 
-            // Content
-            Expanded(
-              child: widget.contextBundle == null
-                  ? const Center(
-                      child: Text(
-                        'No context selected yet',
-                        style: TextStyle(color: Colors.grey),
+                    // Similarity threshold slider (only in context mode)
+                    if (!_showSearchResults &&
+                        widget.contextBundle != null &&
+                        allSemanticMatches.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          const Text(
+                            'Similarity Filter:',
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                          Expanded(
+                            child: Semantics(
+                              label: 'context_panel.similarity_slider',
+                              slider: true,
+                              container: true,
+                              child: Slider(
+                                value: _similarityThreshold,
+                                min: 0.0,
+                                max: 1.0,
+                                divisions: 20,
+                                label: _similarityThreshold.toStringAsFixed(2),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _similarityThreshold = value;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                          Text(
+                            _similarityThreshold.toStringAsFixed(2),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
-                    )
-                  : ListView(
-                      padding: const EdgeInsets.all(16),
-                      children: [
-                        // Recent Conversation
-                        _buildSection(
-                          context,
-                          title: 'Recent Conversation',
-                          items: widget.contextBundle!.conversationThread,
-                          showDecay: true,
-                        ),
+                    ],
+                  ],
+                ),
+              ),
 
-                        const SizedBox(height: 24),
-
-                        // Semantic Matches (filtered by threshold)
-                        _buildSemanticSection(
-                          context,
-                          title: 'Semantic Matches',
-                          items: filteredSemanticMatches,
-                          semanticHalfLifeHours:
-                              widget.contextBundle!.params.semanticHalfLifeHours,
-                        ),
-                      ],
-                    ),
-            ),
-          ],
+              // Content
+              Expanded(
+                child: _buildContent(
+                  context,
+                  filteredSemanticMatches,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    List<SemanticSearchResult> filteredSemanticMatches,
+  ) {
+    // Show loading indicator
+    if (_isSearching) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text('Searching...', style: TextStyle(color: Colors.grey)),
+          ],
+        ),
+      );
+    }
+
+    // Show search error
+    if (_searchError != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, color: Colors.red.shade400, size: 48),
+              const SizedBox(height: 16),
+              Text(
+                'Search Error',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red.shade700,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _searchError!,
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Show search results
+    if (_showSearchResults) {
+      if (_searchResults.isEmpty) {
+        return const Center(
+          child: Text(
+            'No results found',
+            style: TextStyle(color: Colors.grey),
+          ),
+        );
+      }
+
+      return ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          _buildSemanticSection(
+            context,
+            title: 'Search Results',
+            items: _searchResults,
+            semanticHalfLifeHours: 720.0, // Default decay for display
+          ),
+        ],
+      );
+    }
+
+    // Show normal context (no search active)
+    if (widget.contextBundle == null) {
+      return const Center(
+        child: Text(
+          'No context selected yet\n\nUse search above to explore the semantic index',
+          style: TextStyle(color: Colors.grey),
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        // Recent Conversation
+        _buildSection(
+          context,
+          title: 'Recent Conversation',
+          items: widget.contextBundle!.conversationThread,
+          showDecay: true,
+        ),
+
+        const SizedBox(height: 24),
+
+        // Semantic Matches (filtered by threshold)
+        _buildSemanticSection(
+          context,
+          title: 'Semantic Matches',
+          items: filteredSemanticMatches,
+          semanticHalfLifeHours: widget.contextBundle!.params.semanticHalfLifeHours,
+        ),
+      ],
     );
   }
 
@@ -271,6 +504,19 @@ class _ContextPanelState extends State<ContextPanel> {
         ? timeago.format(result.sourceEntity!.updatedAt)
         : 'unknown';
 
+    // Calculate explicit age in days/hours
+    final ageDays = ageHours / 24.0;
+    final ageDisplay = ageDays >= 1.0
+        ? '${ageDays.toStringAsFixed(1)}d'
+        : '${ageHours.toStringAsFixed(1)}h';
+
+    // Get conversation name for Claude imports
+    String? conversationName;
+    if (result.sourceEntity is Invocation) {
+      final inv = result.sourceEntity as Invocation;
+      conversationName = inv.metadata?['sourceConversationName'] as String?;
+    }
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -345,6 +591,23 @@ class _ContextPanelState extends State<ContextPanel> {
                 ),
               ),
               const Spacer(),
+              // Age badge (days or hours)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade600,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  ageDisplay,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 4),
               Text(
                 timeAgo,
                 style: TextStyle(
@@ -354,6 +617,30 @@ class _ContextPanelState extends State<ContextPanel> {
               ),
             ],
           ),
+
+          // Conversation name (for Claude imports)
+          if (conversationName != null) ...[
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Icon(Icons.folder_outlined,
+                    size: 12, color: Colors.blue.shade400),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    conversationName,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.blue.shade600,
+                      fontStyle: FontStyle.italic,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ],
 
           const SizedBox(height: 6),
 

@@ -12,6 +12,10 @@ abstract class ChunkRepository {
   /// Save a chunk to persistent storage.
   Future<void> put(Chunk chunk);
 
+  /// Update the embedding for an existing chunk.
+  /// Used during legacy migration to avoid creating duplicate records.
+  Future<void> updateEmbedding(String chunkId, List<double> embedding);
+
   /// Get all chunks from storage.
   Future<List<Chunk>> getAll();
 
@@ -26,4 +30,9 @@ abstract class ChunkRepository {
 
   /// Remove specific chunks by their IDs.
   Future<void> removeMany(List<String> chunkIds);
+
+  /// Remove duplicate chunks (same chunkId, different DB IDs).
+  /// One-time cleanup for migration issues.
+  /// Returns count of duplicates removed.
+  Future<int> removeDuplicates();
 }

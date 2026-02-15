@@ -46,6 +46,17 @@ class ContextCapacity with Trainable<ContextCapacityAdaptationData> {
   /// Tokenizer for counting tokens.
   final TokenizerService _tokenizer;
 
+  /// Tokens added per message for structure overhead.
+  ///
+  /// Each message in the conversation has structural overhead:
+  /// - Role marker (e.g., "user:", "assistant:")
+  /// - Message delimiters
+  /// - Special tokens for message boundaries
+  ///
+  /// This is approximately 4 tokens per message for most models.
+  /// Reference: OpenAI tokenizer documentation.
+  static const int tokensPerMessageOverhead = 4;
+
   ContextCapacity({
     TokenizerService? tokenizer,
   }) : _tokenizer = tokenizer ?? TokenizerService.instance;
@@ -316,8 +327,8 @@ class ContextCapacity with Trainable<ContextCapacityAdaptationData> {
           }
         }
       }
-      // Add overhead for message structure (~4 tokens per message)
-      total += 4;
+      // Add overhead for message structure (role markers, delimiters, etc.)
+      total += tokensPerMessageOverhead;
     }
     return total;
   }

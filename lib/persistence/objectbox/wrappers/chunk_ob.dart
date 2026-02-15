@@ -39,6 +39,12 @@ class ChunkOB {
   /// Full chunk text (needed for reconstruction after HNSW search).
   late String text;
 
+  /// Embedding vector (384 dimensions for Jina).
+  /// Stored as Float32List for efficient storage.
+  /// Nullable for backwards compatibility with existing data.
+  @Property(type: PropertyType.floatVector)
+  List<double>? embedding;
+
   /// Creation timestamp.
   @Property(type: PropertyType.date)
   late DateTime createdAt;
@@ -57,6 +63,7 @@ class ChunkOB {
       ..endToken = chunk.endToken
       ..config = chunk.config
       ..text = chunk.text
+      ..embedding = chunk.embedding
       ..createdAt = DateTime.now();
   }
 
@@ -70,6 +77,7 @@ class ChunkOB {
       endToken: endToken,
       config: config,
       text: text,
+      embedding: embedding,
     );
   }
 

@@ -22,6 +22,22 @@ class ChunkObjectBoxAdapter implements ChunkRepository {
   }
 
   @override
+  Future<void> updateEmbedding(String chunkId, List<double> embedding) async {
+    // Find existing chunk by chunkId
+    final query = _box.query(ChunkOB_.chunkId.equals(chunkId)).build();
+    try {
+      final existing = query.findFirst();
+      if (existing != null) {
+        // Update in place (preserves ObjectBox ID)
+        existing.embedding = embedding;
+        _box.put(existing);
+      }
+    } finally {
+      query.close();
+    }
+  }
+
+  @override
   Future<List<Chunk>> getAll() async {
     final obList = _box.getAll();
     return obList.map((ob) => ob.toChunk()).toList();
@@ -72,5 +88,42 @@ class ChunkObjectBoxAdapter implements ChunkRepository {
     } finally {
       query.close();
     }
+  }
+
+  @override
+  Future<int> removeDuplicates() async {
+    // Get all chunks
+    final all = _box.getAll();
+    if (all.isEmpty) return 0;
+
+    // Group by chunkId
+    final Map<String, List<ChunkOB>> byChunkId = {};
+    for (final ob in all) {
+      byChunkId.putIfAbsent(ob.chunkId, () => []).add(ob);
+    }
+
+    // Find duplicates: keep only the one with embedding (or first if none have embeddings)
+    final toRemove = <int>[];
+    for (final entry in byChunkId.entries) {
+      if (entry.value.length > 1) {
+        // Sort: prefer ones WITH embeddings, then by ID (keep lower ID = original)
+        entry.value.sort((a, b) {
+          final aHasEmbedding = a.embedding != null && a.embedding!.isNotEmpty;
+          final bHasEmbedding = b.embedding != null && b.embedding!.isNotEmpty;
+          if (aHasEmbedding && !bHasEmbedding) return -1;
+          if (!aHasEmbedding && bHasEmbedding) return 1;
+          return a.id.compareTo(b.id);
+        });
+        // Keep first (best), remove rest
+        for (var i = 1; i < entry.value.length; i++) {
+          toRemove.add(entry.value[i].id);
+        }
+      }
+    }
+
+    if (toRemove.isNotEmpty) {
+      _box.removeMany(toRemove);
+    }
+    return toRemove.length;
   }
 }

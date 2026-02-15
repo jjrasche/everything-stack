@@ -9,7 +9,9 @@ import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/hnsw_index.dart';
 import 'package:everything_stack_template/services/tokenizer_service.dart';
 import 'package:everything_stack_template/services/semantic_search/chunk.dart';
+import 'package:everything_stack_template/services/debug_service.dart';
 import 'package:everything_stack_template/core/trainable.dart';
+import 'package:everything_stack_template/core/debug/debug.dart';
 import 'package:everything_stack_template/core/invocation.dart';
 import 'package:everything_stack_template/core/feedback.dart' as core_feedback;
 import 'package:everything_stack_template/services/types/chunking_types.dart';
@@ -58,7 +60,7 @@ import 'package:everything_stack_template/services/types/chunking_types.dart';
 ///   }
 /// }
 /// ```
-class ChunkingService with Trainable<ChunkingAdaptationData> {
+class ChunkingService with Trainable<ChunkingAdaptationData>, DebugIntrospectable {
   /// HNSW index for semantic search
   final HnswIndex index;
 
@@ -134,7 +136,10 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
     final chunks = <Chunk>[];
     final chunkIds = <String>[];
 
-    // Create single chunk for entire content
+    // Generate embedding FIRST
+    final embedding = await embeddingService.generate(input);
+
+    // Create single chunk for entire content WITH embedding
     final chunkId = const Uuid().v4();
     final chunk = Chunk(
       id: chunkId,
@@ -144,15 +149,15 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
       endToken: tokenizerService.countTokens(input),
       config: 'invocation',
       text: input,
+      embedding: embedding,
     );
     chunks.add(chunk);
     chunkIds.add(chunkId);
 
-    // Generate and insert embedding
-    final embedding = await embeddingService.generate(input);
+    // Insert into HNSW index
     index.insert(chunkId, embedding);
 
-    // Persist chunk to database
+    // Persist chunk WITH embedding to database
     await _persistChunk(chunk);
 
     // Track chunk IDs for this entity
@@ -218,6 +223,12 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
     for (final parentChunkText in parentChunkTexts) {
       // Create parent chunk
       final parentChunkId = const Uuid().v4();
+
+      // Generate parent embedding FIRST
+      final parentEmbedding =
+          await embeddingService.generate(parentChunkText.text);
+
+      // Create chunk WITH embedding
       final parentChunk = Chunk(
         id: parentChunkId,
         sourceEntityId: entity.uuid,
@@ -226,16 +237,15 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
         endToken: parentChunkText.endToken,
         config: 'parent',
         text: parentChunkText.text,
+        embedding: parentEmbedding,
       );
       chunks.add(parentChunk);
       chunkIds.add(parentChunkId);
 
-      // Generate and insert parent embedding
-      final parentEmbedding =
-          await embeddingService.generate(parentChunkText.text);
+      // Insert into HNSW index
       index.insert(parentChunkId, parentEmbedding);
 
-      // Persist parent chunk to database
+      // Persist chunk WITH embedding to database
       await _persistChunk(parentChunk);
 
       // Generate child chunks from this parent
@@ -243,6 +253,12 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
 
       for (final childChunkText in childChunkTexts) {
         final childChunkId = const Uuid().v4();
+
+        // Generate child embedding FIRST
+        final childEmbedding =
+            await embeddingService.generate(childChunkText.text);
+
+        // Create chunk WITH embedding
         final childChunk = Chunk(
           id: childChunkId,
           sourceEntityId: entity.uuid,
@@ -251,6 +267,7 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
           endToken: childChunkText.endToken,
           config: 'child',
           text: childChunkText.text,
+          embedding: childEmbedding,
         );
         chunks.add(childChunk);
         chunkIds.add(childChunkId);
@@ -258,12 +275,10 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
         // Track chunk size for invocation logging
         chunkSizes.add(tokenizerService.countTokens(childChunkText.text));
 
-        // Generate and insert child embedding
-        final childEmbedding =
-            await embeddingService.generate(childChunkText.text);
+        // Insert into HNSW index
         index.insert(childChunkId, childEmbedding);
 
-        // Persist child chunk to database
+        // Persist chunk WITH embedding to database
         await _persistChunk(childChunk);
       }
     }
@@ -367,6 +382,156 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
     return index.size > 0;
   }
 
+  /// Rebuild HNSW index from persisted chunks.
+  ///
+  /// Called on app startup to restore the in-memory index from database.
+  /// Loads all chunks WITH their persisted embeddings and inserts directly into HNSW.
+  ///
+  /// Note: Embeddings are now persisted with chunks, so NO API calls needed.
+  /// This is fast (~1-2 seconds for 1000 chunks).
+  ///
+  /// For legacy chunks without embeddings, regenerates via API (one-time migration).
+  /// Migration is batched to avoid memory issues with large datasets.
+  ///
+  /// Returns the number of chunks loaded.
+  Future<int> rebuildIndexFromStorage() async {
+    print('🔄 [ChunkingService] Rebuilding HNSW index from storage...');
+
+    try {
+      // Clear existing in-memory index before rebuilding
+      final previousSize = index.size;
+      index.clear();
+      if (previousSize > 0) {
+        print('   🧹 Cleared $previousSize entries from in-memory index');
+      }
+
+      // Clean up any duplicate chunks from failed migrations
+      final duplicatesRemoved = await chunkRepo.removeDuplicates();
+      if (duplicatesRemoved > 0) {
+        print('   🧹 Removed $duplicatesRemoved duplicate chunks');
+      }
+
+      final chunks = await chunkRepo.getAll();
+      print('   📦 Found ${chunks.length} chunks in database');
+
+      if (chunks.isEmpty) {
+        print('   ⚠️ No chunks to load - index will remain empty');
+        return 0;
+      }
+
+      int loaded = 0;
+      int skipped = 0;
+      int regenerated = 0;
+
+      // First pass: count how many need migration (quick check)
+      int legacyCount = 0;
+      for (final chunk in chunks) {
+        if (chunk.embedding == null || chunk.embedding!.isEmpty) {
+          legacyCount++;
+        }
+      }
+
+      if (legacyCount > 0) {
+        print('   ⚠️ Found $legacyCount legacy chunks without embeddings');
+        print('   🔄 Starting one-time migration (this may take a few minutes)...');
+      }
+
+      // Progress logging interval (percentage-based for large datasets)
+      final logInterval = (chunks.length / 10).ceil().clamp(10, 100);
+      const batchSize = 50; // Process in batches to manage memory
+
+      for (var i = 0; i < chunks.length; i++) {
+        final chunk = chunks[i];
+
+        try {
+          List<double> embedding;
+
+          if (chunk.embedding != null && chunk.embedding!.isNotEmpty) {
+            // Use persisted embedding (fast path - no API call)
+            embedding = chunk.embedding!;
+          } else {
+            // Legacy chunk without embedding - regenerate via API (one-time migration)
+            embedding = await embeddingService.generate(chunk.text);
+
+            // Update existing chunk with embedding (avoid creating duplicates)
+            await chunkRepo.updateEmbedding(chunk.id, embedding);
+            regenerated++;
+
+            // Add small delay every 10 regenerations to avoid overwhelming API
+            if (regenerated % 10 == 0) {
+              await Future.delayed(const Duration(milliseconds: 100));
+            }
+          }
+
+          // Insert into HNSW index
+          index.insert(chunk.id, embedding);
+          loaded++;
+
+          // Progress logging at intervals
+          if (loaded % logInterval == 0) {
+            final pct = (loaded * 100 / chunks.length).toStringAsFixed(0);
+            if (regenerated > 0) {
+              print('   📈 Progress: $loaded/${chunks.length} ($pct%) - migrated: $regenerated/$legacyCount');
+            } else {
+              print('   📈 Progress: $loaded/${chunks.length} ($pct%)');
+            }
+          }
+
+          // Batch boundary: yield to event loop and allow GC
+          if (loaded % batchSize == 0) {
+            await Future.delayed(Duration.zero);
+          }
+        } catch (e) {
+          print('   ⚠️ Failed to load chunk ${chunk.id}: $e');
+          skipped++;
+        }
+      }
+
+      print('   ✅ Loaded $loaded chunks into HNSW index');
+      if (regenerated > 0) {
+        print('   🔄 Migrated $regenerated legacy chunks (embeddings now persisted)');
+      }
+      if (skipped > 0) {
+        print('   ⚠️ Skipped $skipped chunks due to errors');
+      }
+      print('   📊 Index size: ${index.size}');
+
+      // Capture chunk stats for AI debugging
+      final chunksByType = <String, int>{};
+      final chunksByEntity = <String, int>{};
+      final uniqueIds = <String>{};
+      int withEmbeddings = 0;
+      int withoutEmbeddings = 0;
+
+      for (final chunk in chunks) {
+        chunksByType[chunk.sourceEntityType] =
+            (chunksByType[chunk.sourceEntityType] ?? 0) + 1;
+        chunksByEntity[chunk.sourceEntityId] =
+            (chunksByEntity[chunk.sourceEntityId] ?? 0) + 1;
+        uniqueIds.add(chunk.id);
+        if (chunk.embedding != null && chunk.embedding!.isNotEmpty) {
+          withEmbeddings++;
+        } else {
+          withoutEmbeddings++;
+        }
+      }
+
+      DebugService.instance.captureChunkStats(
+        totalChunks: chunks.length,
+        uniqueChunkIds: uniqueIds.length,
+        chunksWithEmbeddings: withEmbeddings,
+        chunksWithoutEmbeddings: withoutEmbeddings,
+        chunksByEntityType: chunksByType,
+        chunksBySourceEntity: chunksByEntity,
+      );
+
+      return loaded;
+    } catch (e) {
+      print('   ❌ Failed to rebuild index: $e');
+      return 0;
+    }
+  }
+
   /// Persist a chunk to database via repository.
   Future<void> _persistChunk(Chunk chunk) async {
     try {
@@ -405,6 +570,16 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
     } catch (e) {
       print('⚠️ Failed to load chunk $chunkId: $e');
       return null;
+    }
+  }
+
+  /// Get all chunks from database (for debugging/cleanup).
+  Future<List<Chunk>> getAllChunks() async {
+    try {
+      return await chunkRepo.getAll();
+    } catch (e) {
+      print('⚠️ Failed to load all chunks: $e');
+      return [];
     }
   }
 
@@ -490,4 +665,59 @@ class ChunkingService with Trainable<ChunkingAdaptationData> {
     // 3. Adjust parentTargetTokens/childTargetTokens or categorySpecificSizes
     // 4. Save updated AdaptationState
   }
+
+  // ============ DebugIntrospectable Implementation ============
+
+  @override
+  String get debugName => 'chunking';
+
+  @override
+  Map<String, dynamic> getDebugState() => {
+        'indexSize': index.size,
+        'isConsistent': isIndexConsistent(),
+        'registeredEntities': _chunkRegistry.length,
+      };
+
+  @override
+  Map<String, DebugAction> getDebugActions() => {
+        'rebuild': DebugAction(
+          description: 'Rebuild HNSW index from database storage',
+          mutates: true,
+          handler: (params) async {
+            final stopwatch = Stopwatch()..start();
+            final loaded = await rebuildIndexFromStorage();
+            stopwatch.stop();
+            return {
+              'success': true,
+              'chunksLoaded': loaded,
+              'indexSize': index.size,
+              'rebuildTimeMs': stopwatch.elapsedMilliseconds,
+            };
+          },
+        ),
+        'getStats': DebugAction(
+          description: 'Get detailed chunking statistics',
+          mutates: false,
+          handler: (params) async {
+            final allChunks = await getAllChunks();
+            final byType = <String, int>{};
+            final byConfig = <String, int>{};
+
+            for (final chunk in allChunks) {
+              byType[chunk.sourceEntityType] =
+                  (byType[chunk.sourceEntityType] ?? 0) + 1;
+              byConfig[chunk.config] = (byConfig[chunk.config] ?? 0) + 1;
+            }
+
+            return {
+              'totalChunks': allChunks.length,
+              'indexSize': index.size,
+              'byEntityType': byType,
+              'byConfig': byConfig,
+              'hasEmbeddings':
+                  allChunks.where((c) => c.embedding != null).length,
+            };
+          },
+        ),
+      };
 }

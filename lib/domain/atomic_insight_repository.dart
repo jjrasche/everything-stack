@@ -203,7 +203,7 @@ class AtomicInsightRepository extends EntityRepository<AtomicInsight> {
           insight.archivedAt != null &&
           insight.archivedAt!.isBefore(threshold)) {
         if (scope == null || insight.scope == scope) {
-          await delete(insight.uuid);
+          await deleteByUuid(insight.uuid);
           deleted++;
         }
       }

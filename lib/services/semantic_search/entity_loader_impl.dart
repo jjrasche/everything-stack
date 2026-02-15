@@ -2,34 +2,108 @@ import 'package:get_it/get_it.dart';
 import 'package:everything_stack_template/core/base_entity.dart';
 import 'package:everything_stack_template/core/invocation.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
+import 'package:everything_stack_template/services/debug_service.dart';
 import 'semantic_search_service.dart';
+
+/// Type signature for repository lookup functions.
+/// Takes UUID, returns entity or null.
+typedef EntityLookup = Future<BaseEntity?> Function(String uuid);
 
 /// Concrete implementation of EntityLoader for cross-repository entity lookup.
 ///
-/// Resolves entity UUIDs back to their source entities by trying each
-/// repository in sequence. Used by SemanticSearchService to reconstruct
-/// entities from chunk metadata after HNSW search results.
+/// Any SemanticIndexable entity can be chunked and indexed. When semantic
+/// search returns chunks, this loader resolves sourceEntityId back to the
+/// actual entity by querying the appropriate repository.
+///
+/// ## Usage
+/// ```dart
+/// final loader = EntityLoaderImpl();
+///
+/// // Register repositories for each entity type that participates in semantic indexing
+/// loader.registerEntityType('Invocation', (uuid) async {
+///   final repo = GetIt.instance<InvocationRepository<Invocation>>();
+///   return await repo.findById(uuid);
+/// });
+///
+/// loader.registerEntityType('Task', (uuid) async {
+///   final repo = GetIt.instance<TaskRepository>();
+///   return await repo.findById(uuid);
+/// });
+///
+/// // Now getById can resolve any registered entity type
+/// final entity = await loader.getById(uuid, entityType: 'Invocation');
+/// ```
+///
+/// ## Bootstrap Registration
+/// Call registerEntityType() for each SemanticIndexable entity type
+/// during app bootstrap, before semantic search is used.
 class EntityLoaderImpl extends EntityLoader {
-  @override
-  Future<BaseEntity?> getById(String uuid) async {
-    // Try Invocation repository first
-    try {
-      final repo = GetIt.instance<InvocationRepository<Invocation>>();
-      // InvocationRepository is EntityRepository<Invocation> via factory function
-      // EntityRepository has findByUuid method
-      if (repo is InvocationRepository<Invocation>) {
-        // Cast to EntityRepository to access findByUuid
-        final entityRepo = repo as dynamic;
-        final invocation = await entityRepo.findByUuid(uuid);
-        if (invocation != null) return invocation;
+  /// Registry mapping entity type names to lookup functions.
+  final Map<String, EntityLookup> _registry = {};
+
+  /// Register a repository lookup for an entity type.
+  ///
+  /// Call this during bootstrap for each entity type that can be indexed.
+  void registerEntityType(String entityType, EntityLookup lookup) {
+    _registry[entityType] = lookup;
+  }
+
+  /// Register default entity types (Invocation).
+  ///
+  /// Call this during bootstrap to set up standard lookups.
+  /// Additional entity types can be registered separately.
+  void registerDefaults() {
+    print('🔍 [EntityLoader] registerDefaults() called');
+    registerEntityType('Invocation', (uuid) async {
+      try {
+        final repo = GetIt.instance<InvocationRepository<Invocation>>();
+        final result = await repo.findById(uuid);
+        return result;
+      } catch (e) {
+        DebugService.instance.captureError('EntityLoader.Invocation', e);
+        return null;
       }
-    } catch (e) {
-      // Repository not available, continue to next
+    });
+    print('🔍 [EntityLoader] Registered types: ${registeredTypes}');
+    DebugService.instance.captureEntityLoaderState(registeredTypes);
+
+    // Add more default types as they become SemanticIndexable:
+    // registerEntityType('Task', ...);
+    // registerEntityType('Note', ...);
+    // registerEntityType('Document', ...);
+  }
+
+  @override
+  Future<BaseEntity?> getById(String uuid, {String? entityType}) async {
+    // If entityType is specified, query that repository directly
+    if (entityType != null) {
+      final lookup = _registry[entityType];
+      if (lookup != null) {
+        final entity = await lookup(uuid);
+        if (entity != null) return entity;
+      }
+      // entityType specified but not found - capture for debugging
+      DebugService.instance.captureError(
+        'EntityLoader.getById',
+        'entityType "$entityType" not in registry. Keys: ${_registry.keys.toList()}',
+      );
+      return null;
     }
 
-    // Add other repositories as needed (Task, Note, etc.)
-    // For now, only Invocation is required for this feature
+    // No entityType specified - try all registered repositories
+    for (final entry in _registry.entries) {
+      try {
+        final entity = await entry.value(uuid);
+        if (entity != null) return entity;
+      } catch (e) {
+        // Repository lookup failed, continue to next
+      }
+    }
 
     return null;
   }
+
+  /// Get list of registered entity types.
+  /// Useful for debugging and validation.
+  List<String> get registeredTypes => _registry.keys.toList();
 }

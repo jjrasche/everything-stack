@@ -42,7 +42,35 @@ jobs:
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: echo "# CI/CD unit tests - no secrets needed" > .env
-      - run: flutter test test/
+
+      - name: Run Unit Tests with JUnit Reporter
+        run: flutter test test/ --file-reporter json:test-results/unit-tests.json || true
+
+      - name: Convert to JUnit XML
+        if: always()
+        run: |
+          mkdir -p test-results
+          # Install junitreport for conversion
+          dart pub global activate junitreport
+          # Convert Flutter JSON to JUnit XML
+          cat test-results/unit-tests.json | dart pub global run junitreport:tojunit > test-results/unit-tests.xml || true
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results-${{ github.run_number }}
+          path: test-results/
+          retention-days: 90
+
+      - name: Publish Test Report
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Unit Tests Report
+          path: test-results/unit-tests.xml
+          reporter: java-junit
+          fail-on-error: false
 
   # ============ Android Emulator Integration Tests ============
   test-android-emulator:
@@ -66,10 +94,27 @@ jobs:
             flutter pub get
             dart run build_runner build --delete-conflicting-outputs
             echo "# CI/CD test - secrets via dart-define" > .env
+            mkdir -p test-results
 
             # Run ALL integration tests using consolidated entry point (solves Flutter bug #135673)
             # flutter test -d <device> doesn't work when both test/ and integration_test/ exist
-            flutter drive --driver=test_driver/integration_test.dart --target=integration_test/all_tests.dart -d emulator-5554 --dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }} --dart-define=DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }} --dart-define=JINA_API_KEY=${{ secrets.JINA_API_KEY }} --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+            # Capture output to file for historical tracking
+            flutter drive --driver=test_driver/integration_test.dart --target=integration_test/all_tests.dart -d emulator-5554 --dart-define=GROQ_API_KEY=${{ secrets.GROQ_API_KEY }} --dart-define=DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }} --dart-define=JINA_API_KEY=${{ secrets.JINA_API_KEY }} --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }} 2>&1 | tee test-results/integration-tests.log
+
+            # Extract pass/fail summary for quick reference
+            echo "=== Test Summary ===" >> test-results/integration-summary.txt
+            echo "Run: ${{ github.run_number }}" >> test-results/integration-summary.txt
+            echo "Commit: ${{ github.sha }}" >> test-results/integration-summary.txt
+            echo "Date: $(date -Iseconds)" >> test-results/integration-summary.txt
+            grep -E "passed|failed|Some tests" test-results/integration-tests.log >> test-results/integration-summary.txt || true
+
+      - name: Upload Integration Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-results-${{ github.run_number }}
+          path: test-results/
+          retention-days: 90
 
   # ============ Build Web ============
   build-web:

@@ -311,6 +311,15 @@ class HnswIndex {
   /// Get the vector for a given ID
   List<double>? getVector(String id) => _nodes[id]?.vector;
 
+  /// Clear all vectors from the index
+  ///
+  /// Resets the index to empty state. Use before rebuilding from storage.
+  void clear() {
+    _nodes.clear();
+    _entryPointId = null;
+    _maxLevel = -1;
+  }
+
   /// Search a single layer using greedy algorithm
   ///
   /// Based on SEARCH-LAYER from HNSW paper.

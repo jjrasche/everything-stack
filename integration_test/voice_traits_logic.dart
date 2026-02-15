@@ -275,7 +275,7 @@ final voiceTraitsTest = IntegrationTestConfig(
 
     expect(
       formattedPrompt,
-      contains('Example of good response'),
+      contains('Examples of good responses'),
       reason: 'Prompt should include positive example section',
     );
 
@@ -351,31 +351,46 @@ final voiceTraitsTest = IntegrationTestConfig(
 
     // Get the last LLM invocation (for timer_query)
     final lastLlmInv = llmInvocations.last;
-    final prompt = lastLlmInv.input?['prompt'] as String?;
 
-    print('   Last LLM prompt length: ${prompt?.length ?? 0} chars');
+    // Voice traits are injected into the system message, not the user prompt
+    // Check the messages array for the system message
+    final messages = lastLlmInv.input?['messages'] as List<dynamic>?;
+    String? systemContent;
+    if (messages != null) {
+      final systemMessage = messages.firstWhere(
+        (m) => (m as Map<String, dynamic>)['role'] == 'system',
+        orElse: () => <String, dynamic>{},
+      );
+      systemContent = (systemMessage as Map<String, dynamic>)['content'] as String?;
+    }
 
-    // Verify the prompt contains voice traits examples
-    if (prompt != null) {
-      final hasPositiveExample = prompt.contains('Example of good response') ||
-          prompt.contains('10-minute timer');
-      final hasNegativeExample = prompt.contains('What to avoid') ||
-          prompt.contains('Weather.');
+    print('   Last LLM system message length: ${systemContent?.length ?? 0} chars');
 
-      print('   Has positive example in prompt: $hasPositiveExample');
-      print('   Has negative example in prompt: $hasNegativeExample');
+    // Verify the system message contains voice traits examples
+    if (systemContent != null && systemContent.isNotEmpty) {
+      final hasPositiveExample = systemContent.contains('Examples of good response') ||
+          systemContent.contains('10-minute timer');
+      final hasNegativeExample = systemContent.contains('What to avoid') ||
+          systemContent.contains('Weather.');
+
+      print('   Has positive example in system message: $hasPositiveExample');
+      print('   Has negative example in system message: $hasNegativeExample');
 
       expect(
         hasPositiveExample,
         isTrue,
-        reason: 'LLM prompt should include voice traits positive example',
+        reason: 'LLM system message should include voice traits positive example',
       );
 
       expect(
         hasNegativeExample,
         isTrue,
-        reason: 'LLM prompt should include voice traits negative example',
+        reason: 'LLM system message should include voice traits negative example',
       );
+    } else {
+      print('   ⚠️ System message not found or empty - VoiceTraits may not be configured');
+      // VoiceTraits integration is optional; if no system message, skip this verification
+      // This can happen if VoiceTraits dependencies (SemanticSearchService) aren't registered
     }
 
     print('\n=== VoiceTraits Test PASSED ===');

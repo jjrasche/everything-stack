@@ -11,13 +11,15 @@
 /// - Return search results with precise context
 ///
 /// ## Storage
-/// Not persisted to database. Chunks are:
+/// Persisted to database with embedding vector for fast index rebuild.
+/// Chunks are:
 /// - Generated when entity is saved (ChunkingService)
+/// - Stored with their embedding vectors
 /// - Deleted when entity is updated
-/// - Loaded on search via HNSW lookup
+/// - Loaded on startup to rebuild HNSW index (no API calls needed)
 ///
 /// ## Key Design
-/// - No full text storage (reconstruct from entity + tokens)
+/// - Full text + embedding stored for fast rebuild
 /// - sourceEntityType stored (avoids registry lookup)
 /// - UUID id doubles as HNSW index key
 /// - Token range enables context reconstruction
@@ -30,12 +32,10 @@
 ///   sourceEntityType: 'Note',
 ///   startToken: 10,
 ///   endToken: 110,
-///   config: 'parent',  // or 'child'
+///   config: 'parent',
+///   text: 'chunk text here',
+///   embedding: [0.1, 0.2, ...], // 384-dimensional vector
 /// );
-///
-/// // On search:
-/// final entity = await loader.get(chunk.sourceEntityId);
-/// final context = entity.textFromTokens(chunk.startToken, chunk.endToken);
 /// ```
 
 class Chunk {
@@ -68,6 +68,10 @@ class Chunk {
   /// Full chunk text (needed for reconstruction after HNSW search)
   final String text;
 
+  /// Embedding vector for this chunk (384 dimensions for Jina).
+  /// Persisted to avoid regenerating on app restart.
+  final List<double>? embedding;
+
   Chunk({
     required this.id,
     required this.sourceEntityId,
@@ -76,6 +80,7 @@ class Chunk {
     required this.endToken,
     required this.config,
     required this.text,
+    this.embedding,
   }) {
     // Validate token range
     if (startToken < 0) {
@@ -111,6 +116,7 @@ class Chunk {
           endToken == other.endToken &&
           config == other.config &&
           text == other.text;
+  // Note: embedding excluded from equality (too expensive to compare)
 
   @override
   int get hashCode =>
@@ -121,4 +127,16 @@ class Chunk {
       endToken.hashCode ^
       config.hashCode ^
       text.hashCode;
+
+  /// Create a copy with embedding added
+  Chunk copyWithEmbedding(List<double> embedding) => Chunk(
+        id: id,
+        sourceEntityId: sourceEntityId,
+        sourceEntityType: sourceEntityType,
+        startToken: startToken,
+        endToken: endToken,
+        config: config,
+        text: text,
+        embedding: embedding,
+      );
 }

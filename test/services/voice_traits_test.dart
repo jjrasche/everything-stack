@@ -61,7 +61,7 @@ class _FakeEmbeddingService extends EmbeddingService {
 
 class MockEntityLoader implements EntityLoader {
   @override
-  Future<BaseEntity?> getById(String uuid) async => null;
+  Future<BaseEntity?> getById(String uuid, {String? entityType}) async => null;
 }
 
 class MockInvocationRepository implements InvocationRepository<Invocation> {

@@ -473,37 +473,45 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
         centerTitle: true,
         actions: [
           // Continuous mode toggle
-          IconButton(
-            onPressed: () {
-              setState(() {
-                _continuousMode = !_continuousMode;
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(_continuousMode
-                      ? 'Continuous mode ON - will auto-listen after responses'
-                      : 'Continuous mode OFF - tap mic to speak'),
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-            },
-            icon: Icon(_continuousMode ? Icons.loop : Icons.loop_outlined),
-            tooltip: _continuousMode
-                ? 'Continuous mode ON'
-                : 'Continuous mode OFF',
+          Semantics(
+            label: 'app_bar.continuous_mode',
+            toggled: _continuousMode,
+            child: IconButton(
+              onPressed: () {
+                setState(() {
+                  _continuousMode = !_continuousMode;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(_continuousMode
+                        ? 'Continuous mode ON - will auto-listen after responses'
+                        : 'Continuous mode OFF - tap mic to speak'),
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              },
+              icon: Icon(_continuousMode ? Icons.loop : Icons.loop_outlined),
+              tooltip: _continuousMode
+                  ? 'Continuous mode ON'
+                  : 'Continuous mode OFF',
+            ),
           ),
           // Clear button
           if (_messages.isNotEmpty)
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  _messages.clear();
-                  _currentContextBundle = null;
-                  _contextFeedbackGiven = false;
-                });
-              },
-              icon: const Icon(Icons.refresh),
-              tooltip: 'Clear conversation',
+            Semantics(
+              label: 'app_bar.clear_conversation',
+              button: true,
+              child: IconButton(
+                onPressed: () {
+                  setState(() {
+                    _messages.clear();
+                    _currentContextBundle = null;
+                    _contextFeedbackGiven = false;
+                  });
+                },
+                icon: const Icon(Icons.refresh),
+                tooltip: 'Clear conversation',
+              ),
             ),
         ],
       ),

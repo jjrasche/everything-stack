@@ -34,6 +34,7 @@ import '../extraction/extraction_evaluator.dart';
 import '../extraction/extraction_improvement_loop.dart';
 import '../prompt/prompt_registry.dart';
 import '../../domain/atomic_insight_repository.dart';
+import 'ui_automation_service.dart';
 
 Future<void> initializeDebugInfrastructure() async {
   print('🔧 [Debug] Initializing debug infrastructure...');
@@ -926,5 +927,74 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     } catch (e) {
       return {'error': e.toString()};
     }
+  });
+
+  // ── UI Automation Endpoints ──
+
+  final uiAuto = UiAutomationService.instance;
+
+  // Tap a widget by semantics label
+  server.registerAction('ui/tap', (params) async {
+    final target = params['target'];
+    if (target == null || target.isEmpty) {
+      return {'error': 'Missing target parameter', 'hint': 'Use ?target=chat_panel.mic_button'};
+    }
+    return await uiAuto.tap(target);
+  });
+
+  // Long-press a widget by semantics label
+  server.registerAction('ui/long_press', (params) async {
+    final target = params['target'];
+    if (target == null || target.isEmpty) {
+      return {'error': 'Missing target parameter'};
+    }
+    return await uiAuto.longPress(target);
+  });
+
+  // Type text into a text field by semantics label
+  server.registerAction('ui/type', (params) async {
+    final target = params['target'];
+    final text = params['text'];
+    if (target == null || target.isEmpty) {
+      return {'error': 'Missing target parameter'};
+    }
+    if (text == null) {
+      return {'error': 'Missing text parameter'};
+    }
+    final submit = params['submit']?.toLowerCase() == 'true';
+    return await uiAuto.type(target, text, submit: submit);
+  });
+
+  // Slide a slider to a value
+  server.registerAction('ui/slide', (params) async {
+    final target = params['target'];
+    final valueStr = params['value'];
+    if (target == null || target.isEmpty) {
+      return {'error': 'Missing target parameter'};
+    }
+    if (valueStr == null) {
+      return {'error': 'Missing value parameter (0.0-1.0)'};
+    }
+    final value = double.tryParse(valueStr);
+    if (value == null) {
+      return {'error': 'Invalid value: $valueStr (expected 0.0-1.0)'};
+    }
+    return await uiAuto.slide(target, value);
+  });
+
+  // Get full semantics tree
+  server.registerAction('ui/tree', (params) async {
+    return uiAuto.getTree();
+  });
+
+  // Find widgets by label prefix
+  server.registerAction('ui/find', (params) async {
+    final label = params['label'] ?? '';
+    final results = uiAuto.find(label);
+    return {
+      'query': label,
+      'count': results.length,
+      'widgets': results,
+    };
   });
 }

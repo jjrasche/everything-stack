@@ -35,12 +35,13 @@ class AtomicInsightObjectBoxAdapter
   /// Find insights by scope (session, day, week, project, life)
   Future<List<AtomicInsight>> findByScope(String scope,
       {bool includeArchived = false}) async {
-    final queryBuilder = box.query(AtomicInsightOB_.scope.equals(scope));
+    Condition<AtomicInsightOB> condition = AtomicInsightOB_.scope.equals(scope);
     if (!includeArchived) {
-      queryBuilder.and(AtomicInsightOB_.isArchived.equals(false));
+      condition = condition.and(AtomicInsightOB_.isArchived.equals(false));
     }
-    final query = queryBuilder.order(AtomicInsightOB_.updatedAt,
-        flags: Order.descending).build();
+    final query = box.query(condition)
+        .order(AtomicInsightOB_.updatedAt, flags: Order.descending)
+        .build();
     try {
       final obList = query.find();
       return obList.map((ob) => fromOB(ob)).toList();
@@ -52,12 +53,13 @@ class AtomicInsightObjectBoxAdapter
   /// Find insights by project ID
   Future<List<AtomicInsight>> findByProject(String projectId,
       {bool includeArchived = false}) async {
-    final queryBuilder = box.query(AtomicInsightOB_.projectId.equals(projectId));
+    Condition<AtomicInsightOB> condition = AtomicInsightOB_.projectId.equals(projectId);
     if (!includeArchived) {
-      queryBuilder.and(AtomicInsightOB_.isArchived.equals(false));
+      condition = condition.and(AtomicInsightOB_.isArchived.equals(false));
     }
-    final query = queryBuilder.order(AtomicInsightOB_.updatedAt,
-        flags: Order.descending).build();
+    final query = box.query(condition)
+        .order(AtomicInsightOB_.updatedAt, flags: Order.descending)
+        .build();
     try {
       final obList = query.find();
       return obList.map((ob) => fromOB(ob)).toList();
@@ -69,15 +71,16 @@ class AtomicInsightObjectBoxAdapter
   /// Find insights by type (learning, project, exploration)
   Future<List<AtomicInsight>> findByType(String type,
       {String? scope, bool includeArchived = false}) async {
-    final queryBuilder = box.query(AtomicInsightOB_.type.equals(type));
+    Condition<AtomicInsightOB> condition = AtomicInsightOB_.type.equals(type);
     if (scope != null) {
-      queryBuilder.and(AtomicInsightOB_.scope.equals(scope));
+      condition = condition.and(AtomicInsightOB_.scope.equals(scope));
     }
     if (!includeArchived) {
-      queryBuilder.and(AtomicInsightOB_.isArchived.equals(false));
+      condition = condition.and(AtomicInsightOB_.isArchived.equals(false));
     }
-    final query = queryBuilder.order(AtomicInsightOB_.updatedAt,
-        flags: Order.descending).build();
+    final query = box.query(condition)
+        .order(AtomicInsightOB_.updatedAt, flags: Order.descending)
+        .build();
     try {
       final obList = query.find();
       return obList.map((ob) => fromOB(ob)).toList();
@@ -89,11 +92,11 @@ class AtomicInsightObjectBoxAdapter
   /// Find insights with embeddings (for semantic search)
   Future<List<AtomicInsight>> findWithEmbeddings(
       {bool includeArchived = false}) async {
-    final queryBuilder = box.query(AtomicInsightOB_.embedding.notNull());
+    Condition<AtomicInsightOB> condition = AtomicInsightOB_.embedding.notNull();
     if (!includeArchived) {
-      queryBuilder.and(AtomicInsightOB_.isArchived.equals(false));
+      condition = condition.and(AtomicInsightOB_.isArchived.equals(false));
     }
-    final query = queryBuilder.build();
+    final query = box.query(condition).build();
     try {
       final obList = query.find();
       return obList.map((ob) => fromOB(ob)).toList();

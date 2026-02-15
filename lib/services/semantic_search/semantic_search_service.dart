@@ -2,6 +2,7 @@ import 'chunk.dart';
 import 'search_result.dart';
 import '../embedding_service.dart';
 import '../hnsw_index.dart';
+import '../debug_service.dart';
 import '../../core/base_entity.dart';
 
 /// # SemanticSearchService
@@ -147,7 +148,10 @@ class SemanticSearchService {
     final entityMap = <String, BaseEntity?>{};
     for (final chunk in chunks) {
       if (!entityMap.containsKey(chunk.sourceEntityId)) {
-        final entity = await entityLoader.getById(chunk.sourceEntityId);
+        final entity = await entityLoader.getById(
+          chunk.sourceEntityId,
+          entityType: chunk.sourceEntityType,
+        );
         entityMap[chunk.sourceEntityId] = entity;
       }
     }
@@ -178,7 +182,28 @@ class SemanticSearchService {
 
     // Sort by similarity (highest first) and limit
     results.sort((a, b) => b.similarity.compareTo(a.similarity));
-    return results.take(limit).toList();
+    final finalResults = results.take(limit).toList();
+
+    // Capture for AI debugging
+    final searchDuration = DateTime.now().difference(DateTime.now()); // TODO: track actual duration
+    DebugService.instance.captureSearchResult(
+      query: query,
+      results: finalResults.map((r) => {
+        'chunkId': r.chunk.id,
+        'sourceEntityId': r.chunk.sourceEntityId,
+        'sourceEntityType': r.chunk.sourceEntityType,
+        'similarity': r.similarity,
+        'entityLoaded': r.sourceEntity != null,
+        'entityUuid': r.sourceEntity?.uuid,
+        'chunkText': r.chunk.text.length > 100
+            ? '${r.chunk.text.substring(0, 100)}...'
+            : r.chunk.text,
+      }).toList(),
+      totalChunksInIndex: index.size,
+      searchDuration: searchDuration,
+    );
+
+    return finalResults;
   }
 
   /// Reconstruct chunks from HNSW search results.
@@ -202,9 +227,22 @@ class SemanticSearchService {
   }
 }
 
-/// Abstract entity loader for cross-repository lookups
+/// Abstract entity loader for cross-repository lookups.
+///
+/// Any SemanticIndexable entity can be chunked and indexed.
+/// When semantic search returns chunks, this loader resolves
+/// the sourceEntityId back to the actual entity.
+///
+/// Implementations should register repositories for each entity type
+/// that participates in semantic indexing.
 abstract class EntityLoader {
-  /// Load entity by UUID, regardless of type
-  /// Returns null if not found
-  Future<BaseEntity?> getById(String uuid) async => null;
+  /// Load entity by UUID, optionally filtering by type.
+  ///
+  /// Parameters:
+  /// - [uuid]: The entity's unique identifier
+  /// - [entityType]: Optional type hint to query the correct repository first.
+  ///   If null, searches all registered repositories.
+  ///
+  /// Returns null if not found in any repository.
+  Future<BaseEntity?> getById(String uuid, {String? entityType});
 }

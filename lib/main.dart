@@ -7,6 +7,7 @@ import 'core/event.dart';
 import 'core/entity_repository.dart';
 import 'core/invocation.dart';
 import 'services/coordinator.dart';
+import 'services/debug/screenshot_service.dart';
 import 'ui/screens/voice_assistant_screen.dart';
 
 enum InputModality { text, voice }
@@ -86,28 +87,31 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Everything Stack Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: FutureBuilder<void>(
-        future: _initializationFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
-          if (snapshot.hasError) {
-            return Scaffold(
-              body: Center(
-                  child: Text('Initialization error: ${snapshot.error}')),
-            );
-          }
-          return const VoiceAssistantScreen();
-        },
+    // Wrap with ScreenshotWrapper to enable AI-driven screenshot capture
+    return ScreenshotWrapper(
+      child: MaterialApp(
+        title: 'Everything Stack Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home: FutureBuilder<void>(
+          future: _initializationFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
+            if (snapshot.hasError) {
+              return Scaffold(
+                body: Center(
+                    child: Text('Initialization error: ${snapshot.error}')),
+              );
+            }
+            return const VoiceAssistantScreen();
+          },
+        ),
       ),
     );
   }

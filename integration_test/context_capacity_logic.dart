@@ -146,7 +146,8 @@ final contextCapacityTest = IntegrationTestConfig(
 
     for (int i = 1; i <= 10; i++) {
       final key = 'turn$i';
-      print('   Turn $i: ${_utterances[key]!.substring(0, 50)}...');
+      final utterance = _utterances[key]!;
+      print('   Turn $i: ${utterance.length > 40 ? utterance.substring(0, 40) + '...' : utterance}');
       await t.stt(key);
       await Future.delayed(const Duration(milliseconds: 500));
     }
@@ -323,9 +324,9 @@ final contextCapacityTest = IntegrationTestConfig(
 
     // Verify output contains token counts
     expect(
-      lastContextCapacityInv.output?['totalTokens'],
+      lastContextCapacityInv.output?['finalTokens'],
       isNotNull,
-      reason: 'Invocation output should log total token count',
+      reason: 'Invocation output should log final token count',
     );
 
     expect(
@@ -344,12 +345,13 @@ final contextCapacityTest = IntegrationTestConfig(
     print('\n[Test 6] Verify token counts are accurate...');
 
     // Manually count tokens in truncated messages
+    // ContextCapacity adds overhead per message for role markers, delimiters, etc.
     final manualTokenCount = truncationResult.messages.fold<int>(
       0,
-      (sum, msg) => sum + tokenizerService.countTokens(msg['content'] as String),
+      (sum, msg) => sum + tokenizerService.countTokens(msg['content'] as String) + ContextCapacity.tokensPerMessageOverhead,
     );
 
-    print('   Manual token count: $manualTokenCount');
+    print('   Manual token count: $manualTokenCount (including ${ContextCapacity.tokensPerMessageOverhead} tokens/msg overhead)');
     print('   Reported token count: ${truncationResult.totalTokens}');
 
     // Allow small variance (±5%) due to tokenizer edge cases
