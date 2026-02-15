@@ -47,16 +47,6 @@ class STTService with Trainable<STTAdaptationData> {
   ///
   /// IMPORTANT: Audio is buffered and persisted for training/debugging purposes.
   ///
-  /// Flow:
-  /// 1. Select implementer (specified or default)
-  /// 2. Load adaptation state
-  /// 3. Buffer audio chunks while streaming to implementer
-  /// 4. Implementer connects to API and streams chunks in real-time
-  /// 5. When EndOfTurn detected → persist buffered audio
-  /// 6. Log invocation with saved audioId
-  /// 7. Publish transcription_complete event
-  /// 8. Return final transcription
-  ///
   /// NOTE: Only DeepgramFluxImplementer currently supports live streaming.
   /// Other implementers will throw UnsupportedError.
   Future<String> startLiveRecognition({
@@ -65,19 +55,14 @@ class STTService with Trainable<STTAdaptationData> {
     String? implementerName,
     String? userId,
   }) async {
-    // 1. Get implementer (specified or default)
     final implementer = _implementers[implementerName ?? _defaultImplementer]!;
-
-    // 2. Read adaptation state for this implementer + user
     final state =
         await _getAdaptationState(implementer.implementerName, userId);
 
-    // 3. Set up audio buffering: stream to implementer AND accumulate for persistence
     final audioBuffer = <int>[];
     final startTime = DateTime.now();
     final StreamController<Uint8List> bufferedController = StreamController();
 
-    // Listen to original stream, forward to implementer AND buffer for saving
     audioStream.listen(
       (chunk) {
         bufferedController.add(chunk); // Forward to implementer
@@ -88,7 +73,6 @@ class STTService with Trainable<STTAdaptationData> {
       cancelOnError: true,
     );
 
-    // 4. Call implementer with buffered stream
     final output = await implementer.startLiveRecognition(
       audioStream: bufferedController.stream,
       eventId: eventId,
@@ -99,7 +83,6 @@ class STTService with Trainable<STTAdaptationData> {
       enableEagerProcessing: state.enableEagerProcessing,
     );
 
-    // 5. Persist buffered audio to AudioStorage (for training/debugging)
     final audioBytes = Uint8List.fromList(audioBuffer);
     final duration = DateTime.now().difference(startTime).inSeconds.toDouble();
 
@@ -111,7 +94,6 @@ class STTService with Trainable<STTAdaptationData> {
     );
     debugPrint('   💾 Saved audio: $audioId (${audioBytes.length} bytes, ${duration}s)');
 
-    // 6. Log invocation with saved audioId
     await recordInvocation(
       eventId,
       Invocation(
@@ -128,7 +110,6 @@ class STTService with Trainable<STTAdaptationData> {
       ),
     );
 
-    // 7. Publish transcription_complete event (STTService owns this domain event)
     final eventBus = GetIt.instance<EventBus>();
     await eventBus.publish(Event(
       eventType: 'transcription_complete',
@@ -138,18 +119,10 @@ class STTService with Trainable<STTAdaptationData> {
     ));
     debugPrint('   📡 Published transcription_complete event');
 
-    // 8. Return transcription
     return output.transcription;
   }
 
   /// Recognize audio using adaptation-aware parameters (batch mode).
-  ///
-  /// Flow:
-  /// 1. Select implementer (specified or default)
-  /// 2. Load adaptation state (confidence threshold, feedback count)
-  /// 3. Call implementer with saved audio
-  /// 4. Log invocation for training feedback
-  /// 5. Return transcription
   Future<String> recognize({
     required String eventId,
     required String audioId,
@@ -157,14 +130,11 @@ class STTService with Trainable<STTAdaptationData> {
     String? implementerName,
     String? userId,
   }) async {
-    // 1. Get implementer (specified or default)
     final implementer = _implementers[implementerName ?? _defaultImplementer]!;
 
-    // 2. Read adaptation state for this implementer + user
     final state =
         await _getAdaptationState(implementer.implementerName, userId);
 
-    // 3. Call implementer with audio and adaptation parameters
     final output = await implementer.recognize(
       audioId: audioId,
       durationSeconds: durationSeconds,
@@ -176,7 +146,6 @@ class STTService with Trainable<STTAdaptationData> {
       enableEagerProcessing: state.enableEagerProcessing,
     );
 
-    // 4. Log invocation for training feedback
     await recordInvocation(
       eventId,
       Invocation(
@@ -193,7 +162,6 @@ class STTService with Trainable<STTAdaptationData> {
       ),
     );
 
-    // 5. Publish transcription_complete event (STTService owns this domain event)
     final eventBus = GetIt.instance<EventBus>();
     await eventBus.publish(Event(
       eventType: 'transcription_complete',
@@ -203,7 +171,6 @@ class STTService with Trainable<STTAdaptationData> {
     ));
     debugPrint('   📡 Published transcription_complete event');
 
-    // 6. Return transcription
     return output.transcription;
   }
 

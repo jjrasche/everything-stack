@@ -24,7 +24,6 @@ class SemanticChunker extends ChunkingStrategy {
   Future<List<Chunk>> chunk(String text) async {
     if (text.trim().isEmpty) return [];
 
-    // Step 1: Segment text (sentences or sliding windows)
     final segments = _segmentText(text);
     if (segments.isEmpty) return [];
     if (segments.length == 1) {
@@ -66,16 +65,12 @@ class SemanticChunker extends ChunkingStrategy {
       ];
     }
 
-    // Step 2: Generate embeddings for all segments
     final embeddings = await _embeddingService.generateBatch(segments);
 
-    // Step 3: Calculate similarity between adjacent segments
     final similarities = _calculateSimilarities(embeddings);
 
-    // Step 4: Detect topic boundaries based on similarity drops
     final boundaries = _detectBoundaries(similarities);
 
-    // Step 5: Group segments into chunks
     return _groupSegments(segments, boundaries);
   }
 

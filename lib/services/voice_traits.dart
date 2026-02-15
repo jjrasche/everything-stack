@@ -122,14 +122,12 @@ class VoiceTraits with Trainable<VoiceTraitsAdaptationData> {
     Invocation invocation,
     domain_feedback.Feedback feedback,
   ) async {
-    // 1. Get current adaptation state
     final adaptationStateRepo = GetIt.instance<AdaptationStateRepository>();
     final state = await getAdaptationState();
     final params = state.dataJson.isNotEmpty
         ? deserializeData(state.dataJson)
         : createDefaultData();
 
-    // 2. Adjust based on feedback
     var newParams = params;
     final feedbackText = feedback.correctedData?.toLowerCase() ?? '';
 
@@ -159,7 +157,6 @@ class VoiceTraits with Trainable<VoiceTraitsAdaptationData> {
       }
     }
 
-    // 3. Save updated state if changed
     if (newParams != params) {
       state.dataJson = newParams.toJson();
       state.version++;
@@ -189,7 +186,6 @@ class VoiceTraits with Trainable<VoiceTraitsAdaptationData> {
     print('   Query: "${query.length > 50 ? '${query.substring(0, 50)}...' : query}"');
 
     try {
-      // 1. Get learned parameters
       final state = await getAdaptationState(userId: userId);
       final params = state.dataJson.isNotEmpty
           ? deserializeData(state.dataJson)
@@ -197,7 +193,6 @@ class VoiceTraits with Trainable<VoiceTraitsAdaptationData> {
 
       print('   Params: max+=${params.maxPositiveExamples}, max-=${params.maxNegativeExamples}, sim>=${params.minSimilarity}');
 
-      // 2. Search for similar chunks (search more than we need for filtering)
       final searchLimit = (params.maxPositiveExamples + params.maxNegativeExamples) * 5;
       final searchResults = await searchService.search(
         query,
@@ -213,7 +208,6 @@ class VoiceTraits with Trainable<VoiceTraitsAdaptationData> {
         return ContrastiveExamples.empty();
       }
 
-      // 3. Get invocation UUIDs and look up feedback
       final invocationIds = searchResults
           .where((r) => r.sourceEntity != null)
           .map((r) => r.sourceEntity!.uuid)
@@ -233,7 +227,6 @@ class VoiceTraits with Trainable<VoiceTraitsAdaptationData> {
         }
       }
 
-      // 4. Build map of invocation -> feedback
       final feedbackMap = <String, domain_feedback.Feedback>{};
       for (final f in feedbackList) {
         // Only consider LLM feedback, prefer most recent
@@ -245,7 +238,6 @@ class VoiceTraits with Trainable<VoiceTraitsAdaptationData> {
         }
       }
 
-      // 5. Build examples with feedback and decay scoring
       final now = DateTime.now();
       final allPositive = <FeedbackExample>[];
       final allNegative = <FeedbackExample>[];
@@ -287,7 +279,6 @@ class VoiceTraits with Trainable<VoiceTraitsAdaptationData> {
         }
       }
 
-      // 6. Sort by score and take top-k
       allPositive.sort((a, b) => b.score.compareTo(a.score));
       allNegative.sort((a, b) => b.score.compareTo(a.score));
 
@@ -301,7 +292,6 @@ class VoiceTraits with Trainable<VoiceTraitsAdaptationData> {
         negative: negativeExamples,
       );
 
-      // 7. Record invocation for training
       await _recordInvocation(eventId, query, searchResults.length, examples);
 
       return examples;

@@ -36,17 +36,14 @@ class EventBusImpl implements EventBus {
 
   @override
   Future<void> publish(Event event) async {
-    // Step 1: Persist immediately
     await repository.save(event);
 
-    // Step 2: Update ring buffer and correlation ID counts
     _eventLog[_eventLogIndex] = event;
     _eventLogIndex = (_eventLogIndex + 1) % _maxEventLogSize;
 
     final count = _correlationIdCounts[event.correlationId] ?? 0;
     _correlationIdCounts[event.correlationId] = count + 1;
 
-    // Step 3: Notify listeners
     try {
       _eventStream.add(event);
       debugPrint('📤 EventBus: Published ${event.eventType}');

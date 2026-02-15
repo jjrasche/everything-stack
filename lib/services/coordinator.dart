@@ -13,6 +13,7 @@ import 'trainables/model_selector.dart';
 import 'voice_traits.dart';
 import 'context_capacity.dart';
 import 'types/llm_types.dart';
+import 'types/model_selector_types.dart';
 
 /// Result of coordinator orchestration
 class CoordinatorResult {
@@ -204,7 +205,6 @@ class Coordinator {
     final startTime = DateTime.now();
 
     try {
-      // 1. Get context
       print('\n[1/7] Selecting context via ContextSelector...');
       final context = await contextSelector.selectContext(
         eventId: eventId,
@@ -213,7 +213,6 @@ class Coordinator {
       );
       print('✅ Context selected: ${context.summary}');
 
-      // 2. Build messages
       print('\n[2/7] Building message array from context...');
       final messages = llmService.buildMessagesFromContext(
         contextBundle: context,
@@ -223,15 +222,7 @@ class Coordinator {
 
       print('\n[3/7] Getting available tools...');
       // TODO: Integrate ToolSelector once semantic indexing is implemented
-      // Currently ToolSelector is a stub that returns all tools anyway
-      final tools = toolExecutor.toolRegistry
-          .getAllTools()
-          .map((t) => LLMTool(
-                name: t.name,
-                description: t.description,
-                parametersSchema: t.parameters,
-              ))
-          .toList();
+      final tools = _collectAvailableTools();
       print('✅ Available tools: ${tools.length} tools');
 
       print('\n[4/7] Selecting model via ModelSelector...');
@@ -242,54 +233,11 @@ class Coordinator {
       print('✅ Model selected: ${modelSelection.model} '
           '(confidence: ${(modelSelection.confidence * 100).toStringAsFixed(1)}%)');
 
-      // 5. Get voice traits (contrastive few-shot examples)
       print('\n[5/7] Getting voice traits examples...');
-      var finalMessages = messages;
-      if (voiceTraits != null) {
-        try {
-          final examples = await voiceTraits!.getExamples(
-            query: utterance,
-            eventId: eventId,
-          );
-          if (examples.hasExamples) {
-            final traitsPrompt = voiceTraits!.formatPrompt(examples);
-            // Inject into system message
-            finalMessages = _injectVoiceTraits(messages, traitsPrompt);
-            print('✅ Voice traits injected: ${examples.totalCount} examples');
-          } else {
-            print('ℹ️ No voice traits examples found');
-          }
-        } catch (e) {
-          // Degrade gracefully if voice traits fails
-          print('⚠️ Voice traits failed (degraded gracefully): $e');
-        }
-      } else {
-        print('ℹ️ VoiceTraits not configured');
-      }
+      var finalMessages = await _applyVoiceTraits(messages, utterance, eventId);
 
-      // 6. Truncate context to fit token budget (ContextCapacity)
       print('\n[6/7] Truncating context to token budget...');
-      if (contextCapacity != null) {
-        try {
-          final modelKey = '${modelSelection.implementer}:${modelSelection.model}';
-          final truncationResult = await contextCapacity!.truncateMessages(
-            messages: finalMessages,
-            model: modelKey,
-            eventId: eventId,
-          );
-          finalMessages = truncationResult.messages;
-          if (truncationResult.wasTruncated) {
-            print('✂️ Context truncated: ${truncationResult.summary}');
-          } else {
-            print('✅ Context within budget: ${truncationResult.totalTokens}/${truncationResult.tokenBudget} tokens');
-          }
-        } catch (e) {
-          // Degrade gracefully if context capacity fails
-          print('⚠️ ContextCapacity failed (degraded gracefully): $e');
-        }
-      } else {
-        print('ℹ️ ContextCapacity not configured');
-      }
+      finalMessages = await _applyTokenBudget(finalMessages, modelSelection, eventId);
 
       print('\n[7/7] Calling LLM service with context...');
       print('📡 LLM call starting...');
@@ -302,80 +250,13 @@ class Coordinator {
       print('✅ LLM response received');
       print('📄 Response content: "${llmResponse.content}"');
 
-      // 3. Agentic loop: Execute tool calls and get verbal response
-      final executedTools = <String>[];
-      String finalResponse = llmResponse.content ?? '';
-
-      if (llmResponse.toolCalls.isNotEmpty) {
-        print(
-            '\n[Tool Execution] LLM requested ${llmResponse.toolCalls.length} tool calls');
-
-        final toolResults = <Map<String, dynamic>>[];
-        for (final llmToolCall in llmResponse.toolCalls) {
-          print('  🔧 Executing: ${llmToolCall.toolName}');
-          final toolCall = ToolCall(
-            toolName: llmToolCall.toolName,
-            params: llmToolCall.params,
-            callId: llmToolCall.id,
-            confidence: 1.0,
-          );
-          final result =
-              await toolExecutor.executeTool(toolCall, eventId: eventId);
-
-          if (result.success) {
-            executedTools.add(llmToolCall.toolName);
-            print('  ✅ Tool executed: ${llmToolCall.toolName}');
-            toolResults.add({
-              'tool_call_id': llmToolCall.id,
-              'role': 'tool',
-              'name': llmToolCall.toolName,
-              'content': jsonEncode(result.data),
-            });
-          } else {
-            print('  ❌ Tool execution failed: ${result.error}');
-            toolResults.add({
-              'tool_call_id': llmToolCall.id,
-              'role': 'tool',
-              'name': llmToolCall.toolName,
-              'content': jsonEncode({'error': result.error}),
-            });
-          }
-        }
-
-        print(
-            '\n[Agentic Loop] Sending tool results back to LLM for confirmation...');
-        final followUpMessages = [
-          ...messages,
-          {
-            'role': 'assistant',
-            'content': llmResponse.content,
-            'tool_calls': llmResponse.toolCalls
-                .map((tc) => {
-                      'id': tc.id,
-                      'type': 'function',
-                      'function': {
-                        'name': tc.toolName,
-                        'arguments': jsonEncode(tc.params),
-                      }
-                    })
-                .toList(),
-          },
-          ...toolResults,
-        ];
-
-        final followUpResponse = await llmService.chatWithTools(
-          model: modelSelection.model,
-          messages: followUpMessages,
-          tools: tools,
-          temperature: 0.7,
-        );
-
-        finalResponse = followUpResponse.content ?? '';
-        print('✅ LLM follow-up response: "$finalResponse"');
-      }
-
-      // Note: TTS happens in event listener AFTER orchestration_complete is published
-      // This ensures text appears in UI before audio plays (better UX)
+      final (finalResponse, executedTools) = await _executeToolLoop(
+        llmResponse: llmResponse,
+        messages: messages,
+        modelSelection: modelSelection,
+        tools: tools,
+        eventId: eventId,
+      );
 
       final latency = DateTime.now().difference(startTime).inMilliseconds;
       print('\n✅ COORDINATOR: orchestrate SUCCESS');
@@ -428,6 +309,160 @@ class Coordinator {
         latencyMs: latency,
       );
     }
+  }
+
+  /// Collect all registered tools as LLMTool definitions.
+  List<LLMTool> _collectAvailableTools() {
+    return toolExecutor.toolRegistry
+        .getAllTools()
+        .map((t) => LLMTool(
+              name: t.name,
+              description: t.description,
+              parametersSchema: t.parameters,
+            ))
+        .toList();
+  }
+
+  /// Apply voice traits to messages, degrading gracefully on failure.
+  Future<List<Map<String, dynamic>>> _applyVoiceTraits(
+    List<Map<String, dynamic>> messages,
+    String utterance,
+    String eventId,
+  ) async {
+    if (voiceTraits == null) {
+      print('ℹ️ VoiceTraits not configured');
+      return messages;
+    }
+    try {
+      final examples = await voiceTraits!.getExamples(
+        query: utterance,
+        eventId: eventId,
+      );
+      if (examples.hasExamples) {
+        final traitsPrompt = voiceTraits!.formatPrompt(examples);
+        final result = _injectVoiceTraits(messages, traitsPrompt);
+        print('✅ Voice traits injected: ${examples.totalCount} examples');
+        return result;
+      } else {
+        print('ℹ️ No voice traits examples found');
+        return messages;
+      }
+    } catch (e) {
+      print('⚠️ Voice traits failed (degraded gracefully): $e');
+      return messages;
+    }
+  }
+
+  /// Truncate messages to fit token budget, degrading gracefully on failure.
+  Future<List<Map<String, dynamic>>> _applyTokenBudget(
+    List<Map<String, dynamic>> messages,
+    ModelSelection modelSelection,
+    String eventId,
+  ) async {
+    if (contextCapacity == null) {
+      print('ℹ️ ContextCapacity not configured');
+      return messages;
+    }
+    try {
+      final modelKey = '${modelSelection.implementer}:${modelSelection.model}';
+      final truncationResult = await contextCapacity!.truncateMessages(
+        messages: messages,
+        model: modelKey,
+        eventId: eventId,
+      );
+      if (truncationResult.wasTruncated) {
+        print('✂️ Context truncated: ${truncationResult.summary}');
+      } else {
+        print('✅ Context within budget: ${truncationResult.totalTokens}/${truncationResult.tokenBudget} tokens');
+      }
+      return truncationResult.messages;
+    } catch (e) {
+      print('⚠️ ContextCapacity failed (degraded gracefully): $e');
+      return messages;
+    }
+  }
+
+  /// Execute tool calls from LLM response and get follow-up verbal response.
+  ///
+  /// Returns (finalResponse, executedToolNames). If no tool calls, returns
+  /// the original LLM response content unchanged.
+  Future<(String, List<String>)> _executeToolLoop({
+    required LLMResponse llmResponse,
+    required List<Map<String, dynamic>> messages,
+    required ModelSelection modelSelection,
+    required List<LLMTool> tools,
+    required String eventId,
+  }) async {
+    final executedTools = <String>[];
+    String finalResponse = llmResponse.content ?? '';
+
+    if (llmResponse.toolCalls.isEmpty) return (finalResponse, executedTools);
+
+    print('\n[Tool Execution] LLM requested ${llmResponse.toolCalls.length} tool calls');
+
+    final toolResults = <Map<String, dynamic>>[];
+    for (final llmToolCall in llmResponse.toolCalls) {
+      print('  🔧 Executing: ${llmToolCall.toolName}');
+      final toolCall = ToolCall(
+        toolName: llmToolCall.toolName,
+        params: llmToolCall.params,
+        callId: llmToolCall.id,
+        confidence: 1.0,
+      );
+      final result =
+          await toolExecutor.executeTool(toolCall, eventId: eventId);
+
+      if (result.success) {
+        executedTools.add(llmToolCall.toolName);
+        print('  ✅ Tool executed: ${llmToolCall.toolName}');
+        toolResults.add({
+          'tool_call_id': llmToolCall.id,
+          'role': 'tool',
+          'name': llmToolCall.toolName,
+          'content': jsonEncode(result.data),
+        });
+      } else {
+        print('  ❌ Tool execution failed: ${result.error}');
+        toolResults.add({
+          'tool_call_id': llmToolCall.id,
+          'role': 'tool',
+          'name': llmToolCall.toolName,
+          'content': jsonEncode({'error': result.error}),
+        });
+      }
+    }
+
+    print('\n[Agentic Loop] Sending tool results back to LLM for confirmation...');
+    final followUpMessages = [
+      ...messages,
+      {
+        'role': 'assistant',
+        'content': llmResponse.content,
+        'tool_calls': llmResponse.toolCalls
+            .map((tc) => {
+                  'id': tc.id,
+                  'type': 'function',
+                  'function': {
+                    'name': tc.toolName,
+                    'arguments': jsonEncode(tc.params),
+                  }
+                })
+            .toList(),
+      },
+      ...toolResults,
+    ];
+
+    final followUpResponse = await llmService.chatWithTools(
+      model: modelSelection.model,
+      messages: followUpMessages,
+      tools: tools,
+      temperature: 0.7,
+    );
+
+    finalResponse = followUpResponse.content ?? '';
+    print('✅ LLM follow-up response: "$finalResponse"');
+
+    return (finalResponse, executedTools);
   }
 
   /// Inject voice traits prompt into messages.
