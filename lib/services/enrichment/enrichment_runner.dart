@@ -31,7 +31,6 @@ class EnrichmentRunner {
     required String entityType,
     required List<String> steps,
   }) async {
-    // Create queue item
     final item = EnrichmentQueueItem(
       entityUuid: entityUuid,
       entityType: entityType,
@@ -39,10 +38,8 @@ class EnrichmentRunner {
       completedSteps: [],
     );
 
-    // Persist to queue
     await queueRepo.save(item);
 
-    // Trigger worker check (no debounce)
     _onQueueAdd();
   }
 
@@ -61,10 +58,8 @@ class EnrichmentRunner {
   ///
   /// Resets stuck items (currentStep not null) and checks for pending work.
   Future<void> initialize() async {
-    // Find items stuck in "processing" state (app crashed mid-work)
     final stuck = await queueRepo.findStuckItems();
     for (final item in stuck) {
-      // Reset to pending state
       if (item.currentStep != null) {
         // Re-add the step to pending if it was removed
         if (!item.pendingSteps.contains(item.currentStep!) &&
@@ -76,7 +71,6 @@ class EnrichmentRunner {
       }
     }
 
-    // Check if any work exists and spawn workers
     _checkAndSpawnWorkers();
   }
 
@@ -91,7 +85,6 @@ class EnrichmentRunner {
   void _checkAndSpawnWorkers() {
     for (final worker in workers) {
       if (!_activeWorkers.containsKey(worker.stepType)) {
-        // Worker not running - spawn it
         _activeWorkers[worker.stepType] = _spawnWorker(worker);
       }
     }
@@ -105,7 +98,6 @@ class EnrichmentRunner {
         final items = await worker.getReadyItems(queueRepo);
         if (items.isEmpty) break; // Queue empty for this worker, exit
 
-        // Process batch (worker handles sequential processing)
         final batch = items.take(batchSize).toList();
         await worker.processBatch(batch, queueRepo);
       }
@@ -114,7 +106,6 @@ class EnrichmentRunner {
       // ignore: avoid_print
       print('EnrichmentRunner: Worker ${worker.stepType} failed: $e');
     } finally {
-      // Worker done - remove from active set
       _activeWorkers.remove(worker.stepType);
     }
   }

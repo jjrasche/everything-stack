@@ -95,12 +95,10 @@ mixin class Trainable<D extends AdaptationData> {
     // Save invocation immediately (fast path, no blocking)
     await _invocationRepo.save(inv);
 
-    // Generate embedding asynchronously in background
     // Don't block the happy path - semantic search can use the invocation
     // once the embedding is updated
     unawaited(
       inv.generateEmbedding().then((_) {
-        // Update invocation with embedding
         return _invocationRepo.save(inv);
       }).catchError((e) {
         print('⚠️ [Trainable] Background embedding generation failed for '

@@ -59,12 +59,10 @@ class GroqImplementer implements LLMImplementer {
     required int maxTokens,
   }) async {
     try {
-      // Build message list for API
       final messagesList = <Map<String, dynamic>>[
         ...messages.map((m) => {'role': m.role, 'content': m.content}),
       ];
 
-      // Build request body with all adaptation parameters
       final body = {
         'model': model,
         'messages': messagesList,
@@ -75,7 +73,6 @@ class GroqImplementer implements LLMImplementer {
         'max_tokens': maxTokens,
       };
 
-      // Time the API call
       final stopwatch = Stopwatch()..start();
       final response = await http
           .post(
@@ -91,17 +88,14 @@ class GroqImplementer implements LLMImplementer {
 
       final latencyMs = stopwatch.elapsedMilliseconds.toDouble();
 
-      // Handle response
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
 
-        // Extract tokens used
         int tokensUsed = 0;
         if (data['usage'] is Map<String, dynamic>) {
           tokensUsed = (data['usage']['total_tokens'] as num?)?.toInt() ?? 0;
         }
 
-        // Extract response text
         final choices = data['choices'] as List?;
         if (choices != null && choices.isNotEmpty) {
           final firstChoice = choices.first as Map<String, dynamic>;
@@ -117,7 +111,6 @@ class GroqImplementer implements LLMImplementer {
         }
         throw GroqException('No content in API response');
       } else if (response.statusCode == 429) {
-        // Rate limit
         throw GroqRateLimitException(
           'Rate limit exceeded: ${response.body}',
         );
@@ -159,7 +152,6 @@ class GroqImplementer implements LLMImplementer {
 
       final groqResponse = await _makeRequest(body);
 
-      // Map Groq response → LLM domain response
       return _mapToLLMResponse(groqResponse);
     } on GroqTimeoutException {
       rethrow;
@@ -211,7 +203,6 @@ class GroqImplementer implements LLMImplementer {
         await for (final chunk in response.stream.transform(utf8.decoder)) {
           buffer += chunk;
 
-          // Process complete lines
           while (buffer.contains('\n')) {
             final newlineIndex = buffer.indexOf('\n');
             final line = buffer.substring(0, newlineIndex).trim();

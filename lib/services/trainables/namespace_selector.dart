@@ -28,7 +28,6 @@ class NamespaceSelector implements Trainable {
     required List<double> embedding,
     required List<String> availableNamespaces,
   }) async {
-    // Validate input
     if (availableNamespaces.isEmpty) {
       throw ArgumentError('No namespaces available');
     }
@@ -36,7 +35,6 @@ class NamespaceSelector implements Trainable {
     if (availableNamespaces.length == 1) {
       final selected = availableNamespaces.first;
 
-      // Record invocation
       final invocation = Invocation(
         eventId: eventId,
         componentType: 'namespace_selector',
@@ -68,7 +66,6 @@ class NamespaceSelector implements Trainable {
     // In future, this will use learned weights from feedback
     final selected = availableNamespaces.first;
 
-    // Record invocation
     final invocation = Invocation(
       eventId: eventId,
       componentType: 'namespace_selector',
@@ -98,7 +95,6 @@ class NamespaceSelector implements Trainable {
 
   @override
   Future<void> trainFromFeedback(String turnId, {String? userId}) async {
-    // Get all feedback for namespace_selector on this turn
     final feedbackList = await feedbackRepo.findByTurnAndComponent(
       turnId,
       'namespace_selector',
@@ -106,17 +102,14 @@ class NamespaceSelector implements Trainable {
 
     if (feedbackList.isEmpty) return;
 
-    // Get current adaptation state
     var state = await adaptationStateRepo.getForComponent('namespace_selector',
         implementer: null, userId: userId);
     if (state == null) return;
     state.loadData();
 
-    // Process each feedback
     for (final feedback in feedbackList) {
       if (!feedback.hasCorrection) continue;
 
-      // Load the invocation
       final invocation = await invocationRepo.findById(feedback.invocationId);
       if (invocation == null) continue;
 
@@ -133,15 +126,12 @@ class NamespaceSelector implements Trainable {
         final selectedNamespace =
             invocation.output?['selectedNamespace'] as String?;
 
-        // Update state data (increment feedback count for correct namespace)
         Map<String, dynamic> data = state.data;
         if (selectedNamespace != null &&
             selectedNamespace != correctNamespace) {
-          // Track wrong selections
           data['wrongSelections'] = (data['wrongSelections'] as int? ?? 0) + 1;
         }
 
-        // Track correct selections
         data['correctSelections'] =
             (data['correctSelections'] as int? ?? 0) + 1;
 

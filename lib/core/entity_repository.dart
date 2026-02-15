@@ -141,11 +141,9 @@ class EntityRepository<T extends BaseEntity> {
 
       if (steps.isNotEmpty) {
         if (isUpdate) {
-          // Cancel any existing queue item for this entity
           await enrichmentRunner!.cancelForEntity(entity.uuid);
         }
 
-        // Queue for enrichment
         await enrichmentRunner!.enqueue(
           entityUuid: entity.uuid,
           entityType: T.toString(),
@@ -234,12 +232,10 @@ class EntityRepository<T extends BaseEntity> {
   /// Handler execution order determines pattern integration.
   /// See RepositoryPatternHandler for semantics.
   Future<bool> deleteByUuid(String uuid) async {
-    // Load entity to pass to handlers
     final entity = await findByUuid(uuid);
     if (entity == null) return false;
 
-    // Cancel enrichment if entity is Enrichable
-    // This prevents worker from processing deleted entity
+    // Prevents worker from processing deleted entity
     if (enrichmentRunner != null && entity is Enrichable) {
       try {
         await enrichmentRunner!.cancelForEntity(entity.uuid);
@@ -250,7 +246,6 @@ class EntityRepository<T extends BaseEntity> {
       }
     }
 
-    // Clean up chunks if entity is SemanticIndexable
     // Must happen before entity deletion so chunks can be looked up
     if (chunkingService != null && entity is SemanticIndexable) {
       try {
@@ -330,10 +325,8 @@ class EntityRepository<T extends BaseEntity> {
     int limit = 10,
     double minSimilarity = 0.0,
   }) async {
-    // Generate query embedding
     final queryEmbedding = await embeddingService.generate(query);
 
-    // Delegate search to adapter
     return adapter.semanticSearch(
       queryEmbedding,
       limit: limit,
@@ -354,10 +347,8 @@ class EntityRepository<T extends BaseEntity> {
     int limit = 10,
     double minSimilarity = 0.0,
   }) async {
-    // Generate query embedding ONCE
     final queryEmbedding = await embeddingService.generate(query);
 
-    // Delegate search to adapter
     final results = await adapter.semanticSearch(
       queryEmbedding,
       limit: limit,

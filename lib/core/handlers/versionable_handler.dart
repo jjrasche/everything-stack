@@ -61,10 +61,8 @@ class VersionableHandler<T extends BaseEntity>
     if (entity is! Versionable) return;
     if (versionRepository == null) return;
 
-    // Build version record synchronously within transaction
     final version = _buildVersionSync(ctx, entity as Versionable);
 
-    // Save version first, then entity save follows
     versionRepository.saveInTx(ctx, version);
   }
 
@@ -76,7 +74,6 @@ class VersionableHandler<T extends BaseEntity>
     TransactionContext ctx,
     Versionable entity,
   ) {
-    // Fetch previous state synchronously within transaction
     final previousEntity = findByUuidSync(ctx, (entity as BaseEntity).uuid);
     final previousJson = (previousEntity is Versionable)
         ? (previousEntity as dynamic).toJson() as Map<String, dynamic>?
@@ -84,12 +81,10 @@ class VersionableHandler<T extends BaseEntity>
 
     final currentJson = (entity as dynamic).toJson() as Map<String, dynamic>;
 
-    // Calculate version number
     final latestVersion =
         getLatestVersionNumberSync(ctx, (entity as BaseEntity).uuid);
     final newVersionNumber = latestVersion + 1;
 
-    // Compute delta
     final previousState = previousJson ?? {};
     final delta = JsonDiff.diff(previousState, currentJson);
     final deltaJson = jsonEncode(delta);

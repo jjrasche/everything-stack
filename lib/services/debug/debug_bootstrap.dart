@@ -25,24 +25,16 @@ Future<void> initializeDebugInfrastructure() async {
   final getIt = GetIt.instance;
   final registry = DebugRegistry.instance;
 
-  // Initialize VLM analyzer if API key is available
   _initializeVlmAnalyzer();
-
-  // Register introspectable components with central registry
   _registerIntrospectableComponents(registry, getIt);
 
-  // Register state providers (mix of registry + manual)
   _registerStateProviders(server, getIt, registry);
-
-  // Register actions (mix of registry + manual)
   _registerActions(server, getIt, registry);
 
-  // Set screenshot callback
   server.setScreenshotCallback(() async {
     return await ScreenshotService.instance.capture(context: 'debug-request');
   });
 
-  // Start server
   await server.start(port: 9999);
 
   print('✅ [Debug] Debug infrastructure ready');
@@ -110,13 +102,11 @@ void _registerIntrospectableComponents(DebugRegistry registry, GetIt getIt) {
 }
 
 void _registerStateProviders(DebugServer server, GetIt getIt, DebugRegistry registry) {
-  // Register state from DebugRegistry (components with DebugIntrospectable)
-  // This auto-discovers state from all registered components
+  // Auto-discovers state from all registered DebugIntrospectable components
   server.registerStateProvider('_registry', () {
     return registry.getAllState();
   });
 
-  // HNSW Index state (standalone, not introspectable yet)
   server.registerStateProvider('hnswIndex', () {
     try {
       final index = getIt<HnswIndex>();
@@ -129,13 +119,11 @@ void _registerStateProviders(DebugServer server, GetIt getIt, DebugRegistry regi
     }
   });
 
-  // Chunking service state - now uses registry via DebugIntrospectable
-  // Kept here for backwards compatibility, but delegates to registry
+  // Kept for backwards compatibility, but delegates to registry
   server.registerStateProvider('chunking', () {
     return registry.getState('chunking') ?? {'error': 'not registered'};
   });
 
-  // Semantic search state (not introspectable yet)
   server.registerStateProvider('semanticSearch', () {
     try {
       final search = getIt<SemanticSearchService>();
@@ -148,7 +136,6 @@ void _registerStateProviders(DebugServer server, GetIt getIt, DebugRegistry regi
     }
   });
 
-  // Recent screenshots
   server.registerStateProvider('screenshots', () {
     return {'note': 'Use /screenshot endpoint to capture'};
   });
@@ -161,7 +148,6 @@ String _truncate(String text, int maxLength) {
 }
 
 void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
-  // Registry-based action invocation (for components with DebugIntrospectable)
   // Format: /action/component.actionName (e.g., /action/chunking.rebuild)
   server.registerAction('invoke', (params) async {
     final target = params['target'];
@@ -180,7 +166,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     return result ?? {'error': 'Unknown component or action'};
   });
 
-  // List all available actions from registry
   server.registerAction('listActions', (params) async {
     return {
       'components': registry.componentNames,
@@ -188,7 +173,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     };
   });
 
-  // Search action
   server.registerAction('search', (params) async {
     final query = params['q'] ?? params['query'];
     if (query == null || query.isEmpty) {
@@ -224,7 +208,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     }
   });
 
-  // Get entity action
   server.registerAction('getEntity', (params) async {
     final uuid = params['uuid'];
     if (uuid == null || uuid.isEmpty) {
@@ -253,7 +236,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     }
   });
 
-  // Get chunks action
   server.registerAction('getChunks', (params) async {
     final entityId = params['entityId'];
 
@@ -285,7 +267,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     }
   });
 
-  // Capture screenshot action
   server.registerAction('captureScreenshot', (params) async {
     final context = params['context'] ?? 'action-request';
     final path = await ScreenshotService.instance.capture(context: context);
@@ -296,7 +277,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     };
   });
 
-  // List screenshots action
   server.registerAction('listScreenshots', (params) async {
     final limit = int.tryParse(params['limit'] ?? '10') ?? 10;
     final screenshots = await ScreenshotService.instance.getRecentScreenshots(limit: limit);
@@ -306,7 +286,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     };
   });
 
-  // Analyze screenshot with VLM (visual debugging)
   server.registerAction('analyzeScreenshot', (params) async {
     if (!VlmAnalyzer.instance.isConfigured) {
       return {
@@ -315,17 +294,14 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
       };
     }
 
-    // Get image path - either specified or capture new
     String? imagePath = params['path'];
     if (imagePath == null || imagePath.isEmpty) {
-      // Capture fresh screenshot
       imagePath = await ScreenshotService.instance.capture(context: 'vlm-analysis');
       if (imagePath == null) {
         return {'error': 'Failed to capture screenshot'};
       }
     }
 
-    // Get prompt - use default if not specified
     final prompt = params['prompt'] ??
         'Describe this UI screenshot. Focus on: 1) What screen/state is shown, 2) Any error messages or warnings, 3) Data being displayed, 4) Any UI issues or unexpected states.';
 
@@ -342,7 +318,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     };
   });
 
-  // Structured VLM analysis with interaction schema
   server.registerAction('analyzeStructured', (params) async {
     if (!VlmAnalyzer.instance.isConfigured) {
       return {
@@ -360,7 +335,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
       };
     }
 
-    // Get image path - either specified or capture new
     String? imagePath = params['path'];
     if (imagePath == null || imagePath.isEmpty) {
       imagePath = await ScreenshotService.instance.capture(context: 'structured-analysis');
@@ -396,7 +370,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     }
   });
 
-  // Count invocations action
   server.registerAction('countInvocations', (params) async {
     try {
       final repo = getIt<InvocationRepository<Invocation>>();
@@ -414,16 +387,13 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     }
   });
 
-  // Find orphaned chunks (chunks whose source entities don't exist)
   server.registerAction('findOrphanedChunks', (params) async {
     try {
       final chunking = getIt<ChunkingService>();
       final repo = getIt<InvocationRepository<Invocation>>();
 
-      // Get all chunks
       final allChunks = await chunking.getAllChunks();
 
-      // Check which have missing entities
       int orphanCount = 0;
       final orphanSamples = <Map<String, dynamic>>[];
       final seenEntityIds = <String>{};
@@ -457,16 +427,13 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     }
   });
 
-  // Delete orphaned chunks
   server.registerAction('deleteOrphanedChunks', (params) async {
     try {
       final chunking = getIt<ChunkingService>();
       final repo = getIt<InvocationRepository<Invocation>>();
 
-      // Get all chunks
       final allChunks = await chunking.getAllChunks();
 
-      // Find orphaned entity IDs
       final orphanedEntityIds = <String>{};
       final seenEntityIds = <String>{};
 
@@ -480,7 +447,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
         }
       }
 
-      // Delete chunks for orphaned entities
       int deletedCount = 0;
       for (final entityId in orphanedEntityIds) {
         await chunking.deleteByEntityId(entityId);
@@ -496,13 +462,11 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     }
   });
 
-  // Rebuild HNSW index from database (without app restart)
   server.registerAction('rebuildIndex', (params) async {
     try {
       final chunking = getIt<ChunkingService>();
       final stopwatch = Stopwatch()..start();
 
-      // Clear in-memory index and reload from database
       await chunking.rebuildIndexFromStorage();
 
       stopwatch.stop();
@@ -517,13 +481,11 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     }
   });
 
-  // Query imported Claude invocations
   server.registerAction('queryImportedInvocations', (params) async {
     try {
       final repo = getIt<InvocationRepository<Invocation>>();
       final all = await repo.findAll();
 
-      // Filter for claude_import implementer
       final imported = all.where((inv) => inv.implementer == 'claude_import').toList();
 
       final limit = params['limit'] != null ? int.tryParse(params['limit']!) ?? 10 : 10;
@@ -560,7 +522,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     }
   });
 
-  // Import Claude conversations
   server.registerAction('importClaude', (params) async {
     final path = params['path'];
     if (path == null || path.isEmpty) {
@@ -594,16 +555,13 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     }
   });
 
-  // List imported conversations (grouped by conversation UUID)
   server.registerAction('listConversations', (params) async {
     try {
       final repo = getIt<InvocationRepository<Invocation>>();
       final all = await repo.findAll();
 
-      // Filter for claude_import
       final imported = all.where((inv) => inv.implementer == 'claude_import').toList();
 
-      // Group by conversation UUID
       final Map<String, List<Invocation>> byConversation = {};
       for (final inv in imported) {
         final convUuid = inv.metadata?['sourceConversationUuid'] as String?;
@@ -612,7 +570,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
         }
       }
 
-      // Sort conversations by first turn date (most recent first)
       final conversations = byConversation.entries.toList()
         ..sort((a, b) {
           final aFirst = a.value.map((inv) => inv.createdAt).reduce((a, b) => a.isBefore(b) ? a : b);
@@ -652,7 +609,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     }
   });
 
-  // Get full conversation with all turns
   server.registerAction('getConversation', (params) async {
     final convUuid = params['uuid'];
     if (convUuid == null || convUuid.isEmpty) {
@@ -666,7 +622,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
       final repo = getIt<InvocationRepository<Invocation>>();
       final all = await repo.findAll();
 
-      // Filter for this conversation
       final turns = all
           .where((inv) =>
             inv.implementer == 'claude_import' &&
@@ -678,7 +633,7 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
         return {'error': 'Conversation not found', 'uuid': convUuid};
       }
 
-      // Estimate tokens (rough: 1 token ≈ 4 chars)
+      // Estimate tokens (rough: 1 token ~ 4 chars)
       int totalChars = 0;
       for (final turn in turns) {
         totalChars += (turn.input?['prompt'] as String?)?.length ?? 0;
@@ -705,7 +660,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     }
   });
 
-  // Export conversation as golden test data template
   server.registerAction('exportConversationForTest', (params) async {
     final convUuid = params['uuid'];
     if (convUuid == null || convUuid.isEmpty) {
@@ -719,7 +673,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
       final repo = getIt<InvocationRepository<Invocation>>();
       final all = await repo.findAll();
 
-      // Filter for this conversation
       final turns = all
           .where((inv) =>
             inv.implementer == 'claude_import' &&
@@ -731,7 +684,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
         return {'error': 'Conversation not found', 'uuid': convUuid};
       }
 
-      // Format for golden test data
       return {
         'id': 'conv_${convUuid.substring(0, 8)}',
         'description': 'TODO: Add description of what makes this conversation interesting',
@@ -766,7 +718,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     }
   });
 
-  // Extract atomic insights from a specific imported conversation
   server.registerAction('extractInsights', (params) async {
     final convUuid = params['uuid'];
     if (convUuid == null || convUuid.isEmpty) {
@@ -781,7 +732,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
       final repo = getIt<InvocationRepository<Invocation>>();
       final all = await repo.findAll();
 
-      // Get conversation turns
       final turns = all
           .where((inv) =>
             inv.implementer == 'claude_import' &&
@@ -793,7 +743,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
         return {'error': 'Conversation not found', 'uuid': convUuid};
       }
 
-      // Convert to prompt/response pairs
       final turnMaps = turns.map((inv) => {
         'prompt': inv.input?['prompt'] ?? '',
         'response': inv.output?['response'] ?? '',
@@ -827,16 +776,13 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     }
   });
 
-  // Analyze conversations for test selection
   server.registerAction('analyzeConversationsForTests', (params) async {
     try {
       final repo = getIt<InvocationRepository<Invocation>>();
       final all = await repo.findAll();
 
-      // Filter for claude_import
       final imported = all.where((inv) => inv.implementer == 'claude_import').toList();
 
-      // Group by conversation UUID
       final Map<String, List<Invocation>> byConversation = {};
       for (final inv in imported) {
         final convUuid = inv.metadata?['sourceConversationUuid'] as String?;
@@ -845,11 +791,9 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
         }
       }
 
-      // Score each conversation for test suitability
       final scored = byConversation.entries.map((entry) {
         final turns = entry.value..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
-        // Calculate metrics
         final turnCount = turns.length;
         int totalChars = 0;
         int technicalWords = 0;
@@ -859,7 +803,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
           final response = turn.output?['response'] as String? ?? '';
           totalChars += prompt.length + response.length;
 
-          // Count technical indicators
           final text = '$prompt $response'.toLowerCase();
           if (text.contains(RegExp(r'\b(function|class|api|database|service|component|implement|algorithm|pattern|architecture)\b'))) {
             technicalWords++;
@@ -915,7 +858,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
 
   final uiAuto = UiAutomationService.instance;
 
-  // Tap a widget by semantics label
   server.registerAction('ui/tap', (params) async {
     final target = params['target'];
     if (target == null || target.isEmpty) {
@@ -924,7 +866,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     return await uiAuto.tap(target);
   });
 
-  // Long-press a widget by semantics label
   server.registerAction('ui/long_press', (params) async {
     final target = params['target'];
     if (target == null || target.isEmpty) {
@@ -933,7 +874,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     return await uiAuto.longPress(target);
   });
 
-  // Type text into a text field by semantics label
   server.registerAction('ui/type', (params) async {
     final target = params['target'];
     final text = params['text'];
@@ -947,7 +887,6 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     return await uiAuto.type(target, text, submit: submit);
   });
 
-  // Slide a slider to a value
   server.registerAction('ui/slide', (params) async {
     final target = params['target'];
     final valueStr = params['value'];
@@ -964,12 +903,10 @@ void _registerActions(DebugServer server, GetIt getIt, DebugRegistry registry) {
     return await uiAuto.slide(target, value);
   });
 
-  // Get full semantics tree
   server.registerAction('ui/tree', (params) async {
     return uiAuto.getTree();
   });
 
-  // Find widgets by label prefix
   server.registerAction('ui/find', (params) async {
     final label = params['label'] ?? '';
     final results = uiAuto.find(label);

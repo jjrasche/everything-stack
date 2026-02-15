@@ -39,7 +39,6 @@ class ToolSelector implements Trainable {
     // For now, select all tools (will be filtered based on feedback)
     final selected = availableTools;
 
-    // Record invocation
     final invocation = Invocation(
       eventId: eventId,
       componentType: 'tool_selector',
@@ -70,7 +69,6 @@ class ToolSelector implements Trainable {
 
   @override
   Future<void> trainFromFeedback(String turnId, {String? userId}) async {
-    // Get all feedback for tool_selector on this turn
     final feedbackList = await feedbackRepo.findByTurnAndComponent(
       turnId,
       'tool_selector',
@@ -78,17 +76,14 @@ class ToolSelector implements Trainable {
 
     if (feedbackList.isEmpty) return;
 
-    // Get current adaptation state
     var state = await adaptationStateRepo.getForComponent('tool_selector',
         implementer: null, userId: userId);
     if (state == null) return;
     state.loadData();
 
-    // Process each feedback
     for (final feedback in feedbackList) {
       if (!feedback.hasCorrection) continue;
 
-      // Load the invocation
       final invocation = await invocationRepo.findById(feedback.invocationId);
       if (invocation == null) continue;
 
@@ -106,10 +101,8 @@ class ToolSelector implements Trainable {
             (invocation.output?['selectedTools'] as List?)?.cast<String>() ??
                 [];
 
-        // Update state data (track tool selection accuracy)
         Map<String, dynamic> data = state.data;
 
-        // Count correct/incorrect selections
         final correctSet = correctTools.toSet();
         final selectedSet = selectedTools.toSet();
 

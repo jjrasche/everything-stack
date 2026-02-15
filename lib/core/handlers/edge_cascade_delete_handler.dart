@@ -52,7 +52,6 @@ class EdgeCascadeDeleteHandler<T extends BaseEntity>
   /// determine which edges to delete.
   @override
   Future<void> beforeDelete(T entity) async {
-    // Collect edge IDs for cascade delete
     _edgeIdsToDelete = await edgeRepository.getEdgeIdsForEntity(entity.uuid);
   }
 
@@ -70,10 +69,8 @@ class EdgeCascadeDeleteHandler<T extends BaseEntity>
     final edgeIds = _edgeIdsToDelete ?? [];
     if (edgeIds.isEmpty) return;
 
-    // Delete edges inside transaction (atomically)
     edgeRepository.deleteEdgesInTx(ctx, edgeIds);
 
-    // Clear cached IDs
     _edgeIdsToDelete = null;
   }
 }

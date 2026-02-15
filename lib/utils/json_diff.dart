@@ -21,7 +21,6 @@ class JsonDiff {
   ) {
     final fields = <String>{};
 
-    // Check for changed/removed fields
     for (final key in oldState.keys) {
       if (!newState.containsKey(key) ||
           !_deepEqual(oldState[key], newState[key])) {
@@ -29,7 +28,6 @@ class JsonDiff {
       }
     }
 
-    // Check for added fields
     for (final key in newState.keys) {
       if (!oldState.containsKey(key)) {
         fields.add(key);
@@ -73,23 +71,19 @@ class JsonDiff {
     String path,
     List<Map<String, dynamic>> operations,
   ) {
-    // Check for changed or removed keys
     for (final key in oldMap.keys) {
       final fieldPath = '$path/$key';
 
       if (!newMap.containsKey(key)) {
-        // Key removed
         operations.add({
           'op': 'remove',
           'path': fieldPath,
         });
       } else {
-        // Key exists in both - recurse to check value
         _diffRecursive(oldMap[key], newMap[key], fieldPath, operations);
       }
     }
 
-    // Check for added keys
     for (final key in newMap.keys) {
       if (!oldMap.containsKey(key)) {
         final fieldPath = '$path/$key';
@@ -111,7 +105,6 @@ class JsonDiff {
     final minLength =
         oldList.length < newList.length ? oldList.length : newList.length;
 
-    // Check existing indices for changes
     for (int i = 0; i < minLength; i++) {
       _diffRecursive(oldList[i], newList[i], '$path/$i', operations);
     }

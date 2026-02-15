@@ -164,7 +164,6 @@ class _MyHomePageState extends State<MyHomePage> {
     if (input.trim().isEmpty) return;
 
     try {
-      // Create event and send to ContextManager
       final payloadMap = {
         'prompt': input,
         'input_modality': _inputModality.toString(),
@@ -185,7 +184,6 @@ class _MyHomePageState extends State<MyHomePage> {
       _inputController.clear();
       if (mounted) setState(() {});
 
-      // Show feedback
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Event created (processing not yet wired): $input'),
@@ -193,7 +191,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       );
     } catch (e) {
-      // Show error feedback
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error: ${e.toString()}'),

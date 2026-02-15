@@ -348,7 +348,6 @@ Future<void> initializeEverythingStack({
 
 Future<void> _initializeServices(EverythingStackConfig cfg) async {
   try {
-    // Initialize Persistence (platform-specific: ObjectBox or IndexedDB)
     debugPrint('💾 Initializing persistence layer...');
     debugPrint('🔍 [bootstrap] Before calling initializePersistence:');
     debugPrint('   getIt hashCode: ${getIt.hashCode}');
@@ -541,16 +540,13 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
           }
         }
 
-      // Create parent and child chunkers
       final parentChunker = SemanticChunker(config: ChunkingConfig.parent());
       final childChunker = SemanticChunker(config: ChunkingConfig.child());
 
-      // Get ChunkRepository from GetIt (registered in persistence_native.dart)
       debugPrint('🔍 [semantic search] Retrieving ChunkRepository from GetIt...');
       final chunkRepo = getIt<ChunkRepository>();
       debugPrint('   ✓ ChunkRepository retrieved successfully');
 
-      // Create ChunkingService
       final chunkingService = ChunkingService(
         index: hnswIndex,
         embeddingService: EmbeddingService.instance,
@@ -584,11 +580,9 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
       // Register index store for later updates (e.g., after new entities indexed)
       getIt.registerSingleton<HnswIndexStore>(indexStore);
 
-      // Register HNSW index for direct access
       getIt.registerSingleton<HnswIndex>(hnswIndex);
       debugPrint('✅ HNSW index registered (${hnswIndex.size} vectors)');
 
-      // Create SemanticSearchService with entity loader registry
       final entityLoader = EntityLoaderImpl();
       entityLoader.registerDefaults(); // Register Invocation lookup (add more as needed)
       final semanticSearchService = SemanticSearchService(
@@ -600,12 +594,10 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
       getIt.registerSingleton<SemanticSearchService>(semanticSearchService);
       debugPrint('✅ SemanticSearchService initialized');
 
-      // Create RepositoryRegistry for worker entity lookups
       final repoRegistry = RepositoryRegistry();
       getIt.registerSingleton<RepositoryRegistry>(repoRegistry);
       debugPrint('✅ RepositoryRegistry initialized');
 
-      // Create EnrichmentQueueRepository (adapter created by platform-specific code)
       // Note: EnrichmentQueue adapter is registered by persistence initialization
       EnrichmentQueueRepository? enrichmentQueueRepo;
       EnrichmentRunner? enrichmentRunner;
@@ -616,7 +608,6 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
         getIt.registerSingleton<EnrichmentQueueRepository>(enrichmentQueueRepo);
         debugPrint('✅ EnrichmentQueueRepository initialized');
 
-        // Create EnrichmentRunner with workers
         enrichmentRunner = EnrichmentRunner(
           queueRepo: enrichmentQueueRepo,
           workers: [
@@ -645,8 +636,6 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
         final adapterRegistration = getIt<InvocationRepository<Invocation>>();
         debugPrint('   ✓ Retrieved InvocationRepository from GetIt');
 
-        // Create EntityRepository with semantic indexing handler and enrichment runner
-        // This wraps the adapter with SemanticIndexableHandler for automatic chunking
         debugPrint('   🔍 Creating EntityRepository wrapper...');
         final invocationRepo = createInvocationRepository(
           adapter: adapterRegistration as PersistenceAdapter<Invocation>,
@@ -663,7 +652,6 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
         debugPrint(
             '✅ InvocationRepository wired with SemanticIndexableHandler (EntityRepository)');
 
-        // Register invocation repo in RepositoryRegistry for worker entity lookups
         repoRegistry.register<Invocation>(invocationRepo);
         debugPrint('✅ Invocation registered in RepositoryRegistry');
       } catch (e, stackTrace) {
@@ -676,7 +664,6 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
         debugPrint('⚠️ Semantic search initialization failed: $e');
         debugPrint('   Stack trace: $stackTrace');
         // CRITICAL: If EntityRepository<Invocation> wasn't registered, tests will fail
-        // Check if EntityRepository is registered, if not, rethrow
         if (!getIt.isRegistered<EntityRepository<Invocation>>()) {
           debugPrint('   ❌ FATAL: EntityRepository<Invocation> not registered - rethrowing');
           rethrow;
@@ -794,7 +781,6 @@ Future<void> disposeEverythingStack() async {
     await _embeddingQueueService!.stop(flushPending: true);
   }
 
-  // Dispose Coordinator and EventBus
   try {
     final coordinator = getIt<Coordinator>();
     coordinator.dispose();
@@ -813,10 +799,8 @@ Future<void> disposeEverythingStack() async {
   // AudioRecordingService still needs disposal
   AudioRecordingService.instance.dispose();
 
-  // Dispose persistence (platform-specific cleanup)
   disposePersistence(getIt);
 
-  // Dispose other services
   BlobStore.instance.dispose();
   ConnectivityService.instance.dispose();
   SyncService.instance.dispose();
@@ -891,7 +875,6 @@ Future<void> setupServiceLocator() async {
     final taskRepo = TaskRepository();
     getIt.registerSingleton<TaskRepository>(taskRepo);
 
-    // Register task tools with registry
     registerTaskTools(getIt<ToolRegistry>(), taskRepo);
 
     // ========== Timer Repository (Owns adapter selection internally) ==========
@@ -899,7 +882,6 @@ Future<void> setupServiceLocator() async {
     final timerRepo = TimerRepository();
     getIt.registerSingleton<TimerRepository>(timerRepo);
 
-    // Register timer tools with registry
     registerTimerTools(getIt<ToolRegistry>(), timerRepo);
     debugPrint(
         '✅ [setupServiceLocator] Timer tools registered (timer.set, timer.cancel, timer.list)');
@@ -918,7 +900,6 @@ Future<void> setupServiceLocator() async {
     final commitmentLogRepo = CommitmentLogRepository();
     getIt.registerSingleton<CommitmentLogRepository>(commitmentLogRepo);
 
-    // Register regulation tools with registry
     registerRegulationTools(
       getIt<ToolRegistry>(),
       personRepo,
@@ -932,7 +913,6 @@ Future<void> setupServiceLocator() async {
     // ========== Event Bus (Pub/sub with persistence) ==========
     debugPrint('🔍 [setupServiceLocator] Initializing EventBus...');
 
-    // Create EventRepository and EventBus
     final eventRepository = await createEventRepository();
     getIt.registerSingleton<EventRepository>(eventRepository);
 
@@ -967,7 +947,6 @@ Future<void> setupServiceLocator() async {
     // ========== Model Selector (Thompson Sampling model selection) ==========
     debugPrint('🔍 [setupServiceLocator] Registering ModelSelector...');
 
-    // Get available models from InferenceService implementers
     Map<String, List<String>> availableModels = {};
     if (getIt.isRegistered<InferenceService>()) {
       availableModels = getIt<InferenceService>().getAvailableModels();

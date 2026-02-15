@@ -66,21 +66,16 @@ class SemanticSearchService {
       }
     }
 
-    // Generate embedding for query
     final queryEmbedding = await embeddingService.generate(query);
 
-    // Search HNSW index for nearest neighbors
     final hnswResults = index.search(queryEmbedding, k: limit * 2);
     if (hnswResults.isEmpty) {
       return [];
     }
 
-    // Load chunk metadata for top results
-    // Note: Chunks are not persisted, so this would load from ChunkingService cache
-    // For now, we reconstruct from chunk IDs
+    // Look up chunk metadata from ChunkingService database store
     final chunks = await _reconstructChunks(hnswResults.take(limit).toList());
 
-    // Load source entities
     final entityMap = <String, BaseEntity?>{};
     for (final chunk in chunks) {
       if (!entityMap.containsKey(chunk.sourceEntityId)) {
@@ -92,16 +87,13 @@ class SemanticSearchService {
       }
     }
 
-    // Build search results
     var results = <SemanticSearchResult>[];
     for (int i = 0; i < chunks.length; i++) {
       final chunk = chunks[i];
       final hnswResult = hnswResults[i];
 
-      // Convert distance to similarity (HNSW returns distance)
       final similarity = 1.0 - hnswResult.distance;
 
-      // Filter by entity type if specified
       if (entityTypes != null) {
         if (!entityTypes.contains(chunk.sourceEntityType)) {
           continue;
@@ -116,11 +108,9 @@ class SemanticSearchService {
       ));
     }
 
-    // Sort by similarity (highest first) and limit
     results.sort((a, b) => b.similarity.compareTo(a.similarity));
     final finalResults = results.take(limit).toList();
 
-    // Capture for AI debugging
     final searchDuration = DateTime.now().difference(DateTime.now()); // TODO: track actual duration
     DebugService.instance.captureSearchResult(
       query: query,
@@ -150,7 +140,6 @@ class SemanticSearchService {
     for (final result in hnswResults) {
       final chunkId = result.id;
 
-      // Look up chunk from ChunkingService database store
       if (chunkingService != null) {
         final chunk = await (chunkingService as dynamic).getChunkById(chunkId);
         if (chunk != null) {

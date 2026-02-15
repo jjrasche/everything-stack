@@ -13,7 +13,6 @@ Store? _globalStore;
 /// Returns same Store instance on subsequent calls (idempotent).
 /// Returns: Store instance ready for use.
 Future<Store> openObjectBoxStore() async {
-  // Return existing store if already initialized
   if (_globalStore != null) {
     debugPrint(
         'ℹ️ ObjectBox Store already initialized, returning existing instance');

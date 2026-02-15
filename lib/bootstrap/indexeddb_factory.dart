@@ -22,7 +22,6 @@ Future<idb.Database> openIndexedDB() async {
       onUpgradeNeeded: (idb.VersionChangeEvent e) {
         final db = e.database;
 
-        // Create object stores
         _createObjectStores(db);
       },
     );
@@ -37,7 +36,6 @@ Future<idb.Database> openIndexedDB() async {
 
 /// Create all required IndexedDB object stores.
 void _createObjectStores(idb.Database db) {
-  // Create stores if they don't exist
   if (!db.objectStoreNames.contains(ObjectStores.invocations)) {
     db.createObjectStore(ObjectStores.invocations, keyPath: 'uuid');
   }

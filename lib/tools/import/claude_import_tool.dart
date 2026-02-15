@@ -49,12 +49,10 @@ class ClaudeImportTool {
     print('📥 Starting Claude import from: $conversationsPath');
     print('   Limit: ${limit ?? "none"}');
 
-    // Parse conversations
     final allConversations =
         await _parser.parseConversationsFile(conversationsPath);
     print('   Found ${allConversations.length} conversations with turns');
 
-    // Apply limit
     final conversations =
         limit != null ? allConversations.take(limit).toList() : allConversations;
 
@@ -78,7 +76,6 @@ class ClaudeImportTool {
             }
           }
 
-          // Create Invocation
           // Use human message UUID as Invocation UUID for deduplication
           final invocation = Invocation(
             eventId: turn.humanMessageUuid,
@@ -101,7 +98,6 @@ class ClaudeImportTool {
           // Set uuid from human message for dedup on re-import
           invocation.uuid = turn.humanMessageUuid;
 
-          // Set createdAt from original message
           invocation.createdAt = turn.humanCreatedAt;
           invocation.updatedAt = turn.humanCreatedAt;
 

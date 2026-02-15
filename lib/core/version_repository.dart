@@ -41,7 +41,6 @@ class VersionRepository {
         snapshotFrequency != null && newVersionNumber % snapshotFrequency == 1;
     final shouldSnapshot = isFirstVersion || isPeriodicSnapshot;
 
-    // Compute delta and changed fields
     final previousState = previousJson ?? {};
     final delta = JsonDiff.diff(previousState, currentJson);
     final deltaJson = jsonEncode(delta);
@@ -88,7 +87,6 @@ class VersionRepository {
     String entityUuid,
     DateTime targetTimestamp,
   ) async {
-    // Get all versions up to target timestamp
     final versions = await _adapter.findByEntityUuidBeforeTimestamp(
         entityUuid, targetTimestamp);
 
@@ -96,7 +94,6 @@ class VersionRepository {
       return null; // No versions before target
     }
 
-    // Find nearest snapshot before target
     EntityVersion? baseSnapshot;
     int startIndex = 0;
 
@@ -112,10 +109,8 @@ class VersionRepository {
       return null; // No snapshot found (shouldn't happen if first version is snapshot)
     }
 
-    // Start with snapshot state
     Map<String, dynamic> state = jsonDecode(baseSnapshot.snapshotJson!);
 
-    // Apply deltas forward from snapshot to target
     for (int i = startIndex + 1; i < versions.length; i++) {
       final delta = jsonDecode(versions[i].deltaJson) as List;
       final patch = JsonPatch(delta);
@@ -146,18 +141,15 @@ class VersionRepository {
 
     if (allVersions.isEmpty) return;
 
-    // Find snapshots
     final snapshots = allVersions.where((v) => v.isSnapshot).toList();
 
     if (snapshots.length <= keepSnapshots) {
       return; // Nothing to prune
     }
 
-    // Keep N most recent snapshots
     final snapshotsToKeep = snapshots.sublist(snapshots.length - keepSnapshots);
     final oldestKeptSnapshot = snapshotsToKeep.first;
 
-    // Delete all versions older than oldest kept snapshot
     final uuidsToDelete = allVersions
         .where((v) => v.versionNumber < oldestKeptSnapshot.versionNumber)
         .map((v) => v.uuid)

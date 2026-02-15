@@ -71,14 +71,11 @@ class InferenceService with Trainable<InferenceAdaptationData> {
     String? implementerName,
     String? userId,
   }) async {
-    // 1. Get implementer (specified or default)
     final implementer = _implementers[implementerName ?? _defaultImplementer]!;
 
-    // 2. Read adaptation state for this implementer + user
     final state =
         await _getAdaptationState(implementer.implementerName, userId);
 
-    // 3. Call implementer with adapted parameters
     final output = await implementer.chat(
       messages: messages,
       temperature: state.temperature,
@@ -88,7 +85,6 @@ class InferenceService with Trainable<InferenceAdaptationData> {
       maxTokens: state.maxTokens,
     );
 
-    // 4. Log invocation for training feedback
     await recordInvocation(
       eventId,
       Invocation(
@@ -102,7 +98,6 @@ class InferenceService with Trainable<InferenceAdaptationData> {
       ),
     );
 
-    // 5. Return response
     return output.response;
   }
 
@@ -113,7 +108,7 @@ class InferenceService with Trainable<InferenceAdaptationData> {
   ///
   /// Format:
   /// 1. System message with semantic context (facts from across system)
-  /// 2. Conversation thread (STT → user, LLM → assistant)
+  /// 2. Conversation thread (STT -> user, LLM -> assistant)
   /// 3. Current user utterance
   List<Map<String, dynamic>> buildMessagesFromContext({
     required ContextBundle contextBundle,
@@ -133,7 +128,6 @@ class InferenceService with Trainable<InferenceAdaptationData> {
     if (contextBundle.semanticContext.isNotEmpty) {
       systemPrompt.writeln('\n# Relevant Context (from semantic search):');
       for (final result in contextBundle.semanticContext) {
-        // Use chunk text directly (it's the matched content)
         final chunkText = result.chunk.text;
         final entityType = result.chunk.sourceEntityType;
         final similarity = (result.similarity * 100).toStringAsFixed(0);
@@ -143,16 +137,14 @@ class InferenceService with Trainable<InferenceAdaptationData> {
 
     messages.add({'role': 'system', 'content': systemPrompt.toString()});
 
-    // 2. Conversation thread (LLM invocations → user/assistant message pairs)
+    // 2. Conversation thread (LLM invocations -> user/assistant message pairs)
     // Each LLM invocation has input.prompt (user) and output.response (assistant)
     for (final inv in contextBundle.conversationThread) {
-      // Extract user prompt from input
       final userPrompt = inv.input?['prompt'] as String?;
       if (userPrompt != null && userPrompt.isNotEmpty) {
         messages.add({'role': 'user', 'content': userPrompt});
       }
 
-      // Extract assistant response from output
       final assistantResponse = inv.output?['response'] as String?;
       if (assistantResponse != null && assistantResponse.isNotEmpty) {
         messages.add({'role': 'assistant', 'content': assistantResponse});
@@ -174,10 +166,8 @@ class InferenceService with Trainable<InferenceAdaptationData> {
     double temperature = 0.7,
     int? maxTokens,
   }) async {
-    // Use default implementer (typically Groq)
     final implementer = _implementers[_defaultImplementer]!;
 
-    // Delegate to implementer (currently only Groq supports tools)
     final response = await implementer.chatWithTools(
       model: model,
       messages: messages,
@@ -186,8 +176,6 @@ class InferenceService with Trainable<InferenceAdaptationData> {
       maxTokens: maxTokens,
     );
 
-    // Log invocation for training
-    // Extract last user message as prompt for semantic indexing
     final lastUserMsg = messages.lastWhere(
       (msg) => msg['role'] == 'user',
       orElse: () => <String, dynamic>{'content': ''},
@@ -248,7 +236,6 @@ class InferenceService with Trainable<InferenceAdaptationData> {
 
   @override
   Widget buildFeedbackUI(BuildContext context, Invocation invocation) {
-    // Parse typed input/output from invocation
     final input = LLMInvocationInput.fromJson(invocation.input!);
     final output = LLMInvocationOutput.fromJson(invocation.output!);
 
@@ -297,20 +284,15 @@ class InferenceService with Trainable<InferenceAdaptationData> {
     // For now, use global training (userId = null)
     const String? userId = null;
 
-    // Get implementer from invocation (e.g., 'groq')
     final implementerName = invocation.implementer ?? _defaultImplementer;
 
-    // Get or create optimizer for this implementer
     final optimizer = _getOrCreateOptimizer(implementerName, userId);
 
-    // Get current params
     final state = await _getAdaptationState(implementerName, userId);
 
-    // Convert feedback to reward
     final reward =
         feedback.action == core_feedback.FeedbackAction.confirm ? 1.0 : -1.0;
 
-    // Record trial (persists to database)
     await optimizer.recordTrial({
       'temperature': state.temperature,
       'topP': state.topP,
@@ -319,10 +301,8 @@ class InferenceService with Trainable<InferenceAdaptationData> {
       'maxTokens': state.maxTokens,
     }, reward);
 
-    // Get GP suggestion (loads historical trials from database)
     final suggested = await optimizer.suggestNext();
 
-    // Update with new parameters
     final newParams = state.copyWith(
       temperature: suggested['temperature'] as double,
       topP: suggested['topP'] as double,
@@ -331,7 +311,6 @@ class InferenceService with Trainable<InferenceAdaptationData> {
       maxTokens: suggested['maxTokens'] as int,
     );
 
-    // Save to AdaptationState
     final adaptationState = await adaptationStateRepo.getForComponent(
           ComponentType.llm,
           implementer: implementerName,

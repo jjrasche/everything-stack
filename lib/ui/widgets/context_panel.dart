@@ -28,7 +28,6 @@ class ContextPanel extends StatefulWidget {
 class _ContextPanelState extends State<ContextPanel> {
   double _similarityThreshold = 0.0; // Start at 0.0 to show all
 
-  // Search state
   final TextEditingController _searchController = TextEditingController();
   List<SemanticSearchResult> _searchResults = [];
   bool _isSearching = false;
@@ -106,12 +105,10 @@ class _ContextPanelState extends State<ContextPanel> {
 
   @override
   Widget build(BuildContext context) {
-    // Calculate total context count and filter semantic matches
     final conversationCount =
         widget.contextBundle?.conversationThread.length ?? 0;
     final allSemanticMatches = widget.contextBundle?.semanticContext ?? [];
 
-    // Filter semantic matches by similarity threshold (now using actual similarity scores)
     final filteredSemanticMatches = allSemanticMatches.where((result) {
       return result.similarity >= _similarityThreshold;
     }).toList();
@@ -129,7 +126,6 @@ class _ContextPanelState extends State<ContextPanel> {
           ),
           child: Column(
             children: [
-              // Header with Search
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -139,7 +135,6 @@ class _ContextPanelState extends State<ContextPanel> {
                 ),
                 child: Column(
                   children: [
-                    // Search Box
                     Semantics(
                       label: 'context_panel.search_bar',
                       textField: true,
@@ -186,7 +181,6 @@ class _ContextPanelState extends State<ContextPanel> {
 
                     const SizedBox(height: 12),
 
-                    // Title Row
                     Row(
                       children: [
                         Icon(
@@ -271,7 +265,6 @@ class _ContextPanelState extends State<ContextPanel> {
                 ),
               ),
 
-              // Content
               Expanded(
                 child: _buildContent(
                   context,
@@ -289,7 +282,6 @@ class _ContextPanelState extends State<ContextPanel> {
     BuildContext context,
     List<SemanticSearchResult> filteredSemanticMatches,
   ) {
-    // Show loading indicator
     if (_isSearching) {
       return const Center(
         child: Column(
@@ -303,7 +295,6 @@ class _ContextPanelState extends State<ContextPanel> {
       );
     }
 
-    // Show search error
     if (_searchError != null) {
       return Center(
         child: Padding(
@@ -332,7 +323,6 @@ class _ContextPanelState extends State<ContextPanel> {
       );
     }
 
-    // Show search results
     if (_showSearchResults) {
       if (_searchResults.isEmpty) {
         return const Center(
@@ -356,7 +346,6 @@ class _ContextPanelState extends State<ContextPanel> {
       );
     }
 
-    // Show normal context (no search active)
     if (widget.contextBundle == null) {
       return const Center(
         child: Text(
@@ -370,7 +359,6 @@ class _ContextPanelState extends State<ContextPanel> {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        // Recent Conversation
         _buildSection(
           context,
           title: 'Recent Conversation',
@@ -380,7 +368,6 @@ class _ContextPanelState extends State<ContextPanel> {
 
         const SizedBox(height: 24),
 
-        // Semantic Matches (filtered by threshold)
         _buildSemanticSection(
           context,
           title: 'Semantic Matches',
@@ -481,12 +468,10 @@ class _ContextPanelState extends State<ContextPanel> {
     SemanticSearchResult result,
     double semanticHalfLifeHours,
   ) {
-    // Get content from chunk
     final content = result.chunk.text;
     final entityType = result.chunk.sourceEntityType;
     final similarity = result.similarity;
 
-    // Get timestamp from source entity if available
     final now = DateTime.now();
     final entityTime = result.sourceEntity?.updatedAt ?? now;
     final ageHours = now.difference(entityTime).inMinutes / 60.0;
@@ -497,13 +482,11 @@ class _ContextPanelState extends State<ContextPanel> {
         ? timeago.format(result.sourceEntity!.updatedAt)
         : 'unknown';
 
-    // Calculate explicit age in days/hours
     final ageDays = ageHours / 24.0;
     final ageDisplay = ageDays >= 1.0
         ? '${ageDays.toStringAsFixed(1)}d'
         : '${ageHours.toStringAsFixed(1)}h';
 
-    // Get conversation name for Claude imports
     String? conversationName;
     if (result.sourceEntity is Invocation) {
       final inv = result.sourceEntity as Invocation;
@@ -521,10 +504,8 @@ class _ContextPanelState extends State<ContextPanel> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Score badges: Similarity | Decay | Fused + entity type + timestamp
           Row(
             children: [
-              // Similarity badge
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 decoration: BoxDecoration(
@@ -541,7 +522,6 @@ class _ContextPanelState extends State<ContextPanel> {
                 ),
               ),
               const SizedBox(width: 4),
-              // Decay badge
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 decoration: BoxDecoration(
@@ -558,7 +538,6 @@ class _ContextPanelState extends State<ContextPanel> {
                 ),
               ),
               const SizedBox(width: 4),
-              // Fused score badge (similarity * decay)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 decoration: BoxDecoration(
@@ -584,7 +563,6 @@ class _ContextPanelState extends State<ContextPanel> {
                 ),
               ),
               const Spacer(),
-              // Age badge (days or hours)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 decoration: BoxDecoration(
@@ -611,7 +589,6 @@ class _ContextPanelState extends State<ContextPanel> {
             ],
           ),
 
-          // Conversation name (for Claude imports)
           if (conversationName != null) ...[
             const SizedBox(height: 4),
             Row(
@@ -637,7 +614,6 @@ class _ContextPanelState extends State<ContextPanel> {
 
           const SizedBox(height: 6),
 
-          // Content
           Text(
             content.length > 150 ? '${content.substring(0, 150)}...' : content,
             style: TextStyle(
@@ -657,11 +633,9 @@ class _ContextPanelState extends State<ContextPanel> {
     Invocation inv,
     bool showDecay,
   ) {
-    // Extract text content
     final content = inv.toEmbeddingInput();
     final timeAgo = timeago.format(inv.updatedAt);
 
-    // Calculate decay score (simplified - actual score would come from ContextSelector)
     final ageHours =
         DateTime.now().difference(inv.updatedAt).inHours.toDouble();
     final halfLife = showDecay ? 24.0 : 720.0; // conversation vs semantic
@@ -678,7 +652,6 @@ class _ContextPanelState extends State<ContextPanel> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Score badge + type + timestamp
           Row(
             children: [
               Container(
@@ -718,7 +691,6 @@ class _ContextPanelState extends State<ContextPanel> {
 
           const SizedBox(height: 6),
 
-          // Content
           Text(
             content.length > 100 ? '${content.substring(0, 100)}...' : content,
             style: TextStyle(

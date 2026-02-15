@@ -115,15 +115,12 @@ class ChunkingService with Trainable<ChunkingAdaptationData>, DebugIntrospectabl
       return [];
     }
 
-    // Check entity's preferred chunking config
     final chunkingConfig = semanticEntity.getChunkingConfig();
 
-    // For 'invocation' config, create a single whole-unit chunk
     if (chunkingConfig == 'invocation') {
       return _indexAsWholeUnit(entity, semanticEntity, input);
     }
 
-    // Standard two-level chunking for other configs
     return _indexWithTwoLevelChunking(entity, semanticEntity, input);
   }
 
@@ -136,10 +133,8 @@ class ChunkingService with Trainable<ChunkingAdaptationData>, DebugIntrospectabl
     final chunks = <Chunk>[];
     final chunkIds = <String>[];
 
-    // Generate embedding FIRST
     final embedding = await embeddingService.generate(input);
 
-    // Create single chunk for entire content WITH embedding
     final chunkId = const Uuid().v4();
     final chunk = Chunk(
       id: chunkId,
@@ -154,16 +149,12 @@ class ChunkingService with Trainable<ChunkingAdaptationData>, DebugIntrospectabl
     chunks.add(chunk);
     chunkIds.add(chunkId);
 
-    // Insert into HNSW index
     index.insert(chunkId, embedding);
 
-    // Persist chunk WITH embedding to database
     await _persistChunk(chunk);
 
-    // Track chunk IDs for this entity
     _chunkRegistry[entity.uuid] = chunkIds;
 
-    // Record invocation for training feedback
     await recordInvocation(
       entity.uuid,
       Invocation(
@@ -198,37 +189,31 @@ class ChunkingService with Trainable<ChunkingAdaptationData>, DebugIntrospectabl
     SemanticIndexable semanticEntity,
     String input,
   ) async {
-    // 1. Load adaptation state for adaptive chunk sizes
     final adaptationState = await getAdaptationState();
     final adaptationData =
         adaptationState.dataJson.isNotEmpty && adaptationState.dataJson != '{}'
             ? deserializeData(adaptationState.dataJson)
             : createDefaultData();
 
-    // Get entity-specific parent chunk size (falls back to default)
     final entityType = entity.runtimeType.toString();
     final parentSize = adaptationData.getParentSizeForCategory(entityType);
 
-    // Estimate token count (rough heuristic: 1 token ≈ 4 chars)
+    // Estimate token count (rough heuristic: 1 token ~ 4 chars)
     final inputTokenCount = tokenizerService.countTokens(input);
 
     final chunks = <Chunk>[];
     final chunkIds = <String>[];
     final chunkSizes = <int>[];
 
-    // Generate parent chunks
     // TODO: Pass adaptive parent size to chunker (currently hardcoded)
     final parentChunkTexts = await parentChunker.chunk(input);
 
     for (final parentChunkText in parentChunkTexts) {
-      // Create parent chunk
       final parentChunkId = const Uuid().v4();
 
-      // Generate parent embedding FIRST
       final parentEmbedding =
           await embeddingService.generate(parentChunkText.text);
 
-      // Create chunk WITH embedding
       final parentChunk = Chunk(
         id: parentChunkId,
         sourceEntityId: entity.uuid,
@@ -242,23 +227,18 @@ class ChunkingService with Trainable<ChunkingAdaptationData>, DebugIntrospectabl
       chunks.add(parentChunk);
       chunkIds.add(parentChunkId);
 
-      // Insert into HNSW index
       index.insert(parentChunkId, parentEmbedding);
 
-      // Persist chunk WITH embedding to database
       await _persistChunk(parentChunk);
 
-      // Generate child chunks from this parent
       final childChunkTexts = await childChunker.chunk(parentChunkText.text);
 
       for (final childChunkText in childChunkTexts) {
         final childChunkId = const Uuid().v4();
 
-        // Generate child embedding FIRST
         final childEmbedding =
             await embeddingService.generate(childChunkText.text);
 
-        // Create chunk WITH embedding
         final childChunk = Chunk(
           id: childChunkId,
           sourceEntityId: entity.uuid,
@@ -272,21 +252,16 @@ class ChunkingService with Trainable<ChunkingAdaptationData>, DebugIntrospectabl
         chunks.add(childChunk);
         chunkIds.add(childChunkId);
 
-        // Track chunk size for invocation logging
         chunkSizes.add(tokenizerService.countTokens(childChunkText.text));
 
-        // Insert into HNSW index
         index.insert(childChunkId, childEmbedding);
 
-        // Persist chunk WITH embedding to database
         await _persistChunk(childChunk);
       }
     }
 
-    // Track chunk IDs for this entity
     _chunkRegistry[entity.uuid] = chunkIds;
 
-    // Record invocation for training feedback
     final parentChunkCount = parentChunkTexts.length;
     final totalChildCount = chunks.where((c) => c.config == 'child').length;
 
@@ -327,12 +302,10 @@ class ChunkingService with Trainable<ChunkingAdaptationData>, DebugIntrospectabl
   Future<void> deleteByEntityId(String entityId) async {
     final chunkIds = _chunkRegistry[entityId] ?? [];
 
-    // Delete from HNSW index
     for (final chunkId in chunkIds) {
       index.delete(chunkId);
     }
 
-    // Delete from database via repository
     await _deleteChunksFromDb(entityId);
 
     _chunkRegistry.remove(entityId);
@@ -358,7 +331,7 @@ class ChunkingService with Trainable<ChunkingAdaptationData>, DebugIntrospectabl
   /// Safe to call multiple times - it's idempotent.
   ///
   /// This is called after entity is persisted to ensure chunks are backed up.
-  /// If it fails, chunks are already in memory and can be rebuilt by SyncService.
+  /// If it fails, chunks are still in memory and can be rebuilt by SyncService.
   Future<void> persistIndex() async {
     // Index persistence is handled by HnswIndexStore
     // This method is a no-op here since HnswIndexStore is injected separately
@@ -375,7 +348,6 @@ class ChunkingService with Trainable<ChunkingAdaptationData>, DebugIntrospectabl
   ///
   /// For now, returns true if index has any vectors
   bool isIndexConsistent() {
-    // Simple check: if index has vectors, assume it's consistent
     // A more thorough check would compare:
     // - Total chunks expected vs indexed
     // - Orphaned chunks in index but missing entities
@@ -398,14 +370,12 @@ class ChunkingService with Trainable<ChunkingAdaptationData>, DebugIntrospectabl
     print('🔄 [ChunkingService] Rebuilding HNSW index from storage...');
 
     try {
-      // Clear existing in-memory index before rebuilding
       final previousSize = index.size;
       index.clear();
       if (previousSize > 0) {
         print('   🧹 Cleared $previousSize entries from in-memory index');
       }
 
-      // Clean up any duplicate chunks from failed migrations
       final duplicatesRemoved = await chunkRepo.removeDuplicates();
       if (duplicatesRemoved > 0) {
         print('   🧹 Removed $duplicatesRemoved duplicate chunks');
@@ -423,7 +393,6 @@ class ChunkingService with Trainable<ChunkingAdaptationData>, DebugIntrospectabl
       int skipped = 0;
       int regenerated = 0;
 
-      // First pass: count how many need migration (quick check)
       int legacyCount = 0;
       for (final chunk in chunks) {
         if (chunk.embedding == null || chunk.embedding!.isEmpty) {
@@ -436,9 +405,8 @@ class ChunkingService with Trainable<ChunkingAdaptationData>, DebugIntrospectabl
         print('   🔄 Starting one-time migration (this may take a few minutes)...');
       }
 
-      // Progress logging interval (percentage-based for large datasets)
       final logInterval = (chunks.length / 10).ceil().clamp(10, 100);
-      const batchSize = 50; // Process in batches to manage memory
+      const batchSize = 50;
 
       for (var i = 0; i < chunks.length; i++) {
         final chunk = chunks[i];
@@ -447,27 +415,23 @@ class ChunkingService with Trainable<ChunkingAdaptationData>, DebugIntrospectabl
           List<double> embedding;
 
           if (chunk.embedding != null && chunk.embedding!.isNotEmpty) {
-            // Use persisted embedding (fast path - no API call)
             embedding = chunk.embedding!;
           } else {
             // Legacy chunk without embedding - regenerate via API (one-time migration)
             embedding = await embeddingService.generate(chunk.text);
 
-            // Update existing chunk with embedding (avoid creating duplicates)
             await chunkRepo.updateEmbedding(chunk.id, embedding);
             regenerated++;
 
-            // Add small delay every 10 regenerations to avoid overwhelming API
+            // Avoid overwhelming embedding API
             if (regenerated % 10 == 0) {
               await Future.delayed(const Duration(milliseconds: 100));
             }
           }
 
-          // Insert into HNSW index
           index.insert(chunk.id, embedding);
           loaded++;
 
-          // Progress logging at intervals
           if (loaded % logInterval == 0) {
             final pct = (loaded * 100 / chunks.length).toStringAsFixed(0);
             if (regenerated > 0) {
@@ -477,7 +441,7 @@ class ChunkingService with Trainable<ChunkingAdaptationData>, DebugIntrospectabl
             }
           }
 
-          // Batch boundary: yield to event loop and allow GC
+          // Yield to event loop at batch boundaries
           if (loaded % batchSize == 0) {
             await Future.delayed(Duration.zero);
           }
@@ -496,7 +460,6 @@ class ChunkingService with Trainable<ChunkingAdaptationData>, DebugIntrospectabl
       }
       print('   📊 Index size: ${index.size}');
 
-      // Capture chunk stats for AI debugging
       final chunksByType = <String, int>{};
       final chunksByEntity = <String, int>{};
       final uniqueIds = <String>{};
@@ -598,7 +561,6 @@ class ChunkingService with Trainable<ChunkingAdaptationData>, DebugIntrospectabl
 
   @override
   Widget buildFeedbackUI(BuildContext context, Invocation invocation) {
-    // Parse typed input/output from invocation
     final input = ChunkingInvocationInput.fromJson(invocation.input!);
     final output = ChunkingInvocationOutput.fromJson(invocation.output!);
 

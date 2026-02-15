@@ -40,13 +40,11 @@ Future<void> initializePersistence(GetIt getIt) async {
 
   final db = await openIndexedDB();
 
-  // Create and register adapters
   final invocationAdapter = InvocationIndexedDBAdapter(db);
   final adaptationStateAdapter = AdaptationStateIndexedDBAdapter(db);
   final feedbackAdapter = FeedbackIndexedDBAdapter(db);
   final trialAdapter = TrialIndexedDBAdapter(db);
 
-  // Register repositories in GetIt
   getIt.registerSingleton<InvocationRepository<Invocation>>(
     invocationAdapter,
   );
@@ -60,7 +58,6 @@ Future<void> initializePersistence(GetIt getIt) async {
     trialAdapter,
   );
 
-  // Create and register EnrichmentQueue adapter
   final enrichmentQueueAdapter = EnrichmentQueueIndexedDBAdapter(db);
   getIt.registerSingleton<EnrichmentQueueAdapter>(enrichmentQueueAdapter);
 
@@ -73,11 +70,9 @@ Future<void> initializePersistence(GetIt getIt) async {
   final audioFileAdapter = AudioFileIndexedDBAdapter(db);
   getIt.registerSingleton<PersistenceAdapter<AudioFile>>(audioFileAdapter);
 
-  // Register AtomicInsight adapter
   final atomicInsightAdapter = AtomicInsightIndexedDBAdapter(db);
   getIt.registerSingleton<PersistenceAdapter<AtomicInsight>>(atomicInsightAdapter);
 
-  // Register PromptVersion adapter
   final promptVersionAdapter = PromptVersionIndexedDBAdapter(db);
   getIt.registerSingleton<PersistenceAdapter<PromptVersion>>(promptVersionAdapter);
 }

@@ -22,7 +22,6 @@ Future<Map<String, dynamic>> regulationLogEntry(
   PersonRepository personRepo,
   RegulationEntryRepository entryRepo,
 ) async {
-  // Required parameters
   final entryTypeStr = params['entry_type'] as String?;
   if (entryTypeStr == null) {
     throw ArgumentError('entry_type is required');
@@ -43,7 +42,6 @@ Future<Map<String, dynamic>> regulationLogEntry(
     throw ArgumentError('severity is required');
   }
 
-  // Parse enums
   EntryType? entryType;
   try {
     entryType = EntryType.values.firstWhere(
@@ -64,19 +62,16 @@ Future<Map<String, dynamic>> regulationLogEntry(
         'Invalid severity: $severityStr. Must be one of: ${Severity.values.map((e) => e.toString().split('.').last).join(', ')}');
   }
 
-  // Optional parameters
   final regulationStrategy = params['regulation_strategy'] as String?;
   final category = params['category'] as String?;
   final notes = params['notes'] as String?;
 
-  // Auto-create or find persons
   final personIds = <String>[];
   for (final name in personNames) {
     final personName = name.toString();
     var person = await personRepo.findByName(personName);
 
     if (person == null) {
-      // Auto-create person
       person = Person(
         name: personName,
         role: null, // Can be set later
@@ -88,7 +83,6 @@ Future<Map<String, dynamic>> regulationLogEntry(
     personIds.add(person.uuid);
   }
 
-  // Create regulation entry
   final entry = RegulationEntry(
     entryType: entryType,
     personIds: personIds,
@@ -121,18 +115,15 @@ Future<Map<String, dynamic>> regulationLogCommitment(
   CommitmentLogRepository logRepo,
   PersonRepository personRepo,
 ) async {
-  // Required parameters
   final commitmentName = params['commitment_name'] as String?;
   if (commitmentName == null || commitmentName.isEmpty) {
     throw ArgumentError('commitment_name is required');
   }
 
-  // Optional parameters
   final completed = params['completed'] as bool? ?? true;
   final personName = params['person_name'] as String?;
   final notes = params['notes'] as String?;
 
-  // Find commitment by name (case-insensitive)
   final allCommitments = await commitmentRepo.findAll();
   final commitment = allCommitments.firstWhere(
     (c) => c.name.toLowerCase() == commitmentName.toLowerCase(),
@@ -140,7 +131,6 @@ Future<Map<String, dynamic>> regulationLogCommitment(
         'Commitment not found: $commitmentName. Use commitment.create first.'),
   );
 
-  // Find or create person if specified
   String? personId;
   if (personName != null && personName.isNotEmpty) {
     var person = await personRepo.findByName(personName);
@@ -154,12 +144,10 @@ Future<Map<String, dynamic>> regulationLogCommitment(
     personId = person.uuid;
   }
 
-  // Check if log already exists for today
   final today = DateTime.now();
   var log = await logRepo.findByCommitmentAndDate(commitment.uuid, today);
 
   if (log != null) {
-    // Update existing log
     log.completed = completed;
     if (personId != null) log.personId = personId;
     if (notes != null) log.notes = notes;
@@ -175,7 +163,6 @@ Future<Map<String, dynamic>> regulationLogCommitment(
       'status': 'updated',
     };
   } else {
-    // Create new log
     log = CommitmentLog(
       commitmentId: commitment.uuid,
       date: DateTime(today.year, today.month, today.day),
@@ -209,7 +196,6 @@ Future<Map<String, dynamic>> commitmentCreate(
     throw ArgumentError('name is required');
   }
 
-  // Optional parameters
   final rationale = params['rationale'] as String?;
   final interval = params['interval'] as String? ?? 'daily';
   final timeOfDayStr = params['time_of_day'] as String?;
@@ -217,7 +203,6 @@ Future<Map<String, dynamic>> commitmentCreate(
       params['verification_conditions'] as List<dynamic>? ?? [];
   final personNames = params['person_names'] as List<dynamic>? ?? [];
 
-  // Parse time_of_day if provided (ISO 8601 format)
   DateTime? timeOfDay;
   if (timeOfDayStr != null) {
     try {
@@ -228,7 +213,6 @@ Future<Map<String, dynamic>> commitmentCreate(
     }
   }
 
-  // Auto-create or find persons
   final personIds = <String>[];
   for (final name in personNames) {
     final personName = name.toString();
@@ -245,7 +229,6 @@ Future<Map<String, dynamic>> commitmentCreate(
     personIds.add(person.uuid);
   }
 
-  // Create commitment
   final commitment = Commitment(
     name: name,
     rationale: rationale,

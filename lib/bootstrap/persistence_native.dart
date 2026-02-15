@@ -54,14 +54,12 @@ Future<void> initializePersistence(GetIt getIt) async {
   getIt.registerSingleton<Store>(store, instanceName: 'objectBoxStore');
   print('   ✓ Store registered (instanceName: objectBoxStore)');
 
-  // Create and register adapters
   final invocationAdapter = InvocationObjectBoxAdapter(store);
   final adaptationStateAdapter = AdaptationStateObjectBoxAdapter(store);
   final feedbackAdapter = FeedbackObjectBoxAdapter(store);
   final trialAdapter = TrialObjectBoxAdapter(store);
   final audioFileAdapter = AudioFileObjectBoxAdapter(store);
 
-  // Register InvocationRepository adapter
   // Handler wiring (like SemanticIndexableHandler) is done in bootstrap.dart
   getIt.registerSingleton<InvocationRepository<Invocation>>(invocationAdapter);
 
@@ -79,19 +77,15 @@ Future<void> initializePersistence(GetIt getIt) async {
   // Using PersistenceAdapter<AudioFile> for platform-agnostic access
   getIt.registerSingleton<PersistenceAdapter<AudioFile>>(audioFileAdapter);
 
-  // Create and register EnrichmentQueue adapter
   final enrichmentQueueAdapter = EnrichmentQueueObjectBoxAdapter(store);
   getIt.registerSingleton<EnrichmentQueueAdapter>(enrichmentQueueAdapter);
 
-  // Create and register Chunk adapter (for semantic search)
   final chunkAdapter = ChunkObjectBoxAdapter(store);
   getIt.registerSingleton<ChunkRepository>(chunkAdapter);
 
-  // Create and register AtomicInsight adapter
   final atomicInsightAdapter = AtomicInsightObjectBoxAdapter(store);
   getIt.registerSingleton<PersistenceAdapter<AtomicInsight>>(atomicInsightAdapter);
 
-  // Create and register PromptVersion adapter
   final promptVersionAdapter = PromptVersionObjectBoxAdapter(store);
   getIt.registerSingleton<PersistenceAdapter<PromptVersion>>(promptVersionAdapter);
 }

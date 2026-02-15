@@ -95,9 +95,7 @@ class EntityVersion extends BaseEntity {
     this.userId,
     this.changeDescription,
   }) {
-    // Set timestamps via the timestamp setter
     this.timestamp = timestamp;
-    // Generate uuid if not set
     if (uuid.isEmpty) {
       uuid = super.uuid;
     }

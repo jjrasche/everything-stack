@@ -79,7 +79,6 @@ class ChatPanel extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Header
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -121,7 +120,6 @@ class ChatPanel extends StatelessWidget {
             ),
           ),
 
-          // Messages
           Expanded(
             child: messages.isEmpty
                 ? const Center(
@@ -143,7 +141,6 @@ class ChatPanel extends StatelessWidget {
                   ),
           ),
 
-          // Microphone button
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -174,7 +171,6 @@ class ChatPanel extends StatelessWidget {
   }
 
   Widget _buildMessage(BuildContext context, ChatMessage message) {
-    // Render tool call messages with ToolCallMessage widget
     if (message.isToolCall) {
       return ToolCallMessage(
         toolName: message.toolName!,
@@ -184,7 +180,6 @@ class ChatPanel extends StatelessWidget {
       );
     }
 
-    // Render regular text messages
     final isUser = message.role == 'user';
 
     return Align(
@@ -210,7 +205,6 @@ class ChatPanel extends StatelessWidget {
             crossAxisAlignment:
                 isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             children: [
-              // Role label
               Text(
                 isUser ? 'You' : 'Assistant',
                 style: TextStyle(
@@ -222,13 +216,11 @@ class ChatPanel extends StatelessWidget {
 
               const SizedBox(height: 4),
 
-              // Message content
               Text(
                 message.content,
                 style: const TextStyle(fontSize: 14),
               ),
 
-              // Feedback indicator for assistant messages
               if (!isUser) ...[
                 const SizedBox(height: 8),
                 Row(

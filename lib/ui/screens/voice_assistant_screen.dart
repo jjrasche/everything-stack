@@ -36,7 +36,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   late STTService _sttService;
   late AudioStorage _audioStorage;
 
-  // UI state
   List<ChatMessage> _messages = [];
   ContextBundle? _currentContextBundle;
   bool _contextFeedbackGiven = false;
@@ -49,14 +48,12 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   final List<int> _audioBuffer = [];
   DateTime? _recordingStartTime;
 
-  // StreamSubscription
   StreamSubscription<Event>? _eventSubscription;
 
   @override
   void initState() {
     super.initState();
 
-    // Get services from GetIt
     _eventBus = GetIt.instance<EventBus>();
     _invocationRepo = GetIt.instance<InvocationRepository<Invocation>>();
     _feedbackRepo = GetIt.instance<FeedbackRepository>();
@@ -65,7 +62,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
     _sttService = GetIt.instance<STTService>();
     _audioStorage = GetIt.instance<AudioStorage>();
 
-    // Subscribe to events
     _subscribeToEvents();
 
     debugPrint('✅ [VoiceAssistantScreen] Initialized');
@@ -401,7 +397,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   Widget _buildChatWithLiveTranscript() {
     return Column(
       children: [
-        // Chat panel (expanded to fill available space)
         Expanded(
           child: ChatPanel(
             messages: _messages,
@@ -411,7 +406,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
           ),
         ),
 
-        // Live transcription indicator (appears below chat)
         if (_liveTranscript.isNotEmpty)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -423,7 +417,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
             ),
             child: Row(
               children: [
-                // Animated typing indicator
                 SizedBox(
                   width: 16,
                   height: 16,
@@ -434,7 +427,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                // Live transcript text
                 Expanded(
                   child: Text(
                     _liveTranscript,
@@ -463,7 +455,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
         title: const Text('Voice Assistant'),
         centerTitle: true,
         actions: [
-          // Continuous mode toggle
           Semantics(
             label: 'app_bar.continuous_mode',
             toggled: _continuousMode,
@@ -487,7 +478,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
                   : 'Continuous mode OFF',
             ),
           ),
-          // Clear button
           if (_messages.isNotEmpty)
             Semantics(
               label: 'app_bar.clear_conversation',
@@ -517,7 +507,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   Widget _buildMobileLayout() {
     return Column(
       children: [
-        // Context panel (top 50%)
         Expanded(
           flex: 50,
           child: ContextPanel(
@@ -529,7 +518,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
 
         const SizedBox(height: 16),
 
-        // Chat panel (bottom 50%)
         Expanded(
           flex: 50,
           child: _buildChatWithLiveTranscript(),
@@ -542,7 +530,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   Widget _buildDesktopLayout() {
     return Row(
       children: [
-        // Context panel (left 50%)
         Expanded(
           flex: 50,
           child: ContextPanel(
@@ -554,7 +541,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
 
         const SizedBox(width: 16),
 
-        // Chat panel (right 50%)
         Expanded(
           flex: 50,
           child: _buildChatWithLiveTranscript(),

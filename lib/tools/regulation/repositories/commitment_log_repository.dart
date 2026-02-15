@@ -27,7 +27,6 @@ class CommitmentLogRepository extends EntityRepository<CommitmentLog> {
   /// Find log for a commitment on a specific date
   Future<CommitmentLog?> findByCommitmentAndDate(
       String commitmentId, DateTime date) async {
-    // Start of day
     final start = DateTime(date.year, date.month, date.day);
     final end = start.add(const Duration(days: 1));
 

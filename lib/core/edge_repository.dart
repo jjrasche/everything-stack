@@ -33,7 +33,6 @@ class EdgeRepository {
   /// Save edge to database, enforcing uniqueness on (sourceUuid, targetUuid, edgeType)
   /// Throws DuplicateEdgeException if edge already exists.
   Future<int> save(Edge edge) async {
-    // Check for existing edge with same composite key
     final existing = await findBetween(edge.sourceUuid, edge.targetUuid);
     if (existing.any((e) => e.edgeType == edge.edgeType && e.id != edge.id)) {
       throw DuplicateEdgeException(
@@ -43,12 +42,10 @@ class EdgeRepository {
       );
     }
 
-    // Set createdAt if not already set
     if (edge.createdAt.year == 1970) {
       edge.createdAt = DateTime.now();
     }
 
-    // Save via adapter (adapter handles touch())
     final saved = await _adapter.save(edge);
     return saved.id;
   }
@@ -80,7 +77,6 @@ class EdgeRepository {
 
   /// Find all edges between two entities (both directions)
   Future<List<Edge>> findBetween(String sourceUuid, String targetUuid) async {
-    // Fetch by source and filter for target
     final edges = await findBySource(sourceUuid);
     return edges.where((e) => e.targetUuid == targetUuid).toList();
   }
@@ -116,7 +112,6 @@ class EdgeRepository {
       results: results,
     );
 
-    // Remove the starting node if it ended up in results
     results.remove(startUuid);
 
     return results;
@@ -131,10 +126,8 @@ class EdgeRepository {
     required Set<String> visited,
     required Map<String, int> results,
   }) async {
-    // Stop if we've reached max depth
     if (currentDepth >= maxDepth) return;
 
-    // Mark as visited to avoid cycles
     visited.add(currentUuid);
 
     // Handle 'both' direction by processing outgoing and incoming separately
@@ -165,10 +158,8 @@ class EdgeRepository {
         );
       }
     } else {
-      // Get edges to traverse
       final edges = await _getEdgesForDirection(currentUuid, direction);
 
-      // Process each edge
       for (final edge in edges) {
         final nextUuid =
             direction == 'incoming' ? edge.sourceUuid : edge.targetUuid;
@@ -196,16 +187,13 @@ class EdgeRepository {
     required Set<String> visited,
     required Map<String, int> results,
   }) async {
-    // Skip if already visited (avoid cycles)
     if (visited.contains(nextUuid)) return;
 
-    // Record this node
     final newDepth = currentDepth + 1;
     if (!results.containsKey(nextUuid) || results[nextUuid]! > newDepth) {
       results[nextUuid] = newDepth;
     }
 
-    // Recurse
     await _traverseImpl(
       currentUuid: nextUuid,
       currentDepth: newDepth,

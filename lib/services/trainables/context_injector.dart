@@ -31,7 +31,6 @@ class ContextInjector implements Trainable {
   }) async {
     final injected = <String, dynamic>{};
 
-    // Record invocation
     final invocation = Invocation(
       eventId: eventId,
       componentType: 'context_injector',
@@ -59,7 +58,6 @@ class ContextInjector implements Trainable {
 
   @override
   Future<void> trainFromFeedback(String turnId, {String? userId}) async {
-    // Get all feedback for context_injector on this turn
     final feedbackList = await feedbackRepo.findByTurnAndComponent(
       turnId,
       'context_injector',
@@ -67,18 +65,15 @@ class ContextInjector implements Trainable {
 
     if (feedbackList.isEmpty) return;
 
-    // Get current adaptation state
     var state = await adaptationStateRepo.getForComponent('context_injector',
         implementer: null, userId: userId);
     if (state == null) return;
 
     state.loadData();
 
-    // Process each feedback
     for (final feedback in feedbackList) {
       if (!feedback.hasCorrection) continue;
 
-      // Load the invocation
       final invocation = await invocationRepo.findById(feedback.invocationId);
       if (invocation == null) continue;
 
@@ -93,7 +88,6 @@ class ContextInjector implements Trainable {
       if (corrected['missingContext'] is List) {
         final missing = (corrected['missingContext'] as List).cast<String>();
 
-        // Update state data (track missing context fields)
         Map<String, dynamic> data = state.data;
         data['missingContextCount'] =
             (data['missingContextCount'] as int? ?? 0) + missing.length;

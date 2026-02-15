@@ -28,7 +28,6 @@ class SemanticIndexableHandler<T extends BaseEntity>
   Future<void> beforeSave(T entity) async {
     if (entity is! SemanticIndexable) return;
 
-    // Delete old chunks for this entity
     try {
       await chunkingService.deleteByEntityId(entity.uuid);
     } catch (e, stackTrace) {
@@ -49,7 +48,6 @@ class SemanticIndexableHandler<T extends BaseEntity>
     if (entity is! SemanticIndexable) return;
 
     try {
-      // Create chunks from entity content and index them
       final chunks = await chunkingService.indexEntity(entity);
       print('✓ [SemanticIndexableHandler] Indexed ${chunks.length} chunks for ${entity.runtimeType} ${entity.uuid}');
     } catch (e, stackTrace) {

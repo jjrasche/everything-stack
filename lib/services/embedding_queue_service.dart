@@ -43,14 +43,12 @@ class EmbeddingQueueService {
 
     print('EmbeddingQueueService starting...');
 
-    // Process immediately if queue has pending items
     final pendingCount = await _store.getPendingCount();
     if (pendingCount > 0) {
       print('Found $pendingCount pending tasks, processing immediately');
       unawaited(_processBatch());
     }
 
-    // Start periodic timer
     _processingTimer = Timer.periodic(
       Duration(seconds: processingIntervalSeconds),
       (_) => _processBatch(),
@@ -106,7 +104,6 @@ class EmbeddingQueueService {
       return;
     }
 
-    // Check if already queued
     final existing = await _store.findByEntityUuid(entityUuid);
     if (existing != null && !existing.isCompleted && !existing.isFailed) {
       print('$entityType:$entityUuid already queued, skipping');
@@ -123,7 +120,6 @@ class EmbeddingQueueService {
     print(
         'Enqueued $entityType:$entityUuid (queue size: ${await _store.getPendingCount()})');
 
-    // If queue reached batch size, process immediately
     if (await _store.getPendingCount() >= batchSize) {
       print('Queue reached batch size ($batchSize), processing immediately');
       unawaited(_processBatch());
@@ -151,7 +147,6 @@ class EmbeddingQueueService {
     _lastProcessedAt = DateTime.now();
 
     try {
-      // Get next batch of pending tasks
       final tasks = await _store.getPendingTasks(batchSize);
 
       if (tasks.isEmpty) {
@@ -179,19 +174,16 @@ class EmbeddingQueueService {
   Future<void> _processBatchEmbeddings(List<EmbeddingTaskData> tasks) async {
     final texts = tasks.map((t) => t.text).toList();
 
-    // Generate embeddings in batch
     final embeddings = await _embeddingService
         .generateBatch(texts)
         .timeout(Duration(seconds: 30));
 
-    // Save embeddings to entities and mark tasks as completed
     for (int i = 0; i < tasks.length; i++) {
       final task = tasks[i];
       final embedding = embeddings[i];
 
       await _saveEmbedding(task, embedding);
 
-      // Mark as completed
       task.status = TaskStatus.completed;
       await _store.save(task);
       _completedCount++;
@@ -208,15 +200,12 @@ class EmbeddingQueueService {
         task.lastAttemptAt = DateTime.now();
         await _store.save(task);
 
-        // Generate embedding
         final embedding = await _embeddingService
             .generate(task.text)
             .timeout(Duration(seconds: 15));
 
-        // Save to entity
         await _saveEmbedding(task, embedding);
 
-        // Mark as completed
         task.status = TaskStatus.completed;
         await _store.save(task);
         _completedCount++;
@@ -250,7 +239,6 @@ class EmbeddingQueueService {
       print(
           '✗ ${task.entityType}:${task.entityUuid} failed after $maxRetries retries: $error');
     } else {
-      // Retry on next cycle
       task.status = TaskStatus.pending;
       await _store.save(task);
 
