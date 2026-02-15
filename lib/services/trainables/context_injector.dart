@@ -49,18 +49,7 @@ class ContextInjector implements Trainable {
     required String eventId,
     required String namespace,
   }) async {
-    // Context injection placeholder
     final injected = <String, dynamic>{};
-
-    // Example: if namespace is 'task', inject tasks
-    // if (namespace == 'task') {
-    //   injected['tasks'] = await taskRepo.findIncomplete();
-    // }
-    //
-    // Example: if namespace is 'timer', inject timers
-    // if (namespace == 'timer') {
-    //   injected['timers'] = await timerRepo.findActive();
-    // }
 
     // Record invocation
     final invocation = Invocation(

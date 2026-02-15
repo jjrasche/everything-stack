@@ -259,30 +259,8 @@ class EmbeddingQueueService {
 
   /// Save embedding to entity.
   /// Uses adapter directly (bypasses repository) with touch=false.
-  /// TODO: Phase 1 - Re-enable when Note entity is implemented
   Future<void> _saveEmbedding(
       EmbeddingTaskData task, List<double> embedding) async {
-    // Fetch latest entity state
-    // final note = await _noteAdapter.findByUuid(task.entityUuid);
-    //
-    // if (note == null) {
-    //   // Entity was deleted - not a failure, just skip
-    //   task.status = TaskStatus.completed;
-    //   await _store.save(task);
-    //   print('Entity ${task.entityUuid} was deleted, skipping embedding');
-    //   return;
-    // }
-    //
-    // // Apply embedding
-    // note.embedding = embedding;
-    //
-    // // Save with touch=false to preserve updatedAt timestamp
-    // // This is a background side-effect, not a user edit
-    // await _noteAdapter.save(note, touch: false);
-    //
-    // print('Saved embedding for ${task.entityType}:${task.entityUuid}');
-
-    // For now, just mark as completed
     task.status = TaskStatus.completed;
     await _store.save(task);
   }

@@ -377,33 +377,7 @@ Future<void> initializeEverythingStack({
 
 Future<void> _initializeServices(EverythingStackConfig cfg) async {
   try {
-    // 0. Initialize Sentry (DISABLED: Pulls in JNI/Java on Windows)
-    // Re-enable for production when Sentry crash reporting needed
-    /*
-  const isTestMode = bool.fromEnvironment('TEST_MODE', defaultValue: false);
-  if (isTestMode) {
-    debugPrint('⚠️ Skipping Sentry initialization (TEST_MODE=true)');
-  } else {
-    const sentryDsn = String.fromEnvironment('SENTRY_DSN', defaultValue: '');
-    if (sentryDsn.isEmpty) {
-      debugPrint('⚠️ SENTRY_DSN not configured - crash reporting disabled');
-    } else {
-      try {
-        // await SentryFlutter.init(...);
-        debugPrint('✅ Sentry initialized - crashes will be reported');
-      } catch (e) {
-        debugPrint('⚠️ Sentry initialization failed: $e');
-      }
-    }
-  }
-  */
-
-    // 1. Create timeout-wrapped HTTP client (Layer 1 defense)
-    // Note: Currently unused. Will be used for embedding service HTTP client in future phases.
-    // final timeoutClient = TimeoutHttpClient(http.Client());
-    // final wrappedHttpClient = _wrapHttpClientWithTimeout(timeoutClient);
-
-    // 2. Initialize Persistence (platform-specific: ObjectBox or IndexedDB)
+    // Initialize Persistence (platform-specific: ObjectBox or IndexedDB)
     debugPrint('💾 Initializing persistence layer...');
     debugPrint('🔍 [bootstrap] Before calling initializePersistence:');
     debugPrint('   getIt hashCode: ${getIt.hashCode}');
@@ -829,54 +803,8 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
       debugPrint('⚠️ AtomicInsight initialization failed: $e');
     }
 
-    // 14. Initialize STT Service (Speech-to-Text) with implementers
-    // TODO: STTService initialization
-    // Requires concrete implementation (STTService is abstract)
-    // debugPrint('🎤 [STT] Initializing STTService with implementers');
-    // final sttImplementers = <String, STTImplementer>{};
-    //
-    // // Add Deepgram implementer if API key provided
-    // if (cfg.deepgramApiKey != null && cfg.deepgramApiKey!.isNotEmpty) {
-    //   sttImplementers['deepgram'] = DeepgramImplementer(apiKey: cfg.deepgramApiKey!);
-    //   debugPrint('✅ STT: DeepgramImplementer registered');
-    // }
-    //
-    // // Only register if we have implementers
-    // if (sttImplementers.isNotEmpty) {
-    //   final sttService = STTService(
-    //     implementers: sttImplementers,
-    //     defaultImplementer: 'deepgram',
-    //     invocationRepo: getIt<InvocationRepository<Invocation>>(),
-    //     adaptationStateRepo: getIt<AdaptationStateRepository>(),
-    //     feedbackRepo: getIt<FeedbackRepository>(),
-    //   );
-    //   getIt.registerSingleton<STTService>(sttService);
-    //   debugPrint('✅ STT: STTService (deepgram)');
-    // } else {
-    //   debugPrint('⚠️ Deepgram API key missing');
-    //   debugPrint('ℹ️ STT: disabled');
-    //   // Register a disabled STT service (empty implementer map)
-    //   final nullSttService = STTService(
-    //     implementers: {},
-    //     defaultImplementer: 'null',
-    //     invocationRepo: getIt<InvocationRepository<Invocation>>(),
-    //     adaptationStateRepo: getIt<AdaptationStateRepository>(),
-    //     feedbackRepo: getIt<FeedbackRepository>(),
-    //   );
-    //   getIt.registerSingleton<STTService>(nullSttService);
-    // }
-
-    // Note: Domain repositories (Task, Timer, Personality, Namespace) are initialized
-    // by the application layer, not bootstrap. This allows for platform-specific
-    // persistence handling and dependency injection.
-    //
-    // Bootstrap sets up infrastructure services (Persistence, BlobStore, Sync, etc).
-    // Application layer creates domain repositories and ContextManager.
-    //
-    // See: lib/providers/ for Riverpod provider setup with repositories
-    // See: lib/main.dart for ContextManager initialization
-    // Initialize debug infrastructure (HTTP server, screenshot capture)
-    // This enables AI-driven debugging via curl http://localhost:9999/
+    // Domain repositories (Task, Timer, etc.) are initialized by the
+    // application layer, not bootstrap. See lib/providers/ and lib/main.dart.
     await initializeDebugInfrastructure();
 
     debugPrint('\n✅ Bootstrap complete: infrastructure services initialized');
