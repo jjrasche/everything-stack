@@ -87,7 +87,6 @@ class Invocation extends BaseEntity
     if (uuid.isEmpty) {
       uuid = super.uuid;
     }
-    // Serialize input/output maps to JSON strings for ObjectBox storage
     if (input != null && inputJson == null) {
       inputJson = jsonEncode(input);
     }

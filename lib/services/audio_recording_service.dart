@@ -52,7 +52,6 @@ class RecordAudioRecordingService implements AudioRecordingService {
       numChannels: 1,
     );
 
-    // Start recording and stream audio chunks
     _recorder.startStream(config).then((stream) {
       stream.listen(
         (chunk) {

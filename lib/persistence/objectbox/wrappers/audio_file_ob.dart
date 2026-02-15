@@ -67,7 +67,6 @@ class AudioFileOB {
       format: format,
       eventId: eventId,
     );
-    // Copy BaseEntity fields
     audioFile.id = id;
     audioFile.uuid = uuid;
     audioFile.createdAt = createdAt;

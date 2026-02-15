@@ -228,7 +228,6 @@ class STTService with Trainable<STTAdaptationData> {
 
   @override
   Widget buildFeedbackUI(BuildContext context, Invocation invocation) {
-    // Parse typed input/output from invocation
     final output = STTInvocationOutput.fromJson(invocation.output!);
 
     return Column(

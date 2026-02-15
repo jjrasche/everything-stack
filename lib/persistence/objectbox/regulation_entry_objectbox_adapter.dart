@@ -82,7 +82,6 @@ class RegulationEntryObjectBoxAdapter
 
   /// Get daily summary: count by entry type for a specific date
   Future<Map<EntryType, int>> getDailySummary(DateTime date) async {
-    // Start of day
     final start = DateTime(date.year, date.month, date.day);
     final end = start.add(const Duration(days: 1));
 

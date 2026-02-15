@@ -81,7 +81,6 @@ class EnrichmentQueueObjectBoxAdapter implements EnrichmentQueueAdapter {
         .build();
     try {
       final obList = query.find();
-      // Filter in Dart for exact step matching
       return obList
           .map((ob) => ob.toItem())
           .where((item) => item.pendingSteps.contains(stepType))
@@ -101,7 +100,6 @@ class EnrichmentQueueObjectBoxAdapter implements EnrichmentQueueAdapter {
       return findReadyForStep(stepType);
     }
 
-    // Fetch all non-processing items, filter in Dart for exact matching
     // CRITICAL: .contains() does substring matching, not list membership
     final query = _box
         .query(EnrichmentQueueItemOB_.currentStep.isNull())

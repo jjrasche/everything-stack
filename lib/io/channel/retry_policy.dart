@@ -57,14 +57,12 @@ class RetryPolicy {
   Duration delayForAttempt(int attempt, {Random? random}) {
     if (attempt < 0) return Duration.zero;
 
-    // Calculate base delay with exponential backoff
     final baseMs = initialDelay.inMilliseconds *
         pow(backoffMultiplier, attempt).toDouble();
 
     // Cap at maximum delay
     final cappedMs = min(baseMs, maxDelay.inMilliseconds.toDouble());
 
-    // Add jitter if enabled
     if (useJitter && jitterFactor > 0) {
       final rng = random ?? Random();
       final jitterMs = cappedMs * jitterFactor * rng.nextDouble();

@@ -24,14 +24,12 @@ class TrialIndexedDBAdapter extends BaseIndexedDBAdapter<Trial>
   }) async {
     final allTrials = await findAll();
 
-    // Filter by componentType and userId
     var filtered = allTrials.where((t) => t.componentType == componentType);
 
     if (userId != null) {
       filtered = filtered.where((t) => t.userId == userId);
     }
 
-    // Sort by createdAt DESC (newest first)
     final sorted = filtered.toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 

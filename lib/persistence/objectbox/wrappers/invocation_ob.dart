@@ -76,7 +76,6 @@ class InvocationOB {
 
   /// Convert from ObjectBox wrapper back to domain Invocation
   Invocation toInvocation() {
-    // Deserialize JSON strings back to Maps
     Map<String, dynamic>? inputMap;
     if (inputJson != null && inputJson!.isNotEmpty) {
       try {

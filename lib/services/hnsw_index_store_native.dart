@@ -23,7 +23,6 @@ class HnswIndexStoreNative implements HnswIndexStore {
     final stopwatch = Stopwatch()..start();
 
     try {
-      // Serialize index to bytes
       final bytes = index.toBytes();
 
       // Ensure directory exists
@@ -32,11 +31,9 @@ class HnswIndexStoreNative implements HnswIndexStore {
         await dir.create(recursive: true);
       }
 
-      // Write index bytes
       final file = File(_indexPath);
       await file.writeAsBytes(bytes, flush: true);
 
-      // Write metadata
       final metaFile = File(_metadataPath);
       final meta = '${DateTime.now().toIso8601String()}\n${bytes.length}\n${index.size}';
       await metaFile.writeAsString(meta);
@@ -60,10 +57,8 @@ class HnswIndexStoreNative implements HnswIndexStore {
         return IndexLoadResult.notFound();
       }
 
-      // Load metadata first for logging
       final metadata = await getMetadata();
 
-      // Load index bytes
       final bytes = await file.readAsBytes();
 
       // Deserialize

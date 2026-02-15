@@ -44,7 +44,6 @@ class Chunk {
     required this.text,
     this.embedding,
   }) {
-    // Validate token range
     if (startToken < 0) {
       throw ArgumentError('startToken must be >= 0');
     }

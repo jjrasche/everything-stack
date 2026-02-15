@@ -70,11 +70,9 @@ class ServiceRegistry {
   ) async {
     print('\n🔄 Switching provider for $serviceName to: ${config.provider}');
 
-    // Create new service instance
     final newService = factory(config);
     print('✅ Created new ${newService.runtimeType}');
 
-    // Register new service
     register<T>(serviceName, newService);
     print('✅ Switched to ${config.provider}');
   }

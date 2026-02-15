@@ -257,19 +257,15 @@ class VoiceTraits with Trainable<VoiceTraitsAdaptationData> {
         final invocation = result.sourceEntity as Invocation;
         final feedback = feedbackMap[invocation.uuid];
 
-        // Skip invocations without feedback
         if (feedback == null) continue;
 
-        // Skip ignored feedback
         if (feedback.action == domain_feedback.FeedbackAction.ignore) continue;
 
-        // Extract query and response from invocation
         final invQuery = _extractQuery(invocation);
         final invResponse = _extractResponse(invocation);
 
         if (invQuery == null || invResponse == null) continue;
 
-        // Compute age and score with decay
         final age = now.difference(invocation.createdAt);
         final score = params.computeScore(result.similarity, age);
 
@@ -396,7 +392,6 @@ class VoiceTraits with Trainable<VoiceTraitsAdaptationData> {
     // Try to extract from messages array
     final messages = input['messages'] as List<dynamic>?;
     if (messages != null && messages.isNotEmpty) {
-      // Find last user message
       for (int i = messages.length - 1; i >= 0; i--) {
         final msg = messages[i] as Map<String, dynamic>;
         if (msg['role'] == 'user') {

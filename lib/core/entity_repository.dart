@@ -70,7 +70,6 @@ class EntityRepository<T extends BaseEntity> {
       ];
 
   String get _entityStoreName {
-    // Convert type to store name: Note -> 'notes'
     final typeName = T.toString().toLowerCase();
     return typeName.endsWith('s') ? typeName : '${typeName}s';
   }

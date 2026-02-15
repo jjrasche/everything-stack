@@ -93,7 +93,6 @@ class GaussianProcess {
     _data = data;
     final n = data.length;
 
-    // Build covariance matrix K
     final points = data.map((d) => d.params).toList();
     final K = kernel.computeMatrix(points);
 
@@ -104,7 +103,6 @@ class GaussianProcess {
 
     while (attempts < maxAttempts) {
       try {
-        // Add noise to diagonal for numerical stability
         for (int i = 0; i < n; i++) {
           K[i][i] += currentNoise;
         }
@@ -125,10 +123,8 @@ class GaussianProcess {
           );
         }
 
-        // Retry with 10x more noise
         currentNoise *= 10;
 
-        // Reset diagonal (remove previous noise)
         for (int i = 0; i < n; i++) {
           K[i][i] -= currentNoise / 10;
         }
@@ -160,7 +156,6 @@ class GaussianProcess {
       throw GPException('Must call fit() before predict()');
     }
 
-    // Compute kernel vector k* between new point and training data
     final kStar = _data!.map((d) => kernel.compute(params, d.params)).toList();
 
     // Predictive mean: mean = k*^T * alpha

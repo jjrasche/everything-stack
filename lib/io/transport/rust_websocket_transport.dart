@@ -91,16 +91,13 @@ class RustWebSocketTransport implements Transport {
             '🦀 [RustWebSocketTransport] Subprotocols: ${subprotocols.join(", ")}');
       }
 
-      // Call Rust FFI to connect
       _handle = await rust.websocketConnect(
           url: url, headers: headers, subprotocols: subprotocols);
 
-      // Start receive stream - call Rust to begin listening
       try {
         await rust.websocketStartReceive(handle: _handle!);
         print('🦀 [RustWebSocketTransport] Receive stream started');
 
-        // Start polling for received messages
         _startReceivePolling();
       } catch (e) {
         print('⚠️ [RustWebSocketTransport] Could not start receive: $e');
@@ -136,7 +133,6 @@ class RustWebSocketTransport implements Transport {
 
     _setState(TransportState.disconnecting);
 
-    // Stop receive polling
     _receivePoller?.cancel();
 
     if (_handle != null) {

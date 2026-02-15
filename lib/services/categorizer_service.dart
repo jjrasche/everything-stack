@@ -181,7 +181,6 @@ class CategorizerService with Trainable<CategorizerAdaptationData> {
 
   @override
   Widget buildFeedbackUI(BuildContext context, Invocation invocation) {
-    // Parse typed input/output from invocation
     final input = CategorizerInvocationInput.fromJson(invocation.input!);
     final output = CategorizerInvocationOutput.fromJson(invocation.output!);
 

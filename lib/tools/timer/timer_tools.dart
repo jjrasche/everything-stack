@@ -72,7 +72,6 @@ Future<Map<String, dynamic>> timerCancel(
         'message': 'No active timers to cancel',
       };
     }
-    // Get the most recently created active timer
     activeTimers.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     timer = activeTimers.first;
   }

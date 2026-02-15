@@ -20,7 +20,6 @@ class FileSystemBlobStore extends BlobStore {
       final appDir = await getApplicationDocumentsDirectory();
       _blobDirectory = Directory('${appDir.path}/blobs');
 
-      // Create directory if it doesn't exist
       if (!await _blobDirectory.exists()) {
         await _blobDirectory.create(recursive: true);
       }
@@ -74,7 +73,6 @@ class FileSystemBlobStore extends BlobStore {
         return;
       }
 
-      // Open file for streaming
       final raf = await file.open();
 
       try {

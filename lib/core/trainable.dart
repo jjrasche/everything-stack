@@ -92,7 +92,6 @@ mixin class Trainable<D extends AdaptationData> {
       metadata: invocation.metadata,
     );
 
-    // Save invocation immediately (fast path, no blocking)
     await _invocationRepo.save(inv);
 
     // Don't block the happy path - semantic search can use the invocation

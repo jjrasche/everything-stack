@@ -18,12 +18,10 @@ class ChunkObjectBoxAdapter implements ChunkRepository {
 
   @override
   Future<void> updateEmbedding(String chunkId, List<double> embedding) async {
-    // Find existing chunk by chunkId
     final query = _box.query(ChunkOB_.chunkId.equals(chunkId)).build();
     try {
       final existing = query.findFirst();
       if (existing != null) {
-        // Update in place (preserves ObjectBox ID)
         existing.embedding = embedding;
         _box.put(existing);
       }
@@ -75,7 +73,6 @@ class ChunkObjectBoxAdapter implements ChunkRepository {
   Future<void> removeMany(List<String> chunkIds) async {
     if (chunkIds.isEmpty) return;
 
-    // Build query for all chunk IDs
     final query = _box.query(ChunkOB_.chunkId.oneOf(chunkIds)).build();
     try {
       final ids = query.findIds();
@@ -87,7 +84,6 @@ class ChunkObjectBoxAdapter implements ChunkRepository {
 
   @override
   Future<int> removeDuplicates() async {
-    // Get all chunks
     final all = _box.getAll();
     if (all.isEmpty) return 0;
 
@@ -97,7 +93,6 @@ class ChunkObjectBoxAdapter implements ChunkRepository {
       byChunkId.putIfAbsent(ob.chunkId, () => []).add(ob);
     }
 
-    // Find duplicates: keep only the one with embedding (or first if none have embeddings)
     final toRemove = <int>[];
     for (final entry in byChunkId.entries) {
       if (entry.value.length > 1) {

@@ -131,7 +131,6 @@ class AtomicInsightRepository extends EntityRepository<AtomicInsight> {
       minSimilarity: threshold,
     );
 
-    // Filter by scope and archive status
     final filtered = allResults.where((insight) {
       if (excludeArchived && insight.isArchived) return false;
       if (scopes != null && !scopes.contains(insight.scope)) return false;

@@ -145,7 +145,6 @@ class ToolExecutor with Trainable<ToolExecutorAdaptationData> {
       final namespace = parts[0];
       final toolName = parts[1];
 
-      // Execute via registry
       final result = await _executeToolByNamespace(
         namespace: namespace,
         toolName: toolName,
@@ -263,7 +262,6 @@ class ToolExecutor with Trainable<ToolExecutorAdaptationData> {
         );
       }
 
-      // Call the tool function
       final data = await fn(params);
 
       return ToolExecutionResult(

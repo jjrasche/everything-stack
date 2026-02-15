@@ -108,7 +108,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
               ));
             });
 
-            // Load context bundle for this turn
             _loadContextBundle(event.uuid);
           }
         }
@@ -192,7 +191,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   /// Load the context bundle that was selected for this turn
   Future<void> _loadContextBundle(String eventId) async {
     try {
-      // Find the context_selector invocation for this event
       final invocations = await _invocationRepo.findAll();
       final contextInvocation = invocations.firstWhere(
         (inv) =>
@@ -224,13 +222,11 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
     setState(() => _contextFeedbackGiven = true);
 
     try {
-      // Find most recent context_selector invocation
       final invocations = await _invocationRepo.findAll();
       final contextInvocation = invocations
           .where((inv) => inv.componentType == 'context_selector')
           .reduce((a, b) => a.createdAt.isAfter(b.createdAt) ? a : b);
 
-      // Create feedback
       final feedback = domain_feedback.Feedback(
         invocationId: contextInvocation.uuid,
         componentType: 'context_selector',
@@ -268,7 +264,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
   /// Handle message feedback (async, fire-and-forget)
   Future<void> _handleMessageFeedback(String messageId, bool isPositive) async {
     try {
-      // Find LLM invocation for this message
       final invocations = await _invocationRepo.findAll();
       final llmInvocation = invocations.firstWhere(
         (inv) => inv.eventId == messageId && inv.componentType == 'llm',
@@ -276,7 +271,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
             throw Exception('LLM invocation not found for message: $messageId'),
       );
 
-      // Create feedback
       final feedback = domain_feedback.Feedback(
         invocationId: llmInvocation.uuid,
         componentType: 'llm',
@@ -296,7 +290,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
         }),
       );
 
-      // Update message to show feedback given
       setState(() {
         final index = _messages.indexWhere((m) => m.id == messageId);
         if (index != -1) {
@@ -335,12 +328,9 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
       // Generate event ID upfront (needed for correlation)
       final eventId = 'turn_${DateTime.now().millisecondsSinceEpoch}';
 
-      // Start recording stream
       final audioStream = AudioRecordingService.instance.startRecording();
 
-      // Start live recognition (streams chunks to Deepgram in real-time)
-      // NOTE: This is fire-and-forget - we don't await the result here.
-      // The result will come via events: partial transcripts, then end_of_turn.
+      // NOTE: Fire-and-forget - result comes via events: partial transcripts, then end_of_turn.
       _sttService
           .startLiveRecognition(
         audioStream: audioStream,
@@ -367,7 +357,6 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
       debugPrint('⏹️  Stopping audio recording...');
       setState(() => _isListening = false);
 
-      // Stop recording service
       await AudioRecordingService.instance.stopRecording();
       await _audioStreamSubscription?.cancel();
       _audioStreamSubscription = null;

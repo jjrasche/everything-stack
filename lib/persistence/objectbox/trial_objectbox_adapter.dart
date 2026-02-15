@@ -77,7 +77,6 @@ class TrialObjectBoxAdapter extends BaseObjectBoxAdapter<Trial, TrialOB>
     int keepLatest = 100,
     String? userId,
   }) async {
-    // Get all trials for component
     final trials = await getRecent(
       componentType: componentType,
       userId: userId,
@@ -88,7 +87,6 @@ class TrialObjectBoxAdapter extends BaseObjectBoxAdapter<Trial, TrialOB>
       return 0; // Nothing to delete
     }
 
-    // Delete trials beyond keepLatest
     final trialsToDelete = trials.skip(keepLatest).toList();
     int deleteCount = 0;
 

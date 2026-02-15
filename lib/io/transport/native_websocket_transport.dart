@@ -92,7 +92,6 @@ class NativeWebSocketTransport implements Transport {
         if (data is List<int>) {
           _receivedController.add(Uint8List.fromList(data));
         } else if (data is String) {
-          // Convert string to bytes
           _receivedController.add(Uint8List.fromList(data.codeUnits));
         }
       },

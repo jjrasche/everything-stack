@@ -30,15 +30,12 @@ class IndexedDBTransactionManager implements TransactionManager {
       );
     }
 
-    // Create transaction with readwrite mode
     final txn = _db.transaction(objectStores, idbModeReadWrite);
     final ctx = IndexedDBTxContext(txn);
 
     try {
-      // Execute work callback
       final result = work(ctx);
 
-      // Wait for transaction to complete
       await txn.completed;
 
       return result;

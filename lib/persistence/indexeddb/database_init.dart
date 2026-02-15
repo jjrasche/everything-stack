@@ -74,7 +74,6 @@ void _onUpgradeNeeded(VersionChangeEvent event) {
 void _createSchemaV1(Database db) {
   print('Creating IndexedDB schema v1...');
 
-  // Create all object stores with their indexes
   for (final storeDef in DatabaseSchema.objectStores) {
     _createObjectStore(db, storeDef);
   }
@@ -86,14 +85,12 @@ void _createSchemaV1(Database db) {
 void _createObjectStore(Database db, ObjectStoreDefinition storeDef) {
   print('  Creating object store: ${storeDef.name}');
 
-  // Create object store
   final store = db.createObjectStore(
     storeDef.name,
     keyPath: storeDef.keyPath,
     autoIncrement: storeDef.autoIncrement,
   );
 
-  // Create indexes
   for (final indexDef in storeDef.indexes) {
     print('    Creating index: ${indexDef.name} on ${indexDef.keyPath}');
     store.createIndex(

@@ -76,7 +76,6 @@ class WebSocketProtocol implements Protocol {
       // No WebSocket-specific handshake needed.
       // HTTP upgrade already completed in Transport.connect().
 
-      // Setup message forwarding from transport
       _setupMessageForwarding();
 
       _setState(ProtocolState.ready);

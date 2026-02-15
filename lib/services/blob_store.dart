@@ -202,7 +202,6 @@ class SupabaseBlobStore extends BlobStore {
             fileOptions: const FileOptions(upsert: true),
           );
 
-      // Save metadata
       await _client!.from('blob_metadata').upsert({
         'uuid': id,
         'storage_path': storagePath,
@@ -210,7 +209,6 @@ class SupabaseBlobStore extends BlobStore {
         'created_at': DateTime.now().toIso8601String(),
       });
 
-      // Update local cache
       _metadataCache[id] = bytes.length;
 
       return true;
@@ -231,7 +229,6 @@ class SupabaseBlobStore extends BlobStore {
       final bytes =
           await _client!.storage.from(bucketName).download(storagePath);
 
-      // Update cache
       _metadataCache[id] = bytes.length;
 
       return bytes;
@@ -265,13 +262,10 @@ class SupabaseBlobStore extends BlobStore {
     try {
       final storagePath = 'blobs/$id';
 
-      // Delete from storage
       await _client!.storage.from(bucketName).remove([storagePath]);
 
-      // Delete metadata
       await _client!.from('blob_metadata').delete().eq('uuid', id);
 
-      // Update cache
       _metadataCache.remove(id);
 
       return true;

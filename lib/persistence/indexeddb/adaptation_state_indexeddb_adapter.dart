@@ -61,7 +61,6 @@ class AdaptationStateIndexedDBAdapter
       return false; // Version conflict
     }
 
-    // Increment version and save
     state.version++;
     await save(state);
     return true;

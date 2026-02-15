@@ -14,6 +14,5 @@ double haversineDistance(
   // Use geolocator's distanceBetween which returns meters
   final distanceMeters = geo.Geolocator.distanceBetween(lat1, lon1, lat2, lon2);
 
-  // Convert to kilometers for consistency with our API
   return distanceMeters / 1000.0;
 }

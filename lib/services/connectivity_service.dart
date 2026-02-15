@@ -134,11 +134,9 @@ class ConnectivityPlusService extends ConnectivityService {
     try {
       _stateController = StreamController<ConnectivityState>.broadcast();
 
-      // Get initial connectivity state
       final result = await _connectivity.checkConnectivity();
       _currentState = _mapResult(result);
 
-      // Listen for changes
       _subscription = _connectivity.onConnectivityChanged.listen(
         (ConnectivityResult result) {
           final newState = _mapResult(result);

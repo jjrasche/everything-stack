@@ -340,7 +340,6 @@ class ContextCapacity with Trainable<ContextCapacityAdaptationData> {
       return result;
     }
 
-    // Add conversation messages from most recent backwards
     final toAdd = <Map<String, dynamic>>[];
     for (int i = conversationMessages.length - 1; i >= 0; i--) {
       final msg = conversationMessages[i];

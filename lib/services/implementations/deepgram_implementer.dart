@@ -51,8 +51,6 @@ class DeepgramImplementer implements STTImplementer {
       // Time the API call
       final stopwatch = Stopwatch()..start();
 
-      // Build request with audio data
-      // audioId should be a file path or data URL
       final audioData = await _loadAudioData(audioId);
 
       final response = await http
@@ -76,11 +74,9 @@ class DeepgramImplementer implements STTImplementer {
       stopwatch.stop();
       final latencyMs = stopwatch.elapsedMilliseconds.toDouble();
 
-      // Handle response
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
 
-        // Extract transcription and confidence
         final results = data['results'] as Map<String, dynamic>?;
         final channels = results?['channels'] as List?;
 

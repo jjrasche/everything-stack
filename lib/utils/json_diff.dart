@@ -109,7 +109,6 @@ class JsonDiff {
       _diffRecursive(oldList[i], newList[i], '$path/$i', operations);
     }
 
-    // Handle removed elements (old list is longer)
     for (int i = newList.length; i < oldList.length; i++) {
       operations.add({
         'op': 'remove',
@@ -117,7 +116,6 @@ class JsonDiff {
       });
     }
 
-    // Handle added elements (new list is longer)
     for (int i = oldList.length; i < newList.length; i++) {
       operations.add({
         'op': 'add',

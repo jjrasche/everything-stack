@@ -17,7 +17,6 @@ class MatrixOpsDart implements MatrixOps {
   Matrix cholesky(Matrix A, {double epsilon = 1e-6}) {
     int n = A.length;
 
-    // Validate input
     if (n == 0) {
       throw MatrixOperationException('Matrix is empty');
     }
@@ -27,7 +26,6 @@ class MatrixOpsDart implements MatrixOps {
       }
     }
 
-    // Create lower triangular result matrix
     var L = List.generate(n, (_) => List<double>.filled(n, 0.0));
 
     // Cholesky-Banachiewicz algorithm
@@ -44,7 +42,6 @@ class MatrixOpsDart implements MatrixOps {
           // Diagonal element
           double value = A[i][i] - sum;
 
-          // Add regularization for numerical stability
           if (i == j) {
             value += epsilon;
           }

@@ -69,7 +69,6 @@ class Matern52Kernel extends Kernel {
       );
     }
 
-    // Compute Euclidean distance
     double distSquared = 0.0;
     for (int i = 0; i < x1.length; i++) {
       final diff = x1[i] - x2[i];
@@ -133,7 +132,6 @@ class RBFKernel extends Kernel {
       );
     }
 
-    // Compute squared Euclidean distance
     double distSquared = 0.0;
     for (int i = 0; i < x1.length; i++) {
       final diff = x1[i] - x2[i];

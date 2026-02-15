@@ -37,7 +37,6 @@ class AudioFile extends BaseEntity {
       format: format ?? this.format,
       eventId: eventId ?? this.eventId,
     );
-    // Copy BaseEntity fields manually
     copy.id = id;
     copy.uuid = uuid;
     copy.createdAt = createdAt;

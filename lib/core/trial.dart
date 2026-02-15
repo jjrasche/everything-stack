@@ -73,7 +73,6 @@ class Trial extends BaseEntity {
       throw ArgumentError('reward must be in [-1.0, 1.0], got $reward');
     }
 
-    // Validate paramsJson is valid JSON
     try {
       jsonDecode(paramsJson);
     } catch (e) {

@@ -49,7 +49,6 @@ class BrowserWebSocketTransport implements Transport {
     try {
       final completer = Completer<void>();
 
-      // Build URL from config
       final url = config.url;
 
       // Browser WebSocket doesn't support custom headers directly.
@@ -58,7 +57,6 @@ class BrowserWebSocketTransport implements Transport {
       _socket = html.WebSocket(url);
       _socket!.binaryType = 'arraybuffer';
 
-      // Setup event handlers
       _socket!.onOpen.first.then((_) {
         if (!completer.isCompleted) {
           _setState(TransportState.connected);
@@ -87,7 +85,6 @@ class BrowserWebSocketTransport implements Transport {
         }
       });
 
-      // Wait for connection with timeout
       await completer.future.timeout(
         config.connectTimeout,
         onTimeout: () {
@@ -111,7 +108,6 @@ class BrowserWebSocketTransport implements Transport {
     _messageSubscription = _socket!.onMessage.listen((event) {
       final data = event.data;
       if (data is html.Blob) {
-        // Convert Blob to Uint8List
         final reader = html.FileReader();
         reader.readAsArrayBuffer(data);
         reader.onLoadEnd.first.then((_) {
@@ -121,12 +117,10 @@ class BrowserWebSocketTransport implements Transport {
       } else if (data is ByteBuffer) {
         _receivedController.add(Uint8List.view(data));
       } else if (data is String) {
-        // Convert string to bytes (UTF-8)
         _receivedController.add(Uint8List.fromList(data.codeUnits));
       }
     });
 
-    // Close handler
     _closeSubscription = _socket!.onClose.listen((event) {
       _handleDisconnect('Connection closed: ${event.code} ${event.reason}');
     });
@@ -154,7 +148,6 @@ class BrowserWebSocketTransport implements Transport {
     }
 
     try {
-      // Send as binary (ArrayBuffer)
       _socket!.sendByteBuffer(data.buffer);
     } catch (e) {
       throw ConnectionLostException('Send failed: $e', e);

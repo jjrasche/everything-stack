@@ -43,7 +43,6 @@ class TTSService with Trainable<TTSAdaptationData> {
       );
     }
 
-    // Validate default implementer supports current platform
     final defaultImpl = _implementers[_defaultImplementer]!;
     if (!defaultImpl.supportedPlatforms.contains(currentPlatform)) {
       throw UnsupportedError(
@@ -142,7 +141,6 @@ class TTSService with Trainable<TTSAdaptationData> {
 
     debugPrint('🛑 [TTSService] Stopping TTS (barge-in)');
 
-    // Stop the implementer
     final implementer = _implementers[_defaultImplementer]!;
     if (implementer is FlutterTtsImplementer) {
       await implementer.stop();
@@ -157,7 +155,6 @@ class TTSService with Trainable<TTSAdaptationData> {
       payloadJson: jsonEncode({'reason': 'barge_in'}),
     ));
 
-    // Update state
     _isPlaying = false;
     _currentEventId = null;
 
@@ -187,7 +184,6 @@ class TTSService with Trainable<TTSAdaptationData> {
 
   @override
   Widget buildFeedbackUI(BuildContext context, Invocation invocation) {
-    // Parse typed input/output from invocation
     final input = TTSInvocationInput.fromJson(invocation.input!);
     final output = TTSInvocationOutput.fromJson(invocation.output!);
 

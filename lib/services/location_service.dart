@@ -222,7 +222,6 @@ class GeolocatorLocationService extends LocationService {
   Stream<Position> onLocationChanged({
     LocationAccuracy accuracy = LocationAccuracy.medium,
   }) {
-    // Return empty stream if not granted
     return geo.Geolocator.getPositionStream().map(_convertPosition);
   }
 
@@ -231,13 +230,11 @@ class GeolocatorLocationService extends LocationService {
     try {
       _positionController = StreamController<Position>.broadcast();
 
-      // Check/request permission
       final perm = await checkPermission();
       if (perm != LocationPermission.granted) {
         await requestPermission();
       }
 
-      // Listen to position updates
       _positionSubscription = geo.Geolocator.getPositionStream().listen(
         (geoPos) {
           final pos = _convertPosition(geoPos);

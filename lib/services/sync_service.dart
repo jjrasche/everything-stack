@@ -265,7 +265,6 @@ class SupabaseSyncService extends SyncService {
     _emitStatus(uuid, 'Entity', SyncStatus.syncing);
 
     try {
-      // Check if entity has pending data to push
       final pending = _pendingSync[uuid];
       if (pending != null) {
         await pushEntity(
@@ -343,7 +342,6 @@ class SupabaseSyncService extends SyncService {
     final now = updatedAt ?? DateTime.now();
 
     try {
-      // Check if entity exists and get its updated_at
       final existing = await _client!
           .from('entities')
           .select('updated_at')
@@ -380,7 +378,6 @@ class SupabaseSyncService extends SyncService {
       _emitStatus(uuid, type, SyncStatus.synced);
       return true;
     } catch (e) {
-      // Log error for debugging
       print('SupabaseSyncService.pushEntity error: $e');
       _emitStatus(uuid, type, SyncStatus.local);
       return false;

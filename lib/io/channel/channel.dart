@@ -156,10 +156,8 @@ class ChannelImpl implements Channel {
       // Connect transport first
       await protocol.transport.connect();
 
-      // Initialize protocol
       await protocol.initialize();
 
-      // Setup message forwarding
       _setupMessageForwarding();
 
       _setState(ChannelState.connected);

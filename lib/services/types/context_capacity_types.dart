@@ -78,7 +78,6 @@ class ContextCapacityAdaptationData extends AdaptationData {
       return modelConfigs[modelKey]!;
     }
 
-    // Create default config for unknown model
     return ModelContextConfig(
       model: modelKey,
       maxContextTokens: maxTokens ?? 128000,

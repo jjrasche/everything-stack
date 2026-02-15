@@ -141,11 +141,9 @@ class MockEmbeddingService extends EmbeddingService {
     final words = _tokenize(text);
 
     if (words.isEmpty) {
-      // Return zero vector for empty text
       return List.filled(EmbeddingService.dimension, 0.0);
     }
 
-    // Sum word vectors
     final vector = List<double>.filled(EmbeddingService.dimension, 0.0);
     for (final word in words) {
       final wordHash = _hashString(word);
@@ -206,7 +204,6 @@ class MockEmbeddingService extends EmbeddingService {
     }
 
     if (sumSquares == 0) {
-      // Return arbitrary unit vector if input is zero
       return List.generate(
         vector.length,
         (i) => i == 0 ? 1.0 : 0.0,

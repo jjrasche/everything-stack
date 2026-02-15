@@ -200,7 +200,6 @@ class ModelSelector with Trainable<ModelSelectorAdaptationData> {
           currentlyAvailable.contains(e.key)),
     );
 
-    // Log if any stale models were filtered out
     final staleModels = params.activeModels.difference(currentlyAvailable);
     if (staleModels.isNotEmpty) {
       print('⚠️ [ModelSelector] Filtered out stale models: $staleModels');
@@ -291,13 +290,11 @@ class ModelSelector with Trainable<ModelSelectorAdaptationData> {
   Future<void> addModel(String implementer, String model) async {
     final key = '$implementer:$model';
 
-    // Update available models
     availableModels.putIfAbsent(implementer, () => []);
     if (!availableModels[implementer]!.contains(model)) {
       availableModels[implementer]!.add(model);
     }
 
-    // Update adaptation state
     final adaptationStateRepo = GetIt.instance<AdaptationStateRepository>();
     final state = await getAdaptationState();
     final params = state.dataJson.isNotEmpty

@@ -35,7 +35,6 @@ class EntityVersionIndexedDBAdapter extends BaseIndexedDBAdapter<EntityVersion>
       results.add(fromJson(data));
     }
 
-    // Sort by version number ascending
     results.sort((a, b) => a.versionNumber.compareTo(b.versionNumber));
     return results;
   }
@@ -44,7 +43,6 @@ class EntityVersionIndexedDBAdapter extends BaseIndexedDBAdapter<EntityVersion>
   Future<EntityVersion?> findLatestByEntityUuid(String entityUuid) async {
     final versions = await findByEntityUuid(entityUuid);
     if (versions.isEmpty) return null;
-    // Return last version (highest version number)
     return versions.last;
   }
 
@@ -54,7 +52,6 @@ class EntityVersionIndexedDBAdapter extends BaseIndexedDBAdapter<EntityVersion>
     DateTime timestamp,
   ) async {
     final versions = await findByEntityUuid(entityUuid);
-    // Filter to versions created before timestamp
     return versions.where((v) => v.createdAt.isBefore(timestamp)).toList();
   }
 
@@ -65,7 +62,6 @@ class EntityVersionIndexedDBAdapter extends BaseIndexedDBAdapter<EntityVersion>
     DateTime to,
   ) async {
     final versions = await findByEntityUuid(entityUuid);
-    // Filter to versions within time range
     return versions
         .where((v) => v.createdAt.isAfter(from) && v.createdAt.isBefore(to))
         .toList();
@@ -75,7 +71,6 @@ class EntityVersionIndexedDBAdapter extends BaseIndexedDBAdapter<EntityVersion>
   Future<List<EntityVersion>> findByEntityUuidUnsynced(
       String entityUuid) async {
     final versions = await findByEntityUuid(entityUuid);
-    // Filter to unsynced versions (syncStatus == SyncStatus.local)
     return versions
         .where((v) => v.dbSyncStatus == 0) // 0 = SyncStatus.local.index
         .toList();

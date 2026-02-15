@@ -368,7 +368,6 @@ abstract class BaseObjectBoxAdapter<T extends BaseEntity, OB>
       return _executeQuery(query, (q) {
         final ob = q.findFirst();
         if (ob == null) return false;
-        // Convert to get entity ID
         final entity = fromOB(ob);
         return box.remove(entity.id);
       });

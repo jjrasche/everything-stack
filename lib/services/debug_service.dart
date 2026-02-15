@@ -91,7 +91,6 @@ class DebugService {
         'recentErrors': _recentErrors,
       };
 
-      // Write to project logs directory
       final file = File('logs/debug-state.json');
       await file.parent.create(recursive: true);
       await file.writeAsString(

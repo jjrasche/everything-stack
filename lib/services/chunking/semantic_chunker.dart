@@ -141,7 +141,6 @@ class SemanticChunker extends ChunkingStrategy {
       // Semantic boundary: topic change detected
       final hasBoundary = boundaries.contains(i);
 
-      // Create chunk if we hit a boundary or size limit
       if ((hasBoundary || wouldExceed) && currentSegments.isNotEmpty) {
         final chunkText = currentSegments.join(' ');
         final chunkTokens = SentenceSplitter.countTokens(chunkText);
@@ -163,17 +162,14 @@ class SemanticChunker extends ChunkingStrategy {
         }
       }
 
-      // Add segment to current chunk
       currentSegments.add(segments[i]);
       currentTokens += segmentTokens;
     }
 
-    // Handle remaining segments
     if (currentSegments.isNotEmpty) {
       final chunkText = currentSegments.join(' ');
       final chunkTokens = SentenceSplitter.countTokens(chunkText);
 
-      // Merge small chunk with previous if possible
       if (chunkTokens < config.minChunkSize && chunks.isNotEmpty) {
         final lastChunk = chunks.removeLast();
         final mergedText = '${lastChunk.text} $chunkText';
@@ -212,7 +208,6 @@ class SemanticChunker extends ChunkingStrategy {
       if (chunk.tokenCount <= config.maxChunkSize) {
         result.add(chunk);
       } else {
-        // Split oversized chunk
         final tokens =
             chunk.text.split(' ').where((t) => t.isNotEmpty).toList();
         int chunkStart = chunk.startToken;

@@ -74,7 +74,6 @@ class GaussianProcessOptimizer implements ParameterOptimizer {
 
   @override
   Future<Map<String, dynamic>> suggestNext() async {
-    // Load historical trials from database
     final trials = await _trialRepo.getRecent(
       componentType: componentType,
       userId: userId,
@@ -86,7 +85,6 @@ class GaussianProcessOptimizer implements ParameterOptimizer {
       return _randomParams();
     }
 
-    // Convert trials to GP format
     final gpTrials = trials.map((t) {
       final params = t.params.values.toList();
       return GPDataPoint(params: params, reward: t.reward);

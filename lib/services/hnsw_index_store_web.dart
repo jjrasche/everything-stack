@@ -29,15 +29,12 @@ class HnswIndexStoreWeb implements HnswIndexStore {
       final bytes = index.toBytes();
       final db = await _openDatabase();
 
-      // Store index bytes
       final transaction = db.transaction(_storeName.toJS, 'readwrite');
       final store = transaction.objectStore(_storeName);
 
-      // Convert Uint8List to JSArrayBuffer for IndexedDB
       final jsArray = bytes.toJS;
       store.put(jsArray, _indexKey.toJS);
 
-      // Store metadata
       final metadata = {
         'savedAt': DateTime.now().toIso8601String(),
         'sizeBytes': bytes.length,
@@ -65,7 +62,6 @@ class HnswIndexStoreWeb implements HnswIndexStore {
       final transaction = db.transaction(_storeName.toJS, 'readonly');
       final store = transaction.objectStore(_storeName);
 
-      // Get index bytes
       final request = store.get(_indexKey.toJS);
       await request.completed;
 

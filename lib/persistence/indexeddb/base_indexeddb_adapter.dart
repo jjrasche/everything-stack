@@ -212,7 +212,6 @@ abstract class BaseIndexedDBAdapter<T extends BaseEntity>
   @override
   Future<T> save(T entity, {bool touch = true}) async {
     return _executeAsyncWithExceptionHandling(() async {
-      // Assign ID if new entity
       if (entity.id == 0) {
         entity.id = _nextId++;
       }
@@ -234,7 +233,6 @@ abstract class BaseIndexedDBAdapter<T extends BaseEntity>
     return _executeAsyncWithExceptionHandling(() async {
       final store = _getStore();
       for (final entity in entities) {
-        // Assign ID if new entity
         if (entity.id == 0) {
           entity.id = _nextId++;
         }
@@ -290,7 +288,6 @@ abstract class BaseIndexedDBAdapter<T extends BaseEntity>
 
     await for (final record in cursor) {
       final json = record.value as Map<String, dynamic>;
-      // Check if dbSyncStatus == 0 (SyncStatus.local)
       if (json['dbSyncStatus'] == 0) {
         results.add(fromJson(json));
       }

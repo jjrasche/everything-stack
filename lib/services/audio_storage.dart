@@ -21,7 +21,6 @@ class AudioStorage {
       eventId: eventId,
     );
 
-    // Save returns the ID, but we want the UUID
     // The entity's uuid is set during save by BaseEntity
     await _repository.save(audioFile);
     return audioFile.uuid;

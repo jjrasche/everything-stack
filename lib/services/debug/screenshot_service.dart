@@ -49,7 +49,6 @@ class ScreenshotService {
       final filename = '$timestamp-$context.png';
       final filePath = '$_screenshotDir/$filename';
 
-      // Write file
       final file = File(filePath);
       await file.writeAsBytes(byteData.buffer.asUint8List());
 
@@ -78,7 +77,6 @@ class ScreenshotService {
           .where((f) => f.path.endsWith('.png'))
           .toList();
 
-      // Sort by modification time (newest first)
       pngFiles.sort((a, b) => b.statSync().modified.compareTo(a.statSync().modified));
 
       return pngFiles.take(limit).map((f) => f.path).toList();

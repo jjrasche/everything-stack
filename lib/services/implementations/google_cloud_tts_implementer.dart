@@ -49,10 +49,8 @@ class GoogleCloudTTSImplementer implements TTSImplementer {
       // Time the API call
       final stopwatch = Stopwatch()..start();
 
-      // Map generic voiceId to Google Cloud voice name
       final googleVoice = _mapVoiceId(voiceId);
 
-      // Build request body
       final body = jsonEncode({
         'input': {'text': text},
         'voice': {
@@ -67,7 +65,6 @@ class GoogleCloudTTSImplementer implements TTSImplementer {
         },
       });
 
-      // Call Google Cloud TTS API
       final response = await http
           .post(
             Uri.parse('$baseUrl/text:synthesize?key=$apiKey'),
@@ -82,7 +79,6 @@ class GoogleCloudTTSImplementer implements TTSImplementer {
         );
       }
 
-      // Parse response
       final responseData = jsonDecode(response.body) as Map<String, dynamic>;
       final audioContentBase64 = responseData['audioContent'] as String;
       final audioBytes = base64Decode(audioContentBase64);
@@ -93,7 +89,6 @@ class GoogleCloudTTSImplementer implements TTSImplementer {
       // Estimate duration (Google doesn't return duration)
       final durationSeconds = _estimateDuration(text, speechRate);
 
-      // Store audio in AudioStorage
       final audioStorage = GetIt.instance<AudioStorage>();
       final audioId = await audioStorage.saveAudio(
         audioBytes: Uint8List.fromList(audioBytes),
@@ -123,7 +118,6 @@ class GoogleCloudTTSImplementer implements TTSImplementer {
       return voiceId;
     }
 
-    // Map generic IDs
     switch (voiceId.toLowerCase()) {
       case 'default':
       case 'female':

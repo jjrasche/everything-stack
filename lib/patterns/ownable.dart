@@ -51,7 +51,6 @@ mixin Ownable {
     // Public items accessible to all
     if (visibility == Visibility.public) return true;
 
-    // Check if explicitly shared
     if (sharedWith.contains(userId)) return true;
 
     return false;

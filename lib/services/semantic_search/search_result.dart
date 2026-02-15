@@ -19,7 +19,6 @@ class SemanticSearchResult {
     required this.sourceEntity,
     required this.similarity,
   }) {
-    // Validate similarity is in valid range
     if (similarity < 0.0 || similarity > 1.0) {
       throw ArgumentError(
         'similarity must be between 0.0 and 1.0, got $similarity',

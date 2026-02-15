@@ -89,7 +89,6 @@ class UiAutomationService {
       await Future<void>.delayed(const Duration(milliseconds: 50));
     }
 
-    // Find the EditableTextState that received focus from our tap
     final editableState = _findFocusedEditableTextState();
     if (editableState == null) {
       return {'success': false, 'error': 'No editable text field found for: $target'};
@@ -126,7 +125,6 @@ class UiAutomationService {
       return {'success': false, 'error': 'Could not determine bounds for: $target'};
     }
 
-    // Read current slider value from semantics to compute start position
     final currentValue = _parseSliderValue(node);
     final startX = rect.left + (rect.width * currentValue);
     final startY = rect.center.dy;
@@ -254,7 +252,6 @@ class UiAutomationService {
   /// Compute global rect by accumulating transforms up the ancestor chain.
   Rect? _getNodeGlobalRect(SemanticsNode node) {
     try {
-      // Build combined transform from node to root
       var combined = Matrix4.identity();
       SemanticsNode? current = node;
       while (current != null) {

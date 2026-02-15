@@ -28,7 +28,6 @@ class LLMConfigSelector implements Trainable {
     required String namespace,
     required List<String> tools,
   }) async {
-    // Default LLM config
     final config = <String, dynamic>{
       'model': 'llama-3.1-8b-instant',
       'temperature': 0.7,
@@ -67,7 +66,6 @@ class LLMConfigSelector implements Trainable {
 
   @override
   Future<void> trainFromFeedback(String turnId, {String? userId}) async {
-    // Get all feedback for llm_config_selector on this turn
     final feedbackList = await feedbackRepo.findByTurnAndComponent(
       turnId,
       'llm_config_selector',
@@ -75,17 +73,14 @@ class LLMConfigSelector implements Trainable {
 
     if (feedbackList.isEmpty) return;
 
-    // Get current adaptation state
     var state = await adaptationStateRepo.getForComponent('llm_config_selector',
         implementer: null, userId: userId);
     if (state == null) return;
     state.loadData();
 
-    // Process each feedback
     for (final feedback in feedbackList) {
       if (!feedback.hasCorrection) continue;
 
-      // Load the invocation
       final invocation = await invocationRepo.findById(feedback.invocationId);
       if (invocation == null) continue;
 
@@ -100,7 +95,6 @@ class LLMConfigSelector implements Trainable {
       if (corrected['quality'] is String) {
         final quality = corrected['quality'] as String;
 
-        // Update state data (track response quality)
         Map<String, dynamic> data = state.data;
 
         switch (quality) {

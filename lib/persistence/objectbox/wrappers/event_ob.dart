@@ -30,7 +30,6 @@ class EventOB {
   @Property(type: PropertyType.date)
   DateTime timestamp;
 
-  // Store payload as JSON string for ObjectBox
   String payloadJson;
 
   // ============ Ownable fields ============

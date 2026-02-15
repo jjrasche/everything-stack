@@ -104,16 +104,13 @@ class Coordinator {
     print('\n🔧 [Coordinator.initialize] Wiring event listener');
     _transcriptionSubscription = eventBus.subscribe().listen(
       (event) async {
-        // Handle start_of_turn events (barge-in detection)
         if (event.eventType == 'start_of_turn') {
           await _handleStartOfTurn(event);
           return;
         }
 
-        // Handle transcription_complete events (orchestration trigger)
         if (event.eventType == 'transcription_complete') {
           try {
-            // Extract semantic input from event
             final inputText = event.toInputString();
 
             print(
@@ -178,7 +175,6 @@ class Coordinator {
   ///
   /// Pure event routing - no trainable parameters, no learning surface.
   Future<void> _handleStartOfTurn(Event event) async {
-    // Check if TTS is currently playing
     if (!ttsService.isPlaying) {
       // TTS not playing, nothing to do
       return;
@@ -188,7 +184,6 @@ class Coordinator {
         '⚠️ [Coordinator] BARGE-IN detected - user started speaking while TTS playing');
     print('🛑 [Coordinator] Stopping TTS immediately');
 
-    // Stop TTS playback
     await ttsService.stop();
 
     print('✅ [Coordinator] Barge-in handled, TTS stopped');
@@ -315,7 +310,6 @@ class Coordinator {
         print(
             '\n[Tool Execution] LLM requested ${llmResponse.toolCalls.length} tool calls');
 
-        // Execute all tool calls and collect results
         final toolResults = <Map<String, dynamic>>[];
         for (final llmToolCall in llmResponse.toolCalls) {
           print('  🔧 Executing: ${llmToolCall.toolName}');
@@ -348,7 +342,6 @@ class Coordinator {
           }
         }
 
-        // Send tool results back to LLM for verbal confirmation
         print(
             '\n[Agentic Loop] Sending tool results back to LLM for confirmation...');
         final followUpMessages = [
@@ -448,7 +441,6 @@ class Coordinator {
 
     final result = List<Map<String, dynamic>>.from(messages);
 
-    // Find system message and append traits
     final systemIndex = result.indexWhere((m) => m['role'] == 'system');
     if (systemIndex >= 0) {
       final existing = result[systemIndex]['content'] as String? ?? '';

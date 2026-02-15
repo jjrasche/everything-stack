@@ -30,19 +30,16 @@ class IndexedDBBlobStore extends BlobStore {
       onUpgradeNeeded: (VersionChangeEvent event) {
         final db = event.database;
 
-        // Create blobs store
         if (!db.objectStoreNames.contains(_storeName)) {
           db.createObjectStore(_storeName);
         }
 
-        // Create metadata store for size tracking
         if (!db.objectStoreNames.contains(_metaStoreName)) {
           db.createObjectStore(_metaStoreName);
         }
       },
     );
 
-    // Load metadata cache
     await _loadMetadataCache();
   }
 
@@ -65,23 +62,19 @@ class IndexedDBBlobStore extends BlobStore {
   Future<void> save(String id, Uint8List bytes) async {
     if (_db == null) await initialize();
 
-    // Store blob as base64 string (IndexedDB handles strings well)
     final base64Data = base64Encode(bytes);
 
     final txn =
         _db!.transactionList([_storeName, _metaStoreName], idbModeReadWrite);
 
-    // Save blob
     final blobStore = txn.objectStore(_storeName);
     await blobStore.put(base64Data, id);
 
-    // Save metadata
     final metaStore = txn.objectStore(_metaStoreName);
     await metaStore.put(bytes.length, id);
 
     await txn.completed;
 
-    // Update cache
     _sizeCache[id] = bytes.length;
   }
 
@@ -95,7 +88,6 @@ class IndexedDBBlobStore extends BlobStore {
     final result = await store.getObject(id);
     if (result == null) return null;
 
-    // Decode from base64
     final base64Data = result as String;
     return Uint8List.fromList(base64Decode(base64Data));
   }
@@ -109,17 +101,14 @@ class IndexedDBBlobStore extends BlobStore {
     final txn =
         _db!.transactionList([_storeName, _metaStoreName], idbModeReadWrite);
 
-    // Delete blob
     final blobStore = txn.objectStore(_storeName);
     await blobStore.delete(id);
 
-    // Delete metadata
     final metaStore = txn.objectStore(_metaStoreName);
     await metaStore.delete(id);
 
     await txn.completed;
 
-    // Update cache
     _sizeCache.remove(id);
 
     return true;

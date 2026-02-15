@@ -35,7 +35,6 @@ Future<void> _ensureInitialized() async {
 
   debugPrint('🔧 [_ensureInitialized] Initializing bootstrap...');
 
-  // Check if core services already exist (avoid double initialization)
   // Use EntityRepository<Invocation> as sentinel (always registered in bootstrap)
   bool needsInitialization = false;
   try {
@@ -80,14 +79,12 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    // Create the initialization future ONCE during initState
-    // This prevents re-initialization on every build
+    // Prevents re-initialization on every build
     _initializationFuture = _ensureInitialized();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Wrap with ScreenshotWrapper to enable AI-driven screenshot capture
     return ScreenshotWrapper(
       child: MaterialApp(
         title: 'Everything Stack Demo',

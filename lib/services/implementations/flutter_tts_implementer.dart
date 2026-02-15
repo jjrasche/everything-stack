@@ -43,14 +43,12 @@ class FlutterTtsImplementer implements TTSImplementer {
   Future<void> _waitForCompletion() async {
     final completer = Completer<void>();
 
-    // Set completion handler
     _flutterTts.setCompletionHandler(() {
       if (!completer.isCompleted) {
         completer.complete();
       }
     });
 
-    // Set error handler
     _flutterTts.setErrorHandler((message) {
       if (!completer.isCompleted) {
         completer.completeError(
@@ -59,7 +57,6 @@ class FlutterTtsImplementer implements TTSImplementer {
       }
     });
 
-    // Wait with timeout
     return completer.future.timeout(
       const Duration(minutes: 5),
       onTimeout: () {
@@ -102,7 +99,6 @@ class FlutterTtsImplementer implements TTSImplementer {
       // Generate cache key
       final cacheKey = _generateCacheKey(text, voiceId, speechRate, pitch);
 
-      // Check cache first
       String audioId;
       double estimatedDuration;
 
@@ -113,7 +109,6 @@ class FlutterTtsImplementer implements TTSImplementer {
         print('   📦 Using cached audio: $audioId');
       } else {
         print('   🎤 Calling flutter_tts.speak()...');
-        // Set voice and parameters
         await _flutterTts.setSpeechRate(speechRate);
         await _flutterTts.setPitch(pitch);
         if (voiceId != 'default') {
