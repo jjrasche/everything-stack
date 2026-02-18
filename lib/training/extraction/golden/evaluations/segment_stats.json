@@ -1,0 +1,106 @@
+{
+  "evaluationDate": "2026-02-17",
+  "pipeline": ["NormalizeStage (no PunctuationRunner)", "SegmentStage (regex)"],
+  "corpus": {
+    "conversations": 33,
+    "totalTurns": 930,
+    "totalSentences": 9823,
+    "totalDroppedFragments": 736
+  },
+  "distribution": {
+    "avgSentencesPerTurn": 10.6,
+    "sentencesPer1000Chars": 5.87,
+    "sentencesPerTurnP5": 1,
+    "sentencesPerTurnP95": 36,
+    "minSentenceLengthChars": 6,
+    "maxSentenceLengthChars": 3709,
+    "medianSentenceLengthChars": 73,
+    "sentencesOver500Chars": 469,
+    "sentencesOver1000Chars": 114
+  },
+  "zeroSentenceTurns": {
+    "total": 5,
+    "withSubstantialInput": 1,
+    "details": [
+      {
+        "uuid": "47859004",
+        "turnIndex": 13,
+        "speaker": "assistant",
+        "inputCharCount": 5150,
+        "verdict": "correct — entire turn was a fenced markdown code block, correctly stripped"
+      }
+    ]
+  },
+  "issues": [
+    {
+      "id": "antThinking-leak",
+      "severity": "high",
+      "description": "Claude <antThinking> XML tags pass through unstripped into sentence text",
+      "occurrences": 69,
+      "affectedFiles": 8,
+      "affectedFilesPct": 24,
+      "fix": "Add regex strip for <antThinking>[\\s\\S]*?</antThinking> in NormalizeStage or SegmentStage._stripCodeBlocks",
+      "effort": "trivial"
+    },
+    {
+      "id": "markdown-headers-persist",
+      "severity": "medium-high",
+      "description": "Markdown headers (## Title) persist in sentences, causing mega-sentences when section content concatenates under them",
+      "occurrences": 135,
+      "affectedFiles": 14,
+      "affectedFilesPct": 42,
+      "fix": "SegmentStage markdown header regex not matching all patterns — debug and fix. Also treat header lines as sentence boundaries.",
+      "effort": "moderate"
+    },
+    {
+      "id": "bullet-markers-persist",
+      "severity": "medium",
+      "description": "Bullet point markers (- , * ) remain at start of sentences",
+      "occurrences": 163,
+      "affectedFiles": 22,
+      "affectedFilesPct": 67,
+      "fix": "Verify bullet stripping regex coverage. Consider splitting each bullet item as separate sentence.",
+      "effort": "moderate"
+    },
+    {
+      "id": "inline-backticks",
+      "severity": "low-medium",
+      "description": "Inline code references (`identifier`) persist with backtick characters",
+      "occurrences": 190,
+      "affectedFiles": 16,
+      "affectedFilesPct": 48,
+      "fix": "Strip backtick characters while preserving identifier text",
+      "effort": "trivial"
+    },
+    {
+      "id": "mega-sentences",
+      "severity": "medium-high",
+      "description": "469 sentences >500 chars, 114 >1000 chars. Entire bulleted lists or multi-paragraph sections become single sentences because segmenter only splits on .?! punctuation, not structural boundaries (newlines, bullets, headers).",
+      "occurrences": 469,
+      "affectedFiles": "widespread",
+      "fix": "Add structural boundary splitting (newline + bullet, newline + header) or defer to wtpsplit SLM",
+      "effort": "moderate-to-architectural"
+    },
+    {
+      "id": "period-in-identifiers",
+      "severity": "medium",
+      "description": "File extensions (.js, .dart), decimal numbers ($2.4M), and method calls (runtime.call()) cause false sentence splits",
+      "occurrences": "not quantified — scattered across code-heavy conversations",
+      "fix": "Add common extensions to abbreviation set or use negative lookahead. Defer to wtpsplit for complete fix.",
+      "effort": "moderate"
+    }
+  ],
+  "qualityAssessment": {
+    "userSTT": "excellent — disfluencies preserved, fragment filter correctly drops tiny acknowledgments, no false drops on meaningful content",
+    "assistantProse": "good — running prose splits correctly at sentence boundaries",
+    "assistantStructured": "poor — markdown headers, bullets, tables, and code references leak through; mega-sentences pervasive",
+    "overallVerdict": "Pipeline works well for STT/prose input. Assistant structured output needs markdown stripping fixes (antThinking, headers, bullets) and structural boundary splitting before downstream stages can rely on clean atomic sentences.",
+    "recommendedNextSteps": [
+      "1. Strip <antThinking> tags (trivial, 69 occurrences eliminated)",
+      "2. Fix markdown header stripping + treat headers as sentence boundaries",
+      "3. Strip inline backtick characters (preserve identifier text)",
+      "4. Split bullet items into separate sentences",
+      "5. Re-run this evaluation to measure improvement"
+    ]
+  }
+}

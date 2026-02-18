@@ -257,7 +257,7 @@ class ContextSelector with Trainable<ContextSelectorAdaptationData> {
       final decay = scoredChunk.$3;
       final entityType = searchResult.chunk.sourceEntityType;
       print('   $entityType chunk: '
-          'similarity=${result.similarity.toStringAsFixed(3)}, '
+          'similarity=${searchResult.similarity.toStringAsFixed(3)}, '
           'decay=${decay.toStringAsFixed(3)}, '
           'fused=${fusedScore.toStringAsFixed(3)}');
     }

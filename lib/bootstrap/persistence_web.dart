@@ -27,7 +27,9 @@ import '../persistence/indexeddb/trial_indexeddb_adapter.dart';
 import '../persistence/indexeddb/audio_file_indexeddb_adapter.dart';
 import '../persistence/indexeddb/atomic_insight_indexeddb_adapter.dart';
 import '../persistence/indexeddb/prompt_version_indexeddb_adapter.dart';
+import '../persistence/indexeddb/proposition_indexeddb_adapter.dart';
 import '../domain/prompt_version.dart';
+import '../domain/proposition.dart';
 import 'indexeddb_factory.dart';
 
 /// Initialize persistence layer for web platform using IndexedDB.
@@ -75,6 +77,9 @@ Future<void> initializePersistence(GetIt getIt) async {
 
   final promptVersionAdapter = PromptVersionIndexedDBAdapter(db);
   getIt.registerSingleton<PersistenceAdapter<PromptVersion>>(promptVersionAdapter);
+
+  final propositionAdapter = PropositionIndexedDBAdapter(db);
+  getIt.registerSingleton<PersistenceAdapter<Proposition>>(propositionAdapter);
 }
 
 /// Create EventRepository for web platform using IndexedDB.

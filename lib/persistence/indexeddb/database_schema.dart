@@ -54,6 +54,7 @@ class ObjectStores {
   static const String atomicInsights = 'atomic_insights';
   static const String chunks = 'chunks';
   static const String promptVersions = 'prompt_versions';
+  static const String propositions = 'propositions';
 }
 
 /// Index names for each object store
@@ -165,6 +166,15 @@ class Indexes {
   static const String promptVersionsComponentType = 'componentType';
   static const String promptVersionsVersion = 'version';
   static const String promptVersionsIsActive = 'isActive';
+
+  // Proposition indexes
+  static const String propositionsId = 'id';
+  static const String propositionsUuid = 'uuid';
+  static const String propositionsSyncStatus = 'dbSyncStatus';
+  static const String propositionsScope = 'scope';
+  static const String propositionsStatus = 'status';
+  static const String propositionsSourceEpisodeId = 'sourceEpisodeId';
+  static const String propositionsSourceTurnId = 'sourceTurnId';
 }
 
 /// Schema definition for notes object store
@@ -657,6 +667,51 @@ class PromptVersionsStoreSchema {
   ];
 }
 
+/// Schema definition for propositions object store
+class PropositionsStoreSchema {
+  static const String storeName = ObjectStores.propositions;
+  static const String keyPath = 'uuid';
+  static const bool autoIncrement = false;
+
+  static const List<IndexDefinition> indexes = [
+    IndexDefinition(
+      name: Indexes.propositionsId,
+      keyPath: 'id',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.propositionsUuid,
+      keyPath: 'uuid',
+      unique: true,
+    ),
+    IndexDefinition(
+      name: Indexes.propositionsSyncStatus,
+      keyPath: 'dbSyncStatus',
+      unique: false,
+    ),
+    IndexDefinition(
+      name: Indexes.propositionsScope,
+      keyPath: 'scope',
+      unique: false,
+    ),
+    IndexDefinition(
+      name: Indexes.propositionsStatus,
+      keyPath: 'status',
+      unique: false,
+    ),
+    IndexDefinition(
+      name: Indexes.propositionsSourceEpisodeId,
+      keyPath: 'sourceEpisodeId',
+      unique: false,
+    ),
+    IndexDefinition(
+      name: Indexes.propositionsSourceTurnId,
+      keyPath: 'sourceTurnId',
+      unique: false,
+    ),
+  ];
+}
+
 /// Schema definition for HNSW index metadata store
 class HnswIndexStoreSchema {
   static const String storeName = ObjectStores.hnswIndex;
@@ -797,6 +852,12 @@ class DatabaseSchema {
       keyPath: PromptVersionsStoreSchema.keyPath,
       autoIncrement: PromptVersionsStoreSchema.autoIncrement,
       indexes: PromptVersionsStoreSchema.indexes,
+    ),
+    ObjectStoreDefinition(
+      name: PropositionsStoreSchema.storeName,
+      keyPath: PropositionsStoreSchema.keyPath,
+      autoIncrement: PropositionsStoreSchema.autoIncrement,
+      indexes: PropositionsStoreSchema.indexes,
     ),
   ];
 }

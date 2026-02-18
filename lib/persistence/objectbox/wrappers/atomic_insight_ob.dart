@@ -31,6 +31,9 @@ class AtomicInsightOB {
   /// Optional type tag: 'learning', 'project', 'exploration'
   String? type;
 
+  /// Quoted substring from episodic source supporting this insight
+  String? evidenceSpan;
+
   /// Optional project UUID (if scope='project' or insight is within a project)
   @Index()
   String? projectId;
@@ -66,6 +69,7 @@ class AtomicInsightOB {
       ..content = insight.content
       ..scope = insight.scope
       ..type = insight.type
+      ..evidenceSpan = insight.evidenceSpan
       ..projectId = insight.projectId
       ..isArchived = insight.isArchived
       ..archivedAt = insight.archivedAt
@@ -79,6 +83,7 @@ class AtomicInsightOB {
       content: content,
       scope: scope,
       type: type,
+      evidenceSpan: evidenceSpan,
       projectId: projectId,
       isArchived: isArchived,
     )

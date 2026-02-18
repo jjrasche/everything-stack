@@ -74,13 +74,23 @@ import 'domain/audio_file.dart';
 import 'domain/atomic_insight.dart';
 import 'domain/atomic_insight_repository.dart';
 import 'services/extraction/atomic_insight_extractor.dart';
-import 'services/extraction/extraction_evaluator.dart';
-import 'services/extraction/extraction_improvement_loop.dart';
+import 'training/extraction/extraction_evaluator.dart';
+import 'training/extraction/extraction_improvement_loop.dart';
 import 'services/prompt/prompt_registry.dart';
 import 'services/prompt/prompt_mutator.dart';
 import 'services/prompt/prompt_validator.dart';
 import 'domain/prompt_version.dart';
 import 'domain/prompt_version_repository.dart';
+import 'domain/proposition.dart';
+import 'domain/proposition_repository.dart';
+import 'services/memory/working_memory_service.dart';
+import 'services/memory/encoder.dart';
+import 'services/memory/stages/normalize_stage.dart';
+import 'services/memory/stages/segment_stage.dart';
+import 'services/memory/stages/cohere_stage.dart';
+import 'services/memory/stages/classify_stage.dart';
+import 'services/memory/stages/decontextualize_stage.dart';
+import 'services/memory/stages/dedup_stage.dart';
 import 'services/enrichment/enrichment_runner.dart';
 import 'services/enrichment/enrichment_worker.dart';
 import 'services/enrichment/semantic_enrichment_worker.dart';
@@ -759,6 +769,42 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
       }
     } catch (e) {
       debugPrint('⚠️ AtomicInsight initialization failed: $e');
+    }
+
+    // 17. Initialize Memory System (Encoder + Working Memory)
+    try {
+      final propositionAdapter = getIt<PersistenceAdapter<Proposition>>();
+      final propositionRepo = PropositionRepository(
+        adapter: propositionAdapter,
+      );
+      getIt.registerSingleton<PropositionRepository>(propositionRepo);
+
+      final wmService = WorkingMemoryService();
+      getIt.registerSingleton<WorkingMemoryService>(wmService);
+
+      if (getIt.isRegistered<InferenceService>()) {
+        final inferenceService = getIt<InferenceService>();
+        final decontextStage = DecontextualizeStage(
+          chatClient: inferenceService,
+        );
+        final encoder = Encoder(
+          normalizeStage: NormalizeStage(),
+          segmentStage: SegmentStage(),
+          cohereStage: CohereStage(chatClient: inferenceService),
+          classifyStage: ClassifyStage(chatClient: inferenceService),
+          decontextualizeStage: decontextStage,
+          dedupStage: DedupStage(
+            chatClient: inferenceService,
+            decontextualizeStage: decontextStage,
+          ),
+        );
+        getIt.registerSingleton<Encoder>(encoder);
+        debugPrint('✅ Memory: Encoder + WorkingMemory registered');
+      } else {
+        debugPrint('⚠️ Memory: InferenceService not available, encoder skipped');
+      }
+    } catch (e) {
+      debugPrint('⚠️ Memory system initialization failed: $e');
     }
 
     // Domain repositories (Task, Timer, etc.) are initialized by the

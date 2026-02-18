@@ -12,10 +12,12 @@ import '../core/component_types.dart';
 import './implementations/llm_implementer.dart';
 import './types/llm_types.dart';
 import './types/message.dart';
+import './types/chat_client.dart';
 import './types/context_selector_types.dart';
 import './trainer/gaussian_process_optimizer.dart';
 
 // Export types for use by Coordinator, Implementers, and Tests
+export './types/chat_client.dart' show ChatClient;
 export './types/message.dart' show Message;
 export './types/llm_types.dart'
     show
@@ -27,7 +29,7 @@ export './types/llm_types.dart'
         InferenceAdaptationData,
         LLMFeedback;
 
-class InferenceService with Trainable<InferenceAdaptationData> {
+class InferenceService with Trainable<InferenceAdaptationData> implements ChatClient {
   final Map<String, LLMImplementer> _implementers;
   final String _defaultImplementer;
   final InvocationRepository invocationRepo;

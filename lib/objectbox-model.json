@@ -1252,7 +1252,7 @@
     },
     {
       "id": "41:2303334603436700051",
-      "lastPropertyId": "13:649122142148331583",
+      "lastPropertyId": "14:3419279058774555711",
       "name": "AtomicInsightOB",
       "properties": [
         {
@@ -1328,6 +1328,11 @@
           "id": "13:649122142148331583",
           "name": "syncStatus",
           "type": 6
+        },
+        {
+          "id": "14:3419279058774555711",
+          "name": "evidenceSpan",
+          "type": 9
         }
       ],
       "relations": []
@@ -1404,10 +1409,106 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "43:8101629924730712396",
+      "lastPropertyId": "15:8803865231324962447",
+      "name": "PropositionOB",
+      "properties": [
+        {
+          "id": "1:4613755389912057753",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:4901903159246651328",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "65:9112192352056114995"
+        },
+        {
+          "id": "3:5829024658463981551",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "4:8592109660431667228",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "5:3785950082544645978",
+          "name": "syncId",
+          "type": 9
+        },
+        {
+          "id": "6:1964202051020659607",
+          "name": "content",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "66:8774875925395104337"
+        },
+        {
+          "id": "7:8762946983531109312",
+          "name": "scope",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "67:5866132493848224757"
+        },
+        {
+          "id": "8:8524794744577378748",
+          "name": "type",
+          "type": 9
+        },
+        {
+          "id": "9:5792366119030268847",
+          "name": "sourceIdsCsv",
+          "type": 9
+        },
+        {
+          "id": "10:8791237185221242458",
+          "name": "sourceTurnId",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "68:6367704779491750147"
+        },
+        {
+          "id": "11:2343778130227332720",
+          "name": "sourceEpisodeId",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "69:240822330037340564"
+        },
+        {
+          "id": "12:9063684842875852587",
+          "name": "status",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "70:6085265623732814248"
+        },
+        {
+          "id": "13:120128659455380337",
+          "name": "supersededBy",
+          "type": 9
+        },
+        {
+          "id": "14:2829287847604130058",
+          "name": "embedding",
+          "type": 28
+        },
+        {
+          "id": "15:8803865231324962447",
+          "name": "syncStatus",
+          "type": 6
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "42:7369038829847260244",
-  "lastIndexId": "64:5287395165466852642",
+  "lastEntityId": "43:8101629924730712396",
+  "lastIndexId": "70:6085265623732814248",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

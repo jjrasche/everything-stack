@@ -1,0 +1,912 @@
+{
+  "conversationUuid": "01d28f67-5bda-412e-8d2e-e901f704c054",
+  "conversationName": "Modular AI inference architecture",
+  "turnCount": 12,
+  "totalSentences": 196,
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "inputCharCount": 1691,
+      "sentenceCount": 30,
+      "droppedFragments": 4,
+      "punctuationNeeded": false,
+      "sentences": [
+        {
+          "id": "S1",
+          "text": "So I'm thinking about, 1st class citizens."
+        },
+        {
+          "id": "S2",
+          "text": "Within the modular architecture."
+        },
+        {
+          "id": "S3",
+          "text": "So we have configuration UI components."
+        },
+        {
+          "id": "S4",
+          "text": "But to what extent should models be this way?"
+        },
+        {
+          "id": "S5",
+          "text": "I guess the question here is how How individual use case oriented are these?"
+        },
+        {
+          "id": "S6",
+          "text": "Going to be."
+        },
+        {
+          "id": "S7",
+          "text": "And based on the coding assistant, I think fairly the so And this new rendition of the coding assistant spec I feel the need to have 2 props."
+        },
+        {
+          "id": "S8",
+          "text": "1 being The discussion or conversation oriented I don't even know what to call it."
+        },
+        {
+          "id": "S9",
+          "text": "Inference instance instance."
+        },
+        {
+          "id": "S10",
+          "text": "More than just a model."
+        },
+        {
+          "id": "S11",
+          "text": "It's like the model and the system prompt that defines the behavior and the query that defines, you know, the the inputs necessary to So maybe that's what we needed to do first."
+        },
+        {
+          "id": "S12",
+          "text": "I need to identify what this is."
+        },
+        {
+          "id": "S13",
+          "text": "I need to define it."
+        },
+        {
+          "id": "S14",
+          "text": "But at that point, You could swap out some of the stuff."
+        },
+        {
+          "id": "S15",
+          "text": "And I guess, is it just a use case at that point?"
+        },
+        {
+          "id": "S16",
+          "text": "Is is it just the the the the definitional aspect of this?"
+        },
+        {
+          "id": "S17",
+          "text": "The one thing that can't be changed?"
+        },
+        {
+          "id": "S18",
+          "text": "Is the use case."
+        },
+        {
+          "id": "S19",
+          "text": "Of this inference instance."
+        },
+        {
+          "id": "S20",
+          "text": "It's I'm trying to get this to have a conversation with me to flesh out the spec."
+        },
+        {
+          "id": "S21",
+          "text": "So it's essentially Adding 2 in the transcript."
+        },
+        {
+          "id": "S22",
+          "text": "Information or ask me questions to pull this out of me."
+        },
+        {
+          "id": "S23",
+          "text": "And the spec looks like this."
+        },
+        {
+          "id": "S24",
+          "text": "Right now and ultimately, should look like Goodbye."
+        },
+        {
+          "id": "S25",
+          "text": "That's the use case."
+        },
+        {
+          "id": "S26",
+          "text": "And the model and the system prompt the user prompt can all modify can all be modified and tracked."
+        },
+        {
+          "id": "S27",
+          "text": "The behavior of this tracked to most optimally suffice that use case."
+        },
+        {
+          "id": "S28",
+          "text": "This is the right way to be thinking about this."
+        },
+        {
+          "id": "S29",
+          "text": "I I need a need sort of a conversational partner here to Solidify solidify these ideas and push against them."
+        },
+        {
+          "id": "S30",
+          "text": "And pull me and yeah,"
+        }
+      ]
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "inputCharCount": 1843,
+      "sentenceCount": 14,
+      "droppedFragments": 0,
+      "punctuationNeeded": false,
+      "sentences": [
+        {
+          "id": "S1",
+          "text": "You're circling the right abstraction."
+        },
+        {
+          "id": "S2",
+          "text": "Let me sharpen it:\n\n\n\nInference Instance = Use Case Definition + Variable Implementation\nWhere does this live?"
+        },
+        {
+          "id": "S3",
+          "text": "New module `inference-instances."
+        },
+        {
+          "id": "S4",
+          "text": "js` that manages these?"
+        },
+        {
+          "id": "S5",
+          "text": "- Or just data structures passed to `inference."
+        },
+        {
+          "id": "S6",
+          "text": "- Leaning toward: Just data structures - don't over-architect\nWhat makes it \"first-class\"?"
+        },
+        {
+          "id": "S7",
+          "text": "(chrome-sync)\nUI for managing them?"
+        },
+        {
+          "id": "S8",
+          "text": "(probably not needed yet)\nVersioning/history?"
+        },
+        {
+          "id": "S9",
+          "text": "(maybe via training module)\nTraining integration?"
+        },
+        {
+          "id": "S10",
+          "text": "This feels like it maps directly to `training."
+        },
+        {
+          "id": "S11",
+          "text": "js` - each inference instance IS a trainable use case\nThe \"artifacts\" training generates could be refined prompts/model choices\n\n\n\nStart minimal:\n\n\n\nLater, if you need 5+ of these, extract to a registry."
+        },
+        {
+          "id": "S12",
+          "text": "But for now - just inline config objects."
+        },
+        {
+          "id": "S13",
+          "text": "Counter-question: Are you trying to solve \"I need multiple inference patterns\" or \"I need to tune/version one pattern over time\"?"
+        },
+        {
+          "id": "S14",
+          "text": "The architecture differs."
+        }
+      ]
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "inputCharCount": 2203,
+      "sentenceCount": 41,
+      "droppedFragments": 16,
+      "punctuationNeeded": false,
+      "sentences": [
+        {
+          "id": "S1",
+          "text": "I don't like you writing code."
+        },
+        {
+          "id": "S2",
+          "text": "In this mode, whatever."
+        },
+        {
+          "id": "S3",
+          "text": "Want you to sharpen it."
+        },
+        {
+          "id": "S4",
+          "text": "Use case, Stefanesh."
+        },
+        {
+          "id": "S5",
+          "text": "Well, now set."
+        },
+        {
+          "id": "S6",
+          "text": "So goal input and output."
+        },
+        {
+          "id": "S7",
+          "text": "Does this work?"
+        },
+        {
+          "id": "S8",
+          "text": "So it seems like it should be a class."
+        },
+        {
+          "id": "S9",
+          "text": "Probably, you should look at the inference module then."
+        },
+        {
+          "id": "S10",
+          "text": "So it's a data structure."
+        },
+        {
+          "id": "S11",
+          "text": "But I also like the idea of there being mechanisms to To confirm the Response."
+        },
+        {
+          "id": "S12",
+          "text": "So that's either LLM as judge with a rubric or Maybe JSON testing confirmation."
+        },
+        {
+          "id": "S13",
+          "text": "But I think there should be an aspect of this too."
+        },
+        {
+          "id": "S14",
+          "text": "So that you have retryability."
+        },
+        {
+          "id": "S15",
+          "text": "I guess I'm I'm I'm making making leads Did you even help me come up with a day?"
+        },
+        {
+          "id": "S16",
+          "text": "I'm a first class citizen, I think they should be fire and forget."
+        },
+        {
+          "id": "S17",
+          "text": "That's a first class."
+        },
+        {
+          "id": "S18",
+          "text": "That's a good question."
+        },
+        {
+          "id": "S19",
+          "text": "Maybe I'm just using words now."
+        },
+        {
+          "id": "S20",
+          "text": "I like the UI's name, Shannon."
+        },
+        {
+          "id": "S21",
+          "text": "For them to exist within a config and maybe even within a manifest."
+        },
+        {
+          "id": "S22",
+          "text": "But to be defined within a manifest, and updated it within a config."
+        },
+        {
+          "id": "S23",
+          "text": "And probably tied to a Training."
+        },
+        {
+          "id": "S24",
+          "text": "How much of training should be an aspect of this."
+        },
+        {
+          "id": "S25",
+          "text": "Think it should be."
+        },
+        {
+          "id": "S26",
+          "text": "Like, if it has a use case, you should know whether or not It Satisfied that use case."
+        },
+        {
+          "id": "S27",
+          "text": "So if that's training, it's gonna have versioning."
+        },
+        {
+          "id": "S28",
+          "text": "Well, at the string, it's going to have History."
+        },
+        {
+          "id": "S29",
+          "text": "And I guess, versioning therein."
+        },
+        {
+          "id": "S30",
+          "text": "Maybe not such as, you know, when I change this, it creates another, like, saves the versions, but if you had test material, then or if you had test cases from this, then would save against those."
+        },
+        {
+          "id": "S31",
+          "text": "That that version created at the time of the test."
+        },
+        {
+          "id": "S32",
+          "text": "But, you know, for memory's sake, maybe you would version things."
+        },
+        {
+          "id": "S33",
+          "text": "And not tie the object the entire object to the test."
+        },
+        {
+          "id": "S34",
+          "text": "So, yep, can see the versioning."
+        },
+        {
+          "id": "S35",
+          "text": "Stop writing code."
+        },
+        {
+          "id": "S36",
+          "text": "I'm not gonna read it."
+        },
+        {
+          "id": "S37",
+          "text": "And what problem am I trying to solve here?"
+        },
+        {
+          "id": "S38",
+          "text": "It's not about patterns."
+        },
+        {
+          "id": "S39",
+          "text": "It's about use cases, really."
+        },
+        {
+          "id": "S40",
+          "text": "And I'm sure those use cases will fall into some probably pretty standardized patterns, but I do like pulling this out, thinking of it as versioning the It's version 2 in the same time."
+        },
+        {
+          "id": "S41",
+          "text": "But the thing that made that stabilizes this and is consistent is the use case."
+        }
+      ]
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "inputCharCount": 1802,
+      "sentenceCount": 21,
+      "droppedFragments": 1,
+      "punctuationNeeded": false,
+      "sentences": [
+        {
+          "id": "S1",
+          "text": "First-class vs Config Entry\n\nYou said \"fire and forget\" - but also want validation/retry."
+        },
+        {
+          "id": "S2",
+          "text": "Which matters more:\nFire-and-forget: Simple config objects, no special treatment\nValidated/retryable: Needs runtime support, state tracking, probably a module\nManifest vs Config placement\n\n\n\nThis split makes sense IF you're treating them as distinct concerns."
+        },
+        {
+          "id": "S3",
+          "text": "But if training auto-updates the config."
+        },
+        {
+          "id": "S4",
+          "text": "Is that okay?"
+        },
+        {
+          "id": "S5",
+          "text": "Validation - what triggers it?"
+        },
+        {
+          "id": "S6",
+          "text": "Every inference call?"
+        },
+        {
+          "id": "S7",
+          "text": "(expensive)\nOnly during training collection?"
+        },
+        {
+          "id": "S8",
+          "text": "(cheap but less coverage)\nOn-demand via test suite?"
+        },
+        {
+          "id": "S9",
+          "text": "(manual but thorough)\nThe versioning question\n\nYou mentioned \"versioning\" but then \"maybe not version the whole object."
+        },
+        {
+          "id": "S10",
+          "text": "\" \n\nReality: If you're tracking performance over time, you MUST know \"which system prompt produced this result."
+        },
+        {
+          "id": "S11",
+          "text": "\" That's implicit versioning even if you don't call it that."
+        },
+        {
+          "id": "S12",
+          "text": "Do you want:\nSnapshot versioning: Save entire config when tests run\nChangelog versioning: Track what changed and when\nNo explicit versions: Just latest config + historical test results\n\n\n\nSimple: Inference instances are just data structures."
+        },
+        {
+          "id": "S13",
+          "text": "Training module tracks them."
+        },
+        {
+          "id": "S14",
+          "text": "Inference module runs them."
+        },
+        {
+          "id": "S15",
+          "text": "No special status."
+        },
+        {
+          "id": "S16",
+          "text": "Complex: Inference instances are a module with lifecycle, validation, versioning, UI."
+        },
+        {
+          "id": "S17",
+          "text": "But now you have another abstraction to maintain."
+        },
+        {
+          "id": "S18",
+          "text": "You're leaning complex because you said \"first-class citizen\" and \"manifest definition."
+        },
+        {
+          "id": "S19",
+          "text": "\" But you hesitated."
+        },
+        {
+          "id": "S20",
+          "text": "What's the actual pain you're solving?"
+        },
+        {
+          "id": "S21",
+          "text": "Right now in code-assistant, what breaks or feels wrong?"
+        }
+      ]
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "inputCharCount": 1283,
+      "sentenceCount": 16,
+      "droppedFragments": 2,
+      "punctuationNeeded": false,
+      "sentences": [
+        {
+          "id": "S1",
+          "text": "I'm not sure if I iron forget completely conflicts."
+        },
+        {
+          "id": "S2",
+          "text": "With retry the living Validation."
+        },
+        {
+          "id": "S3",
+          "text": "I think validation enables retry."
+        },
+        {
+          "id": "S4",
+          "text": "And if I forget, it's probably the wrong saving here because need to use the output I don't think validation and retriability well, it doesn't state, but that's all encapsulated within the Execution."
+        },
+        {
+          "id": "S5",
+          "text": "But it is initialized via the config."
+        },
+        {
+          "id": "S6",
+          "text": "I'm really believing there should be an aspect of the inference module."
+        },
+        {
+          "id": "S7",
+          "text": "I think every inference call, if there's validation, would be validated."
+        },
+        {
+          "id": "S8",
+          "text": "And if it fails validation, it do retry if retryability is set And that data collect that failure should be a part of the training set collected."
+        },
+        {
+          "id": "S9",
+          "text": "To know if a model or a certain Prompt is causing an issue."
+        },
+        {
+          "id": "S10",
+          "text": "More than others."
+        },
+        {
+          "id": "S11",
+          "text": "Why would you not do validation on everything?"
+        },
+        {
+          "id": "S12",
+          "text": "I guess validation with LMS, judge, seems pretty costly."
+        },
+        {
+          "id": "S13",
+          "text": "But that can also run after the fact."
+        },
+        {
+          "id": "S14",
+          "text": "So it's a question of is validation a part of the retrial logic or is validation part of the training set Yeah."
+        },
+        {
+          "id": "S15",
+          "text": "It's implicit versioning, but I think we should be explicit."
+        },
+        {
+          "id": "S16",
+          "text": "But I think we should be implicit about And, listen, whatever we're creating here Each inference call is basically going to and I've been thinking we should have done this for a while, each friend's call is basically going to"
+        }
+      ]
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "inputCharCount": 1330,
+      "sentenceCount": 8,
+      "droppedFragments": 0,
+      "punctuationNeeded": false,
+      "sentences": [
+        {
+          "id": "S1",
+          "text": "\"Each inference call is basically going to."
+        },
+        {
+          "id": "S2",
+          "text": "\" → create a node in graph-db."
+        },
+        {
+          "id": "S3",
+          "text": "That's your answer."
+        },
+        {
+          "id": "S4",
+          "text": "Every inference execution = graph node with:\nInput (query, systemPrompt, model)\nOutput (response, tokens, latency)\nValidation result (pass/fail, score)\nUse case ID (spec-extraction, etc)\n\n\n\nValidation placement:\nSynchronous JSON schema check (retry immediately)\nAsync LLM-as-judge (background, writes to node)\n\nVersioning:\nImplicit via timestamps on nodes\nQuery by use case ID to see performance over time\n\nTraining:\nTraining module just queries graph-db nodes\n\"Show me all spec-extraction calls where validation failed\"\n\nConfig:\n\n\n\n\nWhere does the inference instance config live?"
+        },
+        {
+          "id": "S5",
+          "text": "(only code-assistant uses it)\ninference."
+        },
+        {
+          "id": "S6",
+          "text": "(becomes a registry of all use cases)\nNew inference-instances."
+        },
+        {
+          "id": "S7",
+          "text": "(separation of concerns)\n\nMy vote: inference."
+        },
+        {
+          "id": "S8",
+          "text": "js - it already has provider/model config, this is the same layer."
+        }
+      ]
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "inputCharCount": 1452,
+      "sentenceCount": 23,
+      "droppedFragments": 2,
+      "punctuationNeeded": false,
+      "sentences": [
+        {
+          "id": "S1",
+          "text": "What I agree with."
+        },
+        {
+          "id": "S2",
+          "text": "We're saving each inference call."
+        },
+        {
+          "id": "S3",
+          "text": "But we're also probably saving each Config history."
+        },
+        {
+          "id": "S4",
+          "text": "Of that it's gonna live in the manifest, of course, of each business module that uses it."
+        },
+        {
+          "id": "S5",
+          "text": "And it could be updated via the config, and chime back gets updated in the config."
+        },
+        {
+          "id": "S6",
+          "text": "It will be saved."
+        },
+        {
+          "id": "S7",
+          "text": "It'll be persistent."
+        },
+        {
+          "id": "S8",
+          "text": "Not to Chrome sync, but to IndexedDB."
+        },
+        {
+          "id": "S9",
+          "text": "As a part of this."
+        },
+        {
+          "id": "S10",
+          "text": "Inference use case."
+        },
+        {
+          "id": "S11",
+          "text": "And, yes, any execution based on the use case will go to index DB and be saved with reference to that inference use case."
+        },
+        {
+          "id": "S12",
+          "text": "So the only thing you're Collecting maybe is the in the the use Is I don't know, some metadata about it, the components of the system prompt and clear that that our variable and I don't think you should be able to modify any aspects."
+        },
+        {
+          "id": "S13",
+          "text": "Other other than that, then you have the response."
+        },
+        {
+          "id": "S14",
+          "text": "And then you have the Either you the acceptance or rejection of the response in the validation Okay."
+        },
+        {
+          "id": "S15",
+          "text": "Inference module, Let me think about that."
+        },
+        {
+          "id": "S16",
+          "text": "I guess so."
+        },
+        {
+          "id": "S17",
+          "text": "Not sure what kind of pattern you wanna use there."
+        },
+        {
+          "id": "S18",
+          "text": "Like, I guess, I foresee it being used very similar to how the inference module is used today."
+        },
+        {
+          "id": "S19",
+          "text": "Just through prompts, but It's different."
+        },
+        {
+          "id": "S20",
+          "text": "So if the inference module log initialization pulls in all the other use cases, current use cases from the other modules."
+        },
+        {
+          "id": "S21",
+          "text": "Then what we're we're gonna pass in We'll have a a separate input to the prompt that Post the use case information."
+        },
+        {
+          "id": "S22",
+          "text": "The current Use case information."
+        },
+        {
+          "id": "S23",
+          "text": "To run the prompt."
+        }
+      ]
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "inputCharCount": 1375,
+      "sentenceCount": 3,
+      "droppedFragments": 0,
+      "punctuationNeeded": false,
+      "sentences": [
+        {
+          "id": "S1",
+          "text": "At inference module init:\n\n\nUsage from code-assistant:\n\n\nWhat inference."
+        },
+        {
+          "id": "S2",
+          "text": "prompt() does:\nLoad use case config from IndexedDB (or manifest default)\nMerge with overrides\nExecute inference\nSave execution node to IndexedDB with use case reference\nRun validation if defined\nRetry if validation fails + retry enabled\nReturn result\nUse case config storage:\nStart: Manifest defaults only\nLater: IndexedDB for tuned versions\nQuery: \"Load from IndexedDB, fallback to manifest\"\nValidation async or blocking?"
+        },
+        {
+          "id": "S3",
+          "text": "JSON schema: Synchronous, blocks return\nLLM judge: Async, background task, updates node later\nIndexedDB schema:\n\n\nDoes this match your mental model?"
+        }
+      ]
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "inputCharCount": 1657,
+      "sentenceCount": 11,
+      "droppedFragments": 0,
+      "punctuationNeeded": true,
+      "sentences": [
+        {
+          "id": "S1",
+          "text": "In this pattern should the system prompt always be static?"
+        },
+        {
+          "id": "S2",
+          "text": "I think for ease of use I want the business module call to use case appearance to not include them query texting full but include the variables that are going to go into the query part if any This is what we're going to store to minimally stores the training history."
+        },
+        {
+          "id": "S3",
+          "text": "So the inference should keep the should assemble with those."
+        },
+        {
+          "id": "S4",
+          "text": "Input parameters inside inference way since the prompt when it sends the actual furnace prompt to the inference server and then use those inputs to speed to save in the use Can we."
+        },
+        {
+          "id": "S5",
+          "text": "Can we solidify on naming of these objects so I like inferences case but then what what's the actual instance of utility of use Is it just a use What do you think\nWe're going to have to extend config module to save also to index DB?"
+        },
+        {
+          "id": "S6",
+          "text": "Correct me if I'm wrong but I think the config will be pulled in set on the module after initialization well after the config module initializes so I think that use case can just use the runtime config from the module."
+        },
+        {
+          "id": "S7",
+          "text": "That does mean that the insurance module has to initialize after config and I don't know if there's any cross contact issues there's."
+        },
+        {
+          "id": "S8",
+          "text": "Was that reasonable to stall and furnace until the config runs the updates on all the modules configs such that influence can pull from those modules the correct configurations?"
+        },
+        {
+          "id": "S9",
+          "text": "Say validation is blocking for now."
+        },
+        {
+          "id": "S10",
+          "text": "And lol I like that validation you can set it to be either blocking or asynchronous."
+        },
+        {
+          "id": "S11",
+          "text": "For the use case config I don't need a version I need a bottle system prompt the query with the injection sites the temperature what else the use should store the use case ID everything else looks good"
+        }
+      ]
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "inputCharCount": 1555,
+      "sentenceCount": 9,
+      "droppedFragments": 0,
+      "punctuationNeeded": false,
+      "sentences": [
+        {
+          "id": "S1",
+          "text": "Use Case Config = definition (stored in manifest/IndexedDB)\nUse Case Execution = single inference run (stored in IndexedDB executions)\n\n\n\n\n\n\n\n\n\n\n\nOption 1 (simpler): Config module doesn't change."
+        },
+        {
+          "id": "S2",
+          "text": "Inference reads `runtime."
+        },
+        {
+          "id": "S3",
+          "text": "getContextModules()` to get current config values directly."
+        },
+        {
+          "id": "S4",
+          "text": "Option 2: Config module writes inference use cases to IndexedDB when they change."
+        },
+        {
+          "id": "S5",
+          "text": "Vote: Option 1."
+        },
+        {
+          "id": "S6",
+          "text": "Inference can initialize after config because it reads runtime state, not storage."
+        },
+        {
+          "id": "S7",
+          "text": "## IndexedDB Schema\n\n\n\nConfirm: System prompt stays in manifest."
+        },
+        {
+          "id": "S8",
+          "text": "Config only tunes model/temperature."
+        },
+        {
+          "id": "S9",
+          "text": "Query assembled in inference module."
+        }
+      ]
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "inputCharCount": 611,
+      "sentenceCount": 11,
+      "droppedFragments": 1,
+      "punctuationNeeded": false,
+      "sentences": [
+        {
+          "id": "S1",
+          "text": "This looks right."
+        },
+        {
+          "id": "S2",
+          "text": "Review the whole plan."
+        },
+        {
+          "id": "S3",
+          "text": "Architecturally speaking, I I think it's doing everything we want to do."
+        },
+        {
+          "id": "S4",
+          "text": "And the main point is to standardize the use cases select the training data, and be able to fine tune the for the optimum executions."
+        },
+        {
+          "id": "S5",
+          "text": "I do like the consistency of the calls."
+        },
+        {
+          "id": "S6",
+          "text": "I'm wondering if the Inference module."
+        },
+        {
+          "id": "S7",
+          "text": "I think we tried this before, and for some reason, it didn't work."
+        },
+        {
+          "id": "S8",
+          "text": "But remind me why."
+        },
+        {
+          "id": "S9",
+          "text": "The inference module isn't capable of injecting functionality into the business modules."
+        },
+        {
+          "id": "S10",
+          "text": "Like, I can't have a method just called Extract spec."
+        },
+        {
+          "id": "S11",
+          "text": "Like, I have to still go through the run time."
+        }
+      ]
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "inputCharCount": 1193,
+      "sentenceCount": 9,
+      "droppedFragments": 0,
+      "punctuationNeeded": false,
+      "sentences": [
+        {
+          "id": "S1",
+          "text": "Why injection doesn't work:\nModule isolation - Each module is a separate import."
+        },
+        {
+          "id": "S2",
+          "text": "Inference can't reach into code-assistant's scope to add methods."
+        },
+        {
+          "id": "S3",
+          "text": "Cross-context calls - Business module might be in extension-page, inference in service-worker."
+        },
+        {
+          "id": "S4",
+          "text": "Direct method calls won't route correctly."
+        },
+        {
+          "id": "S5",
+          "text": "Runtime registration pattern - Actions are registered as `module."
+        },
+        {
+          "id": "S6",
+          "text": "action` pairs, not injected functions."
+        },
+        {
+          "id": "S7",
+          "text": "What you CAN do:\n\nCreate a helper in the business module:\n\n\n\nThis gives you clean call syntax while preserving the architecture."
+        },
+        {
+          "id": "S8",
+          "text": "Full Plan Review:\n\n✅ Use cases defined in module manifests  \n✅ Inference discovers all use cases at init  \n✅ Calls via `runtime."
+        },
+        {
+          "id": "S9",
+          "text": "useCase', {id, inputs})`  \n✅ Inference assembles query from template + inputs  \n✅ Executions saved to IndexedDB with use case reference  \n✅ Validation runs (blocking or async)  \n✅ Training module queries executions for optimization  \n\nMissing anything?"
+        }
+      ]
+    }
+  ]
+}

@@ -44,6 +44,10 @@ class AtomicInsight extends BaseEntity with Embeddable {
   /// Optional type tag: 'learning', 'project', 'exploration'
   String? type;
 
+  /// Quoted substring from the episodic source that supports this insight.
+  /// Stage 1 produces this alongside the insight content for 1:1 evidence alignment.
+  String? evidenceSpan;
+
   /// Optional project UUID (if scope='project' or insight is within a project)
   String? projectId;
 
@@ -69,6 +73,7 @@ class AtomicInsight extends BaseEntity with Embeddable {
     required this.content,
     required this.scope,
     this.type,
+    this.evidenceSpan,
     this.projectId,
     this.isArchived = false,
   }) {

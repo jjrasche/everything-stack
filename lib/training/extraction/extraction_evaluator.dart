@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 import '../../core/debug/debug_introspectable.dart';
-import '../inference_service.dart';
+import '../../services/inference_service.dart';
 import 'extraction_eval_types.dart';
 
 class ExtractionEvaluator with DebugIntrospectable {
-  static const String _judgeModel = 'llama-3.3-70b-versatile';
+  static const String _defaultModel = 'llama-3.1-8b-instant';
 
   /// Heuristic: ~1 insight per 3 conversational turns
   static const int _turnsPerExpectedInsight = 3;
@@ -17,6 +17,7 @@ class ExtractionEvaluator with DebugIntrospectable {
   static const int _responsePreviewLength = 300;
 
   final InferenceService _inferenceService;
+  final String _judgeModel;
   EvaluationWeights _weights;
 
   int _evaluationCount = 0;
@@ -25,8 +26,10 @@ class ExtractionEvaluator with DebugIntrospectable {
   ExtractionEvaluator({
     required InferenceService inferenceService,
     EvaluationWeights? weights,
+    String? model,
   })  : _inferenceService = inferenceService,
-        _weights = weights ?? EvaluationWeights.defaults();
+        _weights = weights ?? EvaluationWeights.defaults(),
+        _judgeModel = model ?? _defaultModel;
 
   EvaluationWeights get weights => _weights;
 

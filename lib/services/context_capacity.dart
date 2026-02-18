@@ -134,56 +134,45 @@ class ContextCapacity with Trainable<ContextCapacityAdaptationData> {
     Invocation invocation,
     domain_feedback.Feedback feedback,
   ) async {
-    // 1. Extract model from invocation
-    final input = invocation.input;
-    if (input == null) {
+    final invocationInput = invocation.input;
+    if (invocationInput == null) {
       print('⚠️ [ContextCapacity] Cannot train: invocation has no input');
       return;
     }
 
-    final model = input['model'] as String?;
+    final model = invocationInput['model'] as String?;
     if (model == null || model.isEmpty) {
       print('⚠️ [ContextCapacity] Cannot train: no model in input');
       return;
     }
 
-    // 2. Get current adaptation state
     final adaptationStateRepo = GetIt.instance<AdaptationStateRepository>();
     final state = await getAdaptationState();
     final params = state.dataJson.isNotEmpty
         ? deserializeData(state.dataJson)
         : createDefaultData();
 
-    // 3. Get current config for model
     final config = params.getConfigForModel(model);
     final currentOptimal = config.optimalContextTokens;
 
-    // 4. Adjust based on feedback
-    // This is a simple heuristic - GP optimizer would do better
     int newOptimal = currentOptimal;
     final feedbackText = feedback.correctedData?.toLowerCase() ?? '';
 
     if (feedback.action == domain_feedback.FeedbackAction.confirm) {
-      // Positive feedback - current setting is good
       print('📊 [ContextCapacity] Positive feedback for $model at $currentOptimal tokens');
     } else if (feedback.action == domain_feedback.FeedbackAction.deny) {
-      // Negative feedback - adjust based on correction text
       if (feedbackText.contains('missing') || feedbackText.contains('little')) {
-        // Increase context
         newOptimal = (currentOptimal * 1.2).round().clamp(500, config.maxContextTokens - config.reservedForResponse);
         print('📊 [ContextCapacity] Increasing $model budget: $currentOptimal → $newOptimal');
       } else if (feedbackText.contains('verbose') || feedbackText.contains('much')) {
-        // Decrease context
         newOptimal = (currentOptimal * 0.8).round().clamp(500, config.maxContextTokens - config.reservedForResponse);
         print('📊 [ContextCapacity] Decreasing $model budget: $currentOptimal → $newOptimal');
       } else {
-        // Generic negative - small decrease (too much context is more common issue)
         newOptimal = (currentOptimal * 0.95).round().clamp(500, config.maxContextTokens - config.reservedForResponse);
         print('📊 [ContextCapacity] Small decrease for $model: $currentOptimal → $newOptimal');
       }
     }
 
-    // 5. Save updated state if changed
     if (newOptimal != currentOptimal) {
       final newConfig = config.copyWith(optimalContextTokens: newOptimal);
       final newParams = params.copyWithModelConfig(model, newConfig);
@@ -215,28 +204,23 @@ class ContextCapacity with Trainable<ContextCapacityAdaptationData> {
     String? userId,
     int? customTokenBudget, // Optional: override learned budget (for testing)
   }) async {
-    // 1. Get adaptation state
     final state = await getAdaptationState(userId: userId);
     final params = state.dataJson.isNotEmpty
         ? deserializeData(state.dataJson)
         : createDefaultData();
 
-    // 2. Get config for this model
     final config = params.getConfigForModel(model);
     final tokenBudget = customTokenBudget ?? config.effectiveContextBudget;
 
     print('\n📏 [ContextCapacity] Truncating for $model');
     print('   Budget: $tokenBudget tokens');
 
-    // 3. Count tokens in current messages
     final originalTokens = _countMessagesTokens(messages);
     print('   Original: $originalTokens tokens, ${messages.length} messages');
 
-    // 4. Check if truncation needed
     if (originalTokens <= tokenBudget) {
       print('   ✅ No truncation needed');
 
-      // Record invocation
       await _recordInvocationData(
         eventId: eventId,
         model: model,
@@ -256,7 +240,6 @@ class ContextCapacity with Trainable<ContextCapacityAdaptationData> {
       );
     }
 
-    // 5. Truncate by removing oldest non-system messages
     final truncated = _truncateToFit(messages, tokenBudget);
     final finalTokens = _countMessagesTokens(truncated);
     final messagesRemoved = messages.length - truncated.length;
@@ -265,7 +248,6 @@ class ContextCapacity with Trainable<ContextCapacityAdaptationData> {
     print('   ✂️ Truncated: $finalTokens tokens, ${truncated.length} messages');
     print('   Removed: $messagesRemoved messages, $tokensRemoved tokens');
 
-    // 6. Record invocation
     await _recordInvocationData(
       eventId: eventId,
       model: model,
@@ -287,25 +269,22 @@ class ContextCapacity with Trainable<ContextCapacityAdaptationData> {
     );
   }
 
-  /// Count total tokens in a list of messages.
   int _countMessagesTokens(List<Map<String, dynamic>> messages) {
-    int total = 0;
-    for (final msg in messages) {
-      final content = msg['content'];
-      if (content is String) {
-        total += _tokenizer.countTokens(content);
-      } else if (content is List) {
-        // Multi-part content (text + images)
-        for (final part in content) {
-          if (part is Map && part['type'] == 'text') {
-            total += _tokenizer.countTokens(part['text'] as String? ?? '');
+    int totalTokenCount = 0;
+    for (final message in messages) {
+      final messageContent = message['content'];
+      if (messageContent is String) {
+        totalTokenCount += _tokenizer.countTokens(messageContent);
+      } else if (messageContent is List) {
+        for (final contentPart in messageContent) {
+          if (contentPart is Map && contentPart['type'] == 'text') {
+            totalTokenCount += _tokenizer.countTokens(contentPart['text'] as String? ?? '');
           }
         }
       }
-      // Add overhead for message structure (role markers, delimiters, etc.)
-      total += tokensPerMessageOverhead;
+      totalTokenCount += tokensPerMessageOverhead;
     }
-    return total;
+    return totalTokenCount;
   }
 
   /// Truncate messages to fit within token budget.
@@ -317,61 +296,55 @@ class ContextCapacity with Trainable<ContextCapacityAdaptationData> {
     List<Map<String, dynamic>> messages,
     int tokenBudget,
   ) {
-    // Separate system message from conversation
     final systemMessages = <Map<String, dynamic>>[];
     final conversationMessages = <Map<String, dynamic>>[];
 
-    for (final msg in messages) {
-      if (msg['role'] == 'system') {
-        systemMessages.add(msg);
+    for (final message in messages) {
+      if (message['role'] == 'system') {
+        systemMessages.add(message);
       } else {
-        conversationMessages.add(msg);
+        conversationMessages.add(message);
       }
     }
 
-    // Start with system messages (must keep)
-    final result = List<Map<String, dynamic>>.from(systemMessages);
-    int currentTokens = _countMessagesTokens(result);
+    final truncatedMessages = List<Map<String, dynamic>>.from(systemMessages);
+    int currentTokens = _countMessagesTokens(truncatedMessages);
 
-    // If system messages alone exceed budget, we have a problem
-    // Just return system messages in that case
     if (currentTokens >= tokenBudget) {
       print('⚠️ [ContextCapacity] System messages exceed budget!');
-      return result;
+      return truncatedMessages;
     }
 
-    final toAdd = <Map<String, dynamic>>[];
+    final messagesToAdd = <Map<String, dynamic>>[];
     for (int i = conversationMessages.length - 1; i >= 0; i--) {
-      final msg = conversationMessages[i];
-      final msgTokens = _countMessageTokens(msg);
+      final message = conversationMessages[i];
+      final messageTokenCount = _countMessageTokens(message);
 
-      if (currentTokens + msgTokens <= tokenBudget) {
-        toAdd.insert(0, msg); // Insert at front to maintain order
-        currentTokens += msgTokens;
+      if (currentTokens + messageTokenCount <= tokenBudget) {
+        messagesToAdd.insert(0, message);
+        currentTokens += messageTokenCount;
       } else {
-        // No more room
         break;
       }
     }
 
-    result.addAll(toAdd);
-    return result;
+    truncatedMessages.addAll(messagesToAdd);
+    return truncatedMessages;
   }
 
-  /// Count tokens in a single message.
-  int _countMessageTokens(Map<String, dynamic> msg) {
-    int tokens = 4; // Overhead for message structure
-    final content = msg['content'];
-    if (content is String) {
-      tokens += _tokenizer.countTokens(content);
-    } else if (content is List) {
-      for (final part in content) {
-        if (part is Map && part['type'] == 'text') {
-          tokens += _tokenizer.countTokens(part['text'] as String? ?? '');
+  int _countMessageTokens(Map<String, dynamic> message) {
+    int tokenCount = tokensPerMessageOverhead;
+    final messageContent = message['content'];
+    if (messageContent is String) {
+      tokenCount += _tokenizer.countTokens(messageContent);
+    } else if (messageContent is List) {
+      for (final contentPart in messageContent) {
+        if (contentPart is Map && contentPart['type'] == 'text') {
+          tokenCount += _tokenizer.countTokens(contentPart['text'] as String? ?? '');
         }
       }
     }
-    return tokens;
+    return tokenCount;
   }
 
   /// Record invocation for training.

@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 
 import '../../core/debug/debug_introspectable.dart';
-import '../prompt/prompt_improvement_loop.dart';
-import '../prompt/prompt_registry.dart';
-import '../prompt/prompt_mutator.dart';
-import '../prompt/prompt_validator.dart';
-import 'atomic_insight_extractor.dart';
+import '../../services/prompt/prompt_improvement_loop.dart';
+import '../../services/prompt/prompt_registry.dart';
+import '../../services/prompt/prompt_mutator.dart';
+import '../../services/prompt/prompt_validator.dart';
+import '../../services/extraction/atomic_insight_extractor.dart';
 import 'extraction_evaluator.dart';
 import 'extraction_eval_types.dart';
 

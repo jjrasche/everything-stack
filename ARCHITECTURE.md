@@ -883,31 +883,170 @@ DECISIONS.md explains the trade-offs that shaped this architecture.
 
 ### Memory Architecture Layers
 
-Three distinct memory systems, each with different scope and purpose:
+Four distinct memory systems forming a pipeline from ephemeral context to persistent knowledge:
 
-1. **Whiteboard (Session Rolling Summary)** - Short-term context
-   - Compression for extraction optimization (prevents re-reading all messages)
-   - Scope: current session only (resets when session ends)
-   - Storage: ephemeral (in-memory or temp file)
-   - Async background refresh (Mem0 pattern), non-blocking
+1. **Session Continuity Memory (Working Context)** - The "RAM"
+   - Rolling, prioritized, append-only observation log of current session
+   - Source-agnostic: conversation turns, articles, lyrics, overheard audio, any episodic input
+   - NOT per-request context fetching. Sticky context that grows within a session
+   - Two background processes (inspired by Mastra Observational Memory):
+     - **Observer**: compresses raw input into dated, priority-tagged observations
+     - **Reflector**: restructures observations when they exceed token threshold,
+       combining related items and removing superseded information
+   - Temporal anchoring: observation date, referenced date, relative offset
+   - Stable prefix enables prompt caching (4-10x cost reduction on cached tokens)
+   - Extraction point: atomic insights are extracted FROM this context, not from raw input
+   - Scope: current ambient session (not tied to a single chat, spans all interactions)
+   - Storage: ephemeral (in-memory), but observations persist until session ends
+   - Research: Mastra OM (94.87% LongMemEval), Mem0 async refresh pattern
+   - Status: **concept, not yet designed or implemented**
 
-2. **AtomicInsight (Semantic Memory)** - Long-term facts
-   - Persistent knowledge extracted from conversations
+2. **AtomicInsight (Semantic Memory)** - Long-term facts (the "database")
+   - Persistent knowledge extracted from session continuity memory
    - Format: "[Fact]. Because [reason]."
    - Storage: database with embeddings for semantic search
-   - Turn-by-turn extraction with deduplication
+   - Turn-by-turn extraction with deduplication (threshold: 0.7 cosine similarity)
+   - Entity extraction as second pass (statistical/semantic, not LLM-based)
+   - Consolidation: L0 (session) → L1 (week) → L2 (project/life) via emergent clustering
+   - Hierarchy: domain tags (~10-20) and category tags (~50-200) enable reduced search space
+   - Graph layer: entity resolution creates edges (insight↔entity, entity↔entity)
+   - Inferred relations: semantic edges ("prefers", "because of") from context
+   - Status: **extraction pipeline complete, consolidation/entity/graph not yet implemented**
 
 3. **NarrativeEntry (Identity Memory)** - Who user is (deferred)
    - Identity, goals, values evolution
    - Scope: day -> week -> project -> life
    - Research: Amazon Bedrock AgentCore episodic memory, Mem0 preference/identity models
 
-### MomentState System (Deferred)
+4. **MomentState (Emotional Context)** - Real-time affect (deferred)
+   - Conversational posture, current focus/topic, engagement level
+   - Inputs: voice prosody + emotion analysis + recent turns
+   - Research: multi-modal emotion recognition, Hume AI empathic voice
 
-Real-time working memory for conversational context (ephemeral, turn-level):
-- Conversational posture, current focus/topic, engagement level
-- Inputs: voice prosody + emotion analysis + recent turns
-- Research: multi-modal emotion recognition, Hume AI empathic voice
+### Memory Pipeline Flow
+
+```
+Episodic Input (songs, articles, conversations, any text)
+    ↓
+Session Continuity Memory (rolling prioritized context, sticky, append-only)
+    ↓ Observer compresses, Reflector restructures
+    ↓ extraction happens HERE
+AtomicInsight Extraction (L0 session/day insights)
+    ↓ second pass
+Entity Extraction + Resolution (statistical, human-in-the-loop training)
+    ↓ creates edges
+Edge Creation (insight↔entity, entity↔entity)
+    ↓ background batch
+Consolidation (L0→L1→L2, emergent domain/category tags)
+    ↓ enables
+Hierarchical Retrieval (domain routing → category → specific insights + graph traversal)
+```
+
+### Entity Model in Memory
+
+- Entities get ONE embedding (canonical description), not chunks
+- Purpose: entity resolution (match new mentions against existing entities)
+- Entities are reference points at the edge of semantic space, not searchable content
+- Edge types: `mentions` (insight->entity), `relates_to` (entity<->entity),
+  `parent_of` (L1->L0 consolidation provenance), `inferred` (semantic relations)
+
+#### Entity Resolution Pipeline (No LLM Calls)
+
+Based on Fellegi-Sunter framework: three-way decision (auto-merge, auto-separate, ask user).
+
+Steps for each new entity mention:
+1. **Blocking** (candidate generation): LSH over entity name embeddings OR phonetic keys
+   to avoid O(n) comparison against all existing entities. Keep recall high, cut quadratic cost.
+   At 1000 entities this is optional. At 50,000 it is mandatory.
+2. **Feature computation** on candidate pairs:
+   - String similarity (token overlap, edit distance)
+   - Embedding cosine similarity (entity description embeddings)
+   - Structural signals (shared graph neighbors, relation compatibility)
+   - Temporal consistency (do two mentions plausibly co-refer at the same time?)
+3. **Three-zone thresholding**:
+   - Above high threshold -> auto-merge (conservative: bias toward low false-merges,
+     because a wrong merge corrupts the graph and cascades into bad multi-hop retrieval)
+   - Below low threshold -> auto-separate (new entity)
+   - Between thresholds -> queue for human review in UI (tap-to-confirm)
+4. **Active learning**: user confirmations train the matcher. Use entropy-based selection
+   to pick the most informative pairs to surface. Keep a durable set of confirmed
+   merges/splits as calibration data.
+
+Implementation order: start with embedding similarity + two fixed thresholds.
+Add blocking when entity count exceeds ~5000. Add active learning when enough
+human judgments accumulate (~100+ decisions).
+
+#### Bi-Temporal Entity Modeling
+
+Steal from Zep/Graphiti. Each entity and relation carries two timelines:
+- **System timeline**: `createdAt` / `expiredAt` (when the system learned or retired it)
+- **Validity timeline**: `validFrom` / `validUntil` (when the fact was actually true)
+
+Example: "I worked at Company X" -> validFrom=2020, validUntil=2023, createdAt=2026-02-16.
+"I now work at Company Y" -> creates new entity relation, sets validUntil on old one.
+
+This enables time-aware retrieval ("where did I work in 2021?") and retroactive
+corrections without rewriting history. Treat "rename" as a new alias row, not a mutation.
+
+Action: add `validFrom: DateTime?` and `validUntil: DateTime?` to BaseEntity or as an
+opt-in mixin (like Embeddable). Decision deferred until Entity implementation phase.
+
+### Consolidated Insight Provenance
+
+- L0 insights archived (not deleted) after consolidation into L1
+- Provenance tracked via `parent_of` edges (L1 -> source L0s)
+- Enables reprocessing if consolidation algorithm improves
+- Rare episodic recall: sometimes the specific detail matters, not the abstraction
+
+### Hybrid Retrieval
+
+Two-stage architecture validated across Zep, H-MEM, SimpleMem, GraphRAG, RAPTOR:
+
+**Stage A: High Recall, Cheap (candidate generation)**
+1. Domain/category routing narrows semantic search space (hierarchy descent)
+2. Semantic ANN within matched categories (HNSW, 8-12ms)
+3. Graph traversal expands from seed entities (1-2 hops, bounded)
+4. Fallback: if hierarchical results are sparse (<3 candidates), run unfiltered
+   semantic search. Hierarchy fragmentation silently kills recall without this.
+
+**Stage B: Precision (reranking + context construction)**
+1. Merge unique candidates from semantic + graph paths
+2. Score fusion via RRF (Reciprocal Rank Fusion) as default:
+   `score(d) = sum(1 / (k + rank_r(d)))` across ranked lists
+   Parameter-light, no training data needed, works out of the box.
+3. Graduate to learned convex combination (`alpha * semantic + (1-alpha) * graph`)
+   when enough retrieval judgments accumulate from human-in-the-loop confirmations.
+4. Context construction: summaries for L1/L2, raw content for L0 when detail needed.
+
+**Score Fusion Implementation Order:**
+- Phase 1: RRF only. No training. Ship it.
+- Phase 2: Log retrieval results + user feedback as calibration data.
+- Phase 3: Learn alpha (single scalar) via logistic regression over feature vector
+  (cosine similarity, BM25, graph hop distance, recency, entity-type match).
+
+**Query-Adaptive Traversal Depth:**
+- Current `EdgeRepository.traverse()` takes fixed depth 1-3. No neighbor cap.
+- Action: add `maxNeighborsPerHop` parameter to `traverse()` to prevent hub blowup.
+  High-degree nodes (e.g., "Flutter" entity with 200 edges) explode BFS without caps.
+- Action: add query complexity estimator (entity count + keyword count in query).
+  Simple factual queries -> 1-hop. Multi-entity or reasoning queries -> 2-3 hops.
+  SimpleMem validates this adaptive approach.
+
+**Known Failure Modes (design around these):**
+- Entity resolution errors cascade into graph traversal. Mitigated by conservative
+  merge thresholds (see Entity Resolution Pipeline above).
+- Hub bias in BFS. Mitigated by `maxNeighborsPerHop` cap, sort neighbors by salience.
+- Hierarchy fragmentation drops recall. Mitigated by unfiltered fallback.
+- Summarization errors lose detail. Mitigated by retaining L0 provenance
+  and fetching raw insights when L1/L2 summaries are ambiguous.
+
+**Benchmarks for validation:**
+- Zep: 71.2% vs 60.2% baseline (LongMemEval), 1.6k vs 115k context tokens
+- H-MEM: +14.98 F1 over flat, +21.25 multi-hop, <100ms vs 400ms+ at scale
+- SimpleMem: +26.4% F1 with consolidation, large token usage reduction
+- Target: measure on exported golden conversations once retrieval pipeline exists
+
+**Research reference:** `docs/RESEARCH_HYBRID_RETRIEVAL.md` for full literature survey
 
 ---
 

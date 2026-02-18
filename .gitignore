@@ -134,3 +134,9 @@ rust/**/mutants.out*/     # Mutation testing output
 
 # Note: flutter_rust_bridge generated files (frb_generated.*, bridge/*.dart) ARE committed
 # per https://cjycode.com/flutter_rust_bridge/guides/how-to/gitignore - works immediately
+
+# ONNX models (too large for git)
+assets/models/*.onnx
+
+# ObjectBox runtime database
+objectbox/

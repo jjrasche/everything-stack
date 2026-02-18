@@ -1,0 +1,425 @@
+{
+  "generatedAt": "2026-02-16T00:33:38.766337",
+  "totalConversations": 33,
+  "totalInsights": 363,
+  "averageInsightsPerConversation": 11.0,
+  "extractionModel": "claude-sonnet-4.5",
+  "assessmentModel": "claude-sonnet (32 convs) + claude-opus (1 conv)",
+  "clusterCoverage": {
+    "0_ui_architecture": {
+      "count": 3,
+      "insights": 20
+    },
+    "1_voice_audio": {
+      "count": 3,
+      "insights": 33
+    },
+    "2_data_scripts": {
+      "count": 3,
+      "insights": 27
+    },
+    "3_farming_land": {
+      "count": 3,
+      "insights": 37
+    },
+    "4_documentation_pm": {
+      "count": 3,
+      "insights": 26
+    },
+    "5_family_recipes": {
+      "count": 3,
+      "insights": 27
+    },
+    "6_healthcare_finance": {
+      "count": 2,
+      "insights": 5
+    },
+    "7_micro_society": {
+      "count": 5,
+      "insights": 51
+    },
+    "8_parenting_relationships": {
+      "count": 3,
+      "insights": 47
+    },
+    "9_ai_architecture": {
+      "count": 5,
+      "insights": 90
+    }
+  },
+  "scopeDistribution": {
+    "session": 113,
+    "project": 165,
+    "life": 85
+  },
+  "typeDistribution": {
+    "learning": 168,
+    "exploration": 74,
+    "project": 121
+  },
+  "conversations": [
+    {
+      "convUuid": "3475558a-afaf-46f9-9f4f-d954eb59fb77",
+      "convName": "Chrome Extension Debugging",
+      "cluster": 0,
+      "turnCount": 15,
+      "insightCount": 9,
+      "turnsWithInsights": 9,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "438c540f-9169-45f7-ba6f-f42033326077",
+      "convName": "Dynamic UI Module Injection",
+      "cluster": 0,
+      "turnCount": 15,
+      "insightCount": 7,
+      "turnsWithInsights": 5,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "da909909-8a98-48ee-a384-d1771a482681",
+      "convName": "UI Module Architecture Migration",
+      "cluster": 0,
+      "turnCount": 8,
+      "insightCount": 4,
+      "turnsWithInsights": 4,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-opus",
+      "verified": false
+    },
+    {
+      "convUuid": "254c2f0d-e265-4907-9d97-eab2532d3fd3",
+      "convName": "Audio pipeline blocker in voice-first AI project",
+      "cluster": 1,
+      "turnCount": 8,
+      "insightCount": 17,
+      "turnsWithInsights": 7,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "51f0c350-c962-4396-ad15-2a73958e31f9",
+      "convName": "Core MVP Voice Streaming Strategy",
+      "cluster": 1,
+      "turnCount": 6,
+      "insightCount": 3,
+      "turnsWithInsights": 2,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "e1eb83dd-03e5-4a36-b905-0e3cd2c8c89d",
+      "convName": "Voice-first spec generator design",
+      "cluster": 1,
+      "turnCount": 7,
+      "insightCount": 13,
+      "turnsWithInsights": 4,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "de0bf690-7c0e-45d0-91df-f90734f91465",
+      "convName": "AI-Powered School Superintendent Scraping",
+      "cluster": 2,
+      "turnCount": 14,
+      "insightCount": 9,
+      "turnsWithInsights": 8,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "9b1d6cba-412d-4814-a006-7ba3a59a71fc",
+      "convName": "Debugging Power BI metadata extraction issues",
+      "cluster": 2,
+      "turnCount": 8,
+      "insightCount": 6,
+      "turnsWithInsights": 6,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "02a6e75f-2e12-4542-a3da-e5f870c4a72e",
+      "convName": "PowerShell script for Windows event log error detection",
+      "cluster": 2,
+      "turnCount": 30,
+      "insightCount": 12,
+      "turnsWithInsights": 12,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "88bb3c0c-7fe8-41ba-b043-d29689065ac2",
+      "convName": "Forest Stewardship Plan Development",
+      "cluster": 3,
+      "turnCount": 12,
+      "insightCount": 15,
+      "turnsWithInsights": 10,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "baa7954c-7e2b-49b4-9681-02415d5d5411",
+      "convName": "Integrated Farm and Living System Overview",
+      "cluster": 3,
+      "turnCount": 13,
+      "insightCount": 10,
+      "turnsWithInsights": 9,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "e48f70db-340c-4d05-a909-ef3bf6de871e",
+      "convName": "Regenerative Farming Microclimate Design",
+      "cluster": 3,
+      "turnCount": 10,
+      "insightCount": 12,
+      "turnsWithInsights": 8,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "bdc4502f-2942-4008-83b9-c7db12123821",
+      "convName": "Converting System Documentation to Metadata-Driven Format",
+      "cluster": 4,
+      "turnCount": 7,
+      "insightCount": 6,
+      "turnsWithInsights": 4,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "2dd5ac55-a0a5-4c65-9426-7e7baf5b2ed7",
+      "convName": "Optimizing Communication Workflow",
+      "cluster": 4,
+      "turnCount": 12,
+      "insightCount": 11,
+      "turnsWithInsights": 8,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "c21867cb-239f-47a5-a8c8-cf3bc3efe357",
+      "convName": "Project document review and consolidation",
+      "cluster": 4,
+      "turnCount": 15,
+      "insightCount": 9,
+      "turnsWithInsights": 6,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "7e123958-7b15-4652-9e83-303eb233d232",
+      "convName": "Air fryer chicken Parmesan recipe",
+      "cluster": 5,
+      "turnCount": 31,
+      "insightCount": 13,
+      "turnsWithInsights": 11,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "69c9276d-8205-45ec-b9c3-3a9744f8530d",
+      "convName": "Homemade snacks for picky eaters",
+      "cluster": 5,
+      "turnCount": 8,
+      "insightCount": 6,
+      "turnsWithInsights": 5,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "775bedcc-9fca-4e3a-9cd3-23b0e6246e64",
+      "convName": "Teaching Charlie a double leg takedown for her first wrestling meet",
+      "cluster": 5,
+      "turnCount": 29,
+      "insightCount": 8,
+      "turnsWithInsights": 7,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "747ea861-0cfc-405c-85af-cfc72acd1dc7",
+      "convName": "Domestic Labor Time Breakdown for Families",
+      "cluster": 6,
+      "turnCount": 7,
+      "insightCount": 3,
+      "turnsWithInsights": 3,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "81781dae-08ed-46a3-80dc-ab356b63a450",
+      "convName": "Reviewing Healthcare Cost Calculations",
+      "cluster": 6,
+      "turnCount": 12,
+      "insightCount": 2,
+      "turnsWithInsights": 2,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "4242ff99-d688-4bd2-a413-65517392f336",
+      "convName": "Approaches to Building a Micro Society",
+      "cluster": 7,
+      "turnCount": 4,
+      "insightCount": 9,
+      "turnsWithInsights": 3,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "08e42e79-9499-4710-896f-72561117b981",
+      "convName": "Community Transportation System for 1000-Person Micro-Society",
+      "cluster": 7,
+      "turnCount": 5,
+      "insightCount": 8,
+      "turnsWithInsights": 5,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "c7086ab1-3099-488e-b422-d77e03ce50aa",
+      "convName": "Comparing Schooling Options for Micro Society",
+      "cluster": 7,
+      "turnCount": 9,
+      "insightCount": 12,
+      "turnsWithInsights": 6,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "a6663467-18fd-42e8-9425-eb4e7ee765d6",
+      "convName": "Establishing a Self-Governed Community",
+      "cluster": 7,
+      "turnCount": 17,
+      "insightCount": 11,
+      "turnsWithInsights": 9,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "f855ee10-ec05-41b7-85e2-bb86528757f3",
+      "convName": "Optimizing Human Flourishing in Micro Societies",
+      "cluster": 7,
+      "turnCount": 11,
+      "insightCount": 11,
+      "turnsWithInsights": 7,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "2cfacb64-16ee-4cc9-9526-1363deccb23e",
+      "convName": "Improving Communication and Connection in a Long-Term Marriage",
+      "cluster": 8,
+      "turnCount": 11,
+      "insightCount": 14,
+      "turnsWithInsights": 6,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "17d350c4-e708-4094-a867-ad90bca77ecf",
+      "convName": "Personal Growth Therapy Progress Tracking",
+      "cluster": 8,
+      "turnCount": 10,
+      "insightCount": 9,
+      "turnsWithInsights": 5,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "47859004-e709-4569-993d-072fd473de2f",
+      "convName": "Systems thinking vs. emotional connection in relationships",
+      "cluster": 8,
+      "turnCount": 34,
+      "insightCount": 24,
+      "turnsWithInsights": 18,
+      "extractionModel": "claude-sonnet-4.5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "3671ad63-bdd4-4567-a91d-1abfe3015d38",
+      "convName": "AI native personal solution architecture",
+      "cluster": 9,
+      "turnCount": 13,
+      "insightCount": 23,
+      "turnsWithInsights": 11,
+      "extractionModel": "claude-sonnet-4-5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "7ef30faf-d027-4011-8443-b0043e3c7f7d",
+      "convName": "AI-Powered Digital Twin Interface",
+      "cluster": 9,
+      "turnCount": 13,
+      "insightCount": 15,
+      "turnsWithInsights": 8,
+      "extractionModel": "claude-sonnet-4-5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "98b78516-71ca-456d-9484-49d7bc88ea0b",
+      "convName": "Critical System Architecture Review",
+      "cluster": 9,
+      "turnCount": 37,
+      "insightCount": 15,
+      "turnsWithInsights": 10,
+      "extractionModel": "claude-sonnet-4-5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "01d28f67-5bda-412e-8d2e-e901f704c054",
+      "convName": "Modular AI inference architecture",
+      "cluster": 9,
+      "turnCount": 6,
+      "insightCount": 11,
+      "turnsWithInsights": 6,
+      "extractionModel": "claude-sonnet-4-5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    },
+    {
+      "convUuid": "20b94a91-39fe-4b0d-b83a-5e3295e718aa",
+      "convName": "speaker diarization",
+      "cluster": 9,
+      "turnCount": 28,
+      "insightCount": 26,
+      "turnsWithInsights": 18,
+      "extractionModel": "claude-sonnet-4-5",
+      "assessedBy": "claude-sonnet",
+      "verified": false
+    }
+  ]
+}

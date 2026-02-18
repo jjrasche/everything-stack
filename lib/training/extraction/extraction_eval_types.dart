@@ -1,7 +1,7 @@
 import 'dart:convert';
 import '../../core/adaptation_data.dart';
-import '../math/evaluation_math.dart';
-import '../prompt/prompt_types.dart';
+import '../../services/math/evaluation_math.dart';
+import '../../services/prompt/prompt_types.dart';
 
 /// Per-insight evaluation scores from LLM-as-judge.
 ///

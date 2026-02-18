@@ -1,0 +1,967 @@
+{
+  "convUuid": "3475558a-afaf-46f9-9f4f-d954eb59fb77",
+  "convName": "Chrome Extension Debugging",
+  "evaluatedAt": "2026-02-17T01:45:00.000Z",
+  "evaluationModel": "claude-sonnet-4-5",
+  "totalInsights": 59,
+  "insights": [
+    {
+      "turnIndex": 0,
+      "insightIndex": 0,
+      "contentPreview": "Chrome extension uses modular architecture with transcript, fitbit, and ui modul...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Evidence directly quoted from assistant response"},
+        "atomicity": {"pass": false, "rationale": "Bundles multiple distinct concepts: modular architecture AND state system AND OAuth integration"},
+        "selfContainment": {"pass": true, "rationale": "All entities specifically named (transcript, fitbit, ui, chrome.storage, Fitbit OAuth)"},
+        "salience": {"pass": true, "rationale": "Describes current production architecture - critical for future work"},
+        "entityClarity": {"pass": true, "rationale": "Specific module names and system components identified"},
+        "formatCompliance": {"pass": true, "rationale": "Follows [Fact]. Because [reason]. format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": false
+    },
+    {
+      "turnIndex": 0,
+      "insightIndex": 1,
+      "contentPreview": "Chrome extension service worker debugging requires opening chrome://extensions, ...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Evidence matches assistant's debugging instructions"},
+        "atomicity": {"pass": false, "rationale": "Combines multiple steps: opening extensions, clicking link, waiting, checking errors"},
+        "selfContainment": {"pass": true, "rationale": "Complete procedure with specific URLs and timing"},
+        "salience": {"pass": true, "rationale": "Essential debugging knowledge for Chrome extension development"},
+        "entityClarity": {"pass": true, "rationale": "Specific Chrome URLs and UI elements named"},
+        "formatCompliance": {"pass": true, "rationale": "Follows format correctly"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": false
+    },
+    {
+      "turnIndex": 0,
+      "insightIndex": 2,
+      "contentPreview": "Extension state can be inspected via globalThis.cognitionState in service worker...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Exact variable name from source"},
+        "atomicity": {"pass": true, "rationale": "Single fact: specific global variable for state inspection"},
+        "selfContainment": {"pass": true, "rationale": "Specifies exact variable name and context (service worker console)"},
+        "salience": {"pass": true, "rationale": "Critical debugging technique"},
+        "entityClarity": {"pass": true, "rationale": "Specific variable name provided"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 0,
+      "insightIndex": 3,
+      "contentPreview": "Most common Chrome extension bugs are syntax errors in modules, missing imports,...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "List matches assistant's categorization"},
+        "atomicity": {"pass": false, "rationale": "Four distinct bug categories listed"},
+        "selfContainment": {"pass": true, "rationale": "Specific bug types enumerated"},
+        "salience": {"pass": false, "rationale": "Generic troubleshooting checklist, not specific actionable knowledge"},
+        "entityClarity": {"pass": true, "rationale": "Specific error types named"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": false
+    },
+    {
+      "turnIndex": 1,
+      "insightIndex": 4,
+      "contentPreview": "Web Speech API requires window object and cannot run in service worker context. ...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Core diagnostic from the error resolution"},
+        "atomicity": {"pass": true, "rationale": "Single platform constraint"},
+        "selfContainment": {"pass": true, "rationale": "Explains why (no window object) and where it works"},
+        "salience": {"pass": true, "rationale": "Fundamental Chrome extension architecture constraint"},
+        "entityClarity": {"pass": true, "rationale": "Web Speech API, window object, service workers all named"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 1,
+      "insightIndex": 5,
+      "contentPreview": "Service worker modules should manage state while delegating window-dependent APIs...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Pattern described in assistant's solution"},
+        "atomicity": {"pass": true, "rationale": "Single architectural pattern"},
+        "selfContainment": {"pass": true, "rationale": "Complete explanation with concrete example (transcript.active state)"},
+        "salience": {"pass": true, "rationale": "Key design pattern for extension architecture"},
+        "entityClarity": {"pass": true, "rationale": "Specific example (transcript.module.js, transcript.active)"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 1,
+      "insightIndex": 6,
+      "contentPreview": "Content scripts bridge service worker state management with window-dependent APIs...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Core pattern from solution"},
+        "atomicity": {"pass": true, "rationale": "Single bridging pattern"},
+        "selfContainment": {"pass": true, "rationale": "Explains role and mechanism (watching state changes)"},
+        "salience": {"pass": true, "rationale": "Critical architectural pattern"},
+        "entityClarity": {"pass": true, "rationale": "Content scripts, service worker, window APIs specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 1,
+      "insightIndex": 7,
+      "contentPreview": "Background.js must inject content scripts and handle bidirectional messaging for...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Part of the proposed solution"},
+        "atomicity": {"pass": false, "rationale": "Two responsibilities: injection AND message handling"},
+        "selfContainment": {"pass": true, "rationale": "Clear responsibilities stated"},
+        "salience": {"pass": false, "rationale": "Later rejected by user - they wanted single-file modules without background.js changes"},
+        "entityClarity": {"pass": true, "rationale": "background.js specifically named"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": false
+    },
+    {
+      "turnIndex": 1,
+      "insightIndex": 8,
+      "contentPreview": "Content scripts can provide UI feedback for background processes using DOM manipu...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Mentioned in solution"},
+        "atomicity": {"pass": true, "rationale": "Single capability"},
+        "selfContainment": {"pass": true, "rationale": "Clear explanation with example (listening indicators)"},
+        "salience": {"pass": true, "rationale": "Important UX pattern"},
+        "entityClarity": {"pass": true, "rationale": "Content scripts, DOM specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 2,
+      "insightIndex": 9,
+      "contentPreview": "Chrome extension modules should be single-file implementations without background...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Direct user requirement quoted"},
+        "atomicity": {"pass": false, "rationale": "Two requirements: single-file AND no background.js changes"},
+        "selfContainment": {"pass": true, "rationale": "Clear with explicit user quote"},
+        "salience": {"pass": true, "rationale": "Core project architecture decision"},
+        "entityClarity": {"pass": true, "rationale": "background.js, modules specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": false
+    },
+    {
+      "turnIndex": 2,
+      "insightIndex": 10,
+      "contentPreview": "UI overlay module demonstrates the canonical pattern for modules requiring both s...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "User directed to look at UI module as example"},
+        "atomicity": {"pass": true, "rationale": "Single reference pattern"},
+        "selfContainment": {"pass": true, "rationale": "Explains mechanism (contentScriptCode function)"},
+        "salience": {"pass": true, "rationale": "Key architectural reference"},
+        "entityClarity": {"pass": true, "rationale": "UI overlay module, contentScriptCode() named"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 2,
+      "insightIndex": 11,
+      "contentPreview": "Module architecture pattern uses contentScriptCode() function to inject content s...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "From UI module description"},
+        "atomicity": {"pass": true, "rationale": "Single function pattern"},
+        "selfContainment": {"pass": true, "rationale": "Function name and purpose clear"},
+        "salience": {"pass": true, "rationale": "Core implementation technique"},
+        "entityClarity": {"pass": true, "rationale": "Specific function name provided"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 2,
+      "insightIndex": 12,
+      "contentPreview": "Web Speech API should run in content script context rather than service worker co...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Core solution approach"},
+        "atomicity": {"pass": true, "rationale": "Single placement decision"},
+        "selfContainment": {"pass": true, "rationale": "Context and rationale provided"},
+        "salience": {"pass": true, "rationale": "Critical for implementing feature"},
+        "entityClarity": {"pass": true, "rationale": "Web Speech API, content scripts, service workers named"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 2,
+      "insightIndex": 13,
+      "contentPreview": "State system coordinates communication between service worker and content script c...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "From proposed solution"},
+        "atomicity": {"pass": true, "rationale": "Single coordination mechanism"},
+        "selfContainment": {"pass": true, "rationale": "Role clearly explained"},
+        "salience": {"pass": true, "rationale": "Key design pattern"},
+        "entityClarity": {"pass": true, "rationale": "State system, service worker, content script named"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 2,
+      "insightIndex": 14,
+      "contentPreview": "All code implementations must be discussed and approved before writing. Because u...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Direct user quote"},
+        "atomicity": {"pass": true, "rationale": "Single workflow requirement"},
+        "selfContainment": {"pass": true, "rationale": "Clear requirement with quote"},
+        "salience": {"pass": true, "rationale": "Critical collaboration pattern"},
+        "entityClarity": {"pass": true, "rationale": "Clear procedural requirement"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 3,
+      "insightIndex": 15,
+      "contentPreview": "Transcript module requires coordination to prevent simultaneous recordings across...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Listed coordination needs from discussion"},
+        "atomicity": {"pass": false, "rationale": "Three distinct needs: prevent simultaneous, track active, handle lifecycle"},
+        "selfContainment": {"pass": true, "rationale": "All requirements enumerated"},
+        "salience": {"pass": true, "rationale": "Critical design requirements"},
+        "entityClarity": {"pass": true, "rationale": "Transcript module, tabs specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - this is specific to transcript module (project scope)",
+      "allPass": false
+    },
+    {
+      "turnIndex": 3,
+      "insightIndex": 16,
+      "contentPreview": "Transcript state uses four-field structure: activeTabId (prevents concurrent reco...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "State structure from discussion"},
+        "atomicity": {"pass": false, "rationale": "Four distinct fields bundled together"},
+        "selfContainment": {"pass": true, "rationale": "All fields explained with purposes"},
+        "salience": {"pass": true, "rationale": "Specific implementation detail"},
+        "entityClarity": {"pass": true, "rationale": "Field names and purposes specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - this is project-specific design",
+      "allPass": false
+    },
+    {
+      "turnIndex": 3,
+      "insightIndex": 17,
+      "contentPreview": "Web Speech API must run in active tab context rather than offscreen document. Bec...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Reasoning from architectural discussion"},
+        "atomicity": {"pass": true, "rationale": "Single placement decision with multiple supporting reasons"},
+        "selfContainment": {"pass": true, "rationale": "Complete rationale provided"},
+        "salience": {"pass": true, "rationale": "Key architectural decision"},
+        "entityClarity": {"pass": true, "rationale": "Web Speech API, active tab, offscreen document named"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - this is a general Web Speech API constraint",
+      "allPass": false
+    },
+    {
+      "turnIndex": 3,
+      "insightIndex": 18,
+      "contentPreview": "Offscreen documents are appropriate for background audio processing but not for u...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "From architectural analysis"},
+        "atomicity": {"pass": true, "rationale": "Single use case distinction"},
+        "selfContainment": {"pass": true, "rationale": "Clear context provided"},
+        "salience": {"pass": true, "rationale": "Useful architectural guideline"},
+        "entityClarity": {"pass": true, "rationale": "Offscreen documents, Web Speech API specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - this is general Chrome extension knowledge",
+      "allPass": false
+    },
+    {
+      "turnIndex": 3,
+      "insightIndex": 19,
+      "contentPreview": "Transcript coordination pattern: service worker tracks which tab is recording, co...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Coordination flow from discussion"},
+        "atomicity": {"pass": false, "rationale": "Three components: service worker tracking, content script watching, single-tab constraint"},
+        "selfContainment": {"pass": true, "rationale": "Complete pattern described"},
+        "salience": {"pass": true, "rationale": "Key implementation pattern"},
+        "entityClarity": {"pass": true, "rationale": "All components named"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - project-specific pattern",
+      "allPass": false
+    },
+    {
+      "turnIndex": 3,
+      "insightIndex": 20,
+      "contentPreview": "Development workflow should start with manifest file containing function signatur...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "User's workflow preference"},
+        "atomicity": {"pass": true, "rationale": "Single workflow step"},
+        "selfContainment": {"pass": true, "rationale": "Clear procedure"},
+        "salience": {"pass": true, "rationale": "Important workflow requirement"},
+        "entityClarity": {"pass": true, "rationale": "Manifest file, function signatures specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 4,
+      "insightIndex": 21,
+      "contentPreview": "getStatus() functions are redundant when state already contains all status inform...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "User's observation"},
+        "atomicity": {"pass": true, "rationale": "Single design principle"},
+        "selfContainment": {"pass": true, "rationale": "Clear rationale"},
+        "salience": {"pass": true, "rationale": "Useful API design principle"},
+        "entityClarity": {"pass": true, "rationale": "getStatus() function type specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 4,
+      "insightIndex": 22,
+      "contentPreview": "Transcript module start() function requires decision on tab targeting approach: i...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Question raised in discussion"},
+        "atomicity": {"pass": true, "rationale": "Single design decision"},
+        "selfContainment": {"pass": true, "rationale": "Both options clearly stated"},
+        "salience": {"pass": false, "rationale": "Ephemeral decision question - not resolved knowledge"},
+        "entityClarity": {"pass": true, "rationale": "start() function, tabId parameter specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - unresolved question",
+      "allPass": false
+    },
+    {
+      "turnIndex": 4,
+      "insightIndex": 23,
+      "contentPreview": "Tab lifecycle handling requires decision on whether recording should auto-stop wh...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Question from discussion"},
+        "atomicity": {"pass": true, "rationale": "Single behavior question"},
+        "selfContainment": {"pass": true, "rationale": "Scenario clearly described"},
+        "salience": {"pass": false, "rationale": "Unresolved question, not actionable knowledge"},
+        "entityClarity": {"pass": true, "rationale": "Tab lifecycle, recording specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - unresolved question",
+      "allPass": false
+    },
+    {
+      "turnIndex": 4,
+      "insightIndex": 24,
+      "contentPreview": "Transcript history array needs size limit decision to prevent unbounded memory gr...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Question raised"},
+        "atomicity": {"pass": true, "rationale": "Single design question"},
+        "selfContainment": {"pass": true, "rationale": "Options and rationale provided"},
+        "salience": {"pass": false, "rationale": "Unresolved design question"},
+        "entityClarity": {"pass": true, "rationale": "History array specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - unresolved question",
+      "allPass": false
+    },
+    {
+      "turnIndex": 4,
+      "insightIndex": 25,
+      "contentPreview": "Error handling strategy requires decision between state-only updates vs state plu...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Question from discussion"},
+        "atomicity": {"pass": true, "rationale": "Single UX decision"},
+        "selfContainment": {"pass": true, "rationale": "Options clearly stated"},
+        "salience": {"pass": false, "rationale": "Unresolved question"},
+        "entityClarity": {"pass": true, "rationale": "State, notification system specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - unresolved question",
+      "allPass": false
+    },
+    {
+      "turnIndex": 4,
+      "insightIndex": 26,
+      "contentPreview": "Visual recording indicator decision needed for transcript module, potentially fol...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Question about UI pattern"},
+        "atomicity": {"pass": true, "rationale": "Single UI decision"},
+        "selfContainment": {"pass": true, "rationale": "Pattern and example provided"},
+        "salience": {"pass": false, "rationale": "Unresolved question"},
+        "entityClarity": {"pass": true, "rationale": "Transcript module, UI module pattern specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - unresolved question",
+      "allPass": false
+    },
+    {
+      "turnIndex": 5,
+      "insightIndex": 27,
+      "contentPreview": "Chrome extension modules should handle their own content scripts to maintain sing...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Architectural decision from discussion"},
+        "atomicity": {"pass": true, "rationale": "Single design principle"},
+        "selfContainment": {"pass": true, "rationale": "Rationale fully explained"},
+        "salience": {"pass": true, "rationale": "Key architectural decision"},
+        "entityClarity": {"pass": true, "rationale": "Modules, content scripts specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 5,
+      "insightIndex": 28,
+      "contentPreview": "Per-module content scripts enable optimization flexibility and reduce coordinati...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Benefits listed in discussion"},
+        "atomicity": {"pass": false, "rationale": "Two distinct benefits: optimization flexibility AND reduced complexity"},
+        "selfContainment": {"pass": true, "rationale": "Benefits clearly stated"},
+        "salience": {"pass": true, "rationale": "Supports architectural decision"},
+        "entityClarity": {"pass": true, "rationale": "Content scripts, modules specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      allPass": false
+    },
+    {
+      "turnIndex": 5,
+      "insightIndex": 29,
+      "contentPreview": "Code duplication in injection logic and multiple content scripts per tab are acce...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Trade-offs acknowledged in discussion"},
+        "atomicity": {"pass": true, "rationale": "Single trade-off decision"},
+        "selfContainment": {"pass": true, "rationale": "Costs and benefits stated"},
+        "salience": {"pass": true, "rationale": "Important architectural trade-off"},
+        "entityClarity": {"pass": true, "rationale": "Injection logic, content scripts specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 5,
+      "insightIndex": 30,
+      "contentPreview": "Defer content script abstraction until duplication becomes a measurable problem. ...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Design decision from discussion"},
+        "atomicity": {"pass": true, "rationale": "Single timing decision"},
+        "selfContainment": {"pass": true, "rationale": "Clear decision with rationale"},
+        "salience": {"pass": true, "rationale": "Prevents premature optimization"},
+        "entityClarity": {"pass": true, "rationale": "Content script abstraction specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 7,
+      "insightIndex": 31,
+      "contentPreview": "Offscreen documents persist while screen is off, making them potentially better t...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "From documentation discussion"},
+        "atomicity": {"pass": true, "rationale": "Single technical capability"},
+        "selfContainment": {"pass": true, "rationale": "Context and source (Chrome OS.md) provided"},
+        "salience": {"pass": true, "rationale": "Alternative approach consideration"},
+        "entityClarity": {"pass": true, "rationale": "Offscreen documents, Chrome OS.md specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 7,
+      "insightIndex": 32,
+      "contentPreview": "Chrome extension content scripts follow three injection patterns: all tabs for pe...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Pattern categorization from discussion"},
+        "atomicity": {"pass": false, "rationale": "Three distinct patterns bundled"},
+        "selfContainment": {"pass": true, "rationale": "All patterns with examples"},
+        "salience": {"pass": true, "rationale": "Useful taxonomy"},
+        "entityClarity": {"pass": true, "rationale": "Patterns and examples specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": false
+    },
+    {
+      "turnIndex": 7,
+      "insightIndex": 33,
+      "contentPreview": "Specific arbitrary tabId parameters have no identified use case in this extension...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Conclusion from analysis"},
+        "atomicity": {"pass": true, "rationale": "Single negative finding"},
+        "selfContainment": {"pass": true, "rationale": "Clear conclusion"},
+        "salience": {"pass": false, "rationale": "Negative finding of limited value"},
+        "entityClarity": {"pass": true, "rationale": "tabId parameter specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": false
+    },
+    {
+      "turnIndex": 7,
+      "insightIndex": 34,
+      "contentPreview": "Content scripts should remain separate per module rather than aggregated. Because...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Design decision with rationale"},
+        "atomicity": {"pass": true, "rationale": "Single architectural decision"},
+        "selfContainment": {"pass": true, "rationale": "Complete rationale provided"},
+        "salience": {"pass": true, "rationale": "Important design choice"},
+        "entityClarity": {"pass": true, "rationale": "Content scripts, modules specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 7,
+      "insightIndex": 35,
+      "contentPreview": "New tab injection pattern can handle module-specific configuration separately fro...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "User's observation"},
+        "atomicity": {"pass": true, "rationale": "Single use case"},
+        "selfContainment": {"pass": true, "rationale": "Use case clearly stated"},
+        "salience": {"pass": true, "rationale": "Useful design pattern"},
+        "entityClarity": {"pass": true, "rationale": "New tab pattern, configuration specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 9,
+      "insightIndex": 36,
+      "contentPreview": "Extension architecture distinguishes core modules from feature modules, with core...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Architectural categorization from discussion"},
+        "atomicity": {"pass": true, "rationale": "Single architectural concept"},
+        "selfContainment": {"pass": true, "rationale": "Both categories and examples provided"},
+        "salience": {"pass": true, "rationale": "Fundamental architecture decision"},
+        "entityClarity": {"pass": true, "rationale": "Specific core modules named"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 9,
+      "insightIndex": 37,
+      "contentPreview": "Content handler module serves as the pioneering implementation of the core module...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "User's characterization"},
+        "atomicity": {"pass": true, "rationale": "Single role assignment"},
+        "selfContainment": {"pass": true, "rationale": "Role clearly stated with quote"},
+        "salience": {"pass": true, "rationale": "Significant architectural milestone"},
+        "entityClarity": {"pass": true, "rationale": "Content handler module specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 9,
+      "insightIndex": 38,
+      "contentPreview": "Active tab content script approach is preferred over offscreen document for trans...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Decision with five supporting reasons"},
+        "atomicity": {"pass": true, "rationale": "Single architectural decision with multiple supporting factors"},
+        "selfContainment": {"pass": true, "rationale": "Complete decision with rationale"},
+        "salience": {"pass": true, "rationale": "Key design decision"},
+        "entityClarity": {"pass": true, "rationale": "Active tab, content script, offscreen document specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 9,
+      "insightIndex": 39,
+      "contentPreview": "Content handler module abstracts tab lifecycle complexity by following standard m...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Module responsibilities from discussion"},
+        "atomicity": {"pass": false, "rationale": "Multiple aspects: structure, loading, API, lifecycle"},
+        "selfContainment": {"pass": true, "rationale": "All responsibilities listed"},
+        "salience": {"pass": true, "rationale": "Core module definition"},
+        "entityClarity": {"pass": true, "rationale": "Content handler, background.js, feature modules specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": false
+    },
+    {
+      "turnIndex": 9,
+      "insightIndex": 40,
+      "contentPreview": "Content handler design requires three architectural decisions: manifest and funct...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Design questions listed"},
+        "atomicity": {"pass": false, "rationale": "Three distinct design areas"},
+        "selfContainment": {"pass": true, "rationale": "All areas enumerated"},
+        "salience": {"pass": false, "rationale": "Planning question, not resolved knowledge"},
+        "entityClarity": {"pass": true, "rationale": "Design elements specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": false
+    },
+    {
+      "turnIndex": 11,
+      "insightIndex": 41,
+      "contentPreview": "Chrome extension microphone permissions are granted once per extension origin and...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Permissions flow explanation"},
+        "atomicity": {"pass": true, "rationale": "Single permission behavior"},
+        "selfContainment": {"pass": true, "rationale": "Complete permission lifecycle explained"},
+        "salience": {"pass": true, "rationale": "Important UX consideration"},
+        "entityClarity": {"pass": true, "rationale": "Extension origin, Chrome permissions specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - this is general Chrome extension knowledge",
+      "allPass": false
+    },
+    {
+      "turnIndex": 11,
+      "insightIndex": 42,
+      "contentPreview": "Chrome extensions can create dedicated HTML pages accessible via chrome-extension...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Technical capability explained"},
+        "atomicity": {"pass": true, "rationale": "Single Chrome extension feature"},
+        "selfContainment": {"pass": true, "rationale": "Complete explanation with URL format"},
+        "salience": {"pass": true, "rationale": "Useful Chrome extension capability"},
+        "entityClarity": {"pass": true, "rationale": "chrome-extension:// URL format, extension APIs specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - general Chrome extension knowledge",
+      "allPass": false
+    },
+    {
+      "turnIndex": 11,
+      "insightIndex": 43,
+      "contentPreview": "chrome.tabCapture.capture() API enables recording audio from specific tabs but re...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "API capability described"},
+        "atomicity": {"pass": true, "rationale": "Single API feature"},
+        "selfContainment": {"pass": true, "rationale": "API, permission, use cases all specified"},
+        "salience": {"pass": true, "rationale": "Alternative approach for audio capture"},
+        "entityClarity": {"pass": true, "rationale": "chrome.tabCapture.capture(), tabCapture permission, Web Speech API specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - general Chrome API knowledge",
+      "allPass": false
+    },
+    {
+      "turnIndex": 11,
+      "insightIndex": 44,
+      "contentPreview": "Transcript feature can support two distinct modes: microphone transcription using...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Two modes identified"},
+        "atomicity": {"pass": false, "rationale": "Two distinct modes bundled"},
+        "selfContainment": {"pass": true, "rationale": "Both modes clearly differentiated"},
+        "salience": {"pass": true, "rationale": "Feature planning knowledge"},
+        "entityClarity": {"pass": true, "rationale": "APIs and modes specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - project-specific feature design",
+      "allPass": false
+    },
+    {
+      "turnIndex": 11,
+      "insightIndex": 45,
+      "contentPreview": "Dedicated transcript tab pattern should check for existing transcript tab and foc...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Tab management logic described"},
+        "atomicity": {"pass": true, "rationale": "Single tab management pattern"},
+        "selfContainment": {"pass": true, "rationale": "Complete logic with code example"},
+        "salience": {"pass": true, "rationale": "Practical implementation pattern"},
+        "entityClarity": {"pass": true, "rationale": "Transcript tab, chrome.tabs.create specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - project-specific pattern",
+      "allPass": false
+    },
+    {
+      "turnIndex": 13,
+      "insightIndex": 46,
+      "contentPreview": "WebRTC provides four built-in audio processing features: echo cancellation (remov...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "WebRTC features listed"},
+        "atomicity": {"pass": false, "rationale": "Four distinct features bundled"},
+        "selfContainment": {"pass": true, "rationale": "All features with descriptions"},
+        "salience": {"pass": true, "rationale": "Useful technical reference"},
+        "entityClarity": {"pass": true, "rationale": "WebRTC, getUserMedia specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - general WebRTC knowledge",
+      "allPass": false
+    },
+    {
+      "turnIndex": 13,
+      "insightIndex": 47,
+      "contentPreview": "WebRTC audio processing features are enabled by passing boolean flags in the getU...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "API usage shown"},
+        "atomicity": {"pass": true, "rationale": "Single API pattern"},
+        "selfContainment": {"pass": true, "rationale": "Complete code example"},
+        "salience": {"pass": true, "rationale": "Practical implementation knowledge"},
+        "entityClarity": {"pass": true, "rationale": "getUserMedia, constraint flags specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - general WebRTC knowledge",
+      "allPass": false
+    },
+    {
+      "turnIndex": 13,
+      "insightIndex": 48,
+      "contentPreview": "WebRTC audio processing cannot perform speaker separation or voice identification...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Limitations stated"},
+        "atomicity": {"pass": true, "rationale": "Single limitation category"},
+        "selfContainment": {"pass": true, "rationale": "Clear boundary of capabilities"},
+        "salience": {"pass": true, "rationale": "Important technical limitation"},
+        "entityClarity": {"pass": true, "rationale": "WebRTC, speaker separation specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - general WebRTC knowledge",
+      "allPass": false
+    },
+    {
+      "turnIndex": 13,
+      "insightIndex": 49,
+      "contentPreview": "Open source speaker diarization solutions include pyannote.audio (4-8GB RAM requi...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Solutions listed from discussion"},
+        "atomicity": {"pass": false, "rationale": "Four distinct solutions bundled"},
+        "selfContainment": {"pass": true, "rationale": "All solutions with resource requirements"},
+        "salience": {"pass": true, "rationale": "Useful reference for feature evaluation"},
+        "entityClarity": {"pass": true, "rationale": "Specific tools named with specs"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - general ML knowledge",
+      "allPass": false
+    },
+    {
+      "turnIndex": 13,
+      "insightIndex": 50,
+      "contentPreview": "Speaker diarization models have significant resource requirements: CPU models need...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Resource specs from discussion"},
+        "atomicity": {"pass": false, "rationale": "Two model types with different specs"},
+        "selfContainment": {"pass": true, "rationale": "Complete resource requirements"},
+        "salience": {"pass": true, "rationale": "Critical for feasibility assessment"},
+        "entityClarity": {"pass": true, "rationale": "CPU/GPU models, specs specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - general ML knowledge",
+      "allPass": false
+    },
+    {
+      "turnIndex": 13,
+      "insightIndex": 51,
+      "contentPreview": "Browser extensions cannot run speaker diarization models directly because models ...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Browser limitations explained"},
+        "atomicity": {"pass": true, "rationale": "Single platform limitation"},
+        "selfContainment": {"pass": true, "rationale": "Reasons and consequences stated"},
+        "salience": {"pass": true, "rationale": "Critical architectural constraint"},
+        "entityClarity": {"pass": true, "rationale": "Browser extensions, WebAssembly/ONNX specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - general browser/ML constraint",
+      "allPass": false
+    },
+    {
+      "turnIndex": 13,
+      "insightIndex": 52,
+      "contentPreview": "Building custom speaker diarization requires audio chunking, VAD, embedding extra...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Requirements listed"},
+        "atomicity": {"pass": false, "rationale": "Multiple components and requirements bundled"},
+        "selfContainment": {"pass": true, "rationale": "Complete component list"},
+        "salience": {"pass": true, "rationale": "Useful for build vs buy decision"},
+        "entityClarity": {"pass": true, "rationale": "Technical components specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - general ML engineering knowledge",
+      "allPass": false
+    },
+    {
+      "turnIndex": 13,
+      "insightIndex": 53,
+      "contentPreview": "Speaker diarization is fundamentally an AI service problem requiring significant ...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Architectural conclusion"},
+        "atomicity": {"pass": true, "rationale": "Single architectural conclusion"},
+        "selfContainment": {"pass": true, "rationale": "Complete assessment"},
+        "salience": {"pass": true, "rationale": "Key decision-making insight"},
+        "entityClarity": {"pass": true, "rationale": "Browser extensions, AI service specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": true,
+      "scopeOverreachReason": "'session' scope inappropriate - general architectural principle",
+      "allPass": false
+    },
+    {
+      "turnIndex": 14,
+      "insightIndex": 54,
+      "contentPreview": "Content handler module serves as a core module that manages content script inject...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Module purpose from prompt"},
+        "atomicity": {"pass": true, "rationale": "Single module responsibility"},
+        "selfContainment": {"pass": true, "rationale": "Role and pattern clearly stated"},
+        "salience": {"pass": true, "rationale": "Core architecture component"},
+        "entityClarity": {"pass": true, "rationale": "Content handler module, core modules specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    },
+    {
+      "turnIndex": 14,
+      "insightIndex": 55,
+      "contentPreview": "Content handler register() function supports three injection patterns: 'all' for ...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Function signature from prompt"},
+        "atomicity": {"pass": false, "rationale": "Three patterns bundled"},
+        "selfContainment": {"pass": true, "rationale": "All patterns with descriptions"},
+        "salience": {"pass": true, "rationale": "Core API design"},
+        "entityClarity": {"pass": true, "rationale": "register() function, patterns specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": false
+    },
+    {
+      "turnIndex": 14,
+      "insightIndex": 56,
+      "contentPreview": "Content handler must manage complete tab lifecycle: auto-inject 'all' pattern scr...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Requirements from prompt"},
+        "atomicity": {"pass": false, "rationale": "Four distinct lifecycle responsibilities"},
+        "selfContainment": {"pass": true, "rationale": "All responsibilities listed"},
+        "salience": {"pass": true, "rationale": "Critical implementation requirements"},
+        "entityClarity": {"pass": true, "rationale": "Tab lifecycle, restricted URLs specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": false
+    },
+    {
+      "turnIndex": 14,
+      "insightIndex": 57,
+      "contentPreview": "Content handler maintains state using two objects: registrations (maps module nam...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "State structure from prompt"},
+        "atomicity": {"pass": false, "rationale": "Two state objects with different purposes"},
+        "selfContainment": {"pass": true, "rationale": "Both structures with examples"},
+        "salience": {"pass": true, "rationale": "Core data model"},
+        "entityClarity": {"pass": true, "rationale": "State objects, structure specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": false
+    },
+    {
+      "turnIndex": 14,
+      "insightIndex": 58,
+      "contentPreview": "Content handler injects each module's content script separately using chrome.scri...",
+      "dimensions": {
+        "groundedness": {"pass": true, "rationale": "Implementation pattern from prompt"},
+        "atomicity": {"pass": true, "rationale": "Single implementation approach"},
+        "selfContainment": {"pass": true, "rationale": "API and rationale provided"},
+        "salience": {"pass": true, "rationale": "Key implementation detail"},
+        "entityClarity": {"pass": true, "rationale": "chrome.scripting.executeScript, func parameter specified"},
+        "formatCompliance": {"pass": true, "rationale": "Correct format"}
+      },
+      "scopeOverreach": false,
+      "scopeOverreachReason": null,
+      "allPass": true
+    }
+  ],
+  "summary": {
+    "totalEvaluated": 59,
+    "allPassCount": 26,
+    "allPassRate": 0.44,
+    "dimensionPassRates": {
+      "groundedness": 1.00,
+      "atomicity": 0.53,
+      "selfContainment": 1.00,
+      "salience": 0.75,
+      "entityClarity": 0.98,
+      "formatCompliance": 1.00
+    },
+    "scopeOverreachCount": 19
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "id": "conv_test0001",
+  "description": "Minimal fixture for testing golden conversation loading and evaluation output format",
+  "conversation": {
+    "uuid": "test0001-aaaa-bbbb-cccc-ddddeeee0001",
+    "name": "Dart async patterns discussion",
+    "turn_count": 3,
+    "first_turn_date": "2025-12-01T10:00:00.000Z",
+    "last_turn_date": "2025-12-01T10:05:00.000Z",
+    "turns": [
+      {
+        "turn_index": 0,
+        "uuid": "turn-0001",
+        "created_at": "2025-12-01T10:00:00.000Z",
+        "prompt": "How should I handle errors in Dart streams?",
+        "response": "Use handleError or listen's onError callback. For transforming streams, StreamTransformer gives you control over error propagation."
+      },
+      {
+        "turn_index": 1,
+        "uuid": "turn-0002",
+        "created_at": "2025-12-01T10:02:00.000Z",
+        "prompt": "What about using zones for error handling?",
+        "response": "Zones can catch uncaught errors but they make debugging harder. Prefer explicit error handling at the stream level. Zones are better for logging or analytics."
+      },
+      {
+        "turn_index": 2,
+        "uuid": "turn-0003",
+        "created_at": "2025-12-01T10:05:00.000Z",
+        "prompt": "I'm building a real-time chat app with WebSockets. Should I use streams?",
+        "response": "Yes. WebSocket channels expose a Stream. Wrap it in a StreamController for buffering and backpressure. Use stream.listen with cancelOnError: false to keep the connection alive on transient errors."
+      }
+    ]
+  },
+  "expected_insights": [
+    {
+      "content": "Dart zones make debugging harder despite catching uncaught errors. Because explicit stream-level error handling is more traceable.",
+      "source_turns": [1],
+      "notes": "Self-contained, grounded in turn 1"
+    }
+  ]
+}

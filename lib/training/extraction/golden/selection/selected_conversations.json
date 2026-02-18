@@ -1,0 +1,279 @@
+{
+  "selectedAt": "2026-02-16T11:14:34.360200",
+  "totalSelected": 30,
+  "clusterCount": 10,
+  "selectionsPerCluster": 3,
+  "minTurnCount": 3,
+  "conversations": [
+    {
+      "convUuid": "da909909-8a98-48ee-a384-d1771a482681",
+      "convName": "UI Module Architecture Migration",
+      "turnCount": 8,
+      "estimatedTokens": 8623,
+      "mostRecentTurnDate": "2025-09-11T21:14:23.818",
+      "cluster": 0,
+      "distanceToCentroid": 0.15780437514013668
+    },
+    {
+      "convUuid": "115a4e1b-b88a-4e1f-9b0e-d7b196b3a062",
+      "convName": "Code Style Module Rewrite",
+      "turnCount": 7,
+      "estimatedTokens": 5720,
+      "mostRecentTurnDate": "2025-08-17T20:27:42.010",
+      "cluster": 0,
+      "distanceToCentroid": 0.1645787713297756
+    },
+    {
+      "convUuid": "fa4d47d6-3e57-4992-a83a-602fb32b2d60",
+      "convName": "UI scrolling and recording bugs",
+      "turnCount": 11,
+      "estimatedTokens": 6606,
+      "mostRecentTurnDate": "2025-10-02T11:41:19.310",
+      "cluster": 0,
+      "distanceToCentroid": 0.17020923254259168
+    },
+    {
+      "convUuid": "cfe2850f-d2dd-4cfc-9cf1-017d13c453c4",
+      "convName": "AI Project Infrastructure Development",
+      "turnCount": 3,
+      "estimatedTokens": 3228,
+      "mostRecentTurnDate": "2025-08-09T07:45:30.760",
+      "cluster": 9,
+      "distanceToCentroid": 0.13658361479290182
+    },
+    {
+      "convUuid": "7ef30faf-d027-4011-8443-b0043e3c7f7d",
+      "convName": "AI-Powered Digital Twin Interface",
+      "turnCount": 13,
+      "estimatedTokens": 11696,
+      "mostRecentTurnDate": "2025-09-06T11:36:54.545",
+      "cluster": 9,
+      "distanceToCentroid": 0.14394801508916955
+    },
+    {
+      "convUuid": "0fdc971f-f125-49e7-a503-bdb76b3ece93",
+      "convName": "Context-Aware AI Infrastructure Development",
+      "turnCount": 3,
+      "estimatedTokens": 2549,
+      "mostRecentTurnDate": "2025-08-07T13:03:51.267",
+      "cluster": 9,
+      "distanceToCentroid": 0.15632033305758508
+    },
+    {
+      "convUuid": "6b751b04-d969-4fa1-ad94-461a332afcbd",
+      "convName": "bring these previous reviews i...",
+      "turnCount": 3,
+      "estimatedTokens": 3299,
+      "mostRecentTurnDate": "2025-10-29T15:44:49.653",
+      "cluster": 2,
+      "distanceToCentroid": 0.20664573895242766
+    },
+    {
+      "convUuid": "5b9a50d3-2849-40bb-9baf-a6fa4d0b7ef7",
+      "convName": "Web Scraping School District Superintendents",
+      "turnCount": 5,
+      "estimatedTokens": 6590,
+      "mostRecentTurnDate": "2025-08-11T15:46:27.157",
+      "cluster": 2,
+      "distanceToCentroid": 0.20924349686358412
+    },
+    {
+      "convUuid": "79fbe66c-559e-4382-9b64-31106a251f34",
+      "convName": "Python test script environment error",
+      "turnCount": 3,
+      "estimatedTokens": 1370,
+      "mostRecentTurnDate": "2025-10-21T09:12:34.335",
+      "cluster": 2,
+      "distanceToCentroid": 0.21335183624053178
+    },
+    {
+      "convUuid": "69c9276d-8205-45ec-b9c3-3a9744f8530d",
+      "convName": "Homemade snacks for picky eaters",
+      "turnCount": 8,
+      "estimatedTokens": 6184,
+      "mostRecentTurnDate": "2026-01-07T18:20:02.455",
+      "cluster": 5,
+      "distanceToCentroid": 0.20001373264355293
+    },
+    {
+      "convUuid": "83ee55a0-1b39-40cb-a724-b8ea2dec4d91",
+      "convName": "Instant Pot mac and cheese troubleshooting",
+      "turnCount": 8,
+      "estimatedTokens": 1586,
+      "mostRecentTurnDate": "2026-01-19T19:21:45.511",
+      "cluster": 5,
+      "distanceToCentroid": 0.21428188694706296
+    },
+    {
+      "convUuid": "38cee245-101b-416a-a385-af953fa00c45",
+      "convName": "Freezable Breakfast Ideas for Kids",
+      "turnCount": 4,
+      "estimatedTokens": 2952,
+      "mostRecentTurnDate": "2024-10-09T10:07:24.894",
+      "cluster": 5,
+      "distanceToCentroid": 0.2565953948402999
+    },
+    {
+      "convUuid": "6e72397b-dbc2-4741-80f2-ea1edb39e6a1",
+      "convName": "Update Healthcare Cost Comparison Tool",
+      "turnCount": 12,
+      "estimatedTokens": 5451,
+      "mostRecentTurnDate": "2024-10-30T12:39:59.067",
+      "cluster": 6,
+      "distanceToCentroid": 0.20812491847897585
+    },
+    {
+      "convUuid": "b157eaac-3d85-4bfc-8c3f-bed428796ba4",
+      "convName": "Analyzing Work Hours vs. Living Expenses",
+      "turnCount": 7,
+      "estimatedTokens": 3059,
+      "mostRecentTurnDate": "2024-12-14T18:06:55.819",
+      "cluster": 6,
+      "distanceToCentroid": 0.22202108945222476
+    },
+    {
+      "convUuid": "ef69e201-8b87-4939-a8dc-33f15870ba74",
+      "convName": "Compare 2024 Healthcare Plan Costs",
+      "turnCount": 4,
+      "estimatedTokens": 1528,
+      "mostRecentTurnDate": "2024-11-08T12:31:07.978",
+      "cluster": 6,
+      "distanceToCentroid": 0.2254875268204618
+    },
+    {
+      "convUuid": "01505af5-b35d-4774-95b2-4f6cd5a4cdf5",
+      "convName": "Comprehensive Project Summary Document",
+      "turnCount": 5,
+      "estimatedTokens": 6393,
+      "mostRecentTurnDate": "2025-05-27T11:03:41.409",
+      "cluster": 4,
+      "distanceToCentroid": 0.18530411012392056
+    },
+    {
+      "convUuid": "c4242b83-6f7c-466d-84ac-ba0fd1db7ba2",
+      "convName": "Summary Document Request",
+      "turnCount": 4,
+      "estimatedTokens": 494,
+      "mostRecentTurnDate": "2025-01-22T12:47:43.902",
+      "cluster": 4,
+      "distanceToCentroid": 0.19027642022925584
+    },
+    {
+      "convUuid": "c67e730b-d9f7-4550-a4d1-4c0241f7ae1c",
+      "convName": "Documentation consolidation strategy",
+      "turnCount": 3,
+      "estimatedTokens": 750,
+      "mostRecentTurnDate": "2025-09-15T17:44:29.011",
+      "cluster": 4,
+      "distanceToCentroid": 0.1997376330347871
+    },
+    {
+      "convUuid": "4242ff99-d688-4bd2-a413-65517392f336",
+      "convName": "Approaches to Building a Micro Society",
+      "turnCount": 4,
+      "estimatedTokens": 7104,
+      "mostRecentTurnDate": "2025-04-09T08:14:01.914",
+      "cluster": 7,
+      "distanceToCentroid": 0.13689343060914383
+    },
+    {
+      "convUuid": "f640b6d3-d1b2-4e00-9fc7-68b8ba47ccde",
+      "convName": "Documenting a Micro Society System",
+      "turnCount": 6,
+      "estimatedTokens": 6669,
+      "mostRecentTurnDate": "2025-01-02T16:19:15.129",
+      "cluster": 7,
+      "distanceToCentroid": 0.13881137947705413
+    },
+    {
+      "convUuid": "53891123-c1f7-455c-8c0f-881e3eecb93e",
+      "convName": "Micro Society Economic Model: Balancing Interests and Labor",
+      "turnCount": 7,
+      "estimatedTokens": 4603,
+      "mostRecentTurnDate": "2025-01-21T21:15:18.647",
+      "cluster": 7,
+      "distanceToCentroid": 0.13998355586109978
+    },
+    {
+      "convUuid": "7a10bb11-6539-4982-8b4b-46ab78475ace",
+      "convName": "Optimizing for relief instead of their development",
+      "turnCount": 6,
+      "estimatedTokens": 2369,
+      "mostRecentTurnDate": "2025-12-09T17:11:16.580",
+      "cluster": 8,
+      "distanceToCentroid": 0.13110231911100445
+    },
+    {
+      "convUuid": "02c58019-a233-40a3-a789-4644d690c78d",
+      "convName": "Balancing Family Expectations and Independence",
+      "turnCount": 8,
+      "estimatedTokens": 10406,
+      "mostRecentTurnDate": "2025-01-04T15:01:39.976",
+      "cluster": 8,
+      "distanceToCentroid": 0.16361622381009078
+    },
+    {
+      "convUuid": "371f0a0b-81c8-483d-84c2-aa29516daba8",
+      "convName": "Exploring Societal Challenges and Personal Reflections",
+      "turnCount": 3,
+      "estimatedTokens": 4502,
+      "mostRecentTurnDate": "2025-02-05T00:56:31.626",
+      "cluster": 8,
+      "distanceToCentroid": 0.17072881805479023
+    },
+    {
+      "convUuid": "ec3d2745-4be7-4a90-9746-b276ce6feac7",
+      "convName": "Fleshing Out a Backyard Food Forest Plan",
+      "turnCount": 6,
+      "estimatedTokens": 8067,
+      "mostRecentTurnDate": "2025-04-12T11:55:30.256",
+      "cluster": 3,
+      "distanceToCentroid": 0.1478544745993311
+    },
+    {
+      "convUuid": "e48f70db-340c-4d05-a909-ef3bf6de871e",
+      "convName": "Regenerative Farming Microclimate Design",
+      "turnCount": 10,
+      "estimatedTokens": 15600,
+      "mostRecentTurnDate": "2025-02-10T22:14:46.959",
+      "cluster": 3,
+      "distanceToCentroid": 0.15756428299173486
+    },
+    {
+      "convUuid": "dc128631-11a8-420f-a63b-71175634a96c",
+      "convName": "Turning Backyard into Forest Garden",
+      "turnCount": 11,
+      "estimatedTokens": 14512,
+      "mostRecentTurnDate": "2025-04-08T22:09:56.178",
+      "cluster": 3,
+      "distanceToCentroid": 0.1619473665680149
+    },
+    {
+      "convUuid": "757ad8ed-8ebd-4431-862e-34ddc91a7da0",
+      "convName": "Development Phases Strategy",
+      "turnCount": 6,
+      "estimatedTokens": 3278,
+      "mostRecentTurnDate": "2025-06-27T15:32:51.185",
+      "cluster": 1,
+      "distanceToCentroid": 0.13333485426666902
+    },
+    {
+      "convUuid": "ccc88149-c395-4953-ae5a-9d47b8e4e8d1",
+      "convName": "Voice AI Desktop Assistant Development",
+      "turnCount": 11,
+      "estimatedTokens": 5351,
+      "mostRecentTurnDate": "2025-07-07T11:11:11.565",
+      "cluster": 1,
+      "distanceToCentroid": 0.15035742196172175
+    },
+    {
+      "convUuid": "cb108cb9-ae5c-4144-b927-ef588e58b655",
+      "convName": "Voice chat app feature updates",
+      "turnCount": 6,
+      "estimatedTokens": 3398,
+      "mostRecentTurnDate": "2025-09-16T09:54:57.894",
+      "cluster": 1,
+      "distanceToCentroid": 0.153591093127164
+    }
+  ]
+}

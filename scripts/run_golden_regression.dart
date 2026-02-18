@@ -21,8 +21,8 @@ void main(List<String> args) async {
   print('🧪 Running extraction regression test...\n');
 
   final threshold = double.tryParse(_parseArg(args, 'threshold', '0.05')) ?? 0.05;
-  final baselinePath = _parseArg(args, 'baseline', 'test/golden/evaluation/baseline_results.json');
-  final goldenDir = _parseArg(args, 'dir', 'test/golden/extraction');
+  final baselinePath = _parseArg(args, 'baseline', 'lib/training/extraction/golden/evaluations/baseline_results.json');
+  final goldenDir = _parseArg(args, 'dir', 'lib/training/extraction/golden');
   final serverUrl = _parseArg(args, 'server', 'http://localhost:9999');
 
   // Load baseline

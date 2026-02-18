@@ -30,13 +30,12 @@ class SemanticChunker extends ChunkingStrategy {
       final tokenCount = SentenceSplitter.countTokens(text);
       final chunks = <Chunk>[];
 
-      // If single segment exceeds max, split it
       if (tokenCount > config.maxChunkSize) {
-        final tokens = text.split(' ').where((t) => t.isNotEmpty).toList();
+        final wordTokens = text.split(' ').where((token) => token.isNotEmpty).toList();
         int globalPos = 0;
-        for (int i = 0; i < tokens.length; i += config.maxChunkSize) {
-          final end = (i + config.maxChunkSize).clamp(0, tokens.length);
-          final chunkText = tokens.sublist(i, end).join(' ');
+        for (int i = 0; i < wordTokens.length; i += config.maxChunkSize) {
+          final end = (i + config.maxChunkSize).clamp(0, wordTokens.length);
+          final chunkText = wordTokens.sublist(i, end).join(' ');
           final chunkTokens = end - i;
           chunks.add(Chunk(
             id: const Uuid().v4(),
@@ -130,17 +129,13 @@ class SemanticChunker extends ChunkingStrategy {
     for (int i = 0; i < segments.length; i++) {
       final segmentTokens = SentenceSplitter.countTokens(segments[i]);
 
-      // Size boundary: would exceed maxChunkSize
-      final wouldExceed = currentTokens + segmentTokens > config.maxChunkSize;
+      final isOverMaxSize = currentTokens + segmentTokens > config.maxChunkSize;
+      final hasTopicBoundary = boundaries.contains(i);
 
-      // Semantic boundary: topic change detected
-      final hasBoundary = boundaries.contains(i);
-
-      if ((hasBoundary || wouldExceed) && currentSegments.isNotEmpty) {
+      if ((hasTopicBoundary || isOverMaxSize) && currentSegments.isNotEmpty) {
         final chunkText = currentSegments.join(' ');
         final chunkTokens = SentenceSplitter.countTokens(chunkText);
 
-        // Only create chunk if it meets minimum size (soft limit)
         if (chunkTokens >= config.minChunkSize || chunks.isEmpty) {
           chunks.add(Chunk(
             id: const Uuid().v4(),
@@ -191,28 +186,27 @@ class SemanticChunker extends ChunkingStrategy {
       }
     }
 
-    // Final pass: split any chunks that exceed maxChunkSize (hard limit enforcement)
     return _enforceSizeLimits(chunks);
   }
 
   /// Final pass to enforce maximum chunk size hard limit
   List<Chunk> _enforceSizeLimits(List<Chunk> chunks) {
-    final result = <Chunk>[];
+    final enforcedChunks = <Chunk>[];
 
     for (final chunk in chunks) {
       if (chunk.tokenCount <= config.maxChunkSize) {
-        result.add(chunk);
+        enforcedChunks.add(chunk);
       } else {
-        final tokens =
-            chunk.text.split(' ').where((t) => t.isNotEmpty).toList();
+        final wordTokens =
+            chunk.text.split(' ').where((token) => token.isNotEmpty).toList();
         int chunkStart = chunk.startToken;
 
-        for (int i = 0; i < tokens.length; i += config.maxChunkSize) {
-          final end = (i + config.maxChunkSize).clamp(0, tokens.length);
-          final splitText = tokens.sublist(i, end).join(' ');
+        for (int i = 0; i < wordTokens.length; i += config.maxChunkSize) {
+          final end = (i + config.maxChunkSize).clamp(0, wordTokens.length);
+          final splitText = wordTokens.sublist(i, end).join(' ');
           final splitTokens = end - i;
 
-          result.add(Chunk(
+          enforcedChunks.add(Chunk(
             id: const Uuid().v4(),
             sourceEntityId: '',
             sourceEntityType: '',
@@ -226,6 +220,6 @@ class SemanticChunker extends ChunkingStrategy {
       }
     }
 
-    return result;
+    return enforcedChunks;
   }
 }

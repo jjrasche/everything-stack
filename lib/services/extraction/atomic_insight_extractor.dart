@@ -9,7 +9,7 @@ import '../prompt/prompt_registry.dart';
 import '../inference_service.dart';
 
 class AtomicInsightExtractor with DebugIntrospectable {
-  static const String _extractionModel = 'llama-3.3-70b-versatile';
+  static const String _defaultModel = 'llama-3.1-8b-instant';
 
   /// Cosine similarity threshold for deduplication (empirically tuned)
   static const double _dedupThreshold = 0.7;
@@ -22,6 +22,7 @@ class AtomicInsightExtractor with DebugIntrospectable {
   final AtomicInsightRepository _insightRepo;
   final InferenceService _inferenceService;
   PromptRegistry? _promptRegistry;
+  final String _extractionModel;
 
   int _extractionCount = 0;
   int _insightsSaved = 0;
@@ -32,9 +33,11 @@ class AtomicInsightExtractor with DebugIntrospectable {
     required AtomicInsightRepository insightRepo,
     required InferenceService inferenceService,
     PromptRegistry? promptRegistry,
+    String? model,
   })  : _insightRepo = insightRepo,
         _inferenceService = inferenceService,
-        _promptRegistry = promptRegistry;
+        _promptRegistry = promptRegistry,
+        _extractionModel = model ?? _defaultModel;
 
   set promptRegistry(PromptRegistry registry) =>
       _promptRegistry = registry;
@@ -236,9 +239,9 @@ class AtomicInsightExtractor with DebugIntrospectable {
         continue;
       }
 
-      // Only persist session/day scopes — week/project/life require
-      // consolidation logic that doesn't exist yet (see CLAUDE.md Future Considerations)
-      if (insight.scope == 'session' || insight.scope == 'day') {
+      // Only persist session scopes — project/life require consolidation
+      // logic that doesn't exist yet (see CLAUDE.md Future Considerations)
+      if (insight.scope == 'session') {
         await _insightRepo.save(insight);
         saved.add(insight);
         _insightsSaved++;
@@ -259,42 +262,111 @@ class AtomicInsightExtractor with DebugIntrospectable {
     return _defaultSystemPrompt;
   }
 
-  static const String _defaultSystemPrompt =
-      '''You are the system's atomic insight extractor. Your job is to identify new insights about the user's identity, goals, and reasoning from conversation.
+  /// Stage 1: Select which segments of the episodic source contain extractable
+  /// knowledge. Outputs candidate descriptions with evidence spans and skip
+  /// annotations. Independently tunable from Stage 2 formatting.
+  static const String _stage1SelectionPrompt =
+      '''You identify extractable knowledge in episodic input. The source may be a conversation, article, transcript, or any text.
+
+Your job: find segments that contain decisions, designs, domain knowledge, constraints, hypotheses, preferences, or tradeoffs — anything that would materially inform future interactions or decisions.
 
 Rules:
-1. Extract NEW atomic insights ONLY. Skip if redundant with existing insights.
+1. SKIP segments that are trivial, ephemeral, or generic. SKIP segments redundant with existing insights shown.
+2. For each selected segment, quote the exact evidence span from the source.
+3. For each selected segment, write a brief candidate description (what knowledge it contains).
+4. Also output skipped segments with a reason (ephemeral, trivial, generic, already_known).
+5. One knowledge unit per candidate. If a segment contains two ideas, produce two candidates.
+6. Never fabricate — every candidate must trace to a quoted span in the source.
+
+Return JSON:
+{
+  "selected": [
+    {
+      "evidenceSpan": "quoted text from source",
+      "candidateDescription": "brief description of the knowledge unit",
+      "isDurable": true
+    }
+  ],
+  "skipped": [
+    {
+      "evidenceSpan": "quoted text that was considered but rejected",
+      "reason": "ephemeral|trivial|generic|already_known"
+    }
+  ]
+}
+
+Return {"selected": [], "skipped": []} if nothing extractable.''';
+
+  /// Stage 2: Format selected candidates into self-contained atomic insights
+  /// with scope, type, and decontextualized content. Independently tunable
+  /// from Stage 1 selection. May combine related candidates or split compound ones.
+  static const String _stage2FormattingPrompt =
+      '''You transform raw knowledge candidates into self-contained atomic insights. Each candidate comes with an evidence span from the source.
+
+Rules:
+1. Format: "[Atomic idea]. Because [reasoning]." Both parts required.
+2. Decontextualize: replace pronouns, resolve references, expand abbreviations so the insight is understandable WITHOUT the source.
+3. One knowledge unit per insight. If a candidate contains two ideas, split into two insights. If two candidates are tightly related, you may combine them into one insight.
+4. Assign scope:
+   - 'session': This episode only
+   - 'project': Named project context (ONLY if project is explicitly named)
+   - 'life': Identity-level pattern (ONLY if profound and repeated)
+5. Identify type: 'learning', 'project', or 'exploration'.
+6. Preserve the evidence span from the candidate.
+
+Return JSON array:
+[
+  {
+    "content": "[decontextualized idea]. Because [reason].",
+    "evidenceSpan": "quoted text from source supporting this insight",
+    "scope": "session|project|life",
+    "type": "learning|project|exploration"
+  }
+]
+
+Return empty array [] if no candidates provided.''';
+
+  /// Combined single-pass prompt for production use where latency matters.
+  /// Stage 1 + Stage 2 fused. Used when PromptRegistry has no override.
+  static const String _defaultSystemPrompt =
+      '''You extract atomic knowledge units from episodic input. The source may be a conversation, article, transcript, or any text. Extract decisions, designs, domain knowledge, constraints, hypotheses, preferences, and tradeoffs — everything intellectually produced or engaged with.
+
+Rules:
+1. Extract NEW atomic insights ONLY. Skip if redundant with existing insights shown.
 2. Format: "[Atomic idea]. Because [reasoning]."
-3. Be concise. One sentence per insight.
-4. Only extract facts that would materially change how an AI responds to this user in future conversations. Skip trivial or ephemeral observations.
-5. Identify insight type: 'learning', 'project', or 'exploration'.
-6. Assign scope:
-   - 'session': Current conversation (always Session if new)
-   - 'day': Multi-conversation pattern within a day
-   - 'week': Weekly themes
-   - 'project': User-defined project context (ONLY if explicitly stated)
-   - 'life': Identity-level patterns (ONLY if profound/core)
-7. Return JSON array:
+3. One knowledge unit per insight. Two ideas = two insights.
+4. Only extract knowledge that would materially inform future interactions or decisions. Skip trivial, ephemeral, or generic observations.
+5. Include an evidence span: a quoted substring from the source that supports the insight.
+6. Identify insight type: 'learning', 'project', or 'exploration'.
+7. Assign scope:
+   - 'session': This episode only
+   - 'project': Named project context (ONLY if project is explicitly named)
+   - 'life': Identity-level pattern (ONLY if profound and repeated)
+8. Return JSON array:
    [
      {
        "content": "[idea]. Because [reason].",
-       "scope": "session|day|week|project|life",
+       "evidenceSpan": "quoted text from source supporting this insight",
+       "scope": "session|project|life",
        "type": "learning|project|exploration"
      }
    ]
-8. Return empty array [] if nothing new.
-9. Never invent projects or life insights. Only surface what's evident.
+9. Return empty array [] if nothing new.
+10. Never fabricate knowledge not present in the source.
 
 Example response:
 [
   {
-    "content": "User prioritizes data sovereignty in AI systems. Because they repeatedly emphasize keeping data local and under user control.",
+    "content": "Data sovereignty is a core architectural constraint for the AI system. Because the design repeatedly emphasizes keeping data local and under user control.",
+    "evidenceSpan": "keeping data local and under user control",
     "scope": "session",
     "type": "project"
   }
 ]''';
 
   static String get defaultSystemPrompt => _defaultSystemPrompt;
+  static String get stage1SelectionPrompt => _stage1SelectionPrompt;
+  static String get stage2FormattingPrompt => _stage2FormattingPrompt;
 
   List<AtomicInsight> _parseResponse(String response) {
     try {
@@ -315,6 +387,7 @@ Example response:
                 content: json['content'] ?? '',
                 scope: json['scope'] ?? 'session',
                 type: json['type'],
+                evidenceSpan: json['evidenceSpan'] as String?,
               ))
           .where((insight) => insight.content.isNotEmpty)
           .toList();

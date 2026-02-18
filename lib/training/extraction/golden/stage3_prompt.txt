@@ -1,0 +1,75 @@
+Assign scope and type to each proposition.
+
+Scope:
+- session: decisions, context, or work specific to THIS conversation only
+- project: tied to a named project (survives beyond this conversation)
+- life: identity-level pattern, preference, or working style (applies broadly)
+
+Type:
+- learning: discovered fact, technical insight, or newly understood concept
+- project: decision, requirement, constraint, or design choice
+- exploration: investigated option, comparison, tradeoff analysis, or deferred decision
+
+Rules:
+1. Default to narrowest scope that fits. If unsure between session and project, prefer session.
+2. "life" scope is rare — only for identity-level patterns repeated across conversations.
+3. A proposition can be a "learning" even within a "project" scope (e.g., discovering a technical constraint while working on a project).
+4. "exploration" type is for options that were considered, compared, or explicitly deferred — not for resolved decisions (those are "project" type).
+
+---
+
+Follow the following format.
+
+Propositions: Self-contained propositions from Stage 2
+Context: Conversation name and topic for scope disambiguation
+Classifications: Each proposition with assigned scope and type
+
+---
+
+Propositions:
+[
+  "All code proposals must be discussed and approved before implementation begins.",
+  "Cognition Extension modules must be single-file implementations following the documentation coding style.",
+  "The UI overlay module is the reference pattern for modules needing both service worker and content script functionality.",
+  "The contentScriptCode() function pattern enables injecting content script logic from within a single module file.",
+  "Cognition Extension modules should not require modifications to background.js."
+]
+
+Context: "Chrome Extension Debugging" — debugging and designing modules for the Cognition Chrome extension
+
+Classifications:
+[
+  {"text": "All code proposals must be discussed and approved before implementation begins.", "scope": "life", "type": "project"},
+  {"text": "Cognition Extension modules must be single-file implementations following the documentation coding style.", "scope": "project", "type": "project"},
+  {"text": "The UI overlay module is the reference pattern for modules needing both service worker and content script functionality.", "scope": "project", "type": "learning"},
+  {"text": "The contentScriptCode() function pattern enables injecting content script logic from within a single module file.", "scope": "project", "type": "learning"},
+  {"text": "Cognition Extension modules should not require modifications to background.js.", "scope": "project", "type": "project"}
+]
+
+---
+
+Propositions:
+[
+  "The transcript module enforces single-tab recording to prevent concurrent recordings across browser tabs.",
+  "The transcript.activeTabId state field tracks which tab is recording, enforcing the single-tab constraint.",
+  "The transcript.isRecording state field provides a global on/off flag for recording status.",
+  "The Cognition Extension implementation approach starts with a manifest file containing function signatures and test case comments.",
+  "Redundant getter functions like getStatus should be eliminated when the data is already available in state."
+]
+
+Context: "Chrome Extension Debugging" — designing the transcript module's state management and coordination
+
+Classifications:
+[
+  {"text": "The transcript module enforces single-tab recording to prevent concurrent recordings across browser tabs.", "scope": "project", "type": "project"},
+  {"text": "The transcript.activeTabId state field tracks which tab is recording, enforcing the single-tab constraint.", "scope": "project", "type": "project"},
+  {"text": "The transcript.isRecording state field provides a global on/off flag for recording status.", "scope": "project", "type": "project"},
+  {"text": "The Cognition Extension implementation approach starts with a manifest file containing function signatures and test case comments.", "scope": "project", "type": "project"},
+  {"text": "Redundant getter functions like getStatus should be eliminated when the data is already available in state.", "scope": "life", "type": "learning"}
+]
+
+---
+
+Propositions: ${propositions}
+Context: ${context}
+Classifications:

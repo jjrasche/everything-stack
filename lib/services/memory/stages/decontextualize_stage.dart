@@ -1,0 +1,253 @@
+import 'dart:convert' show jsonDecode;
+
+import '../../../domain/proposition.dart';
+import '../../types/chat_client.dart';
+import '../../types/message.dart';
+import '../encoder_stage.dart';
+import '../encoder_trace.dart';
+import '../working_memory_service.dart';
+
+class DecontextualizeInput {
+  final List<ConceptSpan> extractSpans;
+  final List<Sentence> sentences;
+  final WorkingMemoryService workingMemory;
+  final String sourceTurnId;
+  final String sourceEpisodeId;
+
+  DecontextualizeInput({
+    required this.extractSpans,
+    required this.sentences,
+    required this.workingMemory,
+    required this.sourceTurnId,
+    required this.sourceEpisodeId,
+  });
+}
+
+class DecontextualizeResult {
+  final List<Proposition> propositions;
+  final DecontextualizeTrace trace;
+
+  DecontextualizeResult({required this.propositions, required this.trace});
+}
+
+/// Per-span decontextualization into self-contained propositions.
+/// Phase 1: Groq LLM. Phase 3: T5-3B fine-tuned.
+class DecontextualizeStage
+    implements EncoderStage<DecontextualizeInput, DecontextualizeResult> {
+  final ChatClient _chatClient;
+
+  DecontextualizeStage({required ChatClient chatClient})
+      : _chatClient = chatClient;
+
+  @override
+  String get stageName => 'decontextualize';
+
+  @override
+  Future<DecontextualizeResult> process(DecontextualizeInput input) async {
+    final stopwatch = Stopwatch()..start();
+    final allPropositions = <Proposition>[];
+    final spanTraces = <DecontextualizeSpanTrace>[];
+
+    for (final span in input.extractSpans) {
+      final result = await _decontextualizeSpan(
+        span,
+        input.sentences,
+        input.workingMemory,
+        input.sourceTurnId,
+        input.sourceEpisodeId,
+      );
+      allPropositions.addAll(result.propositions);
+      spanTraces.add(result.trace);
+    }
+
+    stopwatch.stop();
+
+    return DecontextualizeResult(
+      propositions: allPropositions,
+      trace: DecontextualizeTrace(
+        spans: spanTraces,
+        totalLatencyMs: stopwatch.elapsedMilliseconds,
+      ),
+    );
+  }
+
+  /// Also callable from dedup stage for rewrite.
+  Future<List<Proposition>> rewrite(
+    List<Proposition> toMerge,
+    String sourceTurnId,
+    String sourceEpisodeId,
+  ) async {
+    final combined = toMerge.map((p) => p.content).join('\n');
+    final allSourceIds = toMerge.expand((p) => p.sourceIds).toSet().toList();
+
+    final prompt = '''Rewrite these propositions into a single canonical form.
+Preserve all information. Remove redundancy. One self-contained proposition.
+
+Propositions:
+$combined
+
+Output JSON: {"content": "...", "scope": "session|project|life", "type": "learning|project|exploration"}''';
+
+    final response = await _chatClient.chat(
+      eventId: 'rewrite_${DateTime.now().millisecondsSinceEpoch}',
+      messages: [
+        Message(role: 'system', content: 'You rewrite propositions into canonical form. Output only valid JSON.'),
+        Message(role: 'user', content: prompt),
+      ],
+    );
+
+    try {
+      final json = _extractJson(response);
+      final parsed = jsonDecode(json) as Map<String, dynamic>;
+      return [
+        Proposition(
+          content: parsed['content'] as String,
+          scope: parsed['scope'] as String? ?? 'session',
+          type: parsed['type'] as String?,
+          sourceIds: allSourceIds,
+          sourceTurnId: sourceTurnId,
+          sourceEpisodeId: sourceEpisodeId,
+        ),
+      ];
+    } catch (_) {
+      return toMerge;
+    }
+  }
+
+  Future<_SpanResult> _decontextualizeSpan(
+    ConceptSpan span,
+    List<Sentence> sentences,
+    WorkingMemoryService workingMemory,
+    String sourceTurnId,
+    String sourceEpisodeId,
+  ) async {
+    final spanWatch = Stopwatch()..start();
+    final spanText = span.resolveText(sentences);
+    final surrounding = _findSurrounding(span, sentences);
+    final entityList = workingMemory.entityList;
+
+    final systemPrompt = '''You extract exactly one self-contained proposition from a concept span.
+Replace all pronouns with the specific names from the known entities or surrounding context.
+The proposition must be understandable without any source context.
+If the span contains no durable knowledge, output an empty array [].
+Scope: session (this conversation only), project (named project), life (identity-level).
+Type: learning (discovered fact), project (decision/requirement), exploration (investigated option).
+Output only valid JSON.''';
+
+    final prompt = '''Text:
+$spanText
+
+Surrounding context:
+$surrounding
+
+Known entities: ${entityList.join(', ')}
+
+Output JSON array: [{"content": "...", "scope": "...", "type": "...", "sourceIds": ["S1", "S2"]}]''';
+
+    final response = await _chatClient.chat(
+      eventId: 'decontext_${span.spanId}_${DateTime.now().millisecondsSinceEpoch}',
+      messages: [
+        Message(role: 'system', content: systemPrompt),
+        Message(role: 'user', content: prompt),
+      ],
+    );
+
+    spanWatch.stop();
+    final propositions = _parsePropositions(
+      response, span, sourceTurnId, sourceEpisodeId,
+    );
+    final outputJson = propositions
+        .map((p) => {
+              'propositionId': p.uuid,
+              'text': p.content,
+              'sourceIds': p.sourceIds,
+              'scope': p.scope,
+              'type': p.type,
+            })
+        .toList();
+
+    return _SpanResult(
+      propositions: propositions,
+      trace: DecontextualizeSpanTrace(
+        spanId: span.spanId,
+        output: outputJson,
+        model: 'groq/llama-3.1-8b-instant',
+        latencyMs: spanWatch.elapsedMilliseconds,
+      ),
+    );
+  }
+
+  List<Proposition> _parsePropositions(
+    String response,
+    ConceptSpan span,
+    String sourceTurnId,
+    String sourceEpisodeId,
+  ) {
+    try {
+      final json = _extractJsonArray(response);
+      final parsed = jsonDecode(json) as List;
+      return parsed.map((item) {
+        final map = item as Map<String, dynamic>;
+        final sourceIds = (map['sourceIds'] as List?)?.cast<String>() ?? span.sentenceIds;
+        return Proposition(
+          content: map['content'] as String,
+          scope: map['scope'] as String? ?? 'session',
+          type: map['type'] as String?,
+          sourceIds: sourceIds,
+          sourceTurnId: sourceTurnId,
+          sourceEpisodeId: sourceEpisodeId,
+        );
+      }).toList();
+    } catch (_) {
+      return [
+        Proposition(
+          content: span.sentenceIds.join(' '),
+          scope: 'session',
+          sourceIds: span.sentenceIds,
+          sourceTurnId: sourceTurnId,
+          sourceEpisodeId: sourceEpisodeId,
+        ),
+      ];
+    }
+  }
+
+  String _findSurrounding(ConceptSpan span, List<Sentence> sentences) {
+    final spanIdSet = span.sentenceIds.toSet();
+    final allIds = sentences.map((s) => s.id).toList();
+    final firstIdx = allIds.indexOf(span.sentenceIds.first);
+    final lastIdx = allIds.indexOf(span.sentenceIds.last);
+
+    final contextIds = <String>[];
+    for (var i = (firstIdx - 2).clamp(0, allIds.length); i <= (lastIdx + 2).clamp(0, allIds.length - 1); i++) {
+      if (!spanIdSet.contains(allIds[i])) {
+        contextIds.add(allIds[i]);
+      }
+    }
+
+    return sentences
+        .where((s) => contextIds.contains(s.id))
+        .map((s) => s.text)
+        .join(' ');
+  }
+
+  String _extractJson(String text) {
+    final start = text.indexOf('{');
+    final end = text.lastIndexOf('}');
+    if (start >= 0 && end > start) return text.substring(start, end + 1);
+    return text;
+  }
+
+  String _extractJsonArray(String text) {
+    final start = text.indexOf('[');
+    final end = text.lastIndexOf(']');
+    if (start >= 0 && end > start) return text.substring(start, end + 1);
+    return text;
+  }
+}
+
+class _SpanResult {
+  final List<Proposition> propositions;
+  final DecontextualizeSpanTrace trace;
+
+  _SpanResult({required this.propositions, required this.trace});
+}

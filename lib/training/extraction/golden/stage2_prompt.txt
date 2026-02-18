@@ -1,0 +1,132 @@
+Convert extract spans into self-contained propositions. Decontextualize: replace pronouns and references with named entities. One fact per proposition. No inline reasoning — provenance is the sourceIds link.
+
+Rules:
+1. One knowledge unit per proposition. Two ideas = two propositions.
+2. Decontextualize: no "it", "this", "the module", "that approach". Name the entity.
+3. No "Because" clauses. Provenance is stored as sourceIds, not inline text.
+4. Drop propositions that restate existing working memory entries.
+5. A span with multiple sentences may yield multiple propositions.
+6. A span may yield zero propositions if, upon closer inspection, it lacks extractable knowledge.
+
+Scope assignment (Stage 3 — assign after extraction):
+- session: decisions or context specific to THIS conversation's work
+- project: tied to a named project that outlives this session
+- life: identity-level pattern or preference
+
+Type assignment (Stage 3 — assign after extraction):
+- learning: discovered fact or technical insight
+- project: decision, requirement, or constraint
+- exploration: investigated option or comparison
+
+---
+
+Follow the following format.
+
+Extract Spans: Spans labeled "extract" from Stage 1, with their source sentence texts
+Existing Working Memory: Previously extracted propositions (drop duplicates)
+Propositions: Self-contained propositions with sourceIds, scope, and type
+
+---
+
+Extract Spans:
+[
+  {"sentenceIds": ["S1"], "sourceText": "Dude that was terrible all right we got to talk about any code you're going to write before you write it."},
+  {"sentenceIds": ["S2"], "sourceText": "I want this to be 1 file I want to follow the simplicity of the coding style from the documentation and I don't see any need to update background dot JS."},
+  {"sentenceIds": ["S3"], "sourceText": "Look at the setup for UI overlay module that has both the content script and a service worker aspect"},
+  {"sentenceIds": ["S7"], "sourceText": "Looking at ui.module.js, I see it: 1. Stays in one file 2. Uses contentScriptCode() function that gets injected 3. Doesn't require any background.js changes 4. Keeps everything simple and contained"}
+]
+
+Existing Working Memory:
+- Web Speech API is only available in regular web pages with window object, not in service workers.
+
+Propositions:
+[
+  {
+    "text": "All code proposals must be discussed and approved before implementation begins.",
+    "sourceIds": ["S1"],
+    "scope": "life",
+    "type": "project"
+  },
+  {
+    "text": "Cognition Extension modules must be single-file implementations following the documentation coding style.",
+    "sourceIds": ["S2"],
+    "scope": "project",
+    "type": "project"
+  },
+  {
+    "text": "Cognition Extension modules should not require modifications to background.js.",
+    "sourceIds": ["S2"],
+    "scope": "project",
+    "type": "project"
+  },
+  {
+    "text": "The UI overlay module is the reference pattern for Cognition Extension modules needing both service worker and content script functionality.",
+    "sourceIds": ["S3"],
+    "scope": "project",
+    "type": "learning"
+  },
+  {
+    "text": "The contentScriptCode() function pattern enables injecting content script logic from within a single module file.",
+    "sourceIds": ["S7"],
+    "scope": "project",
+    "type": "learning"
+  }
+]
+
+---
+
+Extract Spans:
+[
+  {"sentenceIds": ["S5", "S6"], "sourceText": "Prevent multiple tabs from recording simultaneously. Track which tab is actively recording."},
+  {"sentenceIds": ["S9"], "sourceText": "transcript.activeTabId - Prevents multiple recordings"},
+  {"sentenceIds": ["S10"], "sourceText": "transcript.isRecording - Global on/off state"},
+  {"sentenceIds": ["S11"], "sourceText": "transcript.current - Live transcript data"},
+  {"sentenceIds": ["S12"], "sourceText": "transcript.history - Saved segments"}
+]
+
+Existing Working Memory:
+- All code proposals must be discussed and approved before implementation begins.
+- Cognition Extension modules must be single-file implementations following the documentation coding style.
+- Cognition Extension modules should not require modifications to background.js.
+- The UI overlay module is the reference pattern for modules needing both service worker and content script functionality.
+- The contentScriptCode() function pattern enables injecting content script logic from within a single module file.
+
+Propositions:
+[
+  {
+    "text": "The transcript module enforces single-tab recording to prevent concurrent recordings across browser tabs.",
+    "sourceIds": ["S5", "S6"],
+    "scope": "project",
+    "type": "project"
+  },
+  {
+    "text": "The transcript.activeTabId state field tracks which tab is recording, enforcing the single-tab constraint.",
+    "sourceIds": ["S9"],
+    "scope": "project",
+    "type": "project"
+  },
+  {
+    "text": "The transcript.isRecording state field provides a global on/off flag for recording status.",
+    "sourceIds": ["S10"],
+    "scope": "project",
+    "type": "project"
+  },
+  {
+    "text": "The transcript.current state field holds live transcript data during active recording.",
+    "sourceIds": ["S11"],
+    "scope": "project",
+    "type": "project"
+  },
+  {
+    "text": "The transcript.history state field stores completed transcript segments.",
+    "sourceIds": ["S12"],
+    "scope": "project",
+    "type": "project"
+  }
+]
+
+---
+
+Extract Spans: ${extract_spans}
+Existing Working Memory: ${existing_working_memory}
+Propositions:

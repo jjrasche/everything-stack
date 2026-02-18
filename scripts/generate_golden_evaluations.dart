@@ -1,11 +1,11 @@
 /// Generate baseline evaluations for golden test conversations.
 ///
-/// Reads golden test data from test/golden/extraction/*.json,
+/// Reads golden test data from lib/training/extraction/golden/*.json,
 /// runs extraction + evaluation, and saves results to
-/// test/golden/evaluation/baseline_results.json.
+/// lib/training/extraction/golden/evaluations/baseline_results.json.
 ///
 /// Usage:
-///   dart run scripts/generate_golden_evaluations.dart [--dir=test/golden/extraction]
+///   dart run scripts/generate_golden_evaluations.dart [--dir=lib/training/extraction/golden]
 ///
 /// Prerequisites:
 ///   - Golden conversations exported via query_imported_conversations.dart --export
@@ -20,8 +20,8 @@ import 'dart:convert';
 void main(List<String> args) async {
   print('📊 Generating baseline evaluations for golden test data...\n');
 
-  final goldenDir = _parseArg(args, 'dir', 'test/golden/extraction');
-  final outputDir = 'test/golden/evaluation';
+  final goldenDir = _parseArg(args, 'dir', 'lib/training/extraction/golden');
+  final outputDir = 'lib/training/extraction/golden/evaluations';
   final serverUrl = _parseArg(args, 'server', 'http://localhost:9999');
 
   // Ensure output directory exists

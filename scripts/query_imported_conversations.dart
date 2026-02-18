@@ -119,8 +119,8 @@ void main(List<String> args) async {
 
     // Export if requested
     if (exportUuids.isNotEmpty) {
-      print('\n📤 Exporting conversations to test/golden/extraction/...');
-      final exportDir = Directory('test/golden/extraction');
+      print('\n📤 Exporting conversations to lib/training/extraction/golden/...');
+      final exportDir = Directory('lib/training/extraction/golden');
       if (!await exportDir.exists()) {
         await exportDir.create(recursive: true);
       }
@@ -169,7 +169,7 @@ void main(List<String> args) async {
         };
 
         final filename = 'conv_${uuid.substring(0, 8)}.json';
-        final file = File('test/golden/extraction/$filename');
+        final file = File('lib/training/extraction/golden/$filename');
         await file.writeAsString(JsonEncoder.withIndent('  ').convert(testData));
         print('   ✅ Exported: $filename');
       }

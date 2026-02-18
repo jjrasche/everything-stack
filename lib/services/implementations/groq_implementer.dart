@@ -73,6 +73,8 @@ class GroqImplementer implements LLMImplementer {
         'max_tokens': maxTokens,
       };
 
+      debugPrint('[Groq.chat] model=$model, messages=${messagesList.length}');
+
       final stopwatch = Stopwatch()..start();
       final response = await http
           .post(
@@ -150,6 +152,8 @@ class GroqImplementer implements LLMImplementer {
         if (maxTokens != null) 'max_tokens': maxTokens,
       };
 
+      debugPrint('[Groq.chatWithTools] model=$model, messages=${messages.length}');
+
       final groqResponse = await _makeRequest(body);
 
       return _mapToLLMResponse(groqResponse);
@@ -178,6 +182,8 @@ class GroqImplementer implements LLMImplementer {
       'stream': true,
       if (maxTokens != null) 'max_tokens': maxTokens,
     };
+
+    debugPrint('[Groq.chatStream] model=$model, messages=${messages.length}');
 
     final request = http.Request(
       'POST',
@@ -283,6 +289,8 @@ class GroqImplementer implements LLMImplementer {
         // Rate limit - retry with exponential backoff
         if (attempt < maxRetries) {
           final delay = Duration(milliseconds: 1000 * (1 << attempt));
+          debugPrint('[Groq] 429 rate limit, retry $attempt/${maxRetries} '
+              'after ${delay.inMilliseconds}ms, model=${body['model']}');
           await Future.delayed(delay);
           return _makeRequest(body, attempt: attempt + 1);
         }
