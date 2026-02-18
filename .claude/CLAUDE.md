@@ -57,9 +57,16 @@ Read from `~/.claude/references/` when relevant:
 - `dart-flutter.md` - Widget lifecycle, platform quirks, state
 - `flutter-workflow.md` - Hot reload, background run, debug workflow
 
+## Current Work: Memory Encoder Pipeline
+6-stage encoder: normalize -> segment -> cohere -> classify -> decontextualize -> dedup.
+**SLM-first**: build on-device ONNX runner, run zero-shot, evaluate, fine-tune. NO LLM calls for stages that can use SLMs.
+Phase 1 (normalize + segment) complete. **Phase 2 (cohere SLM) is next.**
+Read `.claude/plans/encoder-golden-data-stage-by-stage.md` for full plan and instructions. Do NOT enter plan mode — execute directly.
+
 ## Project References
 - `ARCHITECTURE.md` - Entity model, persistence, plugins, sync, scale
 - `PATTERNS.md` - How to build: entities, services, testing, examples
 - `TESTING.md` - E2E testing: no mocks, real persistence, all platforms
 - `DECISIONS.md` - Rationale for major architectural choices
 - `docs/DEVELOPMENT.md` - Build details, Rust/FFI, debug server, dependency management
+- `.claude/plans/encoder-golden-data-stage-by-stage.md` - Stage-by-stage encoder golden data plan

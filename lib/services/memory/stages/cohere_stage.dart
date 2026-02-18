@@ -19,13 +19,15 @@ class CohereResult {
 }
 
 /// Group adjacent sentences into concept spans by discourse coherence.
-/// Phase 1: LLM-based grouping via Groq.
-/// Phase 3: NSP DeBERTa pairwise scoring replaces LLM.
+/// Primary: on-device CohereRunner (discourse DeBERTa pairwise scoring).
+/// Fallback: LLM via ChatClient (temporary, being phased out).
 class CohereStage implements EncoderStage<CohereInput, CohereResult> {
-  final ChatClient _chatClient;
+  final ChatClient? _chatClient;
+  // TODO(phase2): Add CohereRunner field once runner is built
+  // final CohereRunner? _cohereRunner;
   static const double _defaultThreshold = 0.5;
 
-  CohereStage({required ChatClient chatClient})
+  CohereStage({ChatClient? chatClient})
       : _chatClient = chatClient;
 
   @override
@@ -102,6 +104,9 @@ $sentenceList
 
 Output ONLY a JSON array, no other text.''';
 
+    if (_chatClient == null) {
+      throw StateError('CohereStage requires a CohereRunner or ChatClient');
+    }
     final response = await _chatClient.chat(
       eventId: 'cohere_${DateTime.now().millisecondsSinceEpoch}',
       messages: [

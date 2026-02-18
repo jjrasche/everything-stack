@@ -31,13 +31,16 @@ class DedupResult {
 }
 
 /// Pairwise NLI comparison of new propositions against working memory.
-/// Phase 1: LLM-based. Phase 3: NLI cross-encoder replaces LLM.
+/// Primary: on-device DedupRunner (NLI DeBERTa entailment scoring).
+/// Fallback: LLM via ChatClient (temporary, being phased out).
 class DedupStage implements EncoderStage<DedupInput, DedupResult> {
-  final ChatClient _chatClient;
+  final ChatClient? _chatClient;
   final DecontextualizeStage _decontextualizeStage;
+  // TODO(phase3): Add DedupRunner field once runner is built
+  // final DedupRunner? _dedupRunner;
 
   DedupStage({
-    required ChatClient chatClient,
+    ChatClient? chatClient,
     required DecontextualizeStage decontextualizeStage,
   })  : _chatClient = chatClient,
         _decontextualizeStage = decontextualizeStage;
@@ -191,6 +194,9 @@ Classify as:
 
 Output JSON: {"decision": "...", "entailmentScore": 0.0-1.0, "contradictionScore": 0.0-1.0}''';
 
+    if (_chatClient == null) {
+      throw StateError('DedupStage requires a DedupRunner or ChatClient');
+    }
     final response = await _chatClient.chat(
       eventId: 'dedup_${DateTime.now().millisecondsSinceEpoch}',
       messages: [
