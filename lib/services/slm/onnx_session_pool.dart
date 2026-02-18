@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_onnxruntime/flutter_onnxruntime.dart';
 
 import 'session_pool.dart';
@@ -20,7 +22,7 @@ class _OnnxInferenceSession implements InferenceSession {
     try {
       for (final entry in inputs.entries) {
         ortInputs[entry.key] = await OrtValue.fromList(
-          entry.value,
+          Int64List.fromList(entry.value),
           [1, entry.value.length],
         );
       }
@@ -46,16 +48,16 @@ class _OnnxInferenceSession implements InferenceSession {
 }
 
 /// Real ONNX Runtime session pool.
-/// Caches sessions by modelId. Lazy-loads from Flutter assets.
+/// Caches sessions by modelId. Loads from file system paths.
 class OnnxSessionPool implements SessionPool {
   final OnnxRuntime _runtime = OnnxRuntime();
   final Map<String, _OnnxInferenceSession> _sessions = {};
 
   @override
-  Future<InferenceSession> acquire(String modelId, String assetPath) async {
+  Future<InferenceSession> acquire(String modelId, String modelPath) async {
     if (_sessions.containsKey(modelId)) return _sessions[modelId]!;
 
-    final session = await _runtime.createSessionFromAsset(assetPath);
+    final session = await _runtime.createSession(modelPath);
     final wrapped = _OnnxInferenceSession(session);
     _sessions[modelId] = wrapped;
     return wrapped;

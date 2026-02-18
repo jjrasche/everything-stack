@@ -82,15 +82,17 @@ class PunctuationRunner {
     final postPreds = _castToIntList(outputs['post_preds']!);
     final capPreds = _castToIntList(outputs['cap_preds']!);
 
-    // Strip BOS and EOS positions (first and last)
     final seqLen = inputIds.length;
     final contentPostPreds = postPreds.sublist(1, seqLen - 1);
 
-    // Decode each token piece and apply labels
+    // cap_preds shape is [1, seq_len, max_subword_len], flattened
+    final capStride = capPreds.length ~/ seqLen;
+
     final words = <String>[];
     for (var i = 0; i < chunk.length; i++) {
       final piece = _tokenizer.decode([chunk[i]]);
-      final capitalized = _applyCasing(piece, capPreds, i + 1, seqLen);
+      // token position in the BOS-wrapped input is i+1
+      final capitalized = _applyCasing(piece, capPreds, i + 1, capStride);
       final postPunct = _resolvePostLabel(contentPostPreds[i]);
       words.add('$capitalized$postPunct');
     }
@@ -99,17 +101,23 @@ class PunctuationRunner {
   }
 
   /// Apply per-character casing from cap_preds.
-  /// capPreds is flat; each token position has variable-length char predictions.
-  /// For simplicity, we apply the first cap prediction to the first character.
-  String _applyCasing(String piece, List<int> capPreds, int tokenPosition, int seqLen) {
+  /// capPreds is [1, seq_len, max_subword_len] flattened.
+  /// capStride = max_subword_len.
+  /// 0=lower, 1=upper for each character in the subword.
+  String _applyCasing(String piece, List<int> capPreds, int tokenPosition, int capStride) {
     if (piece.isEmpty) return piece;
 
-    // cap_preds may be flat or per-token. Use tokenPosition to index.
-    // If capPreds has exactly seqLen entries, one per token position.
-    if (tokenPosition < capPreds.length && capPreds[tokenPosition] == 1) {
-      return piece[0].toUpperCase() + piece.substring(1);
+    final offset = tokenPosition * capStride;
+    final buf = StringBuffer();
+    for (var c = 0; c < piece.length; c++) {
+      final predIndex = offset + c;
+      if (predIndex < capPreds.length && capPreds[predIndex] == 1) {
+        buf.write(piece[c].toUpperCase());
+      } else {
+        buf.write(piece[c]);
+      }
     }
-    return piece;
+    return buf.toString();
   }
 
   List<int> _castToIntList(List<dynamic> raw) =>

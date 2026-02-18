@@ -64,11 +64,21 @@ class _MockInferenceSession implements InferenceSession {
   @override
   Future<Map<String, List<dynamic>>> run(Map<String, List<int>> inputs) async {
     final seqLen = inputs['input_ids']!.length;
+    // Real model outputs fixed max_subword_len per position.
+    // Pad each position's cap predictions to uniform stride.
+    final maxLen = capPreds.fold<int>(0, (m, c) => c.length > m ? c.length : m);
+    final flatCap = <int>[];
+    for (final c in capPreds) {
+      flatCap.addAll(c);
+      for (var p = c.length; p < maxLen; p++) {
+        flatCap.add(0);
+      }
+    }
     return {
-      'pre_preds': List<int>.filled(seqLen, 0), // no pre-punctuation
+      'pre_preds': List<int>.filled(seqLen, 0),
       'post_preds': postPreds,
-      'cap_preds': capPreds.expand((c) => c).toList(),
-      'seg_preds': List<int>.filled(seqLen, 0), // no sentence boundaries
+      'cap_preds': flatCap,
+      'seg_preds': List<int>.filled(seqLen, 0),
     };
   }
 
