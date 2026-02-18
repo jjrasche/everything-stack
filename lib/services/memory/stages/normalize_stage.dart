@@ -14,6 +14,7 @@ class NormalizeResult {
 /// Without a runner, passes text through unchanged (no-op stub).
 class NormalizeStage implements EncoderStage<String, NormalizeResult> {
   static const int _overlongThreshold = 40;
+  static final _fencedCodeBlock = RegExp(r'```[^\n]*\n[\s\S]*?```', multiLine: true);
   final PunctuationRunner? _punctuationRunner;
 
   NormalizeStage({PunctuationRunner? punctuationRunner})
@@ -97,7 +98,8 @@ class NormalizeStage implements EncoderStage<String, NormalizeResult> {
     final details = <Map<String, dynamic>>[];
 
     for (final sentence in sentences) {
-      final wordCount = sentence.split(RegExp(r'\s+')).length;
+      final proseOnly = sentence.replaceAll(_fencedCodeBlock, '');
+      final wordCount = proseOnly.split(RegExp(r'\s+')).length;
       if (wordCount > _overlongThreshold) {
         final splits = _splitAtConjunctions(sentence);
         if (splits.length > 1) {

@@ -57,6 +57,22 @@ void main() {
       expect(result.trace.splitCount, greaterThan(0));
     });
 
+    test('does not split inside fenced code blocks', () async {
+      const input = 'Here is a long explanation of the pattern and its usage '
+          'in the codebase.\n\n```javascript\nconst result = await '
+          'runtime.call("inference.prompt", {\n  query: buildQuery(),\n'
+          '  model: "llama-4-scout-17b",\n  systemPrompt: getSpecSystemPrompt(),\n'
+          '  responseFormat: "JSON",\n  temperature: 0.7,\n  validation: {\n'
+          '    type: "schema",\n    blocking: true,\n    schema: { type: "object", '
+          'required: ["field", "content"] }\n  }\n});\n```\n\n'
+          'This approach keeps things simple, and the module handles the rest.';
+      final result = await stage.process(input);
+
+      expect(result.trace.splitCount, 0,
+          reason: 'Should not split text containing code blocks');
+      expect(result.output, contains('```javascript'));
+    });
+
     test('does not split short sentences', () async {
       const input = 'Short sentence. Another short one.';
       final result = await stage.process(input);
