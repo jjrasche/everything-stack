@@ -45,6 +45,9 @@ dependencies:
   # Tokenization (for ContextCapacity token counting)
   tiktoken_tokenizer_gpt4o_o1: ^1.2.1
 
+  # On-device SLM inference (ONNX Runtime for all 6 platforms)
+  flutter_onnxruntime: ^1.6.3
+
   # WebSocket support (for Deepgram STT)
   web_socket_channel: ^3.0.0
   universal_io: ^2.2.2  # Pure Dart WebSocket (fixes Flutter Windows wss:// bug)
