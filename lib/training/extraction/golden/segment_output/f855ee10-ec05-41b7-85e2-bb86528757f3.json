@@ -2,7 +2,7 @@
   "conversationUuid": "f855ee10-ec05-41b7-85e2-bb86528757f3",
   "conversationName": "Optimizing Human Flourishing in Micro Societies",
   "turnCount": 22,
-  "totalSentences": 95,
+  "totalSentences": 94,
   "turns": [
     {
       "turnIndex": 0,
@@ -515,7 +515,7 @@
       "turnIndex": 9,
       "speaker": "user",
       "inputCharCount": 2346,
-      "sentenceCount": 4,
+      "sentenceCount": 3,
       "droppedFragments": 0,
       "punctuationNeeded": true,
       "sentences": [
@@ -525,14 +525,10 @@
         },
         {
           "id": "S2",
-          "text": "This isn't just freedom from an over consuming job this is freedom from parenting alone from shouldering the the burdens that up to the individual that should be socialized you know having a safe loving community that's ready to step in whenever you need help and a high trust environment where you feel comfortable enough to do that this is about having a dozen people that you would feel comfortable letting your kids spend the night with within 1/2 mile walk it's about feeling closer to the people around you because you work with them right\n\nthe second line is terrible the third line might be OK replacing alienation with purpose but nobody knows what the ** alienation means by itself I mean I barely know what being alienated from my work actually means\n\nalright the efficiency multiplier voluntary association of aligned individuals creates exponential efficiency through shared resources is pretty cool I think I get anxiety about the 95 cars on behalf of people who'll be reading this but you could say something like 99."
+          "text": "This isn't just freedom from an over consuming job this is freedom from parenting alone from shouldering the the burdens that up to the individual that should be socialized you know having a safe loving community that's ready to step in whenever you need help and a high trust environment where you feel comfortable enough to do that this is about having a dozen people that you would feel comfortable letting your kids spend the night with within 1/2 mile walk it's about feeling closer to the people around you because you work with them right\n\nthe second line is terrible the third line might be OK replacing alienation with purpose but nobody knows what the ** alienation means by itself I mean I barely know what being alienated from my work actually means\n\nalright the efficiency multiplier voluntary association of aligned individuals creates exponential efficiency through shared resources is pretty cool I think I get anxiety about the 95 cars on behalf of people who'll be reading this but you could say something like 99.99% uptime for vehicle access within 10 minutes notice something like that it's like a contract that you have you know a newly cleaned and safe maintained vehicle on hand at any point."
         },
         {
           "id": "S3",
-          "text": "99% uptime for vehicle access within 10 minutes notice something like that it's like a contract that you have you know a newly cleaned and safe maintained vehicle on hand at any point."
-        },
-        {
-          "id": "S4",
           "text": "The efficiency is really about OK liberation is a good angle all right the efficiency is how the liberation happens that's why it feels weird when you say freedom by because the freedom by is by being more efficient\n\nall right freedom dividend the efficiency gains don't just create material abundance but liberate time wait how's that not described in the first one liberation is more about this is ***** confusing guy man you're all over the place\n\n\nall right first find out who your audience is ask me questions until you understand how to write this and who you're writing it to"
         }
       ]

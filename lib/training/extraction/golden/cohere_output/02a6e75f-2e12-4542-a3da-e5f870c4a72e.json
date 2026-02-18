@@ -1,0 +1,3298 @@
+{
+  "conversationUuid": "02a6e75f-2e12-4542-a3da-e5f870c4a72e",
+  "conversationName": "PowerShell script for Windows event log error detection",
+  "turnCount": 60,
+  "stage": "cohere",
+  "model": "bert-wiki-paragraphs",
+  "threshold": 0.5,
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "sentenceCount": 1,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 0,
+      "pairScores": [],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "sentenceCount": 1,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 0,
+      "pairScores": [],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "sentenceCount": 1,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 0,
+      "pairScores": [],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "sentenceCount": 2,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 132,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9884515243629056,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "sentenceCount": 4,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 155,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9572636813449725,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9275247159879884,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.7820149647502412,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "sentenceCount": 9,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 555,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9987752532228151,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.8223843587206557,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.8728004670762369,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.8037169251975694,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.9735999305399072,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.9153845313719589,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S7",
+            "S8"
+          ],
+          "coherenceScore": 0.8278067011742778,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S8",
+            "S9"
+          ],
+          "coherenceScore": 0.985885189080972,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "sentenceCount": 4,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 138,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.997817586264776,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9818836296107162,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.9949831648417357,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "sentenceCount": 7,
+      "spanCount": 2,
+      "boundaryCount": 1,
+      "latencyMs": 376,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9443102696423846,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.8395882009296771,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.9474736089677516,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.47469204268506354,
+          "boundary": true
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.8949208569890641,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.9355627180963041,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
+            "S5",
+            "S6",
+            "S7"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "sentenceCount": 3,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 106,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9851845034148148,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9966977935717962,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "sentenceCount": 5,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 126,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9655124529095587,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9248772196960111,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.9562797075569115,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.9564211986913639,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "sentenceCount": 1,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 0,
+      "pairScores": [],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "sentenceCount": 12,
+      "spanCount": 3,
+      "boundaryCount": 2,
+      "latencyMs": 596,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9462805301636763,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9496477622687455,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.8734143347554717,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.3388316675043542,
+          "boundary": true
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.9785788452598836,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.8780086372406047,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S7",
+            "S8"
+          ],
+          "coherenceScore": 0.784565660355395,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S8",
+            "S9"
+          ],
+          "coherenceScore": 0.8755652558862438,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S9",
+            "S10"
+          ],
+          "coherenceScore": 0.88336725992204,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S10",
+            "S11"
+          ],
+          "coherenceScore": 0.32699419582402406,
+          "boundary": true
+        },
+        {
+          "pair": [
+            "S11",
+            "S12"
+          ],
+          "coherenceScore": 0.611059327892684,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10"
+          ]
+        },
+        {
+          "spanId": "span_2",
+          "sentenceIds": [
+            "S11",
+            "S12"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "user",
+      "sentenceCount": 1,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 0,
+      "pairScores": [],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "assistant",
+      "sentenceCount": 13,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 575,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9828065534684046,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9909321946494279,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.84752808147872,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.8764791808416815,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.6989012438554109,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.8549746329258293,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S7",
+            "S8"
+          ],
+          "coherenceScore": 0.8660283157093295,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S8",
+            "S9"
+          ],
+          "coherenceScore": 0.7898599273638129,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S9",
+            "S10"
+          ],
+          "coherenceScore": 0.849149943245717,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S10",
+            "S11"
+          ],
+          "coherenceScore": 0.9518152487414591,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S11",
+            "S12"
+          ],
+          "coherenceScore": 0.9592477044727571,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S12",
+            "S13"
+          ],
+          "coherenceScore": 0.951660436353905,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S13"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "user",
+      "sentenceCount": 7,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 448,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9569584469473266,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.8993471346628151,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.8264326327596377,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.9227122092110878,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.7194361263742431,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.8196027406410064,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "assistant",
+      "sentenceCount": 9,
+      "spanCount": 2,
+      "boundaryCount": 1,
+      "latencyMs": 524,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9680310552968595,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9411136158421542,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.9713570800840671,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.9122706471766951,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.43567691849872664,
+          "boundary": true
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.8408453694226113,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S7",
+            "S8"
+          ],
+          "coherenceScore": 0.7694956798055068,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S8",
+            "S9"
+          ],
+          "coherenceScore": 0.9480558085419687,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
+            "S6",
+            "S7",
+            "S8",
+            "S9"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "user",
+      "sentenceCount": 2,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 220,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.7583373333330568,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "assistant",
+      "sentenceCount": 4,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 245,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9423280314557908,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.8064629038345432,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.9775642968562906,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "user",
+      "sentenceCount": 4,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 243,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.5451557073562815,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.7610085424851785,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.8760456808270933,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "assistant",
+      "sentenceCount": 3,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 43,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9335131487470367,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9335557980103658,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "user",
+      "sentenceCount": 2,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 54,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9712064671563787,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "assistant",
+      "sentenceCount": 1,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 0,
+      "pairScores": [],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "user",
+      "sentenceCount": 20,
+      "spanCount": 2,
+      "boundaryCount": 1,
+      "latencyMs": 1359,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.49805703479905433,
+          "boundary": true
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9045406793444294,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.9620287327800272,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.9107255079549649,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.9717016672761414,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.950926257468274,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S7",
+            "S8"
+          ],
+          "coherenceScore": 0.9667967228505373,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S8",
+            "S9"
+          ],
+          "coherenceScore": 0.8166505684207053,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S9",
+            "S10"
+          ],
+          "coherenceScore": 0.9169146995437469,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S10",
+            "S11"
+          ],
+          "coherenceScore": 0.9944442889678947,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S11",
+            "S12"
+          ],
+          "coherenceScore": 0.9898444492218262,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S12",
+            "S13"
+          ],
+          "coherenceScore": 0.7636041932051277,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S13",
+            "S14"
+          ],
+          "coherenceScore": 0.8591159097848551,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S14",
+            "S15"
+          ],
+          "coherenceScore": 0.9827251834155276,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S15",
+            "S16"
+          ],
+          "coherenceScore": 0.9556134148236906,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S16",
+            "S17"
+          ],
+          "coherenceScore": 0.9278390028515853,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S17",
+            "S18"
+          ],
+          "coherenceScore": 0.9519683639353222,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S18",
+            "S19"
+          ],
+          "coherenceScore": 0.9598901949454638,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S19",
+            "S20"
+          ],
+          "coherenceScore": 0.9583061263170829,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S13",
+            "S14",
+            "S15",
+            "S16",
+            "S17",
+            "S18",
+            "S19",
+            "S20"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "assistant",
+      "sentenceCount": 8,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 506,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.8797168216089305,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9131222267981907,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.9492586225177693,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.7138265979809197,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.9797959996827424,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.9886102310899828,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S7",
+            "S8"
+          ],
+          "coherenceScore": 0.9169472967357241,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "user",
+      "sentenceCount": 2,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 106,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.90069698958905,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "assistant",
+      "sentenceCount": 8,
+      "spanCount": 2,
+      "boundaryCount": 1,
+      "latencyMs": 594,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9429584900601968,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9477709663371303,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.3723662073064458,
+          "boundary": true
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.7881273946315271,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.7782902324623587,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.8777766620112799,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S7",
+            "S8"
+          ],
+          "coherenceScore": 0.8880814396591159,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 13,
+      "speaker": "user",
+      "sentenceCount": 2,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 31,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9265034599427434,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 13,
+      "speaker": "assistant",
+      "sentenceCount": 5,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 319,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.863888197079847,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.970730500252463,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.8581770788245365,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.9174031331859569,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 14,
+      "speaker": "user",
+      "sentenceCount": 1,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 0,
+      "pairScores": [],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 14,
+      "speaker": "assistant",
+      "sentenceCount": 3,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 110,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.6634656439775449,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9311774928230462,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 15,
+      "speaker": "user",
+      "sentenceCount": 18,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 1875,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.5532861355818314,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9563134965835874,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.9107255079549649,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.9717016672761414,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.950926257468274,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.9667967228505373,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S7",
+            "S8"
+          ],
+          "coherenceScore": 0.9344117854405659,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S8",
+            "S9"
+          ],
+          "coherenceScore": 0.9783765807473698,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S9",
+            "S10"
+          ],
+          "coherenceScore": 0.9332356721909326,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S10",
+            "S11"
+          ],
+          "coherenceScore": 0.9886700599922716,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S11",
+            "S12"
+          ],
+          "coherenceScore": 0.9852034120461652,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S12",
+            "S13"
+          ],
+          "coherenceScore": 0.9634593507409288,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S13",
+            "S14"
+          ],
+          "coherenceScore": 0.885953546144757,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S14",
+            "S15"
+          ],
+          "coherenceScore": 0.8313098673135365,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S15",
+            "S16"
+          ],
+          "coherenceScore": 0.9694424891593205,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S16",
+            "S17"
+          ],
+          "coherenceScore": 0.9886393490270656,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S17",
+            "S18"
+          ],
+          "coherenceScore": 0.9846453120798242,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S13",
+            "S14",
+            "S15",
+            "S16",
+            "S17",
+            "S18"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 15,
+      "speaker": "assistant",
+      "sentenceCount": 13,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 1350,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.8920041298754655,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.8726843743196849,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.885024412121229,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.8818304131776722,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.6829177955177874,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.9466590491315111,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S7",
+            "S8"
+          ],
+          "coherenceScore": 0.996116351798637,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S8",
+            "S9"
+          ],
+          "coherenceScore": 0.8389781751338363,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S9",
+            "S10"
+          ],
+          "coherenceScore": 0.8357441040694066,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S10",
+            "S11"
+          ],
+          "coherenceScore": 0.7447150655003633,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S11",
+            "S12"
+          ],
+          "coherenceScore": 0.5457354034699042,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S12",
+            "S13"
+          ],
+          "coherenceScore": 0.950559555802267,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S13"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 16,
+      "speaker": "user",
+      "sentenceCount": 2,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 81,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9268157376998349,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 16,
+      "speaker": "assistant",
+      "sentenceCount": 7,
+      "spanCount": 3,
+      "boundaryCount": 2,
+      "latencyMs": 799,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9896383559051986,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.37503988233823876,
+          "boundary": true
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.4449026865790533,
+          "boundary": true
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.6942838779586159,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.9877583326383743,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.8185188826674339,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
+            "S3"
+          ]
+        },
+        {
+          "spanId": "span_2",
+          "sentenceIds": [
+            "S4",
+            "S5",
+            "S6",
+            "S7"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 17,
+      "speaker": "user",
+      "sentenceCount": 15,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 1345,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9706594339045014,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.8975618136806216,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.9728087134208993,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.9174624789094105,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.9353284075037256,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.8989371663331565,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S7",
+            "S8"
+          ],
+          "coherenceScore": 0.9284710689479134,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S8",
+            "S9"
+          ],
+          "coherenceScore": 0.9717559586996705,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S9",
+            "S10"
+          ],
+          "coherenceScore": 0.9669026473902471,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S10",
+            "S11"
+          ],
+          "coherenceScore": 0.8042714845666058,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S11",
+            "S12"
+          ],
+          "coherenceScore": 0.8253219815204798,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S12",
+            "S13"
+          ],
+          "coherenceScore": 0.8761628428077435,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S13",
+            "S14"
+          ],
+          "coherenceScore": 0.9141588185578631,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S14",
+            "S15"
+          ],
+          "coherenceScore": 0.5609399190536583,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S13",
+            "S14",
+            "S15"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 17,
+      "speaker": "assistant",
+      "sentenceCount": 8,
+      "spanCount": 2,
+      "boundaryCount": 1,
+      "latencyMs": 556,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.8364046613164184,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.8939160715933654,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.8014464716406303,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.6250778670450907,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.03077332342374739,
+          "boundary": true
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.761971768053598,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S7",
+            "S8"
+          ],
+          "coherenceScore": 0.8542306351896354,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
+            "S6",
+            "S7",
+            "S8"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 18,
+      "speaker": "user",
+      "sentenceCount": 3,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 213,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.7086882188261358,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9063791257630913,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 18,
+      "speaker": "assistant",
+      "sentenceCount": 9,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 737,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9175073416870863,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9763013016715254,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.8387885680022855,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.7346385908039578,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.641739038289588,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.979496686279292,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S7",
+            "S8"
+          ],
+          "coherenceScore": 0.9846845728964573,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S8",
+            "S9"
+          ],
+          "coherenceScore": 0.9334810525877165,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 19,
+      "speaker": "user",
+      "sentenceCount": 1,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 0,
+      "pairScores": [],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 19,
+      "speaker": "assistant",
+      "sentenceCount": 3,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 244,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.986794631357059,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9086784256696925,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 20,
+      "speaker": "user",
+      "sentenceCount": 1,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 0,
+      "pairScores": [],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 20,
+      "speaker": "assistant",
+      "sentenceCount": 2,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 13,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9148604333657905,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 21,
+      "speaker": "user",
+      "sentenceCount": 0,
+      "spanCount": 0,
+      "boundaryCount": 0,
+      "latencyMs": 0,
+      "pairScores": [],
+      "spans": []
+    },
+    {
+      "turnIndex": 21,
+      "speaker": "assistant",
+      "sentenceCount": 2,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 78,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9156710100854271,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 22,
+      "speaker": "user",
+      "sentenceCount": 8,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 358,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9444952546171951,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9107255079549649,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.9717016672761414,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.950926257468274,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.9667967228505373,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.9596447890049629,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S7",
+            "S8"
+          ],
+          "coherenceScore": 0.8762939701899688,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 22,
+      "speaker": "assistant",
+      "sentenceCount": 6,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 532,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9517916464170927,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9245451695569866,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.9545161637148459,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.9923342395721054,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.9848109404929727,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 23,
+      "speaker": "user",
+      "sentenceCount": 1,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 0,
+      "pairScores": [],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 23,
+      "speaker": "assistant",
+      "sentenceCount": 2,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 31,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9026264404485046,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 24,
+      "speaker": "user",
+      "sentenceCount": 17,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 1278,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9262227585855838,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9107255079549649,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.9717016672761414,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.950926257468274,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.9667967228505373,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.870494152711543,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S7",
+            "S8"
+          ],
+          "coherenceScore": 0.9516171220246905,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S8",
+            "S9"
+          ],
+          "coherenceScore": 0.9544153426514369,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S9",
+            "S10"
+          ],
+          "coherenceScore": 0.9900308695422881,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S10",
+            "S11"
+          ],
+          "coherenceScore": 0.986628850254243,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S11",
+            "S12"
+          ],
+          "coherenceScore": 0.9807916188887803,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S12",
+            "S13"
+          ],
+          "coherenceScore": 0.7949721873301986,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S13",
+            "S14"
+          ],
+          "coherenceScore": 0.9259965251377407,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S14",
+            "S15"
+          ],
+          "coherenceScore": 0.9920915394483867,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S15",
+            "S16"
+          ],
+          "coherenceScore": 0.974700444121981,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S16",
+            "S17"
+          ],
+          "coherenceScore": 0.9732264723551054,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S13",
+            "S14",
+            "S15",
+            "S16",
+            "S17"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 24,
+      "speaker": "assistant",
+      "sentenceCount": 7,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 416,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9589370495847699,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9207900584549312,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.9215474369780474,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.8439871618452554,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.9765178494374612,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.9848488077972535,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 25,
+      "speaker": "user",
+      "sentenceCount": 1,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 0,
+      "pairScores": [],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 25,
+      "speaker": "assistant",
+      "sentenceCount": 7,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 414,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9948508420041836,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9967951152513889,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.7250615170622908,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.8347622305636316,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.9327870585395586,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.9014789177206638,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 26,
+      "speaker": "user",
+      "sentenceCount": 1,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 0,
+      "pairScores": [],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 26,
+      "speaker": "assistant",
+      "sentenceCount": 11,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 1011,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.8688078974735545,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.9677903844748107,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.9348583636332213,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.7629217773426463,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.8838975820455814,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S6",
+            "S7"
+          ],
+          "coherenceScore": 0.9540194551867422,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S7",
+            "S8"
+          ],
+          "coherenceScore": 0.7070838686517639,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S8",
+            "S9"
+          ],
+          "coherenceScore": 0.6632933109021396,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S9",
+            "S10"
+          ],
+          "coherenceScore": 0.9719383693822111,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S10",
+            "S11"
+          ],
+          "coherenceScore": 0.9558296447580541,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 27,
+      "speaker": "user",
+      "sentenceCount": 1,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 0,
+      "pairScores": [],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 27,
+      "speaker": "assistant",
+      "sentenceCount": 2,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 31,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.9213917048136578,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 28,
+      "speaker": "user",
+      "sentenceCount": 1,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 0,
+      "pairScores": [],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 28,
+      "speaker": "assistant",
+      "sentenceCount": 1,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 0,
+      "pairScores": [],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 29,
+      "speaker": "user",
+      "sentenceCount": 1,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 0,
+      "pairScores": [],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1"
+          ]
+        }
+      ]
+    },
+    {
+      "turnIndex": 29,
+      "speaker": "assistant",
+      "sentenceCount": 6,
+      "spanCount": 1,
+      "boundaryCount": 0,
+      "latencyMs": 567,
+      "pairScores": [
+        {
+          "pair": [
+            "S1",
+            "S2"
+          ],
+          "coherenceScore": 0.5116523866849275,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S2",
+            "S3"
+          ],
+          "coherenceScore": 0.8626302005566756,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S3",
+            "S4"
+          ],
+          "coherenceScore": 0.9682517095132275,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S4",
+            "S5"
+          ],
+          "coherenceScore": 0.9076872495041166,
+          "boundary": false
+        },
+        {
+          "pair": [
+            "S5",
+            "S6"
+          ],
+          "coherenceScore": 0.9276202116333553,
+          "boundary": false
+        }
+      ],
+      "spans": [
+        {
+          "spanId": "span_0",
+          "sentenceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6"
+          ]
+        }
+      ]
+    }
+  ]
+}

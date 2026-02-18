@@ -2,7 +2,7 @@
   "conversationUuid": "775bedcc-9fca-4e3a-9cd3-23b0e6246e64",
   "conversationName": "Teaching Charlie a double leg takedown for her first wrestling meet",
   "turnCount": 58,
-  "totalSentences": 443,
+  "totalSentences": 368,
   "turns": [
     {
       "turnIndex": 0,
@@ -576,7 +576,7 @@
       "turnIndex": 7,
       "speaker": "user",
       "inputCharCount": 1740,
-      "sentenceCount": 20,
+      "sentenceCount": 5,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
@@ -586,78 +586,18 @@
         },
         {
           "id": "S2",
-          "text": "Here’s the logic I’m using (this is standard food-science / USDA style normalization):\n\nFrozen corn ≈ already 100% edible\n\nCanned corn ≈ ~60–65% corn solids after draining (rest is water)\n\nDried corn ≈ ~2."
+          "text": "Here’s the logic I’m using (this is standard food-science / USDA style normalization):\n\nFrozen corn ≈ already 100% edible\n\nCanned corn ≈ ~60–65% corn solids after draining (rest is water)\n\nDried corn ≈ ~2.5× weight gain when fully hydrated/cooked\n\n\nUsing that, here’s the normalized table."
         },
         {
           "id": "S3",
-          "text": "5× weight gain when fully hydrated/cooked\n\n\nUsing that, here’s the normalized table."
+          "text": "---\n\nNormalized comparison (edible, hydrated corn)\n\nType\tTypical retail cost\tNormalized cost (per lb edible corn)\tShelf life\n\nFrozen corn\t$1.80 / lb\t$1.80 / lb edible\t8–12 months (freezer)\nCanned corn\t$0.85 / lb (with liquid)\t~$1.35–1.45 / lb edible\t3–5 years (pantry)\nDried corn (bulk)\t$0.30 / lb (dry)\t~$0.12–0.15 / lb edible\t1–2 years (pantry, sealed)\n\n\n\n---\n\nWhy this works\n\nCanned: 1 lb canned → ~0.62 lb actual corn\n→ $0.85 ÷ 0.62 ≈ $1.37 per lb edible\n\nDried: 1 lb dry → ~2.5 lb cooked\n→ $0.30 ÷ 2.5 ≈ $0.12 per lb edible\n\nFrozen: already hydrated, no adjustment needed\n\n\n\n---\n\nWhat this means in practice\n\nCanned looks cheap because of water weight — once normalized, it’s only slightly cheaper than frozen, not dramatically."
         },
         {
           "id": "S4",
-          "text": "---\n\nNormalized comparison (edible, hydrated corn)\n\nType\tTypical retail cost\tNormalized cost (per lb edible corn)\tShelf life\n\nFrozen corn\t$1."
-        },
-        {
-          "id": "S5",
-          "text": "80 / lb\t$1."
-        },
-        {
-          "id": "S6",
-          "text": "80 / lb edible\t8–12 months (freezer)\nCanned corn\t$0."
-        },
-        {
-          "id": "S7",
-          "text": "85 / lb (with liquid)\t~$1."
-        },
-        {
-          "id": "S8",
-          "text": "45 / lb edible\t3–5 years (pantry)\nDried corn (bulk)\t$0."
-        },
-        {
-          "id": "S9",
-          "text": "30 / lb (dry)\t~$0."
-        },
-        {
-          "id": "S10",
-          "text": "15 / lb edible\t1–2 years (pantry, sealed)\n\n\n\n---\n\nWhy this works\n\nCanned: 1 lb canned → ~0."
-        },
-        {
-          "id": "S11",
-          "text": "62 lb actual corn\n→ $0."
-        },
-        {
-          "id": "S12",
-          "text": "85 ÷ 0."
-        },
-        {
-          "id": "S13",
-          "text": "62 ≈ $1."
-        },
-        {
-          "id": "S14",
-          "text": "37 per lb edible\n\nDried: 1 lb dry → ~2."
-        },
-        {
-          "id": "S15",
-          "text": "5 lb cooked\n→ $0."
-        },
-        {
-          "id": "S16",
-          "text": "30 ÷ 2."
-        },
-        {
-          "id": "S17",
-          "text": "5 ≈ $0."
-        },
-        {
-          "id": "S18",
-          "text": "12 per lb edible\n\nFrozen: already hydrated, no adjustment needed\n\n\n\n---\n\nWhat this means in practice\n\nCanned looks cheap because of water weight — once normalized, it’s only slightly cheaper than frozen, not dramatically."
-        },
-        {
-          "id": "S19",
           "text": "Frozen costs more because of cold-chain logistics, not because the corn itself is expensive."
         },
         {
-          "id": "S20",
+          "id": "S5",
           "text": "Dried corn absolutely crushes on cost, you pay in:\n\nprep time\n\ntexture differences\n\nplanning ahead\n\n\n\nRule of thumb\n\nConvenience → frozen\n\nCheap + easy pantry storage → canned\n\nUltra-cheap + long-term resilience → dried\n\n\nIf you want, next step could be:\n\ncost per cooked cup\n\nInstant Pot timing + texture outcomes\n\nwhen dried corn is not worth it (there are cases)\n\n\nAll right, the only thing I want is one table with the normalized weights and cost of dry cans and Frozen corn"
         }
       ]
@@ -672,15 +612,15 @@
       "sentences": [
         {
           "id": "S1",
-          "text": "| Type | Cost per lb edible corn |\n|------|------------------------|\n| Dried (bulk) | $0."
+          "text": "Type: Dried (bulk), Cost per lb edible corn: $0.12–0.15."
         },
         {
           "id": "S2",
-          "text": "15 |\n| Canned | $1."
+          "text": "Type: Canned, Cost per lb edible corn: $1.35–1.45."
         },
         {
           "id": "S3",
-          "text": "45 |\n| Frozen | $1."
+          "text": "Type: Frozen, Cost per lb edible corn: $1.80."
         }
       ]
     },
@@ -742,7 +682,7 @@
       "turnIndex": 9,
       "speaker": "assistant",
       "inputCharCount": 770,
-      "sentenceCount": 19,
+      "sentenceCount": 10,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
@@ -756,71 +696,35 @@
         },
         {
           "id": "S3",
-          "text": "I used $0."
+          "text": "I used $0.30/lb which is more like feed corn."
         },
         {
           "id": "S4",
-          "text": "30/lb which is more like feed corn."
-        },
-        {
-          "id": "S5",
           "text": "Food-grade dried sweet corn is more like $2-3/lb."
         },
         {
+          "id": "S5",
+          "text": "Let me redo this:\n\nRealistic prices:\nFrozen corn: $1.80/lb (correct)\nCanned corn: $0.85/lb total weight (correct)\nDried corn (food-grade): ~$2.50/lb dry (not $0.30)\n\nRecalculated:\n\nType: Canned, Cost per lb edible corn: $1.35."
+        },
+        {
           "id": "S6",
-          "text": "Let me redo this:\n\nRealistic prices:\nFrozen corn: $1."
+          "text": "Type: Frozen, Cost per lb edible corn: $1.80."
         },
         {
           "id": "S7",
-          "text": "80/lb (correct)\nCanned corn: $0."
+          "text": "Type: Dried (bulk), Cost per lb edible corn: $1.00."
         },
         {
           "id": "S8",
-          "text": "85/lb total weight (correct)\nDried corn (food-grade): ~$2."
+          "text": "($2.50 dry ÷ 2.5x hydration = $1.00 per lb edible)\n\nThat makes way more sense."
         },
         {
           "id": "S9",
-          "text": "50/lb dry (not $0."
-        },
-        {
-          "id": "S10",
-          "text": "30)\n\nRecalculated:\n\n| Type | Cost per lb edible corn |\n|------|------------------------|\n| Canned | $1."
-        },
-        {
-          "id": "S11",
-          "text": "35 |\n| Frozen | $1."
-        },
-        {
-          "id": "S12",
-          "text": "80 |\n| Dried (bulk) | $1."
-        },
-        {
-          "id": "S13",
-          "text": "00 |\n\n($2."
-        },
-        {
-          "id": "S14",
-          "text": "50 dry ÷ 2."
-        },
-        {
-          "id": "S15",
-          "text": "5x hydration = $1."
-        },
-        {
-          "id": "S16",
-          "text": "00 per lb edible)\n\nThat makes way more sense."
-        },
-        {
-          "id": "S17",
           "text": "Dried is cheaper but not absurdly so, and the ranking now reflects actual grocery store reality."
         },
         {
-          "id": "S18",
-          "text": "Good catch - $0."
-        },
-        {
-          "id": "S19",
-          "text": "12/lb was nonsense unless you're buying livestock feed."
+          "id": "S10",
+          "text": "Good catch - $0.12/lb was nonsense unless you're buying livestock feed."
         }
       ]
     },
@@ -894,77 +798,33 @@
       "turnIndex": 11,
       "speaker": "assistant",
       "inputCharCount": 696,
-      "sentenceCount": 17,
+      "sentenceCount": 6,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
         {
           "id": "S1",
-          "text": "| Type | Cost per lb edible corn |\n|------|------------------------|\n| Canned (bulk) | $1."
+          "text": "Type: Canned (bulk), Cost per lb edible corn: $1.23."
         },
         {
           "id": "S2",
-          "text": "23 |\n| Canned (typical) | $1."
+          "text": "Type: Canned (typical), Cost per lb edible corn: $1.45."
         },
         {
           "id": "S3",
-          "text": "45 |\n| Frozen | $1."
+          "text": "Type: Frozen, Cost per lb edible corn: $1.80."
         },
         {
           "id": "S4",
-          "text": "80 |\n| Dried (bulk) | $6."
+          "text": "Type: Dried (bulk), Cost per lb edible corn: $6.00."
         },
         {
           "id": "S5",
-          "text": "00 |\n\nCalculation breakdown:\nCanned bulk ($0."
+          "text": "Calculation breakdown:\nCanned bulk ($0.76/lb total ÷ 0.62 drain factor = $1.23/lb edible)\nCanned typical ($0.90/lb total ÷ 0.62 drain factor = $1.45/lb edible)\nFrozen ($1.80/lb - already edible weight)\nDried ($14.99/lb dry ÷ 2.5 hydration = $6.00/lb edible)\n\nDried corn is way more expensive than I initially claimed."
         },
         {
           "id": "S6",
-          "text": "76/lb total ÷ 0."
-        },
-        {
-          "id": "S7",
-          "text": "62 drain factor = $1."
-        },
-        {
-          "id": "S8",
-          "text": "23/lb edible)\nCanned typical ($0."
-        },
-        {
-          "id": "S9",
-          "text": "90/lb total ÷ 0."
-        },
-        {
-          "id": "S10",
-          "text": "62 drain factor = $1."
-        },
-        {
-          "id": "S11",
-          "text": "45/lb edible)\nFrozen ($1."
-        },
-        {
-          "id": "S12",
-          "text": "80/lb - already edible weight)\nDried ($14."
-        },
-        {
-          "id": "S13",
-          "text": "99/lb dry ÷ 2."
-        },
-        {
-          "id": "S14",
-          "text": "5 hydration = $6."
-        },
-        {
-          "id": "S15",
-          "text": "00/lb edible)\n\nDried corn is way more expensive than I initially claimed."
-        },
-        {
-          "id": "S16",
-          "text": "12/lb figure was completely wrong - that would only work if you could buy food-grade dried corn for $0."
-        },
-        {
-          "id": "S17",
-          "text": "30/lb, which doesn't exist outside of maybe industrial/feed quantities."
+          "text": "The $0.12/lb figure was completely wrong - that would only work if you could buy food-grade dried corn for $0.30/lb, which doesn't exist outside of maybe industrial/feed quantities."
         }
       ]
     },
@@ -998,68 +858,52 @@
       "turnIndex": 12,
       "speaker": "assistant",
       "inputCharCount": 1671,
-      "sentenceCount": 15,
+      "sentenceCount": 11,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
         {
           "id": "S1",
-          "text": "King Arthur at $0."
+          "text": "King Arthur at $0.79/lb vs Ardent Mills at $0.33/lb - yeah, that's a 2.4x premium."
         },
         {
           "id": "S2",
-          "text": "79/lb vs Ardent Mills at $0."
+          "text": "Here's what you're actually paying for:\n\nProtein content matters most:\nKing Arthur AP: 11.7% protein (high for AP)\nGeneric AP flour: 10-11% protein\nArdent Mills AP: likely 10-10.5%\n\nHigher protein = more gluten development = better structure in breads, chewier cookies, stronger doughs."
         },
         {
           "id": "S3",
-          "text": "33/lb - yeah, that's a 2."
-        },
-        {
-          "id": "S4",
-          "text": "Here's what you're actually paying for:\n\nProtein content matters most:\nKing Arthur AP: 11."
-        },
-        {
-          "id": "S5",
-          "text": "7% protein (high for AP)\nGeneric AP flour: 10-11% protein\nArdent Mills AP: likely 10-10."
-        },
-        {
-          "id": "S6",
-          "text": "5%\n\nHigher protein = more gluten development = better structure in breads, chewier cookies, stronger doughs."
-        },
-        {
-          "id": "S7",
           "text": "For cakes/pastries you actually want LESS protein, which is why cake flour exists at ~8%."
         },
         {
-          "id": "S8",
+          "id": "S4",
           "text": "Other differences:\nWheat sourcing: King Arthur uses specific wheat varieties, claims no bleaching (naturally aged instead)\nMilling consistency: Tighter tolerances batch-to-batch."
         },
         {
-          "id": "S9",
+          "id": "S5",
           "text": "Commercial bakeries care about this - home bakers rarely notice\nQuality control: More testing, more consistent ash content and extraction rates\nBrand tax: You're definitely paying some premium for the name\n\nDoes it matter for your cooking?"
         },
         {
-          "id": "S10",
+          "id": "S6",
           "text": "Instant Pot chicken parm: Absolutely not."
         },
         {
-          "id": "S11",
+          "id": "S7",
           "text": "You're not even using flour here\nMost home baking: Minimal difference for cookies, quick breads, pancakes\nBread baking: Noticeable difference."
         },
         {
-          "id": "S12",
+          "id": "S8",
           "text": "That extra protein helps with rise and crumb structure\nPie crust/pastries: King Arthur is actually WORSE - too much protein makes tough pastry\n\nReal talk: Unless you're doing serious bread baking where gluten development matters, Ardent Mills will be fine."
         },
         {
-          "id": "S13",
-          "text": "4x price difference isn't justified for 95% of home cooking applications."
+          "id": "S9",
+          "text": "The 2.4x price difference isn't justified for 95% of home cooking applications."
         },
         {
-          "id": "S14",
+          "id": "S10",
           "text": "If you want better bread results without paying King Arthur prices, just buy bread flour (12-14% protein) when you need it and use cheap AP for everything else."
         },
         {
-          "id": "S15",
+          "id": "S11",
           "text": "What are you mainly using flour for?"
         }
       ]
@@ -1114,25 +958,25 @@
       "turnIndex": 13,
       "speaker": "assistant",
       "inputCharCount": 1223,
-      "sentenceCount": 15,
+      "sentenceCount": 11,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
         {
           "id": "S1",
-          "text": "Corn shelf life table:\n\n| Type | Cost per lb edible | Shelf life |\n|------|-------------------|------------|\n| Canned | $1."
+          "text": "Corn shelf life table:\n\nType: Canned, Cost per lb edible: $1.23-1.45, Shelf life: 3-5 years."
         },
         {
           "id": "S2",
-          "text": "45 | 3-5 years |\n| Frozen | $1."
+          "text": "Type: Frozen, Cost per lb edible: $1.80, Shelf life: 8-12 months."
         },
         {
           "id": "S3",
-          "text": "80 | 8-12 months |\n| Dried | $6."
+          "text": "Type: Dried, Cost per lb edible: $6.00, Shelf life: 25-30 years."
         },
         {
           "id": "S4",
-          "text": "00 | 25-30 years |\n\nOn the 1% protein question:\n\nEach 1% protein = roughly 10% more gluten potential."
+          "text": "On the 1% protein question:\n\nEach 1% protein = roughly 10% more gluten potential."
         },
         {
           "id": "S5",
@@ -1140,42 +984,26 @@
         },
         {
           "id": "S6",
-          "text": "You won't notice 1%\n\nKing Arthur's 11."
+          "text": "You won't notice 1%\n\nKing Arthur's 11.7% vs generic 10% is actually a 1.7% difference - that's meaningful for bread, irrelevant for most other stuff."
         },
         {
           "id": "S7",
-          "text": "7% vs generic 10% is actually a 1."
+          "text": "Cake flour pricing paradox:\n\nCake flour costs MORE ($1.20-1.50/lb) despite having less protein because:\nRequires extra-fine milling\nBleached for softer texture\nSmaller market = less economy of scale\nMore processing steps\n\nYour conclusion:\n\nYeah, go with Ardent Mills."
         },
         {
           "id": "S8",
-          "text": "7% difference - that's meaningful for bread, irrelevant for most other stuff."
+          "text": "Save the $0.46/lb and use that money on better ingredients that actually matter - like real butter, good vanilla, fresh eggs."
         },
         {
           "id": "S9",
-          "text": "Cake flour pricing paradox:\n\nCake flour costs MORE ($1."
-        },
-        {
-          "id": "S10",
-          "text": "50/lb) despite having less protein because:\nRequires extra-fine milling\nBleached for softer texture\nSmaller market = less economy of scale\nMore processing steps\n\nYour conclusion:\n\nYeah, go with Ardent Mills."
-        },
-        {
-          "id": "S11",
-          "text": "Save the $0."
-        },
-        {
-          "id": "S12",
-          "text": "46/lb and use that money on better ingredients that actually matter - like real butter, good vanilla, fresh eggs."
-        },
-        {
-          "id": "S13",
           "text": "Only buy King Arthur (or bread flour) if you're specifically making bread where gluten structure matters."
         },
         {
-          "id": "S14",
+          "id": "S10",
           "text": "For Instant Pot meals, air fryer stuff, general cooking?"
         },
         {
-          "id": "S15",
+          "id": "S11",
           "text": "Cheap flour is identical."
         }
       ]
@@ -1222,8 +1050,8 @@
       "turnIndex": 14,
       "speaker": "assistant",
       "inputCharCount": 1465,
-      "sentenceCount": 10,
-      "droppedFragments": 0,
+      "sentenceCount": 9,
+      "droppedFragments": 1,
       "punctuationNeeded": false,
       "sentences": [
         {
@@ -1236,34 +1064,30 @@
         },
         {
           "id": "S3",
-          "text": "Here's the reality:\n\nFor things where you DON'T want gluten (cakes, muffins, quick breads):\n8% cake flour: More forgiving with blender mixing, will still develop SOME gluten if you blend hard\n11."
+          "text": "Here's the reality:\n\nFor things where you DON'T want gluten (cakes, muffins, quick breads):\n8% cake flour: More forgiving with blender mixing, will still develop SOME gluten if you blend hard\n11.7% AP flour: Less forgiving, easier to create tough/rubbery texture with aggressive mixing\nDifference: Margin of error, not absolute capability\n\nFor things where you DO want gluten (bread, pizza, chewy cookies):\nHigher protein is BETTER for blender mixing because you're trying to develop that gluten network\nMechanical action + protein = exactly what you want\n\nPractical answer for blender-based workflow:\n\nIf you're making pancakes, waffles, crepes, some cakes - cake flour gives you more room to blend without worry."
         },
         {
           "id": "S4",
-          "text": "7% AP flour: Less forgiving, easier to create tough/rubbery texture with aggressive mixing\nDifference: Margin of error, not absolute capability\n\nFor things where you DO want gluten (bread, pizza, chewy cookies):\nHigher protein is BETTER for blender mixing because you're trying to develop that gluten network\nMechanical action + protein = exactly what you want\n\nPractical answer for blender-based workflow:\n\nIf you're making pancakes, waffles, crepes, some cakes - cake flour gives you more room to blend without worry."
-        },
-        {
-          "id": "S5",
           "text": "Recipes like Depression cake or Wacky cake literally dump everything in a bowl and mix - they work fine."
         },
         {
-          "id": "S6",
+          "id": "S5",
           "text": "If you're making quick breads or muffins - even cake flour will get tough if you blend aggressively."
         },
         {
-          "id": "S7",
+          "id": "S6",
           "text": "The issue isn't just protein, it's also incorporating too much air and breaking down structure."
         },
         {
-          "id": "S8",
+          "id": "S7",
           "text": "If you're making bread - high protein flour + mechanical mixing = exactly what you want."
         },
         {
-          "id": "S9",
+          "id": "S8",
           "text": "What are you trying to make with this blender workflow?"
         },
         {
-          "id": "S10",
+          "id": "S9",
           "text": "That determines which flour you need, not the other way around."
         }
       ]
@@ -1430,48 +1254,44 @@
       "turnIndex": 17,
       "speaker": "assistant",
       "inputCharCount": 1259,
-      "sentenceCount": 10,
-      "droppedFragments": 0,
+      "sentenceCount": 9,
+      "droppedFragments": 1,
       "punctuationNeeded": false,
       "sentences": [
         {
           "id": "S1",
-          "text": "Yeah, you're right - almond flour is $4/lb at Costco vs $0."
+          "text": "Yeah, you're right - almond flour is $4/lb at Costco vs $0.33/lb for Ardent Mills."
         },
         {
           "id": "S2",
-          "text": "33/lb for Ardent Mills."
-        },
-        {
-          "id": "S3",
           "text": "That's 12x more expensive."
         },
         {
-          "id": "S4",
+          "id": "S3",
           "text": "So scratch that unless you specifically want low-carb."
         },
         {
-          "id": "S5",
+          "id": "S4",
           "text": "Back to making wheat flour work for bulk blender production:\n\nThe recipe type matters more than the flour type."
         },
         {
-          "id": "S6",
+          "id": "S5",
           "text": "Look for \"blender muffin\" or \"one-bowl muffin\" recipes that are specifically designed for this:\n\nCommon patterns in blender-friendly wheat recipes:\nOil-based (not butter) - 1/2 to 3/4 cup per batch\nButtermilk or yogurt (acid weakens gluten)\nHigher egg ratio (fat from yolks helps)\nLower flour ratio overall\nOften include mashed banana or applesauce (moisture + pectin interfere with gluten)\n\nExample framework:\n2 cups flour\n2/3 cup oil\n3/4 cup buttermilk (or milk + 1 tbsp vinegar)\n2-3 eggs\n1 cup sugar\n2 tsp baking powder\nPinch salt\nAdd-ins (blueberries, chocolate chips, etc.)\n\nBlend wet ingredients first, add dry, pulse 4-5 times just until combined."
         },
         {
-          "id": "S7",
+          "id": "S6",
           "text": "Still lumpy is fine."
         },
         {
-          "id": "S8",
+          "id": "S7",
           "text": "Or just accept the two-step:\nWet in blender → dump into bowl with dry → 10 stirs with spatula."
         },
         {
-          "id": "S9",
+          "id": "S8",
           "text": "That's still way easier than creaming butter, measuring multiple times, etc. What's your actual batch size goal?"
         },
         {
-          "id": "S10",
+          "id": "S9",
           "text": "Are you trying to make like 48+ muffins at once?"
         }
       ]
@@ -1502,40 +1322,28 @@
       "turnIndex": 18,
       "speaker": "assistant",
       "inputCharCount": 675,
-      "sentenceCount": 8,
+      "sentenceCount": 5,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
         {
           "id": "S1",
-          "text": "| Type | Cost per lb edible | Shelf life | Volume per lb edible |\n|------|-------------------|------------|---------------------|\n| Canned | $1."
+          "text": "Type: Canned, Cost per lb edible: $1.23-1.45, Shelf life: 3-5 years, Volume per lb edible: ~2.25 cups."
         },
         {
           "id": "S2",
-          "text": "45 | 3-5 years | ~2."
+          "text": "Type: Frozen, Cost per lb edible: $1.80, Shelf life: 8-12 months, Volume per lb edible: ~2.5 cups."
         },
         {
           "id": "S3",
-          "text": "25 cups |\n| Frozen | $1."
+          "text": "Type: Dried (rehydrated), Cost per lb edible: $6.00, Shelf life: 25-30 years, Volume per lb edible: ~2.5-3 cups."
         },
         {
           "id": "S4",
-          "text": "80 | 8-12 months | ~2."
+          "text": "Volume notes:\nCanned corn packs slightly tighter (processing compression)\nFrozen corn has more air between IQF kernels\nRehydrated dried corn may not return to full original volume/texture but close\n\nAll three end up pretty similar in volume per pound of actual edible corn - roughly 2-3 cups per pound."
         },
         {
           "id": "S5",
-          "text": "5 cups |\n| Dried (rehydrated) | $6."
-        },
-        {
-          "id": "S6",
-          "text": "00 | 25-30 years | ~2."
-        },
-        {
-          "id": "S7",
-          "text": "5-3 cups |\n\nVolume notes:\nCanned corn packs slightly tighter (processing compression)\nFrozen corn has more air between IQF kernels\nRehydrated dried corn may not return to full original volume/texture but close\n\nAll three end up pretty similar in volume per pound of actual edible corn - roughly 2-3 cups per pound."
-        },
-        {
-          "id": "S8",
           "text": "The main variable is how compactly they're packed, not the kernel size itself."
         }
       ]
@@ -1578,7 +1386,7 @@
       "turnIndex": 19,
       "speaker": "assistant",
       "inputCharCount": 989,
-      "sentenceCount": 19,
+      "sentenceCount": 7,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
@@ -1592,71 +1400,23 @@
         },
         {
           "id": "S3",
-          "text": "| Type | Cost per lb edible | Shelf life | Volume per lb edible |\n|------|-------------------|------------|---------------------|\n| Canned (drained) | $1."
+          "text": "| Type | Cost per lb edible | Shelf life | Volume per lb edible |\nCanned (drained): Frozen, $1.23-1.45: $1.80, 3-5 years: 8-12 months, 2.75 cups: 2.75 cups."
         },
         {
           "id": "S4",
-          "text": "45 | 3-5 years | 2."
+          "text": "Canned (drained): Dried (rehydrated), $1.23-1.45: $6.00, 3-5 years: 25-30 years, 2.75 cups: 2.75 cups."
         },
         {
           "id": "S5",
-          "text": "75 cups |\n| Frozen | $1."
+          "text": "Sources:\nCanned: 5.8 oz/cup (USDA data) → 16 oz ÷ 5.8 = 2.76 cups/lb\nFrozen: 5.8 oz/cup (USDA data) → 16 oz ÷ 5.8 = 2.76 cups/lb  \nDried (rehydrated): Returns to approximately same kernel size as frozen/canned when fully hydrated\n\nThe key insight: Once you normalize everything to \"edible, hydrated corn\" the volume is nearly identical across all three forms - roughly 2.75 cups per pound."
         },
         {
           "id": "S6",
-          "text": "80 | 8-12 months | 2."
-        },
-        {
-          "id": "S7",
-          "text": "75 cups |\n| Dried (rehydrated) | $6."
-        },
-        {
-          "id": "S8",
-          "text": "00 | 25-30 years | 2."
-        },
-        {
-          "id": "S9",
-          "text": "75 cups |\n\nSources:\nCanned: 5."
-        },
-        {
-          "id": "S10",
-          "text": "8 oz/cup (USDA data) → 16 oz ÷ 5."
-        },
-        {
-          "id": "S11",
-          "text": "8 = 2."
-        },
-        {
-          "id": "S12",
-          "text": "76 cups/lb\nFrozen: 5."
-        },
-        {
-          "id": "S13",
-          "text": "8 oz/cup (USDA data) → 16 oz ÷ 5."
-        },
-        {
-          "id": "S14",
-          "text": "8 = 2."
-        },
-        {
-          "id": "S15",
-          "text": "76 cups/lb  \nDried (rehydrated): Returns to approximately same kernel size as frozen/canned when fully hydrated\n\nThe key insight: Once you normalize everything to \"edible, hydrated corn\" the volume is nearly identical across all three forms - roughly 2."
-        },
-        {
-          "id": "S16",
-          "text": "75 cups per pound."
-        },
-        {
-          "id": "S17",
           "text": "The kernels are the same size regardless of preservation method."
         },
         {
-          "id": "S18",
-          "text": "Dried corn in DRY state is much more compact at about 4."
-        },
-        {
-          "id": "S19",
-          "text": "5 cups per pound, but that's before rehydration and not directly comparable."
+          "id": "S7",
+          "text": "Dried corn in DRY state is much more compact at about 4.5 cups per pound, but that's before rehydration and not directly comparable."
         }
       ]
     },
@@ -1682,7 +1442,7 @@
       "turnIndex": 20,
       "speaker": "assistant",
       "inputCharCount": 1052,
-      "sentenceCount": 12,
+      "sentenceCount": 10,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
@@ -1692,15 +1452,15 @@
         },
         {
           "id": "S2",
-          "text": "| Type | Volume per lb (as purchased) |\n|------|---------------------------|\n| Canned (with liquid) | ~2 cups total can volume |\n| Frozen kernels | ~2."
+          "text": "| Type | Volume per lb (as purchased) |\nCanned (with liquid): Frozen kernels, ~2 cups total can volume: ~2.75 cups."
         },
         {
           "id": "S3",
-          "text": "75 cups |\n| Dried kernels | ~4."
+          "text": "Canned (with liquid): Dried kernels, ~2 cups total can volume: ~4.5 cups."
         },
         {
           "id": "S4",
-          "text": "5 cups |\n\nWhat this means:\nCanned: Most space-efficient for storage."
+          "text": "What this means:\nCanned: Most space-efficient for storage."
         },
         {
           "id": "S5",
@@ -1708,30 +1468,22 @@
         },
         {
           "id": "S6",
-          "text": "1 lb of frozen kernels fills about 2."
+          "text": "1 lb of frozen kernels fills about 2.75 cups in the bag\nDried: Takes up the most space per pound."
         },
         {
           "id": "S7",
-          "text": "75 cups in the bag\nDried: Takes up the most space per pound."
+          "text": "1 lb of dried corn fills about 4.5 cups\n\nThe paradox: Dried corn is the LEAST space-efficient by weight, because the kernels are so light when dehydrated."
         },
         {
           "id": "S8",
-          "text": "1 lb of dried corn fills about 4."
-        },
-        {
-          "id": "S9",
-          "text": "5 cups\n\nThe paradox: Dried corn is the LEAST space-efficient by weight, because the kernels are so light when dehydrated."
-        },
-        {
-          "id": "S10",
           "text": "You need more volume to get a pound of dried corn than you do for canned (which is heavy because of water/can)."
         },
         {
-          "id": "S11",
+          "id": "S9",
           "text": "For storage planning: If you're trying to maximize shelf space efficiency, canned wins."
         },
         {
-          "id": "S12",
+          "id": "S10",
           "text": "If you're trying to maximize edible corn per cubic foot long-term, dried still wins because of the 25-30 year shelf life."
         }
       ]
@@ -1762,41 +1514,25 @@
       "turnIndex": 21,
       "speaker": "assistant",
       "inputCharCount": 567,
-      "sentenceCount": 8,
+      "sentenceCount": 4,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
         {
           "id": "S1",
-          "text": "| Type | Cost per lb (as purchased) | Shelf life | Cubic feet per lb |\n|------|---------------------------|------------|------------------|\n| Canned (with liquid) | $0."
+          "text": "Type: Canned (with liquid), Cost per lb (as purchased): $0.76, Shelf life: 3-5 years, Cubic feet per lb: 0.017 ft³."
         },
         {
           "id": "S2",
-          "text": "76 | 3-5 years | 0."
+          "text": "Type: Frozen, Cost per lb (as purchased): $1.80, Shelf life: 8-12 months, Cubic feet per lb: 0.023 ft³."
         },
         {
           "id": "S3",
-          "text": "017 ft³ |\n| Frozen | $1."
+          "text": "Type: Dried, Cost per lb (as purchased): $14.99, Shelf life: 25-30 years, Cubic feet per lb: 0.038 ft³."
         },
         {
           "id": "S4",
-          "text": "80 | 8-12 months | 0."
-        },
-        {
-          "id": "S5",
-          "text": "023 ft³ |\n| Dried | $14."
-        },
-        {
-          "id": "S6",
-          "text": "99 | 25-30 years | 0."
-        },
-        {
-          "id": "S7",
-          "text": "038 ft³ |\n\nWhat this shows:\nCanned is most space-efficient (smallest volume per pound)\nDried takes up 2."
-        },
-        {
-          "id": "S8",
-          "text": "2x more storage space per pound than canned\nBut dried lasts 5-10x longer\n\nStorage efficiency ranking: Canned > Frozen > Dried (by volume per pound as purchased)"
+          "text": "What this shows:\nCanned is most space-efficient (smallest volume per pound)\nDried takes up 2.2x more storage space per pound than canned\nBut dried lasts 5-10x longer\n\nStorage efficiency ranking: Canned > Frozen > Dried (by volume per pound as purchased)"
         }
       ]
     },
@@ -1862,72 +1598,64 @@
       "turnIndex": 23,
       "speaker": "assistant",
       "inputCharCount": 1386,
-      "sentenceCount": 16,
+      "sentenceCount": 14,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
         {
           "id": "S1",
-          "text": "Headline: Dried corn is most space-efficient (0."
+          "text": "Headline: Dried corn is most space-efficient (0.028 ft³/lb), frozen worst (0.062 ft³/lb), but dried costs 20-28x more than canned."
         },
         {
           "id": "S2",
-          "text": "028 ft³/lb), frozen worst (0."
-        },
-        {
-          "id": "S3",
-          "text": "062 ft³/lb), but dried costs 20-28x more than canned."
-        },
-        {
-          "id": "S4",
           "text": "---\n\nParenting is almost entirely flexibility and adaptation."
         },
         {
-          "id": "S5",
+          "id": "S3",
           "text": "You can have principles and general strategies, but specific plans rarely survive contact with reality."
         },
         {
-          "id": "S6",
+          "id": "S4",
           "text": "Wrestling example: You had a solid plan - one defensive foundation, one offensive move, three attempts."
         },
         {
-          "id": "S7",
+          "id": "S5",
           "text": "But between now and the meet, Charlie might get sick, the coach might change the bracket, she might face someone way bigger, or she might just forget everything the second she steps on the mat."
         },
         {
-          "id": "S8",
+          "id": "S6",
           "text": "The adaptation skill is: maintain the goal (have fun, try the move), but be ready to completely pivot on execution."
         },
         {
-          "id": "S9",
+          "id": "S7",
           "text": "Maybe she's too nervous and just needs \"have fun and don't quit."
         },
         {
-          "id": "S10",
+          "id": "S8",
           "text": "\" Maybe she's crushing it and needs \"try something new."
         },
         {
-          "id": "S11",
+          "id": "S9",
           "text": "\" Maybe the move doesn't work and you say \"great sprawl, that counts as trying."
         },
         {
-          "id": "S12",
+          "id": "S10",
           "text": "\"\n\nThe parents who struggle most are the ones who can't let go of THE PLAN when the kid or situation changes."
         },
         {
-          "id": "S13",
+          "id": "S11",
           "text": "The flexible ones are like \"okay, new information, new approach, same underlying values."
         },
         {
-          "id": "S14",
+          "id": "S12",
           "text": "\"\n\nYou're building this muscle constantly - meal planning (kid suddenly hates pasta), schedules (practice cancelled), discipline (what worked last month doesn't work now), education (they're not learning the way you thought)."
         },
         {
-          "id": "S15",
+          "id": "S13",
           "text": "The core stays stable."
         },
         {
-          "id": "S16",
+          "id": "S14",
           "text": "The tactics are water."
         }
       ]
@@ -2306,8 +2034,8 @@
       "turnIndex": 28,
       "speaker": "assistant",
       "inputCharCount": 1249,
-      "sentenceCount": 11,
-      "droppedFragments": 0,
+      "sentenceCount": 4,
+      "droppedFragments": 1,
       "punctuationNeeded": false,
       "sentences": [
         {
@@ -2316,42 +2044,14 @@
         },
         {
           "id": "S2",
-          "text": "Let me break it down:\n\nCost per pound of edible corn:\nCanned: $1."
+          "text": "Let me break it down:\n\nCost per pound of edible corn:\nCanned: $1.23-1.45\nFrozen: $1.80\nDried (rehydrated): $6.00\n\nSo you're paying:\n4-5x more than canned\n3.3x more than frozen\n\nWhy dried costs so much:\nFreeze-drying is expensive as hell\nVacuum chambers, long processing time (24+ hours)\nHigh equipment costs spread over small production runs\nEnergy intensive\nSmall market = no economy of scale\nCanned corn: billions of cans/year, massive industrial scale\nFreeze-dried corn: niche market (preppers, backpackers)\nYou're paying for shelf life you probably don't need\n25-30 years vs 3-5 years for canned\nFor home use rotating through pantry stock, this is worthless\nThe math doesn't work for home storage\nOnly advantage: slightly better space efficiency (0.028 vs 0.018 ft³/lb)\nBut you're paying $5/lb premium to save 0.01 cubic feet\n\nWhen dried makes sense:\nBackpacking (weight matters)\nActual doomsday prepping (25-year shelf life matters)\nOff-grid living with no refrigeration\n\nFor normal home use?"
         },
         {
           "id": "S3",
-          "text": "45\nFrozen: $1."
-        },
-        {
-          "id": "S4",
-          "text": "80\nDried (rehydrated): $6."
-        },
-        {
-          "id": "S5",
-          "text": "00\n\nSo you're paying:\n4-5x more than canned\n3."
-        },
-        {
-          "id": "S6",
-          "text": "3x more than frozen\n\nWhy dried costs so much:\nFreeze-drying is expensive as hell\nVacuum chambers, long processing time (24+ hours)\nHigh equipment costs spread over small production runs\nEnergy intensive\nSmall market = no economy of scale\nCanned corn: billions of cans/year, massive industrial scale\nFreeze-dried corn: niche market (preppers, backpackers)\nYou're paying for shelf life you probably don't need\n25-30 years vs 3-5 years for canned\nFor home use rotating through pantry stock, this is worthless\nThe math doesn't work for home storage\nOnly advantage: slightly better space efficiency (0."
-        },
-        {
-          "id": "S7",
-          "text": "028 vs 0."
-        },
-        {
-          "id": "S8",
-          "text": "018 ft³/lb)\nBut you're paying $5/lb premium to save 0."
-        },
-        {
-          "id": "S9",
-          "text": "01 cubic feet\n\nWhen dried makes sense:\nBackpacking (weight matters)\nActual doomsday prepping (25-year shelf life matters)\nOff-grid living with no refrigeration\n\nFor normal home use?"
-        },
-        {
-          "id": "S10",
           "text": "You're paying a 400-500% premium for benefits you'll never use."
         },
         {
-          "id": "S11",
+          "id": "S4",
           "text": "Buy canned, rotate your stock every 2-3 years."
         }
       ]

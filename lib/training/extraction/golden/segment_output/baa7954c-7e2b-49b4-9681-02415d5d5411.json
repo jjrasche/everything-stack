@@ -2,7 +2,7 @@
   "conversationUuid": "baa7954c-7e2b-49b4-9681-02415d5d5411",
   "conversationName": "Integrated Farm and Living System Overview",
   "turnCount": 26,
-  "totalSentences": 197,
+  "totalSentences": 152,
   "turns": [
     {
       "turnIndex": 0,
@@ -22,24 +22,20 @@
       "turnIndex": 0,
       "speaker": "assistant",
       "inputCharCount": 1682,
-      "sentenceCount": 4,
+      "sentenceCount": 3,
       "droppedFragments": 0,
       "punctuationNeeded": true,
       "sentences": [
         {
           "id": "S1",
-          "text": "Let me break down the key aspects of this ambitious integrated farm and living system:\n\nCore Components:\n130 acre agricultural center surrounded by water-based systems\nCirculating \"lazy river\" fish farm (~10ft wide x 10ft deep) forms perimeter\nForest garden belt (~200ft deep) around exterior\nCross-cutting water channels create agricultural \"islands\"\nOptional housing integrated into forest garden areas\n\nKey Technical Features:\nGeothermal + solar thermal heating maintains 50-55°F minimum water temp\nWater circulation 0."
+          "text": "Let me break down the key aspects of this ambitious integrated farm and living system:\n\nCore Components:\n130 acre agricultural center surrounded by water-based systems\nCirculating \"lazy river\" fish farm (~10ft wide x 10ft deep) forms perimeter\nForest garden belt (~200ft deep) around exterior\nCross-cutting water channels create agricultural \"islands\"\nOptional housing integrated into forest garden areas\n\nKey Technical Features:\nGeothermal + solar thermal heating maintains 50-55°F minimum water temp\nWater circulation 0.5-1.0 ft/sec using 5hp pumps every 1000ft\n3° land grade for optimal drainage without erosion\nFrench drain system prevents contamination\nIntegrated irrigation from fish water\n\nClimate Benefits:\n2-3°F warmer within 100ft of water in winter\n40% growing season extension possible\nHigher humidity year-round\nReduced temperature extremes\nNatural thermal mass from water volume\n\nEconomic Viability:\nBase infrastructure: $400-600k materials\nOperating costs: ~$800-1200/month for heating\nFish production offset costs\nHousing potential creates value\nRecreation/tourism possibilities\n\nUnique Advantages:\nRegenerative agriculture integration\nYear-round fish production\nNatural livestock watering\nExtended growing season\nPotential housing integration with microclimate benefits\n\nTechnical challenges center around water heating costs, contamination prevention, maintenance complexity."
         },
         {
           "id": "S2",
-          "text": "0 ft/sec using 5hp pumps every 1000ft\n3° land grade for optimal drainage without erosion\nFrench drain system prevents contamination\nIntegrated irrigation from fish water\n\nClimate Benefits:\n2-3°F warmer within 100ft of water in winter\n40% growing season extension possible\nHigher humidity year-round\nReduced temperature extremes\nNatural thermal mass from water volume\n\nEconomic Viability:\nBase infrastructure: $400-600k materials\nOperating costs: ~$800-1200/month for heating\nFish production offset costs\nHousing potential creates value\nRecreation/tourism possibilities\n\nUnique Advantages:\nRegenerative agriculture integration\nYear-round fish production\nNatural livestock watering\nExtended growing season\nPotential housing integration with microclimate benefits\n\nTechnical challenges center around water heating costs, contamination prevention, maintenance complexity."
-        },
-        {
-          "id": "S3",
           "text": "However, the system's integration of multiple productive elements (agriculture, aquaculture, housing) could make it economically viable while creating significant environmental benefits."
         },
         {
-          "id": "S4",
+          "id": "S3",
           "text": "Want me to elaborate on any of these aspects?"
         }
       ]
@@ -284,7 +280,7 @@
       "turnIndex": 5,
       "speaker": "user",
       "inputCharCount": 20971,
-      "sentenceCount": 95,
+      "sentenceCount": 67,
       "droppedFragments": 0,
       "punctuationNeeded": true,
       "sentences": [
@@ -302,371 +298,259 @@
         },
         {
           "id": "S4",
-          "text": "If you add tree/shrub fodder, the new forage availability calculation becomes:\n\nTotal Forage Supply=(Pasture DM)+(Tree Browse DM)+(Mast Crop DM)+(Understory DM)\\text{Total Forage Supply} = (\\text{Pasture DM}) + (\\text{Tree Browse DM}) + (\\text{Mast Crop DM}) + (\\text{Understory DM})Total Forage Supply=(Pasture DM)+(Tree Browse DM)+(Mast Crop DM)+(Understory DM)\n\n📌 Example Calculation:  \nFor a 5-acre silvopasture paddock, assume:\nPasture Growth Rate = 250 lbs DM/acre/day\nEdible Tree Browse = 3,000 lbs DM/acre/year → (3,000 ÷ 365) ≈ 8 lbs DM/acre/day\nNut & Fruit Crop DM = 1,000 lbs DM/acre/year → (1,000 ÷ 365) ≈ 3 lbs DM/acre/day\nUnderstory Clover = 1,000 lbs DM/acre/year → (1,000 ÷ 365) ≈ 3 lbs DM/acre/day\n\nTotal adjusted forage supply per acre per day:\n\n250+8+3+3=264 lbs DM/acre/day250 + 8 + 3 + 3 = 264 \\text{ lbs DM/acre/day}250+8+3+3=264 lbs DM/acre/day\n\n\n\n\n\nUsing electric fencing to rotate cows, sheep, chickens daily to efficiently extract resources\n50 cows, 200 sheep, 600 layers\n1 acre strips, 1000ft x ~42 ft\ncows/sheep need 2-strand poly wire 4'\nchickens need electric poultry netting\n\n\n| Season | Growth Phase            | Regrowth Time (Days) | Max DM/acre in Phase   | Avg."
+          "text": "If you add tree/shrub fodder, the new forage availability calculation becomes:\n\nTotal Forage Supply=(Pasture DM)+(Tree Browse DM)+(Mast Crop DM)+(Understory DM)\\text{Total Forage Supply} = (\\text{Pasture DM}) + (\\text{Tree Browse DM}) + (\\text{Mast Crop DM}) + (\\text{Understory DM})Total Forage Supply=(Pasture DM)+(Tree Browse DM)+(Mast Crop DM)+(Understory DM)\n\n📌 Example Calculation:  \nFor a 5-acre silvopasture paddock, assume:\nPasture Growth Rate = 250 lbs DM/acre/day\nEdible Tree Browse = 3,000 lbs DM/acre/year → (3,000 ÷ 365) ≈ 8 lbs DM/acre/day\nNut & Fruit Crop DM = 1,000 lbs DM/acre/year → (1,000 ÷ 365) ≈ 3 lbs DM/acre/day\nUnderstory Clover = 1,000 lbs DM/acre/year → (1,000 ÷ 365) ≈ 3 lbs DM/acre/day\n\nTotal adjusted forage supply per acre per day:\n\n250+8+3+3=264 lbs DM/acre/day250 + 8 + 3 + 3 = 264 \\text{ lbs DM/acre/day}250+8+3+3=264 lbs DM/acre/day\n\n\n\n\n\nUsing electric fencing to rotate cows, sheep, chickens daily to efficiently extract resources\n50 cows, 200 sheep, 600 layers\n1 acre strips, 1000ft x ~42 ft\ncows/sheep need 2-strand poly wire 4'\nchickens need electric poultry netting\n\n\nSeason: Spring, Growth Phase: Rapid growth surge, Regrowth Time (Days): 45-50 days, Max DM/acre in Phase: 5,000 - 6,000 lbs, Avg."
         },
         {
           "id": "S5",
-          "text": "Start & End Dates (West Michigan) | # of Regrazes per Season | Notes                                                      |\n| ---------- | --------------------------- | ------------------------ | -------------------------- | ------------------------------------------ | ---------------------------- | -------------------------------------------------------------- |\n| Spring | Rapid growth surge          | 45-50 days               | 5,000 - 6,000 lbs      | April 15 – June 30                     | 2-3 times                | Grass grows faster than cows can eat, often harvested for hay."
+          "text": "Start & End Dates (West Michigan): April 15 – June 30, # of Regrazes per Season: 2-3 times, Notes: Grass grows faster than cows can eat, often harvested for hay."
         },
         {
           "id": "S6",
-          "text": "|\n| Summer | Slowed growth (heat stress) | 60-90 days               | 3,500 - 4,500 lbs      | July 1 – August 31                     | 1 time                   | Growth slows due to heat; paddocks require longer recovery."
+          "text": "Season: Summer, Growth Phase: Slowed growth (heat stress), Regrowth Time (Days): 60-90 days, Max DM/acre in Phase: 3,500 - 4,500 lbs, Avg."
         },
         {
           "id": "S7",
-          "text": "|\n| Fall   | Strong regrowth phase       | 45-60 days               | 4,500 - 5,500 lbs      | September 1 – November 1               | 1-2 times                | Ideal time to build stockpile; late fall grazing possible."
+          "text": "Start & End Dates (West Michigan): July 1 – August 31, # of Regrazes per Season: 1 time, Notes: Growth slows due to heat; paddocks require longer recovery."
         },
         {
           "id": "S8",
-          "text": "|\n| Winter | Dormant, no regrowth        | No regrowth (Nov–Mar)    | Stockpiled forage only | November 2 – April 14                  | 0 times (foraging only)  | No new growth; relies on stored or standing forage."
+          "text": "Season: Fall, Growth Phase: Strong regrowth phase, Regrowth Time (Days): 45-60 days, Max DM/acre in Phase: 4,500 - 5,500 lbs, Avg."
         },
         {
           "id": "S9",
-          "text": "|\n20 milk cows, replace 4/year\n1 bull, replace every 3 years\n9 new calves,\n18 growing steers\nOne calving season (March-May), ~90% conception rate, 9 months gestation, 12 months between births,  ~18 calves/year\nbreed: Brown Swiss (19,000 lbs milk/year, high butter fat)\nconsume ~60% of available forage\n30 lbs dry matter (DM)/day\nMeat production goal: Maximize forage-based weight gain."
+          "text": "Start & End Dates (West Michigan): September 1 – November 1, # of Regrazes per Season: 1-2 times, Notes: Ideal time to build stockpile; late fall grazing possible."
         },
         {
           "id": "S10",
-          "text": "##### Finishing Beef\n| Age (Months) | Live Weight (lbs) | Hanging Weight (lbs) | Carcass Yield (%) | Market Price (Per lb Live) | Meat Quality                | Best Market Use              |\n| ---------------- | --------------------- | ------------------------ | --------------------- | ------------------------------ | ------------------------------- | -------------------------------- |\n| 3-6 months   | 200-400               | N/A                      | N/A                   | $2."
+          "text": "Season: Winter, Growth Phase: Dormant, no regrowth, Regrowth Time (Days): No regrowth (Nov–Mar), Max DM/acre in Phase: Stockpiled forage only, Avg."
         },
         {
           "id": "S11",
-          "text": "00 - $3."
+          "text": "Start & End Dates (West Michigan): November 2 – April 14, # of Regrazes per Season: 0 times (foraging only), Notes: No new growth; relies on stored or standing forage."
         },
         {
           "id": "S12",
-          "text": "00                  | Veal (low fat)                  | Dairy calves, veal production    |\n| 6-12 months  | 400-800               | N/A                      | N/A                   | $1."
+          "text": "20 milk cows, replace 4/year\n1 bull, replace every 3 years\n9 new calves,\n18 growing steers\nOne calving season (March-May), ~90% conception rate, 9 months gestation, 12 months between births,  ~18 calves/year\nbreed: Brown Swiss (19,000 lbs milk/year, high butter fat)\nconsume ~60% of available forage\n30 lbs dry matter (DM)/day\nMeat production goal: Maximize forage-based weight gain."
         },
         {
           "id": "S13",
-          "text": "50 - $2."
+          "text": "##### Finishing Beef\nAge (Months): 3-6 months, Live Weight (lbs): 200-400, Hanging Weight (lbs): N/A, Carcass Yield (%): N/A, Market Price (Per lb Live): $2.00 - $3.00, Meat Quality: Veal (low fat), Best Market Use: Dairy calves, veal production."
         },
         {
           "id": "S14",
-          "text": "50                  | Lean, mild                      | Stocker calves for backgrounding |\n| 12-18 months | 800-1,200             | 480-720                  | 55-60%                | $1."
+          "text": "Age (Months): 6-12 months, Live Weight (lbs): 400-800, Hanging Weight (lbs): N/A, Carcass Yield (%): N/A, Market Price (Per lb Live): $1.50 - $2.50, Meat Quality: Lean, mild, Best Market Use: Stocker calves for backgrounding."
         },
         {
           "id": "S15",
-          "text": "30 - $2."
+          "text": "Age (Months): 12-18 months, Live Weight (lbs): 800-1,200, Hanging Weight (lbs): 480-720, Carcass Yield (%): 55-60%, Market Price (Per lb Live): $1.30 - $2.20, Meat Quality: Some marbling, Best Market Use: Feeder cattle for feedlot."
         },
         {
           "id": "S16",
-          "text": "20                  | Some marbling                   | Feeder cattle for feedlot        |\n| 18-24 months | 1,200-1,500           | 660-900                  | 55-60%                | $1."
+          "text": "Age (Months): 18-24 months, Live Weight (lbs): 1,200-1,500, Hanging Weight (lbs): 660-900, Carcass Yield (%): 55-60%, Market Price (Per lb Live): $1.00 - $1.70, Meat Quality: Prime beef, high marbling, Best Market Use: Finished grass-fed beef."
         },
         {
           "id": "S17",
-          "text": "00 - $1."
+          "text": "Age (Months): 24-30 months, Live Weight (lbs): 1,500-1,800, Hanging Weight (lbs): 825-1,080, Carcass Yield (%): 55-60%, Market Price (Per lb Live): $0.90 - $1.50, Meat Quality: Heavier finish, better marbling, Best Market Use: Prime beef or large butcher cuts."
         },
         {
           "id": "S18",
-          "text": "70                  | Prime beef, high marbling       | Finished grass-fed beef          |\n| 24-30 months | 1,500-1,800           | 825-1,080                | 55-60%                | $0."
+          "text": "Age (Months): 30+ months, Live Weight (lbs): 1,800+, Hanging Weight (lbs): 1,000+, Carcass Yield (%): 50-55%, Market Price (Per lb Live): $0.75 - $1.20, Meat Quality: Potentially tough, Best Market Use: Old cows, used for ground beef."
         },
         {
           "id": "S19",
-          "text": "90 - $1."
+          "text": "Grass-fed beef steers takes 24-30 months to reach full weight (~1,200-1,500 lbs live weight)."
         },
         {
           "id": "S20",
-          "text": "50                  | Heavier finish, better marbling | Prime beef or large butcher cuts |\n| 30+ months   | 1,800+                | 1,000+                   | 50-55%                | $0."
-        },
-        {
-          "id": "S21",
-          "text": "75 - $1."
-        },
-        {
-          "id": "S22",
-          "text": "20                  | Potentially tough               | Old cows, used for ground beef   |\nGrass-fed beef steers takes 24-30 months to reach full weight (~1,200-1,500 lbs live weight)."
-        },
-        {
-          "id": "S23",
           "text": "- Grain-fed cattle can finish faster (~18-22 months) due to higher energy intake."
         },
         {
-          "id": "S24",
+          "id": "S21",
           "text": "- Market prices fluctuate based on feed costs, demand, and seasonality."
         },
         {
-          "id": "S25",
+          "id": "S22",
           "text": "- Calves under 12 months are often sold as feeders rather than finished meat animals."
         },
         {
+          "id": "S23",
+          "text": "##### Pasture Requirements\nCategory: Breeding Cows, Number: 20, LB DM/Day per Head: 30-35 lbs, Total LB DM/Year: ~250,000-275,000, Acres Needed Annually: 100-120 acres, Acres Needed if Moving Daily (0.5-acre strips): ~40 acres."
+        },
+        {
+          "id": "S24",
+          "text": "Category: Growing Steers, Number: 18, LB DM/Day per Head: 25-30 lbs, Total LB DM/Year: ~150,000-200,000, Acres Needed Annually: 60-80 acres, Acres Needed if Moving Daily (0.5-acre strips): ~30 acres."
+        },
+        {
+          "id": "S25",
+          "text": "Category: Calves (<6 mo."
+        },
+        {
           "id": "S26",
-          "text": "##### Pasture Requirements\n| Category                | Number | LB DM/Day per Head  | Total LB DM/Year            | Acres Needed Annually | Acres Needed if Moving Daily (0."
+          "text": "), Number: 10, LB DM/Day per Head: 10-15 lbs, Total LB DM/Year: ~50,000-75,000, Acres Needed Annually: 20-30 acres, Acres Needed if Moving Daily (0.5-acre strips): ~10 acres."
         },
         {
           "id": "S27",
-          "text": "5-acre strips) |\n| --------------------------- | ---------- | ----------------------- | ------------------------------- | ------------------------- | -------------------------------------------------- |\n| Breeding Cows           | 20         | 30-35 lbs               | ~250,000-275,000                | 100-120 acres             | ~40 acres                                          |\n| Growing Steers          | 18         | 25-30 lbs               | ~150,000-200,000                | 60-80 acres               | ~30 acres                                          |\n| Calves (<6 mo."
+          "text": "Category: Bull (Maintenance), Number: 1, LB DM/Day per Head: 35-40 lbs, Total LB DM/Year: ~12,500-14,500, Acres Needed Annually: 5-10 acres, Acres Needed if Moving Daily (0.5-acre strips): ~4 acres."
         },
         {
           "id": "S28",
-          "text": ")         | 10         | 10-15 lbs               | ~50,000-75,000                  | 20-30 acres               | ~10 acres                                          |\n| Bull (Maintenance)      | 1          | 35-40 lbs               | ~12,500-14,500                  | 5-10 acres                | ~4 acres                                           |\n| Total Herd (50-52 head) | 50-52      | ~1,200-1,400 lbs DM/day | 450,000-550,000 lbs DM/year | 185-230 acres         | 84 acres                                       |\nmaintain 600, replace 200/year, cull based on visual indicators of age/productivity\n50 roosters, cull aggressive/old/excess at 12-16 weeks, add new genes every 5 years\nbrooding hen -> 6-12 chicks, need ~35 broodies annually, produce stronger more self sufficient chicks\nbroody hatching for production: self sustain brooding and egg laying populations without incubators."
+          "text": "Category: Total Herd (50-52 head), Number: 50-52, LB DM/Day per Head: ~1,200-1,400 lbs DM/day, Total LB DM/Year: 450,000-550,000 lbs DM/year, Acres Needed Annually: 185-230 acres, Acres Needed if Moving Daily (0.5-acre strips): 84 acres."
         },
         {
           "id": "S29",
-          "text": "remove eggs from good layers who are brooding and swap out for brooding hen's eggs \n2 breed flock, Australorp (270 eggs/yr, great layers, some brooding), Wyandotte (225 eggs/yr, cold-hardy, moderate broody)\n\n| Source                          | % of Feed | Protein         | Carb            | Fats          | Key Micronutrients                                      | Unique Benefits                                                                         | Annual Volume Needed for 600 Layers                               |     |\n| ----------------------------------- | --------- | --------------- | --------------- | ------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | --- |\n| Pasture Foraging                | 40%       | 12%             | 40%             | 4%            | Vitamin A, Omega-3s, minerals from soil                 | Provides greens, seeds, bugs, natural scratching behavior                           | 47,000 lbs (."
+          "text": "maintain 600, replace 200/year, cull based on visual indicators of age/productivity\n50 roosters, cull aggressive/old/excess at 12-16 weeks, add new genes every 5 years\nbrooding hen -> 6-12 chicks, need ~35 broodies annually, produce stronger more self sufficient chicks\nbroody hatching for production: self sustain brooding and egg laying populations without incubators."
         },
         {
           "id": "S30",
-          "text": "5 acre/day) for Apr-Oct                              |     |\n| Black Soldier Fly Larvae (BSFL) | 12."
+          "text": "remove eggs from good layers who are brooding and swap out for brooding hen's eggs \n2 breed flock, Australorp (270 eggs/yr, great layers, some brooding), Wyandotte (225 eggs/yr, cold-hardy, moderate broody)\n\nSource: Pasture Foraging, % of Feed: 40%, Protein: 12%, Carb: 40%, Fats: 4%, Key Micronutrients: Vitamin A, Omega-3s, minerals from soil, Unique Benefits: Provides greens, seeds, bugs, natural scratching behavior, Annual Volume Needed for 600 Layers: 47,000 lbs (."
         },
         {
           "id": "S31",
-          "text": "5%     | 45%             | 2."
+          "text": "5 acre/day) for Apr-Oct."
         },
         {
           "id": "S32",
-          "text": "5%            | 30%           | Calcium, Phosphorus, Methionine, Lysine                 | High-protein, low-cost, upcycles food waste & manure, year-round potential with biopods | 3,000 lbs of BSFL per year                                        |     |\n| Crop Production: Grains         | 35%       | 10%             | 67."
+          "text": "Source: Black Soldier Fly Larvae (BSFL), % of Feed: 12.5%, Protein: 45%, Carb: 2.5%, Fats: 30%, Key Micronutrients: Calcium, Phosphorus, Methionine, Lysine, Unique Benefits: High-protein, low-cost, upcycles food waste & manure, year-round potential with biopods, Annual Volume Needed for 600 Layers: 3,000 lbs of BSFL per year."
         },
         {
           "id": "S33",
-          "text": "5%           | 3%            | Vitamin E, some B vitamins                              | Energy source, replaces commercial grain feed                                           | 30,000 lbs of mixed grains (corn, wheat, barley, oats) (15 acres) |     |\n| Crop Production: Legumes        | 12."
+          "text": "Source: Crop Production: Grains, % of Feed: 35%, Protein: 10%, Carb: 67.5%, Fats: 3%, Key Micronutrients: Vitamin E, some B vitamins, Unique Benefits: Energy source, replaces commercial grain feed, Annual Volume Needed for 600 Layers: 30,000 lbs of mixed grains (corn, wheat, barley, oats) (15 acres)."
         },
         {
           "id": "S34",
-          "text": "5%     | 21."
+          "text": "Source: Crop Production: Legumes, % of Feed: 12.5%, Protein: 21.5%, Carb: 45%, Fats: 6%, Key Micronutrients: Lysine, Methionine, Phosphorus, Unique Benefits: Protein boost, nitrogen-fixer for soil, Annual Volume Needed for 600 Layers: 8,000 lbs of field peas, soybeans, lentils (~5 acres)."
         },
         {
           "id": "S35",
-          "text": "5%           | 45%             | 6%            | Lysine, Methionine, Phosphorus                          | Protein boost, nitrogen-fixer for soil                                                  | 8,000 lbs of field peas, soybeans, lentils (~5 acres)          |     |\n| Crop Production: Greens         | 7."
+          "text": "Source: Crop Production: Greens, % of Feed: 7.5%, Protein: 17.5%, Carb: 35%, Fats: 4.5%, Key Micronutrients: Vitamin A, Vitamin K, Calcium, Unique Benefits: Vitamins & minerals, improves yolk color, Annual Volume Needed for 600 Layers: 5,000 lbs of alfalfa, duckweed, comfrey (~3 acres)."
         },
         {
           "id": "S36",
-          "text": "5%      | 17."
+          "text": "Source: Food Scraps & Waste Grains, % of Feed: 7.5%, Protein: 15%, Carb: 45%, Fats: 7.5%, Key Micronutrients: Varies by scraps; potential for minerals, Unique Benefits: Reduces food waste, supplements micro-nutrients, Annual Volume Needed for 600 Layers: 5,000 lbs from farm & household waste."
         },
         {
           "id": "S37",
-          "text": "5%           | 35%             | 4."
+          "text": "Source: Total, % of Feed: 115%, Protein: 16.5%, Carb: 50%, Fats: 4.8%."
         },
         {
           "id": "S38",
-          "text": "5%          | Vitamin A, Vitamin K, Calcium                           | Vitamins & minerals, improves yolk color                                                | 5,000 lbs of alfalfa, duckweed, comfrey (~3 acres)             |     |\n| Food Scraps & Waste Grains      | 7."
+          "text": "Source: Total Supplement Needed, % of Feed: ~60%, Protein: 16-18% (Target), Carb: 50-60% (Target), Fats: 3-5% (Target), Key Micronutrients: Ensuring balance of Calcium, Phosphorus, Vitamins A & D."
         },
         {
           "id": "S39",
-          "text": "5%      | 15%             | 45%             | 7."
+          "text": "Forage Source: Insects (Fly Larvae, Beetles, Worms, Grasshoppers, etc.), Yield per 0.5 Acre: ~100-150 lbs, Feed Contribution per Chicken (600 birds): 0.16-0.25 lbs per bird per day."
         },
         {
           "id": "S40",
-          "text": "5%          | Varies by scraps; potential for minerals                | Reduces food waste, supplements micro-nutrients                                         | 5,000 lbs from farm & household waste                             |     |\n| Total                           | 115%      | 16."
+          "text": "Forage Source: Leftover Grass & Seed Heads, Yield per 0.5 Acre: ~50-75 lbs, Feed Contribution per Chicken (600 birds): 0.08-0.12 lbs per bird per day."
         },
         {
           "id": "S41",
-          "text": "5%           | 50%             | 4."
+          "text": "Forage Source: Grazing Residue (Clover, Alfalfa, Other Greens), Yield per 0.5 Acre: ~30-50 lbs, Feed Contribution per Chicken (600 birds): 0.05-0.08 lbs per bird per day."
         },
         {
           "id": "S42",
-          "text": "8%          |                                                         |                                                                                         |                                                                   |     |\n| Total Supplement Needed         | ~60%      | 16-18% (Target) | 50-60% (Target) | 3-5% (Target) | Ensuring balance of Calcium, Phosphorus, Vitamins A & D |                                                                                         |                                                                   |     |\n\n| Forage Source                                            | Yield per 0."
+          "text": "Forage Source: Manure-Based Microorganisms (Fungi, Bacteria, Protozoa), Yield per 0.5 Acre: ~10-20 lbs, Feed Contribution per Chicken (600 birds): 0.016-0.033 lbs per bird per day."
         },
         {
           "id": "S43",
-          "text": "5 Acre | Feed Contribution per Chicken (600 birds) |\n| -------------------------------------------------------- | ------------------ | ----------------------------------------- |\n| Insects (Fly Larvae, Beetles, Worms, Grasshoppers, etc.) | ~100-150 lbs       | 0."
+          "text": "Forage Source: Total, Yield per 0.5 Acre: 240 lbs/ ."
         },
         {
           "id": "S44",
-          "text": "25 lbs per bird per day            |\n| Leftover Grass & Seed Heads                              | ~50-75 lbs         | 0."
+          "text": "5 acre, Feed Contribution per Chicken (600 birds): ."
         },
         {
           "id": "S45",
-          "text": "12 lbs per bird per day            |\n| Grazing Residue (Clover, Alfalfa, Other Greens)          | ~30-50 lbs         | 0."
+          "text": "inputs: food scraps + coffee grounds + manure\nkept in passive climate controlled building for year round production\n100,000 larvae per m² optimal density\n15 kg waste processed per m²/day\n~0.2 kg dry weight harvest per m²/day\n1.5:1 FCR for BSFL (vs 10:1 for beef, 2:1 for mealworms)\n25% bioconversion rate for food waste\n12% bioconversion for manure\n250 sq."
         },
         {
           "id": "S46",
-          "text": "08 lbs per bird per day            |\n| Manure-Based Microorganisms (Fungi, Bacteria, Protozoa)  | ~10-20 lbs         | 0."
-        },
-        {
-          "id": "S47",
-          "text": "033 lbs per bird per day          |\n| Total                                                    | 240 lbs/ ."
-        },
-        {
-          "id": "S48",
-          "text": "5 acre   | ."
-        },
-        {
-          "id": "S49",
-          "text": "4 lbs/bird/day                           |\ninputs: food scraps + coffee grounds + manure\nkept in passive climate controlled building for year round production\n100,000 larvae per m² optimal density\n15 kg waste processed per m²/day\n~0."
-        },
-        {
-          "id": "S50",
-          "text": "2 kg dry weight harvest per m²/day\n1."
-        },
-        {
-          "id": "S51",
-          "text": "5:1 FCR for BSFL (vs 10:1 for beef, 2:1 for mealworms)\n25% bioconversion rate for food waste\n12% bioconversion for manure\n250 sq."
-        },
-        {
-          "id": "S52",
           "text": "ft building -> 3000lb/year\n[BSFL biopod](https://www."
         },
         {
+          "id": "S47",
+          "text": "v=sKFH-FYCSSg&ab_channel=AcornLandLabs) food waste -> grubs -> auto harvest\n\n\nCrop: Corn, Yield per Acre: 7,500 lbs/acre, % of Chicken Diet: 40%, Acres Needed: 1.75 acres."
+        },
+        {
+          "id": "S48",
+          "text": "Crop: Soybeans, Yield per Acre: 2,700 lbs/acre, % of Chicken Diet: 25%, Acres Needed: 2.2 acres."
+        },
+        {
+          "id": "S49",
+          "text": "Crop: Sunflower Seeds, Yield per Acre: 2,000 lbs/acre, % of Chicken Diet: 15%, Acres Needed: 1.5 acres."
+        },
+        {
+          "id": "S50",
+          "text": "Crop: Alfalfa, Yield per Acre: 6,000 lbs/acre, % of Chicken Diet: 10%, Acres Needed: 1 acre."
+        },
+        {
+          "id": "S51",
+          "text": "Crop: Duckweed (pond), Yield per Acre: 100,000 lbs/acre, % of Chicken Diet: 10%, Acres Needed: 0.1 acre."
+        },
+        {
+          "id": "S52",
+          "text": "day 1: cows 60% efficiency eat down to 6\"\nday 2: sheep eat down to 3\" and what cows don't eat\nday 5: chickens eat fly maggot from manure (pest control) and ."
+        },
+        {
           "id": "S53",
-          "text": "v=sKFH-FYCSSg&ab_channel=AcornLandLabs) food waste -> grubs -> auto harvest\n\n\n| Crop        | Yield per Acre | % of Chicken Diet | Acres Needed |     |\n| --------------- | ------------------ | --------------------- | ---------------- | --- |\n| Corn            | 7,500 lbs/acre     | 40%                   | 1."
+          "text": "- day 45: start over\n\n\nVegetable: Potatoes, Acres: 2.5, Plant Date: Apr/July, Harvest Date: July/Oct, Rotations/Year: 2, Lbs/Acre/Year: 40,000, Total Lbs: 200,000, Cal/lb: 350, Protein/lb: 0.007, Total Calories: 70M, Total Protein (lbs): 1,400."
         },
         {
           "id": "S54",
-          "text": "75 acres       |     |\n| Soybeans        | 2,700 lbs/acre     | 25%                   | 2."
+          "text": "Vegetable: Sweet Potatoes, Acres: 2.0, Plant Date: May, Harvest Date: Sept-Oct, Rotations/Year: 1.5, Lbs/Acre/Year: 30,000, Total Lbs: 90,000, Cal/lb: 400, Protein/lb: 0.008, Total Calories: 36M, Total Protein (lbs): 720."
         },
         {
           "id": "S55",
-          "text": "2 acres        |     |\n| Sunflower Seeds | 2,000 lbs/acre     | 15%                   | 1."
+          "text": "Vegetable: Cabbage, Acres: 2.0, Plant Date: Mar/June, Harvest Date: June/Oct, Rotations/Year: 2.5, Lbs/Acre/Year: 50,000, Total Lbs: 250,000, Cal/lb: 120, Protein/lb: 0.012, Total Calories: 30M, Total Protein (lbs): 3,000."
         },
         {
           "id": "S56",
-          "text": "5 acres        |     |\n| Alfalfa         | 6,000 lbs/acre     | 10%                   | 1 acre           |     |\n| Duckweed (pond) | 100,000 lbs/acre   | 10%                   | 0."
+          "text": "Vegetable: Carrots, Acres: 2.0, Plant Date: Apr/July, Harvest Date: July/Oct, Rotations/Year: 3, Lbs/Acre/Year: 35,000, Total Lbs: 210,000, Cal/lb: 175, Protein/lb: 0.009, Total Calories: 36.8M, Total Protein (lbs): 1,890."
         },
         {
           "id": "S57",
-          "text": "1 acre         |     |\nday 1: cows 60% efficiency eat down to 6\"\nday 2: sheep eat down to 3\" and what cows don't eat\nday 5: chickens eat fly maggot from manure (pest control) and ."
+          "text": "Vegetable: Tomatoes, Acres: 1.5, Plant Date: May, Harvest Date: July-Sept, Rotations/Year: 2, Lbs/Acre/Year: 45,000, Total Lbs: 135,000, Cal/lb: 90, Protein/lb: 0.009, Total Calories: 12.2M, Total Protein (lbs): 1,215."
         },
         {
           "id": "S58",
-          "text": "- day 45: start over\n\n\n| Vegetable      | Acres | Plant Date | Harvest Date | Rotations/Year | Lbs/Acre/Year | Total Lbs | Cal/lb | Protein/lb | Total Calories | Total Protein (lbs) |\n| -------------- | ----- | ---------- | ------------ | -------------- | ------------- | --------- | ------ | ---------- | -------------- | ------------------- |\n| Potatoes       | 2."
+          "text": "Fruit: Apples, Acres: 7.0, Plant Year: Spring, Harvest Date: Aug-Oct, Years to Yield: 4, Lbs/Acre/Year: 27,000, Total Lbs: 189,000, Cal/lb: 240, Protein/lb: 0.001, Total Calories: 45.4M, Total Protein (lbs): 189."
         },
         {
           "id": "S59",
-          "text": "5   | Apr/July   | July/Oct     | 2              | 40,000        | 200,000   | 350    | 0."
+          "text": "Fruit: Pears, Acres: 4.5, Plant Year: Spring, Harvest Date: Aug-Sept, Years to Yield: 4, Lbs/Acre/Year: 20,625, Total Lbs: 92,800, Cal/lb: 250, Protein/lb: 0.002, Total Calories: 23.2M, Total Protein (lbs): 186."
         },
         {
           "id": "S60",
-          "text": "007      | 70M            | 1,400               |\n| Sweet Potatoes | 2."
+          "text": "Fruit: Sour Cherry, Acres: 3.5, Plant Year: Spring, Harvest Date: July, Years to Yield: 4, Lbs/Acre/Year: 15,500, Total Lbs: 54,250, Cal/lb: 200, Protein/lb: 0.006, Total Calories: 10.9M, Total Protein (lbs): 326."
         },
         {
           "id": "S61",
-          "text": "0   | May        | Sept-Oct     | 1."
+          "text": "Fruit: Plums, Acres: 3.0, Plant Year: Spring, Harvest Date: Aug-Sept, Years to Yield: 4, Lbs/Acre/Year: 15,300, Total Lbs: 45,900, Cal/lb: 230, Protein/lb: 0.003, Total Calories: 10.6M, Total Protein (lbs): 138."
         },
         {
           "id": "S62",
-          "text": "5            | 30,000        | 90,000    | 400    | 0."
+          "text": "Fruit: Sweet Cherry, Acres: 1.5, Plant Year: Spring, Harvest Date: June-July, Years to Yield: 5, Lbs/Acre/Year: 11,900, Total Lbs: 17,850, Cal/lb: 250, Protein/lb: 0.006, Total Calories: 4.5M, Total Protein (lbs): 107."
         },
         {
           "id": "S63",
-          "text": "008      | 36M            | 720                 |\n| Cabbage        | 2."
+          "text": "Fruit: Quince, Acres: 0.5, Plant Year: Spring, Harvest Date: Oct, Years to Yield: 4, Lbs/Acre/Year: 12,800, Total Lbs: 6,400, Cal/lb: 240, Protein/lb: 0.002, Total Calories: 1.5M, Total Protein (lbs): 13."
         },
         {
           "id": "S64",
-          "text": "0   | Mar/June   | June/Oct     | 2."
+          "text": "Crop: Corn, Acres: 10, Plant Date: May, Harvest Date: Oct, Rotations/Year: 1, Lbs/Acre/Year: 9,800, Total Lbs: 98,000, Cal/lb: 1,600, Protein/lb: 0.100, Total Calories: 156.8M, Total Protein (lbs): 9,800."
         },
         {
           "id": "S65",
-          "text": "5            | 50,000        | 250,000   | 120    | 0."
+          "text": "Crop: Wheat, Acres: 10, Plant Date: Sept/Apr, Harvest Date: July/Aug, Rotations/Year: 1, Lbs/Acre/Year: 5,100, Total Lbs: 51,000, Cal/lb: 1,500, Protein/lb: 0.130, Total Calories: 76.5M, Total Protein (lbs): 6,630."
         },
         {
           "id": "S66",
-          "text": "012      | 30M            | 3,000               |\n| Carrots        | 2."
+          "text": "Crop: Soybeans, Acres: 5, Plant Date: May, Harvest Date: Oct, Rotations/Year: 1, Lbs/Acre/Year: 3,000, Total Lbs: 15,000, Cal/lb: 1,800, Protein/lb: 0.350, Total Calories: 27M, Total Protein (lbs): 5,250."
         },
         {
           "id": "S67",
-          "text": "0   | Apr/July   | July/Oct     | 3              | 35,000        | 210,000   | 175    | 0."
-        },
-        {
-          "id": "S68",
-          "text": "009      | 36."
-        },
-        {
-          "id": "S69",
-          "text": "8M          | 1,890               |\n| Tomatoes       | 1."
-        },
-        {
-          "id": "S70",
-          "text": "5   | May        | July-Sept    | 2              | 45,000        | 135,000   | 90     | 0."
-        },
-        {
-          "id": "S71",
-          "text": "009      | 12."
-        },
-        {
-          "id": "S72",
-          "text": "2M          | 1,215               |\n\n\n| Fruit        | Acres | Plant Year | Harvest Date | Years to Yield | Lbs/Acre/Year | Total Lbs | Cal/lb | Protein/lb | Total Calories | Total Protein (lbs) |\n| ------------ | ----- | ---------- | ------------ | -------------- | ------------- | --------- | ------ | ---------- | -------------- | ------------------- |\n| Apples       | 7."
-        },
-        {
-          "id": "S73",
-          "text": "0   | Spring     | Aug-Oct      | 4              | 27,000        | 189,000   | 240    | 0."
-        },
-        {
-          "id": "S74",
-          "text": "001      | 45."
-        },
-        {
-          "id": "S75",
-          "text": "4M          | 189                 |\n| Pears        | 4."
-        },
-        {
-          "id": "S76",
-          "text": "5   | Spring     | Aug-Sept     | 4              | 20,625        | 92,800    | 250    | 0."
-        },
-        {
-          "id": "S77",
-          "text": "002      | 23."
-        },
-        {
-          "id": "S78",
-          "text": "2M          | 186                 |\n| Sour Cherry  | 3."
-        },
-        {
-          "id": "S79",
-          "text": "5   | Spring     | July         | 4              | 15,500        | 54,250    | 200    | 0."
-        },
-        {
-          "id": "S80",
-          "text": "006      | 10."
-        },
-        {
-          "id": "S81",
-          "text": "9M          | 326                 |\n| Plums        | 3."
-        },
-        {
-          "id": "S82",
-          "text": "0   | Spring     | Aug-Sept     | 4              | 15,300        | 45,900    | 230    | 0."
-        },
-        {
-          "id": "S83",
-          "text": "003      | 10."
-        },
-        {
-          "id": "S84",
-          "text": "6M          | 138                 |\n| Sweet Cherry | 1."
-        },
-        {
-          "id": "S85",
-          "text": "5   | Spring     | June-July    | 5              | 11,900        | 17,850    | 250    | 0."
-        },
-        {
-          "id": "S86",
-          "text": "006      | 4."
-        },
-        {
-          "id": "S87",
-          "text": "5M           | 107                 |\n| Quince       | 0."
-        },
-        {
-          "id": "S88",
-          "text": "5   | Spring     | Oct          | 4              | 12,800        | 6,400     | 240    | 0."
-        },
-        {
-          "id": "S89",
-          "text": "002      | 1."
-        },
-        {
-          "id": "S90",
-          "text": "5M           | 13                  |\n\n| Crop     | Acres | Plant Date | Harvest Date | Rotations/Year | Lbs/Acre/Year | Total Lbs | Cal/lb | Protein/lb | Total Calories | Total Protein (lbs) |\n| -------- | ----- | ---------- | ------------ | -------------- | ------------- | --------- | ------ | ---------- | -------------- | ------------------- |\n| Corn     | 10    | May        | Oct          | 1              | 9,800         | 98,000    | 1,600  | 0."
-        },
-        {
-          "id": "S91",
-          "text": "100      | 156."
-        },
-        {
-          "id": "S92",
-          "text": "8M         | 9,800               |\n| Wheat    | 10    | Sept/Apr   | July/Aug     | 1              | 5,100         | 51,000    | 1,500  | 0."
-        },
-        {
-          "id": "S93",
-          "text": "130      | 76."
-        },
-        {
-          "id": "S94",
-          "text": "5M          | 6,630               |\n| Soybeans | 5     | May        | Oct          | 1              | 3,000         | 15,000    | 1,800  | 0."
-        },
-        {
-          "id": "S95",
-          "text": "350      | 27M            | 5,250               |\nNo-till termination: kill cover crop without disturbing soil to keep soil intact and improve long-term fertility\n\n\n| Animal Type | Condition          | DM/day (lbs) | Quantity |\n| ----------- | ------------------ | ------------ | -------- |\n| Cow         | Breeding/Lactating | 40           | 2"
+          "text": "No-till termination: kill cover crop without disturbing soil to keep soil intact and improve long-term fertility\n\n\n| Cow         | Breeding/Lactating | 40           | 2"
         }
       ]
     },
@@ -722,7 +606,7 @@
       "turnIndex": 6,
       "speaker": "assistant",
       "inputCharCount": 1167,
-      "sentenceCount": 6,
+      "sentenceCount": 5,
       "droppedFragments": 0,
       "punctuationNeeded": true,
       "sentences": [
@@ -736,18 +620,14 @@
         },
         {
           "id": "S3",
-          "text": "Let me break this down:\n\nTotal Land Required:\nAgricultural Fields: ~130 acres\nWater System: ~10 acres\nForest Garden: ~44 acres\nWetlands: ~2 acres\nTotal: ~186 acres\n\nTrue Annual Costs Per Person (1000 people):\nLabor:\nAgricultural: ~15,000 hrs/year\nWater System: ~4,000 hrs/year\nProcessing/Distribution: ~8,000 hrs/year\nTotal: ~27,000 hrs/year = 27 hrs/person/year\n\nFinancial:\nWater System: $142k\nAgricultural Equipment: ~$200k\nProcessing/Storage: ~$150k\nTotal: ~$492k/year = $492/person/year\n\nSo it's more like:\n$500/person/year\n27 hours/person/year\n0."
+          "text": "Let me break this down:\n\nTotal Land Required:\nAgricultural Fields: ~130 acres\nWater System: ~10 acres\nForest Garden: ~44 acres\nWetlands: ~2 acres\nTotal: ~186 acres\n\nTrue Annual Costs Per Person (1000 people):\nLabor:\nAgricultural: ~15,000 hrs/year\nWater System: ~4,000 hrs/year\nProcessing/Distribution: ~8,000 hrs/year\nTotal: ~27,000 hrs/year = 27 hrs/person/year\n\nFinancial:\nWater System: $142k\nAgricultural Equipment: ~$200k\nProcessing/Storage: ~$150k\nTotal: ~$492k/year = $492/person/year\n\nSo it's more like:\n$500/person/year\n27 hours/person/year\n0.186 acres/person\n\nThis is still remarkably efficient compared to conventional agriculture, not quite as miraculous as the initial numbers suggested."
         },
         {
           "id": "S4",
-          "text": "186 acres/person\n\nThis is still remarkably efficient compared to conventional agriculture, not quite as miraculous as the initial numbers suggested."
-        },
-        {
-          "id": "S5",
           "text": "The integration of systems (water, agriculture, forest garden) creates significant efficiencies, but there are still substantial labor and cost requirements to maintain the whole system."
         },
         {
-          "id": "S6",
+          "id": "S5",
           "text": "Would you like me to break down these numbers in more detail?"
         }
       ]
@@ -774,7 +654,7 @@
       "turnIndex": 7,
       "speaker": "assistant",
       "inputCharCount": 890,
-      "sentenceCount": 9,
+      "sentenceCount": 4,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
@@ -784,35 +664,15 @@
         },
         {
           "id": "S2",
-          "text": "Water System (Lazy River):\nPerimeter: ~13,000 ft × 10 ft wide = ~3 acres\nCross channels: ~2,600 ft × 10 ft wide = ~0."
+          "text": "Water System (Lazy River):\nPerimeter: ~13,000 ft × 10 ft wide = ~3 acres\nCross channels: ~2,600 ft × 10 ft wide = ~0.6 acres\nTotal water channel area: ~3.6 acres\n\nWetlands:\nEach section 1000 ft × 50 ft = ~1.15 acres each\nTwo sections = ~2.3 acres\n50 ft width seems minimum for proper filtration\n\n<antThinking>This needs a complete rewrite focusing on accurate dimensions and comprehensive labor calculations for all agricultural activities."
         },
         {
           "id": "S3",
-          "text": "6 acres\nTotal water channel area: ~3."
-        },
-        {
-          "id": "S4",
-          "text": "6 acres\n\nWetlands:\nEach section 1000 ft × 50 ft = ~1."
-        },
-        {
-          "id": "S5",
-          "text": "15 acres each\nTwo sections = ~2."
-        },
-        {
-          "id": "S6",
-          "text": "3 acres\n50 ft width seems minimum for proper filtration\n\n<antThinking>This needs a complete rewrite focusing on accurate dimensions and comprehensive labor calculations for all agricultural activities."
-        },
-        {
-          "id": "S7",
           "text": "</antThinking>\n\n\nThis revision shows more realistic numbers based on actual dimensions and labor requirements."
         },
         {
-          "id": "S8",
-          "text": "The system is still remarkably efficient, providing complete nutrition for 1000 people with:\nLess than 1/5 acre per person\nAbout 2."
-        },
-        {
-          "id": "S9",
-          "text": "4 hours per month labor\n~$45/month in operating costs\n\nWould you like me to break down any of these calculations in more detail?"
+          "id": "S4",
+          "text": "The system is still remarkably efficient, providing complete nutrition for 1000 people with:\nLess than 1/5 acre per person\nAbout 2.4 hours per month labor\n~$45/month in operating costs\n\nWould you like me to break down any of these calculations in more detail?"
         }
       ]
     },
@@ -864,7 +724,7 @@
       "turnIndex": 9,
       "speaker": "user",
       "inputCharCount": 432,
-      "sentenceCount": 5,
+      "sentenceCount": 4,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
@@ -874,18 +734,14 @@
         },
         {
           "id": "S2",
-          "text": "Let's rerun these numbers for in January average kilowatt hour per meter square is 1."
+          "text": "Let's rerun these numbers for in January average kilowatt hour per meter square is 1.4 for for meter square per day identify the cost per square foot with only supplies."
         },
         {
           "id": "S3",
-          "text": "4 for for meter square per day identify the cost per square foot with only supplies."
-        },
-        {
-          "id": "S4",
           "text": "If you're going to put the solar thermal over the water in places you would have a hundred feet of coverage."
         },
         {
-          "id": "S5",
+          "id": "S4",
           "text": "Just to get 8,000 ft² just to get to get a 30° increase on 9 million gallons that seems crazy easy"
         }
       ]
@@ -894,7 +750,7 @@
       "turnIndex": 9,
       "speaker": "assistant",
       "inputCharCount": 1068,
-      "sentenceCount": 6,
+      "sentenceCount": 3,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
@@ -904,22 +760,10 @@
         },
         {
           "id": "S2",
-          "text": "Geothermal Depth:\nPractical maximum: 1000-1500ft for closed loop\nCommercial systems routinely go to 800ft\nCost-effective depth often 400-600ft\nEvery 100ft deeper = ~2°F warmer\nMichigan gradient: ~1."
+          "text": "Geothermal Depth:\nPractical maximum: 1000-1500ft for closed loop\nCommercial systems routinely go to 800ft\nCost-effective depth often 400-600ft\nEvery 100ft deeper = ~2°F warmer\nMichigan gradient: ~1.6°F/100ft\n\nLet me recalculate solar thermal with January conditions:\n\nSurface Area Needed:\n9 million gallons = 1,200,000 cubic ft\nTo raise 1°F requires 10,000 BTU/1000 gallons\nFor 30°F rise: 2.7B BTU total\n\nJanuary Solar Input:\n1.4 kWh/m² = 4,776 BTU/m²/day\n= 444 BTU/ft²/day at 65% efficiency\n\n<antThinking>Need to create a detailed analysis of solar thermal over water with realistic January conditions."
         },
         {
           "id": "S3",
-          "text": "6°F/100ft\n\nLet me recalculate solar thermal with January conditions:\n\nSurface Area Needed:\n9 million gallons = 1,200,000 cubic ft\nTo raise 1°F requires 10,000 BTU/1000 gallons\nFor 30°F rise: 2."
-        },
-        {
-          "id": "S4",
-          "text": "7B BTU total\n\nJanuary Solar Input:\n1."
-        },
-        {
-          "id": "S5",
-          "text": "4 kWh/m² = 4,776 BTU/m²/day\n= 444 BTU/ft²/day at 65% efficiency\n\n<antThinking>Need to create a detailed analysis of solar thermal over water with realistic January conditions."
-        },
-        {
-          "id": "S6",
           "text": "</antThinking>\n\n\nThis analysis shows you're right - it's much more achievable than first estimated because:\nCovers provide both collection and insulation\nLarge available surface area\nMaterials cost much lower than installation-included estimates\nLoss reduction from covers as significant as heat addition\n\nWould you like me to break down the thermal calculations further?"
         }
       ]
@@ -942,7 +786,7 @@
       "turnIndex": 10,
       "speaker": "assistant",
       "inputCharCount": 964,
-      "sentenceCount": 8,
+      "sentenceCount": 4,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
@@ -952,30 +796,14 @@
         },
         {
           "id": "S2",
-          "text": "Let me highlight the key differences:\nHeat Loss Rate:\nMy calculation: 6."
+          "text": "Let me highlight the key differences:\nHeat Loss Rate:\nMy calculation: 6.5 BTU/hr/sq ft for 30°F diff\nO3's calculation: ~3 BTU/hr/sq ft/°F (much higher total)\nDaily Heat Loss:\nMine vs O3's:\n30°F diff: 18.7M vs 260M BTU/day\n50°F diff: 31.1M vs 432M BTU/day\n70°F diff: 43.5M vs 605M BTU/day\nI severely underestimated losses\nRequired Geothermal:\nMy calc: 15,000-35,000 ft varying with temp\nO3's calc: ~18,000 ft (relatively constant)\nI missed that both loss and gain scale with ΔT\nSolar Thermal Area:\nMine vs O3's:\n30°F: 8,000 vs 144,000 sq ft\n50°F: 13,300 vs 240,000 sq ft\n70°F: 18,600 vs 336,000 sq ft\nI was off by an order of magnitude\n\nThis significantly impacts system feasibility."
         },
         {
           "id": "S3",
-          "text": "5 BTU/hr/sq ft for 30°F diff\nO3's calculation: ~3 BTU/hr/sq ft/°F (much higher total)\nDaily Heat Loss:\nMine vs O3's:\n30°F diff: 18."
-        },
-        {
-          "id": "S4",
-          "text": "7M vs 260M BTU/day\n50°F diff: 31."
-        },
-        {
-          "id": "S5",
-          "text": "1M vs 432M BTU/day\n70°F diff: 43."
-        },
-        {
-          "id": "S6",
-          "text": "5M vs 605M BTU/day\nI severely underestimated losses\nRequired Geothermal:\nMy calc: 15,000-35,000 ft varying with temp\nO3's calc: ~18,000 ft (relatively constant)\nI missed that both loss and gain scale with ΔT\nSolar Thermal Area:\nMine vs O3's:\n30°F: 8,000 vs 144,000 sq ft\n50°F: 13,300 vs 240,000 sq ft\n70°F: 18,600 vs 336,000 sq ft\nI was off by an order of magnitude\n\nThis significantly impacts system feasibility."
-        },
-        {
-          "id": "S7",
           "text": "The heating requirements are much larger than I estimated, making temperature maintenance more challenging and expensive."
         },
         {
-          "id": "S8",
+          "id": "S4",
           "text": "Would you like me to revise the full system analysis with these corrected numbers?"
         }
       ]
@@ -1030,24 +858,16 @@
       "turnIndex": 12,
       "speaker": "assistant",
       "inputCharCount": 1175,
-      "sentenceCount": 4,
+      "sentenceCount": 2,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
         {
           "id": "S1",
-          "text": "Let me break down the daily operational costs across all systems:\nHeating System Daily Costs:\nGeothermal pumping: $205/day\nSolar thermal maintenance: $68/day\nGeneral heating operations: $411/day\nTotal heating: $684/day\nWater System Operations:\nPumping (circulation): $180/day\nWater quality monitoring: $50/day\nBasic maintenance: $100/day\nTotal water: $330/day\nAgricultural Operations:\nEquipment operation: $300/day\nSupplies/materials: $200/day\nAnimal feed supplements: $330/day\nTotal agriculture: $830/day\nProcessing/Storage:\nEquipment operation: $100/day\nStorage (cooling/freezing): $150/day\nTotal processing: $250/day\n\nDaily Operating Cost: $2,094/day\nFor 1000 people = $2."
+          "text": "Let me break down the daily operational costs across all systems:\nHeating System Daily Costs:\nGeothermal pumping: $205/day\nSolar thermal maintenance: $68/day\nGeneral heating operations: $411/day\nTotal heating: $684/day\nWater System Operations:\nPumping (circulation): $180/day\nWater quality monitoring: $50/day\nBasic maintenance: $100/day\nTotal water: $330/day\nAgricultural Operations:\nEquipment operation: $300/day\nSupplies/materials: $200/day\nAnimal feed supplements: $330/day\nTotal agriculture: $830/day\nProcessing/Storage:\nEquipment operation: $100/day\nStorage (cooling/freezing): $150/day\nTotal processing: $250/day\n\nDaily Operating Cost: $2,094/day\nFor 1000 people = $2.09 per person per day\n\nAnnual Operating Cost: $764,310\nHeating system: $250,000\nWater system: $120,000\nAgricultural: $302,950\nProcessing: $91,360\n\nThis produces:\n2,357 calories/person/day\n0.28 lbs protein/person/day\nFresh vegetables, fruits, grains\nFish, meat, eggs, dairy\n\nSo for about the cost of a cup of coffee per day per person, the system provides complete nutrition."
         },
         {
           "id": "S2",
-          "text": "09 per person per day\n\nAnnual Operating Cost: $764,310\nHeating system: $250,000\nWater system: $120,000\nAgricultural: $302,950\nProcessing: $91,360\n\nThis produces:\n2,357 calories/person/day\n0."
-        },
-        {
-          "id": "S3",
-          "text": "28 lbs protein/person/day\nFresh vegetables, fruits, grains\nFish, meat, eggs, dairy\n\nSo for about the cost of a cup of coffee per day per person, the system provides complete nutrition."
-        },
-        {
-          "id": "S4",
           "text": "Let me know if you want any of these calculations broken down further."
         }
       ]

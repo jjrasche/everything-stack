@@ -2,7 +2,7 @@
   "conversationUuid": "de0bf690-7c0e-45d0-91df-f90734f91465",
   "conversationName": "AI-Powered School Superintendent Scraping",
   "turnCount": 28,
-  "totalSentences": 126,
+  "totalSentences": 124,
   "turns": [
     {
       "turnIndex": 0,
@@ -200,17 +200,13 @@
       "turnIndex": 3,
       "speaker": "user",
       "inputCharCount": 753,
-      "sentenceCount": 2,
+      "sentenceCount": 1,
       "droppedFragments": 0,
       "punctuationNeeded": true,
       "sentences": [
         {
           "id": "S1",
-          "text": "It seemed to do a pretty good job the the prompt the vague prompt strategy the cool thing about the transparency links stuff is we house a lot of that data already so it could be an easy way to test this concept out\n\nso the most important aspect of robustness is accuracy yeah I mean we know that AI self updating we know it has speed limitations the question we really have here is how accurate can it be and if it's mediocre what can we do with the prompt and some AI dev to make it better like I'm really curious still about when it does a web search what does it pull back like is there a module within these frontier models that what happens\n\nI mean my overall goal is to build AI data pipelines that scour the Internet and our 99."
-        },
-        {
-          "id": "S2",
-          "text": "999% accurate lol"
+          "text": "It seemed to do a pretty good job the the prompt the vague prompt strategy the cool thing about the transparency links stuff is we house a lot of that data already so it could be an easy way to test this concept out\n\nso the most important aspect of robustness is accuracy yeah I mean we know that AI self updating we know it has speed limitations the question we really have here is how accurate can it be and if it's mediocre what can we do with the prompt and some AI dev to make it better like I'm really curious still about when it does a web search what does it pull back like is there a module within these frontier models that what happens\n\nI mean my overall goal is to build AI data pipelines that scour the Internet and our 99.999% accurate lol"
         }
       ]
     },
@@ -218,7 +214,7 @@
       "turnIndex": 3,
       "speaker": "assistant",
       "inputCharCount": 2416,
-      "sentenceCount": 7,
+      "sentenceCount": 6,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
@@ -240,14 +236,10 @@
         },
         {
           "id": "S5",
-          "text": "Now you can:\nA/B test vague vs specific on your transparency links\nBuild confidence scoring - when the AI is uncertain, it tells you\nCreate fallback chains - if method 1 fails, try method 2\n\n\n\n\n\nThe key insight: 99."
+          "text": "Now you can:\nA/B test vague vs specific on your transparency links\nBuild confidence scoring - when the AI is uncertain, it tells you\nCreate fallback chains - if method 1 fails, try method 2\n\n\n\n\n\nThe key insight: 99.999% isn't from one perfect prompt - it's from a system that knows when it might be wrong and has fallbacks."
         },
         {
           "id": "S6",
-          "text": "999% isn't from one perfect prompt - it's from a system that knows when it might be wrong and has fallbacks."
-        },
-        {
-          "id": "S7",
           "text": "Want to design a pilot test using your transparency links data to see what accuracy you can hit?"
         }
       ]

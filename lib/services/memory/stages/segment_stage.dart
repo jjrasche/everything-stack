@@ -19,6 +19,9 @@ class SegmentStage implements EncoderStage<String, SegmentResult> {
   static final _markdownBullet = RegExp(r'^[\s]*[-*+]\s+', multiLine: true);
   static final _markdownNumbered = RegExp(r'^[\s]*\d+\.\s+', multiLine: true);
 
+  static final _tableRow = RegExp(r'^\|(.+)\|$', multiLine: true);
+  static final _tableSeparator = RegExp(r'^[\s|:-]+$');
+
   static final _abbreviations = {
     'dr', 'mr', 'mrs', 'ms', 'prof', 'sr', 'jr',
     'inc', 'corp', 'ltd', 'co', 'vs', 'etc', 'approx',
@@ -47,7 +50,8 @@ class SegmentStage implements EncoderStage<String, SegmentResult> {
     }
 
     final withoutCode = _stripCodeBlocks(input);
-    final prose = _stripMarkdown(withoutCode);
+    final withLinearizedTables = _linearizeTables(withoutCode);
+    final prose = _stripMarkdown(withLinearizedTables);
     final allSentences = _splitSentences(prose);
     final sentences = _filterFragments(allSentences);
     stopwatch.stop();
@@ -73,7 +77,9 @@ class SegmentStage implements EncoderStage<String, SegmentResult> {
       final char = String.fromCharCode(chars[index]);
       buffer.write(char);
 
-      if (_isSentenceEnd(char) && !_isAbbreviation(buffer.toString())) {
+      if (_isSentenceEnd(char) &&
+          !_isDecimalPeriod(chars, index) &&
+          !_isAbbreviation(buffer.toString())) {
         // Consume trailing whitespace
         while (index + 1 < chars.length &&
             String.fromCharCode(chars[index + 1]).trim().isEmpty) {
@@ -103,6 +109,56 @@ class SegmentStage implements EncoderStage<String, SegmentResult> {
     return results;
   }
 
+  /// Replace markdown tables with one linearized sentence per data row.
+  /// Format: "header1: value1, header2: value2."
+  /// Drops header and separator rows.
+  String _linearizeTables(String text) {
+    final lines = text.split('\n');
+    final output = <String>[];
+    var headers = <String>[];
+    var inTable = false;
+
+    for (final line in lines) {
+      if (!_tableRow.hasMatch(line.trim())) {
+        if (inTable) inTable = false;
+        output.add(line);
+        continue;
+      }
+
+      final cells = _extractCells(line);
+
+      if (_tableSeparator.hasMatch(line.trim())) continue;
+
+      if (!inTable) {
+        // First pipe row = header
+        headers = cells;
+        inTable = true;
+        continue;
+      }
+
+      output.add(_formatRow(headers, cells));
+    }
+
+    return output.join('\n');
+  }
+
+  List<String> _extractCells(String row) {
+    return row
+        .split('|')
+        .map((c) => c.trim())
+        .where((c) => c.isNotEmpty)
+        .toList();
+  }
+
+  String _formatRow(List<String> headers, List<String> values) {
+    final pairs = <String>[];
+    for (var i = 0; i < values.length; i++) {
+      final header = i < headers.length ? headers[i] : 'Column ${i + 1}';
+      pairs.add('$header: ${values[i]}');
+    }
+    return '${pairs.join(', ')}.';
+  }
+
   String _stripCodeBlocks(String text) {
     return text
         .replaceAll(_fencedCodeBlock, '')
@@ -129,6 +185,15 @@ class SegmentStage implements EncoderStage<String, SegmentResult> {
 
   bool _isSentenceEnd(String char) =>
       char == '.' || char == '?' || char == '!';
+
+  /// Period between digits (e.g. "2.9") is not a sentence boundary.
+  bool _isDecimalPeriod(List<int> chars, int index) {
+    if (String.fromCharCode(chars[index]) != '.') return false;
+    if (index == 0 || index + 1 >= chars.length) return false;
+    final before = String.fromCharCode(chars[index - 1]);
+    final after = String.fromCharCode(chars[index + 1]);
+    return RegExp(r'\d').hasMatch(before) && RegExp(r'\d').hasMatch(after);
+  }
 
   bool _isAbbreviation(String textSoFar) {
     final trimmed = textSoFar.trimRight();

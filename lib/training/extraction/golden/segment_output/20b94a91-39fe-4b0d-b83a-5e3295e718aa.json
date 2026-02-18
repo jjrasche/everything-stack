@@ -2,7 +2,7 @@
   "conversationUuid": "20b94a91-39fe-4b0d-b83a-5e3295e718aa",
   "conversationName": "speaker diarization",
   "turnCount": 56,
-  "totalSentences": 903,
+  "totalSentences": 896,
   "turns": [
     {
       "turnIndex": 0,
@@ -762,8 +762,8 @@
       "turnIndex": 3,
       "speaker": "assistant",
       "inputCharCount": 1776,
-      "sentenceCount": 20,
-      "droppedFragments": 1,
+      "sentenceCount": 19,
+      "droppedFragments": 2,
       "punctuationNeeded": false,
       "sentences": [
         {
@@ -792,58 +792,54 @@
         },
         {
           "id": "S7",
-          "text": "If the distance is below threshold (0."
+          "text": "If the distance is below threshold (0.4–0.6 range typically), it's a known speaker."
         },
         {
           "id": "S8",
-          "text": "6 range typically), it's a known speaker."
-        },
-        {
-          "id": "S9",
           "text": "If not, new speaker."
         },
         {
-          "id": "S10",
+          "id": "S9",
           "text": "Trainable layer: This is the move."
         },
         {
-          "id": "S11",
+          "id": "S10",
           "text": "Store each identification decision as an invocation."
         },
         {
-          "id": "S12",
+          "id": "S11",
           "text": "Your feedback becomes: \"I said that, Jim\" vs \"that was someone else."
         },
         {
-          "id": "S13",
+          "id": "S12",
           "text": "\" The trainer then adjusts thresholds or flags borderline matches."
         },
         {
-          "id": "S14",
+          "id": "S13",
           "text": "Eventually it learns which speakers you actually care about identifying vs noise."
         },
         {
-          "id": "S15",
+          "id": "S14",
           "text": "Deepgram diarization is pre-recorded only."
         },
         {
-          "id": "S16",
+          "id": "S15",
           "text": "So you'd process chunks after speaking."
         },
         {
-          "id": "S17",
+          "id": "S16",
           "text": "But embedding extraction is lightweight — pyannote embedding runs fast locally."
         },
         {
-          "id": "S18",
+          "id": "S17",
           "text": "Post-process Deepgram's diarized output, extract embeddings in background, done."
         },
         {
-          "id": "S19",
+          "id": "S18",
           "text": "External server optional: Yeah, you could offload embedding extraction to a Groq instance if local compute feels tight, but honestly the embedding models are small enough for device."
         },
         {
-          "id": "S20",
+          "id": "S19",
           "text": "This fits Everything Stack perfectly — diarization data becomes trainable invocations, feedback loop identifies speakers over time, deterministic tool (the embedding distance metric) stays separate from the learning surface."
         }
       ]
@@ -990,8 +986,8 @@
       "turnIndex": 4,
       "speaker": "assistant",
       "inputCharCount": 1662,
-      "sentenceCount": 30,
-      "droppedFragments": 7,
+      "sentenceCount": 29,
+      "droppedFragments": 8,
       "punctuationNeeded": false,
       "sentences": [
         {
@@ -1068,50 +1064,46 @@
         },
         {
           "id": "S19",
-          "text": "That label becomes an invocation: `{speaker_identified: \"Jim\", confidence: 0."
+          "text": "That label becomes an invocation: `{speaker_identified: \"Jim\", confidence: 0.92, timestamp: X}`."
         },
         {
           "id": "S20",
-          "text": "92, timestamp: X}`."
-        },
-        {
-          "id": "S21",
           "text": "Feed that to the trainer."
         },
         {
-          "id": "S22",
+          "id": "S21",
           "text": "Over time the system learns who Jim's voice sounds like."
         },
         {
-          "id": "S23",
+          "id": "S22",
           "text": "You're not extracting embeddings in the hot path."
         },
         {
-          "id": "S24",
+          "id": "S23",
           "text": "You're matching them."
         },
         {
-          "id": "S25",
+          "id": "S24",
           "text": "Embedding extraction is batch/async."
         },
         {
-          "id": "S26",
+          "id": "S25",
           "text": "Matching is sync on-device."
         },
         {
-          "id": "S27",
+          "id": "S26",
           "text": "That's the Jarvis moment right there."
         },
         {
-          "id": "S28",
+          "id": "S27",
           "text": "Knows who's in the room before they finish their first word."
         },
         {
-          "id": "S29",
+          "id": "S28",
           "text": "The whole thing trainable."
         },
         {
-          "id": "S30",
+          "id": "S29",
           "text": "Get some sleep."
         }
       ]
@@ -1546,8 +1538,8 @@
       "turnIndex": 8,
       "speaker": "assistant",
       "inputCharCount": 1953,
-      "sentenceCount": 29,
-      "droppedFragments": 3,
+      "sentenceCount": 27,
+      "droppedFragments": 5,
       "punctuationNeeded": false,
       "sentences": [
         {
@@ -1636,34 +1628,26 @@
         },
         {
           "id": "S22",
-          "text": "\"\n\nAutonomous self-modification with requiresHumanReview — the system lowers its probe threshold from 0."
+          "text": "\"\n\nAutonomous self-modification with requiresHumanReview — the system lowers its probe threshold from 0.7 to 0.6 after seeing three rejections."
         },
         {
           "id": "S23",
-          "text": "7 to 0."
-        },
-        {
-          "id": "S24",
-          "text": "6 after seeing three rejections."
-        },
-        {
-          "id": "S25",
           "text": "Approves or reverts."
         },
         {
-          "id": "S26",
+          "id": "S24",
           "text": "No silent drift."
         },
         {
-          "id": "S27",
+          "id": "S25",
           "text": "This is the shape of it now."
         },
         {
-          "id": "S28",
+          "id": "S26",
           "text": "Static → invocations + taxonomy + async coordination + autonomous bounded adaptation."
         },
         {
-          "id": "S29",
+          "id": "S27",
           "text": "Build from that skeleton."
         }
       ]
@@ -2106,8 +2090,8 @@
       "turnIndex": 13,
       "speaker": "assistant",
       "inputCharCount": 1180,
-      "sentenceCount": 21,
-      "droppedFragments": 1,
+      "sentenceCount": 19,
+      "droppedFragments": 3,
       "punctuationNeeded": false,
       "sentences": [
         {
@@ -2120,78 +2104,70 @@
         },
         {
           "id": "S3",
-          "text": "Each segment is an invocation: `{speaker_id: 0, confidence: 0."
+          "text": "Each segment is an invocation: `{speaker_id: 0, confidence: 0.92, timestamp: X, audio_chunk: ref}`."
         },
         {
           "id": "S4",
-          "text": "92, timestamp: X, audio_chunk: ref}`."
-        },
-        {
-          "id": "S5",
           "text": "On-device: Extract embeddings async (pyannote or SpeechBrain ECAPA) from the audio chunks."
         },
         {
-          "id": "S6",
+          "id": "S5",
           "text": "Store speaker embeddings in local KV."
         },
         {
-          "id": "S7",
+          "id": "S6",
           "text": "Cosine-distance match on next segment."
         },
         {
+          "id": "S7",
+          "text": "That becomes an invocation too: `{speaker_identified: \"Jim\", embedding_distance: 0.35, confidence: 0.88}`."
+        },
+        {
           "id": "S8",
-          "text": "That becomes an invocation too: `{speaker_identified: \"Jim\", embedding_distance: 0."
-        },
-        {
-          "id": "S9",
-          "text": "35, confidence: 0."
-        },
-        {
-          "id": "S10",
           "text": "Both invocations feed the Trainer."
         },
         {
-          "id": "S11",
+          "id": "S9",
           "text": "Feedback: \"That wasn't me\" → Trainer adjusts thresholds or flags the embedding as an outlier."
         },
         {
-          "id": "S12",
+          "id": "S10",
           "text": "Heavy compute (embedding extraction) runs server-side if device can't handle it."
         },
         {
-          "id": "S13",
+          "id": "S11",
           "text": "Light compute (cosine distance matching) runs on-device, no latency."
         },
         {
-          "id": "S14",
+          "id": "S12",
           "text": "Plugins swap execution context: `EmbeddingService."
         },
         {
-          "id": "S15",
+          "id": "S13",
           "text": "execute_on = \"device\" | \"server\"`."
         },
         {
-          "id": "S16",
+          "id": "S14",
           "text": "Same code either way."
         },
         {
-          "id": "S17",
+          "id": "S15",
           "text": "For now: Design the Invocation shape for speaker ID."
         },
         {
-          "id": "S18",
+          "id": "S16",
           "text": "Don't train yet."
         },
         {
-          "id": "S19",
+          "id": "S17",
           "text": "Dashboard shows when speaker ID fired, which speaker, confidence."
         },
         {
-          "id": "S20",
+          "id": "S18",
           "text": "That's your foundation."
         },
         {
-          "id": "S21",
+          "id": "S19",
           "text": "Move on that?"
         }
       ]
@@ -3442,8 +3418,8 @@
       "turnIndex": 23,
       "speaker": "assistant",
       "inputCharCount": 2069,
-      "sentenceCount": 39,
-      "droppedFragments": 1,
+      "sentenceCount": 38,
+      "droppedFragments": 2,
       "punctuationNeeded": false,
       "sentences": [
         {
@@ -3516,90 +3492,86 @@
         },
         {
           "id": "S18",
-          "text": "That's why they're saying start with high threshold (0."
+          "text": "That's why they're saying start with high threshold (0.5-0.6, err strict)."
         },
         {
           "id": "S19",
-          "text": "6, err strict)."
-        },
-        {
-          "id": "S20",
           "text": "The critical insight they buried: Voice is GDPR biometric data."
         },
         {
-          "id": "S21",
+          "id": "S20",
           "text": "If you're in EU or targeting EU users, you need consent flows and deletion APIs."
         },
         {
-          "id": "S22",
+          "id": "S21",
           "text": "This isn't optional."
         },
         {
-          "id": "S23",
+          "id": "S22",
           "text": "It's 1-2 weeks of engineering but it's the hard gate."
         },
         {
-          "id": "S24",
+          "id": "S23",
           "text": "Don't punt it to Phase 5."
         },
         {
-          "id": "S25",
+          "id": "S24",
           "text": "What matters most for you: Phases 1-2 (8 weeks)."
         },
         {
-          "id": "S26",
+          "id": "S25",
           "text": "Server-side embedding extraction (cheaper, simpler than on-device)."
         },
         {
-          "id": "S27",
+          "id": "S26",
           "text": "Fixed enrollment flow (\"say these sentences\")."
         },
         {
-          "id": "S28",
+          "id": "S27",
           "text": "Trainable threshold tuning."
         },
         {
-          "id": "S29",
+          "id": "S28",
           "text": "That gets you to 80-85% accuracy, which is good enough for \"who's talking\" context."
         },
         {
-          "id": "S30",
+          "id": "S29",
           "text": "Phase 3 (continuous update) keeps it from degrading."
         },
         {
-          "id": "S31",
+          "id": "S30",
           "text": "Phase 4 (on-device) matters only if you want offline ambient voice."
         },
         {
-          "id": "S32",
+          "id": "S31",
           "text": "Phase 5 (privacy) is mandatory before shipping."
         },
         {
-          "id": "S33",
+          "id": "S32",
           "text": "The real constraint: You're committing 3-4 months for production quality."
         },
         {
-          "id": "S34",
+          "id": "S33",
           "text": "If you want to experiment faster, scope to Phase 1 only (basic attribution, no training)."
         },
         {
-          "id": "S35",
+          "id": "S34",
           "text": "See what breaks."
         },
         {
-          "id": "S36",
+          "id": "S35",
           "text": "Then add trainable threshold."
         },
         {
-          "id": "S37",
+          "id": "S36",
           "text": "That's 2-3 weeks."
         },
         {
-          "id": "S38",
+          "id": "S37",
           "text": "The coder's right that per-speaker thresholds work better than one global threshold — Jim's voice signature is different from Justine's."
         },
         {
-          "id": "S39",
+          "id": "S38",
           "text": "How much time do you actually have to build this?"
         }
       ]
@@ -4104,7 +4076,7 @@
         },
         {
           "id": "S37",
-          "text": "- How do you simulate the feedback loop in tests (Test 4."
+          "text": "- How do you simulate the feedback loop in tests (Test 4.2)?"
         },
         {
           "id": "S38",

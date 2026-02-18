@@ -2,7 +2,7 @@
   "conversationUuid": "c7086ab1-3099-488e-b422-d77e03ce50aa",
   "conversationName": "Comparing Schooling Options for Micro Society",
   "turnCount": 18,
-  "totalSentences": 126,
+  "totalSentences": 132,
   "turns": [
     {
       "turnIndex": 0,
@@ -26,8 +26,8 @@
       "turnIndex": 0,
       "speaker": "assistant",
       "inputCharCount": 4034,
-      "sentenceCount": 10,
-      "droppedFragments": 3,
+      "sentenceCount": 18,
+      "droppedFragments": 0,
       "punctuationNeeded": true,
       "sentences": [
         {
@@ -48,26 +48,58 @@
         },
         {
           "id": "S5",
-          "text": "</antThinking>\n\n| Educational Model | Regulatory Requirements | Funding Sources | Task System Integration Potential | Space/Facility Needs | Teacher Requirements | Curriculum Flexibility | Parent Involvement | Community Integration |\n|------------------|------------------------|-----------------|----------------------------------|--------------------|--------------------|---------------------|-------------------|---------------------|\n| Traditional Public School | Highest - State standards, accreditation, standardized testing, facility codes | Full state/federal funding | Limited - Separate from task system | Dedicated building meeting code | Licensed teachers | Low - Must follow state standards | Optional involvement | Limited to scheduled events |\n| Charter School | High - State oversight but some flexibility | Public funding with performance metrics | Moderate - Can incorporate some community learning | Dedicated facility | Licensed teachers with some flexibility | Medium - Core requirements with some autonomy | Encouraged participation | Can include community partnerships |\n| Homeschool Co-op | Low - Meet basic state homeschool requirements | Self-funded, parent contributions | High - Can fully integrate with task system | Flexible spaces, can use community areas | Parents + community experts | High - Choose curriculum freely | High - Parents are primary teachers | Strong - Natural part of community life |\n| Pure Homeschool | Minimal - Basic state reporting | Self-funded | Moderate - Can participate in tasks as learning opportunities | Home-based | Parent or guardian | Complete flexibility | Highest - Full parent teaching | Varies by family choice |\n| Unschooling | Minimal - Must meet basic education requirements | Self-funded | Highest - Learning through natural participation | No specific requirements | No formal teachers | Complete flexibility | Facilitator role | Natural integration with daily life |\n| Montessori | Moderate if certified, can be lower | Private tuition, possible grants | High - Aligns well with practical life skills | Prepared environment needed | Montessori certified for official programs | Structured freedom within Montessori method | Moderate - Support role | Can integrate well with community |\n| Waldorf/Steiner | Moderate if certified | Private tuition | High - Emphasis on practical work | Specific aesthetic needs | Waldorf training for official programs | Structured around developmental stages | Active community participation | Strong emphasis on community |\n| Micro Society Integrated Learning | Basic education requirements | Community funded + possible grants | Highest - Fully integrated with task system | Uses existing community spaces | Community experts + qualified members | High - Learning through real work | Balanced - Mix of family and community | Complete - Education is community life |\n\nSome key considerations for the micro society model:\nLegal Status: Would the community register as a private school, homeschool collective, or something else?"
+          "text": "</antThinking>\n\nEducational Model: Traditional Public School, Regulatory Requirements: Highest - State standards, accreditation, standardized testing, facility codes, Funding Sources: Full state/federal funding, Task System Integration Potential: Limited - Separate from task system, Space/Facility Needs: Dedicated building meeting code, Teacher Requirements: Licensed teachers, Curriculum Flexibility: Low - Must follow state standards, Parent Involvement: Optional involvement, Community Integration: Limited to scheduled events."
         },
         {
           "id": "S6",
-          "text": "Record Keeping: How to document learning while maintaining flexibility?"
+          "text": "Educational Model: Charter School, Regulatory Requirements: High - State oversight but some flexibility, Funding Sources: Public funding with performance metrics, Task System Integration Potential: Moderate - Can incorporate some community learning, Space/Facility Needs: Dedicated facility, Teacher Requirements: Licensed teachers with some flexibility, Curriculum Flexibility: Medium - Core requirements with some autonomy, Parent Involvement: Encouraged participation, Community Integration: Can include community partnerships."
         },
         {
           "id": "S7",
-          "text": "College Preparation: If desired, how to ensure children can meet higher education requirements?"
+          "text": "Educational Model: Homeschool Co-op, Regulatory Requirements: Low - Meet basic state homeschool requirements, Funding Sources: Self-funded, parent contributions, Task System Integration Potential: High - Can fully integrate with task system, Space/Facility Needs: Flexible spaces, can use community areas, Teacher Requirements: Parents + community experts, Curriculum Flexibility: High - Choose curriculum freely, Parent Involvement: High - Parents are primary teachers, Community Integration: Strong - Natural part of community life."
         },
         {
           "id": "S8",
-          "text": "Special Needs: How to integrate support for diverse learning needs?"
+          "text": "Educational Model: Pure Homeschool, Regulatory Requirements: Minimal - Basic state reporting, Funding Sources: Self-funded, Task System Integration Potential: Moderate - Can participate in tasks as learning opportunities, Space/Facility Needs: Home-based, Teacher Requirements: Parent or guardian, Curriculum Flexibility: Complete flexibility, Parent Involvement: Highest - Full parent teaching, Community Integration: Varies by family choice."
         },
         {
           "id": "S9",
-          "text": "Assessment: How to evaluate progress without standardized testing?"
+          "text": "Educational Model: Unschooling, Regulatory Requirements: Minimal - Must meet basic education requirements, Funding Sources: Self-funded, Task System Integration Potential: Highest - Learning through natural participation, Space/Facility Needs: No specific requirements, Teacher Requirements: No formal teachers, Curriculum Flexibility: Complete flexibility, Parent Involvement: Facilitator role, Community Integration: Natural integration with daily life."
         },
         {
           "id": "S10",
+          "text": "Educational Model: Montessori, Regulatory Requirements: Moderate if certified, can be lower, Funding Sources: Private tuition, possible grants, Task System Integration Potential: High - Aligns well with practical life skills, Space/Facility Needs: Prepared environment needed, Teacher Requirements: Montessori certified for official programs, Curriculum Flexibility: Structured freedom within Montessori method, Parent Involvement: Moderate - Support role, Community Integration: Can integrate well with community."
+        },
+        {
+          "id": "S11",
+          "text": "Educational Model: Waldorf/Steiner, Regulatory Requirements: Moderate if certified, Funding Sources: Private tuition, Task System Integration Potential: High - Emphasis on practical work, Space/Facility Needs: Specific aesthetic needs, Teacher Requirements: Waldorf training for official programs, Curriculum Flexibility: Structured around developmental stages, Parent Involvement: Active community participation, Community Integration: Strong emphasis on community."
+        },
+        {
+          "id": "S12",
+          "text": "Educational Model: Micro Society Integrated Learning, Regulatory Requirements: Basic education requirements, Funding Sources: Community funded + possible grants, Task System Integration Potential: Highest - Fully integrated with task system, Space/Facility Needs: Uses existing community spaces, Teacher Requirements: Community experts + qualified members, Curriculum Flexibility: High - Learning through real work, Parent Involvement: Balanced - Mix of family and community, Community Integration: Complete - Education is community life."
+        },
+        {
+          "id": "S13",
+          "text": "Some key considerations for the micro society model:\nLegal Status: Would the community register as a private school, homeschool collective, or something else?"
+        },
+        {
+          "id": "S14",
+          "text": "Record Keeping: How to document learning while maintaining flexibility?"
+        },
+        {
+          "id": "S15",
+          "text": "College Preparation: If desired, how to ensure children can meet higher education requirements?"
+        },
+        {
+          "id": "S16",
+          "text": "Special Needs: How to integrate support for diverse learning needs?"
+        },
+        {
+          "id": "S17",
+          "text": "Assessment: How to evaluate progress without standardized testing?"
+        },
+        {
+          "id": "S18",
           "text": "Would you like me to elaborate on any of these models or discuss specific aspects of how they might work in your community?"
         }
       ]
@@ -454,7 +486,7 @@
       "turnIndex": 4,
       "speaker": "assistant",
       "inputCharCount": 2299,
-      "sentenceCount": 11,
+      "sentenceCount": 9,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
@@ -464,42 +496,34 @@
         },
         {
           "id": "S2",
-          "text": "In our system, a student could demonstrate this through:\nHelping calculate concrete needs for construction\nDetermining storage capacity for food systems\nPlanning water storage solutions\nDesigning planter boxes for the garden\nLegal Documentation:\nYes, these requirements are outlined in:\nMichigan Revised School Code (MCL 380."
+          "text": "In our system, a student could demonstrate this through:\nHelping calculate concrete needs for construction\nDetermining storage capacity for food systems\nPlanning water storage solutions\nDesigning planter boxes for the garden\nLegal Documentation:\nYes, these requirements are outlined in:\nMichigan Revised School Code (MCL 380.1 et seq."
         },
         {
           "id": "S3",
-          "text": "1 et seq."
+          "text": ")\nThe State School Aid Act (MCL 388.1601 et seq."
         },
         {
           "id": "S4",
-          "text": ")\nThe State School Aid Act (MCL 388."
+          "text": ")\nMichigan Department of Education Administrative Rules\n\nThe specific definition of instruction time is in MCL 388.1701."
         },
         {
           "id": "S5",
-          "text": "1601 et seq."
-        },
-        {
-          "id": "S6",
-          "text": ")\nMichigan Department of Education Administrative Rules\n\nThe specific definition of instruction time is in MCL 388."
-        },
-        {
-          "id": "S7",
           "text": "Interestingly, they don't explicitly define \"self-directed learning\" but instead focus on \"engaged in learning."
         },
         {
-          "id": "S8",
+          "id": "S6",
           "text": "\" The law considers time as instructional when students are:\nEngaged in learning activities\nUnder guidance and direction of certified teachers\nWorking toward educational objectives\n\nThe flexibility comes from their focus on engagement and progress rather than specific delivery methods."
         },
         {
-          "id": "S9",
+          "id": "S7",
           "text": "Standard Alignment Verification:\nThis is the process of demonstrating how learning activities match state standards."
         },
         {
-          "id": "S10",
+          "id": "S8",
           "text": "For example:\nShowing how a garden planning task teaches geometry\nDocumenting which parts of food preservation teach chemistry\nMapping construction activities to math standards\n\nIt's essentially creating clear documentation that shows:\nStandard: \"Understand volume\"\n↓\nCommunity Task: \"Help design rainwater collection system\"\n↓\nEvidence: \"Student calculated tank volumes, designed optimal shapes, documented calculations\"\n\nWould you like me to find the specific legal language about instructional time requirements?"
         },
         {
-          "id": "S11",
+          "id": "S9",
           "text": "Or dig deeper into how other alternative schools document their standard alignment?"
         }
       ]
@@ -604,7 +628,7 @@
         },
         {
           "id": "S2",
-          "text": "Let me try to reshape this into a more flexible, natural framework:\n\nDaily Structure Example (Ages 8+):\n| Time Block | Activity | Description | Integration with Task System |\n|------------|----------|-------------|----------------------------|\n| 2 hours | Hands-on Labor | - Start as observers\nProgress to helpers\nEventually take on tasks\nNatural skill progression | Direct task system integration starting at \"Watcher\" level |\n| 2 hours | Self-directed Learning | - Follow interests\nAI-guided exploration\nProject work\nResearch | Can contribute to task documentation, SOPs, community wiki |\n| 2 hours | Core Learning | - AI-guided basics\nOptional group instruction\nSkill verification\nDiscussion groups | Maps to academic standards through practical applications |\n| 2 hours | Collaborative Work | - Group projects\nPeer teaching\nCommunity service\nTeam tasks | Natural integration with \"Junior Helper\", \"Youth Assistant\", \"Teen Mentor\" roles |\n\nKey Principles:\nLearning through doing - education isn't separate from community life\nNatural progression from observer to participant to leader\nSelf-pacing with support available when needed\nAI handles basic skills verification, humans focus on mentorship\nDocumentation emerges naturally from task system participation\n\nFor younger children (under 8):\nMore play-based learning\nHigher supervision ratios\nNatural participation in community life\nOptional participation in structured activities\n\nThis feels much more aligned with the community's integrated approach."
+          "text": "Let me try to reshape this into a more flexible, natural framework:\n\nDaily Structure Example (Ages 8+):\n| 2 hours | Hands-on Labor | - Start as observers\nProgress to helpers\nEventually take on tasks\nNatural skill progression | Direct task system integration starting at \"Watcher\" level |\n| 2 hours | Self-directed Learning | - Follow interests\nAI-guided exploration\nProject work\nResearch | Can contribute to task documentation, SOPs, community wiki |\n| 2 hours | Core Learning | - AI-guided basics\nOptional group instruction\nSkill verification\nDiscussion groups | Maps to academic standards through practical applications |\n| 2 hours | Collaborative Work | - Group projects\nPeer teaching\nCommunity service\nTeam tasks | Natural integration with \"Junior Helper\", \"Youth Assistant\", \"Teen Mentor\" roles |\n\nKey Principles:\nLearning through doing - education isn't separate from community life\nNatural progression from observer to participant to leader\nSelf-pacing with support available when needed\nAI handles basic skills verification, humans focus on mentorship\nDocumentation emerges naturally from task system participation\n\nFor younger children (under 8):\nMore play-based learning\nHigher supervision ratios\nNatural participation in community life\nOptional participation in structured activities\n\nThis feels much more aligned with the community's integrated approach."
         },
         {
           "id": "S3",

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cohere Review</title>
+<style>
+  :root {
+    --bg: #111118;
+    --surface: #1a1a26;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --green: #4ade80;
+    --red: #f87171;
+    --border: #2a2a3a;
+    --dim: #333346;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* Top bar — progress only */
+  .bar {
+    height: 3px; background: var(--border);
+  }
+  .bar-fill {
+    height: 100%; background: var(--green);
+    transition: width 0.2s ease;
+  }
+
+  /* Counter */
+  .counter {
+    padding: 8px 24px;
+    font-size: 12px; color: var(--muted);
+    display: flex; justify-content: space-between;
+  }
+
+  /* Main — the two sentences */
+  .main {
+    flex: 1;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 40px 60px;
+    gap: 0;
+  }
+
+  .sentence-block {
+    max-width: 720px; width: 100%;
+    padding: 24px 28px;
+    line-height: 1.7;
+    font-size: 17px;
+    border-radius: 8px;
+  }
+  .sentence-a {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    color: var(--muted);
+  }
+  .sentence-b {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0 0 8px 8px;
+  }
+
+  /* The divider — this IS the decision */
+  .divider {
+    max-width: 720px; width: 100%;
+    height: 4px;
+    transition: all 0.15s ease;
+  }
+  .divider.undecided { background: var(--dim); }
+  .divider.same { background: transparent; }
+  .divider.boundary { background: var(--red); box-shadow: 0 0 12px rgba(248,113,113,0.4); }
+
+  /* Bottom — keys */
+  .controls {
+    padding: 16px 24px;
+    display: flex; justify-content: center; gap: 48px;
+    border-top: 1px solid var(--border);
+  }
+  .key-hint {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 14px; color: var(--muted);
+    transition: color 0.15s;
+  }
+  .key-hint.active-same { color: var(--green); }
+  .key-hint.active-boundary { color: var(--red); }
+  kbd {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px;
+    border-radius: 6px;
+    font-family: monospace; font-size: 16px; font-weight: 700;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    transition: all 0.15s;
+  }
+  .key-hint.active-same kbd { border-color: var(--green); color: var(--green); background: rgba(74,222,128,0.1); }
+  .key-hint.active-boundary kbd { border-color: var(--red); color: var(--red); background: rgba(248,113,113,0.1); }
+
+  /* Done screen */
+  .done {
+    flex: 1;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    gap: 24px;
+  }
+  .done h1 { font-size: 32px; }
+  .done .stat { font-size: 18px; color: var(--muted); }
+  .done .stat strong { color: var(--text); }
+  .export-btn {
+    padding: 12px 32px; border-radius: 8px;
+    background: var(--green); color: #000;
+    border: none; font-size: 16px; font-weight: 600;
+    cursor: pointer;
+  }
+  .export-btn:hover { opacity: 0.85; }
+
+  /* Flash feedback */
+  @keyframes flashGreen {
+    0% { background: rgba(74,222,128,0.15); }
+    100% { background: transparent; }
+  }
+  @keyframes flashRed {
+    0% { background: rgba(248,113,113,0.15); }
+    100% { background: transparent; }
+  }
+  .flash-green { animation: flashGreen 0.3s ease; }
+  .flash-red { animation: flashRed 0.3s ease; }
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="bar-fill" id="barFill"></div></div>
+<div class="counter">
+  <span id="pairCounter"></span>
+  <span id="turnLabel"></span>
+</div>
+
+<div class="main" id="main"></div>
+
+<div class="controls" id="controls">
+  <div class="key-hint" id="hintSame">
+    <kbd>J</kbd>
+    <span>Same topic</span>
+  </div>
+  <div class="key-hint" id="hintNav" style="color: var(--dim);">
+    <kbd>&larr;</kbd><kbd>&rarr;</kbd>
+    <span>Navigate</span>
+  </div>
+  <div class="key-hint" id="hintBoundary">
+    <kbd>K</kbd>
+    <span>Different topic</span>
+  </div>
+</div>
+
+<script>
+let data = [];       // flat array: { turnIdx, pairIdx, sentA, sentB, modelBoundary, score, convName, turnIndex, speaker, category }
+let labels = [];     // parallel array: 'same' | 'boundary' | null
+let cursor = 0;
+let done = false;
+
+async function init() {
+  const resp = await fetch('../lib/training/extraction/golden/labels/cohere/review_set.json');
+  const raw = await resp.json();
+
+  // Flatten all pairs into a single sequence
+  raw.forEach((turn, turnIdx) => {
+    const sentMap = {};
+    turn.sentences.forEach(s => sentMap[s.id] = s.text);
+
+    turn.modelDecisions.forEach((dec, pairIdx) => {
+      data.push({
+        turnIdx,
+        pairIdx,
+        sentAId: dec.pair[0],
+        sentBId: dec.pair[1],
+        sentA: sentMap[dec.pair[0]] || '',
+        sentB: sentMap[dec.pair[1]] || '',
+        modelBoundary: dec.boundary,
+        score: dec.score,
+        convName: turn.convName,
+        turnIndex: turn.turnIndex,
+        speaker: turn.speaker,
+        category: turn.selectionCategory,
+      });
+    });
+  });
+
+  labels = data.map(() => null);
+
+  // Restore progress
+  const saved = localStorage.getItem('cohere_review_v2');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed.labels && parsed.labels.length === labels.length) {
+        labels = parsed.labels;
+        cursor = parsed.cursor || 0;
+      }
+    } catch(e) {}
+  }
+
+  // Jump to first unlabeled if resuming
+  const firstUnlabeled = labels.findIndex(l => l === null);
+  if (firstUnlabeled >= 0 && cursor < firstUnlabeled) cursor = firstUnlabeled;
+
+  render();
+}
+
+function save() {
+  localStorage.setItem('cohere_review_v2', JSON.stringify({ labels, cursor }));
+}
+
+function decide(label) {
+  if (done) return;
+  labels[cursor] = label;
+  save();
+
+  // Flash feedback
+  const main = document.getElementById('main');
+  main.classList.remove('flash-green', 'flash-red');
+  void main.offsetWidth; // reflow
+  main.classList.add(label === 'same' ? 'flash-green' : 'flash-red');
+
+  // Auto-advance after brief pause
+  setTimeout(() => {
+    const nextUnlabeled = labels.findIndex((l, i) => i > cursor && l === null);
+    if (nextUnlabeled >= 0) {
+      cursor = nextUnlabeled;
+    } else if (labels.every(l => l !== null)) {
+      done = true;
+    } else {
+      cursor = Math.min(cursor + 1, data.length - 1);
+    }
+    render();
+  }, 120);
+}
+
+function navigate(dir) {
+  if (done) return;
+  const next = cursor + dir;
+  if (next < 0 || next >= data.length) return;
+  cursor = next;
+  save();
+  render();
+}
+
+function render() {
+  const labeled = labels.filter(l => l !== null).length;
+  const total = data.length;
+  const pct = (labeled / total) * 100;
+
+  document.getElementById('barFill').style.width = `${pct}%`;
+  document.getElementById('pairCounter').textContent = `${labeled} / ${total} labeled`;
+
+  if (done || labeled === total) {
+    renderDone();
+    return;
+  }
+
+  const item = data[cursor];
+  document.getElementById('turnLabel').textContent =
+    `${item.convName} \u00b7 turn ${item.turnIndex} \u00b7 ${item.speaker} \u00b7 ${item.category.replace(/_/g, ' ')}`;
+
+  const currentLabel = labels[cursor];
+
+  document.getElementById('main').innerHTML = `
+    <div class="sentence-block sentence-a">${escapeHtml(item.sentA)}</div>
+    <div class="divider ${currentLabel === 'boundary' ? 'boundary' : currentLabel === 'same' ? 'same' : 'undecided'}"></div>
+    <div class="sentence-block sentence-b">${escapeHtml(item.sentB)}</div>
+  `;
+
+  // Update key hints
+  const hintSame = document.getElementById('hintSame');
+  const hintBoundary = document.getElementById('hintBoundary');
+  hintSame.className = 'key-hint' + (currentLabel === 'same' ? ' active-same' : '');
+  hintBoundary.className = 'key-hint' + (currentLabel === 'boundary' ? ' active-boundary' : '');
+}
+
+function renderDone() {
+  document.getElementById('controls').style.display = 'none';
+
+  // Compute metrics
+  let tp = 0, tn = 0, fp = 0, fn = 0;
+  data.forEach((item, i) => {
+    const humanBoundary = labels[i] === 'boundary';
+    const model = item.modelBoundary;
+    if (model && humanBoundary) tp++;
+    else if (!model && !humanBoundary) tn++;
+    else if (model && !humanBoundary) fp++;
+    else fn++;
+  });
+  const precision = tp + fp > 0 ? tp / (tp + fp) : 1;
+  const recall = tp + fn > 0 ? tp / (tp + fn) : 1;
+  const f1 = precision + recall > 0 ? 2 * precision * recall / (precision + recall) : 0;
+
+  document.getElementById('main').innerHTML = `
+    <div class="done">
+      <h1>Review Complete</h1>
+      <div class="stat">Precision: <strong>${(precision * 100).toFixed(1)}%</strong></div>
+      <div class="stat">Recall: <strong>${(recall * 100).toFixed(1)}%</strong></div>
+      <div class="stat">F1: <strong>${(f1 * 100).toFixed(1)}%</strong></div>
+      <div class="stat" style="margin-top: 8px;">
+        TP: <strong>${tp}</strong> &nbsp; TN: <strong>${tn}</strong> &nbsp;
+        FP: <strong style="color:var(--red)">${fp}</strong> &nbsp; FN: <strong style="color:var(--red)">${fn}</strong>
+      </div>
+      <div class="stat">${data.length} pairs across 25 turns</div>
+      <button class="export-btn" onclick="exportResults()">Export JSON</button>
+      <button class="export-btn" style="background: var(--surface); color: var(--text); border: 1px solid var(--border); margin-top: 8px;" onclick="resetAll()">Reset &amp; Redo</button>
+    </div>
+  `;
+}
+
+function exportResults() {
+  // Group back by turn
+  const turnMap = {};
+  data.forEach((item, i) => {
+    const key = item.turnIdx;
+    if (!turnMap[key]) turnMap[key] = { ...item, pairs: [] };
+    turnMap[key].pairs.push({
+      sentAId: item.sentAId,
+      sentBId: item.sentBId,
+      humanLabel: labels[i],
+      modelBoundary: item.modelBoundary,
+      score: item.score,
+    });
+  });
+
+  let tp = 0, tn = 0, fp = 0, fn = 0;
+  data.forEach((item, i) => {
+    const humanBoundary = labels[i] === 'boundary';
+    const model = item.modelBoundary;
+    if (model && humanBoundary) tp++;
+    else if (!model && !humanBoundary) tn++;
+    else if (model && !humanBoundary) fp++;
+    else fn++;
+  });
+  const precision = tp + fp > 0 ? tp / (tp + fp) : 1;
+  const recall = tp + fn > 0 ? tp / (tp + fn) : 1;
+  const f1 = precision + recall > 0 ? 2 * precision * recall / (precision + recall) : 0;
+
+  const turns = Object.values(turnMap).map(t => ({
+    convName: t.convName,
+    turnIndex: t.turnIndex,
+    speaker: t.speaker,
+    category: t.category,
+    pairs: t.pairs,
+  }));
+
+  const output = {
+    exportedAt: new Date().toISOString(),
+    totalPairs: data.length,
+    metrics: { tp, tn, fp, fn, precision, recall, f1 },
+    turns,
+  };
+
+  const blob = new Blob([JSON.stringify(output, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'cohere_review_results.json';
+  a.click();
+}
+
+function resetAll() {
+  if (!confirm('Reset all labels?')) return;
+  labels = data.map(() => null);
+  cursor = 0;
+  done = false;
+  localStorage.removeItem('cohere_review_v2');
+  document.getElementById('controls').style.display = '';
+  render();
+}
+
+function escapeHtml(text) {
+  const el = document.createElement('div');
+  el.textContent = text;
+  return el.innerHTML.replace(/\n/g, '<br>');
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'j' || e.key === 'J') decide('same');
+  else if (e.key === 'k' || e.key === 'K') decide('boundary');
+  else if (e.key === 'ArrowLeft') navigate(-1);
+  else if (e.key === 'ArrowRight') navigate(1);
+});
+
+init();
+</script>
+</body>
+</html>

@@ -2,7 +2,7 @@
   "conversationUuid": "7ef30faf-d027-4011-8443-b0043e3c7f7d",
   "conversationName": "AI-Powered Digital Twin Interface",
   "turnCount": 26,
-  "totalSentences": 187,
+  "totalSentences": 185,
   "turns": [
     {
       "turnIndex": 0,
@@ -565,7 +565,7 @@
       "turnIndex": 7,
       "speaker": "assistant",
       "inputCharCount": 1105,
-      "sentenceCount": 7,
+      "sentenceCount": 5,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
@@ -579,22 +579,14 @@
         },
         {
           "id": "S3",
-          "text": "Recommended Focus (5-6 hours):\nSystem Health Dashboard (1."
+          "text": "Recommended Focus (5-6 hours):\nSystem Health Dashboard (1.5 hours) - Build confidence in persistence layers\nInference → Atomic Ideas Pipeline (3 hours) - Most important piece, auto-extract from responses  \nTopic Clusters Foundation (1.5 hours) - Group atomic ideas semantically/temporally\n\nThis creates the core loop: *Speak → (manual selection) → Atomic Ideas → Topic Clusters → Context for Inference → More Atomic Ideas*\n\nThe manual atom extractor already exists, you'd extend it with automatic extraction from inference responses and add topic clustering to group related atomic ideas."
         },
         {
           "id": "S4",
-          "text": "5 hours) - Build confidence in persistence layers\nInference → Atomic Ideas Pipeline (3 hours) - Most important piece, auto-extract from responses  \nTopic Clusters Foundation (1."
-        },
-        {
-          "id": "S5",
-          "text": "5 hours) - Group atomic ideas semantically/temporally\n\nThis creates the core loop: *Speak → (manual selection) → Atomic Ideas → Topic Clusters → Context for Inference → More Atomic Ideas*\n\nThe manual atom extractor already exists, you'd extend it with automatic extraction from inference responses and add topic clustering to group related atomic ideas."
-        },
-        {
-          "id": "S6",
           "text": "Alternative: If you want foundation-first, start with speech-to-text testing (audio files + accuracy validation) then system health dashboard."
         },
         {
-          "id": "S7",
+          "id": "S5",
           "text": "Which approach feels right?"
         }
       ]

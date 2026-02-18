@@ -99,5 +99,37 @@ void main() {
       expect(result.sentences, hasLength(3));
       expect(result.sentences[0].text, 'First item is important.');
     });
+
+    test('linearizes markdown table rows into sentences', () async {
+      const input = '| Task | Hours |\n| --- | --- |\n| Laundry | 2.9 |\n| Cooking | 1.5 |';
+      final result = await stage.process(input);
+
+      expect(result.sentences, hasLength(2));
+      expect(result.sentences[0].text, contains('Task'));
+      expect(result.sentences[0].text, contains('Laundry'));
+      expect(result.sentences[0].text, contains('Hours'));
+      expect(result.sentences[0].text, contains('2.9'));
+    });
+
+    test('linearizes table then continues with prose', () async {
+      const input = 'Here are the results.\n\n| Name | Score |\n| --- | --- |\n| Alice | 95 |\n\nThe scores look good.';
+      final result = await stage.process(input);
+
+      expect(result.sentences.first.text, 'Here are the results.');
+      expect(result.sentences.last.text, 'The scores look good.');
+      // Table row should appear as a sentence between prose
+      final tableRow = result.sentences.where((s) => s.text.contains('Alice')).toList();
+      expect(tableRow, hasLength(1));
+      expect(tableRow.first.text, contains('Score'));
+    });
+
+    test('skips separator-only table rows', () async {
+      const input = '| A | B |\n| --- | --- |\n| x | y |';
+      final result = await stage.process(input);
+
+      // Only the data row, not header or separator
+      expect(result.sentences, hasLength(1));
+      expect(result.sentences[0].text, isNot(contains('---')));
+    });
   });
 }

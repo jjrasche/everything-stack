@@ -2,7 +2,7 @@
   "conversationUuid": "c21867cb-239f-47a5-a8c8-cf3bc3efe357",
   "conversationName": "Project document review and consolidation",
   "turnCount": 30,
-  "totalSentences": 238,
+  "totalSentences": 230,
   "turns": [
     {
       "turnIndex": 0,
@@ -222,8 +222,8 @@
       "turnIndex": 3,
       "speaker": "assistant",
       "inputCharCount": 2986,
-      "sentenceCount": 28,
-      "droppedFragments": 0,
+      "sentenceCount": 26,
+      "droppedFragments": 2,
       "punctuationNeeded": false,
       "sentences": [
         {
@@ -232,7 +232,7 @@
         },
         {
           "id": "S2",
-          "text": "Food sitting 30min-2."
+          "text": "Food sitting 30min-2.5hrs."
         },
         {
           "id": "S3",
@@ -248,94 +248,86 @@
         },
         {
           "id": "S6",
-          "text": "Need:\nSEO/ads budget ($2-5K/month)\nDelivery radius defined (8-10 miles = limited market)\nCorporate catering push (offices, events)\nReferral incentives\nTechnology costs are 3-4x low\n$1K/month doesn't cover:\nStripe fees alone: 2."
+          "text": "Need:\nSEO/ads budget ($2-5K/month)\nDelivery radius defined (8-10 miles = limited market)\nCorporate catering push (offices, events)\nReferral incentives\nTechnology costs are 3-4x low\n$1K/month doesn't cover:\nStripe fees alone: 2.9% of $129K = $3,741/month\nIoT sensors + data plan: $500/month\nCustom ML + hosting: $1,000/month\nReal cost: ~$5,000/month\nTraining is a bottleneck\n\"50+ members trained across tasks\" before launch = optimistic."
         },
         {
           "id": "S7",
-          "text": "9% of $129K = $3,741/month\nIoT sensors + data plan: $500/month\nCustom ML + hosting: $1,000/month\nReal cost: ~$5,000/month\nTraining is a bottleneck\n\"50+ members trained across tasks\" before launch = optimistic."
-        },
-        {
-          "id": "S8",
           "text": "If training takes:\n2 shifts to learn 1 task (observation + supervised execution)\n6 tasks per member minimum\nThat's 12 shifts × 50 members = 600 training shifts\nEven with 10 trainers, that's 60 shifts, 30 days minimum\n\nWho trains them?"
         },
         {
-          "id": "S9",
+          "id": "S8",
           "text": "Need experienced cooks first (hire 2-3 professionals for first month?"
         },
         {
-          "id": "S10",
+          "id": "S9",
           "text": "Childcare liability is expensive\nNot just another task."
         },
         {
-          "id": "S11",
+          "id": "S10",
           "text": "Needs:\nLicensing (state requirements for group childcare)\nInsurance rider ($2-5K/year)\nBackground checks ($50/person × 20 qualified = $1,000)\nFirst aid certified staff\nAdd $500/month to operating costs\nMenu fatigue\n4 recipes = same meal every 4 days."
         },
         {
-          "id": "S12",
+          "id": "S11",
           "text": "Standard plan members see each meal 8x/month."
         },
         {
+          "id": "S12",
+          "text": "Need 8-10 recipes minimum for variety, which increases:\nIngredient complexity\nInventory management\nTraining requirements\nMember attrition is underestimated\n6.7% labor buffer means if 14 members quit (7%), you're below threshold."
+        },
+        {
           "id": "S13",
-          "text": "Need 8-10 recipes minimum for variety, which increases:\nIngredient complexity\nInventory management\nTraining requirements\nMember attrition is underestimated\n6."
-        },
-        {
-          "id": "S14",
-          "text": "7% labor buffer means if 14 members quit (7%), you're below threshold."
-        },
-        {
-          "id": "S15",
           "text": "Real attrition is 15-25% annually for co-ops."
         },
         {
-          "id": "S16",
+          "id": "S14",
           "text": "Need 225 members to maintain 200 active, or faster replacement pipeline."
         },
         {
-          "id": "S17",
+          "id": "S15",
           "text": "Changes I'd make:\nFinancial Model: Tech costs $5K/month (not $1K), add childcare compliance $500/month, total monthly costs = $121K (not $116K)."
         },
         {
-          "id": "S18",
+          "id": "S16",
           "text": "Surplus drops to $40K."
         },
         {
-          "id": "S19",
+          "id": "S17",
           "text": "- Operating Model: Add \"professional trainer\" roles for first 90 days (hire 3 cooks @ $25/hr × 20hrs/week = $6K/month, 3 months = $18K one-time cost)."
         },
         {
-          "id": "S20",
+          "id": "S18",
           "text": "- Incorporation Metrics: Require 225 members (not 200) to buffer attrition."
         },
         {
-          "id": "S21",
+          "id": "S19",
           "text": "Or accept 200 but lower dissolution threshold to 160 members (20% attrition)."
         },
         {
-          "id": "S22",
+          "id": "S20",
           "text": "- Kitchen Design & Recipes: Increase menu to 8 recipes minimum."
         },
         {
-          "id": "S23",
+          "id": "S21",
           "text": "Add equipment: 1 more combi oven ($15K) to run 3 simultaneous batches."
         },
         {
-          "id": "S24",
+          "id": "S22",
           "text": "- Technology Stack: Add heated delivery system OR switch value prop from \"delivered hot\" to \"delivered fresh, reheat in 5 minutes\" (more honest)."
         },
         {
-          "id": "S25",
+          "id": "S23",
           "text": "Would these break the model?"
         },
         {
-          "id": "S26",
+          "id": "S24",
           "text": "No, but margins tighten."
         },
         {
-          "id": "S27",
+          "id": "S25",
           "text": "With $121K costs, you're at $40K surplus instead of $45K."
         },
         {
-          "id": "S28",
+          "id": "S26",
           "text": "Still viable, just less cushion."
         }
       ]
@@ -546,7 +538,7 @@
       "turnIndex": 5,
       "speaker": "assistant",
       "inputCharCount": 5233,
-      "sentenceCount": 23,
+      "sentenceCount": 20,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
@@ -576,70 +568,58 @@
         },
         {
           "id": "S7",
-          "text": "Member relationship: \nNot \"owners\" - more like \"active participants with voting rights\"\nDeposit ($200) = launch capital, returned as meal credits or refunded if you quit\nNo equity, no ownership stake, no capital account\n\nProfit distribution (monthly vote):\n\nEach month, surplus gets voted on:\nOption A: Distribute to that month's workers (proportional to hours worked)\nOption B: Save for specific goal (voted at yearly meeting)\nOption C: Hybrid split\n\nExample month: $40K surplus\nOption A: $40K ÷ 1,500 hrs = $26."
+          "text": "Member relationship: \nNot \"owners\" - more like \"active participants with voting rights\"\nDeposit ($200) = launch capital, returned as meal credits or refunded if you quit\nNo equity, no ownership stake, no capital account\n\nProfit distribution (monthly vote):\n\nEach month, surplus gets voted on:\nOption A: Distribute to that month's workers (proportional to hours worked)\nOption B: Save for specific goal (voted at yearly meeting)\nOption C: Hybrid split\n\nExample month: $40K surplus\nOption A: $40K ÷ 1,500 hrs = $26.67/hr bonus (on top of $20 base wage embedded in meal value)\nOption B: All $40K → expansion fund\nOption C: $20K distributed ($13.33/hr bonus), $20K saved\n\nYearly meeting:\n\nVote on:\nSavings goals for next year (2nd location?"
         },
         {
           "id": "S8",
-          "text": "67/hr bonus (on top of $20 base wage embedded in meal value)\nOption B: All $40K → expansion fund\nOption C: $20K distributed ($13."
-        },
-        {
-          "id": "S9",
-          "text": "33/hr bonus), $20K saved\n\nYearly meeting:\n\nVote on:\nSavings goals for next year (2nd location?"
-        },
-        {
-          "id": "S10",
           "text": "heated delivery system?"
         },
         {
-          "id": "S11",
+          "id": "S9",
           "text": "pay down debt faster?"
         },
         {
-          "id": "S12",
+          "id": "S10",
           "text": ")\nBase wage rate (keep at $20/hr or adjust?"
         },
         {
-          "id": "S13",
+          "id": "S11",
           "text": ")\nMajor policy (change meal plans?"
         },
         {
-          "id": "S14",
+          "id": "S12",
           "text": "open cafe area?"
         },
         {
-          "id": "S15",
+          "id": "S13",
           "text": ")\nMembership cap (stay at 200 or expand to 225?"
         },
         {
-          "id": "S16",
+          "id": "S14",
           "text": ")\n\nHow this is better:\n\nExit is instant: \nStop working → stop getting meals + profit share\nNo \"let me calculate your equity\" bullshit\nDeposit returned as meal credits (use over 3 months) or refunded\n\nNewcomers equal to veterans:\nEveryone gets same $20/hr labor value\nProfit share is proportional to THAT MONTH's hours only\nNo \"I've been here since founding so I deserve more\"\n\nAlignment:\nPeople stay because it's valuable NOW (meals + profit share)\nNot because they're locked into equity they can't access\nNo perverse incentive to stay when you hate it\n\nLegal structures that work:\nNonprofit cooperative (cleanest for mission)\nCan't distribute profits to individuals as dividends\nBUT can pay \"patronage dividends\" based on usage (hours worked)\nMission-locked (can't be sold to PE firm)\nTax-exempt if structured right\nDownside: Complex IRS rules\nBenefit corporation (flexible)\nCan distribute profits as bonuses to workers\nMission-locked (can't prioritize profit over mission)\nNot tax-exempt\nEasy to understand\nDownside: Still \"owned\" by someone (founding members?"
         },
         {
-          "id": "S17",
+          "id": "S15",
           "text": ")\nPlatform cooperative (collective ownership, no individual equity)\nMembers collectively own LLC\nNo individual equity shares\nProfits flow to collective, distributed by vote\nCan be nonprofit or for-profit\nCleanest fit for what you're describing\n\nI'd go with #3: Platform cooperative model\n\nHow it works:\n\nFounding:\n200 members × $200 deposit = $40K\n+ $60K loan = $100K equipment\nLLC formed, owned collectively by \"active member class\"\nNo individual shares, no equity accounts\n\nGovernance:\nActive member = worked 8+ hrs in last 60 days, gets 1 vote\nInactive member = worked <8 hrs in last 60 days, loses vote but can reactivate\nDecisions: Monthly (profit distribution), Yearly (big stuff), Emergency (safety/legal)\n\nProfit distribution:\nDefault: 50% distribute to month's workers, 50% save\nCan be changed by monthly vote (requires 50%+1)\nDistribution formula: (Your hours that month ÷ Total hours that month) × Distribution pool\n\nExpansion funded by surplus:\nWant 2nd location?"
         },
         {
-          "id": "S18",
+          "id": "S16",
           "text": "Need $100K saved\nYearly vote: \"Save 100% of surplus until we hit $100K, then open 2nd location\"\nOnce opened, 2nd location is same model (active members there vote on their site's decisions)\n\nWhat about the $60K loan?"
         },
         {
-          "id": "S19",
+          "id": "S17",
           "text": "Options:\nTraditional bank loan - co-op pays $1,200/month from surplus before distribution\nMember loans - members loan co-op money at bank rates, repaid monthly (optional, not required)\nRevenue-based financing - lender takes % of revenue until repaid (no fixed payment, scales with success)\n\nExit scenarios:\n\nMember quits:\nStop working → lose voting rights after 60 days\nDeposit converted to meal credits (use over 3 months) or refunded\nZero equity payout (didn't own anything)\nCan rejoin anytime by working again\n\nDissolution (metrics failed):\nSell equipment\nPay off debt\nReturn member deposits\nDistribute remaining cash to active members (proportional to last 12 months hours)\nClean exit, no lawyers\n\nWhy ownership doesn't matter:\n\nYou're building a time bank with food, not a capital asset."
         },
         {
-          "id": "S20",
-          "text": "The value is:\n8 hrs labor → meals + community + profit share\nNot \"I own 0."
+          "id": "S18",
+          "text": "The value is:\n8 hrs labor → meals + community + profit share\nNot \"I own 0.5% of the kitchen equipment\"\n\nRemoving ownership removes:\nSpeculation (can't flip your stake)\nInequality (no \"original members own more\")\nComplexity (no equity tracking)\nFriction (instant exit)\n\nThis is how it should work."
         },
         {
-          "id": "S21",
-          "text": "5% of the kitchen equipment\"\n\nRemoving ownership removes:\nSpeculation (can't flip your stake)\nInequality (no \"original members own more\")\nComplexity (no equity tracking)\nFriction (instant exit)\n\nThis is how it should work."
-        },
-        {
-          "id": "S22",
+          "id": "S19",
           "text": "You're not building a company to sell."
         },
         {
-          "id": "S23",
+          "id": "S20",
           "text": "You're building a persistent utility that rewards active participation, not passive ownership."
         }
       ]
@@ -862,24 +842,20 @@
       "turnIndex": 9,
       "speaker": "assistant",
       "inputCharCount": 3931,
-      "sentenceCount": 4,
+      "sentenceCount": 3,
       "droppedFragments": 0,
       "punctuationNeeded": true,
       "sentences": [
         {
           "id": "S1",
-          "text": "Independent Variables:\nPublic meal price ($/meal effective rate)\nMember meal price ($/meal at-cost or subsidized)\nFood cost ($/meal ingredients)\nHourly wage rate ($/hr base wage)\nDaily production volume (meals/day total)\nMember meal allocation (% of daily production reserved for members)\nLabor hours per day (total hrs needed to produce daily volume)\nOperating costs (rent, utilities, insurance, tech - $/month fixed)\n\nDependent Variables (calculated):\nMonthly revenue (public sales)\nMonthly labor cost (hrs × wage × days)\nMonthly food cost (member + public meals × food cost)\nMonthly surplus (revenue - all costs)\nSurplus per labor hour ($/hr bonus potential)\nTotal effective wage (base + bonus)\nMember value (wages + food savings + bonus)\nBreak-even public sales (minimum $/day to cover costs)\n\nConstraints:\nZero balance: Revenue = Labor + Food + Operating + Distribution/Savings\nWage cap: Total effective wage ≤ 4x minimum wage ($60/hr)\nProduction capacity: Daily volume ≤ equipment max (based on kitchen design)\nLabor feasibility: Hours/day ≤ reasonable (50-60 hrs max without adding shifts)\nMember meals: Member allocation × volume ≥ committed member meal plans\nPublic pricing: Public $/meal ≥ 1."
+          "text": "Independent Variables:\nPublic meal price ($/meal effective rate)\nMember meal price ($/meal at-cost or subsidized)\nFood cost ($/meal ingredients)\nHourly wage rate ($/hr base wage)\nDaily production volume (meals/day total)\nMember meal allocation (% of daily production reserved for members)\nLabor hours per day (total hrs needed to produce daily volume)\nOperating costs (rent, utilities, insurance, tech - $/month fixed)\n\nDependent Variables (calculated):\nMonthly revenue (public sales)\nMonthly labor cost (hrs × wage × days)\nMonthly food cost (member + public meals × food cost)\nMonthly surplus (revenue - all costs)\nSurplus per labor hour ($/hr bonus potential)\nTotal effective wage (base + bonus)\nMember value (wages + food savings + bonus)\nBreak-even public sales (minimum $/day to cover costs)\n\nConstraints:\nZero balance: Revenue = Labor + Food + Operating + Distribution/Savings\nWage cap: Total effective wage ≤ 4x minimum wage ($60/hr)\nProduction capacity: Daily volume ≤ equipment max (based on kitchen design)\nLabor feasibility: Hours/day ≤ reasonable (50-60 hrs max without adding shifts)\nMember meals: Member allocation × volume ≥ committed member meal plans\nPublic pricing: Public $/meal ≥ 1.3x food cost (minimum markup for viability)\nMember pricing: Member $/meal ≥ food cost (can subsidize but not below cost)\n\nDistribution rules (decided by vote, modeled as scenarios):\nScenario A: 100% distribute surplus as bonus\nScenario B: 50% distribute, 50% save\nScenario C: 25% distribute, 75% save\nScenario D: 0% distribute, 100% save (growth mode)\n\nRecommended system: Spreadsheet with scenarios\n\nStructure:\n\nTab 1: Variables (inputs)\nAll 8 independent variables\nDistribution policy dropdown (A/B/C/D)\n\nTab 2: Monthly Model\nRevenue calculations\nCost calculations\nSurplus calculation\nBonus per hour\nEffective wage\nMember value by tier (8/40/80/160 hrs)\n\nTab 3: Breakeven Analysis\nMinimum public sales needed\nSensitivity: what if 10% fewer public sales?"
         },
         {
           "id": "S2",
-          "text": "3x food cost (minimum markup for viability)\nMember pricing: Member $/meal ≥ food cost (can subsidize but not below cost)\n\nDistribution rules (decided by vote, modeled as scenarios):\nScenario A: 100% distribute surplus as bonus\nScenario B: 50% distribute, 50% save\nScenario C: 25% distribute, 75% save\nScenario D: 0% distribute, 100% save (growth mode)\n\nRecommended system: Spreadsheet with scenarios\n\nStructure:\n\nTab 1: Variables (inputs)\nAll 8 independent variables\nDistribution policy dropdown (A/B/C/D)\n\nTab 2: Monthly Model\nRevenue calculations\nCost calculations\nSurplus calculation\nBonus per hour\nEffective wage\nMember value by tier (8/40/80/160 hrs)\n\nTab 3: Breakeven Analysis\nMinimum public sales needed\nSensitivity: what if 10% fewer public sales?"
-        },
-        {
-          "id": "S3",
           "text": "- Margin of safety\n\nTab 4: Member Tiers\n8hr tier: wages + savings + bonus = total value\n40hr tier: same\n80hr tier: same\n160hr tier: same\nCan this tier live on co-op alone?"
         },
         {
-          "id": "S4",
+          "id": "S3",
           "text": "(vs $2,650 expenses)\n\nTab 5: Scenarios\nGrowth scenario (save 100%)\nSteady state (50/50 split)\nMember-focused (distribute 100%)\nCompare: surplus per year, expansion timeline, member cash flow\n\nTab 6: Equipment Capacity\nBased on kitchen design doc\nMax meals/day by recipe\nBottleneck identification\n\nKey formulas:\n\n\n\nWhat to vary:\n\nTest ranges:\nPublic price: $10-15/meal\nMember price: $5-8/meal\nFood cost: $4-6/meal\nWage: $18-25/hr\nVolume: 400-600 meals/day\nMember allocation: 20-30%\nDistribution policy: 0-100%\n\nGoal: Find combination where:\n8hr tier gets $500+ value/month (attractive to join)\n80hr tier can live on it ($2,500+ cash + food)\nSurplus enough to expand in 18-24 months\nPublic pricing competitive ($10-12/meal)\nBreak-even has 30%+ margin of safety\n\nTool: Google Sheets with dropdown scenarios\n\nBuild it so you can:\nChange any variable\nSee instant impact on all tiers\nToggle distribution policy\nCompare scenarios side-by-side\n\nWant me to spec the exact sheet structure/formulas for Claude Code?"
         }
       ]
@@ -974,7 +950,7 @@
         },
         {
           "id": "S21",
-          "text": "3 x food cost?"
+          "text": "1.3 x food cost?"
         },
         {
           "id": "S22",
@@ -1026,40 +1002,32 @@
       "turnIndex": 10,
       "speaker": "assistant",
       "inputCharCount": 2294,
-      "sentenceCount": 8,
+      "sentenceCount": 6,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
         {
           "id": "S1",
-          "text": "Yes - those are the two numbers that matter:\nTotal wages distributed ($/month to workers)\nTotal saved ($/month to collective goals)\n\nRevised Independent Variables (sliders):\nFood cost ($/meal)\nPublic meal price ($/meal)\nMember meal price ($/meal)\nHourly wage rate ($/hr base)\nDaily production volume (meals/day)\nMember meal percentage (% of daily volume - predictive/historical average)\nOperating costs ($/month fixed)\nRevenue distribution split (% to wages vs % to savings)\n\nConstraints:\nZero balance: All money allocated (nothing carried over)\nWage cap: Total effective wage ≤ $60/hr\nLabor hours/day: ≤ 60 hrs/day (8hr max per person × reasonable crew size)\nPublic price floor: ≥ 1."
+          "text": "Yes - those are the two numbers that matter:\nTotal wages distributed ($/month to workers)\nTotal saved ($/month to collective goals)\n\nRevised Independent Variables (sliders):\nFood cost ($/meal)\nPublic meal price ($/meal)\nMember meal price ($/meal)\nHourly wage rate ($/hr base)\nDaily production volume (meals/day)\nMember meal percentage (% of daily volume - predictive/historical average)\nOperating costs ($/month fixed)\nRevenue distribution split (% to wages vs % to savings)\n\nConstraints:\nZero balance: All money allocated (nothing carried over)\nWage cap: Total effective wage ≤ $60/hr\nLabor hours/day: ≤ 60 hrs/day (8hr max per person × reasonable crew size)\nPublic price floor: ≥ 1.3x food cost\nPublic price ceiling: (add max, maybe 3x food cost?"
         },
         {
           "id": "S2",
-          "text": "3x food cost\nPublic price ceiling: (add max, maybe 3x food cost?"
-        },
-        {
-          "id": "S3",
           "text": "or market rate like $15/meal?"
         },
         {
-          "id": "S4",
+          "id": "S3",
           "text": ")\nMember price floor: ≥ food cost\nMember price ceiling: ≤ public price (otherwise why be public customer?"
         },
         {
-          "id": "S5",
+          "id": "S4",
           "text": ")\n\nDependent Variables (calculated from sliders):\nLabor hours/day needed (based on production volume)\nMonthly revenue (public + member sales)\nMonthly labor cost\nMonthly food cost\nMonthly surplus\nBonus $/hr (from distributed portion of surplus)\nTotal effective wage (base + bonus)\nTotal wages distributed ($/month) ← KEY OUTPUT\nTotal saved ($/month) ← KEY OUTPUT\n\nVisual recommendation:\n\nSingle dashboard with:\n\nLeft side: Sliders (8 inputs)\nFood cost: $4-7\nPublic price: $8-15\nMember price: $5-10\nBase wage: $15-25\nDaily volume: 300-600\nMember %: 15-35%\nOperating: $100K-150K/year\nDistribution split: 0-100% slider\n\nRight side: Key outputs (big numbers)\nMonthly wages: $XX,XXX\nMonthly saved: $XX,XXX\nEffective wage: $XX/hr\nMargin of safety: XX%\n\nBottom: Member tier values\n8hr tier: $XXX value\n40hr tier: $X,XXX value\n80hr tier: $X,XXX value\nCan live on 80hr?"
         },
         {
+          "id": "S5",
+          "text": "YES/NO\n\nConstraint violations (red flags)\n⚠️ Wage exceeds $60/hr\n⚠️ Public price below 1.3x food cost\n⚠️ Labor hours >60/day\n⚠️ Deficit (not breaking even)\n\nTool: Interactive web calculator\n\nNot spreadsheet - build as simple React app with sliders and live calculation."
+        },
+        {
           "id": "S6",
-          "text": "YES/NO\n\nConstraint violations (red flags)\n⚠️ Wage exceeds $60/hr\n⚠️ Public price below 1."
-        },
-        {
-          "id": "S7",
-          "text": "3x food cost\n⚠️ Labor hours >60/day\n⚠️ Deficit (not breaking even)\n\nTool: Interactive web calculator\n\nNot spreadsheet - build as simple React app with sliders and live calculation."
-        },
-        {
-          "id": "S8",
           "text": "Ready to spec for Claude Code?"
         }
       ]

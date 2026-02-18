@@ -1,5 +1,6 @@
 import 'dart:convert' show jsonDecode;
 
+import '../../slm/runners/cohere_runner.dart';
 import '../../types/chat_client.dart';
 import '../../types/message.dart';
 import '../encoder_stage.dart';
@@ -19,19 +20,23 @@ class CohereResult {
 }
 
 /// Group adjacent sentences into concept spans by discourse coherence.
-/// Primary: on-device CohereRunner (discourse DeBERTa pairwise scoring).
+/// Primary: on-device CohereRunner (NLI DeBERTa pairwise scoring).
 /// Fallback: LLM via ChatClient (temporary, being phased out).
 class CohereStage implements EncoderStage<CohereInput, CohereResult> {
+  final CohereRunner? _cohereRunner;
   final ChatClient? _chatClient;
-  // TODO(phase2): Add CohereRunner field once runner is built
-  // final CohereRunner? _cohereRunner;
   static const double _defaultThreshold = 0.5;
 
-  CohereStage({ChatClient? chatClient})
-      : _chatClient = chatClient;
+  CohereStage({CohereRunner? cohereRunner, ChatClient? chatClient})
+      : _cohereRunner = cohereRunner,
+        _chatClient = chatClient;
 
   @override
   String get stageName => 'cohere';
+
+  String get _modelName => _cohereRunner != null
+      ? 'bert-wiki-paragraphs'
+      : 'groq/llama-3.1-8b-instant';
 
   @override
   Future<CohereResult> process(CohereInput input) async {
@@ -45,7 +50,7 @@ class CohereStage implements EncoderStage<CohereInput, CohereResult> {
           input: [],
           pairScores: [],
           output: [],
-          model: 'groq/llama-3.1-8b-instant',
+          model: _modelName,
           threshold: _defaultThreshold,
           latencyMs: stopwatch.elapsedMilliseconds,
         ),
@@ -64,7 +69,7 @@ class CohereStage implements EncoderStage<CohereInput, CohereResult> {
           input: input.sentences.map((s) => s.id).toList(),
           pairScores: [],
           output: [span],
-          model: 'groq/llama-3.1-8b-instant',
+          model: _modelName,
           threshold: _defaultThreshold,
           latencyMs: stopwatch.elapsedMilliseconds,
         ),
@@ -82,7 +87,7 @@ class CohereStage implements EncoderStage<CohereInput, CohereResult> {
         input: input.sentences.map((s) => s.id).toList(),
         pairScores: boundaries,
         output: spans,
-        model: 'groq/llama-3.1-8b-instant',
+        model: _modelName,
         threshold: _defaultThreshold,
         latencyMs: stopwatch.elapsedMilliseconds,
       ),
@@ -90,6 +95,31 @@ class CohereStage implements EncoderStage<CohereInput, CohereResult> {
   }
 
   Future<List<PairScore>> _findBoundaries(List<Sentence> sentences) async {
+    if (_cohereRunner != null) {
+      return _findBoundariesWithRunner(sentences);
+    }
+    return _findBoundariesWithLlm(sentences);
+  }
+
+  Future<List<PairScore>> _findBoundariesWithRunner(
+      List<Sentence> sentences) async {
+    final scores = <PairScore>[];
+    for (var i = 0; i < sentences.length - 1; i++) {
+      final pair = await _cohereRunner!.score(
+        sentences[i].text,
+        sentences[i + 1].text,
+      );
+      scores.add(PairScore(
+        pair: [sentences[i].id, sentences[i + 1].id],
+        coherenceScore: pair.coherence,
+        boundary: pair.coherence < _defaultThreshold,
+      ));
+    }
+    return scores;
+  }
+
+  Future<List<PairScore>> _findBoundariesWithLlm(
+      List<Sentence> sentences) async {
     final sentenceList = sentences
         .map((s) => '${s.id}: ${s.text}')
         .join('\n');

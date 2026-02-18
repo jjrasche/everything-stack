@@ -2,7 +2,7 @@
   "conversationUuid": "51f0c350-c962-4396-ad15-2a73958e31f9",
   "conversationName": "Core MVP Voice Streaming Strategy",
   "turnCount": 12,
-  "totalSentences": 66,
+  "totalSentences": 70,
   "turns": [
     {
       "turnIndex": 0,
@@ -218,7 +218,7 @@
       "turnIndex": 3,
       "speaker": "assistant",
       "inputCharCount": 4948,
-      "sentenceCount": 11,
+      "sentenceCount": 17,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
@@ -236,34 +236,58 @@
         },
         {
           "id": "S4",
-          "text": "### Core Features:\nContinuous audio streaming while phone is locked\nWorks with screen off to save battery\nProcesses everything from meetings to random thoughts\nNo need to press any buttons or look at screen\nSystem wake word: \"Hey Siri/OK Google, activate Extended Cognition\"\nVibration confirmation when recording starts/stops\nOptional periodic pulse to confirm it's still listening\nReal-time transcription and understanding\nAutomatic extraction of tasks, ideas, commitments\nContext-aware note creation\nMeeting summaries generated automatically\nAll processing happens on your local hardware\nAudio archived only on your personal server\nFace ID/fingerprint protection for access\nAutomatic pause in bathrooms/private spaces (GPS-based)\n\n\n\n\n\n\n\n\n\n\n\n| Feature | PWA | Native App |\n|---------|-----|------------|\n| Record with screen locked | ❌ | ✅ |\n| Stream audio in background | ❌ | ✅ |\n| Wake word activation | ❌ | ✅ (via Siri/Google) |\n| 8+ hour continuous recording | ❌ | ✅ |\n| Bluetooth lapel mic | Limited | ✅ Full support |\n| Battery optimization | ❌ | ✅ Background modes |\n\n\n\n\n\n\n\n\nYour extended cognition concept is fundamentally about *forgetting the technology exists*."
+          "text": "### Core Features:\nContinuous audio streaming while phone is locked\nWorks with screen off to save battery\nProcesses everything from meetings to random thoughts\nNo need to press any buttons or look at screen\nSystem wake word: \"Hey Siri/OK Google, activate Extended Cognition\"\nVibration confirmation when recording starts/stops\nOptional periodic pulse to confirm it's still listening\nReal-time transcription and understanding\nAutomatic extraction of tasks, ideas, commitments\nContext-aware note creation\nMeeting summaries generated automatically\nAll processing happens on your local hardware\nAudio archived only on your personal server\nFace ID/fingerprint protection for access\nAutomatic pause in bathrooms/private spaces (GPS-based)\n\n\n\n\n\n\n\n\n\n\n\nFeature: Record with screen locked, PWA: ❌, Native App: ✅."
         },
         {
           "id": "S5",
-          "text": "PWAs require active interaction - antithetical to your vision."
+          "text": "Feature: Stream audio in background, PWA: ❌, Native App: ✅."
         },
         {
           "id": "S6",
-          "text": "Technical Impossibility\nNative apps can use hardware acceleration for on-device AI\nSecure enclave for biometric protection\nEfficient battery usage with OS-level optimization\n\n\nEvery successful always-listening app is native:\nAlexa app\nGoogle Assistant  \nDragon Anywhere\nOtter."
+          "text": "Feature: Wake word activation, PWA: ❌, Native App: ✅ (via Siri/Google)."
         },
         {
           "id": "S7",
-          "text": "ai\nEven Apple's Voice Memos\nPhase 1: Native shell app with recording\nPhase 2: Background streaming to your servers\nPhase 3: System wake word integration\nPhase 4: On-device AI processing\nPhase 5: Full extended cognition features\n\n\n\nPWAs are great for many things."
+          "text": "Feature: 8+ hour continuous recording, PWA: ❌, Native App: ✅."
         },
         {
           "id": "S8",
-          "text": "Extended cognition isn't one of them."
+          "text": "Feature: Bluetooth lapel mic, PWA: Limited, Native App: ✅ Full support."
         },
         {
           "id": "S9",
-          "text": "Your vision of putting a phone in your pocket and having it act as an intelligent audio companion is 100% achievable - but only with native development."
+          "text": "Feature: Battery optimization, PWA: ❌, Native App: ✅ Background modes."
         },
         {
           "id": "S10",
-          "text": "The good news: your backend architecture (STT, LLM, knowledge storage) remains exactly the same."
+          "text": "Your extended cognition concept is fundamentally about *forgetting the technology exists*."
         },
         {
           "id": "S11",
+          "text": "PWAs require active interaction - antithetical to your vision."
+        },
+        {
+          "id": "S12",
+          "text": "Technical Impossibility\nNative apps can use hardware acceleration for on-device AI\nSecure enclave for biometric protection\nEfficient battery usage with OS-level optimization\n\n\nEvery successful always-listening app is native:\nAlexa app\nGoogle Assistant  \nDragon Anywhere\nOtter."
+        },
+        {
+          "id": "S13",
+          "text": "ai\nEven Apple's Voice Memos\nPhase 1: Native shell app with recording\nPhase 2: Background streaming to your servers\nPhase 3: System wake word integration\nPhase 4: On-device AI processing\nPhase 5: Full extended cognition features\n\n\n\nPWAs are great for many things."
+        },
+        {
+          "id": "S14",
+          "text": "Extended cognition isn't one of them."
+        },
+        {
+          "id": "S15",
+          "text": "Your vision of putting a phone in your pocket and having it act as an intelligent audio companion is 100% achievable - but only with native development."
+        },
+        {
+          "id": "S16",
+          "text": "The good news: your backend architecture (STT, LLM, knowledge storage) remains exactly the same."
+        },
+        {
+          "id": "S17",
           "text": "Would you like me to create a React Native scaffold that demonstrates background audio recording with WebRTC streaming?"
         }
       ]
@@ -320,7 +344,7 @@
       "turnIndex": 5,
       "speaker": "user",
       "inputCharCount": 1012,
-      "sentenceCount": 6,
+      "sentenceCount": 5,
       "droppedFragments": 0,
       "punctuationNeeded": false,
       "sentences": [
@@ -334,18 +358,14 @@
         },
         {
           "id": "S3",
-          "text": "sh\"   3 minutes ago   Up 3 minutes (unhealthy)   0."
+          "text": "sh\"   3 minutes ago   Up 3 minutes (unhealthy)   0.0.0.0:3000->3000/tcp, 8080/tcp   open-webui\nPS C:\\Users\\rasche_j>\nPS C:\\Users\\rasche_j> # Or specifically look for open-webui\nPS C:\\Users\\rasche_j> docker ps -a | grep open-webui\ngrep : The term 'grep' is not recognized as the name of a cmdlet, function, script file, operable program."
         },
         {
           "id": "S4",
-          "text": "0:3000->3000/tcp, 8080/tcp   open-webui\nPS C:\\Users\\rasche_j>\nPS C:\\Users\\rasche_j> # Or specifically look for open-webui\nPS C:\\Users\\rasche_j> docker ps -a | grep open-webui\ngrep : The term 'grep' is not recognized as the name of a cmdlet, function, script file, operable program."
-        },
-        {
-          "id": "S5",
           "text": "Check\nthe spelling of the name, or if a path was included, verify that the path is correct and try again."
         },
         {
-          "id": "S6",
+          "id": "S5",
           "text": "At line:1 char:16\ndocker ps -a | grep open-webui\n~~~~\nPS C:\\Users\\rasche_j>"
         }
       ]
@@ -354,8 +374,8 @@
       "turnIndex": 5,
       "speaker": "assistant",
       "inputCharCount": 1409,
-      "sentenceCount": 7,
-      "droppedFragments": 0,
+      "sentenceCount": 6,
+      "droppedFragments": 1,
       "punctuationNeeded": false,
       "sentences": [
         {
@@ -372,18 +392,14 @@
         },
         {
           "id": "S4",
-          "text": "Try accessing it anyway\nhttp://localhost:3000\nhttp://127."
+          "text": "Try accessing it anyway\nhttp://localhost:3000\nhttp://127.0.0.1:3000\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe `-it` flag will show you the startup process directly instead of running in background (`-d`)."
         },
         {
           "id": "S5",
-          "text": "1:3000\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe `-it` flag will show you the startup process directly instead of running in background (`-d`)."
-        },
-        {
-          "id": "S6",
           "text": "Most likely: Open WebUI is still initializing."
         },
         {
-          "id": "S7",
+          "id": "S6",
           "text": "Run `docker logs open-webui` and share what you see - that will tell us exactly what's happening."
         }
       ]
