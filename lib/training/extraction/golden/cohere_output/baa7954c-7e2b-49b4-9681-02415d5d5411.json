@@ -499,7 +499,7 @@
       "turnIndex": 5,
       "speaker": "user",
       "sentenceCount": 67,
-      "spanCount": 4,
+      "spanCount": 8,
       "boundaryCount": 3,
       "latencyMs": 3662,
       "pairScores": [
@@ -1039,7 +1039,12 @@
             "S1",
             "S2",
             "S3",
-            "S4",
+            "S4"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S5",
             "S6",
             "S7",
@@ -1051,15 +1056,30 @@
             "S13",
             "S14",
             "S15",
-            "S16",
+            "S16"
+          ]
+        },
+        {
+          "spanId": "span_2",
+          "sentenceIds": [
             "S17",
             "S18",
             "S19",
             "S20",
             "S21",
-            "S22",
+            "S22"
+          ]
+        },
+        {
+          "spanId": "span_3",
+          "sentenceIds": [
             "S23",
-            "S24",
+            "S24"
+          ]
+        },
+        {
+          "spanId": "span_4",
+          "sentenceIds": [
             "S25",
             "S26",
             "S27",
@@ -1076,7 +1096,7 @@
           ]
         },
         {
-          "spanId": "span_1",
+          "spanId": "span_5",
           "sentenceIds": [
             "S38",
             "S39",
@@ -1096,13 +1116,13 @@
           ]
         },
         {
-          "spanId": "span_2",
+          "spanId": "span_6",
           "sentenceIds": [
             "S53"
           ]
         },
         {
-          "spanId": "span_3",
+          "spanId": "span_7",
           "sentenceIds": [
             "S54",
             "S55",
@@ -1641,5 +1661,7 @@
         }
       ]
     }
-  ]
+  ],
+  "resplitThreshold": 0.65,
+  "maxSpanSentences": 15
 }

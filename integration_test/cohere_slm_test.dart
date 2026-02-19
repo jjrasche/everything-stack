@@ -54,7 +54,11 @@ void main() {
       assetPath: modelFile.absolute.path,
     );
 
-    cohereStage = CohereStage(cohereRunner: cohereRunner);
+    cohereStage = CohereStage(
+      cohereRunner: cohereRunner,
+      resplitThreshold: 0.65,
+      maxSpanSentences: 15,
+    );
   });
 
   tearDownAll(() async {
@@ -136,6 +140,8 @@ void main() {
         'stage': 'cohere',
         'model': _modelId,
         'threshold': 0.5,
+        'resplitThreshold': 0.65,
+        'maxSpanSentences': 15,
         'turns': turnOutputs,
       };
 

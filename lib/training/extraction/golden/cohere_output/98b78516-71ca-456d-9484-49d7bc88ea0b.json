@@ -208,7 +208,7 @@
       "turnIndex": 1,
       "speaker": "user",
       "sentenceCount": 20,
-      "spanCount": 1,
+      "spanCount": 2,
       "boundaryCount": 0,
       "latencyMs": 967,
       "pairScores": [
@@ -381,7 +381,12 @@
             "S10",
             "S11",
             "S12",
-            "S13",
+            "S13"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S14",
             "S15",
             "S16",
@@ -3177,7 +3182,7 @@
       "turnIndex": 17,
       "speaker": "user",
       "sentenceCount": 21,
-      "spanCount": 1,
+      "spanCount": 2,
       "boundaryCount": 0,
       "latencyMs": 784,
       "pairScores": [
@@ -3353,7 +3358,12 @@
             "S5",
             "S6",
             "S7",
-            "S8",
+            "S8"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S9",
             "S10",
             "S11",
@@ -3855,7 +3865,7 @@
       "turnIndex": 19,
       "speaker": "assistant",
       "sentenceCount": 21,
-      "spanCount": 3,
+      "spanCount": 4,
       "boundaryCount": 2,
       "latencyMs": 699,
       "pairScores": [
@@ -4044,7 +4054,12 @@
             "S13",
             "S14",
             "S15",
-            "S16",
+            "S16"
+          ]
+        },
+        {
+          "spanId": "span_2",
+          "sentenceIds": [
             "S17",
             "S18",
             "S19",
@@ -4052,7 +4067,7 @@
           ]
         },
         {
-          "spanId": "span_2",
+          "spanId": "span_3",
           "sentenceIds": [
             "S21"
           ]
@@ -5935,7 +5950,7 @@
       "turnIndex": 33,
       "speaker": "assistant",
       "sentenceCount": 21,
-      "spanCount": 2,
+      "spanCount": 3,
       "boundaryCount": 1,
       "latencyMs": 558,
       "pairScores": [
@@ -6119,7 +6134,12 @@
             "S8",
             "S9",
             "S10",
-            "S11",
+            "S11"
+          ]
+        },
+        {
+          "spanId": "span_2",
+          "sentenceIds": [
             "S12",
             "S13",
             "S14",
@@ -6346,5 +6366,7 @@
         }
       ]
     }
-  ]
+  ],
+  "resplitThreshold": 0.65,
+  "maxSpanSentences": 15
 }

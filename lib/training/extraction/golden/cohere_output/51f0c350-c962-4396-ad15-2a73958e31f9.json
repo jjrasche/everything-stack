@@ -398,7 +398,7 @@
       "turnIndex": 3,
       "speaker": "assistant",
       "sentenceCount": 17,
-      "spanCount": 1,
+      "spanCount": 2,
       "boundaryCount": 0,
       "latencyMs": 651,
       "pairScores": [
@@ -543,7 +543,12 @@
             "S6",
             "S7",
             "S8",
-            "S9",
+            "S9"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S10",
             "S11",
             "S12",
@@ -764,5 +769,7 @@
         }
       ]
     }
-  ]
+  ],
+  "resplitThreshold": 0.65,
+  "maxSpanSentences": 15
 }

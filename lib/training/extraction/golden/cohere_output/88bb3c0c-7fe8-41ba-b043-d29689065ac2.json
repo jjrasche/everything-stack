@@ -10,7 +10,7 @@
       "turnIndex": 0,
       "speaker": "user",
       "sentenceCount": 24,
-      "spanCount": 1,
+      "spanCount": 3,
       "boundaryCount": 0,
       "latencyMs": 776,
       "pairScores": [
@@ -204,7 +204,12 @@
           "spanId": "span_0",
           "sentenceIds": [
             "S1",
-            "S2",
+            "S2"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S3",
             "S4",
             "S5",
@@ -215,7 +220,12 @@
             "S10",
             "S11",
             "S12",
-            "S13",
+            "S13"
+          ]
+        },
+        {
+          "spanId": "span_2",
+          "sentenceIds": [
             "S14",
             "S15",
             "S16",
@@ -780,7 +790,7 @@
       "turnIndex": 3,
       "speaker": "user",
       "sentenceCount": 54,
-      "spanCount": 3,
+      "spanCount": 5,
       "boundaryCount": 2,
       "latencyMs": 2189,
       "pairScores": [
@@ -1226,7 +1236,12 @@
             "S11",
             "S12",
             "S13",
-            "S14",
+            "S14"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S15",
             "S16",
             "S17",
@@ -1243,7 +1258,7 @@
           ]
         },
         {
-          "spanId": "span_1",
+          "spanId": "span_2",
           "sentenceIds": [
             "S28",
             "S29",
@@ -1256,7 +1271,12 @@
             "S36",
             "S37",
             "S38",
-            "S39",
+            "S39"
+          ]
+        },
+        {
+          "spanId": "span_3",
+          "sentenceIds": [
             "S40",
             "S41",
             "S42",
@@ -1267,7 +1287,7 @@
           ]
         },
         {
-          "spanId": "span_2",
+          "spanId": "span_4",
           "sentenceIds": [
             "S47",
             "S48",
@@ -2047,7 +2067,7 @@
       "turnIndex": 9,
       "speaker": "user",
       "sentenceCount": 24,
-      "spanCount": 3,
+      "spanCount": 4,
       "boundaryCount": 2,
       "latencyMs": 1117,
       "pairScores": [
@@ -2254,13 +2274,18 @@
             "S12",
             "S13",
             "S14",
-            "S15",
+            "S15"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S16",
             "S17"
           ]
         },
         {
-          "spanId": "span_1",
+          "spanId": "span_2",
           "sentenceIds": [
             "S18",
             "S19",
@@ -2268,7 +2293,7 @@
           ]
         },
         {
-          "spanId": "span_2",
+          "spanId": "span_3",
           "sentenceIds": [
             "S21",
             "S22",
@@ -2852,5 +2877,7 @@
         }
       ]
     }
-  ]
+  ],
+  "resplitThreshold": 0.65,
+  "maxSpanSentences": 15
 }

@@ -553,7 +553,7 @@
       "turnIndex": 7,
       "speaker": "user",
       "sentenceCount": 25,
-      "spanCount": 1,
+      "spanCount": 3,
       "boundaryCount": 0,
       "latencyMs": 831,
       "pairScores": [
@@ -765,11 +765,21 @@
             "S9",
             "S10",
             "S11",
-            "S12",
+            "S12"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S13",
             "S14",
             "S15",
-            "S16",
+            "S16"
+          ]
+        },
+        {
+          "spanId": "span_2",
+          "sentenceIds": [
             "S17",
             "S18",
             "S19",
@@ -819,5 +829,7 @@
         }
       ]
     }
-  ]
+  ],
+  "resplitThreshold": 0.65,
+  "maxSpanSentences": 15
 }

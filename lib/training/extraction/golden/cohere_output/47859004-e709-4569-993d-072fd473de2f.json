@@ -1384,7 +1384,7 @@
       "turnIndex": 6,
       "speaker": "user",
       "sentenceCount": 23,
-      "spanCount": 1,
+      "spanCount": 4,
       "boundaryCount": 0,
       "latencyMs": 837,
       "pairScores": [
@@ -1570,9 +1570,19 @@
           "spanId": "span_0",
           "sentenceIds": [
             "S1",
-            "S2",
+            "S2"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S3",
-            "S4",
+            "S4"
+          ]
+        },
+        {
+          "spanId": "span_2",
+          "sentenceIds": [
             "S5",
             "S6",
             "S7",
@@ -1585,7 +1595,12 @@
             "S14",
             "S15",
             "S16",
-            "S17",
+            "S17"
+          ]
+        },
+        {
+          "spanId": "span_3",
+          "sentenceIds": [
             "S18",
             "S19",
             "S20",
@@ -1600,7 +1615,7 @@
       "turnIndex": 6,
       "speaker": "assistant",
       "sentenceCount": 19,
-      "spanCount": 1,
+      "spanCount": 2,
       "boundaryCount": 0,
       "latencyMs": 828,
       "pairScores": [
@@ -1767,7 +1782,12 @@
             "S12",
             "S13",
             "S14",
-            "S15",
+            "S15"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S16",
             "S17",
             "S18",
@@ -1780,7 +1800,7 @@
       "turnIndex": 7,
       "speaker": "user",
       "sentenceCount": 17,
-      "spanCount": 1,
+      "spanCount": 2,
       "boundaryCount": 0,
       "latencyMs": 402,
       "pairScores": [
@@ -1923,7 +1943,12 @@
             "S4",
             "S5",
             "S6",
-            "S7",
+            "S7"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S8",
             "S9",
             "S10",
@@ -2059,7 +2084,7 @@
       "turnIndex": 8,
       "speaker": "user",
       "sentenceCount": 23,
-      "spanCount": 2,
+      "spanCount": 4,
       "boundaryCount": 1,
       "latencyMs": 641,
       "pairScores": [
@@ -2249,7 +2274,12 @@
             "S3",
             "S4",
             "S5",
-            "S6",
+            "S6"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S7",
             "S8",
             "S9",
@@ -2260,7 +2290,12 @@
             "S14",
             "S15",
             "S16",
-            "S17",
+            "S17"
+          ]
+        },
+        {
+          "spanId": "span_2",
+          "sentenceIds": [
             "S18",
             "S19",
             "S20",
@@ -2269,7 +2304,7 @@
           ]
         },
         {
-          "spanId": "span_1",
+          "spanId": "span_3",
           "sentenceIds": [
             "S23"
           ]
@@ -2519,7 +2554,7 @@
       "turnIndex": 10,
       "speaker": "user",
       "sentenceCount": 18,
-      "spanCount": 1,
+      "spanCount": 3,
       "boundaryCount": 0,
       "latencyMs": 545,
       "pairScores": [
@@ -2665,9 +2700,19 @@
           "spanId": "span_0",
           "sentenceIds": [
             "S1",
-            "S2",
+            "S2"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S3",
-            "S4",
+            "S4"
+          ]
+        },
+        {
+          "spanId": "span_2",
+          "sentenceIds": [
             "S5",
             "S6",
             "S7",
@@ -3354,7 +3399,7 @@
       "turnIndex": 16,
       "speaker": "assistant",
       "sentenceCount": 16,
-      "spanCount": 1,
+      "spanCount": 2,
       "boundaryCount": 0,
       "latencyMs": 588,
       "pairScores": [
@@ -3483,7 +3528,12 @@
         {
           "spanId": "span_0",
           "sentenceIds": [
-            "S1",
+            "S1"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S2",
             "S3",
             "S4",
@@ -4239,7 +4289,7 @@
       "turnIndex": 21,
       "speaker": "assistant",
       "sentenceCount": 19,
-      "spanCount": 1,
+      "spanCount": 2,
       "boundaryCount": 0,
       "latencyMs": 692,
       "pairScores": [
@@ -4395,7 +4445,12 @@
             "S1",
             "S2",
             "S3",
-            "S4",
+            "S4"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S5",
             "S6",
             "S7",
@@ -4980,7 +5035,7 @@
       "turnIndex": 26,
       "speaker": "assistant",
       "sentenceCount": 17,
-      "spanCount": 1,
+      "spanCount": 2,
       "boundaryCount": 0,
       "latencyMs": 594,
       "pairScores": [
@@ -5127,7 +5182,12 @@
             "S8",
             "S9",
             "S10",
-            "S11",
+            "S11"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S12",
             "S13",
             "S14",
@@ -5159,7 +5219,7 @@
       "turnIndex": 27,
       "speaker": "assistant",
       "sentenceCount": 17,
-      "spanCount": 1,
+      "spanCount": 2,
       "boundaryCount": 0,
       "latencyMs": 588,
       "pairScores": [
@@ -5305,7 +5365,12 @@
             "S7",
             "S8",
             "S9",
-            "S10",
+            "S10"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S11",
             "S12",
             "S13",
@@ -5730,7 +5795,7 @@
       "turnIndex": 31,
       "speaker": "assistant",
       "sentenceCount": 19,
-      "spanCount": 1,
+      "spanCount": 2,
       "boundaryCount": 0,
       "latencyMs": 616,
       "pairScores": [
@@ -5887,7 +5952,12 @@
             "S2",
             "S3",
             "S4",
-            "S5",
+            "S5"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S6",
             "S7",
             "S8",
@@ -6166,5 +6236,7 @@
         }
       ]
     }
-  ]
+  ],
+  "resplitThreshold": 0.65,
+  "maxSpanSentences": 15
 }

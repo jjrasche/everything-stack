@@ -10,7 +10,7 @@
       "turnIndex": 0,
       "speaker": "user",
       "sentenceCount": 21,
-      "spanCount": 1,
+      "spanCount": 2,
       "boundaryCount": 0,
       "latencyMs": 565,
       "pairScores": [
@@ -185,7 +185,12 @@
             "S4",
             "S5",
             "S6",
-            "S7",
+            "S7"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S8",
             "S9",
             "S10",
@@ -714,7 +719,7 @@
       "turnIndex": 2,
       "speaker": "user",
       "sentenceCount": 23,
-      "spanCount": 1,
+      "spanCount": 2,
       "boundaryCount": 0,
       "latencyMs": 964,
       "pairScores": [
@@ -912,7 +917,12 @@
             "S11",
             "S12",
             "S13",
-            "S14",
+            "S14"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S15",
             "S16",
             "S17",
@@ -930,7 +940,7 @@
       "turnIndex": 2,
       "speaker": "assistant",
       "sentenceCount": 34,
-      "spanCount": 3,
+      "spanCount": 4,
       "boundaryCount": 2,
       "latencyMs": 1522,
       "pairScores": [
@@ -1209,7 +1219,12 @@
             "S4",
             "S5",
             "S6",
-            "S7",
+            "S7"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S8",
             "S9",
             "S10",
@@ -1223,7 +1238,7 @@
           ]
         },
         {
-          "spanId": "span_1",
+          "spanId": "span_2",
           "sentenceIds": [
             "S18",
             "S19",
@@ -1232,7 +1247,7 @@
           ]
         },
         {
-          "spanId": "span_2",
+          "spanId": "span_3",
           "sentenceIds": [
             "S22",
             "S23",
@@ -1540,7 +1555,7 @@
       "turnIndex": 3,
       "speaker": "assistant",
       "sentenceCount": 32,
-      "spanCount": 2,
+      "spanCount": 3,
       "boundaryCount": 1,
       "latencyMs": 1038,
       "pairScores": [
@@ -1821,7 +1836,12 @@
             "S17",
             "S18",
             "S19",
-            "S20",
+            "S20"
+          ]
+        },
+        {
+          "spanId": "span_2",
+          "sentenceIds": [
             "S21",
             "S22",
             "S23",
@@ -2388,7 +2408,7 @@
       "turnIndex": 6,
       "speaker": "assistant",
       "sentenceCount": 21,
-      "spanCount": 1,
+      "spanCount": 2,
       "boundaryCount": 0,
       "latencyMs": 579,
       "pairScores": [
@@ -2569,7 +2589,12 @@
             "S10",
             "S11",
             "S12",
-            "S13",
+            "S13"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S14",
             "S15",
             "S16",
@@ -2586,7 +2611,7 @@
       "turnIndex": 7,
       "speaker": "user",
       "sentenceCount": 33,
-      "spanCount": 1,
+      "spanCount": 3,
       "boundaryCount": 0,
       "latencyMs": 1044,
       "pairScores": [
@@ -2862,13 +2887,23 @@
             "S9",
             "S10",
             "S11",
-            "S12",
+            "S12"
+          ]
+        },
+        {
+          "spanId": "span_1",
+          "sentenceIds": [
             "S13",
             "S14",
             "S15",
             "S16",
             "S17",
-            "S18",
+            "S18"
+          ]
+        },
+        {
+          "spanId": "span_2",
+          "sentenceIds": [
             "S19",
             "S20",
             "S21",
@@ -2892,7 +2927,7 @@
       "turnIndex": 7,
       "speaker": "assistant",
       "sentenceCount": 28,
-      "spanCount": 4,
+      "spanCount": 5,
       "boundaryCount": 3,
       "latencyMs": 981,
       "pairScores": [
@@ -3148,7 +3183,12 @@
             "S14",
             "S15",
             "S16",
-            "S17",
+            "S17"
+          ]
+        },
+        {
+          "spanId": "span_4",
+          "sentenceIds": [
             "S18",
             "S19",
             "S20",
@@ -3164,5 +3204,7 @@
         }
       ]
     }
-  ]
+  ],
+  "resplitThreshold": 0.65,
+  "maxSpanSentences": 15
 }

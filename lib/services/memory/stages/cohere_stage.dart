@@ -27,9 +27,18 @@ class CohereStage implements EncoderStage<CohereInput, CohereResult> {
   final ChatClient? _chatClient;
   static const double _defaultThreshold = 0.5;
 
-  CohereStage({CohereRunner? cohereRunner, ChatClient? chatClient})
-      : _cohereRunner = cohereRunner,
-        _chatClient = chatClient;
+  final double? _resplitThreshold;
+  final int? _maxSpanSentences;
+
+  CohereStage({
+    CohereRunner? cohereRunner,
+    ChatClient? chatClient,
+    double? resplitThreshold,
+    int? maxSpanSentences,
+  })  : _cohereRunner = cohereRunner,
+        _chatClient = chatClient,
+        _resplitThreshold = resplitThreshold,
+        _maxSpanSentences = maxSpanSentences;
 
   @override
   String get stageName => 'cohere';
@@ -77,7 +86,11 @@ class CohereStage implements EncoderStage<CohereInput, CohereResult> {
     }
 
     final boundaries = await _findBoundaries(input.sentences);
-    final spans = _buildSpans(input.sentences, boundaries);
+    var spans = _buildSpans(input.sentences, boundaries);
+
+    if (_resplitThreshold != null && _maxSpanSentences != null) {
+      spans = _resplitLargeSpans(spans, boundaries);
+    }
 
     stopwatch.stop();
 
@@ -194,6 +207,77 @@ Output ONLY a JSON array, no other text.''';
     }
 
     return spans;
+  }
+
+  List<ConceptSpan> _resplitLargeSpans(
+      List<ConceptSpan> spans, List<PairScore> allScores) {
+    final scoreMap = _buildScoreMap(allScores);
+    final result = <ConceptSpan>[];
+    var spanIndex = 0;
+
+    for (final span in spans) {
+      final subSpans =
+          _resplitSpan(span.sentenceIds, scoreMap, _maxSpanSentences!);
+      for (final ids in subSpans) {
+        result.add(ConceptSpan(spanId: 'span_$spanIndex', sentenceIds: ids));
+        spanIndex++;
+      }
+    }
+
+    return result;
+  }
+
+  Map<String, double> _buildScoreMap(List<PairScore> scores) {
+    final map = <String, double>{};
+    for (final score in scores) {
+      if (score.pair.length == 2) {
+        map['${score.pair[0]}:${score.pair[1]}'] = score.coherenceScore;
+      }
+    }
+    return map;
+  }
+
+  List<List<String>> _resplitSpan(
+      List<String> sentenceIds, Map<String, double> scoreMap, int maxSize) {
+    if (sentenceIds.length <= maxSize) return [sentenceIds];
+
+    final splitIndex =
+        _findSplitIndex(sentenceIds, scoreMap, _resplitThreshold!);
+    final left = sentenceIds.sublist(0, splitIndex);
+    final right = sentenceIds.sublist(splitIndex);
+
+    return [
+      ..._resplitSpan(left, scoreMap, maxSize),
+      ..._resplitSpan(right, scoreMap, maxSize),
+    ];
+  }
+
+  int _findSplitIndex(
+      List<String> sentenceIds, Map<String, double> scoreMap, double threshold) {
+    // First: split at lowest score below the resplit threshold
+    double? lowestBelow;
+    int? lowestBelowIndex;
+
+    // Second: if nothing below threshold, split at weakest score overall
+    double? weakestScore;
+    int? weakestIndex;
+
+    for (var i = 0; i < sentenceIds.length - 1; i++) {
+      final key = '${sentenceIds[i]}:${sentenceIds[i + 1]}';
+      final score = scoreMap[key];
+      if (score == null) continue;
+
+      if (score < threshold && (lowestBelow == null || score < lowestBelow)) {
+        lowestBelow = score;
+        lowestBelowIndex = i + 1;
+      }
+      if (weakestScore == null || score < weakestScore) {
+        weakestScore = score;
+        weakestIndex = i + 1;
+      }
+    }
+
+    return lowestBelowIndex ?? weakestIndex ?? (sentenceIds.length ~/ 2);
   }
 
   /// LLM may return bare ints (1, 2) instead of "S1", "S2".
