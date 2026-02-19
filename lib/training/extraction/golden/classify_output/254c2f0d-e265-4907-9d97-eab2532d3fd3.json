@@ -1,0 +1,567 @@
+{
+  "conversationUuid": "254c2f0d-e265-4907-9d97-eab2532d3fd3",
+  "conversationName": "Audio pipeline blocker in voice-first AI project",
+  "turnCount": 16,
+  "stage": "classify",
+  "model": "groq/llama-3.1-8b-instant",
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "spanCount": 10,
+      "extractCount": 8,
+      "skipCount": 2,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 600,
+          "spanText": "Today was interesting. As far as the Everything Stack project, what did I do? Superfluous documentation Feel like I was stuck in in tests all day, and I've moved all every test except what? I did I did but the inclusion that I'm gonna have smoke tests and Integration test. They're both gonna be run from integration folder. But only see CI for their run. The integration test that Mark the external services Okay. I I added an actual audio files to STT."
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "reason": "unresolved",
+          "confidence": 0.8,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 158,
+          "spanText": "So we can do like that. And so don't have that working yet, it seems like I mean, you can look up where we're at, but I skipped it in this Overly confident Claude code. Scenarios where it's like, yeah. Like, no. You're not."
+        },
+        {
+          "spanId": "span_2",
+          "label": "skip",
+          "reason": "unresolved",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 119,
+          "spanText": "So It always tries to take shortcuts. I'm wondering if I should do something Skip that or identify these whenever I'm having issues so that I can document it. That's not what I really care about. I guess what I care about is Why is it so hard? Like, why why is it so hard? Like, I I guess I'm getting the point where Hi. Sorry to really test out the concepts. Like like, I'm working on Pretty much end to end integration test."
+        },
+        {
+          "spanId": "span_3",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 118,
+          "spanText": "I have to come to that location. It's my, like, I'm getting to the venue. This seems to be the hard part, man. I am keeping So Hi. Looking something like This where I'm talking to. A lot of chats. It's got a running mic, and I can press it whenever I want, and then Wait a minute for it to respond and then I press play, and then I listen to it while running mic goes. And It's fine. It stays you you do a decent job of chucking up my previous conversations and and searching Nice. I'm just like, I want so much more. Guess I find myself into these deeper conversations like, you know, distributed systems. You know, do I have a stack server, device level level 1."
+        },
+        {
+          "spanId": "span_4",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 107,
+          "spanText": "No. A job."
+        },
+        {
+          "spanId": "span_5",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 117,
+          "spanText": "Is to get a fluid AI interface. I mean, I'm doing a little stuff on top of that, like, having these events and tools and trading chunks and cutting those chunks and and its, semantic search and Syncing to the cloud for backup. Try to build, like, do it all. But this first thing that I'm building, This Just talk to AI and have a reasonable response rate, have it sound decent, have it I can be conversational with the terms of Deepgram Flex I just wanna fucking get it out. I just wanna get it out and fuck fuck and start doing that."
+        },
+        {
+          "spanId": "span_6",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 131,
+          "spanText": "Like, like, we got the trading infrastructure in place, and maybe we gotta tweak a little bit, but the ideas are there. Like, it should just work. Like, if I keep talk if I start talking to stuff, I'll I'll get invocations that I can I can get feedback on those invocations? I can I can train it? Blah blah blah. If I hook up a few tools, just make it the local only at first so I can can add functionality to it and then have test out the LMS Hold identification."
+        },
+        {
+          "spanId": "span_7",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 164,
+          "spanText": "But it all depends on this. Voice first interaction. And just like okay. Let's get the audio pipeline test running. And then let me just start using it. It for everything. But, like, what am I gonna use it for? I need I need to have tasks to use it for. I'm not kind of drop and actually put tasks in my Obsidian. And so Like, what do I use AI for? I use it for coding."
+        },
+        {
+          "spanId": "span_8",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 143,
+          "spanText": "Should should I get a tool that helps me integrate with Claude Code and then and then helps me look through my my own code base and understand it better ask questions and, like, be, like, more hands on with the coding. A little bit more than I I am I can't And then be able to push and to monitor the pipelines that it CI and CD and get the test app right there loaded on my client's link. What Like, that would be the coding aspect of actually be useful. Why would you use I don't know. Honestly honestly, just setting timers And asking quick questions. That that's honestly a good enough use case. Where where I don't wanna have to open my my app don't wanna open chat to continue whenever just wanna press the power button to get the assistant up. You'll ask questions and get an immediate response. So may maybe that's the path I should be going. Let's just get this audio thing running. Let's add a timer tool, and Yes. Start fucking using it. I think with these smoke tests, I could Verifying. All of that, lively enough on emulators that I I I know it will work. And I won't have to be mired and bug up."
+        },
+        {
+          "spanId": "span_9",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 113,
+          "spanText": "So there might be light at the end of tunnel illness, Gotta figure out how to get there. And is that a path in You know, digging down really deep in this test, spent an entire, like, couple hours on it, and, like, then make it solid as hell, then deploying to my device, then working on timer that deploy that to my device."
+        }
+      ],
+      "latencyMs": 1775
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 482,
+          "spanText": "Today was interesting. As far as the Everything Stack project, what did I do? Superfluous documentation Feel like I was stuck in in tests all day, and I've moved all every test except what? I did I did but the inclusion that I'm gonna have smoke tests and Integration test. They're both gonna be run from integration folder. But only see CI for their run. The integration test that Mark the external services Okay. I I added an actual audio files to STT. So we can do like that. And so don't have that working yet, it seems like I mean, you can look up where we're at, but I skipped it in this Overly confident Claude code."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 121,
+          "spanText": "Scenarios where it's like, yeah. Like, no. You're not. So It always tries to take shortcuts. I'm wondering if I should do something Skip that or identify these whenever I'm having issues so that I can document it. That's not what I really care about. I guess what I care about is Why is it so hard? Like, why why is it so hard? Like, I I guess I'm getting the point where Hi. Sorry to really test out the concepts."
+        }
+      ],
+      "latencyMs": 604
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 296,
+          "spanText": "Maybe stop ask it to reflect Right. What do you mean the tunnel vision test is the problem? You said let's let's do the smoke test. Let's actually log log an audio pipeline. That's I'm Well, So when it runs a smoke test, I expect to actually hear something. And I've not when it runs it."
+        }
+      ],
+      "latencyMs": 296
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 350,
+          "spanText": "Maybe stop ask it to reflect Right. What do you mean the tunnel vision test is the problem? You said let's let's do the smoke test. Let's actually log log an audio pipeline. That's I'm Well, So when it runs a smoke test, I expect to actually hear something. And I've not when it runs it."
+        }
+      ],
+      "latencyMs": 350
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "spanCount": 3,
+      "extractCount": 3,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 741,
+          "spanText": "I'll figure that out later. Something else I worked out today was the intern Application app. Added If you add a Well, I guess, judging golden, test golden test judgment Stuff, essentially, we have the UI that gives us it's a dashboard and select a conversation From that conversation, there's a graph that that, shows the Half of it. Is there user emotions. And the AI chat's fits score for that image was an applicant. And on the other side, you can kinda see what messages are going back and forth, and then state. And access messages, It's kinda cool. So what do I wanna say about that? I guess format a plan That LMS we're gonna have. As a judgment mechanism, but they see them from doing 2 jobs. They get an input either persona or the AI chat. Either one of them is going to yeah, How are those thoughts? But also update these factors, which are Building. Values representing whether or not, a factor imperative in the judgment of the interaction in the message they they received."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 530,
+          "spanText": "Let's check And if it was, there's a calculation that transforms those factors related by persona or Application. To Another that helps the interaction understand how it's going That's size. And the entire goal here is to effectively understand and emulate user conversation here. So that we can prove the model for it. Prove the interaction before it actually goes out think that I've got a long ways to go. Because so, essentially, right now, I can Oh, verify this, There's a bunch of different attributes I can click And agree with disagree with mark like, Marquez to validate the output or validate the output for each of those factors, Yep. For the chat There it is. Determine, like, how the chat should interact based on the user's message?"
+        },
+        {
+          "spanId": "span_2",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 117,
+          "spanText": "So with that, I build up I have this run. 50 times, like, up through the time. Kind of see where the chat goes wrong or goes right. That And I've adjusted to interact the way I expect it to. Seems to be making a lot of assumptions now. So I have probably need to increase the amount of context it has about what the application is actually for the situation is going to be like. That's what I'm gonna say about that."
+        }
+      ],
+      "latencyMs": 1389
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 579,
+          "spanText": "I'll figure that out later. Something else I worked out today was the intern Application app. Added If you add a Well, I guess, judging golden, test golden test judgment Stuff, essentially, we have the UI that gives us it's a dashboard and select a conversation From that conversation, there's a graph that that, shows the Half of it. Is there user emotions. And the AI chat's fits score for that image was an applicant. And on the other side, you can kinda see what messages are going back and forth, and then state. And access messages, It's kinda cool. So what do I wanna say about that? I guess format a plan That LMS we're gonna have. As a judgment mechanism, but they see them from doing 2 jobs. They get an input either persona or the AI chat. Either one of them is going to yeah, How are those thoughts? But also update these factors, which are Building. Values representing whether or not, a factor imperative in the judgment of the interaction in the message they they received."
+        }
+      ],
+      "latencyMs": 579
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "spanCount": 7,
+      "extractCount": 7,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 119,
+          "spanText": "Look up everything you know about my son. C o Here we are."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 535,
+          "spanText": "Doing wrestling today. Those times that we do press and keep done it any 5 times. It is time for him to get frustrated I'm starting to cry. It's an issue dynamic. What frustrates the most. Like, Feels like he's not getting it. I mean, it's a lot. It's a lot of, like, I look I listen to the dude give instruction. I'm like, how the hell is this kid supposed to ingest all of this information? And Bye, guys. Me and maybe some other parent dads go out there up at the mat and try to, like, help practice the things that the main guy is saying. Deal does best, but, like, we're using a live drone. He's wrestling like he's, you know, wrestling. I don't know. I guess it's that Where he's not really confused."
+        },
+        {
+          "spanId": "span_2",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 103,
+          "spanText": "It's not like it's not overly inflectional."
+        },
+        {
+          "spanId": "span_3",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 122,
+          "spanText": "Also, like, they did the 94 Hey."
+        },
+        {
+          "spanId": "span_4",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 104,
+          "spanText": "Just do the kids up. From shorts and tallies, and then Yeah. You felt like you did a good job."
+        },
+        {
+          "spanId": "span_5",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 129,
+          "spanText": "So it's also about expectations. I think what I want from this is an option It's a tips and tricks about how to Agent. My gut says I should be out there Just when it gets to the side, taking the lead of of the guidance, trying to Help me where I needed the kind of Catch up. Attitude out there. How close is it?"
+        },
+        {
+          "spanId": "span_6",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 115,
+          "spanText": "So I put my end here, and then Oh, yeah. Under there and then come up around. Mike, just exploratory making them know that, like, we're all learning Together. I don't know. I got this Thank This thing that seems like good sandwiches. I noticed that. I noticed that get frustrated. I noticed that This this warm up is is coming a little hard to you. I know that you have Or, like, do I feel like it's tough to praise as well. I like when you put I look you put your hand right Thank should I praise? I don't know."
+        }
+      ],
+      "latencyMs": 1230
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 451,
+          "spanText": "Look up everything you know about my son. C o Here we are. Doing wrestling today. Those times that we do press and keep done it any 5 times. It is time for him to get frustrated I'm starting to cry. It's an issue dynamic. What frustrates the most. Like, Feels like he's not getting it. I mean, it's a lot. It's a lot of, like, I look I listen to the dude give instruction. I'm like, how the hell is this kid supposed to ingest all of this information? And Bye, guys."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 120,
+          "spanText": "Me and maybe some other parent dads go out there up at the mat and try to, like, help practice the things that the main guy is saying. Deal does best, but, like, we're using a live drone. He's wrestling like he's, you know, wrestling. I don't know. I guess it's that Where he's not really confused. It's not like it's not overly inflectional. Also, like, they did the 94 Hey. Just do the kids up. From shorts and tallies, and then Yeah."
+        }
+      ],
+      "latencyMs": 572
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "spanCount": 8,
+      "extractCount": 8,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 113,
+          "spanText": "Look up everything you know about my son. C o Here we are."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 579,
+          "spanText": "Doing wrestling today. Those times that we do press and keep done it any 5 times. It is time for him to get frustrated I'm starting to cry. It's an issue dynamic. What frustrates the most. Like, Feels like he's not getting it. I mean, it's a lot. It's a lot of, like, I look I listen to the dude give instruction. I'm like, how the hell is this kid supposed to ingest all of this information? And Bye, guys. Me and maybe some other parent dads go out there up at the mat and try to, like, help practice the things that the main guy is saying. Deal does best, but, like, we're using a live drone. He's wrestling like he's, you know, wrestling. I don't know. I guess it's that Where he's not really confused."
+        },
+        {
+          "spanId": "span_2",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 117,
+          "spanText": "It's not like it's not overly inflectional."
+        },
+        {
+          "spanId": "span_3",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 114,
+          "spanText": "Also, like, they did the 94 Hey."
+        },
+        {
+          "spanId": "span_4",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 113,
+          "spanText": "Just do the kids up. From shorts and tallies, and then Yeah. You felt like you did a good job."
+        },
+        {
+          "spanId": "span_5",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 117,
+          "spanText": "So it's also about expectations. I think what I want from this is an option It's a tips and tricks about how to Agent. My gut says I should be out there Just when it gets to the side, taking the lead of of the guidance, trying to Help me where I needed the kind of Catch up. Attitude out there. How close is it?"
+        },
+        {
+          "spanId": "span_6",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 214,
+          "spanText": "So I put my end here, and then Oh, yeah. Under there and then come up around. Mike, just exploratory making them know that, like, we're all learning Together. I don't know. I got this Thank This thing that seems like good sandwiches. I noticed that. I noticed that get frustrated. I noticed that This this warm up is is coming a little hard to you. I know that you have Or, like, do I feel like it's tough to praise as well. I like when you put I look you put your hand right Thank should I praise? I don't know."
+        },
+        {
+          "spanId": "span_7",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 110,
+          "spanText": "By the way, all of this was for Theo, my son Theo"
+        }
+      ],
+      "latencyMs": 1480
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 610,
+          "spanText": "Look up everything you know about my son. C o Here we are. Doing wrestling today. Those times that we do press and keep done it any 5 times. It is time for him to get frustrated I'm starting to cry. It's an issue dynamic. What frustrates the most. Like, Feels like he's not getting it. I mean, it's a lot. It's a lot of, like, I look I listen to the dude give instruction."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 611,
+          "spanText": "I'm like, how the hell is this kid supposed to ingest all of this information? And Bye, guys. Me and maybe some other parent dads go out there up at the mat and try to, like, help practice the things that the main guy is saying. Deal does best, but, like, we're using a live drone. He's wrestling like he's, you know, wrestling. I don't know. I guess it's that Where he's not really confused. It's not like it's not overly inflectional. Also, like, they did the 94 Hey. Just do the kids up. From shorts and tallies, and then Yeah."
+        }
+      ],
+      "latencyMs": 1221
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "spanCount": 3,
+      "extractCount": 2,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 549,
+          "spanText": "I'm gonna think out loud about for a little bit. It's the Red Pass. I guess the only event we have right now that's Voicemail. But it gets put on the event bus, and coordinator gets activated. And consumes it, I think the payload is just as Please. This part were to keep simple. Hailish Street Coordinator takes that string, passes it through, a couple of Once you identify I mean, we can count this out for now, there'll be a bit the namespace like, the context generated Which essentially just store local data store store data within the coordinator instance. That enables it to assemble a package for the LN So that goes to the LLM. And LLM is instructed to return response. Eventually, I'll they'll respond with a tool and slot filling, but not right now. So that l o spot response is dead. Taken and the coordinator and sent it to the TGS. Not a lot of conditionality, not a lot of trainability other than, you know, STTs trainable, TTS That's it. You're One other concern I have is how How I'm like, I I want to give my AI code Eyeballs."
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "reason": "already_known",
+          "confidence": 0.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 98,
+          "spanText": "On the on the app. So it's deployed."
+        },
+        {
+          "spanId": "span_2",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 111,
+          "spanText": "There are some logs the crash logs within Firebase patch logs, but app tester. Open up to the computer and 3 d b logcat. Is that how I should instruct the AI coder to debug it? Like, with Flutter apps, what are some of the ways that people commonly debug, you know,"
+        }
+      ],
+      "latencyMs": 758
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "spanCount": 3,
+      "extractCount": 2,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 313,
+          "spanText": "I'm gonna think out loud about for a little bit. It's the Red Pass. I guess the only event we have right now that's Voicemail. But it gets put on the event bus, and coordinator gets activated. And consumes it, I think the payload is just as Please. This part were to keep simple."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 140,
+          "spanText": "Hailish Street Coordinator takes that string, passes it through, a couple of Once you identify I mean, we can count this out for now, there'll be a bit the namespace like, the context generated Which essentially just store local data store store data within the coordinator instance. That enables it to assemble a package for the LN So that goes to the LLM. And LLM is instructed to return response. Eventually, I'll they'll respond with a tool and slot filling, but not right now. So that l o spot response is dead. Taken and the coordinator and sent it to the TGS. Not a lot of conditionality, not a lot of trainability other than, you know, STTs trainable, TTS That's it. You're One other concern I have is how How I'm like, I I want to give my AI code Eyeballs."
+        },
+        {
+          "spanId": "span_2",
+          "label": "skip",
+          "reason": "unresolved",
+          "confidence": 0.8,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 108,
+          "spanText": "On the on the app. So it's deployed. There are some logs the crash logs within Firebase patch logs, but app tester. Open up to the computer and 3 d b logcat. Is that how I should instruct the AI coder to debug it? Like, with Flutter apps, what are some of the ways that people commonly debug, you know,"
+        }
+      ],
+      "latencyMs": 562
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 552,
+          "spanText": "So should we just rely on the invitation So, yeah, my invocations have everything. Look up the invocation concept from everything on everything stack conversations. So and locations effectively tell me the input to output and if there was an error If I save those, Cloud. And I can't do the super base. And I can just have clod cook That Right? A reasonable default path?"
+        }
+      ],
+      "latencyMs": 552
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "assistant",
+      "spanCount": 3,
+      "extractCount": 1,
+      "skipCount": 2,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 545,
+          "spanText": "So should we just rely on the invitation So, yeah, my invocations have everything. Look up the invocation concept from everything on everything stack conversations. So and locations effectively tell me the input to output and if there was an error If I save those, Cloud. And I can't do the super base. And I can just have clod cook That Right? A reasonable default path?"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "confidence": 0.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 102,
+          "spanText": ""
+        },
+        {
+          "spanId": "span_2",
+          "label": "skip",
+          "reason": "unresolved",
+          "confidence": 0.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 109,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 757
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "unresolved",
+          "confidence": 0.8,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 112,
+          "spanText": "No. I need trainable has it. Let me I gotta log out. I I think that's, like, setting up blockhead and plug in cables, it seems harder than just publishing implications when they happen"
+        }
+      ],
+      "latencyMs": 112
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 106,
+          "spanText": "No. I need trainable has it. Let me I gotta log out. I I think that's, like, setting up blockhead and plug in cables, it seems harder than just publishing implications when they happen"
+        }
+      ],
+      "latencyMs": 106
+    }
+  ]
+}

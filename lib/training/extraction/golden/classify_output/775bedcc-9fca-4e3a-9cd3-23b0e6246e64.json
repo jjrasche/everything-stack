@@ -1,0 +1,1171 @@
+{
+  "conversationUuid": "775bedcc-9fca-4e3a-9cd3-23b0e6246e64",
+  "conversationName": "Teaching Charlie a double leg takedown for her first wrestling meet",
+  "turnCount": 58,
+  "stage": "classify",
+  "model": "groq/llama-3.1-8b-instant",
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 353,
+          "spanText": "I so my 6 year old kindergarten kindergartner daughter. She's going to be wrestling for the first time in a meat period. I wanted to have the best opportunity So I think what I'm doing is she's pretty good at defense right now. They play foot tag, and she kind of understands how to pretty well how to sprawl. And do defense generally. I think what I wanna do is focus on one move I want her brain engaged in either playing defense and at the same time looking for an opportunity for some takedown. And my my guess is that this I forgot what the coach called it. But it's effectively You do the v's and push their arms up. You get down on your knees while you have their arms raised. You bring your arms down and do a double leg takedown, period. Can you advise me generally on how I should advise Charlie to give her the best success today?"
+        }
+      ],
+      "latencyMs": 353
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 361,
+          "spanText": "I so my 6 year old kindergarten kindergartner daughter. She's going to be wrestling for the first time in a meat period. I wanted to have the best opportunity So I think what I'm doing is she's pretty good at defense right now. They play foot tag, and she kind of understands how to pretty well how to sprawl. And do defense generally. I think what I wanna do is focus on one move I want her brain engaged in either playing defense and at the same time looking for an opportunity for some takedown. And my my guess is that this I forgot what the coach called it. But it's effectively You do the v's and push their arms up. You get down on your knees while you have their arms raised. You bring your arms down and do a double leg takedown, period. Can you advise me generally on how I should advise Charlie to give her the best success today?"
+        }
+      ],
+      "latencyMs": 361
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 259,
+          "spanText": "Is it also so on a slightly different note I want you to take me back to the training sessions in a minute but is it? Is it a good idea to? Is it a good idea to breathe deeply when like like take a bunch of quick breaths before match? Like scientifically speaking, that's going to inject a lot of oxygen and your blood and make you better correct? Do any other sports do this?"
+        }
+      ],
+      "latencyMs": 259
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 275,
+          "spanText": "Is it also so on a slightly different note I want you to take me back to the training sessions in a minute but is it? Is it a good idea to? Is it a good idea to breathe deeply when like like take a bunch of quick breaths before match? Like scientifically speaking, that's going to inject a lot of oxygen and your blood and make you better correct? Do any other sports do this?"
+        }
+      ],
+      "latencyMs": 275
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 138,
+          "spanText": "What is a rhythmic breathing done in combat sports and why would you not include wrestling"
+        }
+      ],
+      "latencyMs": 138
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 1,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 109,
+          "spanText": "What is a rhythmic breathing done in combat sports and why would you not include wrestling"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 104,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 213
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 384,
+          "spanText": "So thinking back to Charlie and how we can help her do better at wrestling in this meet it's basically protect yourself from against against a takedown. And what is the other thing? To have 1 have give her one move to, one attack move. Her goal is to try it Like, should she should I she she should she be listening to me? Like, I'll give her one I'll give her a cue about window tech. And that is the v knees v wait. What's it called when you push it their arms up? Then you go to your oh, wait. And then you go to your knees, and then Double egg takedown."
+        }
+      ],
+      "latencyMs": 384
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 570,
+          "spanText": "So thinking back to Charlie and how we can help her do better at wrestling in this meet it's basically protect yourself from against against a takedown. And what is the other thing? To have 1 have give her one move to, one attack move. Her goal is to try it Like, should she should I she she should she be listening to me? Like, I'll give her one I'll give her a cue about window tech. And that is the v knees v wait. What's it called when you push it their arms up? Then you go to your oh, wait. And then you go to your knees, and then Double egg takedown."
+        }
+      ],
+      "latencyMs": 570
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 109,
+          "spanText": "Theo and I are in the woods right now and it's kind of crowded under here. There's a lot of things hanging on each other. There's a lot of dead branches. Is it advantageous to the woods for me to break those and put them on the forest floor and anyway?"
+        }
+      ],
+      "latencyMs": 109
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 101,
+          "spanText": "Theo and I are in the woods right now and it's kind of crowded under here. There's a lot of things hanging on each other. There's a lot of dead branches. Is it advantageous to the woods for me to break those and put them on the forest floor and anyway?"
+        }
+      ],
+      "latencyMs": 101
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 108,
+          "spanText": "So what I'm trying to do is food forestry optimize for food production of a forest"
+        }
+      ],
+      "latencyMs": 108
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 104,
+          "spanText": "So what I'm trying to do is food forestry optimize for food production of a forest"
+        }
+      ],
+      "latencyMs": 104
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 321,
+          "spanText": "I'm doing a load of winter clothes in the laundry. I've got couple kids' boots in there. I've got my one z. There, like my snowsuit. What is the recommended I guess, temperature of the water and, like, everything is delicate. Like, what's the and then not dry, but just, like, hang dry? What's the general rule here?"
+        }
+      ],
+      "latencyMs": 321
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 1,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 525,
+          "spanText": "I'm doing a load of winter clothes in the laundry. I've got couple kids' boots in there. I've got my one z. There, like my snowsuit. What is the recommended I guess, temperature of the water and, like, everything is delicate. Like, what's the and then not dry, but just, like, hang dry? What's the general rule here?"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 100,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 626
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 572,
+          "spanText": "Yep — the cleanest apples-to-apples way is to normalize everything to edible, drained, hydrated corn weight (what you actually eat). Here’s the logic I’m using (this is standard food-science / USDA style normalization):\n\nFrozen corn ≈ already 100% edible\n\nCanned corn ≈ ~60–65% corn solids after draining (rest is water)\n\nDried corn ≈ ~2.5× weight gain when fully hydrated/cooked\n\n\nUsing that, here’s the normalized table. ---\n\nNormalized comparison (edible, hydrated corn)\n\nType\tTypical retail cost\tNormalized cost (per lb edible corn)\tShelf life\n\nFrozen corn\t$1.80 / lb\t$1.80 / lb edible\t8–12 months (freezer)\nCanned corn\t$0.85 / lb (with liquid)\t~$1.35–1.45 / lb edible\t3–5 years (pantry)\nDried corn (bulk)\t$0.30 / lb (dry)\t~$0.12–0.15 / lb edible\t1–2 years (pantry, sealed)\n\n\n\n---\n\nWhy this works\n\nCanned: 1 lb canned → ~0.62 lb actual corn\n→ $0.85 ÷ 0.62 ≈ $1.37 per lb edible\n\nDried: 1 lb dry → ~2.5 lb cooked\n→ $0.30 ÷ 2.5 ≈ $0.12 per lb edible\n\nFrozen: already hydrated, no adjustment needed\n\n\n\n---\n\nWhat this means in practice\n\nCanned looks cheap because of water weight — once normalized, it’s only slightly cheaper than frozen, not dramatically. Frozen costs more because of cold-chain logistics, not because the corn itself is expensive. Dried corn absolutely crushes on cost, you pay in:\n\nprep time\n\ntexture differences\n\nplanning ahead\n\n\n\nRule of thumb\n\nConvenience → frozen\n\nCheap + easy pantry storage → canned\n\nUltra-cheap + long-term resilience → dried\n\n\nIf you want, next step could be:\n\ncost per cooked cup\n\nInstant Pot timing + texture outcomes\n\nwhen dried corn is not worth it (there are cases)\n\n\nAll right, the only thing I want is one table with the normalized weights and cost of dry cans and Frozen corn"
+        }
+      ],
+      "latencyMs": 572
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 582,
+          "spanText": "Yep — the cleanest apples-to-apples way is to normalize everything to edible, drained, hydrated corn weight (what you actually eat). Here’s the logic I’m using (this is standard food-science / USDA style normalization):\n\nFrozen corn ≈ already 100% edible\n\nCanned corn ≈ ~60–65% corn solids after draining (rest is water)\n\nDried corn ≈ ~2.5× weight gain when fully hydrated/cooked\n\n\nUsing that, here’s the normalized table. ---\n\nNormalized comparison (edible, hydrated corn)\n\nType\tTypical retail cost\tNormalized cost (per lb edible corn)\tShelf life\n\nFrozen corn\t$1.80 / lb\t$1.80 / lb edible\t8–12 months (freezer)\nCanned corn\t$0.85 / lb (with liquid)\t~$1.35–1.45 / lb edible\t3–5 years (pantry)\nDried corn (bulk)\t$0.30 / lb (dry)\t~$0.12–0.15 / lb edible\t1–2 years (pantry, sealed)\n\n\n\n---\n\nWhy this works\n\nCanned: 1 lb canned → ~0.62 lb actual corn\n→ $0.85 ÷ 0.62 ≈ $1.37 per lb edible\n\nDried: 1 lb dry → ~2.5 lb cooked\n→ $0.30 ÷ 2.5 ≈ $0.12 per lb edible\n\nFrozen: already hydrated, no adjustment needed\n\n\n\n---\n\nWhat this means in practice\n\nCanned looks cheap because of water weight — once normalized, it’s only slightly cheaper than frozen, not dramatically."
+        }
+      ],
+      "latencyMs": 582
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 111,
+          "spanText": "This includes water weight though right?"
+        }
+      ],
+      "latencyMs": 111
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 113,
+          "spanText": "This includes water weight though right?"
+        }
+      ],
+      "latencyMs": 113
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 95,
+          "spanText": "Double check your numbers cuz I don't think that's realistic"
+        }
+      ],
+      "latencyMs": 95
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 96,
+          "spanText": "Double check your numbers cuz I don't think that's realistic"
+        }
+      ],
+      "latencyMs": 96
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 187,
+          "spanText": "Do research to confirm these numbers and I want you to find sources where we can buy this each of these. Possibly both both purchases online in each condition. I think for the Frozen maybe just use Costco's"
+        }
+      ],
+      "latencyMs": 187
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 1,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 250,
+          "spanText": "Do research to confirm these numbers and I want you to find sources where we can buy this each of these. Possibly both both purchases online in each condition. I think for the Frozen maybe just use Costco's"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "reason": "empty working memory",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 131,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 382
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 127,
+          "spanText": "All right now rerun give me the table"
+        }
+      ],
+      "latencyMs": 127
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 102,
+          "spanText": "All right now rerun give me the table"
+        }
+      ],
+      "latencyMs": 102
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 164,
+          "spanText": "So I'm looking at ardent Mills all-purpose flour, 25 lb bag for 829 and then King Arthur's all-purpose flour has a 12 lb bag for 949. I'm wondering why it's more than twice as much. What should I be? What should I know about the quality of flour and the difference in in the process of making it that could impact baking?"
+        }
+      ],
+      "latencyMs": 164
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "assistant",
+      "spanCount": 3,
+      "extractCount": 2,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 108,
+          "spanText": "So I'm looking at ardent Mills all-purpose flour, 25 lb bag for 829 and then King Arthur's all-purpose flour has a 12 lb bag for 949. I'm wondering why it's more than twice as much. What should I be?"
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 102,
+          "spanText": "What should I know about the quality of flour and the difference in in the process of making it that could impact baking?"
+        },
+        {
+          "spanId": "span_2",
+          "label": "skip",
+          "reason": "empty working memory",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 181,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 392
+    },
+    {
+      "turnIndex": 13,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 625,
+          "spanText": "So dried is actually two three to five times as expensive which is interesting. And what is the amount of time like how? What's the shelf life of each give me that in the table. Oh percent of protein interesting. So to what extent is 1% of protein are going to make a difference? Higher proteins, more gluten development, better structure and bread chewier cookie stronger does for cakes pastries. They actually want less protein which is why cake flour exist. So is the less protein flour more expensive. All right, so I should go the more I should go with the cheaper flour all right at that"
+        }
+      ],
+      "latencyMs": 626
+    },
+    {
+      "turnIndex": 13,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 548,
+          "spanText": "So dried is actually two three to five times as expensive which is interesting. And what is the amount of time like how? What's the shelf life of each give me that in the table. Oh percent of protein interesting. So to what extent is 1% of protein are going to make a difference? Higher proteins, more gluten development, better structure and bread chewier cookie stronger does for cakes pastries. They actually want less protein which is why cake flour exist. So is the less protein flour more expensive. All right, so I should go the more I should go with the cheaper flour all right at that"
+        }
+      ],
+      "latencyMs": 548
+    },
+    {
+      "turnIndex": 14,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 203,
+          "spanText": "All right, so if there's less protein there's less gluten. If there's less gluten then I can mix more readily and I can use mechanical means of mixing. To what extent does you know? 11 and 1/2% protein flour enable me to not use a blender where something like 8 to 8 and 1/2% protein and flour enables me to like blend all of my wet and dry ingredients the same time in a blender. I'm looking to enable you know more efficient means of production of batter. Does any amount of protein create that sort of excess amount of gluten that would overwork the dough? Or is that flour and allow me to do this with an automated sense"
+        }
+      ],
+      "latencyMs": 203
+    },
+    {
+      "turnIndex": 14,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 217,
+          "spanText": "All right, so if there's less protein there's less gluten. If there's less gluten then I can mix more readily and I can use mechanical means of mixing. To what extent does you know? 11 and 1/2% protein flour enable me to not use a blender where something like 8 to 8 and 1/2% protein and flour enables me to like blend all of my wet and dry ingredients the same time in a blender. I'm looking to enable you know more efficient means of production of batter. Does any amount of protein create that sort of excess amount of gluten that would overwork the dough? Or is that flour and allow me to do this with an automated sense"
+        }
+      ],
+      "latencyMs": 217
+    },
+    {
+      "turnIndex": 15,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 108,
+          "spanText": "So I'm trying to make his muffins and what I'm hearing from you is blend wet and dry ingredients by hand. Is that right?"
+        }
+      ],
+      "latencyMs": 108
+    },
+    {
+      "turnIndex": 15,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 1,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 112,
+          "spanText": "So I'm trying to make his muffins and what I'm hearing from you is blend wet and dry ingredients by hand. Is that right?"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "confidence": 0.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 102,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 214
+    },
+    {
+      "turnIndex": 16,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 407,
+          "spanText": "Well this is interesting. The high fat content. So if I use more oil and they make this more of a I don't know to what extent. We can go low carb a lot of muffins but use more oil and that counteracts the gluten. This is interesting tenderizers pulse very briefly. Okay, I do like the idea of simplifying the recipes and the process that enables us to make visit bulk with less human effort"
+        }
+      ],
+      "latencyMs": 407
+    },
+    {
+      "turnIndex": 16,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 415,
+          "spanText": "Well this is interesting. The high fat content. So if I use more oil and they make this more of a I don't know to what extent. We can go low carb a lot of muffins but use more oil and that counteracts the gluten. This is interesting tenderizers pulse very briefly. Okay, I do like the idea of simplifying the recipes and the process that enables us to make visit bulk with less human effort"
+        }
+      ],
+      "latencyMs": 415
+    },
+    {
+      "turnIndex": 17,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 100,
+          "spanText": "So almond flour does appear to be, like, 8 times more expensive than Wheat flour."
+        }
+      ],
+      "latencyMs": 100
+    },
+    {
+      "turnIndex": 17,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 197,
+          "spanText": "So almond flour does appear to be, like, 8 times more expensive than Wheat flour."
+        }
+      ],
+      "latencyMs": 197
+    },
+    {
+      "turnIndex": 18,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 108,
+          "spanText": "Add to that table for cans. Corn, and, Volume. Volume per pound."
+        }
+      ],
+      "latencyMs": 108
+    },
+    {
+      "turnIndex": 18,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 118,
+          "spanText": "Add to that table for cans. Corn, and, Volume. Volume per pound."
+        }
+      ],
+      "latencyMs": 118
+    },
+    {
+      "turnIndex": 19,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 120,
+          "spanText": "Dude, you gotta actually do re real research on that. Because there's no way can't volume is as high as frozen. And dried has to be the lowest. So the numbers. I'm gonna put you in a research mode to figure this out. Or do you need to go to research mode, or can you just search online?"
+        }
+      ],
+      "latencyMs": 120
+    },
+    {
+      "turnIndex": 19,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 181,
+          "spanText": "Dude, you gotta actually do re real research on that. Because there's no way can't volume is as high as frozen."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 204,
+          "spanText": "And dried has to be the lowest. So the numbers. I'm gonna put you in a research mode to figure this out. Or do you need to go to research mode, or can you just search online?"
+        }
+      ],
+      "latencyMs": 386
+    },
+    {
+      "turnIndex": 20,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 102,
+          "spanText": "Well, you can't normalize around the packaging that the product comes. Like, with canned corn, you still have cans and liquid."
+        }
+      ],
+      "latencyMs": 102
+    },
+    {
+      "turnIndex": 20,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 107,
+          "spanText": "Well, you can't normalize around the packaging that the product comes. Like, with canned corn, you still have cans and liquid."
+        }
+      ],
+      "latencyMs": 107
+    },
+    {
+      "turnIndex": 21,
+      "speaker": "user",
+      "spanCount": 2,
+      "extractCount": 1,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 122,
+          "spanText": "All right put that in one table. I think I want square feet per pound as the normalization and I want cost."
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "reason": "unresolved",
+          "confidence": 0.8,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 218,
+          "spanText": "And what was the other thing?"
+        }
+      ],
+      "latencyMs": 341
+    },
+    {
+      "turnIndex": 21,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 96,
+          "spanText": "All right put that in one table. I think I want square feet per pound as the normalization and I want cost. And what was the other thing?"
+        }
+      ],
+      "latencyMs": 96
+    },
+    {
+      "turnIndex": 22,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 107,
+          "spanText": "These numbers don't make any sense, and I need you to, run them all again."
+        }
+      ],
+      "latencyMs": 107
+    },
+    {
+      "turnIndex": 22,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 104,
+          "spanText": "These numbers don't make any sense, and I need you to, run them all again."
+        }
+      ],
+      "latencyMs": 104
+    },
+    {
+      "turnIndex": 23,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 100,
+          "spanText": "Just give me the headline and to what extent is parenting an exercise and flexibility and adaptation to new details plan?"
+        }
+      ],
+      "latencyMs": 100
+    },
+    {
+      "turnIndex": 23,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 1,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 115,
+          "spanText": "Just give me the headline and to what extent is parenting an exercise and flexibility and adaptation to new details plan?"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 102,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 218
+    },
+    {
+      "turnIndex": 24,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 112,
+          "spanText": "So if we're really in a simulation once, if we're thinking about this logically, what are the chances that we are the only person in simulation or there are maybe you're with your core family? Is just the non-ncps aren't non-npcs or it's like a split? It's like a split consciousness thing where have lived as every individual in the simulation"
+        }
+      ],
+      "latencyMs": 112
+    },
+    {
+      "turnIndex": 24,
+      "speaker": "assistant",
+      "spanCount": 4,
+      "extractCount": 2,
+      "skipCount": 2,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.8,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 118,
+          "spanText": "So if we're really in a simulation once, if we're thinking about this logically, what are the chances that we are the only person in simulation or there are maybe you're with your core family? Is just the non-ncps aren't non-npcs or it's like a split? It's like a split consciousness thing where have lived as every individual in the simulation"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 101,
+          "spanText": ""
+        },
+        {
+          "spanId": "span_2",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 94,
+          "spanText": ""
+        },
+        {
+          "spanId": "span_3",
+          "label": "skip",
+          "reason": "unresolved",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 174,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 488
+    },
+    {
+      "turnIndex": 25,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 110,
+          "spanText": "To what extent does my freedom of speech blocked by nuisance laws? Like if I were to stand at a Costco counter where they're trying to organize people via numbers? And I just started yelling random numbers and it caused issue could do they have? I mean it's a private space they can tell me to leave they can kick me out. But if this was all being done in public, what legality protects the free speech"
+        }
+      ],
+      "latencyMs": 110
+    },
+    {
+      "turnIndex": 25,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 110,
+          "spanText": "To what extent does my freedom of speech blocked by nuisance laws? Like if I were to stand at a Costco counter where they're trying to organize people via numbers? And I just started yelling random numbers and it caused issue could do they have? I mean it's a private space they can tell me to leave they can kick me out. But if this was all being done in public, what legality protects the free speech"
+        }
+      ],
+      "latencyMs": 110
+    },
+    {
+      "turnIndex": 26,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 120,
+          "spanText": "Wait so can I as if I'm saying I'm protesting something? Do they not have the right to kick me out of a private space? Well I guess is Costco even considered a private space? I mean you could have to spend veneer of protest protect speech"
+        }
+      ],
+      "latencyMs": 120
+    },
+    {
+      "turnIndex": 26,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 1,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 110,
+          "spanText": "Wait so can I as if I'm saying I'm protesting something? Do they not have the right to kick me out of a private space? Well I guess is Costco even considered a private space? I mean you could have to spend veneer of protest protect speech"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "reason": "empty working memory",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 105,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 216
+    },
+    {
+      "turnIndex": 27,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "reason": "contains a specific fact",
+          "confidence": 0.8,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 263,
+          "spanText": "So nuisance has a lot of precedence over free speech it seems but in in reality. I'm sure that this is very, very infrequently contestant"
+        }
+      ],
+      "latencyMs": 263
+    },
+    {
+      "turnIndex": 27,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 109,
+          "spanText": "So nuisance has a lot of precedence over free speech it seems but in in reality. I'm sure that this is very, very infrequently contestant"
+        }
+      ],
+      "latencyMs": 109
+    },
+    {
+      "turnIndex": 28,
+      "speaker": "user",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 111,
+          "spanText": "Roll me back on the vegetables."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.8,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 105,
+          "spanText": "It's specifically corn cost per type of storage. So are we effectively paying? What is it 3x for dehydration? That seems like a lot"
+        }
+      ],
+      "latencyMs": 217
+    },
+    {
+      "turnIndex": 28,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 106,
+          "spanText": "Roll me back on the vegetables. It's specifically corn cost per type of storage. So are we effectively paying? What is it 3x for dehydration?"
+        }
+      ],
+      "latencyMs": 106
+    }
+  ]
+}

@@ -1,0 +1,1472 @@
+{
+  "conversationUuid": "47859004-e709-4569-993d-072fd473de2f",
+  "conversationName": "Systems thinking vs. emotional connection in relationships",
+  "turnCount": 68,
+  "stage": "classify",
+  "model": "groq/llama-3.1-8b-instant",
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 537,
+          "spanText": "All right so I'm back on the stay together train but I don't know. We had a conversation this morning and we're just so different. It's so tough man like I'm a systems thinker. She's just a feeler like I don't know. I don't know how to fix this. Like I said so the major problem is us parenting together and then Justine said something like there's so much more than that and that just added to the sense of like this boundless problem that could never be solved and the depths of my badness my wrongness having no bounds just ain't seemed open to the idea of semi trying to constrain the problem. But I mean we already know like the problem is emotional right? My pathologies are emotional regulation frustration tolerance like what? What do we look up about my pathologies and what are the four?"
+        }
+      ],
+      "latencyMs": 537
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 392,
+          "spanText": "All right so I'm back on the stay together train but I don't know. We had a conversation this morning and we're just so different. It's so tough man like I'm a systems thinker. She's just a feeler like I don't know. I don't know how to fix this. Like I said so the major problem is us parenting together and then Justine said something like there's so much more than that and that just added to the sense of like this boundless problem that could never be solved and the depths of my badness my wrongness having no bounds just ain't seemed open to the idea of semi trying to constrain the problem. But I mean we already know like the problem is emotional right? My pathologies are emotional regulation frustration tolerance like what? What do we look up about my pathologies and what are the four?"
+        }
+      ],
+      "latencyMs": 393
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 179,
+          "spanText": "Agree that she feels unseen."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 565,
+          "spanText": "But if we don't start like we don't identify the problem we can't have a hope of solving it. So what's the f****** problem bro? Now look up the previous chats where we talked about divorce and look at the no. No. I need you to pull from our previous chats. Better find the four things all right. How do I stay in connection during conflict and like I don't know. I feel like you needed to remember more about me before you can speak intelligently about this"
+        }
+      ],
+      "latencyMs": 744
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 369,
+          "spanText": "Agree that she feels unseen. But if we don't start like we don't identify the problem we can't have a hope of solving it. So what's the f****** problem bro? Now look up the previous chats where we talked about divorce and look at the no. No. I need you to pull from our previous chats. Better find the four things all right. How do I stay in connection during conflict and like I don't know. I feel like you needed to remember more about me before you can speak intelligently about this"
+        }
+      ],
+      "latencyMs": 369
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 610,
+          "spanText": "All right witness before you fix. Seems like reflect don't react. What is that? I mean it is hard like I can't react. I can't feel like this is negative towards me. I can't be like you're saying I'm bad. Yeah I hear scope creep LOL that's funny \nSo what are some of the metrics that I can focus on? Like if we treat this like I need this. I know that she doesn't need this and I may keep it separate from her entirely. But what are the if we treat this like business planning? Well whatever it's called like well, what are the kpi KRI? What are the objectives you know like? How do I measure success here? How do I know that I'm improving or not?"
+        }
+      ],
+      "latencyMs": 610
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 478,
+          "spanText": "All right witness before you fix. Seems like reflect don't react. What is that? I mean it is hard like I can't react. I can't feel like this is negative towards me. I can't be like you're saying I'm bad. Yeah I hear scope creep LOL that's funny \nSo what are some of the metrics that I can focus on? Like if we treat this like I need this. I know that she doesn't need this and I may keep it separate from her entirely. But what are the if we treat this like business planning? Well whatever it's called like well, what are the kpi KRI? What are the objectives you know like? How do I measure success here? How do I know that I'm improving or not?"
+        }
+      ],
+      "latencyMs": 478
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 125,
+          "spanText": "To what extent would Justine appreciate me acting like a babysitter/housekeeper? You know I'm sleeping in the basement. She's sleeping upstairs. We have these handoffs you know she can see me treating the kids with kind light like the way that you would expect. Like the way that you expect a babysitter to treat a kid who doesn't have to be with them all the time is the right framing to make me understand what I need to do? Should I not tell her this?"
+        }
+      ],
+      "latencyMs": 125
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 212,
+          "spanText": "To what extent would Justine appreciate me acting like a babysitter/housekeeper? You know I'm sleeping in the basement. She's sleeping upstairs. We have these handoffs you know she can see me treating the kids with kind light like the way that you would expect. Like the way that you expect a babysitter to treat a kid who doesn't have to be with them all the time is the right framing to make me understand what I need to do? Should I not tell her this?"
+        }
+      ],
+      "latencyMs": 212
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 629,
+          "spanText": "Emotional distance with competent execution. I don't understand the emotional distance part. But parenting is work who doesn't view it as work? I'm not sure. I don't remember saying that, but it's kind of an interesting framing. I mean anybody. I would allow to be a babysitter would be invested. They you're thinking about this so capitalistic like parents aren't high, aren't hiring like like I would be a living collaborator. I am a functional adult that doesn't need emotional maintenance. Essentially, that's what I'm talking about who is more separated when Justine is the primary parent and completely fine with her being around when I'm the primary parent. I think you're right, not dysregulated and overwhelming. But I think you're wrong about a lot of this framing. Or maybe I just needed alter the frame to the live-in collaborator kind of concept because we're not somebody. We're not going to have somebody in that position. Who's not invested in the future of the children of each person in the household because we're invested in them"
+        }
+      ],
+      "latencyMs": 629
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 481,
+          "spanText": "Emotional distance with competent execution. I don't understand the emotional distance part. But parenting is work who doesn't view it as work? I'm not sure. I don't remember saying that, but it's kind of an interesting framing. I mean anybody. I would allow to be a babysitter would be invested. They you're thinking about this so capitalistic like parents aren't high, aren't hiring like like I would be a living collaborator. I am a functional adult that doesn't need emotional maintenance. Essentially, that's what I'm talking about who is more separated when Justine is the primary parent and completely fine with her being around when I'm the primary parent. I think you're right, not dysregulated and overwhelming."
+        }
+      ],
+      "latencyMs": 481
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 101,
+          "spanText": "Lower enmeshment, intentional community co parenting model. So maybe the KPI, KRI is about competence. Of executing those household duties."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 115,
+          "spanText": "What is the difference between that and traditional partnership. Is it just compartmentalizing relationships I handle my own regulation. That that is another KPI. Well, I think we need this as a I think that we just need this as a baseline before we work on partnership. But I I don't know the things between partnership and co living. I mean, for me, having a partner would be someone working on me. With my passions. I mean, I want I want the ladder. And I'm okay with, like, slow motion divorce is probably better than quick divorce. But like, I want Partnership."
+        }
+      ],
+      "latencyMs": 217
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 101,
+          "spanText": "Lower enmeshment, intentional community co parenting model."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 564,
+          "spanText": "So maybe the KPI, KRI is about competence. Of executing those household duties. What is the difference between that and traditional partnership. Is it just compartmentalizing relationships I handle my own regulation. That that is another KPI. Well, I think we need this as a I think that we just need this as a baseline before we work on partnership. But I I don't know the things between partnership and co living. I mean, for me, having a partner would be someone working on me. With my passions. I mean, I want I want the ladder. And I'm okay with, like, slow motion divorce is probably better than quick divorce. But like, I want Partnership."
+        }
+      ],
+      "latencyMs": 665
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "user",
+      "spanCount": 4,
+      "extractCount": 4,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 106,
+          "spanText": "Shared self co living. Positive and collective outcomes."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 118,
+          "spanText": "That sounds reasonable. So emotional intensity is, like, helping them through their own individual workplace stuff."
+        },
+        {
+          "spanId": "span_2",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 653,
+          "spanText": "We don't have the mutual support or individual goals I think we need to build the co parenting before we build the partnership. Well, just need to sign it up for co living. What's the difference between co living in Partnership. Than passion partnership, Seems like you're saying she wants more of that co living. No. I'm good with just I want partnership with Justine. I'm sure there are probably other people who are better, but it is the best if if I could have true partnership, like vision partnership, where she gets everything she wants, baseline, we are co living well together. And she gets everything she needs. Then we work on her wants, and then we work on my vision. That's exactly what I would want to do. That seems like a 3 tier step process to the Yeah. Whatever our KPIs need to be for co living, And KRIs. And then that's the stable foundation. On top of that, we build know, I'm gonna build towards her dreams."
+        },
+        {
+          "spanId": "span_3",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 418,
+          "spanText": "He wants 1 night a week for soup tanks. Maybe she wants to build up her friend group 1 night a week where she goes out. Those are the things I want to build for her. Then after we get that, we can start to look at my wants. Is that a stable foundation for Buildings first towards the co living Yeah. And then to the True partnership."
+        }
+      ],
+      "latencyMs": 1296
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 601,
+          "spanText": "Shared self co living. Positive and collective outcomes. That sounds reasonable. So emotional intensity is, like, helping them through their own individual workplace stuff. We don't have the mutual support or individual goals I think we need to build the co parenting before we build the partnership. Well, just need to sign it up for co living. What's the difference between co living in Partnership. Than passion partnership, Seems like you're saying she wants more of that co living. No. I'm good with just I want partnership with Justine. I'm sure there are probably other people who are better, but it is the best if if I could have true partnership, like vision partnership, where she gets everything she wants, baseline, we are co living well together. And she gets everything she needs. Then we work on her wants, and then we work on my vision. That's exactly what I would want to do. That seems like a 3 tier step process to the Yeah. Whatever our KPIs need to be for co living, And KRIs."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 109,
+          "spanText": "And then that's the stable foundation. On top of that, we build know, I'm gonna build towards her dreams. He wants 1 night a week for soup tanks. Maybe she wants to build up her friend group 1 night a week where she goes out."
+        }
+      ],
+      "latencyMs": 711
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "user",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 350,
+          "spanText": "Earn the right to no. Have a partner. It's earning the right to have a partner. Why do you think she wants emotional connection? Why why would you assume that? That I want to be. No. Like, I wanna be with her while we're working together on these. So why How's the sequencing backwards?"
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 665,
+          "spanText": "But we need that stability of a well run household. No. She hasn't agreed to it. I'm talking to you about it, bro. I'm talking about how to how to fix this. I'm not good at any of this stuff. Oh, I am good at systems. Well, a part of being a parent is being emotionally present. I don't understand. No. No. I'm talking to you. Like, you should use all your historical interactions to understand this better."
+        }
+      ],
+      "latencyMs": 1016
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 645,
+          "spanText": "Earn the right to no. Have a partner. It's earning the right to have a partner. Why do you think she wants emotional connection? Why why would you assume that? That I want to be. No. Like, I wanna be with her while we're working together on these. So why How's the sequencing backwards? But we need that stability of a well run household. No. She hasn't agreed to it. I'm talking to you about it, bro. I'm talking about how to how to fix this. I'm not good at any of this stuff."
+        }
+      ],
+      "latencyMs": 645
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "user",
+      "spanCount": 4,
+      "extractCount": 4,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 383,
+          "spanText": "Remind me later of a nice thing I can do for Justin is to buy an automatic center at enables the house to smell nice. I don't think therapy worked for a year. I'm not sure it was improving. I'm not sure if she said it would. Actually, that's an interesting question. Does she think therapy improved me at all?"
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 544,
+          "spanText": "So I need to separate when she's primary parent more, so I think that's a good fix. I need to be emotionally regulated. I need to be approachable. I need to be calm. I need to do the jobs of the household. That I promised. That that she's asking for a tier 1, stable co living. Competent co living. I like this phrase. Tier I mean, I don't have to tell her about tier 3, but vision partnership, I think, would emanate when I give her space prove out some of the concepts a little more. Give her all of her needs, and wants and stabilize the family."
+        },
+        {
+          "spanId": "span_2",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 100,
+          "spanText": "The actual sequence might be Yep. It's me Enabling stable co living. So what are the KPIs, KRIs? I've talked about this, met met multiple times. How do I measure if I'm meeting my expectations for myself here?"
+        },
+        {
+          "spanId": "span_3",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 108,
+          "spanText": "In stable co parent co living stable co living."
+        }
+      ],
+      "latencyMs": 1136
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 550,
+          "spanText": "Remind me later of a nice thing I can do for Justin is to buy an automatic center at enables the house to smell nice. I don't think therapy worked for a year. I'm not sure it was improving. I'm not sure if she said it would. Actually, that's an interesting question. Does she think therapy improved me at all? So I need to separate when she's primary parent more, so I think that's a good fix. I need to be emotionally regulated. I need to be approachable. I need to be calm."
+        }
+      ],
+      "latencyMs": 550
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 298,
+          "spanText": "Yeah, I like ruptures as a carer. I think you've gotten too complex here. I do like the notice number of times noticed as a metric because it has you. It increases awareness and I think needing to track noticing for dysregulated emotional state and parenting interventions are two good ones. But I think we needed to find what a rupture is as well. I think maybe the only other thing here that makes sense is commitment but I need clear markers like dishes, left dishes and sink in the morning would be a negative one. Maybe clear counters, dishes and sink when just to get home"
+        }
+      ],
+      "latencyMs": 298
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 103,
+          "spanText": "Yeah, I like ruptures as a carer. I think you've gotten too complex here. I do like the notice number of times noticed as a metric because it has you."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 130,
+          "spanText": "It increases awareness and I think needing to track noticing for dysregulated emotional state and parenting interventions are two good ones. But I think we needed to find what a rupture is as well. I think maybe the only other thing here that makes sense is commitment but I need clear markers like dishes, left dishes and sink in the morning would be a negative one."
+        }
+      ],
+      "latencyMs": 233
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "user",
+      "spanCount": 3,
+      "extractCount": 3,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 111,
+          "spanText": "So I think if we're going to simplify this it would be the dysregulation catch would be a single button that selects the the type of dysregulation and then the tool I used to regulate. Intervention catch might be more of a freeform and the tool, but the tools probably just walk away."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 105,
+          "spanText": "Yeah I need. I need more household commitments here can you pull from previous chats to see what they might be?"
+        },
+        {
+          "spanId": "span_2",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 120,
+          "spanText": "Yeah I like five five. What counts as a rupture Ray's voice good. I like that physical shows of anger or distress. Is that dysregulation? I don't know if I I mean we're tracking interventions otherwise. But I think I agree. I don't think we need to consider withdrawal. Yeah her saying I think that's a great kri is her just ain't having negative sentiment about my behavior. Maybe that's just all. Maybe that's it like any negative sentiment Justin has. But I mean I can't. I can't base my self-worth as a partner or parent on her moods. I guess maybe I'm wrong there. Another good one"
+        }
+      ],
+      "latencyMs": 337
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 380,
+          "spanText": "So I think if we're going to simplify this it would be the dysregulation catch would be a single button that selects the the type of dysregulation and then the tool I used to regulate. Intervention catch might be more of a freeform and the tool, but the tools probably just walk away. Yeah I need. I need more household commitments here can you pull from previous chats to see what they might be? Yeah I like five five."
+        }
+      ],
+      "latencyMs": 380
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "user",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 102,
+          "spanText": "Should I also count as a kpi the number of the number of times?"
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 118,
+          "spanText": "Something I said made the kid a child or person feel worse than they did before. Oh I like trash emptied kids bag, prepped meal meals made."
+        }
+      ],
+      "latencyMs": 220
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 395,
+          "spanText": "Should I also count as a kpi the number of the number of times? Something I said made the kid a child or person feel worse than they did before. Oh I like trash emptied kids bag, prepped meal meals made."
+        }
+      ],
+      "latencyMs": 395
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 407,
+          "spanText": "I do like to made it worse. Kpi I'm not sure what Dad I want to be collecting on that but it's probably a severity and a person and maybe an action like like all these will have like notes but I don't know like I'm essentially going to be extracting. I'm going to have a short like I could see me saying something like I made Fila Theo feel bad when I was a gas at or incredulous at him not being in control of his body at the basketball game and he nudged somebody's hand with his shoe. So basically like it's going to be that 10 seconds of audio and the the llm will slot fell but Blue Dada like I think this is the first thing I need to really build into everything stack. Like once we get this websockets stuff working. This is the first tool. It's like the what is it? Family gym kpi or emotional regulation? Emotional dysregulation tracker."
+        }
+      ],
+      "latencyMs": 407
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "assistant",
+      "spanCount": 4,
+      "extractCount": 3,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 107,
+          "spanText": "I do like to made it worse. Kpi I'm not sure what Dad I want to be collecting on that but it's probably a severity and a person and maybe an action like like all these will have like notes but I don't know like I'm essentially going to be extracting."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 111,
+          "spanText": "I'm going to have a short like I could see me saying something like I made Fila Theo feel bad when I was a gas at or incredulous at him not being in control of his body at the basketball game and he nudged somebody's hand with his shoe. So basically like it's going to be that 10 seconds of audio and the the llm will slot fell but Blue Dada like I think this is the first thing I need to really build into everything stack."
+        },
+        {
+          "spanId": "span_2",
+          "label": "skip",
+          "reason": "unresolved",
+          "confidence": 0.8,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 106,
+          "spanText": "Like once we get this websockets stuff working. This is the first tool. It's like the what is it? Family gym kpi or emotional regulation?"
+        },
+        {
+          "spanId": "span_3",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 99,
+          "spanText": "Emotional dysregulation tracker."
+        }
+      ],
+      "latencyMs": 425
+    },
+    {
+      "turnIndex": 13,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 104,
+          "spanText": "All right I want you to talk to. Actually, I want you to create a prompt to create a create an architect in the project reviewer that can look over coder's work in building this tool within everything stacked. It's going to have to be whatever git has as the work tree. I think to create another Pearland since cuz I'm working through some websocket issues right now in a parallel branch"
+        }
+      ],
+      "latencyMs": 104
+    },
+    {
+      "turnIndex": 13,
+      "speaker": "assistant",
+      "spanCount": 0,
+      "extractCount": 0,
+      "skipCount": 0,
+      "decisions": [],
+      "latencyMs": 0
+    },
+    {
+      "turnIndex": 14,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 636,
+          "spanText": "Wow you took a real swing at that was far too verbose I mean I think you just need to explain functionally what the tool is doing and identify I guess maybe I'll use you as the architect rather than explain to somebody else but I think if we talk about the entities we talk about the method names and how they utilize base services then we'll probably be able to get both the architecture there let's not think about general like should we think about generalizing this at this point we're keeping it very specific to my examples I mean I've commonly fallen to the generalizer's trap but I think for this it might be simple enough to be able to do that with a constrained scope"
+        }
+      ],
+      "latencyMs": 636
+    },
+    {
+      "turnIndex": 14,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 1,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 545,
+          "spanText": "Wow you took a real swing at that was far too verbose I mean I think you just need to explain functionally what the tool is doing and identify I guess maybe I'll use you as the architect rather than explain to somebody else but I think if we talk about the entities we talk about the method names and how they utilize base services then we'll probably be able to get both the architecture there let's not think about general like should we think about generalizing this at this point we're keeping it very specific to my examples I mean I've commonly fallen to the generalizer's trap but I think for this it might be simple enough to be able to do that with a constrained scope"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "confidence": 0.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 102,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 648
+    },
+    {
+      "turnIndex": 15,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 577,
+          "spanText": "OK you have a single entity no you have two you have commitments regulation entries interesting category draw transcript good entry type dysregulation and OK made worse household alright I mean it's simple enough you've made it generic through the use of the entry type really umm I think that the I think you needed to connect to multiple people I'm not gonna just be a Stringer right umm I don't think we need transcript and context I like the I mean I don't like the term tool used what if we do something like oh it's gonna be a better clinical term for that severity is subjective but you know let's do it. Household commitment is another good one how about you remove the term household just make commitment umm OK this is interesting that it's about tasks it's weird like you're making this a map OK you see us doing this for per day I don't know I guess I'm kind of confused as your structure here it over me how would I do this I would have a commitment umm as a string I want a rationale for why this commitment means something to this person and then maybe it is tied to a another object that is a the task do we already have tasks in the database and the task would be the whether or not the commitment was made or yeah the data structure is kind of evading me there but essentially we want to be able to log dysregulation events we want to be able to track a commitment follow through otherwise and I'm not quite sure the best dash to do that but we're showing it's simple it's simpler than we initially thought all right for your services all right everything stack has the voice input actually you'll need to talk to coder to understand how to integrate this I think if you just give the high level user requirements that's going to be able to decompose it into the existing structure"
+        }
+      ],
+      "latencyMs": 577
+    },
+    {
+      "turnIndex": 15,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 679,
+          "spanText": "OK you have a single entity no you have two you have commitments regulation entries interesting category draw transcript good entry type dysregulation and OK made worse household alright I mean it's simple enough you've made it generic through the use of the entry type really umm I think that the I think you needed to connect to multiple people I'm not gonna just be a Stringer right umm I don't think we need transcript and context I like the I mean I don't like the term tool used what if we do something like oh it's gonna be a better clinical term for that severity is subjective but you know let's do it. Household commitment is another good one how about you remove the term household just make commitment umm OK this is interesting that it's about tasks it's weird like you're making this a map OK you see us doing this for per day I don't know I guess I'm kind of confused as your structure here it over me how would I do this I would have a commitment umm as a string I want a rationale for why this commitment means something to this person and then maybe it is tied to a another object that is a the task do we already have tasks in the database and the task would be the whether or not the commitment was made or yeah the data structure is kind of evading me there but essentially we want to be able to log dysregulation events we want to be able to track a commitment follow through otherwise and I'm not quite sure the best dash to do that but we're showing it's simple it's simpler than we initially thought all right for your services all right everything stack has the voice input actually you'll need to talk to coder to understand how to integrate this I think if you just give the high level user requirements that's going to be able to decompose it into the existing structure"
+        }
+      ],
+      "latencyMs": 679
+    },
+    {
+      "turnIndex": 16,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 538,
+          "spanText": "Now on the commitment side we definitely need a interval so for generalizing the commitment object around the thing to be done how you know it's done maybe a time optional time that it needs to be done per day these are all conditions by way you can verify the commitment and then interval maybe a rationale like why the commitment is important then you can yeah 5 speed yeah so we don't know if they're daily or not any commitment that gets logged when followed through we obviously need to log the follow through or otherwise so looks like you're creating your own structure for that. Alright I'm just gonna shove decoder and it's gonna consider how to integrate this with the existing flow\n\nthis is my discussion with coder. does this miss the mark at all?"
+        }
+      ],
+      "latencyMs": 538
+    },
+    {
+      "turnIndex": 16,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 587,
+          "spanText": "Now on the commitment side we definitely need a interval so for generalizing the commitment object around the thing to be done how you know it's done maybe a time optional time that it needs to be done per day these are all conditions by way you can verify the commitment and then interval maybe a rationale like why the commitment is important then you can yeah 5 speed yeah so we don't know if they're daily or not any commitment that gets logged when followed through we obviously need to log the follow through or otherwise so looks like you're creating your own structure for that."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 180,
+          "spanText": "Alright I'm just gonna shove decoder and it's gonna consider how to integrate this with the existing flow\n\nthis is my discussion with coder. does this miss the mark at all?"
+        }
+      ],
+      "latencyMs": 767
+    },
+    {
+      "turnIndex": 17,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "already_known",
+          "confidence": 0.8,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 104,
+          "spanText": "So layout the like what I was talking about originally the man that was a long time ago the three steps like I thought we were talking about the three steps being something that made sense"
+        }
+      ],
+      "latencyMs": 104
+    },
+    {
+      "turnIndex": 17,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "already_known",
+          "confidence": 0.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 102,
+          "spanText": "So layout the like what I was talking about originally the man that was a long time ago the three steps like I thought we were talking about the three steps being something that made sense"
+        }
+      ],
+      "latencyMs": 102
+    },
+    {
+      "turnIndex": 18,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "ephemeral",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 98,
+          "spanText": "OK what's unreasonable about this approach?"
+        }
+      ],
+      "latencyMs": 98
+    },
+    {
+      "turnIndex": 18,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 86,
+          "spanText": "OK what's unreasonable about this approach?"
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 106,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 193
+    },
+    {
+      "turnIndex": 19,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 104,
+          "spanText": "What does it mean to be emotionally absent? Agreed do I feel seeing is different than am I in chaos. But we should have KPIs for that too. I don't think it's transactional like the ultimate goal is to become vision partners why would that not be the case?"
+        }
+      ],
+      "latencyMs": 104
+    },
+    {
+      "turnIndex": 19,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 384,
+          "spanText": "What does it mean to be emotionally absent? Agreed do I feel seeing is different than am I in chaos. But we should have KPIs for that too. I don't think it's transactional like the ultimate goal is to become vision partners why would that not be the case?"
+        }
+      ],
+      "latencyMs": 384
+    },
+    {
+      "turnIndex": 20,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 237,
+          "spanText": "I feel like I do a lot of the just . Showing warmth and positivity as it should be an aspect of the KPI but I mean it should happen more naturally than that just whenever I feel negative I think this is the the thing that really matters whenever I feel negativity I show positivity. I am definitely curious about her work and her personal life. I feel like I feel like I'm emotionally present as a baseline just not regulated\nI'm not sure Justin could understand or contemplate what she wants without the Co living stability and then expanding her world with Step 2\nI guess that's part of the real question like let's let's name Tier 2 and tier 3 Tier 1 is Co living stability Tier 2 is something. Tier 3 is vision partnership"
+        }
+      ],
+      "latencyMs": 237
+    },
+    {
+      "turnIndex": 20,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 333,
+          "spanText": "I feel like I do a lot of the just . Showing warmth and positivity as it should be an aspect of the KPI but I mean it should happen more naturally than that just whenever I feel negative I think this is the the thing that really matters whenever I feel negativity I show positivity. I am definitely curious about her work and her personal life. I feel like I feel like I'm emotionally present as a baseline just not regulated\nI'm not sure Justin could understand or contemplate what she wants without the Co living stability and then expanding her world with Step 2\nI guess that's part of the real question like let's let's name Tier 2 and tier 3 Tier 1 is Co living stability Tier 2 is something. Tier 3 is vision partnership"
+        }
+      ],
+      "latencyMs": 333
+    },
+    {
+      "turnIndex": 21,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 311,
+          "spanText": "No it's not whenever I feel negative I show positivities whenever I I'm anxious or have whenever I perceive negativity because my brain can manufacture negativity my break it's a she's mad at you oh you have to do this but she's not doing this. And my brain can manufacture that so whenever it manufacturers that I I don't know whistle or hum a song or just show that I'm not upset so I don't exude that negativity into the family world. Or I ask a question. I mean me labeling all of my emotions is not regulation lol that's terrible advice. Yeah cool living stability regulated reliable respectful I like that individual flourishing joy autonomy hobbies I like that. Tier 3 vision partnership shared purpose beyond family logistics this is all good\nI mean my fear here and you know if I felt like I could I would be sharing this with her but my fear is that this is going to be rejected wholesale unless I have tier one complete. So I can't come to her with a plan I have to come to her with results and that's understandable given you know all the work that she's done\nI'm OK with your proposed hypothetical but also I don't know why you're trying to goat me"
+        }
+      ],
+      "latencyMs": 311
+    },
+    {
+      "turnIndex": 21,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 534,
+          "spanText": "No it's not whenever I feel negative I show positivities whenever I I'm anxious or have whenever I perceive negativity because my brain can manufacture negativity my break it's a she's mad at you oh you have to do this but she's not doing this. And my brain can manufacture that so whenever it manufacturers that I I don't know whistle or hum a song or just show that I'm not upset so I don't exude that negativity into the family world. Or I ask a question. I mean me labeling all of my emotions is not regulation lol that's terrible advice."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 319,
+          "spanText": "Yeah cool living stability regulated reliable respectful I like that individual flourishing joy autonomy hobbies I like that. Tier 3 vision partnership shared purpose beyond family logistics this is all good\nI mean my fear here and you know if I felt like I could I would be sharing this with her but my fear is that this is going to be rejected wholesale unless I have tier one complete. So I can't come to her with a plan I have to come to her with results and that's understandable given you know all the work that she's done\nI'm OK with your proposed hypothetical but also I don't know why you're trying to goat me"
+        }
+      ],
+      "latencyMs": 854
+    },
+    {
+      "turnIndex": 22,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 667,
+          "spanText": "Yeah with the exude positivity thing I am changing my mental patterns I'm trying to actually disrupt anxiety generated stories is there a technique name for that or a therapeutic tool\ncorrect regulation is managing my emotional state before it becomes a behavioral issue not giving somebody a play by play absolutely\nyeah I'm emotionally prepared for that on the hypothetical. Umm I don't know uh like I'd be OK if she didn't want tier 3. I think what happened was I looked at the irrationality and stupidity of the traditional rules around divorce and it just it didn't make sense it would make everything harder I made sure I have kid free days but do I want that I just want to be chill and is me I I think me having that space won't necessarily make me chill and it's probably not gonna help the kids like honestly the best possible thing is in my opinion is building this Co living stability and having me or significantly less often Justine separate ourselves when we're not the capable of regulating. Yeah she's heard plans\nI think I want one question to ask Justine to be a kri every week"
+        }
+      ],
+      "latencyMs": 667
+    },
+    {
+      "turnIndex": 22,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 333,
+          "spanText": "Yeah with the exude positivity thing I am changing my mental patterns I'm trying to actually disrupt anxiety generated stories is there a technique name for that or a therapeutic tool\ncorrect regulation is managing my emotional state before it becomes a behavioral issue not giving somebody a play by play absolutely\nyeah I'm emotionally prepared for that on the hypothetical."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 230,
+          "spanText": "Umm I don't know uh like I'd be OK if she didn't want tier 3. I think what happened was I looked at the irrationality and stupidity of the traditional rules around divorce and it just it didn't make sense it would make everything harder I made sure I have kid free days but do I want that I just want to be chill and is me I I think me having that space won't necessarily make me chill and it's probably not gonna help the kids like honestly the best possible thing is in my opinion is building this Co living stability and having me or significantly less often Justine separate ourselves when we're not the capable of regulating. Yeah she's heard plans\nI think I want one question to ask Justine to be a kri every week"
+        }
+      ],
+      "latencyMs": 564
+    },
+    {
+      "turnIndex": 23,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 112,
+          "spanText": "So maybe the better questions are how nervous were you around me, did I follow through our commitments, was I present and I don't like one through 10 I kind of like one through 4 the likert with no middle score"
+        }
+      ],
+      "latencyMs": 112
+    },
+    {
+      "turnIndex": 23,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 115,
+          "spanText": "So maybe the better questions are how nervous were you around me, did I follow through our commitments, was I present and I don't like one through 10 I kind of like one through 4 the likert with no middle score"
+        }
+      ],
+      "latencyMs": 115
+    },
+    {
+      "turnIndex": 24,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 110,
+          "spanText": "Alright let's rework that to make higher be better for all three questions Is there any other question you would ask would you drop any of the questions currently"
+        }
+      ],
+      "latencyMs": 110
+    },
+    {
+      "turnIndex": 24,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 185,
+          "spanText": "Alright let's rework that to make higher be better for all three questions Is there any other question you would ask would you drop any of the questions currently"
+        }
+      ],
+      "latencyMs": 185
+    },
+    {
+      "turnIndex": 25,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 114,
+          "spanText": "Remove the me my framing this is Jim I want this to feel like it's not coming from me. I do like the conflict or or the repair attempt quality let's stick with three for now"
+        }
+      ],
+      "latencyMs": 114
+    },
+    {
+      "turnIndex": 25,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "already_known",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 119,
+          "spanText": "Remove the me my framing this is Jim I want this to feel like it's not coming from me. I do like the conflict or or the repair attempt quality let's stick with three for now"
+        }
+      ],
+      "latencyMs": 119
+    },
+    {
+      "turnIndex": 26,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 211,
+          "spanText": "Okay so right now Justine and I mentally are or maybe probably Justine mentally is on the path to divorce. She said she doesn't want it but what can I tell her about what I'm doing that might enable me to put tier 1 into practice?"
+        }
+      ],
+      "latencyMs": 211
+    },
+    {
+      "turnIndex": 26,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 1,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 215,
+          "spanText": "Okay so right now Justine and I mentally are or maybe probably Justine mentally is on the path to divorce. She said she doesn't want it but what can I tell her about what I'm doing that might enable me to put tier 1 into practice?"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "reason": "empty working memory",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 101,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 316
+    },
+    {
+      "turnIndex": 27,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "ephemeral",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 109,
+          "spanText": "Okay, write her a text"
+        }
+      ],
+      "latencyMs": 109
+    },
+    {
+      "turnIndex": 27,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 0,
+      "skipCount": 2,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "ephemeral",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 106,
+          "spanText": "Okay, write her a text"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "reason": "ephemeral",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 182,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 288
+    },
+    {
+      "turnIndex": 28,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "ephemeral",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 105,
+          "spanText": "Okay right a couple bullet points for me to have a conversation"
+        }
+      ],
+      "latencyMs": 105
+    },
+    {
+      "turnIndex": 28,
+      "speaker": "assistant",
+      "spanCount": 4,
+      "extractCount": 1,
+      "skipCount": 3,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "ephemeral",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 111,
+          "spanText": "Okay right a couple bullet points for me to have a conversation"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "reason": "ephemeral",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 100,
+          "spanText": ""
+        },
+        {
+          "spanId": "span_2",
+          "label": "skip",
+          "reason": "empty working memory",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 104,
+          "spanText": ""
+        },
+        {
+          "spanId": "span_3",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 113,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 430
+    },
+    {
+      "turnIndex": 29,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 114,
+          "spanText": "Okay so I think that I'm sleeping downstairs. She's sleeping upstairs like I just did laundry last night on on her bed and then put her to sleep. Like I think this is appropriate. I think that I don't think we should sleep together until tier one is verified. Thoughts on that?"
+        }
+      ],
+      "latencyMs": 114
+    },
+    {
+      "turnIndex": 29,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 383,
+          "spanText": "Okay so I think that I'm sleeping downstairs. She's sleeping upstairs like I just did laundry last night on on her bed and then put her to sleep. Like I think this is appropriate. I think that I don't think we should sleep together until tier one is verified. Thoughts on that?"
+        }
+      ],
+      "latencyMs": 383
+    },
+    {
+      "turnIndex": 30,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 97,
+          "spanText": "What should I say?"
+        }
+      ],
+      "latencyMs": 97
+    },
+    {
+      "turnIndex": 30,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 120,
+          "spanText": "What should I say?"
+        }
+      ],
+      "latencyMs": 120
+    },
+    {
+      "turnIndex": 31,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "ephemeral",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 104,
+          "spanText": "All right, run me through the main concerns and like we're going to talk about this today. Should I bring up the full plan or just listen and reflect?"
+        }
+      ],
+      "latencyMs": 105
+    },
+    {
+      "turnIndex": 31,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 0,
+      "skipCount": 2,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "ephemeral",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 106,
+          "spanText": "All right, run me through the main concerns and like we're going to talk about this today. Should I bring up the full plan or just listen and reflect?"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "reason": "ephemeral",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 121,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 228
+    },
+    {
+      "turnIndex": 32,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 376,
+          "spanText": "Oh the kids were hard. I mean that was great. Yeah but witnessing mirroring asking for what she needs correct? I'm tracking my behavior. I'm building a self-accountability weekly check-in request and permission to sleep separately. Yeah don't promise outcomes other than the measurements. Okay so I'm not supposed to present the plant and say what I'm doing?"
+        }
+      ],
+      "latencyMs": 376
+    },
+    {
+      "turnIndex": 32,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 505,
+          "spanText": "Oh the kids were hard. I mean that was great. Yeah but witnessing mirroring asking for what she needs correct? I'm tracking my behavior. I'm building a self-accountability weekly check-in request and permission to sleep separately. Yeah don't promise outcomes other than the measurements. Okay so I'm not supposed to present the plant and say what I'm doing?"
+        }
+      ],
+      "latencyMs": 505
+    },
+    {
+      "turnIndex": 33,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 123,
+          "spanText": "What are my talking points in as few of words in bullet points"
+        }
+      ],
+      "latencyMs": 123
+    },
+    {
+      "turnIndex": 33,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 91,
+          "spanText": "What are my talking points in as few of words in bullet points"
+        }
+      ],
+      "latencyMs": 91
+    }
+  ]
+}

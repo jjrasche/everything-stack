@@ -1,0 +1,389 @@
+{
+  "conversationUuid": "17d350c4-e708-4094-a867-ad90bca77ecf",
+  "conversationName": "Personal Growth Therapy Progress Tracking",
+  "turnCount": 20,
+  "stage": "classify",
+  "model": "groq/llama-3.1-8b-instant",
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 304,
+          "spanText": "All right based on just into my discussion last night umm I give me very brief responses let's keep everything under 100 words umm I'm in a meeting with Brian right now I think I wanna walk away with from this with something I can track umm I also want to like at a metric that Brian can hold me accountable to and I want to reduce the number of our therapy or the frequency of our therapy sessions also to either once every other week or probably monthly So what kind of metrics should I be tracking based on the conversations I've been having with Justine"
+        }
+      ],
+      "latencyMs": 304
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 498,
+          "spanText": "All right based on just into my discussion last night umm I give me very brief responses let's keep everything under 100 words umm I'm in a meeting with Brian right now I think I wanna walk away with from this with something I can track umm I also want to like at a metric that Brian can hold me accountable to and I want to reduce the number of our therapy or the frequency of our therapy sessions also to either once every other week or probably monthly So what kind of metrics should I be tracking based on the conversations I've been having with Justine"
+        }
+      ],
+      "latencyMs": 499
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 663,
+          "spanText": "So can I get a script I'm gonna enter in the text that Brian and I have been working through on preventing interruptions preventing me from interrupting I'd like you to create something akin to that for this other thing that I need to change which is helping being more helpful to my children. I need this to acknowledge my emotion that comes up when I this emotion that counters my desire to be helpful which is I mean of course I'm selfish that's part of it but a bigger part of it or maybe it's just a rationalization I made to myself is what I do for a child I teach them that they cannot do for themselves. There's a big Gray area there there's a great area of learning you know it takes time and modeling for a person for a child anybody to be able to do a thing and I think I'm not necessarily I need to be more lenient in that Gray area so try to mimic what I'm just about to paste to you for this additional topic"
+        }
+      ],
+      "latencyMs": 663
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 1,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 614,
+          "spanText": "So can I get a script I'm gonna enter in the text that Brian and I have been working through on preventing interruptions preventing me from interrupting I'd like you to create something akin to that for this other thing that I need to change which is helping being more helpful to my children. I need this to acknowledge my emotion that comes up when I this emotion that counters my desire to be helpful which is I mean of course I'm selfish that's part of it but a bigger part of it or maybe it's just a rationalization I made to myself is what I do for a child I teach them that they cannot do for themselves. There's a big Gray area there there's a great area of learning you know it takes time and modeling for a person for a child anybody to be able to do a thing and I think I'm not necessarily I need to be more lenient in that Gray area so try to mimic what I'm just about to paste to you for this additional topic"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 189,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 803
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 106,
+          "spanText": "can you turn this into a website that submits to a google form? - metrics to focus on (attention -> awareness -> possibility of change) this all leads to more contro"
+        }
+      ],
+      "latencyMs": 106
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 216,
+          "spanText": "can you turn this into a website that submits to a google form? - metrics to focus on (attention -> awareness -> possibility of change) this all leads to more contro"
+        }
+      ],
+      "latencyMs": 216
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 110,
+          "spanText": "Actually how quickly can you turn this into a can you instead of connecting this to a Google sheet connected to an AWS function or or database I I want I want it I want the back end to be AWS"
+        }
+      ],
+      "latencyMs": 110
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 105,
+          "spanText": "Actually how quickly can you turn this into a can you instead of connecting this to a Google sheet connected to an AWS function or or database I I want I want it I want the back end to be AWS"
+        }
+      ],
+      "latencyMs": 105
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 398,
+          "spanText": "i like to do everything as much as possible through console even infrastructure as code if you could do that\n\nif it takes a little bit more work like 20% more work and I can make this cloud agnostic that would be cool but I understand the limitations there so not a big deal\n\nI think simple serverless will be fine. I want to optimize for quick and easy deployment of essentially crud applications where I could vibe code a cool front end and maybe some visuals\n\nauthentication and user management interesting how much more time will that add if we add this in I think I need it but I'm OK with that being part of the V2 if it takes more than 30 minutes"
+        }
+      ],
+      "latencyMs": 398
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 1,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 408,
+          "spanText": "i like to do everything as much as possible through console even infrastructure as code if you could do that\n\nif it takes a little bit more work like 20% more work and I can make this cloud agnostic that would be cool but I understand the limitations there so not a big deal\n\nI think simple serverless will be fine. I want to optimize for quick and easy deployment of essentially crud applications where I could vibe code a cool front end and maybe some visuals\n\nauthentication and user management interesting how much more time will that add if we add this in I think I need it but I'm OK with that being part of the V2 if it takes more than 30 minutes"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 107,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 516
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "ephemeral",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 108,
+          "spanText": "All right sell me on the architecture tell me what the trades trade-offs are and yeah"
+        }
+      ],
+      "latencyMs": 108
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "ephemeral",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 109,
+          "spanText": "All right sell me on the architecture tell me what the trades trade-offs are and yeah"
+        }
+      ],
+      "latencyMs": 109
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 596,
+          "spanText": "Does your documentation help me avoid that course hell\nyeah good alternative descriptions I'm definitely not gonna do EC2 yeah I I appreciate the customization in contrast to amplify OK netlify good OK you sold me I would like to add off now and I would like to consider the mobile emphasizing this for mobile experience too actually let's talk about that before we go forward regardless of mobile OS am I capable of I don't know creating a progressive web app or something like is there a simple way for me to build this and get it on peoples devices for them to submit it or for them to interact with this or is it honestly best to interact with it as a website on mobile. I'm thinking primarily about authentication and ease of user interaction yeah I guess a progressive web app doesn't really get me anything it's just a browser with an icon right"
+        }
+      ],
+      "latencyMs": 596
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 614,
+          "spanText": "Does your documentation help me avoid that course hell\nyeah good alternative descriptions I'm definitely not gonna do EC2 yeah I I appreciate the customization in contrast to amplify OK netlify good OK you sold me I would like to add off now and I would like to consider the mobile emphasizing this for mobile experience too actually let's talk about that before we go forward regardless of mobile OS am I capable of I don't know creating a progressive web app or something like is there a simple way for me to build this and get it on peoples devices for them to submit it or for them to interact with this or is it honestly best to interact with it as a website on mobile. I'm thinking primarily about authentication and ease of user interaction yeah I guess a progressive web app doesn't really get me anything it's just a browser with an icon right"
+        }
+      ],
+      "latencyMs": 614
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 511,
+          "spanText": "The offline capability is compelling what do you mean clients can't forget to install the update when you use the progressive web app does it and I make changes to the front end does it happen automatically does it just pull in without having to update the app icon\n\nNope you've sold me on progressive web app is there anything you would change about the build document based on this conversation"
+        }
+      ],
+      "latencyMs": 511
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 614,
+          "spanText": "The offline capability is compelling what do you mean clients can't forget to install the update when you use the progressive web app does it and I make changes to the front end does it happen automatically does it just pull in without having to update the app icon\n\nNope you've sold me on progressive web app is there anything you would change about the build document based on this conversation"
+        }
+      ],
+      "latencyMs": 614
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "unresolved",
+          "confidence": 0.8,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 109,
+          "spanText": "Yes completely updated artifact with all these changes should I add extended thinking or something to help you fully do this"
+        }
+      ],
+      "latencyMs": 110
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "already_known",
+          "confidence": 0.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 102,
+          "spanText": "Yes completely updated artifact with all these changes should I add extended thinking or something to help you fully do this"
+        }
+      ],
+      "latencyMs": 102
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 93,
+          "spanText": "now do you need to update the backend build docs?"
+        }
+      ],
+      "latencyMs": 93
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 93,
+          "spanText": "now do you need to update the backend build docs?"
+        }
+      ],
+      "latencyMs": 93
+    }
+  ]
+}

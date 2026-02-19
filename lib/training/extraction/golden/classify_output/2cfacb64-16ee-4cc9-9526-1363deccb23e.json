@@ -1,0 +1,418 @@
+{
+  "conversationUuid": "2cfacb64-16ee-4cc9-9526-1363deccb23e",
+  "conversationName": "Improving Communication and Connection in a Long-Term Marriage",
+  "turnCount": 22,
+  "stage": "classify",
+  "model": "groq/llama-3.1-8b-instant",
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 575,
+          "spanText": "Justin wants me to be a supporting spouse \njustine wants to want to be with me \nJustin does not want to be the only source of emotional labor in the house. I she I need to rely significantly less on her for both my support of myself and my support of the children's emotional needs \nJustine said I want to be able to talk about more things than just your passion projects. We talk about that we talk about her work we talk about her career her future we talk about finances we talk about our shared goals we talk about the kids we talk about TV shows that we like. - talking about my society or my coaching is stressful just for just staying in the same way that listening to her talk about her work in the hardships he has to go to are stressful for me \nMy thought is Justin and I have never set up these structures to interact with each other on a routine basis we need something once a week to do with each other for I don't know an hour or something That can be a walk but honestly we don't want to talk about the same thing so we don't have a lot to like either she doesn't want to talk about something I want to talk about or I don't want to talk about necessary but something that she wants to talk about so what we we need like a book club I think a book club might actually be a pretty great idea because it's not just her and me one-on-one we kind of get a group to diffuse our communication challenges and we going to talk about something there's something that is interesting and a story that we get to talk about \nJustine's reached the point of nihilism in the conversation where she doesn't know she's I'm I put enough solutions out and she's picked at each and every one of them and\n\n\nOkay preface information Justine is my wife we've been married for 10 years we have two children five and a half years old we're both into this pattern of working on our own stuff and spending probably less than 1 hour with each other a day"
+        }
+      ],
+      "latencyMs": 575
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 559,
+          "spanText": "Justin wants me to be a supporting spouse \njustine wants to want to be with me \nJustin does not want to be the only source of emotional labor in the house. I she I need to rely significantly less on her for both my support of myself and my support of the children's emotional needs \nJustine said I want to be able to talk about more things than just your passion projects. We talk about that we talk about her work we talk about her career her future we talk about finances we talk about our shared goals we talk about the kids we talk about TV shows that we like. - talking about my society or my coaching is stressful just for just staying in the same way that listening to her talk about her work in the hardships he has to go to are stressful for me \nMy thought is Justin and I have never set up these structures to interact with each other on a routine basis we need something once a week to do with each other for I don't know an hour or something That can be a walk but honestly we don't want to talk about the same thing so we don't have a lot to like either she doesn't want to talk about something I want to talk about or I don't want to talk about necessary but something that she wants to talk about so what we we need like a book club I think a book club might actually be a pretty great idea because it's not just her and me one-on-one we kind of get a group to diffuse our communication challenges and we going to talk about something there's something that is interesting and a story that we get to talk about \nJustine's reached the point of nihilism in the conversation where she doesn't know she's I'm I put enough solutions out and she's picked at each and every one of them and\n\n\nOkay preface information Justine is my wife we've been married for 10 years we have two children five and a half years old we're both into this pattern of working on our own stuff and spending probably less than 1 hour with each other a day"
+        }
+      ],
+      "latencyMs": 559
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 113,
+          "spanText": "I feel like the things that revolve around Justin and I having one-on-one conversation was will fall into these similar communication hardship patterns where I'm a in the disc profile I'm a high eye and she's a high c I push her too much and she That's an exact example He's sitting here going say something just didn't say something oh my god do it and I'm like overwhelmed by him"
+        }
+      ],
+      "latencyMs": 113
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 115,
+          "spanText": "I feel like the things that revolve around Justin and I having one-on-one conversation was will fall into these similar communication hardship patterns where I'm a in the disc profile I'm a high eye and she's a high c I push her too much and she That's an exact example He's sitting here going say something just didn't say something oh my god do it and I'm like overwhelmed by him"
+        }
+      ],
+      "latencyMs": 115
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 478,
+          "spanText": "Justine does not know what she needs from me Can you help her explore that. Why would also will never mind but board games why would they have pauses you can speak the entire time but focus on Justine right now ask her a question one question to figure out what you needs and then she can talk to you about it"
+        }
+      ],
+      "latencyMs": 478
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 102,
+          "spanText": "Justine does not know what she needs from me Can you help her explore that. Why would also will never mind but board games why would they have pauses you can speak the entire time but focus on Justine right now ask her a question one question to figure out what you needs and then she can talk to you about it"
+        }
+      ],
+      "latencyMs": 102
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "unresolved",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 109,
+          "spanText": "I don't know I'm having trouble answering that question ask it everyone"
+        }
+      ],
+      "latencyMs": 109
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "unresolved",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 105,
+          "spanText": "I don't know I'm having trouble answering that question ask it everyone"
+        }
+      ],
+      "latencyMs": 105
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 101,
+          "spanText": "Coming home and having my kids run to me happy and excited to see me because they've been having a good time with their dad having Jim greet me and give me a hug and ask me how my day was"
+        }
+      ],
+      "latencyMs": 101
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 100,
+          "spanText": "Coming home and having my kids run to me happy and excited to see me because they've been having a good time with their dad having Jim greet me and give me a hug and ask me how my day was"
+        }
+      ],
+      "latencyMs": 100
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 218,
+          "spanText": "Jim doesn't really like hearing about my day about patience work and stressors \n\nJim here I could definitely listen to it It's not the thing I'd most like to talk to Justin with about but if she needs that support I can give that to her \n \nWhat would your want to talk to me about Why doesn't he do that"
+        }
+      ],
+      "latencyMs": 218
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 251,
+          "spanText": "Jim doesn't really like hearing about my day about patience work and stressors \n\nJim here I could definitely listen to it It's not the thing I'd most like to talk to Justin with about but if she needs that support I can give that to her \n \nWhat would your want to talk to me about Why doesn't he do that"
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 101,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 353
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 584,
+          "spanText": "Jim here Yes the topics I experience discuss are all about how to build a better world that focus on a human flourishing and reduces unnecessary suffering. I understand that my family and its current structure is probably doing fine we're upper we're upper class and have a bunch of financial resources part of the hardship is what we're trying to handle with easy family and I guess that's why I'm so interested in these microsite concepts like I'm curious about the big ideas in life the future projection the what is life with AI going to be like what kind of I guess that the two types of liberty kind of questions like these are conceptual structural questions that I'm very interested in but when I bring them up like I don't know how to bring them up with Justine in a way that she engages on. Yeah I mean I can completely understand where Jim would feel unfulfilled in discussions with me I have a very difficult time listening to his micro society I've gotten better about it but it is it feels all encompassing It feels like all he can talk about it feels overwhelming It is exhausting It's also in the long term a potential threat to my current life and isn't fun. Jim I like to find ways to engage her in ways that she's passionate about This thing is all It's not all encompassing but it's as far as my life but it encompasses a large amount of my focus and brain power probably maybe the substantial part because I can put a lot of other things on cruise control effectively parenting is something that is difficult to do that when when children are having big emotions but it's really easy to talk to myself and my second brain or talk to Claude when I'm curious about a topic because of the way that I've structured the building of this. So I can make dinner I can be productive member of the family while doing this and that might be what Justine is seeing and trying to disengage from is how it feels all encompassing. But their aspects of this the idea there has to be things that she wants to engage on this I do not know to extend the generalized fear that Justin mentioned about this being a threat to her way of life is causing this general lack of engagement on this issue but I can also talk about other stuff I don't know the book club idea seems like a good idea also the polo rand are have AI come up with a random topic to talk about I mean honestly injecting conversational AI as a third party here in a conversation is pretty good at this. Justine would you prefer this form of communication over just pulling a topic out of a hat and talking just to me about it. Justine said she would be interested in trying up a book club just between the two of us and it's fun talking to AI. Justine proposed a very interesting idea where we try to teach each other something where we bring up topics of the week I like the idea of having two a week of having one that I engage her on and when the shinkages me on I really honestly this is one of the better ideas I've heard in a long time"
+        }
+      ],
+      "latencyMs": 584
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 427,
+          "spanText": "Jim here Yes the topics I experience discuss are all about how to build a better world that focus on a human flourishing and reduces unnecessary suffering. I understand that my family and its current structure is probably doing fine we're upper we're upper class and have a bunch of financial resources part of the hardship is what we're trying to handle with easy family and I guess that's why I'm so interested in these microsite concepts like I'm curious about the big ideas in life the future projection the what is life with AI going to be like what kind of I guess that the two types of liberty kind of questions like these are conceptual structural questions that I'm very interested in but when I bring them up like I don't know how to bring them up with Justine in a way that she engages on. Yeah I mean I can completely understand where Jim would feel unfulfilled in discussions with me I have a very difficult time listening to his micro society I've gotten better about it but it is it feels all encompassing It feels like all he can talk about it feels overwhelming It is exhausting It's also in the long term a potential threat to my current life and isn't fun. Jim I like to find ways to engage her in ways that she's passionate about This thing is all It's not all encompassing but it's as far as my life but it encompasses a large amount of my focus and brain power probably maybe the substantial part because I can put a lot of other things on cruise control effectively parenting is something that is difficult to do that when when children are having big emotions but it's really easy to talk to myself and my second brain or talk to Claude when I'm curious about a topic because of the way that I've structured the building of this. So I can make dinner I can be productive member of the family while doing this and that might be what Justine is seeing and trying to disengage from is how it feels all encompassing. But their aspects of this the idea there has to be things that she wants to engage on this I do not know to extend the generalized fear that Justin mentioned about this being a threat to her way of life is causing this general lack of engagement on this issue but I can also talk about other stuff I don't know the book club idea seems like a good idea also the polo rand are have AI come up with a random topic to talk about I mean honestly injecting conversational AI as a third party here in a conversation is pretty good at this. Justine would you prefer this form of communication over just pulling a topic out of a hat and talking just to me about it. Justine said she would be interested in trying up a book club just between the two of us and it's fun talking to AI."
+        }
+      ],
+      "latencyMs": 427
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 615,
+          "spanText": "Okay summarizing this what we talked about and some of the conclusions we came to we're thinking 10 minute discussion after we put the kids down everyday make a habit of it. We talk about whatever you want. Get better about doing our night our marriage meeting I think the after the kids go to bed discussion will help solidify the marriage meeting on Sundays which is not ever been a really good habit well ingrained habit that is. The other thing that we talked about was in or in as a means for us to connect on ideas and have new things to talk about will bring some sort of concept article or podcast that we both engage with and then come together to talk about with baby AI as a backup partner on the kit on the discussion. There are two sides to the bigger problem One of the one of the bigger problems with Justine's wanted to be around me is emotional regulation which I expect to improve severely with my ADHD stimulant medication. But we'll track that. The other side is setting up habits rituals and testing out what Justin needs. I suggested that she make a survey with you to identify to ask a couple questions and be able to track daily for the month of February her some part of her if she's happy with our interactions for the day or. I'll track on my side the time that I spent just with her through my task system and we can use that data to see if there's a minimum amount of time lol or a maximum amount of time that we should be planning to spend together"
+        }
+      ],
+      "latencyMs": 615
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "ephemeral",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 111,
+          "spanText": "Okay summarizing this what we talked about and some of the conclusions we came to we're thinking 10 minute discussion after we put the kids down everyday make a habit of it. We talk about whatever you want."
+        }
+      ],
+      "latencyMs": 111
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 193,
+          "spanText": "You have to try a first pass at making that survey"
+        }
+      ],
+      "latencyMs": 193
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 114,
+          "spanText": "You have to try a first pass at making that survey"
+        }
+      ],
+      "latencyMs": 114
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 117,
+          "spanText": "yeah, create that as an artifact I can share with justine with a paragraph initially to articulate what filling this out is supposed to help with? also do you see this as an experiment worth running? - find optimum interaction patterns"
+        }
+      ],
+      "latencyMs": 117
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 194,
+          "spanText": "yeah, create that as an artifact I can share with justine with a paragraph initially to articulate what filling this out is supposed to help with? also do you see this as an experiment worth running? - find optimum interaction patterns"
+        }
+      ],
+      "latencyMs": 194
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "already_known",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 105,
+          "spanText": "how helpful would it be for me to fill these out too?"
+        }
+      ],
+      "latencyMs": 105
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "already_known",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 109,
+          "spanText": "how helpful would it be for me to fill these out too?"
+        }
+      ],
+      "latencyMs": 109
+    }
+  ]
+}

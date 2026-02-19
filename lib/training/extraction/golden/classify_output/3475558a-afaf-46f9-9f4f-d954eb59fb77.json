@@ -1,0 +1,578 @@
+{
+  "conversationUuid": "3475558a-afaf-46f9-9f4f-d954eb59fb77",
+  "conversationName": "Chrome Extension Debugging",
+  "turnCount": 30,
+  "stage": "classify",
+  "model": "groq/llama-3.1-8b-instant",
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 247,
+          "spanText": "let's debug the newly deployed code"
+        }
+      ],
+      "latencyMs": 247
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 96,
+          "spanText": "let's debug the newly deployed code"
+        }
+      ],
+      "latencyMs": 96
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 98,
+          "spanText": "ReferenceError: window is not defined"
+        }
+      ],
+      "latencyMs": 99
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 114,
+          "spanText": "ReferenceError: window is not defined"
+        }
+      ],
+      "latencyMs": 114
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "already_known",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 116,
+          "spanText": "Dude that was terrible all right we got to talk about any code you're going to write before you write it. I want this to be 1 file I want to follow the simplicity of the coding style from the documentation and I don't see any need to update background dot JS. Look at the setup for UI overlay module that has both the content script and a service worker aspect"
+        }
+      ],
+      "latencyMs": 116
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 423,
+          "spanText": "Dude that was terrible all right we got to talk about any code you're going to write before you write it. I want this to be 1 file I want to follow the simplicity of the coding style from the documentation and I don't see any need to update background dot JS. Look at the setup for UI overlay module that has both the content script and a service worker aspect"
+        }
+      ],
+      "latencyMs": 423
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 546,
+          "spanText": "So if we're if we're keeping the web speech API portion out of the service worker which seems like we have to, we're gonna inject it into the content script OK that seems reasonable. So what sort of state are we gonna need to do that coordination and what are we coordinating so we don't want multiple recordings happen at the same time right is that what the coordination is about."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 132,
+          "spanText": "First thing run a file with a manifest and just the function signatures add comments for test cases just single line comments with the name test case name or the test name. Yeah follow that coding guide\n\ncan you also confirm that we that this approach of web speech API into the content script makes sense or if we should do something like that document content document"
+        }
+      ],
+      "latencyMs": 679
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 508,
+          "spanText": "So if we're if we're keeping the web speech API portion out of the service worker which seems like we have to, we're gonna inject it into the content script OK that seems reasonable. So what sort of state are we gonna need to do that coordination and what are we coordinating so we don't want multiple recordings happen at the same time right is that what the coordination is about. First thing run a file with a manifest and just the function signatures add comments for test cases just single line comments with the name test case name or the test name. Yeah follow that coding guide\n\ncan you also confirm that we that this approach of web speech API into the content script makes sense or if we should do something like that document content document"
+        }
+      ],
+      "latencyMs": 508
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "unresolved",
+          "confidence": 0.8,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 115,
+          "spanText": "This one this is this one I don't think we need to get status function I mean it's just going to be in state anyways. Alright any questions you have before you start to write"
+        }
+      ],
+      "latencyMs": 115
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "already_known",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 110,
+          "spanText": "This one this is this one I don't think we need to get status function I mean it's just going to be in state anyways. Alright any questions you have before you start to write"
+        }
+      ],
+      "latencyMs": 110
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 108,
+          "spanText": "Stepping back and considering this problem more broadly if we are going to have several cases where modules insert content into the OR insert stuff into the content script should we generalize this process and make like a content script handler?"
+        }
+      ],
+      "latencyMs": 108
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 104,
+          "spanText": "Stepping back and considering this problem more broadly if we are going to have several cases where modules insert content into the OR insert stuff into the content script should we generalize this process and make like a content script handler?"
+        }
+      ],
+      "latencyMs": 104
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 366,
+          "spanText": "well text-input does not use well uses the UI model module but it's not an example of injecting something into each tab and I think this is what this general piece of functionality would do which is manage tabs content scripts  \nso that's interesting form auto fill is kind of a cool thing. Page content extraction sure so anything that actually interacts with a tabs Dom but there seems to be two patterns here. One where it needs to be in every tab and one where it might need to be in just some tabs am I wrong there am I very complicated in it should I just have each tab at the same content script I think that would be simpler\n\nwhat no I've broken out oauth so you can think of oauth as a module you can think of state as a module you could think of this content script handler as a module\n\nlike of course each module is going to handle what it injects but the underlying infrastructure of ensuring each tab has it and that each module's contents that should be in the tab is kind of aggregated I think that's more of a I think that's a use case. There is one question about dynamic UI content injection and I I don't think I want to think about that now I think I want to do like a static thing just like off where it initializes at startup\n\nremember do not write code"
+        }
+      ],
+      "latencyMs": 366
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 947,
+          "spanText": "well text-input does not use well uses the UI model module but it's not an example of injecting something into each tab and I think this is what this general piece of functionality would do which is manage tabs content scripts  \nso that's interesting form auto fill is kind of a cool thing. Page content extraction sure so anything that actually interacts with a tabs Dom but there seems to be two patterns here. One where it needs to be in every tab and one where it might need to be in just some tabs am I wrong there am I very complicated in it should I just have each tab at the same content script I think that would be simpler\n\nwhat no I've broken out oauth so you can think of oauth as a module you can think of state as a module you could think of this content script handler as a module\n\nlike of course each module is going to handle what it injects but the underlying infrastructure of ensuring each tab has it and that each module's contents that should be in the tab is kind of aggregated I think that's more of a I think that's a use case. There is one question about dynamic UI content injection and I I don't think I want to think about that now I think I want to do like a static thing just like off where it initializes at startup\n\nremember do not write code"
+        }
+      ],
+      "latencyMs": 947
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 392,
+          "spanText": "I think you're pointing out that this all tabs versus select tabs or tab on focus right now is pretty important. Is there anything in the documentation about why we chose the transcript to run through a tab and not through the what is that document script is the alternative\n\ndo you see a specific tab ID needing to be set ever like I I don't see that as I I can't figure out what use cases that would follow. But I do see all tabs versus current tab or even new tab like open a tab and inject this into it I think that's one way to handle configuration for some of these modules if I don't want to wrap it up inside the extension configuration\n\n100% separate like oauth manager. You know what let's keep them separate I think it'd be easier to debug and also there's no need to aggregate them I guess that just adds complexity right is there any benefit there? Paint me a picture of why a module would need to do injection into the content script by itself?"
+        }
+      ],
+      "latencyMs": 392
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 407,
+          "spanText": "I think you're pointing out that this all tabs versus select tabs or tab on focus right now is pretty important. Is there anything in the documentation about why we chose the transcript to run through a tab and not through the what is that document script is the alternative\n\ndo you see a specific tab ID needing to be set ever like I I don't see that as I I can't figure out what use cases that would follow. But I do see all tabs versus current tab or even new tab like open a tab and inject this into it I think that's one way to handle configuration for some of these modules if I don't want to wrap it up inside the extension configuration\n\n100% separate like oauth manager. You know what let's keep them separate I think it'd be easier to debug and also there's no need to aggregate them I guess that just adds complexity right is there any benefit there?"
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 103,
+          "spanText": "Paint me a picture of why a module would need to do injection into the content script by itself?"
+        }
+      ],
+      "latencyMs": 510
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 546,
+          "spanText": "Regarding off screen documents doing the recording and transcription where would they transcribe to like wouldn't so is this capable of running while it's asleep? I think that's the concern I had was battery utilization but I'm completely open to re exploring this decision about where to put the audio capture and transcription logic\n\ngood keep content script separate. All right let's keep it all in the content handler by convention. Explain to me why they are removed from tab is necessary seems like the injector could just be responsible for any ability to turn it off right\n\nOh yeah build the content handler first but let's talk a little more about all of this. Also the O auth manager is like a separate core file but I'm wondering if it makes sense to moving this towards a module. Like the concept of modules versus core functionality like my ethos my my kind of says make everything modular like anything that can be modular make modular even the background JS should be a module but I don't know how extreme that is and I think that's like fairly extreme for what I'm doing right now in this beta but I think I just influences you know can we at this point make this content script handler modular"
+        }
+      ],
+      "latencyMs": 546
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 492,
+          "spanText": "Regarding off screen documents doing the recording and transcription where would they transcribe to like wouldn't so is this capable of running while it's asleep? I think that's the concern I had was battery utilization but I'm completely open to re exploring this decision about where to put the audio capture and transcription logic\n\ngood keep content script separate. All right let's keep it all in the content handler by convention. Explain to me why they are removed from tab is necessary seems like the injector could just be responsible for any ability to turn it off right\n\nOh yeah build the content handler first but let's talk a little more about all of this. Also the O auth manager is like a separate core file but I'm wondering if it makes sense to moving this towards a module. Like the concept of modules versus core functionality like my ethos my my kind of says make everything modular like anything that can be modular make modular even the background JS should be a module but I don't know how extreme that is and I think that's like fairly extreme for what I'm doing right now in this beta but I think I just influences you know can we at this point make this content script handler modular"
+        }
+      ],
+      "latencyMs": 492
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 273,
+          "spanText": "I like that idea like there are core modules like the the state module is essentially the only core module actions probably are a core module too I mean content handlers as well oauth can be run after modules load but why not run it as a core module too\n\nyeah I like pioneering these core module concepts with the content handler correct this is a good approach\n\nalright wow OK I don't need to think about transcription right now but **** fine I mean we've already put thought to it what do you think we should do let's clear this up and then move on to creating the content handler"
+        }
+      ],
+      "latencyMs": 273
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 276,
+          "spanText": "I like that idea like there are core modules like the the state module is essentially the only core module actions probably are a core module too I mean content handlers as well oauth can be run after modules load but why not run it as a core module too\n\nyeah I like pioneering these core module concepts with the content handler correct this is a good approach\n\nalright wow OK I don't need to think about transcription right now but **** fine I mean we've already put thought to it what do you think we should do let's clear this up and then move on to creating the content handler"
+        }
+      ],
+      "latencyMs": 276
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 243,
+          "spanText": "I do like the user controls and visibility of that wait so it has to grant permission for every tab it starts on? One of the main downsides of this is what happens if you close a tab like I guess logically you'd understand that you know you stop recording should be broken out as its own tab like independent tab like a dummy tab that essentially just has AUI constantly updating with the transcript? Actually kind of like that approach and it's more obvious where it's happening and when you like it's not happening at the current tab it doesn't need to happen on the current tab. Is there anything wrong with this approach dig deep be critical"
+        }
+      ],
+      "latencyMs": 243
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 1,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 333,
+          "spanText": "I do like the user controls and visibility of that wait so it has to grant permission for every tab it starts on? One of the main downsides of this is what happens if you close a tab like I guess logically you'd understand that you know you stop recording should be broken out as its own tab like independent tab like a dummy tab that essentially just has AUI constantly updating with the transcript? Actually kind of like that approach and it's more obvious where it's happening and when you like it's not happening at the current tab it doesn't need to happen on the current tab. Is there anything wrong with this approach dig deep be critical"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 105,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 438
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 200,
+          "spanText": "Help me understand the permissions better like every time I every time I I choose to transcribe it's gonna open a new tab and that tab will require me to confirm permissions on microphone? It's a lot easier the tab management is a lot easier I think it's just effectively if there is a tab at the running transcript then you don't open another tab it's a lot easier than managing the microphone across many tabs as you close or refresh. That's fair a transcript app within your browser what do you mean by Chrome tabs create oh interesting Chrome extension URL I don't know how that works but if that's helpful maybe\n\nis it possible to transcribe from tab audio?"
+        }
+      ],
+      "latencyMs": 200
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 129,
+          "spanText": "Help me understand the permissions better like every time I every time I I choose to transcribe it's gonna open a new tab and that tab will require me to confirm permissions on microphone? It's a lot easier the tab management is a lot easier I think it's just effectively if there is a tab at the running transcript then you don't open another tab it's a lot easier than managing the microphone across many tabs as you close or refresh. That's fair a transcript app within your browser what do you mean by Chrome tabs create oh interesting Chrome extension URL I don't know how that works but if that's helpful maybe\n\nis it possible to transcribe from tab audio?"
+        }
+      ],
+      "latencyMs": 129
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 110,
+          "spanText": "Alright I want you to summarize this but also answer this question about how good is the transcription and is it possible with these built in technologies to isolate speakers?"
+        }
+      ],
+      "latencyMs": 110
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 105,
+          "spanText": "Alright I want you to summarize this but also answer this question about how good is the transcription and is it possible with these built in technologies to isolate speakers?"
+        }
+      ],
+      "latencyMs": 105
+    },
+    {
+      "turnIndex": 13,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 108,
+          "spanText": "what is built in and what are the limitations of web RTC audio processing? Can I build something on top of that how complex and how resource intensive can is speaker diarization and isolation. Like I know that people pay for this but are there open source solutions are there solutions I can build myself on open source models how resource intensive are those models is this even something that is about models is this effectively another AI pipeline"
+        }
+      ],
+      "latencyMs": 108
+    },
+    {
+      "turnIndex": 13,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 106,
+          "spanText": "what is built in and what are the limitations of web RTC audio processing? Can I build something on top of that how complex and how resource intensive can is speaker diarization and isolation. Like I know that people pay for this but are there open source solutions are there solutions I can build myself on open source models how resource intensive are those models is this even something that is about models is this effectively another AI pipeline"
+        }
+      ],
+      "latencyMs": 106
+    },
+    {
+      "turnIndex": 14,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "reason": "specific fact about running the content handler in a different instance",
+          "confidence": 0.8,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 131,
+          "spanText": "Pull out a prompt to create this content handler module I'm going to run it in a different instance to save on my claude limit"
+        }
+      ],
+      "latencyMs": 131
+    },
+    {
+      "turnIndex": 14,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "reason": "specific fact",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 331,
+          "spanText": "Pull out a prompt to create this content handler module I'm going to run it in a different instance to save on my claude limit"
+        }
+      ],
+      "latencyMs": 331
+    }
+  ]
+}

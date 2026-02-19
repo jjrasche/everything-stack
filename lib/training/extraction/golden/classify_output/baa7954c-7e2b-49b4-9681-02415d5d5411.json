@@ -1,0 +1,575 @@
+{
+  "conversationUuid": "baa7954c-7e2b-49b4-9681-02415d5d5411",
+  "conversationName": "Integrated Farm and Living System Overview",
+  "turnCount": 26,
+  "stage": "classify",
+  "model": "groq/llama-3.1-8b-instant",
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 174,
+          "spanText": "summarize the important aspects of this"
+        }
+      ],
+      "latencyMs": 174
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 0,
+      "skipCount": 2,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 94,
+          "spanText": "summarize the important aspects of this"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 104,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 199
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 243,
+          "spanText": "what are the solutions to this \n\nheating costs, contamination prevention\n\nalso create a systems document for it all!"
+        }
+      ],
+      "latencyMs": 243
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "spanCount": 3,
+      "extractCount": 2,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 117,
+          "spanText": "what are the solutions to this \n\nheating costs, contamination prevention\n\nalso create a systems document for it all!"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 102,
+          "spanText": ""
+        },
+        {
+          "spanId": "span_2",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 107,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 326
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 601,
+          "spanText": "Oh man one more thing The so I imagine the lazy river fish farm mote will surround the agricultural area and cut it in half. The all right so the wetlands will be in the center of the the half sections of agriculture. And there's going to be a 3° grade towards the middle of those two sections with a marshland in between. Or at least some wetland area that allows for the filtering of this wastewater and then that will slope down somehow into the laser River fish farm. Recreat the system document if you think it warrants it based on this thought."
+        }
+      ],
+      "latencyMs": 601
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 528,
+          "spanText": "Oh man one more thing The so I imagine the lazy river fish farm mote will surround the agricultural area and cut it in half. The all right so the wetlands will be in the center of the the half sections of agriculture. And there's going to be a 3° grade towards the middle of those two sections with a marshland in between. Or at least some wetland area that allows for the filtering of this wastewater and then that will slope down somehow into the laser River fish farm. Recreat the system document if you think it warrants it based on this thought."
+        }
+      ],
+      "latencyMs": 528
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 138,
+          "spanText": "So I don't think the wetlands are out of each quadrant that wetlands are at the intersection of two quadrants from one side with the river running through the separated sides \n\nIn a Note section in the output table no some of the wetland output products"
+        }
+      ],
+      "latencyMs": 138
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 156,
+          "spanText": "So I don't think the wetlands are out of each quadrant that wetlands are at the intersection of two quadrants from one side with the river running through the separated sides \n\nIn a Note section in the output table no some of the wetland output products"
+        }
+      ],
+      "latencyMs": 156
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 604,
+          "spanText": "You don't have to update the document but put the heat in the put the heating system components in a table I want all sources and sinks in there. How much would it cost to add a section of for water recreation to the system? I'm thinking of extending out one side of it maybe 2,000 ft and 200 ft wide let's go big \n\n\nWhat is turbidity? Do you imagine we can keep the water quality primarily through natural means? Could you give me a water quality sink and source table \n\nWhat are the EPAs water quality metrics and what is the average water quality metrics for a US river? In decoration points see ms unnecessary. Make sure you put just for economic model put have outputs and operating cost tables like system designs I don't need construction sequence I don't need critical risks they're not helpful at what you've done with them so far All right we make the document I think there's too much needs to be changed"
+        }
+      ],
+      "latencyMs": 604
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 543,
+          "spanText": "You don't have to update the document but put the heat in the put the heating system components in a table I want all sources and sinks in there. How much would it cost to add a section of for water recreation to the system? I'm thinking of extending out one side of it maybe 2,000 ft and 200 ft wide let's go big \n\n\nWhat is turbidity? Do you imagine we can keep the water quality primarily through natural means? Could you give me a water quality sink and source table \n\nWhat are the EPAs water quality metrics and what is the average water quality metrics for a US river? In decoration points see ms unnecessary. Make sure you put just for economic model put have outputs and operating cost tables like system designs I don't need construction sequence I don't need critical risks they're not helpful at what you've done with them so far All right we make the document I think there's too much needs to be changed"
+        }
+      ],
+      "latencyMs": 543
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "spanCount": 8,
+      "extractCount": 8,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 786,
+          "spanText": "Additionally give the adjustment factors of the microclimate expectation do it a couple points and put it on a table temperature at edge of Forest garden external temperature edge of forest garden internal temperature at water temperature in middle of quadrant so I want temperature humidity and wind speed as a amount changed on average per month \n\nAre you saying that I can that we this design will build a system that has a lady lazy river surrounding agriculture and it's cleaner than normal rivers in America? Recreate the water quality metric sinks and sources for nitrates phosphates and solids where are the sinks I only see sources \n\nI expect fish output to be much higher than that okay I need you to put outputs for the for meat eggs milk grains fruit vegetables fish and make this dress pounds of meat as well as whatever comes from the forest garden. So add all of those outputs from 50 cows 20 milking cows actually I'm just going to throw this at you \n\n\n\n\norchards & forest gardens provide seasonal fodder,\n\nStocking Density = Days per Paddock/Cows per Acre\n\n\nStocking Rate = (Daily Intake per Cow × Grazing Period Length) / (Forage Growth Rate × Total Acres)\n\nGrazing Demand = Stocking Rate × Intake per Cow\nTotal Forage Supply=(Pasture DM)+(Tree Browse DM)+(Mast Crop DM)+(Understory DM)\nForage Supply = Forage Growth Rate × Acres\n\npasture health metrics  \nForage Availability (DM per Acre) above 2000+ lb DM/acre\nForage Growth Rate (DM per Acre per Day) 200+ lb/acre/day\nResidual Stubble Height (Inches After Grazing) 3+ in grasses, 6+ in legumes -> Taller stubble = faster regrowth & deeper roots\nSoil Compaction  (Penetrometer Test) want Loose spongy soil that absorbs water well -> compacted soil = slower regrowth\ncow grazing efficiency is ~60%\n\nplant regrowth patterns\n10 days Recovery Phase\n10-30 days Rapid Growth Phase 200-300 lbs DM/day per acre\n30+ days plants too fibrous = selective grazing\n\novergrazing: when cows eat plant in recovery phase leading to inefficiency\ngrass goes into depletion mode where in recovery phase root energy is depleted\nin response plants do productive tillering producing worse quality DM\n\ngrazing impact\nsoil compaction: makes harder for roots to expand and water to be retained in soil -> weaker plants -> regrowth supression\n80% open pasture (high-yield grasses & legumes for daily grazing)\n10% tree cover (scattered) (shade, nitrogen-fixing trees like honey locust)\n10% buffer zone (hedgerows, riparian zones)\n\n✅ Best For: Spring-Summer-Fall grazing, rapid regrowth  \n✅ Key Forage Plants: Tall fescue, orchardgrass, white clover, alfalfa  \n✅ Tree Species: Honey locust (for pod fodder), black locust (nitrogen-fixing)\n\n---\n50-60% pasture (for stockpiling forage)\n30-40% food forest (for winter shelter & fodder trees)\n10% orchard or mast-producing trees\n\n✅ Best For: Late Fall-Winter grazing  \n✅ Key Forage Plants: Tall fescue (winter hardy), red clover, stockpiled orchardgrass  \n✅ Tree Species: Mulberry, willow, poplar (winter leaves), honey locust, chestnut\n60% fruit/nut orchard (low-density grazing underneath)\n40% managed pasture (grass & legumes between trees)\n\n✅ Best For: Late Summer-Fall grazing, nut & fruit harvesting  \n✅ Key Forage Plants: Timothy grass, white clover, chicory  \n✅ Tree Species: Apple, pear, persimmon, chestnut, hazelnut\n\n\n\n✅ Leafy Browse (Edible Foliage from Trees & Shrubs)\nWillow: 4,000-6,000 lbs DM/acre/year\nMulberry: 2,000-4,000 lbs DM/acre/year\nHoney Locust Pods: 1,500-3,000 lbs DM/acre/year\n\n✅ Mast Crops (Fruit & Nuts as Energy Sources)\nApples: 10-15 lbs DM/tree\nPears: 8-12 lbs DM/tree\nChestnuts: 500-1,500 lbs DM/acre\n\n✅ Understory Crops (Perennial & Cover Crop Forage)\nClover & Chicory: 500-1,500 lbs DM/acre\nAlfalfa under orchard: 3,000-5,000 lbs DM/acre\n\n---\n\n\n\nNormally, forage growth rate per acre per day is 200-300 lbs DM for pasture alone. If you add tree/shrub fodder, the new forage availability calculation becomes:\n\nTotal Forage Supply=(Pasture DM)+(Tree Browse DM)+(Mast Crop DM)+(Understory DM)\\text{Total Forage Supply} = (\\text{Pasture DM}) + (\\text{Tree Browse DM}) + (\\text{Mast Crop DM}) + (\\text{Understory DM})Total Forage Supply=(Pasture DM)+(Tree Browse DM)+(Mast Crop DM)+(Understory DM)\n\n📌 Example Calculation:  \nFor a 5-acre silvopasture paddock, assume:\nPasture Growth Rate = 250 lbs DM/acre/day\nEdible Tree Browse = 3,000 lbs DM/acre/year → (3,000 ÷ 365) ≈ 8 lbs DM/acre/day\nNut & Fruit Crop DM = 1,000 lbs DM/acre/year → (1,000 ÷ 365) ≈ 3 lbs DM/acre/day\nUnderstory Clover = 1,000 lbs DM/acre/year → (1,000 ÷ 365) ≈ 3 lbs DM/acre/day\n\nTotal adjusted forage supply per acre per day:\n\n250+8+3+3=264 lbs DM/acre/day250 + 8 + 3 + 3 = 264 \\text{ lbs DM/acre/day}250+8+3+3=264 lbs DM/acre/day\n\n\n\n\n\nUsing electric fencing to rotate cows, sheep, chickens daily to efficiently extract resources\n50 cows, 200 sheep, 600 layers\n1 acre strips, 1000ft x ~42 ft\ncows/sheep need 2-strand poly wire 4'\nchickens need electric poultry netting\n\n\nSeason: Spring, Growth Phase: Rapid growth surge, Regrowth Time (Days): 45-50 days, Max DM/acre in Phase: 5,000 - 6,000 lbs, Avg."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 620,
+          "spanText": "Start & End Dates (West Michigan): April 15 – June 30, # of Regrazes per Season: 2-3 times, Notes: Grass grows faster than cows can eat, often harvested for hay. Season: Summer, Growth Phase: Slowed growth (heat stress), Regrowth Time (Days): 60-90 days, Max DM/acre in Phase: 3,500 - 4,500 lbs, Avg. Start & End Dates (West Michigan): July 1 – August 31, # of Regrazes per Season: 1 time, Notes: Growth slows due to heat; paddocks require longer recovery. Season: Fall, Growth Phase: Strong regrowth phase, Regrowth Time (Days): 45-60 days, Max DM/acre in Phase: 4,500 - 5,500 lbs, Avg. Start & End Dates (West Michigan): September 1 – November 1, # of Regrazes per Season: 1-2 times, Notes: Ideal time to build stockpile; late fall grazing possible. Season: Winter, Growth Phase: Dormant, no regrowth, Regrowth Time (Days): No regrowth (Nov–Mar), Max DM/acre in Phase: Stockpiled forage only, Avg. Start & End Dates (West Michigan): November 2 – April 14, # of Regrazes per Season: 0 times (foraging only), Notes: No new growth; relies on stored or standing forage. 20 milk cows, replace 4/year\n1 bull, replace every 3 years\n9 new calves,\n18 growing steers\nOne calving season (March-May), ~90% conception rate, 9 months gestation, 12 months between births,  ~18 calves/year\nbreed: Brown Swiss (19,000 lbs milk/year, high butter fat)\nconsume ~60% of available forage\n30 lbs dry matter (DM)/day\nMeat production goal: Maximize forage-based weight gain. ##### Finishing Beef\nAge (Months): 3-6 months, Live Weight (lbs): 200-400, Hanging Weight (lbs): N/A, Carcass Yield (%): N/A, Market Price (Per lb Live): $2.00 - $3.00, Meat Quality: Veal (low fat), Best Market Use: Dairy calves, veal production. Age (Months): 6-12 months, Live Weight (lbs): 400-800, Hanging Weight (lbs): N/A, Carcass Yield (%): N/A, Market Price (Per lb Live): $1.50 - $2.50, Meat Quality: Lean, mild, Best Market Use: Stocker calves for backgrounding. Age (Months): 12-18 months, Live Weight (lbs): 800-1,200, Hanging Weight (lbs): 480-720, Carcass Yield (%): 55-60%, Market Price (Per lb Live): $1.30 - $2.20, Meat Quality: Some marbling, Best Market Use: Feeder cattle for feedlot. Age (Months): 18-24 months, Live Weight (lbs): 1,200-1,500, Hanging Weight (lbs): 660-900, Carcass Yield (%): 55-60%, Market Price (Per lb Live): $1.00 - $1.70, Meat Quality: Prime beef, high marbling, Best Market Use: Finished grass-fed beef."
+        },
+        {
+          "spanId": "span_2",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 430,
+          "spanText": "Age (Months): 24-30 months, Live Weight (lbs): 1,500-1,800, Hanging Weight (lbs): 825-1,080, Carcass Yield (%): 55-60%, Market Price (Per lb Live): $0.90 - $1.50, Meat Quality: Heavier finish, better marbling, Best Market Use: Prime beef or large butcher cuts. Age (Months): 30+ months, Live Weight (lbs): 1,800+, Hanging Weight (lbs): 1,000+, Carcass Yield (%): 50-55%, Market Price (Per lb Live): $0.75 - $1.20, Meat Quality: Potentially tough, Best Market Use: Old cows, used for ground beef. Grass-fed beef steers takes 24-30 months to reach full weight (~1,200-1,500 lbs live weight). - Grain-fed cattle can finish faster (~18-22 months) due to higher energy intake. - Market prices fluctuate based on feed costs, demand, and seasonality. - Calves under 12 months are often sold as feeders rather than finished meat animals."
+        },
+        {
+          "spanId": "span_3",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 111,
+          "spanText": "##### Pasture Requirements\nCategory: Breeding Cows, Number: 20, LB DM/Day per Head: 30-35 lbs, Total LB DM/Year: ~250,000-275,000, Acres Needed Annually: 100-120 acres, Acres Needed if Moving Daily (0.5-acre strips): ~40 acres. Category: Growing Steers, Number: 18, LB DM/Day per Head: 25-30 lbs, Total LB DM/Year: ~150,000-200,000, Acres Needed Annually: 60-80 acres, Acres Needed if Moving Daily (0.5-acre strips): ~30 acres."
+        },
+        {
+          "spanId": "span_4",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 700,
+          "spanText": "Category: Calves (<6 mo. ), Number: 10, LB DM/Day per Head: 10-15 lbs, Total LB DM/Year: ~50,000-75,000, Acres Needed Annually: 20-30 acres, Acres Needed if Moving Daily (0.5-acre strips): ~10 acres. Category: Bull (Maintenance), Number: 1, LB DM/Day per Head: 35-40 lbs, Total LB DM/Year: ~12,500-14,500, Acres Needed Annually: 5-10 acres, Acres Needed if Moving Daily (0.5-acre strips): ~4 acres. Category: Total Herd (50-52 head), Number: 50-52, LB DM/Day per Head: ~1,200-1,400 lbs DM/day, Total LB DM/Year: 450,000-550,000 lbs DM/year, Acres Needed Annually: 185-230 acres, Acres Needed if Moving Daily (0.5-acre strips): 84 acres. maintain 600, replace 200/year, cull based on visual indicators of age/productivity\n50 roosters, cull aggressive/old/excess at 12-16 weeks, add new genes every 5 years\nbrooding hen -> 6-12 chicks, need ~35 broodies annually, produce stronger more self sufficient chicks\nbroody hatching for production: self sustain brooding and egg laying populations without incubators. remove eggs from good layers who are brooding and swap out for brooding hen's eggs \n2 breed flock, Australorp (270 eggs/yr, great layers, some brooding), Wyandotte (225 eggs/yr, cold-hardy, moderate broody)\n\nSource: Pasture Foraging, % of Feed: 40%, Protein: 12%, Carb: 40%, Fats: 4%, Key Micronutrients: Vitamin A, Omega-3s, minerals from soil, Unique Benefits: Provides greens, seeds, bugs, natural scratching behavior, Annual Volume Needed for 600 Layers: 47,000 lbs (. 5 acre/day) for Apr-Oct. Source: Black Soldier Fly Larvae (BSFL), % of Feed: 12.5%, Protein: 45%, Carb: 2.5%, Fats: 30%, Key Micronutrients: Calcium, Phosphorus, Methionine, Lysine, Unique Benefits: High-protein, low-cost, upcycles food waste & manure, year-round potential with biopods, Annual Volume Needed for 600 Layers: 3,000 lbs of BSFL per year. Source: Crop Production: Grains, % of Feed: 35%, Protein: 10%, Carb: 67.5%, Fats: 3%, Key Micronutrients: Vitamin E, some B vitamins, Unique Benefits: Energy source, replaces commercial grain feed, Annual Volume Needed for 600 Layers: 30,000 lbs of mixed grains (corn, wheat, barley, oats) (15 acres). Source: Crop Production: Legumes, % of Feed: 12.5%, Protein: 21.5%, Carb: 45%, Fats: 6%, Key Micronutrients: Lysine, Methionine, Phosphorus, Unique Benefits: Protein boost, nitrogen-fixer for soil, Annual Volume Needed for 600 Layers: 8,000 lbs of field peas, soybeans, lentils (~5 acres). Source: Crop Production: Greens, % of Feed: 7.5%, Protein: 17.5%, Carb: 35%, Fats: 4.5%, Key Micronutrients: Vitamin A, Vitamin K, Calcium, Unique Benefits: Vitamins & minerals, improves yolk color, Annual Volume Needed for 600 Layers: 5,000 lbs of alfalfa, duckweed, comfrey (~3 acres). Source: Food Scraps & Waste Grains, % of Feed: 7.5%, Protein: 15%, Carb: 45%, Fats: 7.5%, Key Micronutrients: Varies by scraps; potential for minerals, Unique Benefits: Reduces food waste, supplements micro-nutrients, Annual Volume Needed for 600 Layers: 5,000 lbs from farm & household waste. Source: Total, % of Feed: 115%, Protein: 16.5%, Carb: 50%, Fats: 4.8%."
+        },
+        {
+          "spanId": "span_5",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 621,
+          "spanText": "Source: Total Supplement Needed, % of Feed: ~60%, Protein: 16-18% (Target), Carb: 50-60% (Target), Fats: 3-5% (Target), Key Micronutrients: Ensuring balance of Calcium, Phosphorus, Vitamins A & D. Forage Source: Insects (Fly Larvae, Beetles, Worms, Grasshoppers, etc.), Yield per 0.5 Acre: ~100-150 lbs, Feed Contribution per Chicken (600 birds): 0.16-0.25 lbs per bird per day. Forage Source: Leftover Grass & Seed Heads, Yield per 0.5 Acre: ~50-75 lbs, Feed Contribution per Chicken (600 birds): 0.08-0.12 lbs per bird per day. Forage Source: Grazing Residue (Clover, Alfalfa, Other Greens), Yield per 0.5 Acre: ~30-50 lbs, Feed Contribution per Chicken (600 birds): 0.05-0.08 lbs per bird per day. Forage Source: Manure-Based Microorganisms (Fungi, Bacteria, Protozoa), Yield per 0.5 Acre: ~10-20 lbs, Feed Contribution per Chicken (600 birds): 0.016-0.033 lbs per bird per day. Forage Source: Total, Yield per 0.5 Acre: 240 lbs/ . 5 acre, Feed Contribution per Chicken (600 birds): . inputs: food scraps + coffee grounds + manure\nkept in passive climate controlled building for year round production\n100,000 larvae per m² optimal density\n15 kg waste processed per m²/day\n~0.2 kg dry weight harvest per m²/day\n1.5:1 FCR for BSFL (vs 10:1 for beef, 2:1 for mealworms)\n25% bioconversion rate for food waste\n12% bioconversion for manure\n250 sq. ft building -> 3000lb/year\n[BSFL biopod](https://www. v=sKFH-FYCSSg&ab_channel=AcornLandLabs) food waste -> grubs -> auto harvest\n\n\nCrop: Corn, Yield per Acre: 7,500 lbs/acre, % of Chicken Diet: 40%, Acres Needed: 1.75 acres. Crop: Soybeans, Yield per Acre: 2,700 lbs/acre, % of Chicken Diet: 25%, Acres Needed: 2.2 acres. Crop: Sunflower Seeds, Yield per Acre: 2,000 lbs/acre, % of Chicken Diet: 15%, Acres Needed: 1.5 acres. Crop: Alfalfa, Yield per Acre: 6,000 lbs/acre, % of Chicken Diet: 10%, Acres Needed: 1 acre. Crop: Duckweed (pond), Yield per Acre: 100,000 lbs/acre, % of Chicken Diet: 10%, Acres Needed: 0.1 acre. day 1: cows 60% efficiency eat down to 6\"\nday 2: sheep eat down to 3\" and what cows don't eat\nday 5: chickens eat fly maggot from manure (pest control) and ."
+        },
+        {
+          "spanId": "span_6",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 108,
+          "spanText": "- day 45: start over\n\n\nVegetable: Potatoes, Acres: 2.5, Plant Date: Apr/July, Harvest Date: July/Oct, Rotations/Year: 2, Lbs/Acre/Year: 40,000, Total Lbs: 200,000, Cal/lb: 350, Protein/lb: 0.007, Total Calories: 70M, Total Protein (lbs): 1,400."
+        },
+        {
+          "spanId": "span_7",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 607,
+          "spanText": "Vegetable: Sweet Potatoes, Acres: 2.0, Plant Date: May, Harvest Date: Sept-Oct, Rotations/Year: 1.5, Lbs/Acre/Year: 30,000, Total Lbs: 90,000, Cal/lb: 400, Protein/lb: 0.008, Total Calories: 36M, Total Protein (lbs): 720. Vegetable: Cabbage, Acres: 2.0, Plant Date: Mar/June, Harvest Date: June/Oct, Rotations/Year: 2.5, Lbs/Acre/Year: 50,000, Total Lbs: 250,000, Cal/lb: 120, Protein/lb: 0.012, Total Calories: 30M, Total Protein (lbs): 3,000. Vegetable: Carrots, Acres: 2.0, Plant Date: Apr/July, Harvest Date: July/Oct, Rotations/Year: 3, Lbs/Acre/Year: 35,000, Total Lbs: 210,000, Cal/lb: 175, Protein/lb: 0.009, Total Calories: 36.8M, Total Protein (lbs): 1,890. Vegetable: Tomatoes, Acres: 1.5, Plant Date: May, Harvest Date: July-Sept, Rotations/Year: 2, Lbs/Acre/Year: 45,000, Total Lbs: 135,000, Cal/lb: 90, Protein/lb: 0.009, Total Calories: 12.2M, Total Protein (lbs): 1,215. Fruit: Apples, Acres: 7.0, Plant Year: Spring, Harvest Date: Aug-Oct, Years to Yield: 4, Lbs/Acre/Year: 27,000, Total Lbs: 189,000, Cal/lb: 240, Protein/lb: 0.001, Total Calories: 45.4M, Total Protein (lbs): 189. Fruit: Pears, Acres: 4.5, Plant Year: Spring, Harvest Date: Aug-Sept, Years to Yield: 4, Lbs/Acre/Year: 20,625, Total Lbs: 92,800, Cal/lb: 250, Protein/lb: 0.002, Total Calories: 23.2M, Total Protein (lbs): 186. Fruit: Sour Cherry, Acres: 3.5, Plant Year: Spring, Harvest Date: July, Years to Yield: 4, Lbs/Acre/Year: 15,500, Total Lbs: 54,250, Cal/lb: 200, Protein/lb: 0.006, Total Calories: 10.9M, Total Protein (lbs): 326. Fruit: Plums, Acres: 3.0, Plant Year: Spring, Harvest Date: Aug-Sept, Years to Yield: 4, Lbs/Acre/Year: 15,300, Total Lbs: 45,900, Cal/lb: 230, Protein/lb: 0.003, Total Calories: 10.6M, Total Protein (lbs): 138. Fruit: Sweet Cherry, Acres: 1.5, Plant Year: Spring, Harvest Date: June-July, Years to Yield: 5, Lbs/Acre/Year: 11,900, Total Lbs: 17,850, Cal/lb: 250, Protein/lb: 0.006, Total Calories: 4.5M, Total Protein (lbs): 107. Fruit: Quince, Acres: 0.5, Plant Year: Spring, Harvest Date: Oct, Years to Yield: 4, Lbs/Acre/Year: 12,800, Total Lbs: 6,400, Cal/lb: 240, Protein/lb: 0.002, Total Calories: 1.5M, Total Protein (lbs): 13. Crop: Corn, Acres: 10, Plant Date: May, Harvest Date: Oct, Rotations/Year: 1, Lbs/Acre/Year: 9,800, Total Lbs: 98,000, Cal/lb: 1,600, Protein/lb: 0.100, Total Calories: 156.8M, Total Protein (lbs): 9,800. Crop: Wheat, Acres: 10, Plant Date: Sept/Apr, Harvest Date: July/Aug, Rotations/Year: 1, Lbs/Acre/Year: 5,100, Total Lbs: 51,000, Cal/lb: 1,500, Protein/lb: 0.130, Total Calories: 76.5M, Total Protein (lbs): 6,630. Crop: Soybeans, Acres: 5, Plant Date: May, Harvest Date: Oct, Rotations/Year: 1, Lbs/Acre/Year: 3,000, Total Lbs: 15,000, Cal/lb: 1,800, Protein/lb: 0.350, Total Calories: 27M, Total Protein (lbs): 5,250. No-till termination: kill cover crop without disturbing soil to keep soil intact and improve long-term fertility\n\n\n| Cow         | Breeding/Lactating | 40           | 2"
+        }
+      ],
+      "latencyMs": 3987
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 566,
+          "spanText": "Additionally give the adjustment factors of the microclimate expectation do it a couple points and put it on a table temperature at edge of Forest garden external temperature edge of forest garden internal temperature at water temperature in middle of quadrant so I want temperature humidity and wind speed as a amount changed on average per month \n\nAre you saying that I can that we this design will build a system that has a lady lazy river surrounding agriculture and it's cleaner than normal rivers in America? Recreate the water quality metric sinks and sources for nitrates phosphates and solids where are the sinks I only see sources \n\nI expect fish output to be much higher than that okay I need you to put outputs for the for meat eggs milk grains fruit vegetables fish and make this dress pounds of meat as well as whatever comes from the forest garden. So add all of those outputs from 50 cows 20 milking cows actually I'm just going to throw this at you \n\n\n\n\norchards & forest gardens provide seasonal fodder,\n\nStocking Density = Days per Paddock/Cows per Acre\n\n\nStocking Rate = (Daily Intake per Cow × Grazing Period Length) / (Forage Growth Rate × Total Acres)\n\nGrazing Demand = Stocking Rate × Intake per Cow\nTotal Forage Supply=(Pasture DM)+(Tree Browse DM)+(Mast Crop DM)+(Understory DM)\nForage Supply = Forage Growth Rate × Acres\n\npasture health metrics  \nForage Availability (DM per Acre) above 2000+ lb DM/acre\nForage Growth Rate (DM per Acre per Day) 200+ lb/acre/day\nResidual Stubble Height (Inches After Grazing) 3+ in grasses, 6+ in legumes -> Taller stubble = faster regrowth & deeper roots\nSoil Compaction  (Penetrometer Test) want Loose spongy soil that absorbs water well -> compacted soil = slower regrowth\ncow grazing efficiency is ~60%\n\nplant regrowth patterns\n10 days Recovery Phase\n10-30 days Rapid Growth Phase 200-300 lbs DM/day per acre\n30+ days plants too fibrous = selective grazing\n\novergrazing: when cows eat plant in recovery phase leading to inefficiency\ngrass goes into depletion mode where in recovery phase root energy is depleted\nin response plants do productive tillering producing worse quality DM\n\ngrazing impact\nsoil compaction: makes harder for roots to expand and water to be retained in soil -> weaker plants -> regrowth supression\n80% open pasture (high-yield grasses & legumes for daily grazing)\n10% tree cover (scattered) (shade, nitrogen-fixing trees like honey locust)\n10% buffer zone (hedgerows, riparian zones)\n\n✅ Best For: Spring-Summer-Fall grazing, rapid regrowth  \n✅ Key Forage Plants: Tall fescue, orchardgrass, white clover, alfalfa  \n✅ Tree Species: Honey locust (for pod fodder), black locust (nitrogen-fixing)\n\n---\n50-60% pasture (for stockpiling forage)\n30-40% food forest (for winter shelter & fodder trees)\n10% orchard or mast-producing trees\n\n✅ Best For: Late Fall-Winter grazing  \n✅ Key Forage Plants: Tall fescue (winter hardy), red clover, stockpiled orchardgrass  \n✅ Tree Species: Mulberry, willow, poplar (winter leaves), honey locust, chestnut\n60% fruit/nut orchard (low-density grazing underneath)\n40% managed pasture (grass & legumes between trees)\n\n✅ Best For: Late Summer-Fall grazing, nut & fruit harvesting  \n✅ Key Forage Plants: Timothy grass, white clover, chicory  \n✅ Tree Species: Apple, pear, persimmon, chestnut, hazelnut\n\n\n\n✅ Leafy Browse (Edible Foliage from Trees & Shrubs)\nWillow: 4,000-6,000 lbs DM/acre/year\nMulberry: 2,000-4,000 lbs DM/acre/year\nHoney Locust Pods: 1,500-3,000 lbs DM/acre/year\n\n✅ Mast Crops (Fruit & Nuts as Energy Sources)\nApples: 10-15 lbs DM/tree\nPears: 8-12 lbs DM/tree\nChestnuts: 500-1,500 lbs DM/acre\n\n✅ Understory Crops (Perennial & Cover Crop Forage)\nClover & Chicory: 500-1,500 lbs DM/acre\nAlfalfa under orchard: 3,000-5,000 lbs DM/acre\n\n---\n\n\n\nNormally, forage growth rate per acre per day is 200-300 lbs DM for pasture alone."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 153,
+          "spanText": "If you add tree/shrub fodder, the new forage availability calculation becomes:\n\nTotal Forage Supply=(Pasture DM)+(Tree Browse DM)+(Mast Crop DM)+(Understory DM)\\text{Total Forage Supply} = (\\text{Pasture DM}) + (\\text{Tree Browse DM}) + (\\text{Mast Crop DM}) + (\\text{Understory DM})Total Forage Supply=(Pasture DM)+(Tree Browse DM)+(Mast Crop DM)+(Understory DM)\n\n📌 Example Calculation:  \nFor a 5-acre silvopasture paddock, assume:\nPasture Growth Rate = 250 lbs DM/acre/day\nEdible Tree Browse = 3,000 lbs DM/acre/year → (3,000 ÷ 365) ≈ 8 lbs DM/acre/day\nNut & Fruit Crop DM = 1,000 lbs DM/acre/year → (1,000 ÷ 365) ≈ 3 lbs DM/acre/day\nUnderstory Clover = 1,000 lbs DM/acre/year → (1,000 ÷ 365) ≈ 3 lbs DM/acre/day\n\nTotal adjusted forage supply per acre per day:\n\n250+8+3+3=264 lbs DM/acre/day250 + 8 + 3 + 3 = 264 \\text{ lbs DM/acre/day}250+8+3+3=264 lbs DM/acre/day\n\n\n\n\n\nUsing electric fencing to rotate cows, sheep, chickens daily to efficiently extract resources\n50 cows, 200 sheep, 600 layers\n1 acre strips, 1000ft x ~42 ft\ncows/sheep need 2-strand poly wire 4'\nchickens need electric poultry netting\n\n\nSeason: Spring, Growth Phase: Rapid growth surge, Regrowth Time (Days): 45-50 days, Max DM/acre in Phase: 5,000 - 6,000 lbs, Avg. Start & End Dates (West Michigan): April 15 – June 30, # of Regrazes per Season: 2-3 times, Notes: Grass grows faster than cows can eat, often harvested for hay. Season: Summer, Growth Phase: Slowed growth (heat stress), Regrowth Time (Days): 60-90 days, Max DM/acre in Phase: 3,500 - 4,500 lbs, Avg."
+        }
+      ],
+      "latencyMs": 719
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 101,
+          "spanText": "Holy shit Wait How is this 21 acres and how are you not including the farmland in this All right I'm getting too tired\n\nDid we just build a system that for less than $150 per person and 4 hours per person per year generates all of their food and nutritional needs?"
+        }
+      ],
+      "latencyMs": 101
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 138,
+          "spanText": "Holy shit Wait How is this 21 acres and how are you not including the farmland in this All right I'm getting too tired\n\nDid we just build a system that for less than $150 per person and 4 hours per person per year generates all of their food and nutritional needs?"
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 146,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 285
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 409,
+          "spanText": "I don't think it's I did not think that it is the first number I saw was right agricultural fields yes 1:30 water systems would be I mean if you're only measuring the service area they are 14 + 14 + 11 + 11 all of that times 209 * 10 and I thought that was a thousand square feet Arthur that was 10,000 ft² which is not even a fourth of an acre \n\nI like to qualify the wetlands has 1 acre per segment 1 acre per section I guess and therefore it would have to be it's a thousand feet long and 50 ft wide about well I guess it's 5 acres so can the wetlands be 10 ft wide Is that substantial enough \n\nYep 44 acre forest garden around that \n\nWhat is processing and distribution labor I mean add agriculture to everything and if you need to separate out food forest do that. Recreate the document thank you You're doing great"
+        }
+      ],
+      "latencyMs": 409
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 578,
+          "spanText": "I don't think it's I did not think that it is the first number I saw was right agricultural fields yes 1:30 water systems would be I mean if you're only measuring the service area they are 14 + 14 + 11 + 11 all of that times 209 * 10 and I thought that was a thousand square feet Arthur that was 10,000 ft² which is not even a fourth of an acre \n\nI like to qualify the wetlands has 1 acre per segment 1 acre per section I guess and therefore it would have to be it's a thousand feet long and 50 ft wide about well I guess it's 5 acres so can the wetlands be 10 ft wide Is that substantial enough \n\nYep 44 acre forest garden around that \n\nWhat is processing and distribution labor I mean add agriculture to everything and if you need to separate out food forest do that. Recreate the document thank you You're doing great"
+        }
+      ],
+      "latencyMs": 578
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 239,
+          "spanText": "If you had a 10 ft why 10 ft deep 12,000 ft long circle of river What would be the heat loss lost from that per day if there's a 30, 50, 70° difference between the water temperature and the air? How many feet of geothermal would you have to place to make up for this difference at each of those levels and how much water needs to be pumped per day How much solar thermal would you need to make up for the heat if the water cover from the ground is 42°?"
+        }
+      ],
+      "latencyMs": 239
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 234,
+          "spanText": "If you had a 10 ft why 10 ft deep 12,000 ft long circle of river What would be the heat loss lost from that per day if there's a 30, 50, 70° difference between the water temperature and the air? How many feet of geothermal would you have to place to make up for this difference at each of those levels and how much water needs to be pumped per day How much solar thermal would you need to make up for the heat if the water cover from the ground is 42°?"
+        }
+      ],
+      "latencyMs": 234
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 355,
+          "spanText": "What's the maximum depth you can go with geothermal? Let's rerun these numbers for in January average kilowatt hour per meter square is 1.4 for for meter square per day identify the cost per square foot with only supplies. If you're going to put the solar thermal over the water in places you would have a hundred feet of coverage. Just to get 8,000 ft² just to get to get a 30° increase on 9 million gallons that seems crazy easy"
+        }
+      ],
+      "latencyMs": 355
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 185,
+          "spanText": "What's the maximum depth you can go with geothermal? Let's rerun these numbers for in January average kilowatt hour per meter square is 1.4 for for meter square per day identify the cost per square foot with only supplies. If you're going to put the solar thermal over the water in places you would have a hundred feet of coverage."
+        }
+      ],
+      "latencyMs": 185
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 104,
+          "spanText": "does this analysis change any of yours?"
+        }
+      ],
+      "latencyMs": 104
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 111,
+          "spanText": "does this analysis change any of yours?"
+        }
+      ],
+      "latencyMs": 111
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "ephemeral",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 107,
+          "spanText": "kk, rewrite the doc"
+        }
+      ],
+      "latencyMs": 107
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "ephemeral",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 113,
+          "spanText": "kk, rewrite the doc"
+        }
+      ],
+      "latencyMs": 113
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 98,
+          "spanText": "give an overall cost to run this per day"
+        }
+      ],
+      "latencyMs": 98
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 96,
+          "spanText": "give an overall cost to run this per day"
+        }
+      ],
+      "latencyMs": 96
+    }
+  ]
+}

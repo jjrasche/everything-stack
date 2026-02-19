@@ -1,0 +1,654 @@
+{
+  "conversationUuid": "3671ad63-bdd4-4567-a91d-1abfe3015d38",
+  "conversationName": "AI native personal solution architecture",
+  "turnCount": 26,
+  "stage": "classify",
+  "model": "groq/llama-3.1-8b-instant",
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "spanCount": 3,
+      "extractCount": 3,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 122,
+          "spanText": "So a pretty big move I've just made with regards to this project and its future. I'm still all in on being AI native and having this adaptable flexible AI solution that is personalized and agentic and configurable and at its core built around orchestration of several tasks together to effectively do what you want. It's built around feedback such that we can train statistical what's the opposite of generative AI it's just like statistical models that are deterministic regardless the feedback is what improves the system and makes it personalized."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 690,
+          "spanText": "I I'm still set on this voice first or voice primary solution where it's more conversational I I do still believe the core of this will be a turn will be these short conversational associative not explanatory interactions with an LLM where the STT and TTS are just two other components in the pipeline of communicating and getting util utility from this AI native solution. All that being said there are several issues with my current approach and I I want to do kind of a postmortem lol on the Chrome extension. I'm just going to talk freely now and I want you to extrapolate out from this the duet Lenovo duet 11 inch is just so slow like it's not responsive like I have trouble using it I don't think it's a learning curve I think it's it is a slow device that takes long to transition it's it's clunky I don't know this is what made me go back to a phone. So my old phone is dead Samsung S23 my new phone I just bought is a Google pixel pro 10 and it will have a 2 billion parameter Google nano LLM on it that I can access via the via app that I'll make. So so just generally speaking the extension I was kind of going in the direction of the browser being the main like the pervasive distribution mechanism of everything of you know if you if you build extension then everybody can have a browser and any device they want and they can utilize it the way they want but of course you have the limitations on mobile where you know it's gonna kill it Android OS and iOS even more so it's gonna kill due to battery limitations any extension you know Android is moving towards Chrome OS but still I think you're probably gonna have issues. If you want the features that make an AI assistant truly interactive and personal I think you really got to go mobile so this is really the big shift is away from the browser extension and towards mobile app. I don't know if this shift is entirely rational I don't know like I've been working on this since August so let's say 2 1/2 months it's kind of a sad sunk cost if it is so if I'm right about this and I want you to be I want you to push back on that but it's a sad sunk cost that let's say I have my productive creative time frame it's 30 to 50 that's 20 years and and now it's fungible but 20 years I just spent 1/5 of one year so 100th of my life on this idea that I'm just closing the book on\n\nOK so the Chrome tablet just isn't functional for this not that I need to do inference on device but it's clunky it's slow it's big and I think if I'm good doing voice first I don't necessarily need to go big portability in the form of cell phone seems fine seems better I mean I'm gonna have your phone in and talking to it most of the time anyways so the device where I thought it would be the democratization of hardware because it's 300 bucks just isn't there yet that being said I think that I could go with a cheaper phone honestly I can go with you know a couple $100 phone do inference off device and have TTS and STT work pretty good on device I don't need a flagship top of the line most recent phone for this but you know I kind of like the idea of you know what Google's doing now with the G5 tensor tpu doing some sort of I I think I can find something useful to do with this to to be parameter model maybe I'm overstating that I don't know. I also just seem to I don't know stall with I guess I I kind of want to go through the iterations and I think it might be helpful if you pull chats from you know the history of this project let's see some of the modules I started with were at the Fitbit module the e-mail module I did off I proved that I could pull stuff and then I I was kind of working with having this shared global state back then I forgot what I called it tell me if you remember. So yeah the architecture I think sat around the state so there was persistence in index DB which I never really got off the ground I didn't get the graph the knowledge graph really off the ground and and I I don't quite know why I I stalled so much on that I think this thing I never focus on it being like a useful kind of thing like I never focus on it being like a you know a voice first you know logger which would be immediately useful I'd say you know start task blah blah blah blah blah and then like I didn't make it a task manager I didn't make it a data entry device entry device I always wanted to move towards these larger ideas of you know being a thought partner and being a coding assistant being a white board that I could interact through to with an LLM and I think all of those are great ideas like the ideas exist around the principles of being able to manage your own context you know the idea that it's it's so important in inference for you to know what the shared context between you and ALM is. And then I started to add I think I got away from the state so in the beginning the modules could update persistence they could update you know Chrome local I think I was gonna keep everything in and then I moved to index DB but that was the persistence layer or could update state and state was like kind of the way to communicate between modules who is the global shared state that models will go to if they needed any information. At some point I ran into an issue where with you know I I proved the concept that in the off screen document I was capable of having running a model and I ran an embedding model and that was a big achievement of mine but in doing so and then kind of moving towards the I want a UI for this and the extension page I I I cross the boundaries of these these contexts and I think maybe there's a limitation in Chrome level where you can't store objects you can only store serializable objects so I think that I I put the objects I I put the modules in each of the context where they needed like configure something so that I could have objects and not like just the serializable things maybe I don't know if that's a big part of it but I transitioned away from state and towards the modules holding their own state and then be responsible for any functionality related to that state so I don't know what that's called but the architecture became more modular in its state rather than global\n\nI spent a ** ton of time on layout I spent a  ton of time on the this idea of DOM tree. Which was a way for me to programmatically transition to a UI the which in the Dom which I honestly kind of I think was kind of elegant the idea that you could pull you could convert a current Dom to a tree and vice versa allowed you to interact with the web in a way that was more seamless loud modules to control you know the web and the layout module was on top that allowing you to organize you know what the modules wanted to show. It was all very elegant but I leaned on testing and I don't know man I I I I actually I I kind of don't know what went wrong like why it became so hard like it was so difficult I think it's why I started to build the code assistant because the code assistant would help me go through that spectrum development cycle of and and a lot of this work just put in the conceptually was very helpful but. The code assistant would spec to skeleton to develpment and I think that pattern is something I want to take away from this the idea that first you need to confirm the the what why in architecturally how at the high level how and then you need to create the function signatures and test descriptions and dependencies of the file and then you need to fill all that in I think doing that is a proper way to think through building software with AI and honestly probably a proper way to do it without AI as well\n\nalright what else oh so after the I think the transition from global state pushed me towards the runtime object which is really cool it used Chrome runtime messaging to pass messages between contacts and it's working pretty *** well but I guess here now is the point where I kind of explain why I am transitioning away from the Chrome extension and towards building a custom side loaded Android app."
+        },
+        {
+          "spanId": "span_2",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 572,
+          "spanText": "I I'm struggling here lol. I can't tell if I transitioned this frame of thinking because of feeling stuck and I shouldn't have really transitioned. Or if I needed to make a hardware decision because my phone was broken I realized that I can't go VoIP like I can't go I need a phone and what I determined that I needed a phone I saw the opportunity when I when I realized that I can't do VoIP because the limitations around MMS and SMS and it just gets more complicated and less seamless and the thing that this technology needs to do most importantly is disappear into the background I need to never worry about this is the important part I need to not be a *** constant debugger of this ** if I want to use this to be a native and show the capabilities of of that position I have to not be debugging this whole time period and I think with VoIP and going non cellular with my conversations previously it seemed like something that would just keep on bugging me in the in the way the same way that I felt like I just had this constant slow downs within building the cognition extension that prevented me from accelerating forward as I thought I should in my transition being AI native. So that decision to stay cellular made me need to keep a phone which pushed me to think what can I do just on the phone which introduced me to the idea or or the products that are out here on the market the flagship products which are which it showed me the capabilities of things like easily integrating via an Android app with communication that is SMS MMS being able to read and send messages being able to initiate a phone call being able to record the audio of that phone call. The vision of being immediately helpful on a phone call that is while I'm talking to somebody while I'm talking to my father on the road I'll have my phone magnetically attached to the dash and it will pull up you know just a thing that is pertinent to the information there like we ask a lot of questions and then you know like I don't have to search it's immediately pulling it up because of something that I built that integrated in this. Things that I'm concerned about are transitioning to a different stack you know JavaScript TypeScript it's very comfortable for me, I don't think it should be an issue I think with this new AI augmented coding approach as long as I define the spec in the skeleton in the high level architecture and I think that's extremely important here as I quote start over quote this might be able to go quicker. I'm concerned that I'm overselling that and I am kind of tricking myself and this is going to be pretty tough regardless like there's still a wall there I'm going to bang my head against it I'm just banging my head at a different spot"
+        }
+      ],
+      "latencyMs": 1385
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "spanCount": 6,
+      "extractCount": 3,
+      "skipCount": 3,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 721,
+          "spanText": "So a pretty big move I've just made with regards to this project and its future. I'm still all in on being AI native and having this adaptable flexible AI solution that is personalized and agentic and configurable and at its core built around orchestration of several tasks together to effectively do what you want. It's built around feedback such that we can train statistical what's the opposite of generative AI it's just like statistical models that are deterministic regardless the feedback is what improves the system and makes it personalized. I I'm still set on this voice first or voice primary solution where it's more conversational I I do still believe the core of this will be a turn will be these short conversational associative not explanatory interactions with an LLM where the STT and TTS are just two other components in the pipeline of communicating and getting util utility from this AI native solution. All that being said there are several issues with my current approach and I I want to do kind of a postmortem lol on the Chrome extension. I'm just going to talk freely now and I want you to extrapolate out from this the duet Lenovo duet 11 inch is just so slow like it's not responsive like I have trouble using it I don't think it's a learning curve I think it's it is a slow device that takes long to transition it's it's clunky I don't know this is what made me go back to a phone. So my old phone is dead Samsung S23 my new phone I just bought is a Google pixel pro 10 and it will have a 2 billion parameter Google nano LLM on it that I can access via the via app that I'll make. So so just generally speaking the extension I was kind of going in the direction of the browser being the main like the pervasive distribution mechanism of everything of you know if you if you build extension then everybody can have a browser and any device they want and they can utilize it the way they want but of course you have the limitations on mobile where you know it's gonna kill it Android OS and iOS even more so it's gonna kill due to battery limitations any extension you know Android is moving towards Chrome OS but still I think you're probably gonna have issues. If you want the features that make an AI assistant truly interactive and personal I think you really got to go mobile so this is really the big shift is away from the browser extension and towards mobile app."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 629,
+          "spanText": "I don't know if this shift is entirely rational I don't know like I've been working on this since August so let's say 2 1/2 months it's kind of a sad sunk cost if it is so if I'm right about this and I want you to be I want you to push back on that but it's a sad sunk cost that let's say I have my productive creative time frame it's 30 to 50 that's 20 years and and now it's fungible but 20 years I just spent 1/5 of one year so 100th of my life on this idea that I'm just closing the book on\n\nOK so the Chrome tablet just isn't functional for this not that I need to do inference on device but it's clunky it's slow it's big and I think if I'm good doing voice first I don't necessarily need to go big portability in the form of cell phone seems fine seems better I mean I'm gonna have your phone in and talking to it most of the time anyways so the device where I thought it would be the democratization of hardware because it's 300 bucks just isn't there yet that being said I think that I could go with a cheaper phone honestly I can go with you know a couple $100 phone do inference off device and have TTS and STT work pretty good on device I don't need a flagship top of the line most recent phone for this but you know I kind of like the idea of you know what Google's doing now with the G5 tensor tpu doing some sort of I I think I can find something useful to do with this to to be parameter model maybe I'm overstating that I don't know. I also just seem to I don't know stall with I guess I I kind of want to go through the iterations and I think it might be helpful if you pull chats from you know the history of this project let's see some of the modules I started with were at the Fitbit module the e-mail module I did off I proved that I could pull stuff and then I I was kind of working with having this shared global state back then I forgot what I called it tell me if you remember. So yeah the architecture I think sat around the state so there was persistence in index DB which I never really got off the ground I didn't get the graph the knowledge graph really off the ground and and I I don't quite know why I I stalled so much on that I think this thing I never focus on it being like a useful kind of thing like I never focus on it being like a you know a voice first you know logger which would be immediately useful I'd say you know start task blah blah blah blah blah and then like I didn't make it a task manager I didn't make it a data entry device entry device I always wanted to move towards these larger ideas of you know being a thought partner and being a coding assistant being a white board that I could interact through to with an LLM and I think all of those are great ideas like the ideas exist around the principles of being able to manage your own context you know the idea that it's it's so important in inference for you to know what the shared context between you and ALM is. And then I started to add I think I got away from the state so in the beginning the modules could update persistence they could update you know Chrome local I think I was gonna keep everything in and then I moved to index DB but that was the persistence layer or could update state and state was like kind of the way to communicate between modules who is the global shared state that models will go to if they needed any information."
+        },
+        {
+          "spanId": "span_2",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 682,
+          "spanText": "At some point I ran into an issue where with you know I I proved the concept that in the off screen document I was capable of having running a model and I ran an embedding model and that was a big achievement of mine but in doing so and then kind of moving towards the I want a UI for this and the extension page I I I cross the boundaries of these these contexts and I think maybe there's a limitation in Chrome level where you can't store objects you can only store serializable objects so I think that I I put the objects I I put the modules in each of the context where they needed like configure something so that I could have objects and not like just the serializable things maybe I don't know if that's a big part of it but I transitioned away from state and towards the modules holding their own state and then be responsible for any functionality related to that state so I don't know what that's called but the architecture became more modular in its state rather than global\n\nI spent a ** ton of time on layout I spent a  ton of time on the this idea of DOM tree. Which was a way for me to programmatically transition to a UI the which in the Dom which I honestly kind of I think was kind of elegant the idea that you could pull you could convert a current Dom to a tree and vice versa allowed you to interact with the web in a way that was more seamless loud modules to control you know the web and the layout module was on top that allowing you to organize you know what the modules wanted to show. It was all very elegant but I leaned on testing and I don't know man I I I I actually I I kind of don't know what went wrong like why it became so hard like it was so difficult I think it's why I started to build the code assistant because the code assistant would help me go through that spectrum development cycle of and and a lot of this work just put in the conceptually was very helpful but. The code assistant would spec to skeleton to develpment and I think that pattern is something I want to take away from this the idea that first you need to confirm the the what why in architecturally how at the high level how and then you need to create the function signatures and test descriptions and dependencies of the file and then you need to fill all that in I think doing that is a proper way to think through building software with AI and honestly probably a proper way to do it without AI as well\n\nalright what else oh so after the I think the transition from global state pushed me towards the runtime object which is really cool it used Chrome runtime messaging to pass messages between contacts and it's working pretty *** well but I guess here now is the point where I kind of explain why I am transitioning away from the Chrome extension and towards building a custom side loaded Android app. I I'm struggling here lol. I can't tell if I transitioned this frame of thinking because of feeling stuck and I shouldn't have really transitioned. Or if I needed to make a hardware decision because my phone was broken I realized that I can't go VoIP like I can't go I need a phone and what I determined that I needed a phone I saw the opportunity when I when I realized that I can't do VoIP because the limitations around MMS and SMS and it just gets more complicated and less seamless and the thing that this technology needs to do most importantly is disappear into the background I need to never worry about this is the important part I need to not be a *** constant debugger of this ** if I want to use this to be a native and show the capabilities of of that position I have to not be debugging this whole time period and I think with VoIP and going non cellular with my conversations previously it seemed like something that would just keep on bugging me in the in the way the same way that I felt like I just had this constant slow downs within building the cognition extension that prevented me from accelerating forward as I thought I should in my transition being AI native. So that decision to stay cellular made me need to keep a phone which pushed me to think what can I do just on the phone which introduced me to the idea or or the products that are out here on the market the flagship products which are which it showed me the capabilities of things like easily integrating via an Android app with communication that is SMS MMS being able to read and send messages being able to initiate a phone call being able to record the audio of that phone call. The vision of being immediately helpful on a phone call that is while I'm talking to somebody while I'm talking to my father on the road I'll have my phone magnetically attached to the dash and it will pull up you know just a thing that is pertinent to the information there like we ask a lot of questions and then you know like I don't have to search it's immediately pulling it up because of something that I built that integrated in this. Things that I'm concerned about are transitioning to a different stack you know JavaScript TypeScript it's very comfortable for me, I don't think it should be an issue I think with this new AI augmented coding approach as long as I define the spec in the skeleton in the high level architecture and I think that's extremely important here as I quote start over quote this might be able to go quicker. I'm concerned that I'm overselling that and I am kind of tricking myself and this is going to be pretty tough regardless like there's still a wall there I'm going to bang my head against it I'm just banging my head at a different spot"
+        },
+        {
+          "spanId": "span_3",
+          "label": "skip",
+          "reason": "empty_working_memory",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 99,
+          "spanText": ""
+        },
+        {
+          "spanId": "span_4",
+          "label": "skip",
+          "reason": "empty_working_memory",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 96,
+          "spanText": ""
+        },
+        {
+          "spanId": "span_5",
+          "label": "skip",
+          "reason": "empty_working_memory",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 106,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 2337
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 716,
+          "spanText": "Alright reading through your history. Yeah getting absorbed in the layout was likely a problem but the thought there was I needed to have this be visual for it to be impactful and configurable. But it was definitely a move away from voice first like if I focused for instead on these voice commands and the training that allowed me to do this it it would have been voice 1st and it would've been so much better. I don't I I didn't the embedding quality issues I don't think that was ever well it wasn't fully tested like sure I embedded a lot of stuff and shoved it into the graph but I never proved that the connectivity part of that the first point of being able to use utilize that was in the white board but the whiteboard stalled I don't know why like I've got code built for it maybe this is my ADHD like I switched the coding assistant 'cause I was like I need to focus on being able to build stuff first like I think I thought part of my stalling was related to not having clear specs or like good fundamental coding I just kept on going back to it but then I switched the coding system to the thought partner which I mean honestly the the paradigm is pretty solid the it's testing out what I've always wanted the thought the voice first stuff the STT to LLM to TTS. And I probably would have been moving forward if my phone didn't die and I didn't have to make this decision to get a new flagship phone and I saw the potential in the expanded abilities of a mobile app over a Chrome extension\n\nI still believe that the knowledge graph and generally rag that is that is being able to store stuff in a persistence layer either in a graph form of atomic ideas and entities or within a data format either probably no sequel I think that is the future of being able to have a quality context to share with an lol getting value out of inference requires this shared context but that requires the ability to pull from history like pull from the expansive source of data which will require which I think the graph solves itself with its connectivity but it also requires the ability to see what the shared context is to some extent or maybe not see it but I don't know at least agree upon what it should be and know that we're talking about the same thing kind of this this whiteboard idea that I've been circling around\n\nit's unrelated to what we've talked about so far is Claude I feel like I'm much more quickly hitting the token quote UN quote limitation with quad and I shouldn't be like there's maybe 32,000 tokens in the browser and you should be able to go up to 250-500K, don't know what's happening there. What do you mean validating even in voice 1st works I think a thought partner is validated that kind of I mean I I haven't used it pervasively but STT is good and each part of this process you gotta test out but I'm doing STT right now and it's gotta be really good on device or probably at least good hopefully significantly better on the Google pixel pro 10 with the on board G5 doing that hopefully providing some sort of personalization for that but each part independently works the question remains can we and I think this is completely doable use inference in a way that provides back this associative not explanatory version of things. So I I get the point whatever I build needs to be useful immediately but this comes in conflict with the idea that with these kind of architectural ideas about feedback systems improving overtime and needing the UI to implement those feedback systems like for example on the STT side I need to be able to see the audio look at the transcript go back and forth between each and then correct to improve the audio overtime but I mean hopefully with STT on device it's not even necessary\n\nyou're right in the context that I'm not considering the workflow like what is the MVP to show value and that I could use daily right now well there's not a technical limitation here I believe like I can keep it a foreground service just having a little recording icon and it's not gonna kill it like I have full control I even have control to get around the to be able to record audio through the speaker phone hack which is cool because I want to be a record pretty much everything\n\nall right answers to brutal questions. I've not had a successful voice conversation with the extension but I have successful conversations with LL Mississippi all the time this is one of them the question is if we made this more associative and less explanatory how'd that work can we make it more conversational less like huge chunked I guess that's the thing I would need to validate and honestly something I could validate relatively quickly with the tiny side loaded app I'm sure. No feedback no storage just STT LLM to TTS I could try to use on device or I could go straight to the cloud and GROQ. 2 hours of initial setup. use 100x before I build anything else\n\nso the duet was slow with regards to UI new X moving around apps loading kind of frozen UI so it wasn't anything about the extension honestly I was kind of impressed with how well I could code on the thing compared to the laptop like it was probably 60% there\n\nwhy would mobile help me not focus on debugging I mean it won't by itself it does some of the things that I was focusing on naturally like TTS and STT but that's not the bulk of the functionality I think what will help me focus on the utility over debugging is starting from scratch and being more deliberate about what I work on so spending an hour or so considering why I'm starting a new module or having more of a road map more of a detailed road map this is more about a work management issue than a the debugging aspect is more about I guess the work management issue and knowing how to get to stability with each part aspect so issues don't compound. I mean realistically I can keep going with this extension and validate the voice first what mobile can do is wake word is the built in STT and TTS I could valid let's think about how I could use the extension right now to validate the value of the the the thought partner module concept well see what I'm tweaking right now and I guess what would be useful to continue to experiment with until I get my phone is the module prompts the system prompt and the query and the handling of the input so yeah I think that still be useful to work with through the thought partner now that I have the back and forth going through and I can I like I can still work with this to verify the concept yeah I like that. The voice task logger is interesting it's a single purpose I could build it into the handler of the thought partner with the keyword log task and then it would just store the text after that and stop when I say stop or end and put a timestamp on it I could see that as being useful and taking very minimal amount of time I'd have to use that with my computer which is fine but I kind of like the idea. I'm being pulled already to build a UI for it just like a a box that listed out lists all the tasks like last 20 tasks or whatever but I think that be pretty easy for you to do\n\nI appreciate you helping me understand what I've learned with this one 100th of my productive life yeah infrastructure without utility is worthless that's the biggest thing here\n\noh also very important don't think of this as a shippable product. This is a a tinker DIY solution to cybernetic augmentation"
+        }
+      ],
+      "latencyMs": 716
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "spanCount": 4,
+      "extractCount": 3,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 623,
+          "spanText": "Alright reading through your history. Yeah getting absorbed in the layout was likely a problem but the thought there was I needed to have this be visual for it to be impactful and configurable. But it was definitely a move away from voice first like if I focused for instead on these voice commands and the training that allowed me to do this it it would have been voice 1st and it would've been so much better. I don't I I didn't the embedding quality issues I don't think that was ever well it wasn't fully tested like sure I embedded a lot of stuff and shoved it into the graph but I never proved that the connectivity part of that the first point of being able to use utilize that was in the white board but the whiteboard stalled I don't know why like I've got code built for it maybe this is my ADHD like I switched the coding assistant 'cause I was like I need to focus on being able to build stuff first like I think I thought part of my stalling was related to not having clear specs or like good fundamental coding I just kept on going back to it but then I switched the coding system to the thought partner which I mean honestly the the paradigm is pretty solid the it's testing out what I've always wanted the thought the voice first stuff the STT to LLM to TTS. And I probably would have been moving forward if my phone didn't die and I didn't have to make this decision to get a new flagship phone and I saw the potential in the expanded abilities of a mobile app over a Chrome extension\n\nI still believe that the knowledge graph and generally rag that is that is being able to store stuff in a persistence layer either in a graph form of atomic ideas and entities or within a data format either probably no sequel I think that is the future of being able to have a quality context to share with an lol getting value out of inference requires this shared context but that requires the ability to pull from history like pull from the expansive source of data which will require which I think the graph solves itself with its connectivity but it also requires the ability to see what the shared context is to some extent or maybe not see it but I don't know at least agree upon what it should be and know that we're talking about the same thing kind of this this whiteboard idea that I've been circling around\n\nit's unrelated to what we've talked about so far is Claude I feel like I'm much more quickly hitting the token quote UN quote limitation with quad and I shouldn't be like there's maybe 32,000 tokens in the browser and you should be able to go up to 250-500K, don't know what's happening there. What do you mean validating even in voice 1st works I think a thought partner is validated that kind of I mean I I haven't used it pervasively but STT is good and each part of this process you gotta test out but I'm doing STT right now and it's gotta be really good on device or probably at least good hopefully significantly better on the Google pixel pro 10 with the on board G5 doing that hopefully providing some sort of personalization for that but each part independently works the question remains can we and I think this is completely doable use inference in a way that provides back this associative not explanatory version of things. So I I get the point whatever I build needs to be useful immediately but this comes in conflict with the idea that with these kind of architectural ideas about feedback systems improving overtime and needing the UI to implement those feedback systems like for example on the STT side I need to be able to see the audio look at the transcript go back and forth between each and then correct to improve the audio overtime but I mean hopefully with STT on device it's not even necessary\n\nyou're right in the context that I'm not considering the workflow like what is the MVP to show value and that I could use daily right now well there's not a technical limitation here I believe like I can keep it a foreground service just having a little recording icon and it's not gonna kill it like I have full control I even have control to get around the to be able to record audio through the speaker phone hack which is cool because I want to be a record pretty much everything\n\nall right answers to brutal questions. I've not had a successful voice conversation with the extension but I have successful conversations with LL Mississippi all the time this is one of them the question is if we made this more associative and less explanatory how'd that work can we make it more conversational less like huge chunked I guess that's the thing I would need to validate and honestly something I could validate relatively quickly with the tiny side loaded app I'm sure. No feedback no storage just STT LLM to TTS I could try to use on device or I could go straight to the cloud and GROQ. 2 hours of initial setup. use 100x before I build anything else\n\nso the duet was slow with regards to UI new X moving around apps loading kind of frozen UI so it wasn't anything about the extension honestly I was kind of impressed with how well I could code on the thing compared to the laptop like it was probably 60% there\n\nwhy would mobile help me not focus on debugging I mean it won't by itself it does some of the things that I was focusing on naturally like TTS and STT but that's not the bulk of the functionality I think what will help me focus on the utility over debugging is starting from scratch and being more deliberate about what I work on so spending an hour or so considering why I'm starting a new module or having more of a road map more of a detailed road map this is more about a work management issue than a the debugging aspect is more about I guess the work management issue and knowing how to get to stability with each part aspect so issues don't compound. I mean realistically I can keep going with this extension and validate the voice first what mobile can do is wake word is the built in STT and TTS I could valid let's think about how I could use the extension right now to validate the value of the the the thought partner module concept well see what I'm tweaking right now and I guess what would be useful to continue to experiment with until I get my phone is the module prompts the system prompt and the query and the handling of the input so yeah I think that still be useful to work with through the thought partner now that I have the back and forth going through and I can I like I can still work with this to verify the concept yeah I like that. The voice task logger is interesting it's a single purpose I could build it into the handler of the thought partner with the keyword log task and then it would just store the text after that and stop when I say stop or end and put a timestamp on it I could see that as being useful and taking very minimal amount of time I'd have to use that with my computer which is fine but I kind of like the idea."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 161,
+          "spanText": "I'm being pulled already to build a UI for it just like a a box that listed out lists all the tasks like last 20 tasks or whatever but I think that be pretty easy for you to do\n\nI appreciate you helping me understand what I've learned with this one 100th of my productive life yeah infrastructure without utility is worthless that's the biggest thing here\n\noh also very important don't think of this as a shippable product. This is a a tinker DIY solution to cybernetic augmentation"
+        },
+        {
+          "spanId": "span_2",
+          "label": "skip",
+          "reason": "empty working memory",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 100,
+          "spanText": ""
+        },
+        {
+          "spanId": "span_3",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 2545,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 3431
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 103,
+          "spanText": "kk all sounds good, write the spec and skeleton for task logging functionality. it shouldn't be save to a turn right? maybe separate indexeddb?"
+        }
+      ],
+      "latencyMs": 103
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 1,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 122,
+          "spanText": "kk all sounds good, write the spec and skeleton for task logging functionality. it shouldn't be save to a turn right? maybe separate indexeddb?"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 101,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 223
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "reason": "contains a specific fact or decision",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 106,
+          "spanText": "Regarding the spec should we consider looking at actions on the task we have start end how do we trigger a complete or starting of a new task and then going back to a previous task don't work on the skeleton until the speck is complete"
+        }
+      ],
+      "latencyMs": 106
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "spanCount": 4,
+      "extractCount": 2,
+      "skipCount": 2,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 99,
+          "spanText": "Regarding the spec should we consider looking at actions on the task we have start end how do we trigger a complete or starting of a new task and then going back to a previous task don't work on the skeleton until the speck is complete"
+        },
+        {
+          "spanId": "span_1",
+          "label": "skip",
+          "confidence": 0.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 100,
+          "spanText": ""
+        },
+        {
+          "spanId": "span_2",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 97,
+          "spanText": ""
+        },
+        {
+          "spanId": "span_3",
+          "label": "skip",
+          "reason": "ephemeral",
+          "confidence": 0.8,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 95,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 392
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 271,
+          "spanText": "maybe we could use inference to help with the selection of an existing task? like I don't need to say the task name perfectly, but say like a couple tasks ago that was about _____\nso the actions should be start pause, resume, complete, switch. Are those all the methods? Do we need a pending status what does that even mean I don't want a completed boolean I do want to track sessions I do like that question of how long have I been working on this why not just keep current task rather than aspects of the current task? All right you were a little bit long winded there so I stopped reading about halfway through"
+        }
+      ],
+      "latencyMs": 271
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 539,
+          "spanText": "maybe we could use inference to help with the selection of an existing task? like I don't need to say the task name perfectly, but say like a couple tasks ago that was about _____\nso the actions should be start pause, resume, complete, switch. Are those all the methods? Do we need a pending status what does that even mean I don't want a completed boolean I do want to track sessions I do like that question of how long have I been working on this why not just keep current task rather than aspects of the current task? All right you were a little bit long winded there so I stopped reading about halfway through"
+        }
+      ],
+      "latencyMs": 539
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 585,
+          "spanText": "For a session am I adding too much when I want to add a little bit of detail about it like I'll say worked on blank as a part of this task. maybe add that as a comment todo. Good on the task selection via inference I do want to split this out by system prompt and query also get a Jason response back with the task number\n\nI like your stated voice patterns. And I like your pseudocode at the end of that what do you call that that's pretty cool\n\nanswer your questions \nI'm wondering if start tasks should only create something new because if it exists I should switch to it rather than start this removes the LLM matching overhead from starting is there something I'm missing there? Now start task takes over log task completely\nkeep completed tasks forever no auto delete\nI do like the TTS especially when switching yeah I think just for switching actually I kind of want it for everything initially it would just be the name of the OR the action of the function and I don't know I think you can infer what to do with that but let's be more explicitly verbose initially. But task switching definitely needs this"
+        }
+      ],
+      "latencyMs": 585
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 541,
+          "spanText": "For a session am I adding too much when I want to add a little bit of detail about it like I'll say worked on blank as a part of this task. maybe add that as a comment todo. Good on the task selection via inference I do want to split this out by system prompt and query also get a Jason response back with the task number\n\nI like your stated voice patterns. And I like your pseudocode at the end of that what do you call that that's pretty cool\n\nanswer your questions \nI'm wondering if start tasks should only create something new because if it exists I should switch to it rather than start this removes the LLM matching overhead from starting is there something I'm missing there? Now start task takes over log task completely\nkeep completed tasks forever no auto delete\nI do like the TTS especially when switching yeah I think just for switching actually I kind of want it for everything initially it would just be the name of the OR the action of the function and I don't know I think you can infer what to do with that but let's be more explicitly verbose initially."
+        }
+      ],
+      "latencyMs": 541
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 101,
+          "spanText": "Looking back at your statuses I do want cancelled in there\nfor the select task query should the return Jason into the format be in the system prompt? Also with groq can I specify the output in JSON like the schema?"
+        }
+      ],
+      "latencyMs": 102
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 104,
+          "spanText": "Looking back at your statuses I do want cancelled in there\nfor the select task query should the return Jason into the format be in the system prompt? Also with groq can I specify the output in JSON like the schema?"
+        }
+      ],
+      "latencyMs": 104
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 99,
+          "spanText": "Look online for validated methods that for validating option a versus option B in Jason format location. Liked his GROQ how many suggestions about how to enforce or ensure the right schema?"
+        }
+      ],
+      "latencyMs": 100
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 101,
+          "spanText": "Look online for validated methods that for validating option a versus option B in Jason format location. Liked his GROQ how many suggestions about how to enforce or ensure the right schema?"
+        }
+      ],
+      "latencyMs": 101
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 109,
+          "spanText": "Alright rewrite this back and then I'll take it to another prompt to do the skeleton. Could you write a prompt as well that would build the skeleton I just want method signatures and I want that pseudo code that you had represented as function calls within any method that has it but no logic other than those function calls does that make sense is that how I should do that"
+        }
+      ],
+      "latencyMs": 109
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 106,
+          "spanText": "Alright rewrite this back and then I'll take it to another prompt to do the skeleton. Could you write a prompt as well that would build the skeleton I just want method signatures and I want that pseudo code that you had represented as function calls within any method that has it but no logic other than those function calls does that make sense is that how I should do that"
+        }
+      ],
+      "latencyMs": 106
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 109,
+          "spanText": "Based on the usage of the audio recording we don't have to accumulate current text right. or do we?"
+        }
+      ],
+      "latencyMs": 109
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 128,
+          "spanText": "Based on the usage of the audio recording we don't have to accumulate current text right. or do we?"
+        }
+      ],
+      "latencyMs": 128
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "user",
+      "spanCount": 5,
+      "extractCount": 3,
+      "skipCount": 2,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "already_known",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 106,
+          "spanText": "this is the response from the other instance. any thoughts\n\n\nGreat spec!"
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 132,
+          "spanText": "The architecture is solid - clean separation, smart LLM integration, and natural voice patterns."
+        },
+        {
+          "spanId": "span_2",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 135,
+          "spanText": "Here are the key considerations:\nCritical Issues\nHandler Order Matters - Task handlers MUST come before thought partner handlers or \"start task X\" will trigger conversation flow. Put all task handlers at the top of the array. State Conflicts - What if user says \"start task\" while in `response_done` or `feedback` state? Need explicit guards:\nActive Task Validation - Many operations need `if (! currentTask) return;` guards. Add a helper:\nIndexedDB Migration - Version bump from 1→2 needs migration code in indexed-db."
+        },
+        {
+          "spanId": "span_3",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 152,
+          "spanText": "Existing turns data should be preserved. Design Questions\nResume Logic - \"Most recent paused\" is ambiguous. Should it be:\nMost recently paused (by timestamp)? * Most recently worked on (last session end)? * Suggest: Add `lastActivityAt` timestamp updated on all operations\nLLM Selection Edge Cases:\nMultiple close matches → First match or ask for clarification? * Inference timeout/failure → Fall back to exact text match? * No tasks exist → Auto-create new task? Concurrent Operations - If currentTask exists and user says \"start task X\":\nAuto-pause current, start new? * Reject with TTS \"Complete current task first\"? * Suggest: Auto-pause is better UX\nCrash Recovery - Open session when extension reloads:\n\n\n\nEnhancements\nAdd helper for session duration:\nConsider batch operations:\nAdd task preview to \"switch to\":\nLogging enhancement:\n\n\n\nImplementation Order\nAdd task schema + IndexedDB store (with migration)\nAdd CRUD actions (addTask, getTasks, etc.)\nAdd session management (startSession, closeSession helpers)\nAdd work management actions (startTask, pauseTask, etc.)\nAdd LLM task selection (findBestMatchingTask)\nAdd voice handlers\nAdd crash recovery logic\nAdd tests\nThe spec is ready to implement - just address handler ordering and add error guards."
+        },
+        {
+          "spanId": "span_4",
+          "label": "skip",
+          "reason": "already_known",
+          "confidence": 0.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 179,
+          "spanText": "Want me to generate the skeleton with state transition notation?"
+        }
+      ],
+      "latencyMs": 707
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "assistant",
+      "spanCount": 3,
+      "extractCount": 2,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "already_known",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 197,
+          "spanText": "this is the response from the other instance. any thoughts\n\n\nGreat spec! The architecture is solid - clean separation, smart LLM integration, and natural voice patterns. Here are the key considerations:\nCritical Issues\nHandler Order Matters - Task handlers MUST come before thought partner handlers or \"start task X\" will trigger conversation flow."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 101,
+          "spanText": "Put all task handlers at the top of the array."
+        },
+        {
+          "spanId": "span_2",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 178,
+          "spanText": "State Conflicts - What if user says \"start task\" while in `response_done` or `feedback` state? Need explicit guards:\nActive Task Validation - Many operations need `if (! currentTask) return;` guards. Add a helper:\nIndexedDB Migration - Version bump from 1→2 needs migration code in indexed-db. Existing turns data should be preserved."
+        }
+      ],
+      "latencyMs": 477
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 105,
+          "spanText": "yep regenerate spec"
+        }
+      ],
+      "latencyMs": 105
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "assistant",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 105,
+          "spanText": "yep regenerate spec"
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 103,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 209
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 95,
+          "spanText": "do we need \"lastActivityAt\" or just use most recent session start/end? what is the log task, how is it different from start task? you have too much code here for spec! I want this \n\nswitch task (found) → if currentTask: pause current, then start selected, TTS \"Switching to [name]\"\n\nover \n\nswitch (not found): \"No matching task found\"\n\nyour duplicating information\nremove testing commands. don't hae future enhancements."
+        }
+      ],
+      "latencyMs": 95
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 110,
+          "spanText": "do we need \"lastActivityAt\" or just use most recent session start/end? what is the log task, how is it different from start task? you have too much code here for spec! I want this \n\nswitch task (found) → if currentTask: pause current, then start selected, TTS \"Switching to [name]\"\n\nover \n\nswitch (not found): \"No matching task found\"\n\nyour duplicating information\nremove testing commands. don't hae future enhancements."
+        }
+      ],
+      "latencyMs": 110
+    }
+  ]
+}

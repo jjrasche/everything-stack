@@ -1,0 +1,406 @@
+{
+  "conversationUuid": "c7086ab1-3099-488e-b422-d77e03ce50aa",
+  "conversationName": "Comparing Schooling Options for Micro Society",
+  "turnCount": 18,
+  "stage": "classify",
+  "model": "groq/llama-3.1-8b-instant",
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 665,
+          "spanText": "Create a table of different schooling options like traditional, homeschool, co-op homeschool, unschooling, Montessori are there any others I missing? But I want you to create a table comparing these options and for micro society in particular and I guess the regulatory and compliance burdens along with the whether or not you get funding from any external sources government if these schooling methods can be built into the task system at all just have a conversation with me It should what other things should I be thinking about with regards to these types of schools that you could put into the table"
+        }
+      ],
+      "latencyMs": 665
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "spanCount": 3,
+      "extractCount": 3,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 204,
+          "spanText": "Create a table of different schooling options like traditional, homeschool, co-op homeschool, unschooling, Montessori are there any others I missing? But I want you to create a table comparing these options and for micro society in particular and I guess the regulatory and compliance burdens along with the whether or not you get funding from any external sources government if these schooling methods can be built into the task system at all just have a conversation with me It should what other things should I be thinking about with regards to these types of schools that you could put into the table"
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 110,
+          "spanText": ""
+        },
+        {
+          "spanId": "span_2",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 101,
+          "spanText": ""
+        }
+      ],
+      "latencyMs": 416
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 566,
+          "spanText": "I think education could be monitored the same way skill development is monitored within the internal labor force. I also think there's a high potential for AI to be involved in testing and grading for basic skills. Maybe some of these AI / human review processes that minimize the burden on people. Do you have any thoughts on the college prep or anyway to measure ourselves against the external world? I like the idea of federal state funding I'm curious about the regulatory effort required for charter school. And the flexibility of curriculum like are there demands for about a time spent in classrooms or if like how do you prove that you how do you show adherence to core requirements? I think that would be charter school seems like the best way to gain make this revenue positive. I'm curious about the Montessori like any of the the three Montessori waldor Steiner sort of what I I guess I don't know much about them but I assume they're very opinionated educational styles that have this sort of official certifying body to them. I think I like these because they have high integration capability with the task system so that would have essentially no maintenance compared to what we already have for internal labor. That doesn't have any money coming from outside governments but I'll actually have his Montessori work with grants? I guess the only revenue stream here would be from external external community member tuition. I guess the way for people to teach their kids in this environment let their kids learn this environment without being full members It's kind of interesting but you could do that with the charter school too so \n\nWhat percent of education can be like self-reported and/or verified with an AI tutor teacher? Maybe it's smart to turn away from this and kind of ask the general question about how to remake the fucking education system. All right I spoken enough I'm leaning towards charter because I want public funding but I'm concerned I want to know more about the burden of performance metrics and core requirements and the limitations of integration within the task system"
+        }
+      ],
+      "latencyMs": 566
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 448,
+          "spanText": "I think education could be monitored the same way skill development is monitored within the internal labor force. I also think there's a high potential for AI to be involved in testing and grading for basic skills. Maybe some of these AI / human review processes that minimize the burden on people. Do you have any thoughts on the college prep or anyway to measure ourselves against the external world? I like the idea of federal state funding I'm curious about the regulatory effort required for charter school. And the flexibility of curriculum like are there demands for about a time spent in classrooms or if like how do you prove that you how do you show adherence to core requirements? I think that would be charter school seems like the best way to gain make this revenue positive."
+        }
+      ],
+      "latencyMs": 448
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "spanCount": 4,
+      "extractCount": 4,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 104,
+          "spanText": "What are the requirements for charter schools in Michigan?"
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 116,
+          "spanText": "I'm not seeing anything that's all that more difficult than creating the task system for internal labor. You could just give kids daily tasks for attending certain classes sort of instruction you could document their their tasks in certain and other areas with working and their skill level progression through the task system. You of course need this performance metric stuff but I wondered what extents that can be peer led. That's kind of integrating this youth mentorship with the junior helpers, youth assistance and, team mentors."
+        },
+        {
+          "spanId": "span_2",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 349,
+          "spanText": "Are there minimums for number of certified teachers per student? The core subjects must be covered but how they're taught is flexible is very interesting like there's there seems to be no limitation on amount of butts in seats instruction \n\nWhat sort of tests do charter schools have to administer to test their performance of the students? Tell me more about the Michigan details for charter schools and if the task system with performance testing will suffice for documentation of learning activities \n\nYeah this phrasing of AI verification of learning with human mentorship for deeper learning seems right to me with maybe a small cohort of certified teachers organizing the system and engaging where help is needed \n\nI don't think I like the restrictions on the community if we were to go with the Montessori. I don't know if I like the external assessment tools that I found with map I feel like we could easily do this for a self-set a fraction of the cost. I do like the idea of maybe asking for external teachers to come in and verify some of our techniques or do assessments like that. But I don't want to buy software we're making software."
+        },
+        {
+          "spanId": "span_3",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 123,
+          "spanText": "This is qualified educators the the license the the teachers This is most of what they would be doing is portfolio reviews and then probably a lot of hands-on education for where it seems appropriate maybe leading discussions probably some amount of instruction. I'm still not convinced by the compromise of a charter model. Maybe you need to get deeper into the requirements to help me understand this. That hybrid approach every single bullet point makes a thousand percent sense. Understanding the task system would have to integrate outputs for charter requirements. Yeah mapping community tasks to academic standards."
+        }
+      ],
+      "latencyMs": 693
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 112,
+          "spanText": "What are the requirements for charter schools in Michigan? I'm not seeing anything that's all that more difficult than creating the task system for internal labor."
+        }
+      ],
+      "latencyMs": 112
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 626,
+          "spanText": "I don't think the ratios are necessarily applicable here but tell me if I'm wrong. The task management system and AI are taking a lot of workload off of where kids should be what they should be doing who should be helping them like I imagine some of the like the internal laborers doing tasks will be the kids will be integrated with them at some stage when seemingly acceptable. So it's kind of like the burden of teaching to some extent for at least the hands-on part will be transferred to the internal laborers. I do like the idea of having subject matter experts teach detailed subjects but most of the education I imagine's happening from a self-learned perspective through use of AI. And there's you know some portion of that is group discussion some portion of that might be a human instructing you know a large you know I don't know how big you could do this but many dozens of people kids at the same time."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 573,
+          "spanText": "What are Michigan academic standards? Define competency based learning \n\nDefine instruction in the 1098 hours of instruction per year and 180 days. Is that what you did in saying Independent study, work-based learning, community service, apprenticeship? So in Michigan grades 338 are required like every great from native evergrade from third grade to 11th grade is required every student and every grade from a third to 11th is required to take a standardized testing? First the MSTEP then PSAT twice and the SAT? I feel like this probably isn't right. If it's not I want the real requirements for standardized testing for charter schools \n\nFor the documentation requirements you mentioned student attendance which I think would be easy to work into the task system. Course completion I don't know what the definition of a course is here but I assume educators could kind of bundle certain things together to create a course if necessary. I don't know how learning and objectives are defined here. I do like the idea of individual learning plans and think those should be created for each student with progress reports but the stuff seems to be easily enough done with human verification of AI majority work if the systems are built right \n\n\nTalk to me about these compromise points I prefer the certified teachers for a level of legitimacy and do not mind that as compromise. Standardized testing participation I don't love personally but I'm excited about the children blowing it out of the water compared to other education models. Essentially I see this as a means for this model to validate itself against others. How many hours would you assume it would take per student or maybe that's not the right way to think about it for regular state reporting? And what is the external authorizer oversight like? Yeah feel free to create this community task to Michigan academic standards mapping I think it's a really good idea"
+        }
+      ],
+      "latencyMs": 1200
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "spanCount": 3,
+      "extractCount": 3,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 105,
+          "spanText": "I don't think the ratios are necessarily applicable here but tell me if I'm wrong."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 410,
+          "spanText": "The task management system and AI are taking a lot of workload off of where kids should be what they should be doing who should be helping them like I imagine some of the like the internal laborers doing tasks will be the kids will be integrated with them at some stage when seemingly acceptable. So it's kind of like the burden of teaching to some extent for at least the hands-on part will be transferred to the internal laborers. I do like the idea of having subject matter experts teach detailed subjects but most of the education I imagine's happening from a self-learned perspective through use of AI. And there's you know some portion of that is group discussion some portion of that might be a human instructing you know a large you know I don't know how big you could do this but many dozens of people kids at the same time. What are Michigan academic standards? Define competency based learning \n\nDefine instruction in the 1098 hours of instruction per year and 180 days. Is that what you did in saying Independent study, work-based learning, community service, apprenticeship? So in Michigan grades 338 are required like every great from native evergrade from third grade to 11th grade is required every student and every grade from a third to 11th is required to take a standardized testing?"
+        },
+        {
+          "spanId": "span_2",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 138,
+          "spanText": "First the MSTEP then PSAT twice and the SAT? I feel like this probably isn't right. If it's not I want the real requirements for standardized testing for charter schools \n\nFor the documentation requirements you mentioned student attendance which I think would be easy to work into the task system. Course completion I don't know what the definition of a course is here but I assume educators could kind of bundle certain things together to create a course if necessary. I don't know how learning and objectives are defined here."
+        }
+      ],
+      "latencyMs": 654
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 240,
+          "spanText": "How is the 5th grade outcome of understanding volume measured currently by schools? Are there legal documents that describe this these Michigan educational requirements like 1098 hours? I'm curious about their definition of self-directed learning \n\nWhat is standard alignment verification?"
+        }
+      ],
+      "latencyMs": 240
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 162,
+          "spanText": "How is the 5th grade outcome of understanding volume measured currently by schools? Are there legal documents that describe this these Michigan educational requirements like 1098 hours? I'm curious about their definition of self-directed learning \n\nWhat is standard alignment verification?"
+        }
+      ],
+      "latencyMs": 162
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 103,
+          "spanText": "what would you add to this document to flesh it out?"
+        }
+      ],
+      "latencyMs": 103
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 108,
+          "spanText": "what would you add to this document to flesh it out?"
+        }
+      ],
+      "latencyMs": 108
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "user",
+      "spanCount": 2,
+      "extractCount": 2,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.5,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 580,
+          "spanText": "I just don't think much of this stuff applies in a competency-based learning environment. Like you go at your own pace so special education and gifted students kind of get their own lane. I don't know that we would take on anybody severely needing help like that but maybe we could with enough student support. You have certain number of hours per week each student will put into internal labor with an emphasis on them being able to pick a certain focus every quarter and spending let's say I'm not sure 10 hours a week there. I don't know what age this would start. Maybe middle school maybe maybe becomes optional before that I don't know but yeah and like at any time before that before middle school it would be you know play-based to be more Montessori higher student teacher ratios kind of thing. Okay but going through going back to why I think most of these additions don't make sense sure I don't want to get to the granularity of grade level task progression maps That seems to take too much or skill assessment frameworks I'm going to wave my hands at that right now. I like the idea of maybe 2 hours of hands-on Labor Day you can't force any one kid to do anything but you can ask them to do it. They're there at least to monitor and not get in the way I mean they're all starting out as initially as observers only."
+        },
+        {
+          "spanId": "span_1",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 113,
+          "spanText": "Another 2 hours spent in self-learning exploring essentially their own interests maybe another 2 hours on core academics that is either instruction lead or AI individually led. Another two hours of group work"
+        }
+      ],
+      "latencyMs": 694
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 110,
+          "spanText": "I just don't think much of this stuff applies in a competency-based learning environment. Like you go at your own pace so special education and gifted students kind of get their own lane. I don't know that we would take on anybody severely needing help like that but maybe we could with enough student support."
+        }
+      ],
+      "latencyMs": 110
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 106,
+          "spanText": "Create a systems document for this"
+        }
+      ],
+      "latencyMs": 106
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 1.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 101,
+          "spanText": "Create a systems document for this"
+        }
+      ],
+      "latencyMs": 101
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "user",
+      "spanCount": 1,
+      "extractCount": 1,
+      "skipCount": 0,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "extract",
+          "confidence": 0.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 97,
+          "spanText": "How likely is this to work? Is anybody else doing this?"
+        }
+      ],
+      "latencyMs": 97
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "assistant",
+      "spanCount": 1,
+      "extractCount": 0,
+      "skipCount": 1,
+      "decisions": [
+        {
+          "spanId": "span_0",
+          "label": "skip",
+          "reason": "unresolved",
+          "confidence": 0.0,
+          "model": "groq/llama-3.1-8b-instant",
+          "latencyMs": 115,
+          "spanText": "How likely is this to work? Is anybody else doing this?"
+        }
+      ],
+      "latencyMs": 115
+    }
+  ]
+}
