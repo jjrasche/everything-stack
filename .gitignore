@@ -22,10 +22,12 @@ download/
 # Generated code
 *.g.dart
 
-# Claude Code
-.claude/
-.claude/**/*
+# Claude Code - track CLAUDE.md and plans, ignore everything else
+.claude/*
 !.claude/CLAUDE.md
+!.claude/plans/
+.claude/plans/*
+!.claude/plans/*.md
 
 # IDE
 .idea/
