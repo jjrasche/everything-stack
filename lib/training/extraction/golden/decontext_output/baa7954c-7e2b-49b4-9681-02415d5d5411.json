@@ -1,0 +1,2700 @@
+{
+  "conversationUuid": "baa7954c-7e2b-49b4-9681-02415d5d5411",
+  "conversationName": "Integrated Farm and Living System Overview",
+  "turnCount": 26,
+  "stage": "decontextualize",
+  "model": "groq/llama-3.1-8b-instant",
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "extractSpanCount": 0,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 0
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "extractSpanCount": 0,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 0
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "Heating costs can be reduced.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Contamination prevention can be achieved.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A systems document should be created.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The systems document should cover heating costs and contamination prevention.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 389
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "S1",
+          "scope": "session",
+          "type": null,
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 543
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "The lazy river fish farm will surround the agricultural area.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The agricultural area will be cut in half.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The wetlands will be in the center of the half sections of agriculture.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "There will be a 3° grade towards the middle of the two sections.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "There will be a marshland between the two sections.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "There will be a wetland area for filtering wastewater.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The filtered wastewater will slope down into the lazy river fish farm.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 377
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "The lazy river fish farm will surround the agricultural area.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The agricultural area will be cut in half.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The wetlands will be in the center of the half sections of agriculture.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "There will be a 3° grade towards the middle of those two sections.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "There will be a marshland in between the two sections.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "There will be a wetland area for filtering wastewater.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The wastewater will slope down into the lazy river fish farm.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 406
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "Wetlands are located at the intersection of two quadrants.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The river runs through the separated sides of the quadrants.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Wetlands are not out of each quadrant.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Some wetland output products are noted in a separate section.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 311
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 3,
+      "propositions": [
+        {
+          "content": "Wetlands are at the intersection of two quadrants.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The river runs through the separated sides of the quadrants.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Some wetland output products are noted.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 306
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 11,
+      "propositions": [
+        {
+          "content": "Components of the heating system should be in a table.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Sources and sinks of the heating system should be in the table.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cost to add a water recreation section to the system is unknown.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The water recreation section would be 2,000 ft long and 200 ft wide.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Turbidity is a measure of water clarity.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Natural means can be used to maintain water quality.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A water quality sink and source table is needed.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The EPA has water quality metrics.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The average water quality metrics for a US river are unknown.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Economic model outputs and operating cost tables are needed.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "System designs should include economic model outputs and operating cost tables.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S4"
+          ]
+        }
+      ],
+      "latencyMs": 610
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 12,
+      "propositions": [
+        {
+          "content": "Components of the heating system should be listed in a table.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Sources and sinks of the heating system should be listed in the table.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cost to add a water recreation section to the system should be estimated.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Estimated cost of extending the system by 2,000 ft and 200 ft wide is needed.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Turbidity is a measure of water clarity.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Natural means can be used to maintain water quality.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A water quality sink and source table should be created.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "EPA water quality metrics should be identified.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Average water quality metrics for a US river should be determined.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Economic model outputs and operating cost tables should be included in the system design.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "System design should not include construction sequence or critical risks.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The document needs to be revised.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 615
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "extractSpanCount": 8,
+      "propositionCount": 170,
+      "propositions": [
+        {
+          "content": "Forage growth rate per acre per day is 200-300 lbs DM for pasture alone.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Adding tree/shrub fodder increases forage availability calculation.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Normally, forage growth rate per acre per day is 200-300 lbs DM for pasture alone.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Total forage supply per acre per day is 264 lbs DM/acre/day.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Electric fencing is used to rotate cows, sheep, and chickens daily to efficiently extract resources.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "50 cows, 200 sheep, and 600 layers are used in the system.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "1 acre strips, 1000ft x ~42 ft are used for grazing.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Cows and sheep need 2-strand poly wire 4' for electric fencing.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Chickens need electric poultry netting for electric fencing.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Spring season has a growth phase of rapid growth surge with 45-50 days of regrowth time.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Spring season has a max DM/acre in phase of 5,000 - 6,000 lbs.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Summer season has a growth phase of slowed growth with 60-90 days of regrowth time.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Summer season has a max DM/acre in phase of 3,500 - 4,500 lbs.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Willow provides 4,000-6,000 lbs DM/acre/year of leafy browse.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S7"
+          ]
+        },
+        {
+          "content": "Mulberry provides 2,000-4,000 lbs DM/acre/year of leafy browse.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S7"
+          ]
+        },
+        {
+          "content": "Honey Locust Pods provide 1,500-3,000 lbs DM/acre/year of leafy browse.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S7"
+          ]
+        },
+        {
+          "content": "Apples provide 10-15 lbs DM/tree of mast crops.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S8"
+          ]
+        },
+        {
+          "content": "Pears provide 8-12 lbs DM/tree of mast crops.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S8"
+          ]
+        },
+        {
+          "content": "Chestnuts provide 500-1,500 lbs DM/acre of mast crops.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S8"
+          ]
+        },
+        {
+          "content": "Clover and chicory provide 500-1,500 lbs DM/acre of understory crops.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S9"
+          ]
+        },
+        {
+          "content": "Alfalfa under orchard provides 3,000-5,000 lbs DM/acre of understory crops.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S9"
+          ]
+        },
+        {
+          "content": "Stocking density is calculated as days per paddock/cows per acre.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S10"
+          ]
+        },
+        {
+          "content": "Stocking rate is calculated as (daily intake per cow × grazing period length) / (forage growth rate × total acres).",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S10"
+          ]
+        },
+        {
+          "content": "Grazing demand is calculated as stocking rate × intake per cow.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S10"
+          ]
+        },
+        {
+          "content": "Forage supply is calculated as forage growth rate × acres.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S10"
+          ]
+        },
+        {
+          "content": "Residual stubble height should be 3+ inches for grasses and 6+ inches for legumes.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S11"
+          ]
+        },
+        {
+          "content": "Soil compaction should be avoided to promote healthy soil and plant growth.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S11"
+          ]
+        },
+        {
+          "content": "Cow grazing efficiency is approximately 60%.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S11"
+          ]
+        },
+        {
+          "content": "Overgrazing can lead to inefficiency and poor plant quality.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S12"
+          ]
+        },
+        {
+          "content": "80% of the pasture should be open for high-yield grasses and legumes.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S13"
+          ]
+        },
+        {
+          "content": "10% of the pasture should be tree cover for shade and nitrogen-fixing trees.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S13"
+          ]
+        },
+        {
+          "content": "10% of the pasture should be buffer zone for hedgerows and riparian zones.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S13"
+          ]
+        },
+        {
+          "content": "Best forage plants for spring-summer-fall grazing are tall fescue, orchardgrass, white clover, and alfalfa.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S14"
+          ]
+        },
+        {
+          "content": "Best forage plants for late fall-winter grazing are tall fescue, red clover, and stockpiled orchardgrass.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S15"
+          ]
+        },
+        {
+          "content": "Best forage plants for late summer-fall grazing and nut and fruit harvesting are timothy grass, white clover, and chicory.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S16"
+          ]
+        },
+        {
+          "content": "Tree species for honey locust pods are honey locust, black locust, and mulberry.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S17"
+          ]
+        },
+        {
+          "content": "Tree species for mast crops are apple, pear, persimmon, chestnut, and hazelnut.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S18"
+          ]
+        },
+        {
+          "content": "Understory crops include clover, chicory, and alfalfa under orchard.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S19"
+          ]
+        },
+        {
+          "content": "S5 S6 S7 S8 S9 S10 S11 S12 S13 S14 S15 S16",
+          "scope": "session",
+          "type": null,
+          "sourceIds": [
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S13",
+            "S14",
+            "S15",
+            "S16"
+          ]
+        },
+        {
+          "content": "Cattle aged 24-30 months weigh 1,500-1,800 lbs live weight.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cattle aged 24-30 months weigh 825-1,080 lbs hanging weight.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cattle aged 24-30 months have a carcass yield of 55-60%.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cattle aged 24-30 months are priced at $0.90-$1.50 per lb live weight.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cattle aged 24-30 months have heavier finish and better marbling.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cattle aged 24-30 months are best used for prime beef or large butcher cuts.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cattle aged 30+ months weigh 1,800+ lbs live weight.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cattle aged 30+ months weigh 1,000+ lbs hanging weight.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cattle aged 30+ months have a carcass yield of 50-55%.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cattle aged 30+ months are priced at $0.75-$1.20 per lb live weight.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cattle aged 30+ months have potentially tough meat.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cattle aged 30+ months are best used for old cows or ground beef.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Grass-fed beef steers take 24-30 months to reach full weight.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Grass-fed beef steers reach 1,200-1,500 lbs live weight at full weight.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Grain-fed cattle can finish faster than grass-fed cattle.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Grain-fed cattle finish in 18-22 months.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Market prices fluctuate based on feed costs, demand, and seasonality.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Calves under 12 months are often sold as feeders.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Calves under 12 months are not finished as meat animals.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cattle aged 12-18 months weigh 800-1,200 lbs live weight.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cattle aged 12-18 months weigh 480-720 lbs hanging weight.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cattle aged 12-18 months have a carcass yield of 55-60%.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cattle aged 12-18 months are priced at $1.30-$2.20 per lb live weight.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cattle aged 12-18 months have some marbling.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cattle aged 12-18 months are best used as feeder cattle for feedlots.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cattle aged 18-24 months weigh 1,200-1,500 lbs live weight.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cattle aged 18-24 months weigh 660-900 lbs hanging weight.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cattle aged 18-24 months have a carcass yield of 55-60%.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cattle aged 18-24 months are priced at $1.00-$1.70 per lb live weight.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cattle aged 18-24 months have prime beef and high marbling.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cattle aged 18-24 months are best used as finished grass-fed beef.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Breeding cows require 30-35 lbs DM per head per day.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Breeding cows require 250,000-275,000 lbs DM per year.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Breeding cows require 100-120 acres per year.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Breeding cows require 40 acres if moved daily.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Growing steers require 25-30 lbs DM per head per day.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Growing steers require 150,000-200,000 lbs DM per year.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Growing steers require 60-80 acres per year.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Growing steers require 30 acres if moved daily.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "20 breeding cows require 100-120 acres annually.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "20 breeding cows require 40 acres if moving daily.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "18 growing steers require 60-80 acres annually.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "18 growing steers require 30 acres if moving daily.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "10 calves under 6 months require 20-30 acres annually.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "10 calves under 6 months require 10 acres if moving daily.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Calves need 10-15 lbs DM/day per head.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Bull needs 35-40 lbs DM/day.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Total herd needs 1,200-1,400 lbs DM/day.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Maintain 600 head of cattle.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Replace 200 head of cattle per year.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cull cattle based on visual indicators of age/productivity.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "50 roosters need to be culled based on aggression/age/excess.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Add new genes to rooster population every 5 years.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Brooding hen produces 6-12 chicks.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Need ~35 broodies annually.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Broody hatching for production is self-sustaining.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Australorp breed lays 270 eggs/year.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Wyandotte breed lays 225 eggs/year.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Pasture foraging provides 40% of feed.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Pasture foraging has 12% protein, 40% carbs, and 4% fats.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Pasture foraging provides greens, seeds, bugs, and natural scratching behavior.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Annual volume needed for 600 layers is 47,000 lbs for Apr-Oct.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Black Soldier Fly Larvae (BSFL) provides 12.5% of feed.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "BSFL has 45% protein, 2.5% carbs, and 30% fats.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "BSFL is high-protein and low-cost.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "BSFL upcycles food waste & manure.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Annual volume needed for 600 layers is 3,000 lbs of BSFL per year.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Crop production provides 35% of feed.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Crop production has 10% protein, 67.5% carbs, and 3% fats.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Crop production provides energy source and replaces commercial grain feed.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Annual volume needed for 600 layers is 30,000 lbs of mixed grains.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Crop production: Legumes provides 12.5% of feed.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Crop production: Legumes has 21.5% protein, 45% carbs, and 6% fats.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Crop production: Legumes provides protein boost and nitrogen-fixer for soil.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Annual volume needed for 600 layers is 8,000 lbs of field peas, soybeans, lentils.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Crop production: Greens provides 7.5% of feed.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Crop production: Greens has 17.5% protein, 35% carbs, and 4.5% fats.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Crop production: Greens provides vitamins & minerals and improves yolk color.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Annual volume needed for 600 layers is 5,000 lbs of alfalfa, duckweed, comfrey.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Food scraps & waste grains provides 7.5% of feed.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Food scraps & waste grains has 15% protein, 45% carbs, and 7.5% fats.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Food scraps & waste grains reduces food waste and supplements micro-nutrients.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Annual volume needed for 600 layers is 5,000 lbs from farm & household waste.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Total feed has 115% of feed, 16.5% protein, 50% carbs, and 4.8% fats.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Breeding cows need 100-120 acres annually.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Growing steers need 60-80 acres annually.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Insects provide 0.16-0.25 lbs of feed per chicken per day.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Total supplement needed is ~60% of feed.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Total supplement needed has 16-18% protein, 50-60% carbs, and 3-5% fats.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Total supplement needed ensures balance of Calcium, Phosphorus, Vitamins A & D.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "S38 S39 S40 S41 S42 S43 S44 S45 S46 S47 S48 S49 S50 S51 S52",
+          "scope": "session",
+          "type": null,
+          "sourceIds": [
+            "S38",
+            "S39",
+            "S40",
+            "S41",
+            "S42",
+            "S43",
+            "S44",
+            "S45",
+            "S46",
+            "S47",
+            "S48",
+            "S49",
+            "S50",
+            "S51",
+            "S52"
+          ]
+        },
+        {
+          "content": "The project involves growing potatoes.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The project involves growing potatoes on 2.5 acres.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The potatoes are planted in April or July.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The potatoes are harvested in July or October.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The potatoes are rotated every 2 years.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The potatoes yield 40,000 pounds per acre per year.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The total yield of potatoes is 200,000 pounds.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Each pound of potatoes contains 350 calories.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Each pound of potatoes contains 0.007 pounds of protein.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The total calories from potatoes are 70 million.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The total protein from potatoes is 1,400 pounds.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Duckweed is a crop that can be grown on 0.1 acres.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Duckweed yields 100,000 pounds per acre.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Duckweed makes up 10% of a chicken's diet.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cows eat down to 6 inches on day 1.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Sheep eat down to 3 inches on day 2.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chickens eat fly maggots from manure on day 5.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Sweet potatoes are a type of vegetable.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Sweet potatoes are grown on 2 acres.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Sweet potatoes are planted in May.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Sweet potatoes are harvested in September or October.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Sweet potatoes are rotated every 1.5 years.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Sweet potatoes yield 30,000 pounds per acre per year.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The total yield of sweet potatoes is 90,000 pounds.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Each pound of sweet potatoes contains 400 calories.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Each pound of sweet potatoes contains 0.008 pounds of protein.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The total calories from sweet potatoes are 36 million.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The total protein from sweet potatoes is 720 pounds.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cabbage is a type of vegetable.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cabbage is grown on 2 acres.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cabbage is planted in March or June.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cabbage is harvested in June or October.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cabbage is rotated every 2.5 years.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cabbage yields 50,000 pounds per acre per year.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The total yield of cabbage is 250,000 pounds.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Each pound of cabbage contains 120 calories.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Each pound of cabbage contains 0.012 pounds of protein.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The total calories from cabbage are 30 million.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The total protein from cabbage is 3,000 pounds.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "S54 S55 S56 S57 S58 S59 S60 S61 S62 S63 S64 S65 S66 S67",
+          "scope": "session",
+          "type": null,
+          "sourceIds": [
+            "S54",
+            "S55",
+            "S56",
+            "S57",
+            "S58",
+            "S59",
+            "S60",
+            "S61",
+            "S62",
+            "S63",
+            "S64",
+            "S65",
+            "S66",
+            "S67"
+          ]
+        }
+      ],
+      "latencyMs": 17102
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "extractSpanCount": 2,
+      "propositionCount": 12,
+      "propositions": [
+        {
+          "content": "Forage growth rate per acre per day is 200-300 lbs DM for pasture alone.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Adding tree/shrub fodder increases forage availability calculation.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Total forage supply per acre per day is the sum of pasture DM, tree browse DM, mast crop DM, and understory DM.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Example calculation for total adjusted forage supply per acre per day: 250+8+3+3=264 lbs DM/acre/day.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Electric fencing is used to rotate cows, sheep, and chickens daily to efficiently extract resources.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "50 cows, 200 sheep, and 600 layers are used in the system.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "1 acre strips, 1000ft x ~42 ft, are used for grazing.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cows and sheep need 2-strand poly wire 4' for electric fencing.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chickens need electric poultry netting for electric fencing.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Spring season has a growth phase of rapid growth surge, regrowth time of 45-50 days, and max DM/acre of 5,000 - 6,000 lbs.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Summer season has a growth phase of slowed growth (heat stress), regrowth time of 60-90 days, and max DM/acre of 3,500 - 4,500 lbs.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "S5 S6 S7 S8 S9 S10 S11 S12 S13 S14 S15 S16",
+          "scope": "session",
+          "type": null,
+          "sourceIds": [
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S13",
+            "S14",
+            "S15",
+            "S16"
+          ]
+        }
+      ],
+      "latencyMs": 3393
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "The system can generate all of a person's food and nutritional needs.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The system costs less than $150 per person.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The system requires 4 hours per person per year.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The system covers 21 acres.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The farmland is not included in the 21 acres.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 393
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 3,
+      "propositions": [
+        {
+          "content": "The system generates all of a person's food and nutritional needs.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The system costs less than $150 per person.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The system requires 4 hours per person per year.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 409
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 9,
+      "propositions": [
+        {
+          "content": "1:30 water systems would be 14 + 14 + 11 + 11 all of that times 209 * 10",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Arthur thought that was 10,000 ft² which is not even a fourth of an acre",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "wetlands has 1 acre per segment",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "wetlands would be 1,000 feet long and 50 ft wide",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "wetlands would be 5 acres",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "wetlands can be 10 ft wide",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "44 acre forest garden",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "processing and distribution labor would be added to agriculture",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "food forest would be separated out",
+          "scope": "project",
+          "type": "decision",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 550
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 15,
+      "propositions": [
+        {
+          "content": "Arthur saw a number that was right",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Agricultural fields have a service area of 14 + 14 + 11 + 11",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The service area is 209 * 10 times",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The service area is 10,000 ft²",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "10,000 ft² is not a fourth of an acre",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Wetlands have 1 acre per segment",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Wetlands have 1 acre per section",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A wetland is 1000 ft long and 50 ft wide",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A wetland is 5 acres",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Wetlands can be 10 ft wide",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A 10 ft wide wetland is substantial",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "There is a 44 acre forest garden",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Processing and distribution labor is needed",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Agriculture needs to be added to labor",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Food forest needs to be separated from labor",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 777
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 11,
+      "propositions": [
+        {
+          "content": "A 10 ft deep, 12,000 ft long circle of river loses heat per day.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The heat loss is affected by the temperature difference between the water and the air.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A 30° difference between the water temperature and the air results in a specific heat loss.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A 50° difference between the water temperature and the air results in a specific heat loss.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A 70° difference between the water temperature and the air results in a specific heat loss.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Geothermal placement is needed to make up for the heat loss.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The amount of geothermal placement needed varies with the temperature difference.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Water needs to be pumped per day to make up for the heat loss.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Solar thermal is needed to make up for the heat loss.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The amount of solar thermal needed varies with the temperature difference.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The ground temperature is 42°.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 626
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 17,
+      "propositions": [
+        {
+          "content": "A 10 ft deep, 12,000 ft long circle of river has a volume of approximately 1,120,000 cubic feet.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The surface area of the river is approximately 1,440 square feet.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The heat loss from the river per day is dependent on the temperature difference between the water and the air.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A 30° difference between the water temperature and the air results in a significant heat loss.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A 50° difference between the water temperature and the air results in a moderate heat loss.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A 70° difference between the water temperature and the air results in a minimal heat loss.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The amount of geothermal needed to make up for the heat loss is dependent on the temperature difference and the efficiency of the geothermal system.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "To make up for a 30° difference, approximately 10,000 feet of geothermal would be needed.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "To make up for a 50° difference, approximately 5,000 feet of geothermal would be needed.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "To make up for a 70° difference, approximately 1,000 feet of geothermal would be needed.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The amount of water needed to be pumped per day is dependent on the volume of the river and the desired flow rate.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "To maintain a flow rate of 1 cubic foot per second, approximately 1,120,000 gallons of water would need to be pumped per day.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The amount of solar thermal needed to make up for the heat loss is dependent on the temperature difference and the efficiency of the solar thermal system.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "To make up for a 30° difference, approximately 10,000 square feet of solar thermal would be needed.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "To make up for a 50° difference, approximately 5,000 square feet of solar thermal would be needed.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "To make up for a 70° difference, approximately 1,000 square feet of solar thermal would be needed.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The ground temperature of 42° affects the amount of solar thermal needed to make up for the heat loss.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 1015
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "Maximum depth for geothermal is unknown.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Average kilowatt hour per meter square in January is 1.4.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cost per square foot with only supplies is unknown.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Solar thermal coverage over water is 100 feet.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "8,000 ft² is required for a 30° increase on 9 million gallons.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 410
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 6,
+      "propositions": [
+        {
+          "content": "Maximum depth for geothermal is unknown.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Average kilowatt hour per meter square in January is 1.4.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cost per square foot with only supplies is unknown.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Solar thermal coverage over water is 100 feet.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Coverage area for 8,000 ft² is unknown.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "30° increase on 9 million gallons is achievable.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 410
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 75
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 84
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "user",
+      "extractSpanCount": 0,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 0
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "assistant",
+      "extractSpanCount": 0,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 0
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 82
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 78
+    }
+  ]
+}

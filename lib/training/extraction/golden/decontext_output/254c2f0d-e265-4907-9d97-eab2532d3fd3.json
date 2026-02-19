@@ -1,0 +1,2258 @@
+{
+  "conversationUuid": "254c2f0d-e265-4907-9d97-eab2532d3fd3",
+  "conversationName": "Audio pipeline blocker in voice-first AI project",
+  "turnCount": 16,
+  "stage": "decontextualize",
+  "model": "groq/llama-3.1-8b-instant",
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "extractSpanCount": 8,
+      "propositionCount": 65,
+      "propositions": [
+        {
+          "content": "The Everything Stack project has superfluous documentation.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "All tests except one were moved.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "One test remains to be moved.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Smoke tests and integration tests will be run from the integration folder.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Only CI will run the integration tests.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Integration tests will be run for external services.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Mark is responsible for integration tests of external services.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Actual audio files were added to STT.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The user is at the venue.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The user is using a device with a running mic.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The user can press a button to activate the mic.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The user can press play to listen to the response.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The device can search and recall previous conversations.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The user wants to have deeper conversations about distributed systems.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The user is working on an end-to-end integration test for a job.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The job is to create a fluid AI interface.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The user is unsure if they have a stack server at the device level.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The user is currently employed.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The user is working on a project involving distributed systems.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The user is using a stack server at device level 1.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The user aims to create a fluid AI interface.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The user is implementing events and tools.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The user is trading chunks and cutting them.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The user is implementing semantic search.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The user is syncing data to the cloud for backup.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Building a fluid AI interface is the primary goal.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The interface will include events, tools, and semantic search.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The interface will sync data to the cloud for backup.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The initial goal is to create a conversational AI with Deepgram Flex.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The AI should have a reasonable response rate and sound decent.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The project currently lacks a stack server at the device level.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The trading infrastructure is in place, but may need tweaking.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The trading infrastructure is in place.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Ideas for tweaking the infrastructure exist.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Invocations can be used to get feedback.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The system can be trained.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Local tools can be used to add functionality.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The LMS Hold identification can be tested.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The goal is to have a reasonable response rate with Deepgram Flex.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Conversational interaction with the system is desired.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Voice first interaction is a priority.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Voice first interaction is a concept.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Audio pipeline test can be run.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Obsidian can be used for task management.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "AI can be used for coding.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Claude Code can be integrated with other tools.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Code base can be analyzed with AI.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "CI and CD pipelines can be monitored.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "I want a tool that integrates with Claude Code.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The tool should help me understand my own code base.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The tool should allow me to ask questions and be hands-on with coding.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "I want to be able to push and monitor pipelines in CI and CD.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "I want to be able to load the test app on my client's link.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A timer tool is a good use case for AI.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "I want to be able to ask questions and get an immediate response from the AI assistant.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "I want to use smoke tests to verify the AI assistant on emulators.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "I want to deploy the timer tool to my device.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "There might be a solution to a tunnel illness.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A path to the solution requires effort and time.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Digging deep into a test is necessary to find the solution.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Spending hours on a test is required to make it solid.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Deploying the solution to a device is a necessary step.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Working on a timer to automate deployment is a good idea.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The solution works on emulators.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The solution will work without bugs.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 3758
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "extractSpanCount": 2,
+      "propositionCount": 17,
+      "propositions": [
+        {
+          "content": "I worked on the Everything Stack project.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "I was stuck in tests all day.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "I moved all tests except one.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "I will have smoke tests.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "I will have integration tests.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Integration tests will run from the integration folder.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "CI will run integration tests.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Integration tests will check external services.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "I added actual audio files to STT.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The integration test is not working yet.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The integration test is not working yet.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The Overly confident Claude code skipped the location check.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The integration test always tries to take shortcuts.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Mark added actual audio files to STT.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "It is recommended to document issues.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "It is recommended to document issues.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The integration test is not working yet.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 819
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "S1 S2 S3 S4 S5 S6",
+          "scope": "session",
+          "type": null,
+          "sourceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6"
+          ]
+        }
+      ],
+      "latencyMs": 1126
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "The speaker expects to hear something when a smoke test runs.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The speaker has not heard anything when the smoke test runs.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The speaker wants to log an audio pipeline.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The speaker suggests doing a smoke test instead of the tunnel vision test.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 513
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "extractSpanCount": 3,
+      "propositionCount": 26,
+      "propositions": [
+        {
+          "content": "The intern Application app was created today.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The UI has a dashboard and a conversation graph.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The graph shows half of the conversation.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The AI chat's fit score for an applicant's image is calculated.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "User emotions are displayed in the conversation.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Messages are exchanged between the user and the AI chat.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A plan will be formatted for the LMS.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The LMS will serve as a judgment mechanism.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Two jobs will be performed by the LMS.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Input from the persona or AI chat will be used.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Factors will be updated based on the interaction.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Factors represent the importance of the interaction in the message.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "There's a calculation that transforms factors related by persona or Application",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The calculation helps the interaction understand how it's going",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The goal is to effectively understand and emulate user conversation",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The model needs to prove the interaction before it goes out",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "There are attributes that can be clicked and validated",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The chat should interact based on the user's message",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Factors can be updated based on the user's message",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The interaction is judged based on the user's message",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The model can verify the output for each factor",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The chat can be validated through user input",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The chat was run 50 times.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The chat was adjusted to interact as expected.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The chat is making assumptions.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "More context is needed for the chat to understand the application's purpose.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 1634
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "An application app was created.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The UI has a dashboard and a graph that shows half of the conversation.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "User emotions are shown in the AI chat's fit score for an applicant's image.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Messages are exchanged between the AI chat and the applicant.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A judgment mechanism will be used in the LMS.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The judgment mechanism will consider factors related to persona or application.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The judgment mechanism will update factors representing building values.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 615
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "extractSpanCount": 7,
+      "propositionCount": 47,
+      "propositions": [
+        {
+          "content": "The person's son is involved in wrestling.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The person and their son will be doing wrestling today.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The person and their son will be doing press exercises as part of wrestling today.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The person and their son will repeat the press exercise 5 times.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Doing wrestling today.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "We do press and keep it any 5 times.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "It is time for him to get frustrated.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "I'm starting to cry.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "It's an issue dynamic.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "What frustrates the most.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "He's not getting it.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "It's a lot of information.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The instructor gives a lot of information.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The kid has trouble ingesting the information.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The parent dads try to help practice.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A live drone is being used.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The kid is wrestling.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "He's not really confused.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "I look up everything I know about my son.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "My son is involved in wrestling.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Wrestling is not easy for him.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "It's not like it's not overly inflectional.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "They did the 94 Hey.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The language is inflectional.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "He is not confused.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "They did something in 1994.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The kids need to be dressed up.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "They did the 94 Hey.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "They did the 94 Hey.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "They did the 94 Hey.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "They did the 94 Hey.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "They did the 94 Hey.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "They did the 94 Hey.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "They participated in the 94 Hey event.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "They participated in the 94 Hey event.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "They participated in the 94 Hey event.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "They participated in the 94 Hey event.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "They participated in the 94 Hey event.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "They participated in the 94 Hey event.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The kids were dressed in shorts and tallies.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The speaker felt they did a good job.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The warm-up is coming a little hard.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "It is tough to praise.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "This thing that seems like good sandwiches is a thing.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "People get frustrated.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "It is hard to praise as well.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The hand should be put right.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 4404
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "extractSpanCount": 2,
+      "propositionCount": 8,
+      "propositions": [
+        {
+          "content": "The wrestling session involves press and repetition.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The child is expected to perform the press 5 times.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The child's frustration is a common issue in wrestling.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The coach provides instruction, but the child may struggle to understand.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Additional support is provided by parents during practice.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A live drone is being used during the wrestling session.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The child is actively wrestling and engaging with the activity.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The child is not visibly confused during the wrestling session.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 713
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "extractSpanCount": 8,
+      "propositionCount": 31,
+      "propositions": [
+        {
+          "content": "Doing wrestling today.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "We do press and keep it 5 times.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "It is time for him to get frustrated.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "I'm starting to cry.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The main guy gives instruction.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The main guy uses a live drone.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The parent dads help practice.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The parent dads try to help the kid ingest information.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The kid is wrestling like a normal wrestler.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The language is overly inflectional.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "He is not confused.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "They did something in 1994.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "They performed the 1994 Hey.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The kids were dressed in shorts and tallies.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The speaker felt they did a good job.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Agent requires guidance to be effective.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Effective Agent requires taking the lead.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Effective Agent requires helping others where needed.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Effective Agent requires a positive attitude.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Effective Agent requires being close to others.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Agent can be effective when guided.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Guidance is necessary for Agent to be effective.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The session is exploratory.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The session involves learning together.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The speaker has a thing that seems like it serves good sandwiches.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The speaker notices that people get frustrated.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The speaker notices that the warm-up is coming hard to the person.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The speaker knows that the person has trouble praising.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The speaker likes when the person puts their hand in a certain way.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The speaker is unsure how to praise the person.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The speaker is doing this for their son Theo.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 2536
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "extractSpanCount": 2,
+      "propositionCount": 9,
+      "propositions": [
+        {
+          "content": "The speaker is doing wrestling today.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The speaker and other parents assist the instructor during practice.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The speaker's son is wrestling with a live drone.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The speaker's son is having difficulty understanding the instructor's instructions.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The speaker is concerned about the amount of information the instructor is providing.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The speaker's son is wrestling in a competition.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The speaker's son is using a live drone during the competition.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The speaker is looking up information about their son.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The speaker's son is participating in a wrestling competition in 1994.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 660
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "extractSpanCount": 2,
+      "propositionCount": 14,
+      "propositions": [
+        {
+          "content": "The event 'Voicemail' is currently the only event.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The Hailish Street Coordinator consumes the event payload.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The payload is a string.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The coordinator stores local data within its instance.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The coordinator assembles a package for the LN.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The package is sent to the LLM.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The LLM returns a response.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The coordinator sends the response to the TGS.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The TGS is trainable for STT and TTS.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The AI code is deployed on the app.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Logs are located within Firebase patch logs.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "App testers can access logs on a computer.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Logcat is a common tool for debugging.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Flutter app developers use logcat for debugging.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 899
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "extractSpanCount": 2,
+      "propositionCount": 15,
+      "propositions": [
+        {
+          "content": "The Red Pass event is currently Voicemail.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The coordinator consumes the Voicemail event payload.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The coordinator payload is a string called Please.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The Hailish Street Coordinator stores local data within its instance.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The coordinator assembles a package for the LN.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The package is sent to the LLM.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The LLM is instructed to return a response.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The coordinator sends the response to the TGS.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The Red Pass event has limited conditionality and trainability.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The Red Pass event is trainable for STT and TTS.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The AI code is deployed on the app.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The app is deployed.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The app has crash logs in Firebase.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The app has patch logs in Firebase.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The app has logcat logs.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 1031
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 8,
+      "propositions": [
+        {
+          "content": "The concept of invocation has everything.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Invocations can be found in everything on everything stack conversations.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Locations provide input to output in invocations.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Error messages can be saved in invocations.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cloud can be used to save invocations.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A super base cannot be done.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cloud can be used to cook.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A reasonable default path exists.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 509
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "The invocation concept exists on the Everything Stack.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Locations provide input to output in the invocation concept.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Error messages can be saved in the invocation concept.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cloud can be used to save data.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A super base is not possible.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cloud can be used to cook.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A default path is reasonable.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 406
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "user",
+      "extractSpanCount": 0,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 0
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "Setting up blockhead and plug in cables is harder than publishing implications when they happen.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 130
+    }
+  ]
+}

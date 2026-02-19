@@ -1,0 +1,4209 @@
+{
+  "conversationUuid": "88bb3c0c-7fe8-41ba-b043-d29689065ac2",
+  "conversationName": "Forest Stewardship Plan Development",
+  "turnCount": 24,
+  "stage": "decontextualize",
+  "model": "groq/llama-3.1-8b-instant",
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "extractSpanCount": 3,
+      "propositionCount": 41,
+      "propositions": [
+        {
+          "content": "The property owner's full name is required for the plan.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property owner's contact information (phone, email) is required for the plan.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The complete legal description of the property (County, Township, Range, Section) is required for the plan.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property has 63 acres.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property has distinct areas including a west slope, ravine, valley, and east slope.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property is located at 3332 Falcon Ridge Drive.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property owner's full name is unknown.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property owner's contact information includes a phone number and email.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property's legal description includes a County, Township, Range, and Section.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property tax ID number is unknown.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property owner's top 3-6 Forest Management Goals include food forest/edible landscaping.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property owner's top 3-6 Forest Management Goals include wildlife habitat (mushroom logs, bee hives).",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property owner's top 3-6 Forest Management Goals include water management (pond project, stream improvements).",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property owner's top 3-6 Forest Management Goals include invasive species control (buckthorn removal).",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property owner's top 3-6 Forest Management Goals include soil improvement.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property owner's priorities for Forest Management Goals may have changed.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property owner may have additional Forest Management Goals to add.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property has a west slope with 75 ft elevation and 8% grade.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The west slope has types of trees/vegetation.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property has a ravine with 100 ft length and 2-30 ft width.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The ravine's current condition is unknown.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property has a valley with 50 ft length and 40 ft clearing width.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The valley has vegetation growing there now.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property has an east slope with vegetation type.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property has 63 acres with distinct areas including a west slope, ravine, valley, and east slope.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property has 3-year-old hickory trees.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property has buckthorn (invasive) trees.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property has various ground covers.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "There may be additional significant trees on the property.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "You have 3-year-old hickory trees.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Buckthorn is an invasive species.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "You have various ground covers.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "You have significant trees other than hickory and buckthorn.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The pond project is 1,400 sq ft natural swimming/skating pond.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The pond project is still planned.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The timeline for major projects is unclear.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Activities are planned for 2016-2030.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "You may consider enrolling in Commercial Forest or Qualified Forest property tax programs.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Threatened/endangered species or special sites have not been identified on the property.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Your experience level with forest management is unknown.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "You may hire contractors for forest management work.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 2385
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "extractSpanCount": 2,
+      "propositionCount": 27,
+      "propositions": [
+        {
+          "content": "The property owner's full name is required for the plan.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property owner's contact information includes phone and email.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The complete legal description of the property includes County, Township, Range, and Section.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property has 63 acres.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property has distinct areas including a west slope, ravine, valley, and east slope.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property is located at 3332 Falcon Ridge Drive.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property owner's name is unknown.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property owner's contact information is unknown.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property's address is 3332 Falcon Ridge Drive.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property has 63 acres.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property has a west slope.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The west slope is 75 ft high and has an 8% grade.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The west slope has 3-year-old hickory trees.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The west slope has buckthorn (invasive).",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The west slope has various ground covers.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property has a ravine.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The ravine is 100 ft long and 2-30 ft wide.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property has a valley.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The valley is 50 ft wide and 40 ft clearing.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property has an east slope.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property owner's forest management goals include food forest/edible landscaping.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property owner's forest management goals include wildlife habitat (mushroom logs, bee hives).",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property owner's forest management goals include water management (pond project, stream improvements).",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property owner's forest management goals include invasive species control (buckthorn removal).",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property owner's forest management goals include soil improvement.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property owner's priorities for forest management goals include food forest/edible landscaping, wildlife habitat, water management, invasive species control, and soil improvement.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property owner's priorities for forest management goals may include additional goals.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 1352
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 16,
+      "propositions": [
+        {
+          "content": "Jim Jay Rasche's address is 3332 Falcon Ridge Dr. Grand Rapids MI 49525",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche's phone number is 415 301 8471",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche's email is jimjrasche@gmail.com",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property is not 63 acres",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The exact acreage of the property is uncertain, but it is approximately 2-2.5 acres",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property development goals include food forest development, soil improvement, and invasive species control",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The soil assessment indicates heavy clay in the valley",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Canopy cover percentage can be calculated",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The understory is mostly invasive species, with some native species like Japanese snowball and Blackberry",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The natural recreation pond should be included in the forest stewardship plan",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche has not formed an LLC and does not have environmental permits",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The most urgent goal is to start producing food, specifically leafy greens, and improving soil conditions",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The annual budget is in the low thousands of dollars",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "All work will be done by Jim Jay Rasche or community members, not hired labor",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The project is about community resiliency and learning to be closer to nature and food sources",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche is interested in government funding",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 902
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 33,
+      "propositions": [
+        {
+          "content": "Jim Jay Rasche's address is 3332 Falcon Ridge Dr. Grand Rapids MI 49525.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche's phone number is 415 301 8471.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche's email is jimjrasche@gmail.com.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche wants to find the legal description of his property.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche wants to look up information about his property.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche's property is not 63 acres.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche wants to know the exact size of his property.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche thinks his property is between 2 and 2.5 acres.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche wants to develop a food forest on his property.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche wants to improve the soil on his property.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche wants to control invasive species on his property.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche thinks his soil is heavy clay.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche wants to calculate the canopy cover percentage of his property.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche wants to preserve trees on his property.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche has understories with mostly invasive species.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche has some non-invasive species like Japanese snowball and Blackberry.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche wants to include the natural recreation pond in his forest stewardship plan.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche is currently clearing standing dead on his property.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche does not have an LLC for his property.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche has a tacit agreement with his neighbors to work on his property.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche does not have environmental permits for his property.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche will need permits for a substantial pond that interacts with the ephemeral stream.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche wants to start producing food on his property.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche wants to start producing leafy greens on his property.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche wants to improve soil conditions in his backyard.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche wants to move invasive species that are alleopathic.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche has an annual budget of low thousands of dollars.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche will do work on his property himself or with community members.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche does not want to hire anyone else.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche wants to promote community resiliency and connection with nature.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche wants to learn to be closer to his food source.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche wants to find government funding for his project.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim Jay Rasche has no additional questions before drafting.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 1479
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 16,
+      "propositions": [
+        {
+          "content": "The ecosystem is mostly close canopy.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Thick invasive undergrowth exists.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The food production timeline is accurate.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A pond with an area of 200 feet by 50 feet will be included.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Habitat creation and recreation are the main focus.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Soil is built above clay.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Sheet mulching, deep accumulators, and wheat tea can work together.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Sheet mulching can be done in the winter.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Deep accumulators can break up clay and add organic material.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Wheat tea can add nutrients and organic material.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "There is a great grandfather tree that is an oak.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Ash trees survived ash borer and re-sprouted.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The EQ IP program exists.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Funding opportunities are available for EQ IP.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Private funding sources should be considered.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Public funding sources should be considered.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        }
+      ],
+      "latencyMs": 804
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 8,
+      "propositions": [
+        {
+          "content": "The area will be a substantial 200 feet by 50 feet.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The project will focus on habitat creation and recreation.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Soil can be built above clay through sheet mulching.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Deep accumulators can break up clay and add organic material.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Wheat tea can add nutrients and organic material.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "There is a great grandfather tree that is likely an oak.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "There are couple ashes that survived ash borer and started re-sprouting.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The project may be suitable for EQ IP funding.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        }
+      ],
+      "latencyMs": 625
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "extractSpanCount": 5,
+      "propositionCount": 50,
+      "propositions": [
+        {
+          "content": "Trees that die back but still have a 1-foot trunk with jagged top and sprouting shoots are considered surviving.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Documenting flora is necessary for FSP.",
+          "scope": "project",
+          "type": "requirement",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Property collects runoff from the neighborhood and flows into the Grand Rapids watershed.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Public programs spend money on watershed conservation.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "10 acres are typically required for MAEAP FWH verification.",
+          "scope": "project",
+          "type": "requirement",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Development of a Forest Management Plan is required for FWH verifications.",
+          "scope": "project",
+          "type": "requirement",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "NRCS and DNR have funding for Forest Management Plan development.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Small property footprints may not qualify for funding or verification.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "NRCS and DNR have limited funding for plan development.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "MAEAP verification is not necessary for non-MAEAP projects.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Developing a plan helps keep a forest healthy.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Multiple property owners complicate plan development.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Nathan Ayers is a resource for agroforestry plan development.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The West MI Agroforestry Partnership provides resources for forest farming.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The USDA/USFS website discusses forest farming and provides resources.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The Conservation District's strike team controls invasive species.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Ryan Wilemski coordinates the strike team.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Native species are productive and robust with extensive root systems.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Native species are drought-tolerant and beneficial to biodiversity.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Native species act as hosts for beneficial insects.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The Joe Gardener podcast provides gardening information.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Federal funding for developing Forestry Stewardship Plans (FSPs) is suspended for FY25 and likely FY26.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "EQIP (Environmental Quality Incentives Program) may support or approve FSP development for partial funding.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Application window for EQIP funding may be closed, requiring submission of an EQIP application for FY26.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "NRCS funding is no longer frozen.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A Forestry Stewardship Plan (FSP) typically includes required components.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Guidance for developing a Forestry Stewardship Plan (FSP) is available.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Examples of finished Forestry Stewardship Plans (FSPs) are available.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Forestry stewardship/management plan checklists are available for different options/avenues.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Examples and resources are available for FSP development.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A list of required components for FSP is available.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A document offers guidance on FSP development.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "An example of a finished FSP is available.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "8 different plan checklists for FSP development are available.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A recently completed FSP for Byron Center Christian Schools is available.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "FSP development may be worthwhile due to smaller area and associated costs.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Eligibility for EQIP application is uncertain.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "NRCS funding is no longer frozen.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "EQIP application for FY26 is an alternative to NRCS funding.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "District Conservationist's feedback or recommendations are available upon request.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Development of a FSP could be worthwhile.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Smaller areas have smaller plans, less work, and more affordable costs.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Eligibility for EQIP or NRCS programs is uncertain.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "FSPs are often developed for conservation program funding.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "FSPs provide a comprehensive plan for forestland management.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "FSPs can help estimate future costs.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "FSPs can include plans for accessibility improvements.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "MAEAP verification is a potential outcome of FSP development.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Jim can relate to the difficulty of FSP density.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jim has experienced receiving multiple FSPs at once.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 3641
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "extractSpanCount": 2,
+      "propositionCount": 25,
+      "propositions": [
+        {
+          "content": "Trees that die back and sprout new shoots from a jagged trunk are considered survivors.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Documenting flora is necessary for the FSP.",
+          "scope": "project",
+          "type": "requirement",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The property collects runoff from the neighborhood and feeds into the Grand Rapids watershed.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Public programs spend money on watershed projects to add value.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Brush management requirements need to be met to receive funding.",
+          "scope": "project",
+          "type": "requirement",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cover crops are considered part of brush management.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Mulching can be used to restore soil like wood chips.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Trisha shrub establishment money can be used for water filtering plants and natives.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A 2-acre property may not qualify for MAEAP FWH verification due to its small footprint.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "A Forest Management Plan is required for FWH verifications.",
+          "scope": "project",
+          "type": "requirement",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "NRCS and DNR have funding for Forest Management Plan development.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "A Forest Management Plan is not necessary if not for MAEAP verification.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "NRCS and DNR have some funding to help offset costs for the development of plans.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "MAEAP verification is not entirely necessary if you're not doing it for verification.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Developing a plan can help keep a forest healthy.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Multiple property owners can complicate the development of a plan.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Nathan Ayers from the Agroforestry Coalition can help develop a plan for a food forest.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The West MI Agroforestry Partnership has resources on Forest Farming.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The USDA/USFS website has informational pages on Forest Farming.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The Conservation District's strike team can control invasive species.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Ryan Wilemski is the strike team coordinator.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The Conservation District does plant and tree sales twice a year.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Native plants have extensive root systems and are more drought-tolerant.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Native plants can act as hosts for beneficial insects.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The Joe Gardener podcast is a resource for gardening information.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 1536
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 18,
+      "propositions": [
+        {
+          "content": "The project is a headwater property.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "An assessment of ash borers is required.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A work task is needed to document all trees.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Phone-based GPS is not good enough for measuring trees.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Measuring tape is needed for measuring trees.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "There is a need to measure tree height easily.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Indicators of tree health status are required.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A guide is needed for someone with no knowledge to document trees.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The project aims to showcase community involvement and impact.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The project should be made public to advocate for other neighborhoods.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Michael's emails are unclear about funding sources and acreage requirements.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "EQIP focuses on smaller acreage.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Owner regulation will be involved in continuing funding.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "AI can be used to a certain extent in funding.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Developing an FSP on my own is possible with help.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Matt Sono can help with developing an FSP.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A free inventory form is needed for the FSP.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A five-year FSP can include a pond.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 941
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 17,
+      "propositions": [
+        {
+          "content": "The project is a headwater property.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "An artifact is needed to document all trees.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Phone-based GPS may not be sufficient for measuring trees.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Measuring tape and other tools are required for tree measurement.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Height can be measured using a measuring tape.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Indicators of health status are required for tree assessment.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A guide is needed for someone with no knowledge to perform the job.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Community involvement is important for project success.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Government funding is available for watershed projects.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Project visibility is important for funding and community involvement.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Equity focuses on smaller acreage, not 10 acres minimum.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Owner regulation is involved in continuing funding.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "AI can be used to a limited extent for funding and regulation.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Developing an FSP requires assistance and guidance.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "An FSP can be developed with the help of Matt Sono.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A pond can be included in the FSP if desired.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A free inventory form is available for FSP development.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 848
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 16,
+      "propositions": [
+        {
+          "content": "A smartphone can be used to take pictures of a tree.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A picture of a tree's pass through and inclinometer capability can be taken.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A picture of a tree's canopy can be taken from 5 feet away.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "DBH measurement can be taken using a smartphone.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "GPS may not be more accurate than the three words method.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Height estimation can be done using a pencil at arm's length.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Tree width can be estimated using a pencil.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The pencil method may not be accurate for estimating tree width.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Location services can be used to record a tree's location.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Three words can be used to map a location onto a box.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Tree health indicators can include the fullness of the canopy.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Tree health indicators can include the presence of intact bark.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Tree health indicators can be categorized as green, yellow, or red.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Tree species can be recorded separately from the tree inventory.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Analysis work can be done separately from data collection.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Tree survivor and champion tree designations can be used.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S5"
+          ]
+        }
+      ],
+      "latencyMs": 748
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 9,
+      "propositions": [
+        {
+          "content": "A smartphone app can simplify tree inventory by taking pictures and DBH measurements.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Taking a picture straight ahead from 5 feet away and panning up for canopy measurement is accurate.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The '3 words' method is more accurate than GPS for location mapping.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The pencil method for height estimation involves holding a pencil at arm's length and measuring tree width.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The accuracy of the pencil method is relative.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Tree health indicators include canopy fullness and intact bark.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Tree health indicators can be categorized as green, yellow, or red.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Tree species identification can be done after initial data collection.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Tree analysis can be done after initial data collection.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 736
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 10,
+      "propositions": [
+        {
+          "content": "Photos should be taken from a distance to capture the full tree or its surroundings.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Location information should be included with the photos.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Photos should be taken from multiple angles to capture different features of the tree.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Photos should include the sky through the leaves to assess the tree's health.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Photos should include the bark and check for dead branches and green leaves.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A health metric should be calculated based on the answers to the questions and the photos.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The health metric should be a numerical value, not a color-coded assessment.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Tree flags are not necessary.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "AI can be used to extrapolate information such as the tree species, height, and health from the photos and answers to the questions.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A map of the trees can be created, and their heights can be measured either during the process or in post-processing.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 819
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 11,
+      "propositions": [
+        {
+          "content": "Photos should be taken from a distance to capture the full tree or its surroundings.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Location information should be included with the pictures.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Photos should capture the sky through the leaves of the tree.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Photos should show the bark and any dead branches of the tree.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Photos should show the presence of green leaves on the tree.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A health metric for the tree should be calculated based on the answers to the questions and the pictures.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The health metric should be a numerical value, not a color-coded assessment.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Tree flags are not necessary.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "AI can be used to extrapolate information about the tree species, height, and health from the pictures and answers to the questions.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A map of the trees can be created based on the pictures and answers to the questions.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "There should be a way to measure tree heights during or after data collection.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 655
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 8,
+      "propositions": [
+        {
+          "content": "Two people will be doing this task.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "One person should stand next to a tree with every photo.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The person's size can be given and calculated.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The tree's height can be assumed based on a full-length photo.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The algorithm should be normalized around 10 or 100.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "An AI app with a single chat interface and photo button is a good idea.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The AI can collect data more quickly with a stream of consciousness and photos.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The AI can be used as a data entry source for everything.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 573
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 8,
+      "propositions": [
+        {
+          "content": "Two people will be doing this task.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "One person should stand next to the tree with every photo.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Person's size and height can be measured.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Height can be assumed based on a full-length tree photo.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Altitude should be calculated within the map.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The algorithm should be normalized around 10 or 100.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A simple app with a single chat interface and photo button should be built.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "AI can be used as a data entry source for everything.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 512
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "The perimeter of St. can be traversed clockwise.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The perimeter of St. can be divided into zones.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "GPS elevation and location data can be collected for topographic overlay.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Accuracy is more important than precision in this context.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The phone will handle streaming and picture taking.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A back end will process AI and L interaction.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A project document and RFP for forestry stewardship plan should be created.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 489
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 9,
+      "propositions": [
+        {
+          "content": "Going clockwise around the perimeter is a viable approach.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Using zones as a method of data collection is an alternative approach.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Collecting GPS elevation and location data can be helpful for topographic overlay.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Accuracy is more important than precision in this context.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Streaming data will occur on the phone.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Picture data will be processed on the phone.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A back-end system will process AI interactions.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Create a project document for the forestry stewardship plan.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Create an RFP for the forestry stewardship plan.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 517
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "user",
+      "extractSpanCount": 4,
+      "propositionCount": 69,
+      "propositions": [
+        {
+          "content": "GPS accuracy for longitude and latitude is typically high.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "GPS accuracy for elevation is typically lower than for longitude and latitude.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A mobile app for tree inventory can be designed with a single chat interface and voice-to-text streaming input.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The app needs a speech-to-text translator, LLM, storage, and backend logic.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Species identification using an LLM is possible but may not be accurate for all tree species.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Individual user authentication is necessary for collecting data on trees.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Measuring the trunk of a tree is a necessary data entry task.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A standardized object, such as a cone, can be used to measure the trunk of a tree.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "GPS tracking of tree locations is a necessary feature of the app.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Community adoption rate is a suitable success metric for the app.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Data completion rate is not a suitable success metric for the app.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Time from app download to first tree documentation is a suitable success metric for the app.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The forestry stewardship plan should include landowner goals and objectives.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Managing storm water is an important goal for the forestry stewardship plan.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Establishing native edible plants is an important goal for the forestry stewardship plan.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Creating recreational wildlife habitat is an important goal for the forestry stewardship plan.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The forestry stewardship plan should include a community education component.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Soil reports are typically accurate but may vary depending on the source and methodology used.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Soil reports are not accurate.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Remove the three-year old Hickory tree.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Community resilience is a nice aspect.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The community cares about resilience.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "2025 activities look good.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "2026 sheet mulching and cover crops are good for food beds.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "2027 pond construction is a good idea.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "2028 community education is a good idea.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Channel is ephemeral and collects from two acres of neighborhood runoff.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Forest health is the primary concern.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Invasive species prevent regeneration.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Ecological restoration is a priority.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Sheet mulching and cover crops are effective.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Water resources include an ephemeral stream and neighborhood runoff.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Wetland areas and small seasonal pools are present.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "The property is in the Grand River watershed.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "The property is a headwater property.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Common buckthorn is a concern.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S7"
+          ]
+        },
+        {
+          "content": "Mature buckthorn trees and seedlings are present.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S7"
+          ]
+        },
+        {
+          "content": "Border privet and creeping Jenny are concerns.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S7"
+          ]
+        },
+        {
+          "content": "Lesser celandine is a concern.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S7"
+          ]
+        },
+        {
+          "content": "Special sites require consideration.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S8"
+          ]
+        },
+        {
+          "content": "Maintain 50-foot buffers around water features.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S9"
+          ]
+        },
+        {
+          "content": "Invasive species prevent forest regeneration.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Ecological restoration is a primary concern for forest health.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Sheet mulching is a management method.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cover crops are used in ecological restoration.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Weed tea applications are used in ecological restoration.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Water resources include ephemeral streams, neighborhood runoff, and wetland areas.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The property is located in the Grand River watershed.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The property is a headwater property.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Common buckthorn is an invasive species with 5+ mature trees and extensive seedlings.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Border privet is an invasive species.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Creeping Jenny and lesser celandine are invasive species.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Maintaining 50-foot buffers around water features is a recommended practice.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Cardboard sheet mulch is a method for removing invasive ground cover.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "White clover is a plant that can outcompete invasive species.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Herbicides are not planned to be used.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Receipts may be required for funding applications.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S7"
+          ]
+        },
+        {
+          "content": "Combining funding sources may reduce the likelihood of getting funded.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S7"
+          ]
+        },
+        {
+          "content": "Cardboard sheet mulch can be used to get rid of invasive ground cover.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "White Clover can outcompete invasive ground cover.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Receipts for equipment purchases may be required.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Combining multiple funding sources may decrease the likelihood of getting funded.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Local building permits may be required for structures.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The Right to Forest Act is a relevant consideration.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Insurance details may be required for funding.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Zoning regulations may impact the project.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "White Clover is a suitable cover crop for food forests.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Maintaining 50-foot buffers around water features is recommended.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Buffers around water features may contain specific plants or features.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        }
+      ],
+      "latencyMs": 3804
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "assistant",
+      "extractSpanCount": 4,
+      "propositionCount": 63,
+      "propositions": [
+        {
+          "content": "GPS accuracy for longitude is high.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "GPS accuracy for latitude is high.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "GPS accuracy for elevation is moderate.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A mobile app for tree inventory can be developed.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The app should have a single chat interface with voice-to-text streaming input.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The app should have an integrated camera for documentation.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The app should have AI-powered data extraction.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Individual user authentication is necessary for data collection.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Measurements of tree trunk diameter are necessary.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Elevation measurements are necessary.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Health score of trees can be estimated.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Species identification can be done using AI-powered data extraction.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Photos of trees should be taken with an overlay or instructions.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "GPS tracking should be enabled.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Species identification should be a part of the app.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A standardized object, such as a cone, should be used for measurements.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The app should have success metrics, such as data completion rate and time from download to first tree documentation.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Community adoption rate and total number of trees inventoried are important metrics.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A forestry stewardship plan should include landowner goals and objectives.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Food production and storm water management are important goals.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Establishing native edible plants and creating recreational wildlife habitat are important objectives.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Pond construction and community education are important activities.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The forestry stewardship plan should include a general overview and details about the channel and its ephemeral nature.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Soil reports are usually accurate.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "The three-year old Hickory should be removed.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Soil reports are usually inaccurate.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Remove the three-year old Hickory tree.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The community cares about community resilience.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "2025 and 2026 activities look good.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "2027 pond construction seems good.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "2028 community education thing begins throughout the greater community.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The channel is ephemeral and collects from about two acres of neighborhood runoff.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Forest health is a primary concern, and invasive species are preventing regeneration.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Ecological restoration is a general goal.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Sheet mulching, cover crops, and weed tea applications are effective.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property has an ephemeral stream, neighborhood runoff, and wetland areas.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property is a headwater property in the Grand River watershed.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Common buckthorn, border privet, and lesser celandine are invasive species.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Maintain 50 foot buffers around water features.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The vision for 2030 is beautiful.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Invasive species prevent forest regeneration.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Ecological restoration is a primary concern.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Sheet mulching is an effective method for invasive species control.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cover crops and weed tea applications are useful.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The property is a headwater in the Grand River watershed.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Common buckthorn and border privet are invasive species.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Maintaining 50-foot buffers around water features is necessary.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Cardboard sheet mulch is a non-herbicide method for invasive species control.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "White clover can outcompete invasive ground cover.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Receipts for equipment purchases may be required.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S7"
+          ]
+        },
+        {
+          "content": "Combining funding sources may reduce the likelihood of funding approval.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S7"
+          ]
+        },
+        {
+          "content": "Herbicides are not used in invasive ground cover removal.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cardboard sheet mulch is used to suppress invasive ground cover.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "White Clover is used to outcompete invasive ground cover.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Receipts for all expenses must be submitted.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Multiple funding sources may reduce the likelihood of getting funded.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Local building permits are required for structures.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The Right to Forest Act is relevant to this project.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Insurance details are required for this project.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Zoning regulations must be reviewed for this area.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "White Clover is a staple cover crop for food forests.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Maintain 50-foot buffers around water features.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Buffers around water features require specific maintenance.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        }
+      ],
+      "latencyMs": 3582
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 12,
+      "propositions": [
+        {
+          "content": "A five-gallon bucket is standardized.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The pond reframing was successful.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Loam may not be accurate.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A 50-foot vegetative shrimp buffer is required.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The buffer area must be 150 feet wide by 300 feet.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A buffer is required on all four sides of the pond.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A zero-gravity walkout is a possible design option.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Private funding may be easier to obtain.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Public funding is an option for the project.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Grand Rapids Township is the project location.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The Right to Forest Act applies to forestry management activities.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Normal forestry management activities under the Right to Forest Act are unknown.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 614
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 10,
+      "propositions": [
+        {
+          "content": "A five-gallon bucket is very standardized.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The pond reframing is successful.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Loam may not be accurate.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A 50-foot vegetative shrimp buffer is required.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The buffer area must be 150 feet wide by 300 feet.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A buffer is required on all four sides of the pond.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A zero-gravity walkout is an investigated option.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Private funding may be easier than public funding.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The Grand Rapids Township is the location.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The right to forest act includes normal forestry management activities.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 515
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 12,
+      "propositions": [
+        {
+          "content": "A 5-gallon bucket is equivalent to a 5-gallon pocket cool.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A measuring tape can be used to verify the ability to extrapolate width from photos.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Buffers should be placed on slopes from the West and East.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Buffers should be placed on slopes that face the West and East.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Buffers should be placed on slopes that face the opposite direction of water flow.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Buffers should be placed on slopes that face the direction perpendicular to water flow.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Buffers should be placed on slopes that face the North and South.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Buffers should be placed on slopes that face the opposite direction of the water flow direction (North-South).",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Edible filtering is a recommended approach.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A section on phase funding should be added to the project.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Private funding sources should be considered for phase funding.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The use of private funding sources should be clearly stated.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 793
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "S1 S2 S3 S4",
+          "scope": "session",
+          "type": null,
+          "sourceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4"
+          ]
+        }
+      ],
+      "latencyMs": 1969
+    }
+  ]
+}

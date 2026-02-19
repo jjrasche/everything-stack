@@ -1,0 +1,2529 @@
+{
+  "conversationUuid": "a6663467-18fd-42e8-9425-eb4e7ee765d6",
+  "conversationName": "Establishing a Self-Governed Community",
+  "turnCount": 34,
+  "stage": "decontextualize",
+  "model": "groq/llama-3.1-8b-instant",
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 8,
+      "propositions": [
+        {
+          "content": "People face impositions of laws within government applied locally, county, state, and federal levels.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Most people feel laws are applied at the local level.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "At least 100 people per square mile are required for property ownership and incorporation.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A population of 1,000 people per square mile is expected for the project.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The 95% value of well payment from the state to the school can be used for education.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The school can buy the farm from the state of Michigan through a school.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "A down payment of $200,000 can be leveraged to buy the farm.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "A loan of $2 million can be obtained for 10 years with a down payment of $200,000.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        }
+      ],
+      "latencyMs": 667
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 10,
+      "propositions": [
+        {
+          "content": "People face impositions of laws within government applied locally, county, state, or federal levels.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Laws are enforced differently at local, county, state, and federal levels.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Property ownership and incorporation require at least 100 people per square mile.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Population density of 1000 people per square mile is achievable in rural and suburban environments.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Voting threshold for participation in the community is unclear.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "95% of well payment from the state goes to education.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Farm schools can receive funding for education and potentially buy land from the state.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A school with 20 students can receive $200,000 per year in funding.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A $200,000 loan can be leveraged for 10 years to buy land and assets.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Technology and coordination are necessary for implementing this system.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 659
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "extractSpanCount": 0,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 0
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "extractSpanCount": 0,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 0
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 9,
+      "propositions": [
+        {
+          "content": "Land does not need to be contiguous.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Average parcel size in farm regions is unknown.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Rehabilitating land is possible.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Initial 100 acres will be good land.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Phase two involves infrastructure development.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Water system will be long-term.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Agriculture will be long-term, mixed species grazing.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Regenerative farming will be used.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Establishing a small school unlocks 10K per student Michigan funding.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        }
+      ],
+      "latencyMs": 564
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 10,
+      "propositions": [
+        {
+          "content": "Average parcel size in the farm does not need to be contiguous.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "You can rehab land.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "You can start with 100 acres of good land and then buy more.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "You can use badland to spruce up the farm with resources.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "You have good soil.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Phase two will involve infrastructure development.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The water system will be a long-term investment.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A mixed species grazing situation will be used for permaculture.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Regenerative farming will be used to minimize inputs and maximize land use.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Establishing a small school unlocks $10,000 per student in Michigan funding.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 620
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 10,
+      "propositions": [
+        {
+          "content": "Federal state and county governments provide funding to communities.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Communities can receive funding from state payments for schools.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Not all government payments are means-tested.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "People who work but don't earn enough money may still collect benefits.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Residents in poor areas may receive more government assistance.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Government payments can be leveraged to support community development.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Leveraging school income to generate community revenue is a viable concept.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "This approach may be viewed negatively by some states.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Independent and responsible communities can be built through alternative societal philosophies.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Charts can be used as artifacts to visualize and document community development concepts.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 816
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 9,
+      "propositions": [
+        {
+          "content": "The federal state and county government provide funding to communities.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The state pays its communities through schools.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The state and federal government and county government pay their communities through various means.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Not all government payments are means-tested.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "People who work but do not earn enough money may still collect benefits.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "People who work but do not earn enough money may be eligible for Medicare and Medicaid.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "It is possible to leverage school income to create community benefits.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Leveraging school income to create community benefits may be viewed negatively by some states.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A society that involves more independence and responsibility for younger generations may be desirable.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 577
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "extractSpanCount": 2,
+      "propositionCount": 18,
+      "propositions": [
+        {
+          "content": "Revenue sharing is interesting in Michigan.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Revenue sharing involves government revenue from DNR licenses.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Michigan's per capita revenue is unknown.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Trump's government prioritizes rural development grants.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Trump's government prioritizes community development block grants.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Trump's government cuts rural development grants and/or community development block grants.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Private, state, and federal grants are sources of funding.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Road funding is per mile in Michigan.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Low-income benefits seem counterintuitive.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Community development should prioritize local area costs and salary requirements.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Grants from private, state, and federal sources are not specified.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Road funding per mile is not specified.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Low-income benefits may be counterintuitive.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Community requirements for minimum hours and salary should be based on per capita income.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Per capita income is a goal for municipalities.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The size of a community determines the use of words like town, village, township, city.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Communities may need to reach a certain size to have their own airport.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The responsibility for creating a flight strip or airport is unclear.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 1247
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "extractSpanCount": 2,
+      "propositionCount": 24,
+      "propositions": [
+        {
+          "content": "Revenue sharing is interesting in Michigan.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Revenue sharing involves government revenue from DNR licenses.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Michigan government revenue per capita is unknown.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Trump's government prioritizes rural development grants.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Trump's government prioritizes community development block grants.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Trump's government is cutting rural development grants and community development block grants.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Private, state, and federal grants are sources of funding.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Road funding in Michigan is per mile.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Low-income benefits seem counterintuitive.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Community hours to dollars ratio should be a salary requirement.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Surrounding area costs should be exhibited by community hours to dollars ratio.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Grants from private, state, and federal sources are not specified.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Road funding is not specified per mile.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Low-income benefits may be counterintuitive.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Community benefits should be tied to minimum requirement hours and community dollars ratio.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Per capita income should be the goal.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Municipalities should prioritize community development.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The goal is to increase per capita income.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The speaker is invested in their city's success.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The speaker wants their city to have its own airport.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The responsibility for creating a flight strip is unclear.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The speaker is unsure if the incorporated area can create a flight strip.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Trump's government may be prioritizing rural development grants and/or community development block grants.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Trump's government may be cutting rural development grants and/or community development block grants.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 1451
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 9,
+      "propositions": [
+        {
+          "content": "Government revenue streams to communities include rural development and agricultural subsidies.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Brownfield remediation provides historical amounts per acre.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Planning and land acquisition can start simultaneously.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Student-based projects receive $2,000 per year for positive change in their environment.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "School proposals are cleared through a democratic vote by classmates.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Traffic within the incorporated area can be limited to golf carts and bikes.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Government revenue streams provide funds for roads on an as-needed basis.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Community-provided health care options compete with outside options.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Voting rules and thresholds determine who votes in the community.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 823
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 9,
+      "propositions": [
+        {
+          "content": "Government revenue streams to communities include rural development and agricultural subsidies.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Brownfield remediation provides historical amounts per acre.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Planning and land acquisition can start simultaneously.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Student-based projects receive $2,000 per year for positive change in their environment.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "School proposals are cleared through a democratic vote.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Traffic within the incorporated area can be limited to golf carts and bikes.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Government revenue streams provide funds for roads on an as-needed basis.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Community health care options compete with outside options.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Voting rules and thresholds are important for decision-making.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 611
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 13,
+      "propositions": [
+        {
+          "content": "Government revenue per mile is estimated at $3,000.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Population of 10,000 and over 20 square miles is a starting point for town size.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Population of 10,000 and over 20 square miles is a starting point for town size.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Road construction cost per year for 1 ton vehicles with 1,000 passes per day is a metric to consider.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Road construction cost per year for golf carts is a metric to consider.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Maintenance cost per year for roads is a metric to consider.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A hundred people need to ask for the incorporation to make it happen.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Half of the property owners need to be convinced for the incorporation to happen.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Property owners within the area of incorporation are affected.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Gerrymandering is a possible strategy for incorporation.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Building systems is necessary for the society to function.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "An operating system is needed for the society to function.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Incorporation is a better option than not having it.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        }
+      ],
+      "latencyMs": 818
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 12,
+      "propositions": [
+        {
+          "content": "Government revenue estimate is $3,000 per mile.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Population of 10,000 and over 20 square miles is a suitable town size.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Population of 10,000 and over 30 square miles is a suitable town size.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cheapest road type per year for 1 ton vehicles with 1,000 passes a day is a metric to consider.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Golf carts and maintenance carts are allowed on the road.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Road types and their costs need to be determined.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Convincing half of the property owners is necessary for success.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Property owners within the area of incorporation are affected.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Gerrymandering is a potential issue.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Building systems is necessary for society to function.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Operating system for society is a necessary concept.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "This concept has not been attempted before.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        }
+      ],
+      "latencyMs": 715
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 6,
+      "propositions": [
+        {
+          "content": "There are two types of village structures: villages and cities.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Villages and cities have different requirements for incorporation.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The requirements for incorporation include 750 contiguous acres.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The requirements for incorporation include a hundred people who own property within that area.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A majority of the affected people must vote for a petition or sign a petition for incorporation.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Affected people are defined as those who own property within the area.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 355
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 6,
+      "propositions": [
+        {
+          "content": "There are two types of village structures: villages and cities.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Villages and cities have different requirements for incorporation.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The requirements for incorporation are 750 contiguous acres.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "There must be a hundred people who own property within the 750 contiguous acres.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A majority of the affected people must vote for a petition or sign a petition.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A majority of the affected people are defined as those who own property within the 750 contiguous acres.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 466
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "Options for train system within 1-1.5 hours of Detroit include Ann Arbor, Toledo, and Windsor.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Legal requirements for train system include obtaining permits and licenses.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Public funding for train system can be obtained through state funding and grants.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Significant impact of train system includes increased transportation options and reduced traffic congestion.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 409
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "Legal options for public funding include state funding and federal funding.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A train system within one to an hour and a half of Detroit requires legal compliance with federal and state regulations.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Significant impacts of a train system include reduced traffic congestion.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A train system can also reduce air pollution.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 300
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "The closest unincorporated town to Detroit is an unincorporated town.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Reincorporation takes more hours of human time and days of waiting compared to incorporation for the first time.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "An incorporated town has a voting block with unanimous decision-making power within an existing town.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "One person can sue the town to prevent something in an incorporated town.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Incorporated towns have structures similar to Ralph Nader's block.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 362
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "The closest unincorporated town to Detroit is likely to vary depending on the specific definition of 'close'.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Reincorporation typically takes longer than incorporation for the first time.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Reincorporation may take more hours of human time and days, months of waiting compared to incorporation for the first time.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "An incorporated town has a structured government and decision-making process.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A voting block with unanimous decisions within an existing town can significantly influence town decisions.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "One person may have limited ability to sue a town to prevent something, depending on the specific circumstances and town structure.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Ralph Nader's activism often involved blocking or challenging structures and decisions.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 550
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 3,
+      "propositions": [
+        {
+          "content": "The mayor and council must follow the Constitution and direct democracy decision making.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The charter removes the mayor if they don't follow the direct democracy threshold.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The charter triggers a reelection if the mayor doesn't follow the direct democracy threshold.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 314
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "The mayor and the council will not deviate from the Constitution.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The charter enforces direct democracy decision making.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The mayor's deviation from direct democracy can trigger a reelection.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The mayor's deviation from direct democracy can result in immediate removal.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 256
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 2,
+      "propositions": [
+        {
+          "content": "Judges are appointed at a certain point.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The bond for a temporary restraining order on municipal decisions is unknown.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 184
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "Judges are appointed at a specific point.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Temporary restraining order bond varies.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Temporary restraining order bond is required for municipal decisions.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Temporary restraining order bond amount is unknown.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 281
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 11,
+      "propositions": [
+        {
+          "content": "Local laws determine the classification of misdemeanors and felonies.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The city of Ann Arbor decriminalized marijuana.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The classification of crimes can vary between cities.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The farmer, Kirk, prefers to be left alone.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The farmer, Kirk, is an introvert.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The farmer, Kirk, is conservative.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The farmer, Kirk, wants a space.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The businessman, Jeff, is an extrovert.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The businessman, Jeff, likes to help people.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The businessman, Jeff, is a community builder.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The businessman, Jeff, is conservative.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 648
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 11,
+      "propositions": [
+        {
+          "content": "Local law determines the classification of misdemeanors and felonies.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The city of Ann Arbor decriminalized marijuana.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The classification of crimes can vary between cities.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Kirk is a 60-year-old white man who is a farmer and an introvert.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Kirk prefers to be left alone.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Kirk is conservative.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Kirk wants personal space.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jeff is a 60-year-old white man who is a businessman and an extrovert.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jeff likes to help people.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jeff is a community builder.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Jeff is active in his community.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 716
+    },
+    {
+      "turnIndex": 13,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 20,
+      "propositions": [
+        {
+          "content": "A town can put someone into jail for 93 days for a felony.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Some laws are unconstitutional at the state or federal level.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Limiting the effectiveness of external policing is illegal.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A municipality can limit the effectiveness of external policing.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A table about revenue and its sources should be included.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Revenue from outside sources, such as trade, should be considered.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A municipality can control food permits.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A municipality can effectively get food inspections within an hour.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Revenue is important for a municipality's growth.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A timeline with stages or steps should be included.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Key metrics of a municipality include size, population, land owned, and community assets.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A low-cost road construction option should be considered.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Education and infrastructure can be supported by revenue.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Children can participate in community projects with a budget of $1,000 each.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Land acquisition strategy is important for a municipality's growth.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "2 acres of agricultural land per person is sufficient for a municipality's growth.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A municipality can grow by acquiring property outside its area.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Harvard University owns 80% of Cambridge.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A fruit production system should be included in a municipality's plan.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Initial and annual costs of a fruit production system should be calculated.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 1197
+    },
+    {
+      "turnIndex": 13,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 13,
+      "propositions": [
+        {
+          "content": "A town can put a person into jail for 93 days for a felony.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Some laws are unconstitutional at the state or federal level.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Limiting the effectiveness of external policing is illegal.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A municipality can control food permits.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A municipality can effectively get food inspections within an hour.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Revenue is important for a municipality.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A municipality has key metrics such as size, number of people, land owned, and community assets.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A municipality can use revenue to improve infrastructure and education.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Kids can have a multi-thousand dollar budget to do a project that helps their community.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "2 acres of agricultural land per person is sufficient for a municipality.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A municipality can grow by buying property outside of its area.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A simple fruit production system can be implemented in a municipality.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Initial and annual costs can be calculated for a municipality's systems.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 775
+    },
+    {
+      "turnIndex": 14,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "The municipality has authority over food inspection.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The implementation timeline is good.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Land requirements are not two acres.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Land requirements are two acres.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Municipal governance powers are related to food production.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Community assets include essential services and revenue from the community.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The implementation timeline is good.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 350
+    },
+    {
+      "turnIndex": 14,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "The municipality has authority over food inspection.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The municipality's authority over food inspection is not typically a table.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Land requirements for the project are not two acres.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The project requires two acres of land.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Municipal governance powers are relevant to the project.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Community assets and essential services are essential to the project.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "The project should generate revenue from the community.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S7"
+          ]
+        }
+      ],
+      "latencyMs": 364
+    },
+    {
+      "turnIndex": 15,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "Include the amount of time that should be banked by the project.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Specify the number of members required before each timeline event.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Calculate the average number of hours committed per year.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Track the number of people involved in the project.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Record the total number of committed hours.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Monitor the total number of committed dollars.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Note the total number of acres involved in the project.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 371
+    },
+    {
+      "turnIndex": 15,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "Include the amount of time that should be banked by the project.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Specify the number of members required before each timeline event.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Calculate the average number of hours committed per year.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Track the number of people involved in the project.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Monitor the total number of committed hours.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Record the total number of committed dollars.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Track the number of acres involved in the project.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 492
+    },
+    {
+      "turnIndex": 16,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "There are three options for incorporation.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "One option is reincorporation.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Another option is taking over a town.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A third option is taking over 35-40% of a town.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 303
+    },
+    {
+      "turnIndex": 16,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "Incorporation is an option.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Reincorporation is an option.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Taking over a town is an option.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Taking over 35-40% of a town is an option.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 412
+    }
+  ]
+}

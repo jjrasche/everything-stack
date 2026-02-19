@@ -1,0 +1,2612 @@
+{
+  "conversationUuid": "7ef30faf-d027-4011-8443-b0043e3c7f7d",
+  "conversationName": "AI-Powered Digital Twin Interface",
+  "turnCount": 26,
+  "stage": "decontextualize",
+  "model": "groq/llama-3.1-8b-instant",
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "extractSpanCount": 2,
+      "propositionCount": 15,
+      "propositions": [
+        {
+          "content": "I can integrate LLMs with game logic.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A digital twin can be created.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A digital twin can be an AI village.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "I have 5-6 hours to work today.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "I want to create a highly productive task for the next weekend.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "I want to create a personal dashboard.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The personal dashboard can log food, daily snapshots, or medicine.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The personal dashboard can give me faith that my dad's data is being kept.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The goal is to create a boardroom of LMs to give feedback.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "There are two approaches to achieve this goal.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The first approach is to transition the functionality of Obsidian into the new system.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The first approach would allow for persistence of index DB and logging of personal data.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The second approach is to use a multi-agent interaction model for AI and knowledge management.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The second approach would enable search, prompt, and inference capabilities.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The goal is to create a digital twin or AI village.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 1212
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 10,
+      "propositions": [
+        {
+          "content": "LLMs can be integrated with game logic.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A digital twin can be created.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "An AI village can be created.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A boardroom of LMs can be created to give feedback.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "There are multiple ways to transition functionality from Obsidian.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Functionality from Obsidian can be transitioned into the new system.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The persistence of the index DB is valid for everyday use.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A personal dashboard can be created for logging and tracking.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Metrics and logging can be integrated into the system.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The system can be used to track personal data such as food, medicine, and daily snapshots.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 718
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 10,
+      "propositions": [
+        {
+          "content": "Adding UI components for graph DB or index DB metrics on the bottom left of the search input can provide faith in not losing things.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Modules have their own UI state, which may require a module selector on the bottom left.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Individual modules are not tested.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Conversational state management is not a thing.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Inference interactions should be independent and go along with topic clusters.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Inference interaction responses and prompts should be scraped for atomic ideas to become context.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Intense routing will be important, possibly using a small module for intent classification.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Logging interactions will allow training smaller models.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Multi-agent coordination will involve multiple inferences talking to each other and showing thought processes.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Creating an extended thinking option from smaller modules will allow investigation of thought processes.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 612
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 15,
+      "propositions": [
+        {
+          "content": "A UI component with graph DB or index DB metrics should be added to the bottom left of the search input.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A module selector should be added to the bottom left.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Modules have their own UI state.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Modules are not individually tested.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Conversational state management is not a thing.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Inference interactions should be independent.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Inference interactions should be related to topic clusters.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Atomic ideas from inference interaction responses should be used as context.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Intense routing will be important.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Classifying intent using a small module is a good idea.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Logging interactions for training smaller models is a good idea.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Multi-agent coordination will be a big thing.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Multiple inferences should be able to talk to each other and show their thought process.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Users should be able to investigate the thought process of individual inferences.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A boardroom analogy can be used to describe the extended thinking option.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 682
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "Module status counts are displayed.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Clicking on module status expands to all modules.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Module selector is being shown.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Universal back button is desired.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Work to be done today will be solidified in this chat.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 341
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "Module status counts are displayed.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Clicking on module status counts expands to all modules.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Module selector is being shown.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Universal back button is desired for the interface.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Work to be done today will be solidified in this chat.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 304
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 6,
+      "propositions": [
+        {
+          "content": "Voice to action in technology is a desirable feature.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Voice first utility is a wanted technology.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Building ease of use features may increase usage of Cognition extension.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Inference is used frequently, potentially 100 to 300 times a day.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Ease of use features are considered lower hanging fruit compared to building a voice first utility.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A stopwatch feature is missing in Cognition extension.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 514
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "extractSpanCount": 0,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 0
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "extractSpanCount": 2,
+      "propositionCount": 19,
+      "propositions": [
+        {
+          "content": "Speech to text is foundational.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Accuracy of speech to text needs to be verified.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Uncertainties in modules will compound if not addressed.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Speech to text is probably good.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "An audio and speech to text Output Auditor can be created.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Audio and speech to text Output Auditor can create test case audio files.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Audio and speech to text Output Auditor can verify output.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Test audio files, human made transcript, and ability to run different modules are needed.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Speech to text module architecture needs to be understood.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Several different implementations of speech to text module exist.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "We are planning the work for the day.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Other possible tasks should be considered when planning.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A longer term planning approach is being considered.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Previous tasks and this project should be included in the planning.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "All ideas and tasks should be considered in the planning.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Stored tasks might be stale.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Audio files, human made transcripts, and module implementations are required.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The speech to text module's architecture needs to be determined.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "There can be multiple implementations of the module.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 1257
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 8,
+      "propositions": [
+        {
+          "content": "Speech to text is foundational.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Accuracy needs to be verified.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Speech to text is probably good.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "An audio and speech to text output auditor can be created.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Test case audio files can be created.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "A human made transcript is needed.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Different models can be tested.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "The speech to text module architecture needs to be understood.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        }
+      ],
+      "latencyMs": 482
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "S1 S2 S3 S4",
+          "scope": "session",
+          "type": null,
+          "sourceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4"
+          ]
+        }
+      ],
+      "latencyMs": 953
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 9,
+      "propositions": [
+        {
+          "content": "Speech to text testing requires implementation architecture.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Adding test cases to verify accuracy is a viable alternative.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Inference should be prioritized over voice first utilities.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Voice first utilities should be annotated as a task.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A current task list exists, but its credibility is uncertain.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A task artifact should represent the current tasks.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "UI Polish is not the correct term, instead use tiny dashboard or system health.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "UI Polish builds confidence in the persistence layer.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Concentration on usage habits is a good approach.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 470
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "user",
+      "extractSpanCount": 0,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 0
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "assistant",
+      "extractSpanCount": 0,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 0
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "user",
+      "extractSpanCount": 4,
+      "propositionCount": 52,
+      "propositions": [
+        {
+          "content": "System health dashboard is agreed upon.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Intent routing keyword mapper is a small part of the system.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Flow interface will include voice first functionality.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Flow interface will include knowledge graph functionality.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Flow interface will include web functionality.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chunking and reassessing of spoken thoughts will be manual.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Topic switching functionality will be included in the flow interface.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Intent routing and keyword mapping are not the main focus.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "UI module and text to speech module are completed.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Graph DB is completed.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Intent routing and keyword mapping are small parts of a larger flow interface.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The flow interface includes voice first, knowledge graph, web, and chunking.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The flow interface should allow manual thought extraction and topic switching.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The flow interface should categorize topics for inference and isolate them.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The flow interface should allow transferring atomic ideas to inference for context.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The flow interface is a combination of flow interface and multi-agent systems.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The UI module, text to speech module, and graph DB are done.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The project is moving away from chunking quality and towards atomic idea creation.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The project is collecting human curated atomic idea data from source material.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The project is testing a model for atomic idea creation.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The project is considering a 2-step pipeline for atomic idea creation.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The project needs to consolidate error handling.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The project needs to be more explicit about technical debt.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The visual graph representation may not be useful for knowledge management.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Chunking previous inference conversations may not be useful for knowledge management.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Embedding cluster analysis is not the most important aspect of knowledge management.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "The system health dashboard should include response quality feedback.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "The system health dashboard should include graph quality assessments.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Response quality feedback is important.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Rating inference response quality is a large portion of extracting training data.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Graph quality assessments are important.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Voice first utilities task tracker is a killer feature.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Voice command parser is not a priority.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Daily prep and recap interactions are habit forming.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Core flow interface should prioritize atomic idea creation and extraction.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Context assembly with graph DB becomes easy with topic clusters.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Inference to atomic ideas pipeline is one of the most important things to work on.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Manual atom extractor is a better approach than 3 mode extension architecture.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "System health dashboard is important for foundation in system health.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Embedding cluster analysis is the least important of these.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "System health dashboard is useful.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Database health is a good metric.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Module status is a good metric.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Speech to text accuracy testing is a good standalone task.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Audio files can be used for speech to text accuracy testing.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Manual text extraction is required for speech to text accuracy testing.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "End to end interface testing is necessary.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Inference to atomic ideas pipeline is a priority.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Manual atom extractor is a viable alternative.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "3rd pane with topic, sources, and atomic ideas is a possible design.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Flexbox layout for topic cluster and atomic ideas is a possible design.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Knowledge graph and inferences can be used to generate atomic ideas.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        }
+      ],
+      "latencyMs": 2911
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 10,
+      "propositions": [
+        {
+          "content": "The system health dashboard is agreed upon.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The intent routing keyword mapper is a small part of the overall system.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The flow interface will include voice first, knowledge graph, web, and chunking.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The flow interface will allow manual thought extraction.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The flow interface will include topic switching functionality.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The flow interface will allow categorization of topics for inference.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The UI module is done.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "The text to speech module is done.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "The graph DB is done.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "The tasks have been dwindled down to the UI module, text to speech module, and graph DB.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        }
+      ],
+      "latencyMs": 546
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "user",
+      "extractSpanCount": 4,
+      "propositionCount": 60,
+      "propositions": [
+        {
+          "content": "The system health dashboard is agreed upon.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The intent routing keyword mapper is a small part of the overall system.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The flow interface will include voice first, knowledge graph, web, and chunking.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The flow interface will allow manual thought extraction.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The flow interface will include topic switching functionality.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The flow interface will include categorization for isolated topics.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The flow interface will allow transfer of atomic ideas to inference.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The UI module, text to speech module, graph DB, and web trees are completed.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Intent routing keyword mapper is a small part of a larger system.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The flow interface will include voice first, knowledge graph, web, and chunking.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Atomic thoughts should be manually extracted.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Topic switching functionality allows changing between topics and intents.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Inference runs preemptively.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The UI module is complete.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The text to speech module is complete.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The graph DB is complete.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Technical debt includes moving away from chunking quality.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Atomic idea creation uses models for testing or data collection.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Human curated atomic idea data is collected from source material.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A model is being trained for atomic idea creation.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The visual graph representation may not be useful.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Chunking previous inference conversations may not be useful.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Embedding cluster analysis is the least important aspect.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The system health dashboard is a priority.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Response quality feedback is important for training data.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Graph quality assessments are important but not the top priority.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Extracting training data is crucial for improving the software apparatus.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Rating inference response quality is a significant portion of improving the software apparatus.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Graph quality assessments are important but not the most important thing.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Voice first utilities task tracker is a high-priority feature.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Voice command parser is not a priority.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Daily prep and recap interactions are habit-forming and could be high-priority.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Core flow interface intent routing is not the core idea, but atomic idea creation and extraction are.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Context assembly with graph DB becomes easy with topic clusters.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Inference to atomic ideas pipeline is a high-priority task.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "3 mode extension architecture is no longer needed.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Manual atom extractor is a better approach than 3 mode extension architecture.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chunking previous inference conversations may not be useful.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Embedding cluster analysis is the least important of these features.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "System health dashboard is a high-priority feature.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Decompose system health concept into atomic propositions.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Replace pronouns with specific referents.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Split sentences with multiple facts.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Skip filler and greetings.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Output 0 propositions if span contains no durable knowledge.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Scope: session, project, life.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Type: learning, project, exploration.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Output only valid JSON array.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Create system health dashboard with graphdb counts and database health.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Implement speech to text accuracy testing.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Remove live chunk of persistence feature.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Use semantic similarity to group separate thoughts into chunks.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Implement end to end interface testing.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Design inference to atomic ideas pipeline.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Cancel 3 mode extension architecture.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Implement manual atom extractor.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Design 3 pane interface with topic cluster, sources, and atomic idea generation.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Create talk atmosphere visible while working on topic cluster.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Repeat back actions before performing them.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Trust that actions will be performed correctly.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        }
+      ],
+      "latencyMs": 3193
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 9,
+      "propositions": [
+        {
+          "content": "The system health dashboard is agreed upon.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The intent routing keyword mapper is a small part of the overall system.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The flow interface will include voice first, knowledge graph, web, and chunking.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The flow interface will have manual thought extraction.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The flow interface will have topic switching functionality.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The flow interface will have categorization for isolated topics.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The flow interface will allow transfer of atomic ideas to inference.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The flow interface can include multiple AI inference responses.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The UI module, web trees, text to speech module, and graph DB are completed tasks.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        }
+      ],
+      "latencyMs": 629
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "user",
+      "extractSpanCount": 2,
+      "propositionCount": 10,
+      "propositions": [
+        {
+          "content": "You didn't get any information from my previous message.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The UI layout is interesting.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The idea of using a full flex layout is worth exploring.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The configuration of the UI layout should be saved.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The user should be able to manually resize and move UI boxes.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The user should be able to add or remove UI boxes.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The user should be able to save and load UI configurations.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Each module should be able to inject into the flexible flexbox space.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The UI should not take over the entire screen.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Previous conversations should be searched for relevant information.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 645
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 10,
+      "propositions": [
+        {
+          "content": "You didn't get anything from my previous message.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Today's work is liked.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "UI layout is interesting.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Full flex layout is considered.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Configuration should be saved.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Configuration should be movable.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Common page configuration should be stored.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Modules should be able to inject into flexible flexbox space.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Tetris should not take over the entire screen.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "UI should be decided from a usability standpoint.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 604
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "The UI configuration system is flexible.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "It is possible to search for multiple items.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Five items can be searched at once.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Breaking down tasks into smaller inference tasks is a viable option.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The user can bring results of smaller tasks.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 394
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "A flexible UI configuration system exists.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Searching for multiple items is possible.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Breaking down complex tasks into smaller ones is a viable option.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Inference tasks can be performed individually.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 248
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 12,
+      "propositions": [
+        {
+          "content": "Two-stage pipeline pulls information from chats.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Most content is noise.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Atomic idea extraction moved away from chunking.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Topic clusters tie together sources and atomic ideas.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Topic clusters can be refined by inference.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Atomic ideas can be pulled into a topic cluster.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Intent and keywords can be inferred from the knowledge graph.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Flow interface is not a 3-layered system.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Long-term goal is to implement atomic idea pipeline.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Consolidated arrow handling improves debugging.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Natural parameter call changes use data types instead of params object.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Data types are being used for most of the stuff.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        }
+      ],
+      "latencyMs": 695
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 8,
+      "propositions": [
+        {
+          "content": "The two-stage pipeline pulls information from chats.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Most content is noise.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chunking is not used in atomic idea extraction.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Topic clusters are uncertain concepts.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Atomic ideas are the core components of topic clusters.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The flow interface is a unified system of components.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Consolidated arrow handling improves debugging.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Natural parameter call changes involve data types.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        }
+      ],
+      "latencyMs": 583
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "Chunking is an idea.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Atomic idea extraction is by inference.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Most content is noise.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Sentences aren't atomic ideas.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Inference can handle complexity.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Assumptions are being worked through.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Task priorities need to be updated.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 411
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 6,
+      "propositions": [
+        {
+          "content": "Chunking as an idea can be transformed into atomic idea extraction by inference.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Most content is noise.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Sentences aren't atomic ideas.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Inference can handle complexity.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Assumptions need to be updated.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Task priorities need to be updated.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        }
+      ],
+      "latencyMs": 408
+    }
+  ]
+}

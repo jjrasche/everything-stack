@@ -1,0 +1,6188 @@
+{
+  "conversationUuid": "98b78516-71ca-456d-9484-49d7bc88ea0b",
+  "conversationName": "Critical System Architecture Review",
+  "turnCount": 74,
+  "stage": "decontextualize",
+  "model": "groq/llama-3.1-8b-instant",
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 158
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 88
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "extractSpanCount": 2,
+      "propositionCount": 28,
+      "propositions": [
+        {
+          "content": "Single file module architecture is a standard.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Single purpose modules might have more than 500 lines.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "State management complexity is a concern.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Single writer pattern has major drawbacks.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Module coordination overhead is not seen.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Race conditions can occur when updating state.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Modules cannot override state space.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Naming standards are necessary for actions.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Compounding logic can lead to complexity.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Service worker proxy can cause performance bottlenecks.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "External calls can add overhead.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Message passing layers can cause complexity.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "State synchronization can cause performance bottlenecks.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Graph database queries can cause network latency.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Security and privacy concerns are inherent vulnerabilities.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Modularity in Chrome OS devices requires pre-built bundling.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Users have to understand the power they're giving when using modules with API keys.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The Chrome OS marketplace needs investigatory measures to prevent malicious code.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Developing a local development environment for Chrome OS extensions is feasible.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Rolling back individual modules in Chrome OS is manageable due to version hosting.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Quality control in the Chrome OS marketplace can be achieved through machine learning models.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Update coordination in Chrome OS can be simplified by clearly stating dependencies.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The Chrome OS module paradox claims modularity but requires pre-built bundling, which is a fundamental architecture flaw.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Distributed state with single riders creates artificial boundaries in Chrome OS.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "A knowledge graph assumption in Chrome OS assumes every user wants a complex graph database, which may not be the case.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Chrome OS devices can't process everything on device due to computational intensity.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Network latency of up to 100 milliseconds is acceptable for Chrome OS processing performance.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Inherent vulnerabilities in Chrome OS require security and privacy concerns to be addressed.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        }
+      ],
+      "latencyMs": 1740
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "extractSpanCount": 2,
+      "propositionCount": 25,
+      "propositions": [
+        {
+          "content": "We are creating new CRX's from a module marketplace.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Single file module architecture is a standard.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Single purpose modules are supposed to be under 500 lines.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Common utilities might be their own module.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Single rider pattern has major drawbacks.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Module coordination overhead is not visible.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Regulated module marketplace prevents state space conflicts.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Naming standards are necessary for actions.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Compounding logic can lead to performance bottlenecks.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "External calls (API calls) add overhead.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Message passing layers are not necessary.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "State synchronization can have performance bottlenecks.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Graph database queries have network latency.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Security and privacy concerns are inherent vulnerabilities.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS devices can have a module to add a tone like a projected tone every so often to make it clear that it's recording.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Pre-bundled modules have access even when disabled.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "API key management is accessible to all modules.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The marketplace needs to have some sort of investigatory process to review modules before bundling.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Quality control can be achieved through machine learning models.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Update coordination can be achieved by controlling all versions of each module.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The fundamental architecture of the system has flaws due to the module paradox.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Distributed state with single riders creates artificial boundaries.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A knowledge graph assumption may not be necessary for most users.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Network latency of up to 100 milliseconds is acceptable for processing performance.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "There are inherent vulnerabilities in the system related to security and privacy concerns.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        }
+      ],
+      "latencyMs": 1461
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "extractSpanCount": 2,
+      "propositionCount": 9,
+      "propositions": [
+        {
+          "content": "S1 S2 S3 S4",
+          "scope": "session",
+          "type": null,
+          "sourceIds": [
+            "S1",
+            "S2",
+            "S3",
+            "S4"
+          ]
+        },
+        {
+          "content": "State grows linearly with modules.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Most modules will stay within their lane.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "State namespace collisions are effectively prevented by the compiler.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "LLM service is the center that constrains dependencies.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Modules can be categorized into two types: those that add to state and those that extend functionality.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Inference solves the coordination problem.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "LLM is responsible for understanding actions and triggering them.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Transaction updates across models are not possible.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 1651
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 13,
+      "propositions": [
+        {
+          "content": "State management involves complexity.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The single rider pattern has drawbacks.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Module coordination is necessary for task scheduling.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The LLM is responsible for understanding actions and triggering them.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The LLM can create tasks and block off calendar time.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The LLM acts as a coordinating force for module interactions.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Inference can solve the coordination problem.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Training sets can be used to store expectations of scenarios and actions.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Module C needs to understand dependencies of its dependencies.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Combine latest or weighted approach can be used for dependency management.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Service worker injects DOM code and JavaScript into the browser.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Injected code can update state and define UI interactions.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The DOM issues commands through the broadcast channel.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        }
+      ],
+      "latencyMs": 806
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 20,
+      "propositions": [
+        {
+          "content": "Background monitors continuously watch and react.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "State Transformers listen to one state and do some action based on that.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Motion detector reads transcripts updates mood state.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "LLM drives its own context from querying the graph.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Background monitors are state creators and action providers.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Orchestrators are complex workflows needed for coordination.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "LLM can't coordinate complex features like live meeting assistant in one shot.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Compound commands can be created and sent to the LLM for execution.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Complex workflows can be created from the complex workflow module.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Research paper mode relies on the LLM to do a lot of work.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Context problem can be solved by background monitors updating state.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Recent tasks, calendar, and emails are states that live within the service worker.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Balance is needed between keeping state in the service worker and giving access to the LLM.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Coordination isn't enough, and latency compounds with parallelization of action calls.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Context window size is a problem, and Google can handle 2 million tokens.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Transactional integrity is a problem that can be solved by modules implementing rollback behavior.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Module dependency web is a problem that needs coordination.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Coordination module contracts can declare what it provides and what it needs.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Enrichment pipeline and execution pipeline can be used to build context and ensure execution order.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Event sourcing can be used instead of state updates to emit events.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S4"
+          ]
+        }
+      ],
+      "latencyMs": 1027
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 21,
+      "propositions": [
+        {
+          "content": "Background monitors continuously watch and react.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "State Transformers listen to one state and then do some action based on that.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Motion detector reads transcripts updates mood state.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "LLM drives its own context from querying the graph.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Background monitor is a state creator.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Orchestrators complex workflows needed.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Inference can't coordinate complex features like live meeting assistant.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Compound commands can be created to tell LLM what to do.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Knowledge graph doesn't read from John's contacts.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Research paper mode relies on LLM to do a lot of work.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Context problem is a state that gives LLM context enough to answer.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Recent tasks, calendar, and emails are states that live within the service worker.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Transcription module would never do anything except transcribe.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "LM coordination isn't enough due to latency and parallelization issues.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Context window size is a problem, especially with 10,000 tokens.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Transactional integrity is a problem that can be solved with rollback behavior.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Module dependency web requires coordination.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "State is the coordination handler or the means by which coordination is communication happens.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Coordination module contracts declare what it provides, declare what it needs, declare transformations.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Enrichment pipeline and execution pipeline are necessary for building context and ensuring everything happens in the right order.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Event sourcing instead of state updates emit events.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 1225
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 22,
+      "propositions": [
+        {
+          "content": "Users will be constrained to direct and context-rich calls.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "LLM can pull contacts from the graph about conversations from yesterday.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Context window explosion is not expected.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Atomic ideas are one or two sentences long.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Context isn't going to be more than a couple hundred tokens.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Building smart contacts assembly is not possible.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "AI-native is depending on inference and context window limitations.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "LMS can't truly parallelize task creation needs calendar results.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Users would enter a time or agree with the time and then set it.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Two separate calls are fine, and users won't guess or give it to you.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Modules coordinating would create profound complexity.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Feedback loop problem is real, and users would be frustrated.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Users would be frustrated with the complexity of the feedback loop.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Error context problem requires throwing valuable errors with module information.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Modules would not be better at coordinating than an LLM.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "State verse event question requires understanding intent and contacts.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Compound command solution is brilliant and solves many issues.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Compound command module allows users to order actions in their extension.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Emergent behavior in state event patterns could be held within the workflow module.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Complex operations will go through the LM and allow for parallelization.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Context assembly is going to be rough and may have divergent module types.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Complexity has to live somewhere, and workflows and LLM prompts are not a solution.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        }
+      ],
+      "latencyMs": 1226
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 13,
+      "propositions": [
+        {
+          "content": "Users will be constrained to direct and context-rich calls.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "LM can pull contacts from the graph about conversations from yesterday.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Context window explosion is a potential issue with raw transcripts and new nodes.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Parallel execution problem is a limitation of LMs.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Modules coordinating can create complexity and may not be a solution.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Feedback loop problem can be solved with a perfect result that requires user input.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Error context problem requires throwing valuable errors with module information.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "State verse event question can be solved with intent and contacts wrapped up in method or event name.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Compound command solution can orchestrate user-created compound command interaction.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Emergent behavior in state event patterns can be held within the workflow module.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Complex operations will go through the LM, while workflows will handle complex operations.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Context assembly will be rough and may have divergent module types.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Module coordination is not a solution for complexity.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 921
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 17,
+      "propositions": [
+        {
+          "content": "Latency of minutes is fine for background processes.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "LLMS is the only one that understands intense context.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Workflow module lists actions by modules.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Complex behavior can be understood from coordination vs composition.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Contacts assembly is the most complex problem.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Token budgets can be used for context assembly.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "LLM can be called with unique context.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Context assembler allows for pattern implementation.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Modules should handle their own exception cases.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Air response modules are not necessary.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Context assembly can be config-driven.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Module metadata can be used for context assembly.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Graph DB can be used for context assembly.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Verb object subject pattern is not necessary.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Context assembly is the biggest challenge.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "User control over context assembly is desired.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Context assembly can be codified within the workflow module.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 870
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 19,
+      "propositions": [
+        {
+          "content": "Latency of minutes is acceptable.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "LLMS is the only one that understands the event emitting.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Workflow module lists actions by modules for configuration.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Complex behavior is different from coordination and composition.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Contacts assembly is the most complex problem.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Token budgets can be used for context assembly.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "LLM can handle unique context without limitations.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Context size and time impact LLM performance.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Context assembly can be config-driven.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Air response modules are not necessary.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Modules handle exception cases individually.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Context assembly provides a rundown of module capabilities.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Context assembler logic allows for dynamic context creation.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Module metadata and persisted state can be used for context assembly.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Naming conventions do not matter for module interactions.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Context assembly is the biggest challenge.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Module coordination adds complexity without value.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Context assembly should be user-controlled through JSON schema.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Emergent behavior can be codified within the workflow module.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 880
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 14,
+      "propositions": [
+        {
+          "content": "Context assembly module is a core module.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Context assembly module should be created and configured.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "State coherence can be inferred by users.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Latency is not a concern for context assembly.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Common groupings of modules can be verified for defaults.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Modules do not need to be configured for context assembly by default.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Modules will have error messages or stack traces for failed actions.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "LLM access to actions has nondeterministic behavior.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Context assembly will be stored in a graph.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "State will be available for debugging with a time machine debugger.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Modules will not have on average 10 state entries each.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Context assembly is a simple process.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Core modules will be built first.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "First 5 core modules will be built.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 728
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 10,
+      "propositions": [
+        {
+          "content": "Context assembly module is a core module.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Context assembly module should be created and added to the config base context assembly.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "State coherence is not a requirement for the platform.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Latency is acceptable for the platform.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Common groupings of modules can be verified for defaults.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Users don't need to understand state to use the platform.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Modules can have a maximum of 10 state entries.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Context assembly is a simple process of reading the entire state and filling in at a predefined prompt.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The platform will store prompts and responses in a graph.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The time machine debugger will be available for debugging purposes.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 592
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 2,
+      "propositions": [
+        {
+          "content": "Modules can be compiled into the CRX.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Documentation markdown files can be created.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 204
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 3,
+      "propositions": [
+        {
+          "content": "Compile selected modules into CRX",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Create documentation markdown files",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Create documentation markdown files",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 183
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "user",
+      "extractSpanCount": 2,
+      "propositionCount": 32,
+      "propositions": [
+        {
+          "content": "README document exists.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "README document contains links to other documents.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "README document provides a quick start guide.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "README document contains a 30-second pitch.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "README document is a high-level overview.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "ARCHITECTURE document exists.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "ARCHITECTURE document contains core architecture sections.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "ARCHITECTURE document includes Knowledge Graph section.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "ARCHITECTURE document includes State section.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "ARCHITECTURE document includes Data Flow section.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "ARCHITECTURE document includes Browser Extension Model section.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "ARCHITECTURE document includes Communication Patterns section.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "ARCHITECTURE document includes Storage Strategy section.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "ARCHITECTURE document keeps high-level information.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "ARCHITECTURE document does not contain implementation details.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "MODULES document exists.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Develop a 30-second pitch for the project.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Keep high-level architecture design without implementation details.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Use a single-file architecture for modules.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Implement a compilation service architecture.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Limit module size to 500 lines.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Use a declarative approach for architecture design.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Use dynamic loading instead of compilation.",
+          "scope": "decision",
+          "type": "exploration",
+          "sourceIds": [
+            "S7"
+          ]
+        },
+        {
+          "content": "Use dynamic loading instead of single-file modules.",
+          "scope": "decision",
+          "type": "exploration",
+          "sourceIds": [
+            "S8"
+          ]
+        },
+        {
+          "content": "Use a dynamic approach instead of declarative approach.",
+          "scope": "decision",
+          "type": "exploration",
+          "sourceIds": [
+            "S9"
+          ]
+        },
+        {
+          "content": "Create a compilation service architecture.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S10"
+          ]
+        },
+        {
+          "content": "Develop a module interface contract.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S11"
+          ]
+        },
+        {
+          "content": "Implement development standards for modules.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S12"
+          ]
+        },
+        {
+          "content": "Create a testing requirements document for modules.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S13"
+          ]
+        },
+        {
+          "content": "Develop a module walkthrough example.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S14"
+          ]
+        },
+        {
+          "content": "Create a module capabilities matrix.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S15"
+          ]
+        },
+        {
+          "content": "Document which modules work together.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S16"
+          ]
+        }
+      ],
+      "latencyMs": 1609
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 10,
+      "propositions": [
+        {
+          "content": "README document exists.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "README document contains a 30-second pitch.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "README document contains links to other documents.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "ARCHITECTURE document exists.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "ARCHITECTURE document contains core architecture sections.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "ARCHITECTURE document contains a browser extension model.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "ARCHITECTURE document contains communication patterns.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "ARCHITECTURE document contains a storage strategy.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "ARCHITECTURE document keeps high-level information.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "ARCHITECTURE document does not contain implementation details.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 593
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "user",
+      "extractSpanCount": 0,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 0
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "assistant",
+      "extractSpanCount": 0,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 0
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 2,
+      "propositions": [
+        {
+          "content": "The module catalog needs to be converted into a table format.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "A table is a suitable data structure for organizing module information.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 253
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "The module catalog needs to be put into a table.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 131
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 14,
+      "propositions": [
+        {
+          "content": "Chrome extensions can detect media button events from Bluetooth headphones.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Media button events are passed through to Chrome as keyboard-equivalent events.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome extensions can theoretically trigger actions with these buttons.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome extensions generally don't run when the device is in sleep mode.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome extensions need explicit permission to access the microphone.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "User consent through a permission prompt is required for microphone access.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The browser must be active for Chrome extensions to access the microphone.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Background audio recording while the screen is off is restricted for privacy and battery reasons.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Using media buttons while the screen is ON but dimmed is a more realistic approach.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A Chrome extension can listen for media button events and trigger microphone recording.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Keeping the screen at minimum brightness is a possible solution.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "An Android app like 'Easy Voice Recorder' might handle sleep states better.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has built-in protections against apps secretly recording audio.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "These protections are in place for user security.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 653
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 12,
+      "propositions": [
+        {
+          "content": "Chrome extensions can detect media button events from Bluetooth headphones.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Media button events are passed through to Chrome as keyboard-equivalent events.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome extensions can theoretically trigger actions with these buttons.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome extensions generally don't run when the device is in sleep mode.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome extensions need explicit permission to access the microphone.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "User consent through a permission prompt is required for microphone access.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Background audio recording while the screen is off is restricted for privacy and battery reasons.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Using media buttons while the screen is ON but dimmed is a more realistic approach.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "A Chrome extension can listen for media button events and trigger microphone recording.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "A Chrome extension can keep the screen at minimum brightness.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "An Android app like 'Easy Voice Recorder' might handle sleep states better.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has built-in protections against apps secretly recording audio when the device appears to be off.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 730
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "A Chrome extension can wake up the screen from sleep.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A Chrome extension can run when the device screen is off.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A Chrome extension can detect the media key press.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A Chrome extension can turn the screen on.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A Chrome extension can be always listening.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A Chrome extension can run in the background.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A Chrome extension can transcribe audio.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 454
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "A Chrome extension can turn the screen on.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A Chrome extension can wake up from sleep.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A document can run when the device screen is off.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A Chrome extension can run when the device screen is off.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The media key is not necessary if the extension is always running.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 330
+    },
+    {
+      "turnIndex": 13,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 6,
+      "propositions": [
+        {
+          "content": "The media session API can run within the module runtime.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The media session API can run outside the module runtime.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The media session API can wake up the device.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The media session API can trigger the microphone.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The audio capture should be a module within the service worker.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The media session API should run outside the service worker.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 336
+    },
+    {
+      "turnIndex": 13,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "The media session API can run within the module runtime.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The media session API can wake up the device.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The media session API can trigger the mic to run.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The audio capture should be a module within the service worker.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The media session API should run outside of the service worker.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 358
+    },
+    {
+      "turnIndex": 14,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "The off-screen document can wake up the service worker tied to the extension.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "State and local storage must be saved to prevent data loss.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The service worker's memory is not killed when it stops, it is paused.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The service worker does not have to go through startup again after being paused.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Audio capture should not run in the off-screen document.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The Lenovo Duet 11-inch (83HH0001US) device will be used for testing.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "A research script will be created to verify the functionality.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 412
+    },
+    {
+      "turnIndex": 14,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 6,
+      "propositions": [
+        {
+          "content": "The off-screen document can wake up the service worker tied to the extension.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Saving state and local storage is necessary for time-traveling debugging.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The service worker's memory is not killed when it stops, but rather paused.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Audio capture should not run in the off-screen document.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The Lenovo duet 11 inch 83hh0001us is a device to be considered for the project.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "A research script should be created to verify the feasibility of the project.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 505
+    },
+    {
+      "turnIndex": 15,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 6,
+      "propositions": [
+        {
+          "content": "Chrome OS doesn't notify extensions before termination.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Restarting Chrome OS takes longer than one second.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Device state modifications should be kept for 1020 minutes.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Users may lose 10 seconds of state when device screen turns off.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Users can turn off device screen to terminate extensions.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "There may be a setting to terminate extensions when device screen turns off.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 408
+    },
+    {
+      "turnIndex": 15,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 6,
+      "propositions": [
+        {
+          "content": "Chrome OS extensions are not informed of impending termination.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Restarting Chrome OS takes longer than one second.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Hardware document artifact should include user settings for screen timeout.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Device state modifications should be retained for 1020 minutes.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Losing 10 seconds of state is not a significant issue.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "There may be a setting to terminate extensions on screen off or sleep.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 409
+    },
+    {
+      "turnIndex": 16,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 11,
+      "propositions": [
+        {
+          "content": "Chrome OS kills extensions when the screen is off",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS kills extensions when the screen is off, not when sleeping",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS extensions can be triggered by state change, not timer",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS has a 10 to 20 minute state history",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS can be set to never sleep",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS battery life is affected by screen state",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS battery life is affected by sleep state",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS extensions can be triggered by state change",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS state persistence strategy is reasonable",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablet is a suitable device for cognition extension",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cognition extension project aims to extend cognition",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 719
+    },
+    {
+      "turnIndex": 16,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 9,
+      "propositions": [
+        {
+          "content": "Chrome OS kills extensions when the screen is off",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS kills extensions when the screen is off or when sleep triggers",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "State persistence strategy with 10 to 20 minute state history is reasonable",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS extensions can be triggered by state change, not just timer",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Screen being off but not sleeping allows Chrome OS extensions to work fine",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Setting sleep to never on Chrome OS is possible",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Battery life in both screen off and sleep states is unknown",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablet is a potential cognition extension device",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cognition extension project aims to extend cognition using Chrome OS",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 507
+    },
+    {
+      "turnIndex": 17,
+      "speaker": "user",
+      "extractSpanCount": 2,
+      "propositionCount": 23,
+      "propositions": [
+        {
+          "content": "Saving state frequently is necessary due to suspend duration.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Local storage can be used for state recovery in case of emergency shutdown.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Extensions keep running when the screen is off on Chrome OS.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Extensions are terminated during sleep on Chrome OS.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS can be awake for 8-10 hours with the screen off.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS can sleep for 2-3 days.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The off-screen doc will consume 2 hours of runtime.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets have full desktop Chrome and extension support.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets do not limit extensions like other mobile licenses do.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets are always updated.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Instant on feature on Chrome OS provides long battery life like tablets.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets have a low price point.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets are low-cost devices.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets have long battery life.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Extensions are first-class citizens in Chrome OS.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets can be used as a perfect device for cloud-first cognition extension.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets can be used as a sandbox environment.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets can be secured by design.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets can be used for cloud-first knowledge everywhere.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets can be used for user experience promises.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets can be used for app switching in the browser.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Graph databases can be used for storing music.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Graph databases might be slower than BLOB storage for storing media.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 1352
+    },
+    {
+      "turnIndex": 17,
+      "speaker": "assistant",
+      "extractSpanCount": 2,
+      "propositionCount": 25,
+      "propositions": [
+        {
+          "content": "Chrome OS power state clarification",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Extensions keep running when screen is off",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Extensions are terminated during sleep",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "System can be awake for 8 to 10 hours with screen off",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "System can sleep for 2 to 3 days",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS does not limit extensions like other mobile licenses",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS is always updated",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Instant on means long battery life like tablets",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Instant on means low price point",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS has full desktop Chrome and extension support",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS can recover from local storage in case of emergency shutdown",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS can recover from startup script",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS can save state to local storage",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has a perfect sandbox for Chrome extensions",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets have long battery life.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets have a low price point.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS extensions are first-class citizens.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Extensions can run in the background in Chrome OS.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Extensions can be secured by design in Chrome OS.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cloud-first knowledge is a feature of Chrome OS tablets.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Extensions can be turned on with a headphone tap in Chrome OS.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Extensions can pull from memory the state before sleep in Chrome OS.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Graph media storage might be slower than BLOB storage.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Graph media storage has limitations.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets can switch apps quickly.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 1418
+    },
+    {
+      "turnIndex": 18,
+      "speaker": "user",
+      "extractSpanCount": 2,
+      "propositionCount": 27,
+      "propositions": [
+        {
+          "content": "Storage dot local dot set has a 116 megabyte property size limit for base 64 encoded media.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Base 64 encoding is the least efficient type of encoding for media.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Base 64 encoded media is 10 to 100 times slower than BLOB storage for performance.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A 5 minute song in base 64 encoding is larger than 116 megabytes.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets are the perfect cognition extension device.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS extensions are first class citizens.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has an instant on feature with a power on time of less than two seconds.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has a good all day battery life.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS supports full desktop Chrome experience.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS supports real extensions, not mobile Chrome.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS is a democratization cognition extension for everyone, not just the wealthy.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Service workers on Chrome OS restart fast enough, less than one second.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS can listen to off screen documents while the screen is off.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has a media button that triggers the whole flow.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS is a perfect voice first AI device built on the extendable Chrome OS and extensions.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Graph database media storage is technically possible but not ideal.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Neo 4J is a suitable graph database for media storage.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The government may verify media files stored on BLOB storage for piracy.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Chrome extensions do not store blobs in the graph.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "There is no way to play music from files on a Chrome extension.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Chrome OS has fingerprint security features.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Blobs are not stored in the graph.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The Chrome extension has a limitation of not being able to play music from device files.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "There is a limitation in the Chrome extension.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "It is possible to unlock a Lenovo device with a fingerprint.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Lenovo devices have a fingerprint unlocking feature.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The government may verify media files for piracy if they are hosted on a BLOB storage.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        }
+      ],
+      "latencyMs": 1637
+    },
+    {
+      "turnIndex": 18,
+      "speaker": "assistant",
+      "extractSpanCount": 2,
+      "propositionCount": 18,
+      "propositions": [
+        {
+          "content": "Storage dot local dot set has a 116 megabyte property size limit for base 64 encoded media.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Base 64 encoding is the least efficient type of encoding.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Base 64 encoding is 10 to 100 times slower than BLOB storage for media.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets are the perfect cognition extension device.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS extensions are first class citizens.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has an instant on press power feature.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has a good all day battery life.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A 5 minute song in base 64 encoding is larger than 116 megabytes.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Graph database media storage is not ideal for media.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Neo 4J is a suitable alternative to graph database media storage.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS does not store blobs in the graph.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "There is no direct way to play music from files on a Chrome OS device.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Lenovo devices have fingerprint unlocking feature.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Blobs are not stored in the graph.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The Chrome extension has limitations.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The Chrome extension cannot play music from local files.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "There is a fingerprint unlock feature on Lenovo devices.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The government may verify media files for piracy.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        }
+      ],
+      "latencyMs": 1021
+    },
+    {
+      "turnIndex": 19,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 12,
+      "propositions": [
+        {
+          "content": "Chrome OS runs the exact same Chrome as desktop",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS has full manifest V3 support",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS extension APIs are available",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS has a file system access API",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS supports face unlock via front camera",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS supports smart lock unlock with paired phone nearby",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A 5-minute song size is 12 megabits",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS can start local servers",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has instant on from sleep in less than two seconds",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has a media key for recording",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has a battery life",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS is cheap",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 612
+    },
+    {
+      "turnIndex": 19,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 17,
+      "propositions": [
+        {
+          "content": "Chrome OS runs the exact same Chrome as desktop",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS has full manifest V3 support",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS has all extension APIs available",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS has a file system access API",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has a file picker",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS supports local file server interaction",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS supports starting local servers",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has face unlock via front camera",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has pin password and smart lock unlock with paired phone nearby",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A phone can wake up from sleep in less than a second",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A Chrome OS tablet can wake up from sleep in less than two seconds",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A Chrome OS tablet has instant on from sleep",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A Chrome OS tablet has cheap media key",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A 5-minute song size is 12 megabits",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Base 64 is more efficient than other encoding methods",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "DMCA notice is related to hosting media on a private server",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Encrypting media from a private server to a device can be 100% safe",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 819
+    },
+    {
+      "turnIndex": 20,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 13,
+      "propositions": [
+        {
+          "content": "Chrome OS has full desktop Chrome APIs, unlike iPads and Android tablets.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets can access USB devices directly.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has a full extension API, unlike mobile Chrome.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS can access local files without user prompting.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets can wake up instantly, unlike laptops.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has a perfect voice-first AI experience.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Cloud storage providers must respond to DMCA takedowns.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "E2E encryption makes cloud storage effectively safe from DMCA takedowns.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets are fully customizable AI systems.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets can access hardware features like accelerometers.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has a unique architecture that allows for instant wake-up and thinking.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets have limitations like no local file servers and no face unlock.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets are cloud-first extension native voice writing cognitive devices.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 747
+    },
+    {
+      "turnIndex": 20,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 12,
+      "propositions": [
+        {
+          "content": "Chrome OS tablets have full desktop Chrome APIs.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets can access USB devices directly.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets have full extension support.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets can run full desktop Chrome, not the limited mobile version.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets can access local files without a user prompt.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets can wake up instantly.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets have a smart lock feature.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets can run for 10 hours with the screen off.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets have access to hardware features like accelerometers.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets have a fully customizable AI system.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets do not have local file servers.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS tablets are cloud-first extension native voice writing cognitive devices.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 692
+    },
+    {
+      "turnIndex": 21,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 15,
+      "propositions": [
+        {
+          "content": "Chrome OS has stricter sandboxing than desktop Chrome.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "File operations may behave differently on Chrome OS due to its file system structure.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Downloads on Chrome OS go to the Downloads folder, which is more isolated.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Native messaging is limited on Chrome OS compared to desktop Chrome.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS extensions can't communicate with arbitrary native applications.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS extensions can only communicate with Android apps through specific channels.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "USB and serial port access can be more restricted on Chrome OS.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS extensions may need to handle device sleep/wake differently.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Background processing limits can be more aggressive on Chrome OS.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome OS has the same core Chrome Extension APIs as desktop Chrome.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS provides additional APIs not available on other platforms, including the File System Provider API, Input Method Editor API, Virtual Keyboard API, and Wallpaper API.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has stricter sandboxing and file system structure, which affects file operations.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS extensions have limited native messaging capabilities compared to desktop Chrome.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS extensions have restricted access to USB and serial ports.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS extensions have different background processing limits compared to desktop Chrome.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 786
+    },
+    {
+      "turnIndex": 21,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 8,
+      "propositions": [
+        {
+          "content": "Chrome OS has the same core Chrome Extension APIs as desktop Chrome.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS provides additional APIs: File System Provider API, Input Method Editor API, Virtual Keyboard API, Wallpaper API.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS has stricter sandboxing and file operations may behave differently.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Native Messaging is limited on Chrome OS compared to desktop.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Hardware access, such as USB and serial port access, can be more restricted on Chrome OS.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS extensions may need to handle device sleep/wake differently and have more aggressive background processing limits.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS offers a full desktop Chrome with complete extensions API, unlike iPads and Android tablets which run mobile Chrome with severe limitations.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Chrome OS allows running servers and full Linux environment.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 548
+    },
+    {
+      "turnIndex": 22,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 6,
+      "propositions": [
+        {
+          "content": "A module can pull data from a Fitbit.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The data includes the time you woke up today.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The data includes how long you've been up.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The data includes the number of steps you've taken.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A module can be used to demonstrate a data retriever module.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A data retriever module is a marginal type of module.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 414
+    },
+    {
+      "turnIndex": 22,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 6,
+      "propositions": [
+        {
+          "content": "A module can pull data from a Fitbit.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A Fitbit tracks the time you woke up.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A Fitbit tracks how long you've been up.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A Fitbit tracks the number of steps you've taken.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A module can be used to demonstrate a data retriever module.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A data retriever module is a type of module.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 330
+    },
+    {
+      "turnIndex": 23,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "A device can be used to listen to conversations without being detected.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "LLMs can piece together conversations to provide advice on how to act like you belong at a party.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "It is technically feasible to use LLMs to analyze conversations from multiple sources.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Pre-processing and voice isolation can be used to improve conversation analysis.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "LLMs can be used to analyze conversations from multiple sources, such as tables in a restaurant.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "LLMs can be used to analyze conversations from multiple sources, such as a kitchen in a restaurant.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "LLMs can be used to analyze conversations from multiple sources, such as a wedding.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 498
+    },
+    {
+      "turnIndex": 23,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "It is technically feasible to use an LLM to piece together conversations from multiple sources.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Pre-processing can be used to isolate voices from random snippets of conversation.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "An LLM can be used to analyze conversations from multiple sources, such as a kitchen with multiple tables.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "An LLM can be used to help with tasks such as running a kitchen, given enough data and sources.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 455
+    },
+    {
+      "turnIndex": 24,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 6,
+      "propositions": [
+        {
+          "content": "A restaurant can interact with a multilingual ordering system.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A device can be used to order food without a menu.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A person can pretend to be an expert by looking up information.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A person can create a backstory to appear as someone else.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A person can use conversation topics to build a backstory.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A person can use an AI to appear as a human.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 434
+    },
+    {
+      "turnIndex": 24,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "A restaurant ordering system can bridge language barriers for multilingual kitchens.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A device can be designed to start recording and know the table and order of a customer.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A customer can specify their order in detail, such as a hamburger that tastes like one from McDonald's.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A person can blend in by pretending to be someone else and providing plausible information.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A person can create a backstory by gathering information through conversation and observation.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A person can use a device to access information and appear knowledgeable.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A person can build a social graph by interacting with key people and gathering information.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 448
+    },
+    {
+      "turnIndex": 25,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 3,
+      "propositions": [
+        {
+          "content": "Operational memories can be created using Fitbit data.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Augmented humanity can be achieved with new technology.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "There is a lack of innovation in creating operational memories.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 245
+    },
+    {
+      "turnIndex": 25,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 3,
+      "propositions": [
+        {
+          "content": "Operational memories can be created with Fitbit data.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Augmented humanity is a new concept.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "There is no known solution to the problem of creating operational memories.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 338
+    },
+    {
+      "turnIndex": 26,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 2,
+      "propositions": [
+        {
+          "content": "Chrome OS tablets document was updated",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "different document was created",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 201
+    },
+    {
+      "turnIndex": 26,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 3,
+      "propositions": [
+        {
+          "content": "Chrome OS tablets document was not updated",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A perfect voice first AI device exists",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A newer document was created",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 305
+    },
+    {
+      "turnIndex": 27,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 76
+    },
+    {
+      "turnIndex": 27,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 79
+    },
+    {
+      "turnIndex": 28,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "changes were made",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 112
+    },
+    {
+      "turnIndex": 28,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "changes were made",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 121
+    },
+    {
+      "turnIndex": 29,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 11,
+      "propositions": [
+        {
+          "content": "The off-screen document is a separate module that is an always-on listener for media keys.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The service worker is the context where the extension code runs.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The service worker does not do speech processing or media handling.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The individual modules are responsible for their own logic and state.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The extension UI is not a separate thing, it's actually a UI overlay module.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Each module is responsible for its own overlay and can show actions like pop-ups.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The UI module needs to provide actions that allow modules to show pop-ups and other UI elements.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The action registry will coordinate what to put where and when.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The state synchronization is done through a broadcast channel that keeps state hot.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The state is not partitioned by module to avoid tight coupling.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "There are four types of state: volatile, persistent local, persistent secure storage, and the knowledge graph.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 740
+    },
+    {
+      "turnIndex": 29,
+      "speaker": "assistant",
+      "extractSpanCount": 0,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 0
+    },
+    {
+      "turnIndex": 30,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 16,
+      "propositions": [
+        {
+          "content": "Content scripts can read and modify the DOM.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Content scripts cannot make external API calls.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Service workers can interact with Chrome memory and make API calls.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Service workers persist until Chrome terminates after sleep.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The content script array is in the manifest.json.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Modules generate HTML in the content script.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The off-screen document is a simple concept.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The service worker's primary function is to create and initialize state and build an action registry.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The service worker should not do everything; it's just a process.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The startup script's primary function is to create and initialize state and build an action registry.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The UI has three main functions: notification, confirmation, and visualization.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Storage state is in memory and can be wiped.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Config can be stored in Chrome storage.local.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Config can be wiped when browser data is deleted.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Secrets can be stored in Chrome's password manager.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Knowledge can be stored in a cloud graph DB.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 878
+    },
+    {
+      "turnIndex": 30,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 24,
+      "propositions": [
+        {
+          "content": "Content scripts can read and modify the DOM.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Content scripts cannot make external API calls.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Content scripts can interact with Chrome memory.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Service workers can make API calls and use the Chrome API.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Service workers persist until Chrome terminates after sleep.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The content script array is in the manifest JSON.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Modules generate HTML in the content script.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The off-screen document is a single line of code.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The service worker needs to create, initialize state, and build an action registry.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The service worker should not do everything.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The startup script needs to create, initialize state, and build an action registry.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "There should be a modal notification and a sidebar in the UI.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The notification should go away after a configured amount of time.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The modal can be closed.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The sidebar is for persistent text.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The UI has three things it can do: notify, confirm, and show/visualize.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Storage is in memory, hot, and broadcast channel perfect.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Config is in Chrome storage dot local.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Config can be wiped, but it should not be able to wipe.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Deleting browser data may delete extension configs.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Config is considered an extension config.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Config is kept in a separate location.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Secrets are in Chrome password manager.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Knowledge is in a cloud graph DB.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        }
+      ],
+      "latencyMs": 1169
+    },
+    {
+      "turnIndex": 31,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 9,
+      "propositions": [
+        {
+          "content": "A service worker defines the UI.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The UI module collects all module UIs.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The service worker sends UI to the contact script.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The content script is a static file.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The content script receives objects.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The content script can be a listener on the broadcast channel.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Extension updates involve updating the extension config.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Extension effects get wiped with clearing browser data.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Configs are stored in Chrome storage local.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 610
+    },
+    {
+      "turnIndex": 31,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "A service worker defines the UI.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The UI module collects all module UIs.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A service worker sends UI to a contact script.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The content script is a static file.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The content script receives objects.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The content script is a listener.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Configs are stored in Chrome storage local.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 356
+    },
+    {
+      "turnIndex": 32,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "Start a new project",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Create a new project folder",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Name the new project 'cognition extension'",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Declutter the project folder",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Clean and pull the git repo",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Include documentation in the git repo",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Include contacts from previous attempts in the git repo",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 356
+    },
+    {
+      "turnIndex": 32,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "Create a new project called cognition extension",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Start decluttering from the project folder",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Consider cleaning and pulling the git repo before starting a new project",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Consider pulling all contacts from previous attempts before starting a new project",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 315
+    },
+    {
+      "turnIndex": 33,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "A fresh GitHub repository has been created.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Documentation has been created for the project.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The start script should be the initial point for development.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A 'hello world' module should be created as a starting point.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "An extension builder is required to compile the code into an extension.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Instructions are needed for updating Chrome and viewing the change in the browser.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The extension should be loaded into a specific folder.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 507
+    },
+    {
+      "turnIndex": 33,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 8,
+      "propositions": [
+        {
+          "content": "A fresh GitHub repository has been created.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Instructions for updating Chrome are needed.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Instructions for updating a browser view are needed.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A 'hello world' module should be created.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "An extension builder should be used.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Code for compiling into an extension is needed.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Documentation has been created for the project.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Documentation should be reviewed for changes.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 515
+    },
+    {
+      "turnIndex": 34,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "The state and start up should both speed modules.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 125
+    },
+    {
+      "turnIndex": 34,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "The state and start up both speed modules",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 113
+    },
+    {
+      "turnIndex": 35,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 2,
+      "propositions": [
+        {
+          "content": "Take instructions from clod project",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Consider different constructions for next project",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 267
+    },
+    {
+      "turnIndex": 35,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 2,
+      "propositions": [
+        {
+          "content": "clod project instructions",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "different constructions",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 142
+    },
+    {
+      "turnIndex": 36,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "A file with instructions for AI code helper should be in the repo.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The file should be named in a way that is clear to a language model.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The file name should indicate its purpose as instructions for the AI code helper.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Examples of clear file names include 'AI Code Helper Instructions' or 'LM Instructions'.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 369
+    },
+    {
+      "turnIndex": 36,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "File should be in the repository.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "File contains instructions for the AI code helper.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "File should be named to indicate its purpose to the language model.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "File name should be clear and explicit to the language model.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "File name should scream out to the language model to use it as instructions.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 350
+    }
+  ]
+}

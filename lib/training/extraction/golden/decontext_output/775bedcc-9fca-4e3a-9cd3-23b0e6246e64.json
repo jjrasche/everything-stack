@@ -1,0 +1,2127 @@
+{
+  "conversationUuid": "775bedcc-9fca-4e3a-9cd3-23b0e6246e64",
+  "conversationName": "Teaching Charlie a double leg takedown for her first wrestling meet",
+  "turnCount": 58,
+  "stage": "decontextualize",
+  "model": "groq/llama-3.1-8b-instant",
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 8,
+      "propositions": [
+        {
+          "content": "6 year old kindergarten kindergartner is going to wrestle for the first time.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Daughter is pretty good at defense.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Daughter understands how to sprawl.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Daughter understands how to do defense generally.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Focus on one move for takedown.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Move involves doing the v's and pushing arms up.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Move involves getting down on knees with arms raised.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Move involves bringing arms down for double leg takedown.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 618
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 10,
+      "propositions": [
+        {
+          "content": "The child is 6 years old and in kindergarten.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The child is going to participate in wrestling for the first time.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The child is good at defense.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The child can sprawl and do defense generally.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The child should focus on one move while playing defense.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The child should look for an opportunity for a takedown while playing defense.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The move involves doing the v's and pushing the opponent's arms up.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The move involves getting down on the knees with the opponent's arms raised.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The move involves bringing the arms down and doing a double leg takedown.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The child should be advised to engage their brain in playing defense and looking for a takedown opportunity.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S4"
+          ]
+        }
+      ],
+      "latencyMs": 680
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "Breathing deeply before a match can inject oxygen into the blood.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Breathing deeply before a match can improve performance.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Breathing deeply before a match is a common practice in some sports.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Breathing deeply before a match involves taking a bunch of quick breaths.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 288
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 3,
+      "propositions": [
+        {
+          "content": "Breathe deeply before a match can inject oxygen into the blood.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Breathe deeply before a match can improve performance.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Breathe deeply before a match is a common practice in some sports.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 257
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "Rhythmic breathing is done in combat sports.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Combat sports include martial arts, boxing, and mixed martial arts.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Wrestling is a combat sport.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Rhythmic breathing is not typically done in wrestling.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Wrestling has different breathing techniques.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 326
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "S1",
+          "scope": "session",
+          "type": null,
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 427
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "Protect yourself from a takedown.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Have one attack move.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The v-knees v-wait is a defensive move.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Pushing an opponent's arms up is a part of the v-knees v-wait move.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The double egg takedown is an attack move.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 334
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 8,
+      "propositions": [
+        {
+          "content": "Charlie should protect herself from a takedown.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Charlie should have one attack move.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Charlie's goal is to try an attack move.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Charlie should listen to her coach.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A cue about window tech is not relevant to wrestling.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The v knees move involves pushing the opponent's arms up.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The v knees move involves going to the knees.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The Double egg takedown is a wrestling move.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 480
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "Dead branches are present in the woods.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Breaking dead branches and putting them on the forest floor is a possible action.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The woods are crowded under a particular area.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Things are hanging on each other in the woods.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 366
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 6,
+      "propositions": [
+        {
+          "content": "Dead branches are present in the woods.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Dead branches are hanging on each other.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Dead branches are present on the trees.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The woods are crowded.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Removing dead branches can be beneficial to the woods.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Removing dead branches can improve the forest floor.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 317
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 3,
+      "propositions": [
+        {
+          "content": "Food forestry is a concept.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Food forestry aims to optimize food production.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Food production in a forest is the goal.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 234
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "Food forestry is a method.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The goal of food forestry is to optimize food production in a forest.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The focus is on a forest.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The objective is food production.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 352
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 3,
+      "propositions": [
+        {
+          "content": "Delicate winter clothes require cold water for washing.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Delicate winter clothes should be hang dried.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The general rule for delicate clothes is to use cold water and hang dry.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 333
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "Delicate clothes require cold water.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Delicate clothes should be hung to dry.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cold water is typically below 30 degrees Celsius.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Delicate clothes can be damaged by high temperatures.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Hanging clothes to dry is a gentle drying method.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 308
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 3,
+      "propositions": [
+        {
+          "content": "Frozen corn ≈ $1.80 / lb, 8–12 months shelf life",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Canned corn ≈ $1.35–1.45 / lb edible, 3–5 years shelf life",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Dried corn ≈ $0.12–0.15 / lb edible, 1–2 years shelf life",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 485
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 8,
+      "propositions": [
+        {
+          "content": "Frozen corn ≈ $1.80 / lb",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Frozen corn ≈ $1.80 / lb edible",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Frozen corn ≈ 8–12 months (freezer)",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Canned corn ≈ ~$1.35–1.45 / lb edible",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Canned corn ≈ 3–5 years (pantry)",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Dried corn (bulk) ≈ $0.30 / lb (dry)",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Dried corn (bulk) ≈ ~$0.12–0.15 / lb edible",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Dried corn (bulk) ≈ 1–2 years (pantry, sealed)",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 436
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "includes water weight",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 115
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "includes water weight",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 104
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 83
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 78
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "Research to confirm numbers",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Find sources to buy Frozen",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Find sources to buy Frozen online",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Use Costco's for Frozen",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Find sources to buy Frozen offline",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 262
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "Confirm numbers through research.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Find sources for buying Frozen at Costco.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Find sources for buying Frozen online.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Find sources for buying Frozen at other stores.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Find sources for buying Frozen online at other stores.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 377
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 86
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 76
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "A 25 lb bag of ardent Mills all-purpose flour costs 829.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A 12 lb bag of King Arthur's all-purpose flour costs 949.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A 25 lb bag of ardent Mills all-purpose flour costs more than twice as much as a 12 lb bag of King Arthur's all-purpose flour.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The quality of ardent Mills all-purpose flour is unknown.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The quality of King Arthur's all-purpose flour is unknown.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The process of making ardent Mills all-purpose flour is unknown.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The process of making King Arthur's all-purpose flour is unknown.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 423
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "A 25 lb bag of ardent Mills all-purpose flour costs 829.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A 12 lb bag of King Arthur's all-purpose flour costs 949.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A 25 lb bag of ardent Mills all-purpose flour costs more than twice as much as a 12 lb bag of King Arthur's all-purpose flour.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The quality of flour can impact baking.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The process of making flour can impact baking.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 335
+    },
+    {
+      "turnIndex": 13,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "Dried products are two to five times as expensive.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The shelf life of dried products varies.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Dried products contain 1% to 3% of protein.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Higher protein content in dried products leads to better structure and chewier texture.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cake flour has lower protein content compared to other types of flour.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cake flour is less expensive than other types of flour.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Using cheaper flour is a cost-effective option.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 507
+    },
+    {
+      "turnIndex": 13,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "Dried goods are two to five times as expensive as other options.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The shelf life of dried goods varies.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Dried goods contain 1-3% of protein.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Higher protein content in dried goods leads to better structure and chewier texture.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cake flour with lower protein content is used for baking cakes and pastries.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Cake flour is more expensive than other types of flour.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Using cheaper flour is a more cost-effective option.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 486
+    },
+    {
+      "turnIndex": 14,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "Less protein in flour results in less gluten.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Lower gluten content enables easier mixing.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Mechanical means of mixing can be used with lower gluten content.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "11.5% protein flour allows for efficient mixing without a blender.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "8-8.5% protein flour requires blending wet and dry ingredients separately.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Higher protein content in flour can lead to overworked dough.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Automated mixing is possible with certain types of flour.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 439
+    },
+    {
+      "turnIndex": 14,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "Lower protein flour enables easier mixing.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "11.5% protein flour allows for mechanical mixing.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "8-8.5% protein flour requires blending wet and dry ingredients separately.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Higher protein flour can lead to overworked dough.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 248
+    },
+    {
+      "turnIndex": 15,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 2,
+      "propositions": [
+        {
+          "content": "muffins require blending of wet and dry ingredients",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "blending of wet and dry ingredients should be done by hand",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 184
+    },
+    {
+      "turnIndex": 15,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 2,
+      "propositions": [
+        {
+          "content": "muffins require blending wet and dry ingredients",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "blending wet and dry ingredients is typically done by hand",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 199
+    },
+    {
+      "turnIndex": 16,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "High fat content is present in the recipe.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Using more oil counteracts gluten.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Tenderizers pulse very briefly.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Simplifying recipes and the process enables bulk production with less human effort.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 275
+    },
+    {
+      "turnIndex": 16,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "High fat content is present in the recipe.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Using more oil counteracts gluten.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Tenderizers pulse very briefly.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Simplifying recipes enables bulk production with less human effort.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 239
+    },
+    {
+      "turnIndex": 17,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "Almond flour is 8 times more expensive than wheat flour.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 126
+    },
+    {
+      "turnIndex": 17,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "Almond flour is 8 times more expensive than wheat flour.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 124
+    },
+    {
+      "turnIndex": 18,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 3,
+      "propositions": [
+        {
+          "content": "Add Corn to the table for cans.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Add Volume to the table for cans.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Include Volume per pound in the table for cans.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 241
+    },
+    {
+      "turnIndex": 18,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "S1 S2 S3",
+          "scope": "session",
+          "type": null,
+          "sourceIds": [
+            "S1",
+            "S2",
+            "S3"
+          ]
+        }
+      ],
+      "latencyMs": 699
+    },
+    {
+      "turnIndex": 19,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 3,
+      "propositions": [
+        {
+          "content": "Volume of frozen is as high as volume of real",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Volume of dried is the lowest",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Research is needed to figure out the volume comparison",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 319
+    },
+    {
+      "turnIndex": 19,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "Volume of frozen is not as high as volume of real research.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Volume of dried is the lowest.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Research mode is necessary to figure out the numbers.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Online search is an alternative to research mode.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 306
+    },
+    {
+      "turnIndex": 20,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 2,
+      "propositions": [
+        {
+          "content": "Canned corn packaging cannot be normalized.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Canned corn products still have cans and liquid.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 205
+    },
+    {
+      "turnIndex": 20,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 2,
+      "propositions": [
+        {
+          "content": "Canned corn packaging cannot be normalized.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Canned corn products still have cans and liquid.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 205
+    },
+    {
+      "turnIndex": 21,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 2,
+      "propositions": [
+        {
+          "content": "Normalization should be square feet per pound.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cost should be included in the table.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 201
+    },
+    {
+      "turnIndex": 21,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 2,
+      "propositions": [
+        {
+          "content": "Normalization should be square feet per pound.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Cost should be included in the table.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 204
+    },
+    {
+      "turnIndex": 22,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "numbers don't make sense",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 108
+    },
+    {
+      "turnIndex": 22,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "Numbers need to be recalculated.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 301
+    },
+    {
+      "turnIndex": 23,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "Parenting is an exercise in flexibility and adaptation to new details.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 130
+    },
+    {
+      "turnIndex": 23,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "Parenting involves exercise of flexibility and adaptation",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 133
+    },
+    {
+      "turnIndex": 24,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "There is a chance of being the only person in a simulation.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "There is a chance of being with core family in a simulation.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Non-NPCs may be NPCs.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Consciousness may be split.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Individuals in a simulation may have lived as every other individual.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 350
+    },
+    {
+      "turnIndex": 24,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "There is a possibility of being the only person in a simulation.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "There is a possibility of being with core family members in a simulation.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Non-NPCs in a simulation may be non-physical entities.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A simulation may have a split consciousness or multiple parallel realities.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "It is possible to have lived as every individual in a simulation.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 408
+    },
+    {
+      "turnIndex": 25,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "A private space can tell a person to leave.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A private space can kick a person out.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A private space is not a public space.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A public space has laws protecting free speech.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 265
+    },
+    {
+      "turnIndex": 25,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "A private space can ask a person to leave.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A private space can kick out a person.",
+          "scope": "life",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A private space is not a public space.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A public space has laws protecting free speech.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 349
+    },
+    {
+      "turnIndex": 26,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 3,
+      "propositions": [
+        {
+          "content": "Protest speech is protected.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Private spaces have the right to regulate their occupants.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Costco is a private space.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 308
+    },
+    {
+      "turnIndex": 26,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "Protest speech is protected",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Private spaces may have rules",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Costco is a private space",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Private spaces can kick out protesters",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Private spaces have the right to set rules",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 276
+    },
+    {
+      "turnIndex": 27,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 2,
+      "propositions": [
+        {
+          "content": "Nuisance has precedence over free speech.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "This is infrequently contested.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 173
+    },
+    {
+      "turnIndex": 27,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 2,
+      "propositions": [
+        {
+          "content": "Nuisance has precedence over free speech.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "This is infrequently contested.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 266
+    },
+    {
+      "turnIndex": 28,
+      "speaker": "user",
+      "extractSpanCount": 2,
+      "propositionCount": 3,
+      "propositions": [
+        {
+          "content": "Corn cost varies by storage type.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Dehydration storage costs 3 times as much as others.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Vegetables are being discussed.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 411
+    },
+    {
+      "turnIndex": 28,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 99
+    }
+  ]
+}

@@ -1,0 +1,2255 @@
+{
+  "conversationUuid": "3671ad63-bdd4-4567-a91d-1abfe3015d38",
+  "conversationName": "AI native personal solution architecture",
+  "turnCount": 26,
+  "stage": "decontextualize",
+  "model": "groq/llama-3.1-8b-instant",
+  "turns": [
+    {
+      "turnIndex": 0,
+      "speaker": "user",
+      "extractSpanCount": 3,
+      "propositionCount": 33,
+      "propositions": [
+        {
+          "content": "The project will be AI native.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The AI solution will be adaptable and flexible.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The AI solution will be personalized.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The AI solution will be agentic.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The AI solution will be configurable.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The AI solution will be built around orchestration of several tasks.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The AI solution will be based on statistical models.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The AI solution will be deterministic.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The AI solution will be trained using feedback.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The AI solution will be voice-first or voice-primary.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The AI solution will have short conversational associative interactions with an LLM.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The AI solution will have STT and TTS as components.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A Chrome tablet is not functional for a voice-first solution due to its clunky, slow, and big design.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A cheaper phone can be used for device inference and TTS/STT functionality.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The Chrome extension approach has limitations due to battery and Android OS constraints.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "A mobile app is necessary for a truly interactive and personal AI assistant.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "The concept of a shared global state is essential for effective inference and context management.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Modular architecture with state management is a more effective approach than global state.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "A code assistant can help streamline the software development cycle and improve productivity.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S7"
+          ]
+        },
+        {
+          "content": "A custom side-loaded Android app is a better approach than a Chrome extension for a voice-first solution.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S8"
+          ]
+        },
+        {
+          "content": "Statistical models with feedback can improve the system and make it personalized.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S9"
+          ]
+        },
+        {
+          "content": "I transitioned from global state to runtime object.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Chrome runtime messaging is working well.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "I am transitioning away from the Chrome extension.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "I am building a custom side-loaded Android app.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "VoIP is not a viable option due to limitations around MMS and SMS.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A phone is required for VoIP to function.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The technology should disappear into the background.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Debugging should be minimized.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The code assistant should help with the spectrum development cycle.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The pattern of spec to skeleton to development is a proper way to build software with AI.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The transition from global state to runtime object was a good decision.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The Chrome runtime messaging is a good alternative to global state.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 2114
+    },
+    {
+      "turnIndex": 0,
+      "speaker": "assistant",
+      "extractSpanCount": 3,
+      "propositionCount": 36,
+      "propositions": [
+        {
+          "content": "The project will have a voice first or voice primary solution.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The core of the solution will be short conversational associative interactions with a Large Language Model (LLM).",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Speech-to-Text (STT) and Text-to-Speech (TTS) are components in the pipeline of communicating with the AI native solution.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The AI native solution will be built around the orchestration of several tasks together.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The AI native solution will be adaptable, flexible, personalized, agentic, and configurable.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The AI native solution will be built around feedback to improve the system and make it personalized.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The AI native solution will use statistical models that are deterministic, unlike generative AI.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A voice-first or voice-primary solution is conversational and uses short interactions with an LLM.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The Chrome extension is clunky and slow, making it unsuitable for a conversational AI solution.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A mobile app is necessary for a truly interactive and personal AI assistant.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The Chrome tablet is not functional for a conversational AI solution due to its size and slowness.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A cheaper phone can be used for inference and TTS/STT tasks.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The Google Pixel Pro 10 has a 2 billion parameter Google nano LLM.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The project started with a Fitbit module and an email module.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The architecture initially used a global shared state, but later transitioned to modular state.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The project struggled with layout and DOM tree implementation.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The code assistant was built to help with the development cycle and pattern of software development with AI.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The Chrome extension is being transitioned to a custom side-loaded Android app.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The AI solution is built around orchestration of tasks, feedback, and statistical models.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "The author's phone was broken.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "VoIP technology has limitations around MMS and SMS.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The author needs a phone to use VoIP technology.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The author wants the technology to disappear into the background.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The author wants to be a native and show the capabilities of that position.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The author previously used non-cellular conversations with VoIP.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The author's decision to stay cellular made them need to keep a phone.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The author was introduced to flagship products on the market.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The author wants to integrate communication via an Android app with SMS and MMS.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The author wants to be immediately helpful on a phone call.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The author is concerned about transitioning to a different stack (JavaScript and TypeScript).",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The author thinks that defining the spec in the skeleton in the high-level architecture is important.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The author is concerned that they are overselling the new AI-augmented coding approach.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The author thinks that the code assistant would help them go through the spectrum development cycle.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The author wants to take away the idea of confirming the what, why, in architecturally how at the high level how and then creating function signatures and test descriptions and dependencies of the file.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The author is transitioning away from the Chrome extension and towards building a custom side-loaded Android app.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The author used Chrome runtime messaging to pass messages between contacts in the runtime object.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 2457
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 20,
+      "propositions": [
+        {
+          "content": "Voice first design is more impactful and configurable.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Embedding quality issues were not fully tested.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The whiteboard stalled due to unclear specs or coding issues.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The thought partner paradigm is solid and tests voice first concepts.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A mobile app can provide expanded abilities over a Chrome extension.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A knowledge graph with atomic ideas and entities is the future of context sharing.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Inference requires a shared context and the ability to pull from history.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Claude has a token limit of 32,000, which is lower than expected.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "STT and TTS work independently, but inference may not.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "A UI should implement feedback systems for improvement over time.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "A foreground service can record audio without technical limitations.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Voice conversations with the extension have been unsuccessful, but LLaMA conversations are successful.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "A more associative and less explanatory design could improve conversational flow.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "A tiny side-loaded app can validate conversational flow without feedback or storage.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Mobile devices can help with debugging by providing TTS and STT capabilities.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Starting from scratch and having a detailed roadmap can improve work management and focus.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "A wake word can trigger STT and TTS on a mobile device.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "A voice task logger can be built into the thought partner with a keyword command.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Infrastructure without utility is worthless.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "This project is a tinker-DIY solution to cybernetic augmentation.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        }
+      ],
+      "latencyMs": 1330
+    },
+    {
+      "turnIndex": 1,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 12,
+      "propositions": [
+        {
+          "content": "The author needs visual representation for impactful and configurable results.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Voice-first approach would be better with voice commands and training.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Embedding quality issues were not well tested.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The whiteboard stalled due to unclear specs or coding issues.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A mobile app can provide expanded abilities over a Chrome extension.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A knowledge graph with persistence layer is the future of context sharing.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Claude has token limitation issues with quad.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "STT is validated but needs improvement for voice-first approach.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Inference requires shared context and ability to pull from history.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Mobile can help with debugging by providing a more deliberate approach.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Infrastructure without utility is worthless.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "This is a tinker DIY solution to cybernetic augmentation.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S7"
+          ]
+        }
+      ],
+      "latencyMs": 820
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 2,
+      "propositions": [
+        {
+          "content": "Task logging functionality should not be saved to the conversation turn.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Task logging functionality should be stored separately from IndexedDB.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 211
+    },
+    {
+      "turnIndex": 2,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 2,
+      "propositions": [
+        {
+          "content": "Task logging functionality should not be saved to a turn.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Task logging functionality should be separate from IndexedDB.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 179
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "S1",
+          "scope": "session",
+          "type": null,
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 593
+    },
+    {
+      "turnIndex": 3,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "We should consider looking at actions on the task.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "We have a start and end for the task.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "We need to trigger a complete or starting of a new task.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Going back to a previous task does not work.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "We should not work on the skeleton until the spec is complete.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 323
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 6,
+      "propositions": [
+        {
+          "content": "Inference can be used to select an existing task with partial task name input.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The actions for task management are start, pause, resume, complete, and switch.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A pending status may be necessary for task management.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Task completion status should be tracked separately from a completed boolean.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Session duration should be tracked for task management.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Current task information is sufficient for tracking purposes.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 432
+    },
+    {
+      "turnIndex": 4,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 8,
+      "propositions": [
+        {
+          "content": "Inference can be used for selecting an existing task.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Task names do not need to be perfectly specified.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A task can be referenced by its position relative to other tasks.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The actions for task management are start, pause, resume, complete, and switch.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A pending status may be necessary for task management.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "A completed boolean may not be sufficient for tracking task progress.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Task duration can be tracked by monitoring the current task.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Aspects of the current task may not be necessary to track.",
+          "scope": "life",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 510
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 11,
+      "propositions": [
+        {
+          "content": "Adding detail to session",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Split tasks by system prompt and query",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Get Jason response with task number",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Use stated voice patterns",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Use pseudocode",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Remove LLM matching overhead from starting tasks",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Switch to existing tasks instead of starting new ones",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Keep completed tasks forever",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Use TTS for switching tasks",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Use TTS for all tasks initially",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Use explicit and verbose task descriptions",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 607
+    },
+    {
+      "turnIndex": 5,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 9,
+      "propositions": [
+        {
+          "content": "Adding detail about a session should be done with a comment or todo.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Task selection via inference should be split by system prompt and query.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Task selection via inference should return a Jason response with the task number.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Start tasks should create new tasks only, not override existing ones.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Start tasks should remove LLM matching overhead.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Completed tasks should be kept forever, not auto-deleted.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "TTS should be used for task switching.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "TTS should be used for all task actions initially.",
+          "scope": "session",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Task switching should use TTS for clarity.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 506
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "statuses should include cancelled tasks",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "select task query return format should be in system prompt",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "groq can return output in JSON format",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "groq output can be specified in JSON like schema",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 297
+    },
+    {
+      "turnIndex": 6,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 4,
+      "propositions": [
+        {
+          "content": "The select task query should return Jason into the format.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The system prompt should be in the format of the system.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Groq can be used to specify the output in JSON like the schema.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "There are cancelled statuses in the select task query.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 320
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 3,
+      "propositions": [
+        {
+          "content": "Validated methods for validating option A versus option B exist online.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Jason format location requires a schema to be enforced.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "GROQ has suggestions for ensuring the right schema.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 238
+    },
+    {
+      "turnIndex": 7,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 5,
+      "propositions": [
+        {
+          "content": "Validated methods for validating option A versus option B exist online.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Jason format location requires validation.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "GROQ has suggestions for enforcing schema.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Schema enforcement is necessary for Jason format location.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Jason format location can be validated using multiple methods.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 386
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 15,
+      "propositions": [
+        {
+          "content": "Rewrite the given text and create a prompt to build a skeleton.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The prompt should include method signatures and pseudo code.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The pseudo code should represent function calls without logic.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The prompt should be used to build a skeleton with method signatures and pseudo code.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The skeleton should have method signatures and pseudo code with function calls.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The pseudo code should not include any logic other than function calls.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The prompt should be used to create a skeleton with the specified requirements.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The skeleton should include method signatures and pseudo code with function calls.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The pseudo code should represent function calls without any additional logic.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The prompt should be used to build a skeleton with the specified requirements.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Create a prompt to build a skeleton with method signatures and pseudo code.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The skeleton should have method signatures and pseudo code with function calls.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The pseudo code should represent function calls without any additional logic.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The prompt should be used to create a skeleton with the specified requirements.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The skeleton should include method signatures and pseudo code with function calls.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 852
+    },
+    {
+      "turnIndex": 8,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 9,
+      "propositions": [
+        {
+          "content": "Rewrite the given text and then create a prompt to generate a skeleton.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The prompt should include method signatures and pseudo code.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The pseudo code should represent function calls within methods.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The method signatures should have no logic other than function calls.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Create a prompt to generate a skeleton with method signatures and pseudo code.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The prompt should include method signatures and pseudo code with function calls.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The method signatures should have no logic other than function calls.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "The pseudo code should represent function calls within methods.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Create a prompt to generate a skeleton with method signatures and pseudo code.",
+          "scope": "life",
+          "type": "exploration",
+          "sourceIds": [
+            "S3"
+          ]
+        }
+      ],
+      "latencyMs": 507
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 3,
+      "propositions": [
+        {
+          "content": "We don't have to accumulate current text.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Audio recording usage is relevant to text accumulation.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "We have to accumulate current text.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 205
+    },
+    {
+      "turnIndex": 9,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 3,
+      "propositions": [
+        {
+          "content": "We don't have to accumulate current text.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Audio recording usage determines text accumulation.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "We have to accumulate current text.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 245
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "user",
+      "extractSpanCount": 3,
+      "propositionCount": 34,
+      "propositions": [
+        {
+          "content": "Task handlers must come before thought partner handlers.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Task handlers should be placed at the top of the array.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The architecture has a clean separation.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The architecture has smart LLM integration.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The architecture has natural voice patterns.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Task handlers must come before thought partner handlers in the array.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "User input 'start task' should be guarded against in 'response_done' and 'feedback' states.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Operations need a guard to check if the current task exists before proceeding.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A helper function is needed to add a guard for the current task.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "IndexedDB needs migration code for version bump from 1 to 2.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The 'most recent paused' resume logic is ambiguous.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Preserve existing turns data.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Most recent paused is ambiguous.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Most recently paused should be determined by timestamp.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Most recently worked on should be determined by last session end.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Add lastActivityAt timestamp to all operations.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Multiple close matches should be handled by selecting the first match.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Inference timeout/failure should be handled by falling back to exact text match.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "No tasks exist should be handled by auto-creating a new task.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S3"
+          ]
+        },
+        {
+          "content": "Auto-pausing the current task is a better UX.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "content": "Add a helper for session duration.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Consider batch operations for performance.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Add task preview to the 'switch to' feature.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Implement logging enhancements.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S5"
+          ]
+        },
+        {
+          "content": "Add task schema and IndexedDB store with migration.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Implement CRUD actions.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Implement session management.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Implement work management actions.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Implement LLM task selection.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Implement voice handlers.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Implement crash recovery logic.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Implement tests.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S6"
+          ]
+        },
+        {
+          "content": "Add error guards to the handlers.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S7"
+          ]
+        },
+        {
+          "content": "Generate IndexedDB migration skeleton with state transition notation.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S8"
+          ]
+        }
+      ],
+      "latencyMs": 1740
+    },
+    {
+      "turnIndex": 10,
+      "speaker": "assistant",
+      "extractSpanCount": 2,
+      "propositionCount": 11,
+      "propositions": [
+        {
+          "content": "Task handlers must come before thought partner handlers.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Task handlers should be placed at the top of the array.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The architecture has a clean separation.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The architecture integrates with LLMs.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "The architecture uses natural voice patterns.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "content": "Task handlers must come before thought partner handlers in the array.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Explicit guards are needed for 'start task' while in 'response_done' or 'feedback' state.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Many operations need 'if (! currentTask) return;' guards.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "A helper is needed for Active Task Validation.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "IndexedDB migration code is needed for version bump from 1 to 2.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Resume Logic is ambiguous due to 'Most recent paused' definition.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 780
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 1,
+      "propositions": [
+        {
+          "content": "regenerate spec",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 120
+    },
+    {
+      "turnIndex": 11,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 0,
+      "propositions": [],
+      "latencyMs": 80
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "user",
+      "extractSpanCount": 1,
+      "propositionCount": 7,
+      "propositions": [
+        {
+          "content": "A session's last activity time is not necessary if the most recent session start or end time can be used.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The log task is a distinct task from the start task.",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The log task is different from the start task.",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "The code for switching tasks should be simplified.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "When switching tasks, pause the current task and start the selected task, and announce the task name.",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "If no matching task is found, display a corresponding message.",
+          "scope": "session",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Remove testing commands and future enhancements from the code.",
+          "scope": "project",
+          "type": "project",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "latencyMs": 583
+    },
+    {
+      "turnIndex": 12,
+      "speaker": "assistant",
+      "extractSpanCount": 1,
+      "propositionCount": 6,
+      "propositions": [
+        {
+          "content": "Use most recent session start/end instead of lastActivityAt",
+          "scope": "session",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Log task is different from start task",
+          "scope": "project",
+          "type": "exploration",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Remove testing commands",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Remove future enhancements",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "content": "Switch task: pause current, then start selected, TTS 'Switching to [name]'",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "content": "Switch task not found: 'No matching task found'",
+          "scope": "project",
+          "type": "learning",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "latencyMs": 411
+    }
+  ]
+}

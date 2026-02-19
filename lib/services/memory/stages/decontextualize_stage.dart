@@ -126,13 +126,17 @@ Output JSON: {"content": "...", "scope": "session|project|life", "type": "learni
     final surrounding = _findSurrounding(span, sentences);
     final entityList = workingMemory.entityList;
 
-    final systemPrompt = '''You extract exactly one self-contained proposition from a concept span.
-Replace all pronouns with the specific names from the known entities or surrounding context.
-The proposition must be understandable without any source context.
-If the span contains no durable knowledge, output an empty array [].
-Scope: session (this conversation only), project (named project), life (identity-level).
-Type: learning (discovered fact), project (decision/requirement), exploration (investigated option).
-Output only valid JSON.''';
+    final systemPrompt = '''You decompose a concept span into atomic, self-contained propositions.
+
+Rules:
+- Each proposition must be understandable WITHOUT the source text.
+- Replace all pronouns with specific referents from known entities or surrounding context.
+- One fact per proposition. Split sentences that contain multiple facts.
+- Skip filler, greetings, hedging, and meta-commentary.
+- Output 0 propositions if the span contains no durable knowledge.
+- Scope: session (this conversation only), project (named project), life (identity-level).
+- Type: learning (discovered fact), project (decision/requirement), exploration (investigated option).
+- Output ONLY a valid JSON array.''';
 
     final prompt = '''Text:
 $spanText
