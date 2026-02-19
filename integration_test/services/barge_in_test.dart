@@ -1,7 +1,7 @@
 /// # Barge-in Integration Test
 ///
 /// Tests that user can interrupt TTS playback by starting to speak.
-/// Verifies the coordinator's barge-in handling:
+/// Verifies the execution loop's barge-in handling:
 /// 1. TTS starts playing a response
 /// 2. User starts speaking (start_of_turn event)
 /// 3. TTS stops immediately

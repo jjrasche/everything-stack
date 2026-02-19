@@ -7,7 +7,7 @@
 /// 1. Save test audio to AudioStorage
 /// 2. Call STTService.recognize() with audioId
 /// 3. Verify transcription_complete event is published
-/// 4. Verify Coordinator processes the event
+/// 4. Verify ExecutionLoop processes the event
 
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';

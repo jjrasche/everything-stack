@@ -2,7 +2,7 @@
 ///
 /// Tests event-driven multi-turn conversation with timer tools.
 /// Verifies:
-/// - EventBus → Coordinator → ContextSelector → LLM → ToolExecutor → TimerRepository
+/// - EventBus → ExecutionLoop → ContextSelector → LLM → ToolExecutor → TimerRepository
 /// - Multi-turn context preservation
 /// - Timer persistence to database
 /// - Invocation logging

@@ -107,7 +107,7 @@ class Event extends BaseEntity with Ownable {
 
   /// Extract the semantic input text that drives the pipeline.
   /// Different event types contain the input in different payload fields.
-  /// Used by Coordinator to orchestrate processing.
+  /// Used by ExecutionLoop to orchestrate processing.
   String toInputString() {
     try {
       final payload = jsonDecode(payloadJson);

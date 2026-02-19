@@ -10,7 +10,7 @@ import 'package:everything_stack_template/services/inference_service.dart';
 import 'package:everything_stack_template/services/tts_service.dart';
 import 'package:everything_stack_template/services/stt_service.dart';
 import 'package:everything_stack_template/services/types/llm_types.dart';
-import 'package:everything_stack_template/services/coordinator.dart';
+import 'package:everything_stack_template/services/execution_loop.dart';
 import 'package:everything_stack_template/services/context_selector.dart';
 import 'package:everything_stack_template/services/tool_executor.dart';
 import 'package:everything_stack_template/services/embedding_service.dart';
@@ -68,8 +68,8 @@ class IntegrationTestConfig {
           if (mockImplementers != null) {
             await _swapExternalImplementers(tester, mockImplementers!);
 
-            // Register Coordinator now that services exist
-            await _registerCoordinator();
+            // Register ExecutionLoop now that services exist
+            await _registerExecutionLoop();
           }
         }
 
@@ -184,8 +184,8 @@ class IntegrationTestConfig {
     await tester.pump();
   }
 
-  /// Register Coordinator after services are available
-  Future<void> _registerCoordinator() async {
+  /// Register ExecutionLoop after services are available
+  Future<void> _registerExecutionLoop() async {
     final getIt = GetIt.instance;
 
     // Unregister ContextSelector if exists (has cached EmbeddingService reference)
@@ -203,15 +203,15 @@ class IntegrationTestConfig {
     getIt.registerSingleton<ContextSelector>(contextSelector);
     print('✅ ContextSelector re-registered with swapped EmbeddingService');
 
-    // Unregister Coordinator if exists (has cached service references)
-    if (getIt.isRegistered<Coordinator>()) {
-      print('ℹ️ Coordinator already registered, disposing and unregistering...');
-      final oldCoordinator = getIt<Coordinator>();
-      oldCoordinator.dispose(); // Cancel event listener to prevent double-handling
-      getIt.unregister<Coordinator>();
+    // Unregister ExecutionLoop if exists (has cached service references)
+    if (getIt.isRegistered<ExecutionLoop>()) {
+      print('ℹ️ ExecutionLoop already registered, disposing and unregistering...');
+      final oldExecutionLoop = getIt<ExecutionLoop>();
+      oldExecutionLoop.dispose(); // Cancel event listener to prevent double-handling
+      getIt.unregister<ExecutionLoop>();
     }
 
-    print('🔍 Registering Coordinator...');
+    print('🔍 Registering ExecutionLoop...');
 
     // Get or create ModelSelector
     ModelSelector modelSelector;
@@ -224,7 +224,7 @@ class IntegrationTestConfig {
       getIt.registerSingleton<ModelSelector>(modelSelector);
     }
 
-    final coordinator = Coordinator(
+    final executionLoop = ExecutionLoop(
       embeddingService: EmbeddingService.instance,
       llmService: getIt<InferenceService>(),
       ttsService: getIt<TTSService>(),
@@ -236,8 +236,8 @@ class IntegrationTestConfig {
       invocationRepo: getIt<InvocationRepository<Invocation>>(),
       eventBus: getIt<EventBus>(),
     );
-    getIt.registerSingleton<Coordinator>(coordinator);
-    coordinator.initialize();
-    print('✅ Coordinator registered and initialized');
+    getIt.registerSingleton<ExecutionLoop>(executionLoop);
+    executionLoop.initialize();
+    print('✅ ExecutionLoop registered and initialized');
   }
 }

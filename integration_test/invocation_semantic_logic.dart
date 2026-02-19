@@ -28,7 +28,7 @@ final invocationSemanticTest = IntegrationTestConfig(
     InvocationRepository<Invocation>,
   ],
 
-  // No mockResponses - this test doesn't need Coordinator
+  // No mockResponses - this test doesn't need ExecutionLoop
 
   testLogic: (t) async {
     // Get services from GetIt

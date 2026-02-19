@@ -131,7 +131,7 @@ class TTSService with Trainable<TTSAdaptationData> {
 
   /// Stop TTS playback (for barge-in).
   ///
-  /// Called by Coordinator when user starts speaking during TTS.
+  /// Called by ExecutionLoop when user starts speaking during TTS.
   /// Publishes tts_stopped event for logging/debugging.
   Future<void> stop() async {
     if (!_isPlaying) {

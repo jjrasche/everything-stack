@@ -6,7 +6,7 @@
 /// - VoiceTraits.getExamples() retrieves semantically similar examples
 /// - Positive feedback examples are included
 /// - Negative feedback examples are included
-/// - Examples are injected into Coordinator messages (system prompt)
+/// - Examples are injected into ExecutionLoop messages (system prompt)
 /// - VoiceTraits invocations are logged with similarity scores
 /// - Empty result when no feedback exists
 ///
@@ -327,8 +327,8 @@ final voiceTraitsTest = IntegrationTestConfig(
       print('   ✅ No examples returned (as expected for unrelated query)');
     }
 
-    // ===== TEST 6: Integration with Coordinator (examples injected into messages) =====
-    print('\n[Test 6] Verify VoiceTraits examples are injected into Coordinator messages...');
+    // ===== TEST 6: Integration with ExecutionLoop (examples injected into messages) =====
+    print('\n[Test 6] Verify VoiceTraits examples are injected into ExecutionLoop messages...');
 
     // Trigger orchestration with timer query
     print('   Sending timer query: "$query"');
@@ -346,7 +346,7 @@ final voiceTraitsTest = IntegrationTestConfig(
     expect(
       llmInvocations.isNotEmpty,
       isTrue,
-      reason: 'Should have LLM invocations from Coordinator orchestration',
+      reason: 'Should have LLM invocations from ExecutionLoop orchestration',
     );
 
     // Get the last LLM invocation (for timer_query)

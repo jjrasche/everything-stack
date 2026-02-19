@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:everything_stack_template/main.dart';
-import 'package:everything_stack_template/services/coordinator.dart';
+import 'package:everything_stack_template/services/execution_loop.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
 import 'package:everything_stack_template/domain/invocation.dart';
 import 'package:everything_stack_template/services/event_bus.dart';
@@ -19,12 +19,12 @@ import 'package:everything_stack_template/services/stt_service.dart';
 ///
 /// ## Architecture Under Test
 /// ```
-/// STT → TranscriptionComplete event → Coordinator → LLM → TTS → OrchestrationComplete event
+/// STT → TranscriptionComplete event → ExecutionLoop → LLM → TTS → OrchestrationComplete event
 /// ```
 ///
 /// ## What This Verifies
 /// 1. STT processes audio and publishes TranscriptionComplete event
-/// 2. Coordinator receives event and runs orchestration
+/// 2. ExecutionLoop receives event and runs orchestration
 /// 3. LLM generates response
 /// 4. TTS synthesizes speech
 /// 5. OrchestrationComplete event published for UI
@@ -49,13 +49,13 @@ Future<void> runAudioPipelineTest(WidgetTester tester) async {
 
   // Get services from GetIt
   final getIt = GetIt.instance;
-  final coordinator = getIt<Coordinator>();
+  final executionLoop = getIt<ExecutionLoop>();
   final invocationRepo = getIt<InvocationRepository<Invocation>>();
   final eventRepository = getIt<EventRepository>();
   final eventBus = getIt<EventBus>();
   final sttService = getIt<STTService>();
 
-  print('✅ Services initialized: Coordinator, EventBus, Repositories');
+  print('✅ Services initialized: ExecutionLoop, EventBus, Repositories');
 
   // ========== TURN 1: First utterance ==========
   print('\n' + '=' * 60);

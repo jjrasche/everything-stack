@@ -83,7 +83,7 @@ void main() {
       // 2. LLM processes
       // 3. TTS starts → tts_started event → STT MUST RESTART (for barge-in)
       // 4. TTS playing, STT listening for interruption
-      // 5a. User interrupts → start_of_turn → Coordinator stops TTS
+      // 5a. User interrupts → start_of_turn → ExecutionLoop stops TTS
       // 5b. OR: TTS completes → tts_completed → STT already on, continue
       //
       // The key requirement: STT is ON during step 4.

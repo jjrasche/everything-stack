@@ -6,7 +6,7 @@ import 'bootstrap.dart';
 import 'core/event.dart';
 import 'core/entity_repository.dart';
 import 'core/invocation.dart';
-import 'services/coordinator.dart';
+import 'services/execution_loop.dart';
 import 'services/debug/screenshot_service.dart';
 import 'ui/screens/voice_assistant_screen.dart';
 
@@ -129,25 +129,25 @@ class _MyHomePageState extends State<MyHomePage> {
   String _recordingTime = '0:00';
   InputModality _inputModality = InputModality.text;
   OutputModality _outputModality = OutputModality.text;
-  late Coordinator _coordinator;
+  late ExecutionLoop _executionLoop;
 
   @override
   void initState() {
     super.initState();
     _inputController = TextEditingController();
-    _initializeCoordinator();
+    _initializeExecutionLoop();
   }
 
-  /// Initialize Coordinator with all trainable services
-  void _initializeCoordinator() {
+  /// Initialize ExecutionLoop with all trainable services
+  void _initializeExecutionLoop() {
     // TODO: Wire up actual repositories and services when initialized in bootstrap
     // For now, this will fail if actually called, but the structure is ready
     try {
-      // _coordinator = Coordinator(...);
+      // _executionLoop = ExecutionLoop(...);
       print(
-          'Coordinator initialization not yet implemented - awaiting bootstrap setup');
+          'ExecutionLoop initialization not yet implemented - awaiting bootstrap setup');
     } catch (e) {
-      print('Failed to initialize Coordinator: $e');
+      print('Failed to initialize ExecutionLoop: $e');
     }
   }
 
@@ -174,8 +174,8 @@ class _MyHomePageState extends State<MyHomePage> {
       );
 
       // Publish event for async processing
-      // TODO: Uncomment when Coordinator is initialized
-      // _coordinator.orchestrate(...);
+      // TODO: Uncomment when ExecutionLoop is initialized
+      // _executionLoop.orchestrate(...);
       print('Would publish event: ${event.payloadJson}');
 
       _inputController.clear();

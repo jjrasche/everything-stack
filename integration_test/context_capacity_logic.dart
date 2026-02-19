@@ -9,7 +9,7 @@
 /// - Token counts are accurate using real TokenizerService
 /// - ContextCapacity invocations are logged with token counts
 /// - Truncation summary reports what was removed
-/// - Integration with Coordinator (step 6/7 in orchestration)
+/// - Integration with ExecutionLoop (step 6/7 in orchestration)
 ///
 /// ## Test Flow
 /// 1. Create long conversation history (exceeds token budget)
@@ -366,8 +366,8 @@ final contextCapacityTest = IntegrationTestConfig(
 
     print('   ✅ Token counts accurate (variance: $variance, allowed: $allowedVariance)');
 
-    // ===== TEST 7: Integration with Coordinator (truncation in step 6/7) =====
-    print('\n[Test 7] Verify Coordinator uses ContextCapacity in orchestration...');
+    // ===== TEST 7: Integration with ExecutionLoop (truncation in step 6/7) =====
+    print('\n[Test 7] Verify ExecutionLoop uses ContextCapacity in orchestration...');
 
     // Clear invocations and trigger new orchestration
     print('   Clearing invocations and triggering new turn...');
@@ -376,22 +376,22 @@ final contextCapacityTest = IntegrationTestConfig(
       await invocationRepo.delete(inv.uuid);
     }
 
-    // Trigger orchestration (uses default Coordinator flow with ContextCapacity)
+    // Trigger orchestration (uses default ExecutionLoop flow with ContextCapacity)
     await t.stt('turn1');
     await Future.delayed(const Duration(seconds: 2));
 
     // Check that ContextCapacity was called during orchestration
     allInvocations = await invocationRepo.findAll();
-    final coordinatorContextCapacityInvocations = allInvocations
+    final loopContextCapacityInvocations = allInvocations
         .where((inv) => inv.componentType == 'context_capacity')
         .toList();
 
-    print('   Found ${coordinatorContextCapacityInvocations.length} context_capacity invocations from Coordinator');
+    print('   Found ${loopContextCapacityInvocations.length} context_capacity invocations from ExecutionLoop');
 
     expect(
-      coordinatorContextCapacityInvocations.isNotEmpty,
+      loopContextCapacityInvocations.isNotEmpty,
       isTrue,
-      reason: 'Coordinator should call ContextCapacity during orchestration (step 6/7)',
+      reason: 'ExecutionLoop should call ContextCapacity during orchestration (step 6/7)',
     );
 
     // ===== TEST 8: No truncation when within budget =====

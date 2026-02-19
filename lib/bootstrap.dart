@@ -33,7 +33,7 @@ import 'services/implementations/flutter_tts_implementer.dart';
 import 'services/implementations/google_cloud_tts_implementer.dart';
 import 'services/service_registry.dart';
 import 'services/service_builders.dart';
-import 'services/coordinator.dart';
+import 'services/execution_loop.dart';
 import 'services/context_selector.dart';
 import 'services/trainables/model_selector.dart';
 import 'services/voice_traits.dart';
@@ -828,10 +828,10 @@ Future<void> disposeEverythingStack() async {
   }
 
   try {
-    final coordinator = getIt<Coordinator>();
-    coordinator.dispose();
+    final executionLoop = getIt<ExecutionLoop>();
+    executionLoop.dispose();
   } catch (e) {
-    debugPrint('⚠️ Coordinator not registered, skipping disposal');
+    debugPrint('⚠️ ExecutionLoop not registered, skipping disposal');
   }
 
   try {
@@ -905,7 +905,7 @@ Future<void> setupServiceLocator() async {
 
     // ========== Trainable Selectors (Removed - dead code) ==========
     // These classes were deleted in Phase 8 cleanup
-    // TODO: Coordinator needs refactoring to remove dependency on these
+    // TODO: ExecutionLoop needs refactoring to remove dependency on these
     // For now, commented out to allow app to compile for semantic search testing
 
     // debugPrint('🔍 [setupServiceLocator] Registering NamespaceSelector...');
@@ -1030,13 +1030,13 @@ Future<void> setupServiceLocator() async {
     getIt.registerSingleton<ContextCapacity>(contextCapacity);
     debugPrint('✅ [setupServiceLocator] ContextCapacity registered');
 
-    // ========== Coordinator (Multi-turn context management) ==========
+    // ========== ExecutionLoop (Multi-turn context management) ==========
     // Only register if InferenceService and TTSService exist
     if (getIt.isRegistered<InferenceService>() &&
         getIt.isRegistered<TTSService>()) {
-      debugPrint('🔍 [setupServiceLocator] Registering Coordinator...');
+      debugPrint('🔍 [setupServiceLocator] Registering ExecutionLoop...');
 
-      final coordinator = Coordinator(
+      final executionLoop = ExecutionLoop(
         embeddingService: EmbeddingService.instance,
         llmService: getIt<InferenceService>(),
         ttsService: getIt<TTSService>(),
@@ -1048,13 +1048,13 @@ Future<void> setupServiceLocator() async {
         invocationRepo: getIt<InvocationRepository<Invocation>>(),
         eventBus: getIt<EventBus>(),
       );
-      getIt.registerSingleton<Coordinator>(coordinator);
-      coordinator.initialize();
+      getIt.registerSingleton<ExecutionLoop>(executionLoop);
+      executionLoop.initialize();
       debugPrint(
-          '✅ [setupServiceLocator] Coordinator registered and initialized');
+          '✅ [setupServiceLocator] ExecutionLoop registered and initialized');
     } else {
       debugPrint(
-          '⏭️ [setupServiceLocator] Coordinator skipped (InferenceService/TTSService not registered)');
+          '⏭️ [setupServiceLocator] ExecutionLoop skipped (InferenceService/TTSService not registered)');
     }
 
     debugPrint('🎉 [setupServiceLocator] ALL SERVICES REGISTERED SUCCESSFULLY');

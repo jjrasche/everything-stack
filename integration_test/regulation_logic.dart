@@ -2,7 +2,7 @@
 ///
 /// Tests event-driven regulation tracking with regulation tools.
 /// Verifies:
-/// - EventBus → Coordinator → ContextSelector → LLM → ToolExecutor → Regulation Repositories
+/// - EventBus → ExecutionLoop → ContextSelector → LLM → ToolExecutor → Regulation Repositories
 /// - Auto-creation of Person entities
 /// - Regulation entry logging
 /// - Commitment creation and logging

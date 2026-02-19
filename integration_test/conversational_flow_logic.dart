@@ -3,7 +3,7 @@
 /// Tests multi-event conversational flow through the pipeline.
 /// Verifies:
 /// - Multiple events complete successfully (3 sequential turns)
-/// - Coordinator → LLM → TTS pipeline works for each event
+/// - ExecutionLoop → LLM → TTS pipeline works for each event
 /// - Invocations logged correctly for each component
 /// - Barge-in stops TTS during playback (REAL FlutterTtsImplementer)
 ///
@@ -135,7 +135,7 @@ final conversationalFlowTest = IntegrationTestConfig(
       payloadJson: jsonEncode({'transcript': _utterances['long_story']}),
     ));
 
-    // Wait for TTS to start (Coordinator → LLM → TTS pipeline)
+    // Wait for TTS to start (ExecutionLoop → LLM → TTS pipeline)
     await Future.delayed(const Duration(milliseconds: 800));
 
     // Verify TTS is actually playing

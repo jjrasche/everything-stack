@@ -16,7 +16,7 @@ import './types/chat_client.dart';
 import './types/context_selector_types.dart';
 import './trainer/gaussian_process_optimizer.dart';
 
-// Export types for use by Coordinator, Implementers, and Tests
+// Export types for use by ExecutionLoop, Implementers, and Tests
 export './types/chat_client.dart' show ChatClient;
 export './types/message.dart' show Message;
 export './types/llm_types.dart'
@@ -161,7 +161,7 @@ class InferenceService with Trainable<InferenceAdaptationData> implements ChatCl
     final lastUserPrompt = (lastUserMessage['content'] as String?) ?? '';
 
     await recordInvocation(
-      'unknown', // TODO: Pass eventId from Coordinator
+      'unknown', // TODO: Pass eventId from ExecutionLoop
       Invocation(
         eventId: 'unknown',
         componentType: ComponentType.llm,

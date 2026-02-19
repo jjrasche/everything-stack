@@ -20,10 +20,16 @@ flutter analyze                   # Lint
 
 ## Architecture
 
+### Orchestrator = Memory + Tools + Execution Loop + Feedback
+- **Memory System**: Working memory (bounded propositions) + knowledge store (persistent facts). Encoder pipeline bridges raw input to both stores.
+- **Tool System**: Registry (catalog) + executor (invocation). Intelligence about tool choice lives in the execution loop.
+- **Execution Loop**: assembleContext -> decompose -> selectTools -> execute -> classifyFailure. The `ExecutionLoop` class (`lib/services/execution_loop.dart`) is the orchestrator method.
+- **Feedback System**: Invocation logs, adaptation state, prompt optimization, SLM training. Trains all subsystems.
+
 ### Key Directories
 - `lib/core/` - Base entity, repository, debug, platform detection
 - `lib/domain/` - Pure Dart entities (no ORM decorators)
-- `lib/services/` - Business logic, extraction, training, coordinator
+- `lib/services/` - Business logic, extraction, execution loop, memory stages
 - `lib/tools/` - Self-contained domains (regulation, task, timer) with own entities/repos/adapters
 - `lib/persistence/` - ObjectBox (native) + IndexedDB (web) adapters
 - `lib/patterns/` - Opt-in mixins (Trainable, Embeddable, Temporal, etc.)
@@ -31,7 +37,7 @@ flutter analyze                   # Lint
 - `lib/bootstrap/` - GetIt DI container setup, platform-specific initialization
 
 ### Data Flow
-Event -> Coordinator -> LLM (with context + voice traits) -> Tool execution -> Persistence. Enrichment pipeline indexes entities asynchronously. Invocation logs feed adaptation.
+Event -> ExecutionLoop (assembleContext, selectTools, execute) -> Encoder Pipeline (input -> propositions -> working memory diff) -> Feedback System (log invocations, update adaptation). Enrichment pipeline indexes entities asynchronously.
 
 ## Non-Negotiable Principles
 1. ALL platforms first-class. If it only works on some platforms, it's not done.
@@ -60,11 +66,11 @@ Read from `~/.claude/references/` when relevant:
 ## Current Work: Memory Encoder Pipeline
 6-stage encoder: normalize -> segment -> cohere -> classify -> decontextualize -> dedup.
 **SLM-first**: build on-device ONNX runner, run zero-shot, evaluate, fine-tune. NO LLM calls for stages that can use SLMs.
-Phase 1 (normalize + segment) complete. **Phase 2 (cohere SLM) is next.**
-Read `.claude/plans/encoder-golden-data-stage-by-stage.md` for full plan and instructions. Do NOT enter plan mode — execute directly.
+Stages 1-5 complete. **Stage 6 (dedup) is next.**
+Read `.claude/plans/encoder-golden-data-stage-by-stage.md` for full plan and instructions. Do NOT enter plan mode -- execute directly.
 
 ## Project References
-- `ARCHITECTURE.md` - Entity model, persistence, plugins, sync, scale
+- `ARCHITECTURE.md` - Orchestrator taxonomy, entity model, persistence, plugins, sync, scale
 - `PATTERNS.md` - How to build: entities, services, testing, examples
 - `TESTING.md` - E2E testing: no mocks, real persistence, all platforms
 - `DECISIONS.md` - Rationale for major architectural choices

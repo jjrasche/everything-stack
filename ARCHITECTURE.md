@@ -6,6 +6,101 @@ Everything Stack provides complete application infrastructure for autonomous sof
 
 ---
 
+## Orchestrator Architecture
+
+Everything Stack is an **orchestrator**: a runtime that coordinates memory, tools, and inference to accomplish goals. The orchestrator manages one or more agents — each an execution context with its own working memory, goal, and tool subset.
+
+### Four Subsystems
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   ORCHESTRATOR                       │
+│                                                      │
+│  ┌──────────┐  ┌──────────┐  ┌──────────────────┐  │
+│  │  Memory   │  │  Tools   │  │  Execution Loop  │  │
+│  │  System   │  │  System  │  │                  │  │
+│  │          │  │          │  │ assembleContext   │  │
+│  │ Working  │◄─┤ Registry │◄─┤ decompose        │  │
+│  │ Memory   │  │ Executor │  │ selectTools      │  │
+│  │ Knowledge│  │          │  │ execute          │  │
+│  │ Store    │  └──────────┘  │ classifyFailure  │  │
+│  │ Encoder  │                └────────┬─────────┘  │
+│  └──────────┘                         │             │
+│                              ┌────────▼─────────┐  │
+│                              │  Feedback System  │  │
+│                              │                   │  │
+│                              │ Invocation Logs   │  │
+│                              │ Adaptation State  │  │
+│                              │ Prompt Optim      │  │
+│                              │ SLM Training      │  │
+│                              └───────────────────┘  │
+└─────────────────────────────────────────────────────┘
+```
+
+### 1. Memory System (two stores)
+
+| Component | Purpose | Status |
+|-----------|---------|--------|
+| **Working Memory** | Bounded, session-scoped active propositions | `WorkingMemoryService` — built |
+| **Knowledge Store** | Persistent facts with entity links + temporal metadata | Documented, not built |
+| **Encoder Pipeline** | 6-stage: normalize → segment → cohere → classify → decontextualize → dedup | Built, stages 1-5 done |
+| **Entity Resolution** | Links propositions to persistent entities; promotes working memory to knowledge store | Not built |
+| **Consolidation** | Background dedup/merge across knowledge store by entity | Not built |
+
+The encoder handles episodic input → working memory. Entity resolution is the linchpin for context assembly, tool selection, and knowledge store promotion. See `PIPELINE_ARCHITECTURE.md` for encoder details.
+
+### 2. Tool System (registry + execution)
+
+| Component | Purpose | Status |
+|-----------|---------|--------|
+| **Tool Registry** | Catalog of available tools with schemas | `ToolRegistry` — built |
+| **Tool Executor** | Invoke tool, capture output, handle errors, log invocations | `ToolExecutor` — built |
+
+The registry is storage. The executor is invocation. Intelligence about *which* tool to use lives in the execution loop, not here.
+
+### 3. Execution Loop (the core)
+
+The execution loop is the behavior pattern the orchestrator runs: assemble context → decompose → select tools → execute → classify result → repeat or terminate.
+
+| Function | Purpose | SLM Viable? | Status |
+|----------|---------|-------------|--------|
+| **Context Assembly** | Select which propositions + knowledge go into the prompt | Yes — retrieval + ranking | Not built (`propositionsAsContext()` dumps all) |
+| **Decomposition** | Goal → subtask plan. Trainable via prompt optimization | No — needs frontier | Not built |
+| **Tool Selection** | Entity affinity + semantic similarity + LRU frequency | Yes — statistical filtering | Not built |
+| **Inference Routing** | Decide SLM vs frontier per step | Yes — classification task | Partially implicit |
+| **Failure Classification** | Tool failure (observable) vs "needs feedback" (retroactive) | Yes — classification | Not built |
+
+**Context assembly** is the most impactful function to build after the encoder stabilizes. Without it, encoder precision is wasted by dumping all propositions into prompts.
+
+**Tool selection** is architecturally parallel to context assembly — both are selection policies over a store (propositions vs tools), using the same pattern: candidates → filter(entity) → filter(semantic) → rank(recency) → top-k.
+
+### 4. Feedback System (learning mechanism)
+
+| Component | Purpose | Status |
+|-----------|---------|--------|
+| **Invocation Logging** | Record every action + outcome | Built |
+| **Adaptation State** | Tune parameters from feedback per component | `AdaptationState` entity — built |
+| **Prompt Optimization** | Improve prompts from failures | `PromptImprovementLoop` — built |
+| **SLM Training** | Distill frontier labels into on-device models | Golden data infrastructure — in progress |
+
+The feedback system trains all execution loop functions and memory components. Every invocation logged is a potential training signal.
+
+### Data Flow
+
+```
+Event (voice/text/system)
+  → Execution Loop
+    → assembleContext (select from working memory + knowledge store)
+    → decompose (goal → subtasks, if multi-step)
+    → selectTools (entity affinity + semantic + frequency)
+    → execute (tool invocation via ToolExecutor)
+    → classifyFailure (if failed: retry tool, re-plan, or request feedback)
+  → Encoder Pipeline (input + results → propositions → working memory diff)
+  → Feedback System (log invocation, update adaptation state)
+```
+
+---
+
 ## Core Design Principles
 
 ### 1. Infrastructure Completeness Over Simplicity
@@ -1058,8 +1153,8 @@ Automated grouping of tasks with conditional logic and decision points. Inherent
 Workflow = Sequence of Tasks + Decision Logic + Trainable Aspects
 ```
 
-### Integration with Coordinator
-- Workflows appear as tools in ToolSelector
+### Integration with Execution Loop
+- Workflows appear as tools in the tool registry
 - LLM can select individual tasks OR `workflow.invoke_workflow_name`
 - Each task in workflow creates an Invocation (same as individual tool)
 - Conditional branches log as `workflow_decision` invocations
@@ -1075,4 +1170,4 @@ Workflows improve through user feedback only, no autonomous self-training.
 
 ---
 
-**Last Updated**: February 14, 2026
+**Last Updated**: February 19, 2026

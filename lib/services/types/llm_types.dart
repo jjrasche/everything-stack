@@ -184,7 +184,7 @@ class LLMFeedback {
 }
 
 /// LLM response from chatWithTools (includes tool calls, not just text).
-/// Used by Coordinator for agentic workflows.
+/// Used by ExecutionLoop for agentic workflows.
 class LLMResponse {
   /// Request ID for logging and correlation.
   final String id;
@@ -229,7 +229,7 @@ class LLMToolCall {
 
 /// Tool definition provided to LLM for available tools.
 class LLMTool {
-  /// Tool name (must match Coordinator's tools).
+  /// Tool name (must match ExecutionLoop's tools).
   final String name;
 
   /// Description of what the tool does (for LLM to understand).
