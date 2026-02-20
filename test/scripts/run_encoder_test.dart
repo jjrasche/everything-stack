@@ -21,7 +21,8 @@ import 'package:everything_stack_template/services/memory/working_memory_diff.da
 import 'package:everything_stack_template/services/memory/stages/normalize_stage.dart';
 import 'package:everything_stack_template/services/memory/stages/segment_stage.dart';
 import 'package:everything_stack_template/services/memory/stages/cohere_stage.dart';
-import 'package:everything_stack_template/services/memory/stages/classify_stage.dart';
+import 'package:everything_stack_template/services/memory/stages/recohere_stage.dart';
+import 'package:everything_stack_template/services/memory/stages/filter_stage.dart';
 import 'package:everything_stack_template/services/memory/stages/decontextualize_stage.dart';
 import 'package:everything_stack_template/services/memory/stages/dedup_stage.dart';
 
@@ -136,7 +137,8 @@ Encoder _createEncoder(ChatClient chatClient) {
     normalizeStage: NormalizeStage(),
     segmentStage: SegmentStage(),
     cohereStage: CohereStage(chatClient: chatClient),
-    classifyStage: ClassifyStage(chatClient: chatClient),
+    recoherStage: RecoherStage(),
+    filterStage: FilterStage(chatClient: chatClient),
     decontextualizeStage: decontextStage,
     dedupStage: DedupStage(
       chatClient: chatClient,

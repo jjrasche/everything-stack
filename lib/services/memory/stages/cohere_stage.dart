@@ -67,9 +67,10 @@ class CohereStage implements EncoderStage<CohereInput, CohereResult> {
     }
 
     if (input.sentences.length == 1) {
-      final span = ConceptSpan(
+      final span = ConceptSpan.fromSentences(
         spanId: 'span_0',
         sentenceIds: [input.sentences.first.id],
+        sentences: input.sentences,
       );
       stopwatch.stop();
       return CohereResult(
@@ -89,7 +90,7 @@ class CohereStage implements EncoderStage<CohereInput, CohereResult> {
     var spans = _buildSpans(input.sentences, boundaries);
 
     if (_resplitThreshold != null && _maxSpanSentences != null) {
-      spans = _resplitLargeSpans(spans, boundaries);
+      spans = _resplitLargeSpans(spans, boundaries, input.sentences);
     }
 
     stopwatch.stop();
@@ -195,7 +196,7 @@ Output ONLY a JSON array, no other text.''';
 
     for (final sentence in sentences) {
       if (boundaryIds.contains(sentence.id) && currentIds.isNotEmpty) {
-        spans.add(ConceptSpan(spanId: 'span_$spanIndex', sentenceIds: currentIds));
+        spans.add(ConceptSpan.fromSentences(spanId: 'span_$spanIndex', sentenceIds: currentIds, sentences: sentences));
         currentIds = [];
         spanIndex++;
       }
@@ -203,14 +204,14 @@ Output ONLY a JSON array, no other text.''';
     }
 
     if (currentIds.isNotEmpty) {
-      spans.add(ConceptSpan(spanId: 'span_$spanIndex', sentenceIds: currentIds));
+      spans.add(ConceptSpan.fromSentences(spanId: 'span_$spanIndex', sentenceIds: currentIds, sentences: sentences));
     }
 
     return spans;
   }
 
   List<ConceptSpan> _resplitLargeSpans(
-      List<ConceptSpan> spans, List<PairScore> allScores) {
+      List<ConceptSpan> spans, List<PairScore> allScores, List<Sentence> sentences) {
     final scoreMap = _buildScoreMap(allScores);
     final result = <ConceptSpan>[];
     var spanIndex = 0;
@@ -219,7 +220,7 @@ Output ONLY a JSON array, no other text.''';
       final subSpans =
           _resplitSpan(span.sentenceIds, scoreMap, _maxSpanSentences!);
       for (final ids in subSpans) {
-        result.add(ConceptSpan(spanId: 'span_$spanIndex', sentenceIds: ids));
+        result.add(ConceptSpan.fromSentences(spanId: 'span_$spanIndex', sentenceIds: ids, sentences: sentences));
         spanIndex++;
       }
     }

@@ -6,8 +6,10 @@ import 'package:everything_stack_template/services/memory/working_memory_service
 import 'package:everything_stack_template/services/memory/working_memory_diff.dart';
 import 'package:everything_stack_template/services/memory/stages/cohere_stage.dart';
 import 'package:everything_stack_template/services/memory/stages/classify_stage.dart';
+import 'package:everything_stack_template/services/memory/stages/filter_stage.dart';
 import 'package:everything_stack_template/services/memory/stages/decontextualize_stage.dart';
 import 'package:everything_stack_template/services/memory/stages/dedup_stage.dart';
+import 'package:everything_stack_template/services/slm/runners/filter_runner.dart';
 import 'package:everything_stack_template/domain/proposition.dart';
 
 class MockChatClient implements ChatClient {
@@ -27,6 +29,17 @@ class MockChatClient implements ChatClient {
     }
     return '{}';
   }
+}
+
+class MockFilterRunner implements FilterRunner {
+  FilterPrediction _prediction = FilterPrediction(extractScore: 0.9, skipScore: 0.1);
+
+  void stubPrediction(FilterPrediction prediction) {
+    _prediction = prediction;
+  }
+
+  @override
+  Future<FilterPrediction> predict(String spanText) async => _prediction;
 }
 
 void main() {
@@ -56,6 +69,7 @@ void main() {
 
       expect(result.spans, hasLength(1));
       expect(result.spans.first.sentenceIds, ['S1', 'S2']);
+      expect(result.spans.first.text, 'ObjectBox is fast. It uses LMDB internally.');
     });
 
     test('splits at boundary', () async {
@@ -79,6 +93,7 @@ void main() {
       ]));
 
       expect(result.spans, hasLength(1));
+      expect(result.spans.first.text, 'Only one.');
     });
   });
 
@@ -94,7 +109,7 @@ void main() {
           '{"label": "extract", "reason": null, "confidence": 0.9}');
 
       final result = await stage.process(ClassifyInput(
-        spans: [ConceptSpan(spanId: 'span_0', sentenceIds: ['S1'])],
+        spans: [ConceptSpan(spanId: 'span_0', sentenceIds: ['S1'], text: 'ObjectBox is fast.')],
         sentences: [Sentence(id: 'S1', text: 'ObjectBox is fast.')],
         workingMemory: workingMemory,
       ));
@@ -109,7 +124,7 @@ void main() {
           '{"label": "skip", "reason": "ephemeral", "confidence": 0.85}');
 
       final result = await stage.process(ClassifyInput(
-        spans: [ConceptSpan(spanId: 'span_0', sentenceIds: ['S1'])],
+        spans: [ConceptSpan(spanId: 'span_0', sentenceIds: ['S1'], text: 'Okay sure.')],
         sentences: [Sentence(id: 'S1', text: 'Okay sure.')],
         workingMemory: workingMemory,
       ));
@@ -125,8 +140,8 @@ void main() {
           '{"label": "skip", "reason": "trivial", "confidence": 0.8}');
 
       final allSpans = [
-        ConceptSpan(spanId: 'span_0', sentenceIds: ['S1']),
-        ConceptSpan(spanId: 'span_1', sentenceIds: ['S2']),
+        ConceptSpan(spanId: 'span_0', sentenceIds: ['S1'], text: 'Important fact.'),
+        ConceptSpan(spanId: 'span_1', sentenceIds: ['S2'], text: 'Trivial filler.'),
       ];
 
       final result = await stage.process(ClassifyInput(
@@ -137,6 +152,61 @@ void main() {
         ],
         workingMemory: workingMemory,
       ));
+
+      final extracted = result.extractSpans(allSpans);
+      expect(extracted, hasLength(1));
+      expect(extracted.first.spanId, 'span_0');
+    });
+  });
+
+  group('FilterStage', () {
+    late MockFilterRunner mockRunner;
+    late FilterStage stage;
+
+    setUp(() {
+      mockRunner = MockFilterRunner();
+      stage = FilterStage(filterRunner: mockRunner);
+    });
+
+    test('filters span as extract', () async {
+      mockRunner.stubPrediction(
+          FilterPrediction(extractScore: 0.9, skipScore: 0.1));
+
+      final result = await stage.process(FilterInput(
+        spans: [ConceptSpan(spanId: 'span_0', sentenceIds: ['S1'], text: 'ObjectBox is fast.')],
+      ));
+
+      expect(result.decisions, hasLength(1));
+      expect(result.decisions.first.label, 'extract');
+      expect(result.decisions.first.isExtract, isTrue);
+    });
+
+    test('filters span as skip', () async {
+      mockRunner.stubPrediction(
+          FilterPrediction(extractScore: 0.15, skipScore: 0.85));
+
+      final result = await stage.process(FilterInput(
+        spans: [ConceptSpan(spanId: 'span_0', sentenceIds: ['S1'], text: 'Okay sure.')],
+      ));
+
+      expect(result.decisions.first.label, 'skip');
+      expect(result.decisions.first.isExtract, isFalse);
+    });
+
+    test('extractSpans filters to extract-labeled spans', () async {
+      // First call returns extract, second returns skip
+      final sequentialRunner = _SequentialMockFilterRunner([
+        FilterPrediction(extractScore: 0.9, skipScore: 0.1),
+        FilterPrediction(extractScore: 0.15, skipScore: 0.85),
+      ]);
+      stage = FilterStage(filterRunner: sequentialRunner);
+
+      final allSpans = [
+        ConceptSpan(spanId: 'span_0', sentenceIds: ['S1'], text: 'Important fact.'),
+        ConceptSpan(spanId: 'span_1', sentenceIds: ['S2'], text: 'Trivial filler.'),
+      ];
+
+      final result = await stage.process(FilterInput(spans: allSpans));
 
       final extracted = result.extractSpans(allSpans);
       expect(extracted, hasLength(1));
@@ -156,7 +226,7 @@ void main() {
           '[{"content": "ObjectBox delivers sub-millisecond queries.", "scope": "project", "type": "learning", "sourceIds": ["S1"]}]');
 
       final result = await stage.process(DecontextualizeInput(
-        extractSpans: [ConceptSpan(spanId: 'span_0', sentenceIds: ['S1'])],
+        extractSpans: [ConceptSpan(spanId: 'span_0', sentenceIds: ['S1'], text: 'It is really fast.')],
         sentences: [Sentence(id: 'S1', text: 'It is really fast.')],
         workingMemory: workingMemory,
         sourceTurnId: 'conv_abc_turn_0',
@@ -270,4 +340,18 @@ void main() {
       expect(result.diff.superseded.first.oldUuid, existing.uuid);
     });
   });
+}
+
+class _SequentialMockFilterRunner implements FilterRunner {
+  final List<FilterPrediction> _predictions;
+  int _index = 0;
+
+  _SequentialMockFilterRunner(this._predictions);
+
+  @override
+  Future<FilterPrediction> predict(String spanText) async {
+    final prediction = _predictions[_index % _predictions.length];
+    _index++;
+    return prediction;
+  }
 }

@@ -7,9 +7,11 @@ import 'package:everything_stack_template/services/memory/working_memory_service
 import 'package:everything_stack_template/services/memory/stages/normalize_stage.dart';
 import 'package:everything_stack_template/services/memory/stages/segment_stage.dart';
 import 'package:everything_stack_template/services/memory/stages/cohere_stage.dart';
-import 'package:everything_stack_template/services/memory/stages/classify_stage.dart';
+import 'package:everything_stack_template/services/memory/stages/recohere_stage.dart';
+import 'package:everything_stack_template/services/memory/stages/filter_stage.dart';
 import 'package:everything_stack_template/services/memory/stages/decontextualize_stage.dart';
 import 'package:everything_stack_template/services/memory/stages/dedup_stage.dart';
+import 'package:everything_stack_template/services/slm/runners/filter_runner.dart';
 
 class MockChatClient implements ChatClient {
   @override
@@ -20,9 +22,6 @@ class MockChatClient implements ChatClient {
     if (eventId.startsWith('cohere_')) {
       return '[{"pair": ["S1", "S2"], "boundary": false}]';
     }
-    if (eventId.startsWith('classify_')) {
-      return '{"label": "extract", "confidence": 0.9}';
-    }
     if (eventId.startsWith('decontext_')) {
       return '[{"content": "ObjectBox supports all six Flutter platforms.", "scope": "project", "type": "learning", "sourceIds": ["S1", "S2"]}]';
     }
@@ -31,7 +30,13 @@ class MockChatClient implements ChatClient {
     }
     return '{}';
   }
+}
 
+/// Always predicts extract for encoder integration tests.
+class _ExtractAllFilterRunner implements FilterRunner {
+  @override
+  Future<FilterPrediction> predict(String spanText) async =>
+      FilterPrediction(extractScore: 0.9, skipScore: 0.1);
 }
 
 void main() {
@@ -52,7 +57,8 @@ void main() {
         normalizeStage: NormalizeStage(),
         segmentStage: SegmentStage(),
         cohereStage: CohereStage(chatClient: mockChat),
-        classifyStage: ClassifyStage(chatClient: mockChat),
+        recoherStage: RecoherStage(),
+        filterStage: FilterStage(filterRunner: _ExtractAllFilterRunner()),
         decontextualizeStage: decontextStage,
         dedupStage: DedupStage(
           chatClient: mockChat,
@@ -78,7 +84,7 @@ void main() {
       expect(result.trace.turnId, 'conv_abc_turn_0');
       expect(result.trace.normalize.input, source.text);
       expect(result.trace.segment.output, isNotEmpty);
-      expect(result.trace.classify.decisions, isNotEmpty);
+      expect(result.trace.filter.decisions, isNotEmpty);
       expect(result.trace.decontextualize.spans, isNotEmpty);
     });
 

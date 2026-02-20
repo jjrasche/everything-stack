@@ -78,7 +78,7 @@ class ClassifyStage implements EncoderStage<ClassifyInput, ClassifyResult> {
     List<ClassifyDecision> previousDecisions,
   ) async {
     final spanWatch = Stopwatch()..start();
-    final spanText = span.resolveText(sentences);
+    final spanText = span.text;
     final wmContext = workingMemory.propositionsAsContext();
 
     final previousContext = previousDecisions.isEmpty

@@ -1,0 +1,17 @@
+# Normalize line endings to LF in repo, checkout as native
+* text=auto
+
+# Force LF for generated JSON (prevents CRLF churn on Windows)
+*.json text eol=lf
+
+# Force LF for markdown
+*.md text eol=lf
+
+# Force LF for Dart
+*.dart text eol=lf
+
+# Binary files
+*.onnx binary
+*.png binary
+*.jpg binary
+*.wav binary

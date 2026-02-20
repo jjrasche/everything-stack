@@ -140,5 +140,20 @@ rust/**/mutants.out*/     # Mutation testing output
 # ONNX models (too large for git)
 assets/models/*.onnx
 
+# Golden data (personal conversation extracts, not for repo)
+lib/training/extraction/golden/normalize_output/
+lib/training/extraction/golden/segment_output/
+lib/training/extraction/golden/cohere_output/
+lib/training/extraction/golden/filter_output/
+lib/training/extraction/golden/dedup_output/
+lib/training/extraction/golden/encoder_output/
+lib/training/extraction/golden/labels/
+lib/training/extraction/golden/selection/
+lib/training/extraction/golden/test_batch_spans.json
+
+# Temp files from scripts/agents
+temp_*
+checkpoints/
+
 # ObjectBox runtime database
 objectbox/

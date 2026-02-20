@@ -4,7 +4,8 @@ import 'working_memory_service.dart';
 import 'stages/normalize_stage.dart';
 import 'stages/segment_stage.dart';
 import 'stages/cohere_stage.dart';
-import 'stages/classify_stage.dart';
+import 'stages/recohere_stage.dart';
+import 'stages/filter_stage.dart';
 import 'stages/decontextualize_stage.dart';
 import 'stages/dedup_stage.dart';
 
@@ -15,13 +16,14 @@ class EncoderResult {
   EncoderResult({required this.diff, required this.trace});
 }
 
-/// Pure orchestrator: calls stages in sequence, threads output → input.
+/// Pure orchestrator: calls 7 stages in sequence, threads output → input.
 /// Does NOT apply the diff — caller decides when to apply.
 class Encoder {
   final NormalizeStage _normalizeStage;
   final SegmentStage _segmentStage;
   final CohereStage _cohereStage;
-  final ClassifyStage _classifyStage;
+  final RecoherStage _recoherStage;
+  final FilterStage _filterStage;
   final DecontextualizeStage _decontextualizeStage;
   final DedupStage _dedupStage;
 
@@ -29,13 +31,15 @@ class Encoder {
     required NormalizeStage normalizeStage,
     required SegmentStage segmentStage,
     required CohereStage cohereStage,
-    required ClassifyStage classifyStage,
+    required RecoherStage recoherStage,
+    required FilterStage filterStage,
     required DecontextualizeStage decontextualizeStage,
     required DedupStage dedupStage,
   })  : _normalizeStage = normalizeStage,
         _segmentStage = segmentStage,
         _cohereStage = cohereStage,
-        _classifyStage = classifyStage,
+        _recoherStage = recoherStage,
+        _filterStage = filterStage,
         _decontextualizeStage = decontextualizeStage,
         _dedupStage = dedupStage;
 
@@ -55,13 +59,15 @@ class Encoder {
       CohereInput(sentences: segmentResult.sentences),
     );
 
-    final classifyResult = await _classifyStage.process(ClassifyInput(
+    final recoherResult = await _recoherStage.process(RecoherInput(
       spans: cohereResult.spans,
-      sentences: segmentResult.sentences,
-      workingMemory: workingMemory,
     ));
 
-    final extractSpans = classifyResult.extractSpans(cohereResult.spans);
+    final filterResult = await _filterStage.process(FilterInput(
+      spans: recoherResult.spans,
+    ));
+
+    final extractSpans = filterResult.extractSpans(recoherResult.spans);
 
     final decontextResult = await _decontextualizeStage.process(
       DecontextualizeInput(
@@ -115,7 +121,8 @@ class Encoder {
         normalize: normalizeResult.trace,
         segment: segmentResult.trace,
         cohere: cohereResult.trace,
-        classify: classifyResult.trace,
+        recohere: recoherResult.trace,
+        filter: filterResult.trace,
         decontextualize: decontextResult.trace,
         dedup: dedupResult.trace,
         workingMemoryAfter: wmAfterPreview,

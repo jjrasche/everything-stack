@@ -1,467 +1,604 @@
-# Memory System Architecture
+# Memory Encoder Pipeline
 
 ## Glossary
 
 | Term | Definition |
 |------|-----------|
 | **Memory System** | The complete module. Encoder + working memory + knowledge store + entity resolution + consolidation. Input: episodic sources. Output: structured, entity-linked, temporally-versioned knowledge. |
-| **Encoder** | The pipeline: normalize → segment → cohere → classify → decontextualize → dedup. Input: episodic source + working memory state. Output: working memory diff. Scope ends at working memory. |
+| **Encoder** | The pipeline: normalize → segment → cohere → recohere → filter → decontextualize → dedup. Input: episodic source + working memory state. Output: working memory diff. Scope ends at working memory. |
 | **Episodic Source** | Raw input to the encoder: a conversation turn, transcript segment, article, or any temporal unit of text. |
-| **Sentence** | Atomic text unit from segmentation. Verbatim from source. Identified by `S1`, `S2`, etc. Speaker metadata carried from the episodic source, not produced by the segmenter. |
-| **Concept Span** | One or more adjacent sentences grouped by discourse coherence. The unit that the classifier labels. |
-| **Proposition** | Self-contained, decontextualized knowledge unit. Encoder output. Contains text + sourceIds + scope + type. No pronouns, no inline provenance. Lives in working memory. |
-| **Fact** | A proposition after entity resolution and persistence. Proposition + entity links (subject/object) + temporal metadata (validFrom, status) + sourceEpisodeIds. Lives in the knowledge store. Not built yet. |
+| **Sentence** | Atomic text unit from segmentation. Verbatim from source. Identified by `S1`, `S2`, etc. |
+| **Concept Span** | One or more sentences grouped by discourse coherence. The unit that filter scores and decontext decomposes. |
+| **Proposition** | Self-contained, decontextualized knowledge unit. Encoder output. Contains content + sourceIds + scope + type. No pronouns, no inline provenance. Lives in working memory. |
+| **Fact** | A proposition after entity resolution and persistence. Proposition + entity links + temporal metadata. Lives in the knowledge store. Not built yet. |
 | **Working Memory** | Bounded set of propositions relevant to the current processing context. Versioned via event-sourced diffs. The encoder reads from and writes to working memory. |
-| **Knowledge Store** | All persisted facts with entity links and temporal metadata. Long-term memory. Append-only with soft delete (supersession, not deletion). Not built yet. |
-| **Entity** | A named, persistent concept that appears across multiple facts. Constrained taxonomy: Person, Project, Technology, Organization, Concept. Not built yet. |
-| **Entity Resolution** | Links entity mentions in propositions to existing entities in the knowledge store. Three-stage: embedding, text, LLM/NLI. The boundary where propositions become facts. Not built yet. |
-| **Working Memory Diff** | The output of one encoder run. `{added: [propositions], archived: [ids], superseded: [{old, new}], rewritten: [{old, new}]}`. Applied to working memory. |
-| **Supersession** | Temporal invalidation. When a new proposition contradicts an existing one in working memory, the old one gets `status: superseded`. Old proposition preserved. |
-| **Consolidation** | Periodic background dedup of the knowledge store, grouped by entity. Catches redundancies between propositions that were never co-resident in working memory. Not built yet. |
+| **Knowledge Store** | All persisted facts with entity links and temporal metadata. Long-term memory. Append-only with supersession. Not built yet. |
+| **Entity Resolution** | Links entity mentions in propositions to entities in the knowledge store. Post-encoder, converts propositions to facts. Not built yet. |
+| **Working Memory Diff** | The output of one encoder run. `{added, archived, superseded, rewritten}`. Applied to working memory by the caller. |
 
-## Scope: What We Are Building Now
-
-The encoder + working memory. Everything from episodic source to working memory diff.
-
-**Not building yet:** entity resolution, knowledge store, fact persistence, entity model, consolidation. These are documented here for architectural context but are future work.
-
-## System Overview
-
-```mermaid
-graph TB
-    subgraph Episode["Episodic Source"]
-        CONV[Conversation Turn]
-    end
-
-    subgraph MS["Memory System"]
-
-        subgraph Encoder["Encoder"]
-            direction TB
-            NORM["Normalize<br/><i>detect + punctuate + split</i>"]
-            SEG["Segment<br/><i>wtpsplit 15M</i>"]
-            COH["Cohere<br/><i>NSP DeBERTa 22M</i>"]
-            CLS["Classify (sequential)<br/><i>extract / skip + reason</i>"]
-            DECON["Decontextualize (per span)<br/><i>propositions with sourceIds</i>"]
-            DEDUP["Dedup<br/><i>NLI pairwise check</i>"]
-        end
-
-        subgraph WM["Working Memory (bounded)"]
-            direction TB
-            CURR[Current session propositions]
-            RETRIEVED["Retrieved from knowledge store<br/><i>(future)</i>"]
-        end
-
-        subgraph KS["Knowledge Store (future)"]
-            direction TB
-            FACTS["Facts"]
-            ENTITIES["Entities"]
-        end
-    end
-
-    CONV --> NORM
-    NORM -->|"clean text"| SEG
-    SEG -->|"sentences"| COH
-    COH -->|"concept spans"| CLS
-    WM -.->|"working memory state"| CLS
-    CLS -->|"extract spans"| DECON
-    CLS -.->|"skip spans (training data)"| CLS
-    DECON -->|"propositions"| DEDUP
-    WM -.->|"working memory state"| DEDUP
-    DEDUP -->|"working memory diff"| WM
-
-    WM -.->|"future: entity resolution"| KS
-    KS -.->|"future: retrieval"| RETRIEVED
-```
-
-## Encoder: Input, Output
-
-The encoder is a pure function:
+## Pipeline Overview
 
 ```
-Input:  Episodic Source + Working Memory State
-Output: Working Memory Diff {added, archived, superseded, rewritten}
+Episodic Source → [1.Normalize] → [2.Segment] → [3.Cohere] → [4.Recohere] → [5.Filter] → [6.Decontext] → [7.Dedup] → WM Diff
+                   SLM 210M        regex          SLM 110M     SLM 110M       SLM 44M      LLM 8B         SLM 22M
 ```
 
-The encoder's scope ends at the working memory diff. It does not do entity resolution. It does not write to the knowledge store. It produces propositions and updates working memory.
+**Input**: Episodic source text + current working memory state
+**Output**: Working memory diff `{added, archived, superseded, rewritten}`
 
-## Encoder Stages
+---
 
-### 1. Normalize (punctuate + split)
-Three sub-steps. Source-agnostic: handles any input regardless of whether it came from Deepgram, another STT, exported LLM conversations, or pasted text.
+## Stage 1: Normalize
 
-**1a. Detect punctuation quality**
-- **Method**: ratio of punctuation marks (`. , ? !`) to word count. Well-punctuated English: ~1 period per 15-20 words, ~1 comma per 8-12 words. If ratio is far below threshold, text needs punctuation.
-- **No model needed**: arithmetic on character counts. <1ms.
-- **Why not a simple "contains periods?" check**: STT can produce text with some punctuation but missing most of it. Ratio catches partial punctuation.
+**Question**: Is this text clean enough to segment?
+**Operation**: Compute punctuation ratio (marks per word). If below threshold (AdaptationState: `punctuationRatioThreshold`), invoke SLM for punctuation restoration + truecasing. Then check for overlong sentences exceeding word limit (AdaptationState: `maxSentenceWords`, default 40). Split at coordinating conjunctions: `, and `, `, but `, `, so `, `, or ` when preceded by a subject-verb clause.
 
-**1b. Punctuate (conditional, runs only when 1a detects low punctuation)**
-- **Model**: `1-800-BAD-CODE/xlm-roberta_punctuation_fullstop_truecase` (560M params, ONNX, 47 languages)
-- **Performance**: 92.4 F1 on periods, 78.8 on commas, 80.5 on question marks. Also does truecasing.
-- **Why gated, not unconditional**: punctuation models strip existing punctuation before re-predicting. They are not idempotent. Running on already-punctuated text introduces spurious commas (0.75% false positive rate) and changes correct punctuation. Source: oliverguhr/fullstop model documentation.
-- **SLM from day one**: pre-trained, no training needed
-- **Inference**: one model call per turn (when gate passes)
-
-**1c. Split overlong sentences**
-- **Method**: after punctuation, check sentence word counts. Any sentence over threshold (40-50 words) gets split at natural clause boundaries.
-- **Rules-based**: split at coordinating conjunctions (", and", ", but", ", so", ", or") when preceded by a subject-verb clause. No model needed.
-- **Why**: STT produces run-on compound sentences. Punctuation model may correctly add commas but not periods. This catches "I went to the store, and then I picked up groceries, and then I came home, and started cooking" and splits it.
-- **Inference**: regex + word count. <1ms.
-
-### 2. Segment
-- **Model**: wtpsplit (15M params, 3ms, ONNX)
-- **Input**: punctuated text
-- **Output**: `[{id: "S1", text: "..."}, {id: "S2", text: "..."}, ...]`
-- **No speaker field**: speaker metadata comes from the episodic source, not the segmenter
-- **SLM from day one**: pre-trained, no training needed
-- **Inference**: one model call per turn
-
-### 3. Cohere
-- **Method**: Next Sentence Prediction (NSP) discourse coherence
-- **Model**: DeBERTa 22M (~3ms per pair)
-- **Input**: adjacent sentence pairs from segment output
-- **Output**: coherence score per pair. Drop below threshold = group boundary. Produces concept spans.
-- **Why NSP, not embeddings**: "I decided to use ObjectBox" + "Because it supports all six platforms" have low embedding similarity but high discourse coherence. NSP directly answers "is this a continuation of the previous thought?" Embeddings answer "are these about the same topic?" - weaker, less precise.
-- **SLM from day one**: pre-trained NSP head, no training needed
-- **Inference**: one model call per adjacent pair. N sentences = N-1 inferences.
-
-### 4. Classify (extract / skip) - sequential
-- **Model**: Groq LLM initially, CRF or SetFit/DeBERTa classifier (22M) after training data
-- **Input per span**: one concept span + working memory state + previous span decisions
-- **Output per span**: label (`extract` | `skip` with reason + confidence)
-- **Sequential, not batch**: each span classified one at a time. Previous span + label passed as context to the next. Research (EMNLP 2024, LLM-SSC) shows +1.5 F1 improvement over independent classification when labels have contextual dependencies. For extract/skip, dependencies are real: if you just extracted "ObjectBox persistence," the next mention is likely `already_known`.
-- **Why sequential also helps SLM replacement**: CRF-style structured prediction (where adjacent labels are jointly optimized) adds +0.35 F1 over independent softmax. Sequential LLM classification is a reasonable approximation of CRF without training a custom layer. 2B models (Gemma-2b + LoRA) achieved 0.907 Micro F1 with sequential context. 8B handles this trivially.
-- **Skip reasons**: ephemeral, trivial, generic, already_known, unresolved. Reasons are training data for the SLM replacement.
-- **Full coverage**: every sentence in exactly one span, every span labeled
-- **Inference**: one LLM call per span (sequential). N spans = N calls. Context per call: current span + working memory + last 5-10 span decisions (~50-100 tokens each).
-- **No Claude models**: Groq inference only. Respect inference budget.
-
-### 5. Decontextualize - per span
-- **Model**: Groq LLM initially. T5-3B fine-tuned is the minimum viable SLM (SARI 0.5183). Sub-1B cannot do this task (Choi et al. 2021).
-- **Input per span**:
-  1. The target span text
-  2. 2-3 surrounding sentences (from the same turn)
-  3. Entity mention list from working memory (known entities the model can resolve references to)
-- **Output per span**: self-contained propositions with sourceIds + scope + type
-- **Key operation**: coreference resolution - "it" to "ObjectBox", "this approach" to "dedicated transcript tab"
-- **Why per-span, not batch**: enables SLM replacement. Per-span keeps context small (~200 tokens). Batch requires full turn context which exceeds small model capacity.
-- **Why entity list matters**: instead of the model inferring "it" = "ObjectBox" from conversation history, you hand it `Known entities: ObjectBox, Flutter, DeBERTa`. The model picks the right one. This dramatically reduces context needed and makes the task tractable for T5-3B. 76% of coreference links fall within 500 words; 90% of pronoun references resolve within 5 entity mentions.
-- **Hybrid SLM path**: use sub-1B NLI model on-device for coreference detection (flag which spans need rewriting). Only spans with unresolved references hit the LLM. Clean spans pass through unchanged.
-- **No "Because" clauses**: provenance stored as sourceIds, not inline text
-- **One fact per proposition**: two ideas = two propositions
-- **Scope**: session (this conversation) | project (named project) | life (identity-level)
-- **Type**: learning (discovered fact) | project (decision/requirement) | exploration (investigated option)
-- **Also called by dedup**: when bidirectional entailment detected, dedup routes the pair back here for canonical rewrite.
-- **Inference**: one LLM call per extract span. Context per call: span + surrounding sentences + entity list (~200 tokens).
-- **No Claude models**: Groq inference only.
-
-### 6. Dedup (NLI entailment against working memory)
-- **Model**: NLI cross-encoder (22M)
-- **Input**: new propositions + working memory state
-- **Output**: working memory diff
-- **Multi-step process**:
-  1. For each new proposition, run NLI against every working memory entry (N * M inferences)
-  2. **No match** (all entailment scores below threshold): add to working memory
-  3. **Bidirectional entailment** (same meaning, different words): route both propositions back to decontextualize for canonical rewrite. The rewrite replaces both.
-  4. **Contradiction** (high contradiction score): supersede the old proposition
-- **SLM from day one**: zero-shot NLI, no training needed
-- **Inference**: N propositions * M working memory entries * 3ms each. Plus optional decontextualize callbacks for rewrites.
-
-## Dedup Detail: Rewrite Loop
-
-When dedup detects bidirectional entailment, it triggers a rewrite cycle. This is the only place where the encoder loops back on itself.
-
-```mermaid
-sequenceDiagram
-    participant D as Dedup
-    participant NLI as NLI Model
-    participant DC as Decontextualize
-
-    D->>NLI: compare(new_p, wm_entry)
-    NLI-->>D: bidirectional entailment (0.91)
-    D->>DC: rewrite([new_p, wm_entry])
-    DC-->>D: canonical proposition
-    Note over D: replace wm_entry with canonical
-    Note over D: discard new_p (merged into canonical)
-```
-
-## Trace Structure (per-turn logging)
-
-Every turn produces a complete trace through all stages. Each stage logs input, output, model, and latency. All intermediate results preserved for inspection and golden data generation.
-
+#### Input
 ```json
 {
-  "turnId": "conv_3475558a_turn_0",
-  "episodicSource": {
-    "text": "raw turn text",
-    "speaker": "user",
-    "episodeId": "conv_3475558a"
-  },
-  "workingMemoryBefore": ["p_01", "p_02"],
-
-  "stages": {
-    "normalize": {
-      "input": "raw turn text",
-      "punctuationRatio": 0.02,
-      "punctuationNeeded": true,
-      "punctuateModel": "xlm-roberta-punctuation-560M",
-      "punctuateLatencyMs": 15,
-      "splitCount": 1,
-      "splitDetails": [{"original": "long compound sentence, and then...", "splitAt": 23}],
-      "output": "normalized turn text",
-      "totalLatencyMs": 16
-    },
-
-    "segment": {
-      "input": "punctuated turn text",
-      "output": [
-        {"id": "S1", "text": "first sentence."},
-        {"id": "S2", "text": "second sentence."}
-      ],
-      "model": "wtpsplit-15M",
-      "latencyMs": 3
-    },
-
-    "cohere": {
-      "input": ["S1", "S2", "S3", "S4"],
-      "pairScores": [
-        {"pair": ["S1", "S2"], "coherenceScore": 0.92, "boundary": false},
-        {"pair": ["S2", "S3"], "coherenceScore": 0.34, "boundary": true},
-        {"pair": ["S3", "S4"], "coherenceScore": 0.88, "boundary": false}
-      ],
-      "output": [
-        {"spanId": "span_0", "sentenceIds": ["S1", "S2"]},
-        {"spanId": "span_1", "sentenceIds": ["S3", "S4"]}
-      ],
-      "model": "deberta-nsp-22M",
-      "threshold": 0.5,
-      "latencyMs": 9
-    },
-
-    "classify": {
-      "sequential": true,
-      "decisions": [
-        {
-          "spanId": "span_0",
-          "input": {"span": "span_0", "previousDecisions": []},
-          "label": "extract",
-          "confidence": 0.94,
-          "model": "groq/llama-3.3-70b-versatile",
-          "latencyMs": 600
-        },
-        {
-          "spanId": "span_1",
-          "input": {"span": "span_1", "previousDecisions": [{"spanId": "span_0", "label": "extract"}]},
-          "label": "skip",
-          "reason": "ephemeral",
-          "confidence": 0.87,
-          "model": "groq/llama-3.3-70b-versatile",
-          "latencyMs": 550
-        }
-      ],
-      "totalLatencyMs": 1150
-    },
-
-    "decontextualize": {
-      "perSpan": true,
-      "spans": [
-        {
-          "spanId": "span_0",
-          "input": {
-            "spanText": "first sentence. second sentence.",
-            "surroundingSentences": ["S3", "S4"],
-            "entityList": ["ObjectBox", "Flutter", "Everything Stack"]
-          },
-          "output": [
-            {
-              "propositionId": "p_03",
-              "text": "Self-contained proposition text.",
-              "sourceIds": ["S1", "S2"],
-              "scope": "project",
-              "type": "learning"
-            }
-          ],
-          "model": "groq/llama-3.3-70b-versatile",
-          "latencyMs": 800
-        }
-      ],
-      "totalLatencyMs": 800
-    },
-
-    "dedup": {
-      "comparisons": [
-        {
-          "newPropositionId": "p_03",
-          "comparedTo": "p_01",
-          "entailmentScore": 0.12,
-          "contradictionScore": 0.03,
-          "decision": "no_match"
-        },
-        {
-          "newPropositionId": "p_03",
-          "comparedTo": "p_02",
-          "entailmentScore": 0.91,
-          "contradictionScore": 0.01,
-          "decision": "bidirectional_entailment",
-          "rewriteTriggered": true,
-          "rewriteInput": ["p_03", "p_02"],
-          "rewriteOutput": {
-            "propositionId": "p_04",
-            "text": "Canonical merged proposition.",
-            "sourceIds": ["S1", "S2", "S5"],
-            "scope": "project",
-            "type": "learning"
-          },
-          "rewriteModel": "groq/llama-3.3-70b-versatile",
-          "rewriteLatencyMs": 600
-        }
-      ],
-      "actions": [
-        {"propositionId": "p_02", "action": "superseded_by_rewrite", "replacedBy": "p_04"},
-        {"propositionId": "p_03", "action": "merged_into_rewrite", "replacedBy": "p_04"},
-        {"propositionId": "p_04", "action": "add", "source": "dedup_rewrite"}
-      ],
-      "model": "deberta-nli-22M",
-      "latencyMs": 6
-    }
-  },
-
-  "workingMemoryDiff": {
-    "added": [{"propositionId": "p_04", "source": "dedup_rewrite"}],
-    "archived": [],
-    "superseded": [{"old": "p_02", "replacedBy": "p_04", "reason": "dedup_merge"}],
-    "rewritten": [{"old": "p_03", "mergedInto": "p_04"}]
-  },
-
-  "workingMemoryAfter": ["p_01", "p_04"]
+  "text": "so we decided to use objectbox because it supports all six platforms and the single writer model means we need queue coordination for concurrent writes"
 }
 ```
 
-Key properties:
-- Every stage has explicit `input`, `output`, `model`, `latencyMs`
-- Confidence scores where applicable (classify, dedup)
-- Coherence pair scores for boundary inspection
-- Dedup logs every pairwise comparison with NLI scores
-- Dedup rewrite loops are fully traced (input pair, output canonical, model used)
-- Working memory state before and after
-- All IDs trace back to source sentences
-- No Claude models anywhere. Groq for LLM stages.
-
-## Data Flow Per Turn
-
-```mermaid
-sequenceDiagram
-    participant Src as Episodic Source
-    participant P as Normalize
-    participant Seg as Segment
-    participant NSP as Cohere
-    participant Cls as Classify
-    participant Ext as Decontextualize
-    participant Dup as Dedup
-    participant WM as Working Memory
-
-    Src->>P: raw text
-    P->>Seg: normalized text (punctuated + split)
-    Seg->>NSP: S1, S2, S3...Sn
-    NSP->>Cls: concept spans
-
-    loop each span (sequential)
-        WM-->>Cls: working memory + previous decisions
-        Cls->>Cls: label span (extract/skip + reason)
-    end
-
-    loop each extract span
-        WM-->>Ext: entity list + surrounding sentences
-        Ext->>Ext: decontextualize into propositions
-    end
-
-    Ext->>Dup: all propositions
-    WM-->>Dup: working memory state
-    Dup->>Dup: NLI pairwise (N * M comparisons)
-    opt bidirectional entailment
-        Dup->>Ext: rewrite pair into canonical form
-        Ext-->>Dup: canonical proposition
-    end
-    Dup->>WM: working memory diff
-```
-
-## Working Memory Versioning
-
-Each change to working memory is a diff event:
-
+#### Output
 ```json
-{"action": "add", "propositionId": "p_42", "timestamp": "...", "source": "encoder"}
-{"action": "archive", "propositionId": "p_12", "timestamp": "...", "reason": "context_pressure"}
-{"action": "supersede", "propositionId": "p_08", "supersededBy": "p_42", "timestamp": "..."}
-{"action": "rewrite", "oldPropositionId": "p_03", "newPropositionId": "p_43", "timestamp": "...", "reason": "dedup_merge"}
+{
+  "text": "So we decided to use ObjectBox because it supports all six platforms. The single writer model means we need queue coordination for concurrent writes.",
+  "punctuationNeeded": true,
+  "latencyMs": 16
+}
 ```
 
-Working memory state at any point = replay diffs from empty. The diff sequence is the version history.
+#### Metrics
+| Metric | Formula | Healthy | Red Flag |
+|--------|---------|---------|----------|
+| Words per punctuation mark | word count / punctuation count in output | 8-20 | >30 (punctuation failed) or <3 (over-punctuated) |
+| Longest sentence (words) | max word count across output sentences | 10-35 | >50 (splitting failed) |
+
+
+#### Review Screen
+Source text on top, normalized text on bottom. Each change (inserted punctuation, case change, split point) highlighted individually. Tab through changes one at a time: accept or reject each. Each decision = one training pair. Arrow keys to advance to next source. Instances with metrics outside healthy range surfaced first.
+
+#### Implementation
+**Model**: `1-800-BAD-CODE/punctuation_fullstop_truecase_english` (210M ONNX, SentencePiece 32k vocab).
+**AdaptationState**: `punctuationRatioThreshold` (float), `maxSentenceWords` (int, default 40).
+
+#### Training
+**Fine-tuning**: Trigger: >5% correction rate across 50+ reviewed instances. Golden data: accumulated (source, corrected) pairs from review. Expected improvement: domain-specific truecasing (ObjectBox, DeBERTa, HNSW).
+
+---
+
+## Stage 2: Segment
+
+**Question**: What are the atomic sentence units in this text?
+**Operation**: Strip code blocks (fenced + indented), strip markdown formatting, split on sentence boundaries (`.?!`), filter fragments under minimum word count (AdaptationState: `minFragmentWords`, default 3).
+
+#### Input
+```json
+{
+  "text": "So we decided to use ObjectBox because it supports all six platforms. The single writer model means we need queue coordination for concurrent writes."
+}
+```
+
+#### Output
+```json
+{
+  "sentences": [
+    {"id": "S1", "text": "So we decided to use ObjectBox because it supports all six platforms."},
+    {"id": "S2", "text": "The single writer model means we need queue coordination for concurrent writes."}
+  ],
+  "latencyMs": 1
+}
+```
+
+#### Metrics
+| Metric | Formula | Healthy | Red Flag |
+|--------|---------|---------|----------|
+| Avg sentence length (words) | total words / sentence count | 8-25 | <4 (over-splitting) or >40 (under-splitting) |
+| Sentence count | number of output sentences | 3-30 | <2 or >80 |
+
+
+#### Review Screen
+Source text with split boundaries marked as colored bars between sentences. Reviewer clicks a boundary to remove it, clicks between words to add one. Arrow keys to advance. Flag instances where avg sentence length is outside range.
+
+#### Implementation
+Pure regex. Deterministic. No model.
+**AdaptationState**: `minFragmentWords` (int, default 3).
+
+#### Training
+No model. Rule updates only from review disagreements (e.g., abbreviation periods).
+
+---
+
+## Stage 3: Cohere
+
+**Question**: Which adjacent sentences are part of the same thought?
+**Operation**: Score each adjacent sentence pair for discourse continuity via pairwise SLM inference. Pairs scoring below boundary threshold (AdaptationState: `cohereBoundaryThreshold`, default 0.5) mark topic boundaries. Group consecutive same-topic sentences into concept spans. Resplit any span exceeding max sentence count (AdaptationState: `maxSpanSentences`, default 15) at weakest internal boundary below resplit threshold (AdaptationState: `resplitThreshold`, default 0.65).
+
+#### Input
+```json
+{
+  "sentences": [
+    {"id": "S1", "text": "So we decided to use ObjectBox..."},
+    {"id": "S2", "text": "The single writer model means..."},
+    {"id": "S3", "text": "OK anyway what about the UI?"},
+    {"id": "S4", "text": "The button placement feels wrong."}
+  ]
+}
+```
+
+#### Output
+```json
+{
+  "spans": [
+    {"spanId": "span_0", "sentenceIds": ["S1", "S2"]},
+    {"spanId": "span_1", "sentenceIds": ["S3", "S4"]}
+  ],
+  "pairScores": [
+    {"pair": ["S1", "S2"], "coherenceScore": 0.89, "boundary": false},
+    {"pair": ["S2", "S3"], "coherenceScore": 0.31, "boundary": true},
+    {"pair": ["S3", "S4"], "coherenceScore": 0.84, "boundary": false}
+  ],
+  "latencyMs": 9
+}
+```
+
+#### Metrics
+| Metric | Formula | Healthy | Red Flag |
+|--------|---------|---------|----------|
+| Words per span | span word count | 15-150 | <5 (over-fragmenting) or >300 (not splitting) |
+| Sentences per span | sentence count in this span | 2-8 | 1 always (not grouping) or >15 (not splitting) |
+
+
+#### Review Screen
+First sentence on top, second sentence on bottom. Coherence score displayed between them. Current decision (boundary/continuation) pre-selected as tab. Reviewer switches tab to change. Left/right arrow keys to advance to next pair.
+
+#### Implementation
+**Model**: `bert-wiki-paragraphs` (110M ONNX, WordPiece tokenizer). Pairwise scoring, ~3ms/pair.
+**AdaptationState**: `cohereBoundaryThreshold` (float, default 0.5), `resplitThreshold` (float, default 0.65), `maxSpanSentences` (int, default 15).
+
+#### Training
+**Fine-tuning**: Trigger: >10% correction rate across 50+ reviewed pairs. Golden data: (sentence_a, sentence_b, should_be_boundary) from review. Expected improvement: boundary F1 from ~85% to 92%+.
+
+---
+
+## Stage 4: Recohere
+
+**Question**: Are there non-adjacent spans within this source that belong together?
+**Operation**: Compute pairwise cosine similarity between all span embeddings. Merge pairs above merge threshold (AdaptationState: `recohereThreshold`). Handles divergent thinking where the speaker leaves a topic, discusses something else, then returns. Scope: within a single episodic source only. Cross-source knowledge accumulation is working memory's job.
+
+**Not asking**: Whether to merge spans across different episodic sources.
+
+#### Input
+```json
+{
+  "spans": [
+    {"spanId": "span_0", "sentenceIds": ["S1", "S2"], "text": "ObjectBox uses single-writer..."},
+    {"spanId": "span_1", "sentenceIds": ["S3", "S4"], "text": "The button placement feels wrong..."},
+    {"spanId": "span_2", "sentenceIds": ["S5", "S6"], "text": "Back to ObjectBox, the sync layer..."}
+  ]
+}
+```
+
+#### Output
+```json
+{
+  "spans": [
+    {"spanId": "span_0", "sentenceIds": ["S1", "S2", "S5", "S6"]},
+    {"spanId": "span_1", "sentenceIds": ["S3", "S4"]}
+  ],
+  "merges": [{"merged": ["span_0", "span_2"], "similarity": 0.87}],
+  "latencyMs": 15
+}
+```
+
+#### Metrics
+| Metric | Formula | Healthy | Red Flag |
+|--------|---------|---------|----------|
+| Merge count | merges in this source | 0-3 | >5 (cohere boundaries were poor) |
+| Highest non-merged similarity | max similarity among pairs NOT merged | <threshold | near-threshold scores warrant review |
+
+
+#### Review Screen
+Two span texts side by side. Similarity score displayed between them. Pre-selected decision (merge/keep separate). Reviewer confirms or overrides. Arrow keys to advance. Only pairs near threshold surfaced for review.
+
+#### Implementation
+**Model**: Same `bert-wiki-paragraphs` (110M ONNX) used by cohere. Encode each span, compute pairwise cosine similarity.
+O(n^2) on spans, not sentences. 10-15 spans per source = ~100 comparisons at ~3ms each = ~300ms.
+**AdaptationState**: `recohereThreshold` (float).
+
+#### Training
+Shares model and training with cohere. No separate training needed.
+
+---
+
+## Stage 5: Filter
+
+**Question**: Is this span anything, or is it conversational noise?
+**Operation**: Compute heuristic features from span text. Run classification model on text + features. Score 0.0 (noise) to 1.0 (substantive). Compare against threshold (AdaptationState: `filterThreshold`, default 0.35). Deterministic fast-path: `wordCount < 3 AND NOT hasNamedEntity` skips without model call.
+
+**Not asking**: Is this novel relative to working memory? (dedup). Is this a complete thought? (cohere/recohere). What type of knowledge? (decontext). Will this last? (working memory decay). Is this redundant? (dedup).
+
+#### Input
+```json
+{
+  "spanId": "span_3",
+  "text": "ok sounds good let me think about that",
+  "features": {
+    "wordCount": 8,
+    "sentenceCount": 1,
+    "lexicalDensity": 0.0,
+    "hasNamedEntity": false,
+    "hasCausalMarker": false,
+    "questionRatio": 0.0
+  }
+}
+```
+
+**Heuristic features** (computed deterministically, included as model input):
+
+| Feature | Type | Computation | Signal |
+|---------|------|-------------|--------|
+| `wordCount` | int | whitespace split count | <5 with no entities = almost certainly noise |
+| `sentenceCount` | int | sentence count in span | single-sentence spans more likely filler |
+| `lexicalDensity` | float | content words / total words | "ok sure" = 0.0, technical text = 0.5-0.7 |
+| `hasNamedEntity` | bool | capitalized multi-char tokens, code refs, technical terms | near-perfect substantiveness indicator |
+| `hasCausalMarker` | bool | "because", "so that", "in order to", "therefore", "since" | explanations are inherently substantive |
+| `questionRatio` | float | question sentences / total sentences | all-questions may not be decomposable alone |
+
+#### Output
+```json
+{
+  "spanId": "span_3",
+  "score": 0.12,
+  "decision": "skip",
+  "latencyMs": 4
+}
+```
+
+#### Metrics
+| Metric | Formula | Healthy | Red Flag |
+|--------|---------|---------|----------|
+| Filter score | model output for this span | 0.0-1.0 | 0.3-0.5 (borderline, warrants review) |
+| Skip rate | skipped / total spans | 5-20% | >40% (too aggressive) or 0% (not working) |
+
+
+#### Evaluation Rubric (for human labeling, not runtime)
+| Dimension | Question |
+|-----------|----------|
+| **Substantive** | Contains any claim, fact, decision, preference, or description? |
+| **Specific** | Concrete enough to decompose into at least one proposition? |
+
+Both yes = extract. Either no = skip. Frontier model applies rubric first. Human verifies disagreements and borderline cases.
+
+#### Review Screen
+Span text displayed. Filter score and decision shown. Heuristic feature values alongside. Reviewer confirms extract/skip via tab toggle. Arrow keys to advance. Borderline scores (0.3-0.5) surfaced first.
+
+#### Implementation
+**Model**: DeBERTa-v3-small (44M) with binary classification head. Input = [CLS] embedding concatenated with heuristic feature vector.
+**AdaptationState**: `filterThreshold` (float, default 0.35). ↑ decontext produces 0 propositions. ↓ user flags missing knowledge from skipped span.
+**Latency**: ~3-5ms per span. Fast-path skips in <1ms.
+
+#### Training
+Follows generic SLM Training Process (see section above).
+- **Bootstrap**: 200+ labeled spans (stratified). SetFit contrastive fine-tune (30 sec). Target: F1 90%+.
+- **Active learning**: Borderline scores (0.3-0.5) routed to review. Expected: F1 90% to 95%+ after 500 corrections.
+- **Labeler**: Claude Code applies rubric directly. No external LLM calls.
+
+---
+
+## Stage 6: Decontextualize
+
+**Question**: What self-contained, atomic propositions does this span express?
+**Operation**: Replace pronouns and references ("it", "this approach", "that thing") with concrete entity names from the entity list. Then decompose the span into 0-N atomic propositions. Assign scope (session/project/life) and type (learning/project/exploration). Coreference resolution is the primary job. Decomposition into atomic units is the secondary job.
+
+**Not asking**: Whether to extract this span (filter decided). Whether this is redundant (dedup decides after). What entities are mentioned (entity resolution is post-encoder).
+
+#### Input
+```json
+{
+  "spanId": "span_0",
+  "text": "So we decided to use it because it supports all six platforms. The single writer model means we need queue coordination.",
+  "surroundingContext": "...previous and next span text...",
+  "entityList": ["ObjectBox", "Flutter", "Everything Stack", "Supabase"]
+}
+```
+
+#### Output
+```json
+{
+  "spanId": "span_0",
+  "propositions": [
+    {
+      "content": "The Everything Stack project uses ObjectBox for persistence because ObjectBox supports all six target platforms.",
+      "scope": "project",
+      "type": "project",
+      "sourceIds": ["S1"]
+    },
+    {
+      "content": "ObjectBox uses a single-writer model that requires queue coordination for concurrent write operations.",
+      "scope": "project",
+      "type": "learning",
+      "sourceIds": ["S2"]
+    }
+  ],
+  "latencyMs": 800
+}
+```
+
+#### Metrics
+| Metric | Formula | Healthy | Red Flag |
+|--------|---------|---------|----------|
+| Propositions from this span | proposition count | 1-8 | 0 (filter should have caught) or >15 (over-decomposing) |
+| Input-to-output word ratio | span words / total proposition words | 2-6x | <1.5x (copying source) or >10x (losing information) |
+| Avg proposition length (words) | total proposition words / proposition count | 10-25 | <5 (fragments) or >40 (not atomic) |
+
+
+#### Evaluation Rubric (for human labeling)
+| Dimension | Question |
+|-----------|----------|
+| **Self-contained** | Understandable without the source text? No dangling pronouns or references? |
+| **Atomic** | Contains exactly one claim? Could not be split further? |
+| **Faithful** | Accurately represents what the source said? No hallucinated details? |
+| **Complete** | All extractable knowledge from the span captured across all propositions? |
+
+Frontier model applies rubric first. Human verifies disagreements.
+
+#### Review Screen
+Source span text on top. Propositions listed below, each with scope/type tags. Reviewer can: confirm all, flag individual propositions (not self-contained, not atomic, not faithful), mark span as incomplete (missing knowledge). Arrow keys to advance to next span.
+
+#### Implementation
+**Model**: Groq LLM (8B). **Permanent LLM stage.** Generative rewriting requires 3B+ minimum (Choi et al. 2021). Sub-1B cannot do this.
+**Input per span**: target span text + 2-3 surrounding sentences + entity list from working memory (~200 tokens total).
+**Per-span, not batch**: keeps context small, enables future SLM transition to T5-3B.
+**Also callable from dedup**: when bidirectional entailment detected, dedup routes the pair here for canonical rewrite.
+
+#### Training
+**Stays on LLM.** Prompt optimization only. Flagged propositions drive PromptImprovementLoop.
+**Future SLM**: T5-3B fine-tuned. Requires ~1000 (span, propositions) pairs.
+
+---
+
+## Stage 7: Dedup
+
+**Question**: Does this proposition duplicate, contradict, or refine anything already in working memory?
+**Operation**: For each new proposition, run NLI cross-encoder against every working memory proposition. Classify each pair as: no match, entailment (merge), or contradiction (supersede). On merge: route both propositions to decontext for canonical rewrite. When working memory is empty, all propositions are added directly.
+
+**Not asking**: Whether this is substantive (filter decided). What entities are mentioned (entity resolution is post-encoder). Whether this is "important": all propositions that reach dedup have passed filter and decontext.
+
+#### Input
+```json
+{
+  "propositions": [
+    {"content": "ObjectBox uses a single-writer model requiring queue coordination.", "sourceIds": ["S2"]}
+  ],
+  "workingMemory": [
+    {"uuid": "p_01", "content": "ObjectBox requires queue coordination for concurrent writes."},
+    {"uuid": "p_02", "content": "Flutter supports six target platforms."}
+  ]
+}
+```
+
+#### Output
+```json
+{
+  "diff": {
+    "added": [],
+    "superseded": [{"oldUuid": "p_01", "newUuid": "p_03", "reason": "bidirectional_entailment"}],
+    "rewritten": [{"oldUuid": "p_01", "mergedInto": "p_03"}]
+  },
+  "comparisons": [
+    {"new": "p_new", "existing": "p_01", "entailment": 0.91, "contradiction": 0.01, "decision": "merge"},
+    {"new": "p_new", "existing": "p_02", "entailment": 0.08, "contradiction": 0.02, "decision": "no_match"}
+  ],
+  "latencyMs": 6
+}
+```
+
+#### Metrics
+| Metric | Formula | Healthy | Red Flag |
+|--------|---------|---------|----------|
+| Max entailment score | highest entailment score against any WM entry | 0.0-1.0 | near-threshold scores warrant review |
+| Merge rate | (superseded + rewritten) / new propositions | 5-30% | 0% after source 3 (not working) or >60% (redundant extraction) |
+| Contradiction rate | contradictions / total comparisons | 1-5% | >20% (decontext hallucinating or source self-contradicting) |
+
+
+#### Evaluation Rubric (for human labeling)
+| Dimension | Question |
+|-----------|----------|
+| **Match correctness** | Entailment/contradiction/no-match classification correct for this pair? |
+| **Merge quality** | When merged, does the canonical rewrite preserve information from both? |
+| **No false merges** | Are non-duplicate propositions correctly kept separate? |
+
+Frontier model applies rubric first. Human verifies.
+
+#### Review Screen
+New proposition on left. Matched WM proposition on right. NLI scores (entailment, contradiction, neutral) displayed. Pre-selected decision shown. If merge: canonical rewrite displayed below. Reviewer confirms or overrides. Arrow keys to advance. Only pairs near threshold surfaced.
+
+#### Implementation
+**Model**: `nli-deberta-v3-xsmall` (22M). Cross-encoder: (proposition A, proposition B) → entailment/contradiction/neutral scores.
+**Merge trigger**: bidirectional entailment > threshold → route to decontext for canonical rewrite.
+**Contradiction trigger**: contradiction > threshold → supersede old with new.
+**Inference**: N new propositions x M working memory entries x ~3ms each.
+**AdaptationState**: `entailmentThreshold` (float), `contradictionThreshold` (float).
+
+#### Training
+**Fine-tuning**: Trigger: >10% correction rate across 50+ reviewed pairs. Golden data: (proposition_a, proposition_b, correct_decision) from review. Expected improvement: accuracy from ~80% to 90%+.
+
+---
+
+## Pipeline Ordering Rationale
+
+The order is load-bearing. Each stage depends on the previous stage's output form:
+
+| Stage | Requires from previous | Cannot move because |
+|-------|----------------------|-------------------|
+| Normalize | Raw text | Must clean before splitting |
+| Segment | Clean punctuated text | Cannot split unpunctuated text reliably |
+| Cohere | Sentence list | Needs atomic units to score adjacency |
+| Recohere | Initial span list | Needs cohere boundaries before merging across gaps |
+| Filter | Final spans | Must have coherent spans to score |
+| Decontext | Filtered extract spans + WM entity list | Needs clean spans and entity context for pronoun resolution |
+| Dedup | Atomic propositions + WM state | Cannot compare messy span text against clean WM propositions |
+
+**Dedup cannot move before decontext** because dedup compares propositions (atomic, self-contained) against propositions. Before decontext, only messy multi-claim span text exists.
+
+**Filter is an optimization, dedup is correctness.** Removing filter entirely works. It just wastes LLM calls on noise spans. Removing dedup breaks working memory with duplicates.
+
+---
 
 ## Progressive Intelligence
 
 ```
-Phase 1 (now):     Groq LLM does classify + decontextualize. SLMs do the rest.
-Phase 2 (golden):  Human review corrects per-stage outputs (training data)
-Phase 3 (SLM):     On-device models take over per-stage
-Phase 4 (active):  Low-confidence routes to Groq, rest stays on-device
-
-Stage          | Phase 1          | Phase 3 Target             | SLM from day one?
----------------|------------------|----------------------------|------------------
-Normalize      | xlm-roberta (gated) + rules | xlm-roberta + rules (already) | Yes
-Segment        | wtpsplit         | wtpsplit (already)         | Yes
-Cohere         | NSP/DeBERTa      | NSP/DeBERTa (already)      | Yes
-Classify       | Groq LLM (seq)   | CRF or SetFit/DeBERTa 22M | No (needs examples)
-Decontextualize| Groq LLM (span)  | T5-3B fine-tuned (minimum) | No (generative, sub-1B fails)
-Dedup          | NLI/DeBERTa      | NLI/DeBERTa (already)      | Yes (zero-shot)
+Stage            | Phase 1 (now)        | SLM Target              | SLM day one? | Fine-tune trigger
+-----------------|----------------------|-------------------------|--------------|------------------
+Normalize        | PunctuationRunner    | Same (already SLM)      | Yes          | >5% truecasing corrections
+Segment          | Regex                | Regex (already)         | N/A          | Rule updates only
+Cohere           | CohereRunner         | Same (already SLM)      | Yes          | >10% boundary corrections
+Recohere         | CohereRunner (reuse) | Same (shares w/ cohere) | Yes          | Shared with cohere
+Filter           | PassthroughRunner    | DeBERTa-v3-small 44M   | No           | 200 labeled spans (bootstrap)
+Decontextualize  | Groq LLM            | T5-3B minimum           | No           | ~1000 (span, props) pairs
+Dedup            | NLI DeBERTa          | Same (already SLM)      | Yes          | >10% match corrections
 ```
 
-### Inference Budget Policy
+Every SLM improves with your data. The trigger column shows when corrections justify a retrain.
 
-- SLM stages (normalize, segment, cohere, dedup): on-device, zero API cost
-- LLM stages (classify, decontextualize): Groq only. No Claude, no GPT-4.
-- Max model size for Groq: smallest model that passes quality threshold
-- Dedup rewrite callbacks to decontextualize: counted as LLM calls in budget
+**LLM call budget per source**: Filter (0-1, trending to 0 after SLM trained) + Decontext (1 per extract span, permanent) + Dedup rewrites (occasional, triggered by merges). Target: decontext calls only.
 
-### Golden Data Purpose
+---
 
-Golden data exists for the encoder only. Its boundary is: episodic source in, working memory diff out. Nothing beyond working memory needs to be in the golden dataset.
+## SLM Training Process (Generic)
 
-| Golden Data Slice | Trains/Evaluates |
-|-------------------|-----------------|
-| sentences[] | Segmenter output validation |
-| pairScores[] | Coherence grouper boundary accuracy |
-| spans[] labels (extract/skip + reason) | Classifier |
-| propositions[] text | Decontextualizer quality |
-| propositions[] scope + type | Scope/type classification |
-| dedup comparisons[] | NLI threshold tuning |
+**No external LLM calls.** Claude Code applies each stage's evaluation rubric directly to create golden labels. No Groq, no frontier model API. The labeler is the development agent.
 
-The schema is additive. New stages add fields without breaking existing data. Each stage trains independently.
+Every SLM-backed stage follows the same training loop. The stage defines two things: its **rubric** (what dimensions to evaluate) and its **golden data format** (input/output pairs from the pipeline). Everything else is generic.
+
+### Training Loop
+
+```
+1. COLLECT — Gather stage input/output pairs from golden pipeline runs
+2. LABEL  — Claude Code applies the stage's rubric to each pair (no external LLM)
+3. BASELINE — Run pre-trained (zero-shot) SLM on the same inputs, measure accuracy against labels
+4. TRAIN  — Fine-tune SLM on labeled data (SetFit contrastive / LoRA / full retrain)
+5. EVALUATE — Run fine-tuned SLM on held-out split, measure accuracy improvement over baseline
+6. SHIP or ITERATE — If improved: export ONNX, deploy. If not: analyze failures, relabel, retrain.
+```
+
+**Human enters at step 6**, reviewing only after Claude Code has confirmed improvement. The review UI surfaces borderline cases and disagreements, not the full dataset.
+
+### Stage Contract for Training
+
+Each trainable stage provides:
+
+| Contract Item | What it defines | Example (Filter) |
+|--------------|----------------|-------------------|
+| **Rubric** | Evaluation dimensions with yes/no questions | Substantive? Specific? |
+| **Decision rule** | How dimension answers map to labels | Both yes = extract, either no = skip |
+| **Golden input** | What the SLM sees at inference time | Span text (+ optional heuristic features) |
+| **Golden output** | The label the SLM should produce | "extract" or "skip" |
+| **Metrics** | How to measure quality | Precision, recall, F1 per class |
+| **Improvement threshold** | When fine-tuned model is ready | F1 > baseline + 5% |
+
+### Label Format (All Stages)
+
+```json
+{
+  "index": 0,
+  "input": "the text or pair the SLM will classify",
+  "label": "the correct classification",
+  "dimensions": {"dim1": true, "dim2": false},
+  "confidence": "high|borderline",
+  "rationale": "brief reason for this label",
+  "labeledBy": "claude-opus-4|human"
+}
+```
+
+### Data Splits
+
+| Split | Size | Purpose |
+|-------|------|---------|
+| Train | 70% | Fine-tuning data |
+| Validation | 15% | Hyperparameter selection, early stopping |
+| Test | 15% | Final accuracy measurement (never trained on) |
+
+Stratified by label. Borderline-confidence examples weighted toward validation/test for harder evaluation.
+
+### CPU Training Sizing (SetFit)
+
+**Terminology:**
+- **SetFit**: Sentence Transformer Fine-Tuning. Few-shot classifier. Fine-tunes a sentence transformer via contrastive learning, then trains a logistic regression head on embeddings. 8-64 examples per class. No prompts, no large LM.
+- **Contrastive pair**: Two texts shown together. Same-class pairs pull embeddings closer. Different-class pairs push them apart.
+- **num_iterations**: Pairs generated per training sample. Higher = more diversity = better embeddings, but linearly more compute.
+- **batch_size**: Pairs per forward/backward pass. Larger = fewer steps, more memory. 16 is standard for CPU.
+- **Step**: One forward + backward + weight update on one batch. Total steps = total pairs / batch_size.
+- **Epoch**: One full pass through all pairs. SetFit uses 1 epoch. Pair generation already provides diversity.
+
+**Sizing math:**
+
+Pair count formula: `num_iterations * num_train_samples` per class.
+DeBERTa-v3-small: ~24s/step on CPU (batch=16, no GPU).
+
+| Train samples | num_iterations | Total pairs | Steps (batch=16) | Wall time (CPU) |
+|---------------|---------------|-------------|-------------------|-----------------|
+| 1450          | 20            | 58,000      | 3,625             | ~24 hours       |
+| 128 (64/class)| 20            | 2,560       | 160               | ~64 min         |
+| 128 (64/class)| 5             | 640         | 40                | ~16 min         |
+| 32 (16/class) | 5             | 320         | 20                | **8 min (measured)** |
+
+**16/class baseline results** (32 train, 1673 eval):
+
+| Class | Precision | Recall | F1 |
+|-------|-----------|--------|----|
+| skip | 0.46 | 0.85 | 0.60 |
+| extract | 0.97 | 0.83 | 0.89 |
+| weighted avg | 0.89 | 0.83 | 0.85 |
+
+- Skip precision low (0.46): over-predicting skip. Only 16 skip examples = not enough variety.
+- Extract precision high (0.97): model learned real signal from just 32 examples.
+- Fix: scale to 64/class for more skip variety.
+
+SetFit is few-shot by design. Use **fixed train-per-class**, not percentage split:
+- Start with 16/class (32 total) to validate the pipeline end-to-end (~8 min).
+- Scale to 64/class once pipeline is confirmed working (~16 min).
+- Remaining labels become the eval set. Large eval = reliable metrics.
+- Start with `num_iterations=5`. Increase to 20 only if quality is insufficient.
+- `batch_size=16` is the sweet spot. 32 gives marginal speedup, 8 is slower.
+- Full labeled set is an evaluation asset first, training asset second.
+
+### Per-Stage Training Details
+
+| Stage | SLM | Training Method | Min Labels | Target Metric |
+|-------|-----|----------------|------------|---------------|
+| Normalize | PunctuationRunner 210M | N/A (pre-trained) | 50 corrections | Truecasing accuracy |
+| Cohere | CohereRunner 110M | Fine-tune on boundary corrections | 50 pairs | Boundary F1 |
+| Recohere | CohereRunner 110M (shared) | Shared with cohere | — | — |
+| Filter | DeBERTa-v3-small 44M | SetFit contrastive | 200 spans | F1 90%+ |
+| Dedup | NLI DeBERTa-v3-xsmall 22M | Fine-tune on match corrections | 50 pairs | Match accuracy |
+
+---
+
+## Encoder Scope Boundary
+
+The encoder produces propositions and working memory diffs. **It does not**:
+- Do entity resolution (post-encoder, converts propositions to facts)
+- Write to the knowledge store (entity resolution does this)
+- Determine long-term importance (working memory decay handles this)
+- Resolve entities across episodic sources (entity resolution + knowledge store)
 
 ---
 
 ## Future Work (not in current build)
 
-### Entity Resolution
-- Links propositions to entities in the knowledge store
-- Three-stage: embedding search, BM25 text match, LLM/NLI resolution
-- The boundary where propositions become facts
-- Runs per-turn, async, after encoder updates working memory
+### Entity Resolution (post-encoder)
+Runs after encoder updates working memory. Converts propositions to facts.
+Three-stage: GLiNER NER (50M, entity mention detection) → HNSW blocking (candidate retrieval) → NLI cross-encoder (match confirmation).
+The boundary where propositions become facts with entity links and temporal metadata.
 
 ### Knowledge Store
-- All persisted facts with entity links and temporal metadata
-- Append-only with supersession (soft delete)
-- Periodic consolidation by entity (background NLI dedup)
+All persisted facts with entity links and temporal metadata. Append-only with supersession.
 
-### Temporal Invalidation
-When entity resolution detects a contradiction between a new proposition and an existing fact (NLI: entailment of negation between facts sharing entity pairs), the older fact is marked `status: superseded`. Old fact preserved with temporal validity window - never deleted.
+### Consolidation
+Periodic background dedup of the knowledge store grouped by entity. Catches redundancies between propositions that were never co-resident in working memory.
 
-**Why not a full belief network?** We evaluated Truth Maintenance Systems (JTMS/ATMS). TMS was designed for expert systems where facts are derived through formal inference. Personal knowledge facts are observed (stated in conversation), not derived. The overhead of inter-fact dependency graphs provides no benefit for episodic input. Neither Graphiti/Zep nor Mem0 implements fact-to-fact relationships beyond supersession. Documented in DECISIONS.md.
-
-### Entity Model (constrained taxonomy)
-Person, Project, Technology, Organization, Concept. NOT entities: attributes ("version 3.x"), actions ("decided to use"), ephemeral references ("this approach" - resolved during decontextualization).
-
-### Research: Proposition to Fact Timing
-Every production memory system processes per-turn, not per-session. Graphiti: per-message, 4-5 LLM calls. Mem0: per-message-pair. Letta: agent-initiated. LangMem: hot-path or debounced. Nobody defers entity resolution. Consolidation is the only deferred operation. Sources: arXiv 2501.13956, arXiv 2504.19413, arXiv 2504.13171.
-
-### Why Other Systems Use So Many LLMs
-Graphiti, Mem0, and others don't decompose the problem. They treat extraction as one monolithic LLM task (4-5 calls per message). This architecture decomposes into stages with clear boundaries. Punctuate, segment, cohere, and dedup are SLMs from day one. Only classify and decontextualize need LLMs initially, both with SLM replacement paths. Result: 1-2 LLM calls per turn trending toward zero.
+### Global Coherence Across Episodes
+Working memory naturally accumulates cross-episode knowledge. Recohere operates within a single episodic source. Cross-episode topic merging is a knowledge store concern, not an encoder concern.

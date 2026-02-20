@@ -1,156 +1,186 @@
 # Stage-by-Stage Encoder Golden Data Plan
 
 ## Goal
-For each of the 6 encoder stages: create golden data, evaluate quality, optimize or hand off to SLM. No stage proceeds until the previous stage's output is validated.
+For each of the 7 encoder stages: run on golden data, evaluate quality, train SLM where applicable. No stage proceeds until the previous stage's output is validated.
+
+Full per-stage architecture: `lib/training/extraction/golden/PIPELINE_ARCHITECTURE.md`
 
 ## Corpus
 33 golden conversations, 465 turns, in `lib/training/extraction/golden/turns/`.
 
 ---
 
-## The 6 Stages
+## The 7 Stages
 
-| Stage | Input | Output | On-device SLM | LLM 8B role | Training | Status |
-|-------|-------|--------|---------------|-------------|----------|--------|
-| **1. Normalize** | raw turn text | punctuated text | PunctuationRunner (210M ONNX). Zero-shot. | None | None needed | **DONE** |
-| **2. Segment** | punctuated text | `List<Sentence>` (S1, S2...) | None. Pure regex. | None | N/A | **DONE** |
-| **3. Cohere** | sentence list | `List<ConceptSpan>` (grouped sentences) | CohereRunner: bert-wiki-paragraphs (110M). Zero-shot. Two-loop resplit (0.65 threshold, 15 max). | None | Fine-tune on ~300 human-labeled pairs if zero-shot < 85% | **DONE** |
-| **4. Classify** | concept spans + working memory | labeled spans (extract/skip) | ClassifyRunner: SetFit (22M). Needs training data. | **Temporary**: generates candidate labels. Human corrects ~100 spans. LLM removed after SetFit trained. | Train SetFit on 100 human-corrected labels (30 sec on CPU) | **DONE** |
-| **5. Decontextualize** | extract-labeled span + context | `List<Proposition>` (content, scope, type) | None. **Permanent LLM.** Generative rewriting needs 3B+ minimum. | **Long-term**: decomposes spans into self-contained propositions. Stays on 8B cloud indefinitely. | Golden data drives prompt improvement only. | **DONE** |
-| **6. Dedup** | new propositions + working memory | `WorkingMemoryDiff` (added, superseded, rewritten) | DedupRunner: NLI DeBERTa (22M). Zero-shot ~78-82%. Best SLM candidate. | None. Constructor accepts optional ChatClient as temporary fallback only. | Fine-tune on ~100 human-labeled pairs if zero-shot < 85% | **NEXT** |
-
-### How LLM 8B is used per stage:
-- **Normalize, Segment, Cohere, Dedup**: NO LLM. On-device SLM or regex.
-- **Classify**: LLM generates candidate labels temporarily. Human corrects them. SetFit trains on corrections. LLM removed.
-- **Decontextualize**: LLM permanently. Generative task too complex for small models. Golden data improves the prompt.
-
-### Stage details:
-
-**1. Normalize**: Detects punctuation ratio. If low (STT input), calls PunctuationRunner ONNX model. Splits overlong sentences at conjunctions. Assistant turns pass through unchanged.
-
-**2. Segment**: Strips code blocks (fenced + indented), linearizes markdown tables, strips markdown formatting, splits on `.?!`, filters <3 word fragments. Pure regex, deterministic.
-
-**3. Cohere**: Scores adjacent sentence pairs for topic continuity via bert-wiki-paragraphs ONNX. Groups consecutive same-topic sentences into ConceptSpans. Two-loop: first pass at 0.5 threshold for topic boundaries, then recursive resplit at 0.65 on spans exceeding 15 sentences. All spans capped at 15.
-
-**4. Classify**: Binary: extract (durable knowledge) vs skip (ephemeral/trivial). Sequential, feeds previous decisions as context.
-
-**5. Decontextualize**: Decomposes each extract span into 0-N self-contained propositions. Replaces pronouns. Assigns scope (session/project/life) and type (learning/project/exploration). Prompt must allow multiple propositions per span (not "exactly one").
-
-**6. Dedup**: Pairwise NLI comparison against working memory. Entailment = merge. Contradiction = supersede. Constructor accepts optional `DedupRunner` (SLM) or optional `ChatClient` (LLM fallback).
+| # | Stage | Model | Golden Data | Status |
+|---|-------|-------|-------------|--------|
+| 1 | Normalize | PunctuationRunner 210M ONNX | `golden/normalize_output/` (33 files) | **DONE** |
+| 2 | Segment | Pure regex | `golden/segment_output/` (33 files) | **DONE** |
+| 3 | Cohere | CohereRunner 110M ONNX | `golden/cohere_output/` (33 files, 1705 spans) | **DONE** |
+| 4 | Recohere | CohereRunner (same 110M) | none | **NOT BUILT** |
+| 5 | Filter | DeBERTa-v3-small 44M | none (old classify data is broken) | **NOT BUILT** |
+| 6 | Decontext | Groq LLM 8B (permanent) | `golden/decontext_output/` (33 files, 8997 props) | **DATA EXISTS, NOT REVIEWED** |
+| 7 | Dedup | NLI DeBERTa 22M | none | **NOT BUILT** |
 
 ---
 
-## Compounding Error Analysis
+## SLM Training Infrastructure
 
-Critical path is cohere -> classify -> decontextualize (3 stages). Normalize/segment are deterministic. Dedup is corrective.
+Training happens in Python. The Dart app does inference only.
 
-| Per-stage accuracy | Critical path (3 stages) | Notes |
-|-------------------|-------------------------|-------|
-| 85% | 61% | Unacceptable |
-| 90% | 73% | Minimum viable |
-| 95% | 86% | Target |
+```
+Python script (PyTorch + SetFit/transformers)
+  → fine-tune on labeled pairs
+  → export ONNX + quantize INT8
+  → app loads updated model via ModelLoader
+```
+
+**What exists**: `scripts/export_*.py` for punctuation, coherence, NLI models. These download pre-trained weights and export ONNX. No fine-tuning scripts exist yet.
+
+**What needs to be built per trainable stage**:
+1. `scripts/train_<stage>.py`: loads labeled JSON, fine-tunes, exports ONNX
+2. Label format: stage-specific JSON in `golden/labels/<stage>/`
+3. Trigger: correction rate threshold from human review (see PIPELINE_ARCHITECTURE.md per-stage training section)
+
+| Stage | Training method | Input | Time | Trigger |
+|-------|----------------|-------|------|---------|
+| Normalize | Full fine-tune 210M | (source, corrected) text pairs | ~5 min GPU | >5% correction rate over 50+ instances |
+| Cohere | Full fine-tune 110M | (sent_a, sent_b, boundary) triples | ~5 min GPU | >10% correction rate over 50+ pairs |
+| Recohere | Shares model with cohere | same | same | same |
+| Filter | SetFit 44M | (span_text, features, extract/skip) | ~30 sec CPU | 200 labeled spans (bootstrap) |
+| Dedup | Full fine-tune 22M | (prop_a, prop_b, decision) triples | ~2 min GPU | >10% correction rate over 50+ pairs |
+
+Decontext stays on LLM. Prompt improvement only (PromptImprovementLoop).
+
+---
+
+## Claude Code Batch Evaluation
+
+Claude Code reads cohere output JSON and applies the filter rubric (substantive? specific?) directly. No Groq call needed for labeling.
+
+**Tested batch sizes**: 15, 20, and 50 spans on real golden data. All three produced consistent labels. Quality bottleneck is span complexity (word count), not span count. At avg 125 words/span, 50 spans per pass is comfortable.
+
+**Process**:
+1. Read `golden/cohere_output/*.json`, resolve span text from `golden/segment_output/`
+2. For each span: apply rubric, write label with rationale and confidence
+3. Write labels to `golden/labels/filter/<uuid>.json`
+4. Flag borderline spans (confidence: "borderline") for human review
+5. Present borderline spans in review screen for human correction
+
+**Label format**:
+```json
+{
+  "spanId": "span_3",
+  "text": "ok sounds good let me think about that",
+  "label": "skip",
+  "rubric": { "substantive": false, "specific": false },
+  "rationale": "Conversational filler. No claim, fact, or decision.",
+  "confidence": "high"
+}
+```
+
+**Estimated distribution** (from 50-span test): ~80% high-confidence (clear extract or clear skip), ~20% borderline (requires human review).
 
 ---
 
 ## Execution Order
 
 ### Stage 1: Normalize -- DONE
-1. SLM infrastructure: PunctuationRunner, SentencePieceTokenizer, ModelLoader, OnnxSessionPool
-2. NormalizeStage with optional PunctuationRunner injection
-3. Run on all 33 conversations -> `golden/normalize_output/`
+- PunctuationRunner, SentencePieceTokenizer, ModelLoader, OnnxSessionPool
+- NormalizeStage with optional PunctuationRunner injection
+- Output: `golden/normalize_output/` (33 files)
 
 ### Stage 2: Segment -- DONE
-4. Code block stripping, table linearization, markdown stripping, sentence splitting, fragment filtering
-5. Run on all 33 conversations -> `golden/segment_output/`
+- Code block stripping, markdown stripping, sentence splitting, fragment filtering
+- Output: `golden/segment_output/` (33 files)
 
 ### Stage 3: Cohere -- DONE
-6. Built CohereRunner (bert-wiki-paragraphs ONNX, WordPiece tokenizer, pairwise scoring)
-7. CohereStage accepts optional CohereRunner injection
-8. Two-loop resplit: resplitThreshold=0.65, maxSpanSentences=15
-9. Run on all 33 conversations -> `golden/cohere_output/` (1705 spans, max 15 sentences)
-10. Review UI built (`tools/cohere_review.html`), 25 turns selected for labeling
-11. Verified 8B model decomposes 12-15 sentence spans into 5-6 propositions (no summarization)
-12. **Remaining**: Human-label ~100 cohere boundary pairs, compute F1. Can do in parallel with Classify.
+- CohereRunner (bert-wiki-paragraphs ONNX, WordPiece tokenizer, pairwise scoring)
+- Two-loop resplit: resplitThreshold=0.65, maxSpanSentences=15
+- Output: `golden/cohere_output/` (33 files, 1705 spans)
+- Review UI: `tools/cohere_review.html`
+- **Remaining**: Human-label ~100 boundary pairs, compute F1
 
-### Stage 4: Classify -- DONE
-13. Run LLM classify on cohere output -> `golden/classify_output/` (1705 spans: 83.4% extract, 16.6% skip)
-14. Human reviews/corrects 100 spans -> `golden/labels/classify/`
-15. Train SetFit (22M) on labeled data. Evaluate. Target: 90%+ F1 on both classes.
-16. Build ClassifyRunner, rewrite ClassifyStage with optional injection.
+### Stage 4: Recohere -- NEXT
+1. Build RecoherStage: encode spans via CohereRunner, pairwise cosine similarity
+2. Merge pairs above recohereThreshold (AdaptationState)
+3. Run on 33 conversations -> `golden/recohere_output/`
+4. Expect 0-3 merges per source
 
-### Stage 5: Decontextualize -- DONE
-17. Updated prompt: 0-N propositions with anti-summarization guidance
-18. Run LLM decontext on classify-extract spans -> `golden/decontext_output/` (1202 extract spans -> 8997 propositions, 7.5 avg/span)
-19. Human-rate 150 propositions on 6 dimensions -> `golden/labels/decontext/`
-20. Iterate prompt until dimension targets met. No SLM transition.
+### Stage 5: Filter -- NEXT (replaces old "Classify")
+Old classify data (commit 6001bb7) is broken: `firstWhere` bug (57.5% wrong speaker text), empty working memory, collapsed confidence.
 
-### Stage 6: Dedup -- NEXT
-21. Run LLM dedup on decontext propositions with cumulative working memory -> `golden/dedup_output/`
-22. Integrate `nli-deberta-v3-xsmall` (22M) ONNX model via same runner pattern
-23. Build DedupRunner: NLI pairwise (entailment/contradiction/neutral)
-24. Rewrite DedupStage to accept optional DedupRunner
-25. Run zero-shot on proposition pairs from encoder output
-26. Human-label 100 pairs -> `golden/labels/dedup/`
-27. Evaluate accuracy. Target: 90%+. Fine-tune if <85%.
+**Minimum viable data**: 200 stratified spans (60 short + 60 medium + 80 long). SetFit needs 8-16 examples per class minimum, but 200 gives robust generalization. Expect ~40 skip examples from 200 spans (20% skip rate).
 
-### End-to-end evaluation
-27. Run full encoder (all 6 stages, SLMs where available) on all 33 conversations -> `golden/encoder_output/`
-28. Evaluate final propositions per conversation
-29. Compare against per-stage golden labels to identify worst-performing stage
-30. Iterate until end-to-end quality meets bar
+1. Claude Code labels 200 stratified spans directly (no Groq needed), 50 per pass
+2. Write labels to `golden/labels/filter/`
+3. Human reviews borderline labels (~40 spans) via review screen (`tools/filter_review.html`)
+4. `scripts/train_filter.py`: SetFit fine-tune DeBERTa-v3-small on corrected labels (~30 sec CPU)
+5. `scripts/export_filter_model.py`: export ONNX + INT8 quantize
+6. Build FilterRunner + FilterStage with optional injection
+7. Run SLM on all 1705 spans, compare against labels. Target: F1 90%+.
+8. If <90%: label another 200 spans, retrain. Active learning on borderline scores.
+
+### Stage 6: Decontext -- DATA EXISTS
+Existing: `golden/decontext_output/` (33 files, 8997 propositions from 1422 extract spans)
+Generated from broken classify output, but extract spans are valid (83.4% were extract).
+
+1. Verify decontext output is usable despite upstream classify bug
+2. Claude Code batch-evaluates propositions on 4 dimensions (self-contained, atomic, faithful, complete)
+3. Human reviews flagged propositions
+4. Iterate prompt via PromptImprovementLoop until dimension targets met
+
+### Stage 7: Dedup -- AFTER FILTER + DECONTEXT
+1. Build DedupRunner: NLI DeBERTa-v3-xsmall (22M) pairwise cross-encoder
+2. DedupStage accepts optional DedupRunner (same injection pattern)
+3. Run zero-shot on proposition pairs with cumulative working memory
+4. Output: `golden/dedup_output/` (33 files)
+5. Claude Code batch-evaluates pairs (match correctness, merge quality, no false merges)
+6. Human reviews borderline pairs
+7. Evaluate accuracy. Target: 90%+. Fine-tune if <85%.
+
+### End-to-end
+1. Run full 7-stage encoder on all 33 conversations -> `golden/encoder_output/`
+2. Compare final propositions against per-stage golden labels
+3. Identify worst-performing stage, iterate
 
 ---
 
-## Evaluation Mechanism
+## Key Files
 
-Each stage follows the same pattern:
-1. **Run stage** on all 33 conversations. Write output to `golden/<stage>_output/`.
-2. **Claude Code analyzes** the output: distributions, outliers, obvious failures.
-3. **Claude Code presents** items to the user for labeling. Turn-by-turn, user gives stream-of-consciousness feedback. Claude Code decomposes into structured labels with per-dimension rationale.
-4. **Labels written** to `golden/labels/<stage>/` as JSON.
-5. **Claude Code computes** precision/recall/F1 against human labels.
-6. **If below target**: Claude Code fixes the prompt or model, re-runs, re-evaluates.
-
----
-
-## Stage 1-2 Status: DONE
-
-- SLM infrastructure built and tested (69 tests pass)
-- Normalize output: `golden/normalize_output/` (33 files)
-- Segment output: `golden/segment_output/` (33 files)
-- Table linearization, decimal period handling, code block stripping
-
-Key files:
-- `lib/services/slm/runners/punctuation_runner.dart`
-- `lib/services/slm/tokenizers/sentencepiece_tokenizer.dart`
+### Infrastructure
 - `lib/services/slm/model_loader.dart`
 - `lib/services/slm/onnx_session_pool.dart`
+- `lib/services/slm/session_pool.dart`
+
+### Runners
+- `lib/services/slm/runners/punctuation_runner.dart` (normalize)
+- `lib/services/slm/runners/cohere_runner.dart` (cohere + recohere)
+- `lib/services/slm/runners/filter_runner.dart` (filter, not built)
+- `lib/services/slm/runners/dedup_runner.dart` (dedup, not built)
+
+### Tokenizers
+- `lib/services/slm/tokenizers/sentencepiece_tokenizer.dart`
+- `lib/services/slm/tokenizers/wordpiece_tokenizer.dart`
+
+### Stages
 - `lib/services/memory/stages/normalize_stage.dart`
 - `lib/services/memory/stages/segment_stage.dart`
+- `lib/services/memory/stages/cohere_stage.dart`
+- `lib/services/memory/stages/recohere_stage.dart` (not built)
+- `lib/services/memory/stages/filter_stage.dart` (not built, replaces classify_stage.dart)
+- `lib/services/memory/stages/decontextualize_stage.dart`
+- `lib/services/memory/stages/dedup_stage.dart`
 
-## Stage 3 Status: DONE
+### Golden Data Scripts
+- `test/scripts/run_normalize_segment_test.dart`
+- `test/scripts/run_cohere_golden.dart` (inferred)
+- `test/scripts/run_classify_golden.dart` (broken, to be replaced by filter)
+- `test/scripts/run_decontext_golden.dart`
+- `test/scripts/run_dedup_golden.dart`
+- `test/scripts/run_encoder_test.dart` (full pipeline)
 
-- CohereRunner: bert-wiki-paragraphs (110M ONNX, WordPiece tokenizer)
-- Two-loop resplit: 1434 -> 1705 spans, max 15 sentences, all conversations processed
-- Review UI: `tools/cohere_review.html` (~100 interesting pairs to label)
-- Verified decomposition quality on 12-15 sentence spans (5-6 propositions, no summarization)
-
-Key files:
-- `lib/services/slm/runners/cohere_runner.dart`
-- `lib/services/slm/tokenizers/wordpiece_tokenizer.dart`
-- `lib/services/memory/stages/cohere_stage.dart` (resplitThreshold, maxSpanSentences)
-- `test/services/memory/cohere_stage_test.dart` (6 resplit tests)
-- `integration_test/cohere_slm_test.dart`
-
-## Stage 4: Classify -- NEXT
-
-**Task**: Run LLM classify on all cohere output spans to generate candidate extract/skip labels. Human corrects. Train SetFit.
-
-### Steps:
-1. Write classify golden data script: reads `golden/cohere_output/`, runs ClassifyStage on each span, writes `golden/classify_output/`
-2. Analyze distribution: extract vs skip ratio, confidence distribution, skip reasons
-3. Human reviews/corrects 100 spans -> `golden/labels/classify/`
-4. Train SetFit on corrections. Evaluate F1. Target: 90%+.
-5. Build ClassifyRunner, inject into ClassifyStage.
-
-**Key constraint**: Must run as Flutter test (BaseEntity -> dart:ui dependency chain).
+### Export Scripts
+- `scripts/export_punctuation_model.py`
+- `scripts/export_coherence_model.py`
+- `scripts/export_nli_model.py`

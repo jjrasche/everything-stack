@@ -122,7 +122,7 @@ Output JSON: {"content": "...", "scope": "session|project|life", "type": "learni
     String sourceEpisodeId,
   ) async {
     final spanWatch = Stopwatch()..start();
-    final spanText = span.resolveText(sentences);
+    final spanText = span.text;
     final surrounding = _findSurrounding(span, sentences);
     final entityList = workingMemory.entityList;
 

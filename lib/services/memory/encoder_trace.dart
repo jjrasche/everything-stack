@@ -7,7 +7,8 @@ class EncoderTrace {
   final NormalizeTrace normalize;
   final SegmentTrace segment;
   final CohereTrace cohere;
-  final ClassifyTrace classify;
+  final RecoherTrace recohere;
+  final FilterTrace filter;
   final DecontextualizeTrace decontextualize;
   final DedupTrace dedup;
   final List<String> workingMemoryAfter;
@@ -19,7 +20,8 @@ class EncoderTrace {
     required this.normalize,
     required this.segment,
     required this.cohere,
-    required this.classify,
+    required this.recohere,
+    required this.filter,
     required this.decontextualize,
     required this.dedup,
     required this.workingMemoryAfter,
@@ -33,7 +35,8 @@ class EncoderTrace {
           'normalize': normalize.toJson(),
           'segment': segment.toJson(),
           'cohere': cohere.toJson(),
-          'classify': classify.toJson(),
+          'recohere': recohere.toJson(),
+          'filter': filter.toJson(),
           'decontextualize': decontextualize.toJson(),
           'dedup': dedup.toJson(),
         },
@@ -147,21 +150,32 @@ class PairScore {
 class ConceptSpan {
   final String spanId;
   final List<String> sentenceIds;
+  final String text;
 
-  ConceptSpan({required this.spanId, required this.sentenceIds});
+  ConceptSpan({
+    required this.spanId,
+    required this.sentenceIds,
+    required this.text,
+  });
 
   Map<String, dynamic> toJson() => {
         'spanId': spanId,
         'sentenceIds': sentenceIds,
+        'text': text,
       };
 
-  /// Reconstruct span text from sentence list
-  String resolveText(List<Sentence> sentences) {
+  /// Build from sentence list (used by CohereStage at output time).
+  static ConceptSpan fromSentences({
+    required String spanId,
+    required List<String> sentenceIds,
+    required List<Sentence> sentences,
+  }) {
     final idSet = sentenceIds.toSet();
-    return sentences
+    final resolved = sentences
         .where((s) => idSet.contains(s.id))
         .map((s) => s.text)
         .join(' ');
+    return ConceptSpan(spanId: spanId, sentenceIds: sentenceIds, text: resolved);
   }
 }
 
@@ -186,6 +200,45 @@ class CohereTrace {
         'input': input,
         'pairScores': pairScores.map((p) => p.toJson()).toList(),
         'output': output.map((s) => s.toJson()).toList(),
+        'model': model,
+        'threshold': threshold,
+        'latencyMs': latencyMs,
+      };
+}
+
+class RecoherMerge {
+  final List<String> mergedSpanIds;
+  final double similarity;
+
+  RecoherMerge({required this.mergedSpanIds, required this.similarity});
+
+  Map<String, dynamic> toJson() => {
+        'mergedSpanIds': mergedSpanIds,
+        'similarity': similarity,
+      };
+}
+
+class RecoherTrace {
+  final List<ConceptSpan> input;
+  final List<ConceptSpan> output;
+  final List<RecoherMerge> merges;
+  final String model;
+  final double threshold;
+  final int latencyMs;
+
+  RecoherTrace({
+    required this.input,
+    required this.output,
+    required this.merges,
+    required this.model,
+    required this.threshold,
+    required this.latencyMs,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'input': input.map((s) => s.toJson()).toList(),
+        'output': output.map((s) => s.toJson()).toList(),
+        'merges': merges.map((m) => m.toJson()).toList(),
         'model': model,
         'threshold': threshold,
         'latencyMs': latencyMs,
@@ -234,6 +287,50 @@ class ClassifyTrace {
 
   Map<String, dynamic> toJson() => {
         'sequential': sequential,
+        'decisions': decisions.map((d) => d.toJson()).toList(),
+        'totalLatencyMs': totalLatencyMs,
+      };
+}
+
+class FilterDecision {
+  final String spanId;
+  final String label;
+  final double extractScore;
+  final double skipScore;
+  final String model;
+  final int latencyMs;
+
+  FilterDecision({
+    required this.spanId,
+    required this.label,
+    required this.extractScore,
+    required this.skipScore,
+    required this.model,
+    required this.latencyMs,
+  });
+
+  bool get isExtract => label == 'extract';
+
+  Map<String, dynamic> toJson() => {
+        'spanId': spanId,
+        'label': label,
+        'extractScore': extractScore,
+        'skipScore': skipScore,
+        'model': model,
+        'latencyMs': latencyMs,
+      };
+}
+
+class FilterTrace {
+  final List<FilterDecision> decisions;
+  final int totalLatencyMs;
+
+  FilterTrace({
+    required this.decisions,
+    required this.totalLatencyMs,
+  });
+
+  Map<String, dynamic> toJson() => {
         'decisions': decisions.map((d) => d.toJson()).toList(),
         'totalLatencyMs': totalLatencyMs,
       };

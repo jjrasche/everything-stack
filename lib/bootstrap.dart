@@ -88,7 +88,9 @@ import 'services/memory/encoder.dart';
 import 'services/memory/stages/normalize_stage.dart';
 import 'services/memory/stages/segment_stage.dart';
 import 'services/memory/stages/cohere_stage.dart';
-import 'services/memory/stages/classify_stage.dart';
+import 'services/memory/stages/recohere_stage.dart';
+import 'services/memory/stages/filter_stage.dart';
+import 'services/slm/runners/filter_runner.dart';
 import 'services/memory/stages/decontextualize_stage.dart';
 import 'services/memory/stages/dedup_stage.dart';
 import 'services/enrichment/enrichment_runner.dart';
@@ -791,7 +793,9 @@ Future<void> _initializeServices(EverythingStackConfig cfg) async {
           normalizeStage: NormalizeStage(),
           segmentStage: SegmentStage(),
           cohereStage: CohereStage(chatClient: inferenceService),
-          classifyStage: ClassifyStage(chatClient: inferenceService),
+          recoherStage: RecoherStage(),
+          // FilterRunner provided after SLM model is trained and deployed
+          filterStage: FilterStage(filterRunner: _PassthroughFilterRunner()),
           decontextualizeStage: decontextStage,
           dedupStage: DedupStage(
             chatClient: inferenceService,
@@ -1079,4 +1083,11 @@ String _getIndexStorePath() {
   // The HNSW index file will be stored alongside the ObjectBox database
   // This avoids needing to access the Store instance before it's fully initialized
   return 'objectbox';
+}
+
+/// Extracts all spans until trained FilterRunner is deployed.
+class _PassthroughFilterRunner implements FilterRunner {
+  @override
+  Future<FilterPrediction> predict(String spanText) async =>
+      FilterPrediction(extractScore: 1.0, skipScore: 0.0);
 }
