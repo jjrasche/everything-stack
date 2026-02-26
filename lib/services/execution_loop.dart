@@ -7,17 +7,6 @@ import 'inference_service.dart';
 import 'tts_service.dart';
 import 'event_bus.dart';
 
-class TurnResult {
-  final String turnId;
-  final String response;
-  final bool isSuccess;
-  final String? errorMessage;
-  final int latencyMs;
-
-  TurnResult({required this.turnId, required this.response,
-    required this.isSuccess, this.errorMessage, required this.latencyMs});
-}
-
 class ExecutionLoop {
   final InferenceService inferenceService;
   final TTSService ttsService;
@@ -53,41 +42,32 @@ class ExecutionLoop {
   }
 
   Future<void> _handleTranscription(Event event) async {
-    final result = await runTurn(
-      turnId: event.uuid, utterance: event.toInputString(),
-    );
-    await _publishTurnResult(event.correlationId, result);
-    if (result.isSuccess && result.response.isNotEmpty) {
-      await ttsService.synthesize(
-        text: result.response, eventId: event.correlationId,
-      );
+    final correlationId = event.correlationId;
+    try {
+      final response = await _generateResponse(event.toInputString());
+      await _publishResult(correlationId, response: response);
+      if (response.isNotEmpty) {
+        await ttsService.synthesize(text: response, eventId: correlationId);
+      }
+    } catch (error) {
+      await _publishResult(correlationId, errorMessage: '$error');
     }
   }
 
-  Future<TurnResult> runTurn({
-    required String turnId, required String utterance,
-  }) async {
-    final stopwatch = Stopwatch()..start();
-    try {
-      final recentTurns = await _fetchRecentTurns();
-      final messages = _buildMessages(recentTurns, utterance);
-      final llmResponse = await inferenceService.chatWithTools(
-        model: model, messages: messages,
-      );
-      return TurnResult(turnId: turnId, response: llmResponse.content ?? '',
-        isSuccess: true, latencyMs: stopwatch.elapsedMilliseconds);
-    } catch (error) {
-      return TurnResult(turnId: turnId, response: '', isSuccess: false,
-        errorMessage: '$error', latencyMs: stopwatch.elapsedMilliseconds);
-    }
+  Future<String> _generateResponse(String utterance) async {
+    final recentTurns = await _fetchRecentTurns();
+    final llmResponse = await inferenceService.chatWithTools(
+      model: model,
+      messages: _buildMessages(recentTurns, utterance),
+    );
+    return llmResponse.content ?? '';
   }
 
   Future<List<Invocation>> _fetchRecentTurns() async {
     final cutoff = DateTime.now().subtract(const Duration(minutes: 30));
     final allInvocations = await invocationRepo.findAll();
     final recentTurns = allInvocations
-        .where((inv) =>
-            inv.componentType == 'llm' && inv.updatedAt.isAfter(cutoff))
+        .where((inv) => inv.componentType == 'llm' && inv.updatedAt.isAfter(cutoff))
         .toList()
       ..sort((older, newer) => older.createdAt.compareTo(newer.createdAt));
     return recentTurns.length > 10
@@ -110,17 +90,16 @@ class ExecutionLoop {
     {'role': 'user', 'content': utterance},
   ];
 
-  Future<void> _publishTurnResult(
-    String correlationId, TurnResult result,
-  ) async {
+  Future<void> _publishResult(String correlationId, {String? response, String? errorMessage}) async {
+    final isSuccess = errorMessage == null;
     await eventBus.publish(Event(
-      eventType: result.isSuccess
-          ? 'orchestration_complete' : 'orchestration_error',
+      eventType: isSuccess ? 'orchestration_complete' : 'orchestration_error',
       correlationId: correlationId,
       source: 'execution_loop',
       payloadJson: jsonEncode({
-        'success': result.isSuccess, 'response': result.response,
-        if (result.errorMessage != null) 'errorMessage': result.errorMessage,
+        'success': isSuccess,
+        'response': response ?? '',
+        if (errorMessage != null) 'errorMessage': errorMessage,
       }),
     ));
   }
