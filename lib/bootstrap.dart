@@ -14,7 +14,6 @@ import 'services/semantic_search/bootstrap_module.dart';
 import 'services/extraction/bootstrap_module.dart';
 import 'services/memory/bootstrap_module.dart';
 import 'services/debug/debug_bootstrap.dart';
-import 'services/embedding_queue_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -28,9 +27,6 @@ final List<BootstrapModule> _modules = [
   MemoryModule(),
   ApplicationModule(),
 ];
-
-EmbeddingQueueService? _embeddingQueueService;
-EmbeddingQueueService? get embeddingQueueService => _embeddingQueueService;
 
 Future<void> initializeEverythingStack({
   EverythingStackConfig? config,
@@ -53,10 +49,6 @@ Future<void> initializeEverythingStack({
 }
 
 Future<void> disposeEverythingStack() async {
-  if (_embeddingQueueService != null) {
-    await _embeddingQueueService!.stop(flushPending: true);
-  }
-
   for (final module in _modules.reversed) {
     await module.dispose(getIt);
   }

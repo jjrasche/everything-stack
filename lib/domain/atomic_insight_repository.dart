@@ -2,58 +2,19 @@ import '../core/entity_repository.dart';
 import '../core/persistence/persistence_adapter.dart';
 import '../core/persistence/transaction_manager.dart';
 import '../services/embedding_service.dart';
-import '../services/embedding_queue_service.dart';
-import '../bootstrap.dart' show embeddingQueueService;
 import 'atomic_insight.dart';
 
 class AtomicInsightRepository extends EntityRepository<AtomicInsight> {
-  final EmbeddingQueueService? _embeddingQueueService;
-
-  /// Full constructor for testing and infrastructure setup.
   AtomicInsightRepository({
     required PersistenceAdapter<AtomicInsight> adapter,
     EmbeddingService? embeddingService,
     TransactionManager? transactionManager,
-    EmbeddingQueueService? embeddingQueueService,
-  })  : _embeddingQueueService = embeddingQueueService,
-        super(
+  }) : super(
           adapter: adapter,
           embeddingService: embeddingService ?? EmbeddingService.instance,
           transactionManager: transactionManager,
           handlers: [],
         );
-
-  /// Factory for production use - uses global singleton services.
-  factory AtomicInsightRepository.production({
-    required PersistenceAdapter<AtomicInsight> adapter,
-  }) {
-    return AtomicInsightRepository(
-      adapter: adapter,
-      embeddingService: EmbeddingService.instance,
-      embeddingQueueService: embeddingQueueService,
-    );
-  }
-
-  // ============ Repository Overrides ============
-
-  /// Override save to enqueue background embedding generation.
-  @override
-  Future<int> save(AtomicInsight entity) async {
-    final id = await super.save(entity);
-
-    // Enqueue for background embedding if queue service is available
-    if (_embeddingQueueService != null && !entity.isArchived) {
-      if (entity.content.isNotEmpty) {
-        await _embeddingQueueService!.enqueue(
-          entityUuid: entity.uuid,
-          entityType: 'AtomicInsight',
-          text: entity.content,
-        );
-      }
-    }
-
-    return id;
-  }
 
   // ============ Scope-Based Queries ============
 

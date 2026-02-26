@@ -28,7 +28,6 @@ class ExtractionModule extends BootstrapModule {
     final atomicInsightRepo = AtomicInsightRepository(
       adapter: getIt<PersistenceAdapter<AtomicInsight>>(),
       embeddingService: EmbeddingService.instance,
-      embeddingQueueService: embeddingQueueService,
     );
     getIt.registerSingleton<AtomicInsightRepository>(atomicInsightRepo);
 
