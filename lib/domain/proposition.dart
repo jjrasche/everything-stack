@@ -34,10 +34,10 @@ class Proposition extends BaseEntity with Embeddable {
   /// Stored as comma-separated in ObjectBox.
   List<String> sourceIds;
 
-  /// Turn identifier (e.g. "conv_3475558a_turn_0")
+  /// Turn identifier (e.g. "conv_abc12345_turn_0")
   String sourceTurnId;
 
-  /// Episode identifier (e.g. "conv_3475558a")
+  /// Episode identifier (e.g. "conv_abc12345")
   String sourceEpisodeId;
 
   /// Lifecycle status: 'active', 'archived', 'superseded'

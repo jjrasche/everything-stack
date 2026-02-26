@@ -64,10 +64,9 @@ Read from `~/.claude/references/` when relevant:
 - `flutter-workflow.md` - Hot reload, background run, debug workflow
 
 ## Current Work: Memory Encoder Pipeline
-6-stage encoder: normalize -> segment -> cohere -> classify -> decontextualize -> dedup.
+7-stage encoder: normalize -> segment -> cohere -> recohere -> filter -> decontextualize -> dedup.
 **SLM-first**: build on-device ONNX runner, run zero-shot, evaluate, fine-tune. NO LLM calls for stages that can use SLMs.
-Stages 1-5 complete. **Stage 6 (dedup) is next.**
-Read `.claude/plans/encoder-golden-data-stage-by-stage.md` for full plan and instructions. Do NOT enter plan mode -- execute directly.
+Read `lib/training/extraction/golden/PIPELINE_ARCHITECTURE.md` for full plan. Do NOT enter plan mode.
 
 ## Project References
 - `ARCHITECTURE.md` - Orchestrator taxonomy, entity model, persistence, plugins, sync, scale
@@ -75,4 +74,4 @@ Read `.claude/plans/encoder-golden-data-stage-by-stage.md` for full plan and ins
 - `TESTING.md` - E2E testing: no mocks, real persistence, all platforms
 - `DECISIONS.md` - Rationale for major architectural choices
 - `docs/DEVELOPMENT.md` - Build details, Rust/FFI, debug server, dependency management
-- `.claude/plans/encoder-golden-data-stage-by-stage.md` - Stage-by-stage encoder golden data plan
+- `lib/training/extraction/golden/PIPELINE_ARCHITECTURE.md` - Encoder pipeline: stages, rubrics, training, golden data

@@ -141,15 +141,18 @@ rust/**/mutants.out*/     # Mutation testing output
 assets/models/*.onnx
 
 # Golden data (personal conversation extracts, not for repo)
+lib/training/extraction/golden/sources/
+lib/training/extraction/golden/unified_runs/
+lib/training/extraction/golden/evaluation/
 lib/training/extraction/golden/normalize_output/
 lib/training/extraction/golden/segment_output/
 lib/training/extraction/golden/cohere_output/
+lib/training/extraction/golden/recohere_output/
 lib/training/extraction/golden/filter_output/
+lib/training/extraction/golden/decontext_output/
 lib/training/extraction/golden/dedup_output/
-lib/training/extraction/golden/encoder_output/
-lib/training/extraction/golden/labels/
-lib/training/extraction/golden/selection/
-lib/training/extraction/golden/test_batch_spans.json
+lib/training/extraction/golden/.claude/
+tools/inspector_data.json
 
 # Temp files from scripts/agents
 temp_*

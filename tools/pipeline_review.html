@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipeline Review</title>
+<style>
+:root {
+  --bg: #0d0d14;
+  --surface: #161622;
+  --surface2: #1c1c2e;
+  --text: #e2e8f0;
+  --text-dim: #8888aa;
+  --muted: #555570;
+  --border: #222238;
+
+  /* Semantic colors */
+  --extract: #4ade80;
+  --extract-bg: rgba(74, 222, 128, 0.12);
+  --skip: #555570;
+  --removed: #f87171;
+  --inserted: #60a5fa;
+  --entail: #4ade80;
+  --contradict: #f87171;
+  --neutral: #555570;
+
+  /* Span palette - distinct but not jarring */
+  --span-1: rgba(99, 102, 241, 0.15);   /* indigo */
+  --span-2: rgba(168, 85, 247, 0.15);   /* purple */
+  --span-3: rgba(236, 72, 153, 0.15);   /* pink */
+  --span-4: rgba(34, 211, 238, 0.15);   /* cyan */
+  --span-5: rgba(251, 191, 36, 0.15);   /* amber */
+  --span-6: rgba(74, 222, 128, 0.15);   /* green */
+  --span-7: rgba(248, 113, 113, 0.15);  /* red */
+  --span-8: rgba(96, 165, 250, 0.15);   /* blue */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* === Top Bar === */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.mode-tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--surface);
+  padding: 2px;
+  border-radius: 6px;
+}
+
+.mode-tab {
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.mode-tab:hover { color: var(--text-dim); }
+.mode-tab.active { background: var(--surface2); color: var(--text); }
+
+.source-select {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-btn {
+  background: var(--surface);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.nav-btn:hover:not(:disabled) { color: var(--text); border-color: var(--extract); }
+.nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+.nav-label {
+  font-size: 12px;
+  color: var(--muted);
+  min-width: 80px;
+  text-align: center;
+}
+
+.stats {
+  margin-left: auto;
+  display: flex;
+  gap: 20px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.stats .val { color: var(--text); font-weight: 500; }
+
+/* === Main Content Area === */
+.main {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+}
+
+/* === Transformation View (Stages 0-6) === */
+.transform-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.source-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px 48px;
+}
+
+.source-text {
+  max-width: 800px;
+  margin: 0 auto;
+  font-size: 15px;
+  line-height: 1.85;
+  white-space: pre-wrap;
+}
+
+/* Normalize diffs */
+.removed {
+  color: var(--removed);
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.inserted {
+  color: var(--inserted);
+  background: rgba(96, 165, 250, 0.1);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+/* Span regions - layered backgrounds */
+.span-region {
+  position: relative;
+  border-radius: 3px;
+  padding: 2px 0;
+  transition: opacity 0.2s;
+}
+
+.span-region.skip {
+  opacity: 0.4;
+}
+
+.span-region:hover {
+  opacity: 1 !important;
+}
+
+/* Span colors via data attribute */
+.span-region[data-span-idx="0"] { background: var(--span-1); }
+.span-region[data-span-idx="1"] { background: var(--span-2); }
+.span-region[data-span-idx="2"] { background: var(--span-3); }
+.span-region[data-span-idx="3"] { background: var(--span-4); }
+.span-region[data-span-idx="4"] { background: var(--span-5); }
+.span-region[data-span-idx="5"] { background: var(--span-6); }
+.span-region[data-span-idx="6"] { background: var(--span-7); }
+.span-region[data-span-idx="7"] { background: var(--span-8); }
+
+/* Span label badge */
+.span-label {
+  position: absolute;
+  top: -8px;
+  left: 4px;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--surface);
+  padding: 1px 4px;
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: none;
+}
+
+.span-region:hover .span-label {
+  opacity: 1;
+}
+
+/* Extract indicator (underline for proposition-linked text) */
+.has-props {
+  text-decoration: underline;
+  text-decoration-color: var(--extract);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* === Proposition Tooltip === */
+.prop-tooltip {
+  position: fixed;
+  max-width: 450px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.prop-tooltip.visible {
+  opacity: 1;
+}
+
+.prop-tooltip-header {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.prop-item {
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.prop-item:last-child {
+  border-bottom: none;
+}
+
+.prop-meta {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.prop-tag {
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: var(--surface2);
+  color: var(--muted);
+}
+
+.prop-tag.scope { color: var(--inserted); background: rgba(96, 165, 250, 0.15); }
+
+/* === Entailment View (Stage 7) === */
+.entail-view {
+  flex: 1;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.entail-view.active {
+  display: flex;
+}
+
+.transform-view.hidden {
+  display: none;
+}
+
+.entail-container {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.prop-list-panel {
+  width: 320px;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 16px;
+  flex-shrink: 0;
+}
+
+.prop-list-header {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.prop-list-item {
+  padding: 8px 10px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.4;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+
+.prop-list-item:hover {
+  background: var(--surface);
+}
+
+.prop-list-item.selected {
+  background: var(--extract-bg);
+  border-color: var(--extract);
+}
+
+.prop-list-item .prop-id {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-right: 6px;
+}
+
+/* Cluster groups */
+.cluster-group {
+  margin-bottom: 24px;
+}
+
+.cluster-header {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 8px 10px;
+  background: var(--surface);
+  border-radius: 4px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cluster-count {
+  font-size: 9px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* Heat map panel */
+.heatmap-panel {
+  flex: 1;
+  overflow: auto;
+  padding: 24px;
+}
+
+.heatmap-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.heatmap-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.heatmap-label {
+  width: 50px;
+  font-size: 10px;
+  color: var(--muted);
+  text-align: right;
+  padding-right: 8px;
+  flex-shrink: 0;
+}
+
+.heatmap-cell {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.1s;
+  position: relative;
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.15);
+  z-index: 10;
+}
+
+/* Gapmap - space between clusters */
+.heatmap-gap {
+  width: 12px;
+}
+
+/* Entailment colors */
+.heatmap-cell.bidir { background: var(--entail); }
+.heatmap-cell.forward { background: rgba(251, 191, 36, 0.9); }
+.heatmap-cell.contradict { background: var(--contradict); }
+.heatmap-cell.neutral { background: var(--surface2); }
+.heatmap-cell.self { background: var(--surface); border: 1px solid var(--border); }
+
+/* Confidence via opacity */
+.heatmap-cell.low-conf { opacity: 0.4; }
+.heatmap-cell.med-conf { opacity: 0.7; }
+.heatmap-cell.high-conf { opacity: 1.0; }
+
+/* Selected cell highlight */
+.heatmap-cell.selected {
+  box-shadow: 0 0 0 2px var(--text);
+}
+
+/* Detail panel */
+.detail-panel {
+  width: 400px;
+  border-left: 1px solid var(--border);
+  padding: 20px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.detail-header {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+
+.detail-pair {
+  margin-bottom: 20px;
+}
+
+.detail-prop {
+  padding: 12px;
+  background: var(--surface);
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.detail-prop-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.detail-relationship {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px;
+}
+
+.detail-score {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.detail-score.entail { color: var(--entail); }
+.detail-score.contradict { color: var(--contradict); }
+.detail-score.neutral { color: var(--muted); }
+
+.detail-label {
+  font-size: 12px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.15s;
+}
+
+.action-btn.confirm {
+  background: var(--extract-bg);
+  color: var(--extract);
+  border-color: var(--border);
+}
+
+.action-btn.confirm:hover, .action-btn.confirm.active {
+  border-color: var(--extract);
+}
+
+.action-btn.override {
+  background: rgba(248, 113, 113, 0.1);
+  color: var(--removed);
+  border-color: var(--border);
+}
+
+.action-btn.override:hover, .action-btn.override.active {
+  border-color: var(--removed);
+}
+
+/* === Bottom Bar === */
+.bottombar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 10px 24px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 11px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+/* === Empty State === */
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 14px;
+  gap: 12px;
+}
+
+.empty-state-icon {
+  font-size: 48px;
+  opacity: 0.3;
+}
+
+/* === Legend === */
+.legend {
+  display: flex;
+  gap: 16px;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+.legend-swatch.removed { background: var(--removed); opacity: 0.7; }
+.legend-swatch.inserted { background: var(--inserted); }
+.legend-swatch.skip { background: var(--surface2); opacity: 0.4; }
+.legend-swatch.extract { background: var(--extract); height: 3px; width: 20px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="mode-tabs">
+    <button class="mode-tab active" data-mode="transform">Transformations</button>
+    <button class="mode-tab" data-mode="entail">Entailment</button>
+  </div>
+
+  <select class="source-select" id="sourceSelect">
+    <option value="">Load data...</option>
+  </select>
+
+  <div class="nav-controls">
+    <button class="nav-btn" id="prevBtn" disabled>&larr;</button>
+    <span class="nav-label" id="navLabel">Text 0/0</span>
+    <button class="nav-btn" id="nextBtn" disabled>&rarr;</button>
+  </div>
+
+  <div class="stats">
+    <span>Spans: <span class="val" id="spanCount">-</span></span>
+    <span>Extract: <span class="val" id="extractCount">-</span></span>
+    <span>Props: <span class="val" id="propCount">-</span></span>
+  </div>
+</div>
+
+<div class="legend" id="transformLegend">
+  <div class="legend-item"><span class="legend-swatch removed"></span> Removed (normalize)</div>
+  <div class="legend-item"><span class="legend-swatch inserted"></span> Inserted (normalize)</div>
+  <div class="legend-item"><span class="legend-swatch skip"></span> Skip (filter)</div>
+  <div class="legend-item"><span class="legend-swatch extract"></span> Has propositions</div>
+</div>
+
+<div class="main">
+  <!-- Transformation View -->
+  <div class="transform-view" id="transformView">
+    <div class="source-container">
+      <div class="source-text" id="sourceText">
+        <div class="empty-state">
+          <div class="empty-state-icon">&#x1F4C4;</div>
+          <div>Load a source to begin review</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Entailment View -->
+  <div class="entail-view" id="entailView">
+    <div class="entail-container">
+      <div class="prop-list-panel" id="propListPanel">
+        <div class="prop-list-header">Propositions</div>
+        <div id="propList"></div>
+      </div>
+
+      <div class="heatmap-panel" id="heatmapPanel">
+        <div class="heatmap-container" id="heatmap"></div>
+      </div>
+
+      <div class="detail-panel" id="detailPanel">
+        <div class="detail-header">Relationship Detail</div>
+        <div id="detailContent">
+          <div class="empty-state">Select a cell to view details</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="prop-tooltip" id="propTooltip"></div>
+
+<div class="bottombar">
+  <div class="hint"><kbd>&larr;</kbd><kbd>&rarr;</kbd> navigate texts</div>
+  <div class="hint"><kbd>Tab</kbd> toggle mode</div>
+  <div class="hint">hover for propositions</div>
+</div>
+
+<script>
+// ============================================================
+// State
+// ============================================================
+let DATA = null;
+let currentSourceId = null;
+let currentTextIndex = 0;
+let currentMode = 'transform';
+let selectedPropId = null;
+let selectedCell = null;
+
+// ============================================================
+// Data Loading
+// ============================================================
+
+// For demo/testing, generate sample data
+function generateSampleData() {
+  return {
+    sources: {
+      "sample-source-001": {
+        sourceId: "sample-source-001",
+        name: "Sample Conversation",
+        textCount: 2,
+        texts: [
+          {
+            textIndex: 0,
+            rawText: "um I'm designing a community transportation system for about 1000 people. The basic idea is that anyone who wants access to a car has to be willing to provide rides to other community members within 10 miles of their destination. Let me know if you'd like me to explore any of these options further.",
+            normalizedText: "I'm designing a community transportation system for about 1,000 people. The basic idea is that anyone who wants access to a car has to be willing to provide rides to other community members within 10 miles of their destination. Let me know if you'd like me to explore any of these options further.",
+            normalizeDiffs: [
+              { start: 0, end: 3, type: 'removed', text: 'um ' },
+              { start: 58, end: 62, type: 'replaced', oldText: '1000', newText: '1,000' }
+            ],
+            spans: [
+              {
+                spanId: "span_0",
+                sentenceIds: ["S1", "S2"],
+                startChar: 0,
+                endChar: 213,
+                filterLabel: "extract",
+                extractScore: 0.92,
+                propositions: [
+                  { content: "A community transportation system is being designed for 1,000 people.", scope: "project", type: "design" },
+                  { content: "Vehicle users must provide ridesharing for passengers within 10 miles of their destination.", scope: "project", type: "constraint" }
+                ]
+              },
+              {
+                spanId: "span_1",
+                sentenceIds: ["S3"],
+                startChar: 214,
+                endChar: 290,
+                filterLabel: "skip",
+                extractScore: 0.23,
+                propositions: []
+              }
+            ]
+          },
+          {
+            textIndex: 1,
+            rawText: "That sounds like an interesting approach to community mobility. I'd estimate you'd need around 55 vehicles for that population size, assuming typical usage patterns. The monthly cost per person would be approximately $63.75.",
+            normalizedText: "That sounds like an interesting approach to community mobility. I'd estimate you'd need around 55 vehicles for that population size, assuming typical usage patterns. The monthly cost per person would be approximately $63.75.",
+            normalizeDiffs: [],
+            spans: [
+              {
+                spanId: "span_0",
+                sentenceIds: ["S1"],
+                startChar: 0,
+                endChar: 62,
+                filterLabel: "skip",
+                extractScore: 0.18,
+                propositions: []
+              },
+              {
+                spanId: "span_1",
+                sentenceIds: ["S2", "S3"],
+                startChar: 63,
+                endChar: 223,
+                filterLabel: "extract",
+                extractScore: 0.89,
+                propositions: [
+                  { content: "The estimated fleet size is 55 vehicles for 1,000 people.", scope: "project", type: "design" },
+                  { content: "The estimated per-capita cost is $63.75 per month.", scope: "project", type: "design" }
+                ]
+              }
+            ]
+          }
+        ],
+        propositions: [
+          { id: "p_0", content: "A community transportation system is being designed for 1,000 people.", scope: "project", type: "design", textIndex: 0 },
+          { id: "p_1", content: "Vehicle users must provide ridesharing for passengers within 10 miles of their destination.", scope: "project", type: "constraint", textIndex: 0 },
+          { id: "p_2", content: "The estimated fleet size is 55 vehicles for 1,000 people.", scope: "project", type: "design", textIndex: 1 },
+          { id: "p_3", content: "The estimated per-capita cost is $63.75 per month.", scope: "project", type: "design", textIndex: 1 }
+        ],
+        entailmentMatrix: [
+          // p_0 relationships
+          { idxA: 0, idxB: 1, label: "neutral", entailScore: 0.12, contradictScore: 0.05 },
+          { idxA: 0, idxB: 2, label: "forward_entailment", entailScore: 0.71, contradictScore: 0.02 },
+          { idxA: 0, idxB: 3, label: "neutral", entailScore: 0.25, contradictScore: 0.03 },
+          // p_1 relationships
+          { idxA: 1, idxB: 2, label: "neutral", entailScore: 0.08, contradictScore: 0.04 },
+          { idxA: 1, idxB: 3, label: "neutral", entailScore: 0.11, contradictScore: 0.02 },
+          // p_2 relationships
+          { idxA: 2, idxB: 3, label: "neutral", entailScore: 0.34, contradictScore: 0.06 }
+        ],
+        clusters: [
+          { id: "cluster_0", name: "System Design", propIds: ["p_0", "p_2", "p_3"] },
+          { id: "cluster_1", name: "Constraints", propIds: ["p_1"] }
+        ]
+      }
+    }
+  };
+}
+
+async function loadData() {
+  // Try to load from review_data.json first
+  try {
+    const resp = await fetch('review_data.json');
+    if (resp.ok) {
+      DATA = await resp.json();
+      populateSourceSelect();
+      return;
+    }
+  } catch(e) {
+    console.log('No review_data.json found, using sample data');
+  }
+
+  // Fall back to sample data
+  DATA = generateSampleData();
+  populateSourceSelect();
+}
+
+function populateSourceSelect() {
+  const select = document.getElementById('sourceSelect');
+  select.innerHTML = '';
+
+  for (const [sid, src] of Object.entries(DATA.sources)) {
+    const opt = document.createElement('option');
+    opt.value = sid;
+    opt.textContent = `${src.name || sid.substring(0, 8)} (${src.textCount} texts)`;
+    select.appendChild(opt);
+  }
+
+  select.addEventListener('change', () => {
+    if (select.value) selectSource(select.value);
+  });
+
+  if (select.options.length > 0) {
+    selectSource(select.options[0].value);
+  }
+}
+
+function selectSource(sourceId) {
+  currentSourceId = sourceId;
+  currentTextIndex = 0;
+  render();
+}
+
+// ============================================================
+// Rendering - Transformation View
+// ============================================================
+
+function renderTransformView() {
+  const src = DATA.sources[currentSourceId];
+  if (!src) return;
+
+  const textData = src.texts[currentTextIndex];
+  if (!textData) return;
+
+  updateNavigation(src);
+  updateStats(textData);
+
+  const container = document.getElementById('sourceText');
+  container.innerHTML = buildTransformHTML(textData);
+
+  // Attach hover listeners for propositions
+  attachPropHoverListeners();
+}
+
+function buildTransformHTML(textData) {
+  const rawText = textData.rawText;
+  const spans = textData.spans || [];
+  const diffs = textData.normalizeDiffs || [];
+
+  // Build character-level markup
+  // We'll process the text and wrap regions appropriately
+
+  let html = '';
+  let charIdx = 0;
+  let spanIdx = 0;
+  let currentSpan = null;
+
+  // Sort spans by start position
+  const sortedSpans = [...spans].sort((a, b) => a.startChar - b.startChar);
+
+  // Process character by character
+  while (charIdx < rawText.length) {
+    // Check if we're entering a new span
+    const nextSpan = sortedSpans.find(s => s.startChar === charIdx);
+    if (nextSpan) {
+      currentSpan = nextSpan;
+      const skipClass = currentSpan.filterLabel === 'skip' ? 'skip' : '';
+      const hasProps = currentSpan.propositions && currentSpan.propositions.length > 0;
+      const propsClass = hasProps ? 'has-props' : '';
+      const colorIdx = sortedSpans.indexOf(currentSpan) % 8;
+
+      html += `<span class="span-region ${skipClass} ${propsClass}" data-span-id="${currentSpan.spanId}" data-span-idx="${colorIdx}" data-props='${JSON.stringify(currentSpan.propositions || [])}'>`;
+      html += `<span class="span-label">${currentSpan.spanId} (${currentSpan.filterLabel})</span>`;
+    }
+
+    // Check for normalize diffs at this position
+    const diff = diffs.find(d => d.start === charIdx);
+    if (diff) {
+      if (diff.type === 'removed') {
+        html += `<span class="removed">${escapeHtml(diff.text)}</span>`;
+        charIdx = diff.end;
+        continue;
+      } else if (diff.type === 'replaced') {
+        html += `<span class="removed">${escapeHtml(diff.oldText)}</span>`;
+        html += `<span class="inserted">${escapeHtml(diff.newText)}</span>`;
+        charIdx = diff.end;
+        continue;
+      }
+    }
+
+    // Regular character
+    html += escapeHtml(rawText[charIdx]);
+    charIdx++;
+
+    // Check if we're exiting a span
+    if (currentSpan && charIdx >= currentSpan.endChar) {
+      html += '</span>';
+      currentSpan = null;
+    }
+  }
+
+  // Close any unclosed span
+  if (currentSpan) {
+    html += '</span>';
+  }
+
+  return html;
+}
+
+function attachPropHoverListeners() {
+  const tooltip = document.getElementById('propTooltip');
+
+  document.querySelectorAll('.has-props').forEach(el => {
+    el.addEventListener('mouseenter', (e) => {
+      const props = JSON.parse(el.dataset.props || '[]');
+      if (props.length === 0) return;
+
+      let html = `<div class="prop-tooltip-header">Propositions (${props.length})</div>`;
+      props.forEach(p => {
+        html += `
+          <div class="prop-item">
+            ${escapeHtml(p.content)}
+            <div class="prop-meta">
+              <span class="prop-tag scope">${p.scope}</span>
+              <span class="prop-tag">${p.type}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      tooltip.innerHTML = html;
+      tooltip.classList.add('visible');
+
+      // Position tooltip
+      const rect = el.getBoundingClientRect();
+      tooltip.style.left = `${rect.left}px`;
+      tooltip.style.top = `${rect.bottom + 8}px`;
+
+      // Keep tooltip in viewport
+      const tooltipRect = tooltip.getBoundingClientRect();
+      if (tooltipRect.right > window.innerWidth - 20) {
+        tooltip.style.left = `${window.innerWidth - tooltipRect.width - 20}px`;
+      }
+      if (tooltipRect.bottom > window.innerHeight - 20) {
+        tooltip.style.top = `${rect.top - tooltipRect.height - 8}px`;
+      }
+    });
+
+    el.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('visible');
+    });
+  });
+}
+
+// ============================================================
+// Rendering - Entailment View
+// ============================================================
+
+function renderEntailView() {
+  const src = DATA.sources[currentSourceId];
+  if (!src) return;
+
+  renderPropList(src);
+  renderHeatmap(src);
+  renderDetailPanel(null);
+}
+
+function renderPropList(src) {
+  const container = document.getElementById('propList');
+  const clusters = src.clusters || [{ id: 'all', name: 'All Propositions', propIds: src.propositions.map(p => p.id) }];
+
+  let html = '';
+
+  clusters.forEach(cluster => {
+    html += `<div class="cluster-group">`;
+    html += `<div class="cluster-header">${cluster.name} <span class="cluster-count">${cluster.propIds.length}</span></div>`;
+
+    cluster.propIds.forEach(pid => {
+      const prop = src.propositions.find(p => p.id === pid);
+      if (!prop) return;
+
+      const selected = selectedPropId === pid ? 'selected' : '';
+      html += `
+        <div class="prop-list-item ${selected}" data-prop-id="${pid}">
+          <span class="prop-id">${pid}</span>
+          ${escapeHtml(prop.content.substring(0, 80))}${prop.content.length > 80 ? '...' : ''}
+        </div>
+      `;
+    });
+
+    html += `</div>`;
+  });
+
+  container.innerHTML = html;
+
+  // Attach click listeners
+  container.querySelectorAll('.prop-list-item').forEach(el => {
+    el.addEventListener('click', () => {
+      selectedPropId = el.dataset.propId;
+      renderPropList(src);
+      highlightPropInHeatmap(selectedPropId);
+    });
+  });
+}
+
+function renderHeatmap(src) {
+  const container = document.getElementById('heatmap');
+  const props = src.propositions || [];
+  const matrix = src.entailmentMatrix || [];
+  const clusters = src.clusters || [];
+
+  // Build lookup for entailment scores
+  const lookup = {};
+  matrix.forEach(m => {
+    lookup[`${m.idxA}-${m.idxB}`] = m;
+    lookup[`${m.idxB}-${m.idxA}`] = m; // symmetric
+  });
+
+  // Build cluster boundaries for gaps
+  const clusterBoundaries = new Set();
+  let cumIdx = 0;
+  clusters.forEach(c => {
+    cumIdx += c.propIds.length;
+    clusterBoundaries.add(cumIdx);
+  });
+
+  let html = '';
+
+  // Header row
+  html += '<div class="heatmap-row">';
+  html += '<div class="heatmap-label"></div>';
+  props.forEach((p, j) => {
+    html += `<div class="heatmap-label" style="width:32px;text-align:center;transform:rotate(-45deg);transform-origin:center;font-size:9px;">${p.id}</div>`;
+    if (clusterBoundaries.has(j + 1) && j < props.length - 1) {
+      html += '<div class="heatmap-gap"></div>';
+    }
+  });
+  html += '</div>';
+
+  // Data rows
+  props.forEach((pA, i) => {
+    html += '<div class="heatmap-row">';
+    html += `<div class="heatmap-label">${pA.id}</div>`;
+
+    props.forEach((pB, j) => {
+      if (i === j) {
+        // Self
+        html += `<div class="heatmap-cell self" data-i="${i}" data-j="${j}"></div>`;
+      } else {
+        const key = `${Math.min(i,j)}-${Math.max(i,j)}`;
+        const rel = lookup[key] || { label: 'neutral', entailScore: 0, contradictScore: 0 };
+
+        let cellClass = 'neutral';
+        if (rel.label === 'bidirectional_entailment') cellClass = 'bidir';
+        else if (rel.label === 'forward_entailment') cellClass = 'forward';
+        else if (rel.label === 'contradiction') cellClass = 'contradict';
+
+        // Confidence class
+        const maxScore = Math.max(rel.entailScore, rel.contradictScore);
+        let confClass = 'high-conf';
+        if (maxScore < 0.5) confClass = 'low-conf';
+        else if (maxScore < 0.75) confClass = 'med-conf';
+
+        html += `<div class="heatmap-cell ${cellClass} ${confClass}" data-i="${i}" data-j="${j}" data-rel='${JSON.stringify(rel)}'></div>`;
+      }
+
+      // Add gap after cluster boundary
+      if (clusterBoundaries.has(j + 1) && j < props.length - 1) {
+        html += '<div class="heatmap-gap"></div>';
+      }
+    });
+
+    html += '</div>';
+
+    // Add gap row after cluster boundary
+    if (clusterBoundaries.has(i + 1) && i < props.length - 1) {
+      html += '<div style="height:12px"></div>';
+    }
+  });
+
+  container.innerHTML = html;
+
+  // Attach click listeners
+  container.querySelectorAll('.heatmap-cell:not(.self)').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = parseInt(el.dataset.i);
+      const j = parseInt(el.dataset.j);
+      const rel = JSON.parse(el.dataset.rel || '{}');
+
+      // Clear previous selection
+      container.querySelectorAll('.heatmap-cell.selected').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+
+      selectedCell = { i, j, rel };
+      renderDetailPanel(src, i, j, rel);
+    });
+  });
+}
+
+function highlightPropInHeatmap(propId) {
+  const src = DATA.sources[currentSourceId];
+  const propIdx = src.propositions.findIndex(p => p.id === propId);
+  if (propIdx === -1) return;
+
+  // Highlight row and column for this prop
+  document.querySelectorAll('.heatmap-cell').forEach(el => {
+    const i = parseInt(el.dataset.i);
+    const j = parseInt(el.dataset.j);
+    if (i === propIdx || j === propIdx) {
+      el.style.boxShadow = `0 0 0 2px var(--extract)`;
+    } else {
+      el.style.boxShadow = '';
+    }
+  });
+}
+
+function renderDetailPanel(src, i, j, rel) {
+  const container = document.getElementById('detailContent');
+
+  if (!src || i === undefined) {
+    container.innerHTML = '<div class="empty-state">Select a cell to view details</div>';
+    return;
+  }
+
+  const propA = src.propositions[i];
+  const propB = src.propositions[j];
+
+  let labelText = 'Neutral';
+  let scoreClass = 'neutral';
+  let score = Math.max(rel.entailScore || 0, rel.contradictScore || 0);
+
+  if (rel.label === 'bidirectional_entailment' || rel.label === 'forward_entailment') {
+    labelText = rel.label === 'bidirectional_entailment' ? 'Bi-Entailment' : 'Forward Entailment';
+    scoreClass = 'entail';
+    score = rel.entailScore;
+  } else if (rel.label === 'contradiction') {
+    labelText = 'Contradiction';
+    scoreClass = 'contradict';
+    score = rel.contradictScore;
+  }
+
+  container.innerHTML = `
+    <div class="detail-pair">
+      <div class="detail-prop">
+        <div class="detail-prop-label">${propA.id}</div>
+        ${escapeHtml(propA.content)}
+      </div>
+
+      <div class="detail-relationship">
+        <span class="detail-score ${scoreClass}">${(score * 100).toFixed(0)}%</span>
+        <span class="detail-label">${labelText}</span>
+      </div>
+
+      <div class="detail-prop">
+        <div class="detail-prop-label">${propB.id}</div>
+        ${escapeHtml(propB.content)}
+      </div>
+    </div>
+
+    <div class="detail-actions">
+      <button class="action-btn confirm" data-action="confirm">Confirm</button>
+      <button class="action-btn override" data-action="override">Override</button>
+    </div>
+  `;
+
+  // Attach action listeners
+  container.querySelectorAll('.action-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Toggle active state
+      container.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // In a real implementation, this would save the decision
+      console.log(`${btn.dataset.action} relationship between ${propA.id} and ${propB.id}`);
+    });
+  });
+}
+
+// ============================================================
+// Navigation & UI Updates
+// ============================================================
+
+function updateNavigation(src) {
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const label = document.getElementById('navLabel');
+
+  prevBtn.disabled = currentTextIndex === 0;
+  nextBtn.disabled = currentTextIndex >= src.textCount - 1;
+  label.textContent = `Text ${currentTextIndex + 1}/${src.textCount}`;
+}
+
+function updateStats(textData) {
+  const spans = textData.spans || [];
+  const extractSpans = spans.filter(s => s.filterLabel === 'extract');
+  const propCount = spans.reduce((sum, s) => sum + (s.propositions?.length || 0), 0);
+
+  document.getElementById('spanCount').textContent = spans.length;
+  document.getElementById('extractCount').textContent = extractSpans.length;
+  document.getElementById('propCount').textContent = propCount;
+}
+
+function setMode(mode) {
+  currentMode = mode;
+
+  document.querySelectorAll('.mode-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.mode === mode);
+  });
+
+  const transformView = document.getElementById('transformView');
+  const entailView = document.getElementById('entailView');
+  const legend = document.getElementById('transformLegend');
+
+  if (mode === 'transform') {
+    transformView.classList.remove('hidden');
+    entailView.classList.remove('active');
+    legend.style.display = 'flex';
+    renderTransformView();
+  } else {
+    transformView.classList.add('hidden');
+    entailView.classList.add('active');
+    legend.style.display = 'none';
+    renderEntailView();
+  }
+}
+
+function render() {
+  if (currentMode === 'transform') {
+    renderTransformView();
+  } else {
+    renderEntailView();
+  }
+}
+
+// ============================================================
+// Event Listeners
+// ============================================================
+
+document.getElementById('prevBtn').addEventListener('click', () => {
+  if (currentTextIndex > 0) {
+    currentTextIndex--;
+    render();
+  }
+});
+
+document.getElementById('nextBtn').addEventListener('click', () => {
+  const src = DATA.sources[currentSourceId];
+  if (src && currentTextIndex < src.textCount - 1) {
+    currentTextIndex++;
+    render();
+  }
+});
+
+document.querySelectorAll('.mode-tab').forEach(tab => {
+  tab.addEventListener('click', () => setMode(tab.dataset.mode));
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft') document.getElementById('prevBtn').click();
+  else if (e.key === 'ArrowRight') document.getElementById('nextBtn').click();
+  else if (e.key === 'Tab') {
+    e.preventDefault();
+    setMode(currentMode === 'transform' ? 'entail' : 'transform');
+  }
+});
+
+// ============================================================
+// Utilities
+// ============================================================
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text || '';
+  return div.innerHTML;
+}
+
+// ============================================================
+// Init
+// ============================================================
+
+loadData();
+</script>
+</body>
+</html>

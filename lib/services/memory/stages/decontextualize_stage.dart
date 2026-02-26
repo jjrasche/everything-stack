@@ -131,7 +131,14 @@ Output JSON: {"content": "...", "scope": "session|project|life", "type": "learni
 Rules:
 - Each proposition must be understandable WITHOUT the source text.
 - Replace all pronouns with specific referents from known entities or surrounding context.
-- One fact per proposition. Split sentences that contain multiple facts.
+- BARE ASSERTIVE FORM: Write propositions as standalone knowledge claims, never as observations about a person. No "The user wants/thinks/believes/decided". Test: "It is known that [proposition]" must read naturally.
+  WRONG: "The user wants to use AWS Lambda for the backend."
+  RIGHT: "AWS Lambda is the chosen backend for the therapy tracker."
+  WRONG: "The user believes React Native adds too much complexity."
+  RIGHT: "React Native adds 10x complexity for 5% benefit compared to a PWA for simple tracking apps."
+- STRICT ATOMICITY: One fact per proposition. Never bundle items with "includes X, Y, and Z" or "X and Y". If a span lists 4 benefits, output 4 propositions. If a sentence has 2 facts joined by "and", split into 2 propositions.
+  WRONG: "PWA benefits include offline capability, add-to-homescreen, no app store review, and cross-device compatibility."
+  RIGHT (4 separate propositions): "PWAs work offline." / "PWAs install to homescreen." / "PWAs bypass app store review." / "PWAs are cross-device compatible."
 - Skip filler, greetings, hedging, and meta-commentary.
 - Output 0 propositions if the span contains no durable knowledge.
 - Scope: session (this conversation only), project (named project), life (identity-level).

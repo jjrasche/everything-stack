@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Encoder Pipeline Inspector</title>
+<style>
+  :root {
+    --bg: #0d0d14;
+    --surface: #161622;
+    --surface2: #1c1c2e;
+    --text: #e2e8f0;
+    --muted: #555570;
+    --green: #4ade80;
+    --green-dim: #1a2e1a;
+    --red: #f87171;
+    --red-dim: #2e1a1a;
+    --yellow: #fbbf24;
+    --yellow-dim: #2e2a1a;
+    --blue: #60a5fa;
+    --blue-dim: #1a1a2e;
+    --border: #222238;
+    --highlight: rgba(74, 222, 128, 0.15);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* --- Top bar --- */
+  .topbar {
+    display: flex; align-items: center; gap: 16px;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .topbar select {
+    background: var(--surface); color: var(--text);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 4px 8px; font-size: 13px;
+  }
+  .nav-btn {
+    background: var(--surface); color: var(--muted);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 4px 12px; font-size: 14px; cursor: pointer;
+  }
+  .nav-btn:hover { color: var(--text); border-color: var(--green); }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+  .nav-label { font-size: 13px; color: var(--muted); }
+  .stats {
+    margin-left: auto;
+    display: flex; gap: 16px; font-size: 12px; color: var(--muted);
+  }
+  .stats .val { color: var(--text); font-weight: 600; }
+  .precision-badge {
+    padding: 2px 8px; border-radius: 3px;
+    font-size: 11px; font-weight: 700;
+  }
+  .precision-badge.healthy { background: var(--green-dim); color: var(--green); }
+  .precision-badge.warning { background: var(--yellow-dim); color: var(--yellow); }
+  .precision-badge.red { background: var(--red-dim); color: var(--red); }
+
+  /* --- Panels --- */
+  .panels {
+    flex: 1; display: flex; overflow: hidden;
+  }
+  .panel {
+    flex: 1; overflow-y: auto; padding: 16px 20px;
+  }
+  .panel-left { border-right: 1px solid var(--border); }
+  .panel-header {
+    font-size: 11px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 12px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* --- Source spans --- */
+  .span-block {
+    margin-bottom: 8px; padding: 10px 14px;
+    border-radius: 6px; border: 1px solid var(--border);
+    cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    position: relative;
+  }
+  .span-block.extract {
+    border-left: 3px solid var(--green);
+    background: var(--surface);
+  }
+  .span-block.skip {
+    border-left: 3px solid var(--muted);
+    background: var(--bg);
+    opacity: 0.5;
+  }
+  .span-block.highlighted {
+    border-color: var(--green);
+    background: var(--highlight);
+    opacity: 1;
+  }
+  .span-label {
+    font-size: 10px; color: var(--muted); margin-bottom: 4px;
+    display: flex; justify-content: space-between;
+  }
+  .span-label .filter-tag {
+    padding: 1px 5px; border-radius: 2px; font-size: 9px; font-weight: 700;
+    text-transform: uppercase;
+  }
+  .filter-tag.extract { background: var(--green-dim); color: var(--green); }
+  .filter-tag.skip { background: var(--surface2); color: var(--muted); }
+  .span-text {
+    font-size: 14px; line-height: 1.65;
+    white-space: pre-wrap;
+  }
+  .sentence {
+    transition: background 0.1s;
+    border-radius: 2px;
+  }
+  .sentence:hover { background: rgba(255,255,255,0.04); }
+  .sentence-id {
+    font-size: 9px; color: var(--muted); vertical-align: super;
+    margin-right: 2px; user-select: none;
+  }
+
+  /* --- Non-span text --- */
+  .unspanned-text {
+    margin-bottom: 8px; padding: 10px 14px;
+    font-size: 14px; line-height: 1.65;
+    color: var(--muted); opacity: 0.4;
+    white-space: pre-wrap;
+  }
+
+  /* --- WM propositions --- */
+  .wm-section-label {
+    font-size: 10px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin: 16px 0 6px 0;
+  }
+  .wm-section-label:first-child { margin-top: 0; }
+
+  .prop-item {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 6px 10px; margin-bottom: 3px;
+    border-radius: 4px; cursor: pointer;
+    transition: background 0.15s;
+    border: 1px solid transparent;
+  }
+  .prop-item:hover { background: rgba(255,255,255,0.03); }
+  .prop-item.highlighted {
+    background: var(--highlight);
+    border-color: var(--green);
+  }
+  .prop-item.fail { border-left: 2px solid var(--red); }
+
+  .prop-badge {
+    flex-shrink: 0; width: 18px; height: 18px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 3px; font-size: 11px; font-weight: 700;
+    margin-top: 1px;
+  }
+  .prop-badge.added { background: var(--green-dim); color: var(--green); }
+  .prop-badge.superseded { background: var(--yellow-dim); color: var(--yellow); }
+  .prop-badge.merged { background: var(--red-dim); color: var(--red); }
+  .prop-badge.prior { background: var(--surface2); color: var(--muted); }
+
+  .prop-content {
+    flex: 1; font-size: 13px; line-height: 1.5;
+  }
+  .prop-content.dim { color: var(--muted); }
+  .prop-content.struck {
+    text-decoration: line-through; color: var(--muted); opacity: 0.6;
+  }
+  .prop-tags {
+    display: flex; gap: 4px; margin-top: 2px;
+  }
+  .prop-tag {
+    font-size: 9px; padding: 1px 4px; border-radius: 2px;
+    background: var(--surface2); color: var(--muted);
+  }
+  .prop-tag.scope { color: var(--blue); background: var(--blue-dim); }
+  .supersede-arrow {
+    font-size: 11px; color: var(--yellow); margin-left: 26px;
+    padding: 2px 0;
+  }
+
+  /* --- Bottom bar --- */
+  .bottombar {
+    display: flex; align-items: center; gap: 16px;
+    padding: 8px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--muted);
+    flex-shrink: 0;
+  }
+  .bottombar .val { color: var(--text); }
+
+  /* --- Empty state --- */
+  .empty-state {
+    display: flex; align-items: center; justify-content: center;
+    height: 100%; color: var(--muted); font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <select id="sourceSelect"></select>
+  <button class="nav-btn" id="prevBtn" disabled>&larr;</button>
+  <span class="nav-label" id="turnLabel">Text 0 of 0</span>
+  <button class="nav-btn" id="nextBtn" disabled>&rarr;</button>
+  <div class="stats">
+    <span>WM: <span class="val" id="wmSize">-</span></span>
+    <span>Added: <span class="val" id="addedCount">-</span></span>
+    <span>Removed: <span class="val" id="removedCount">-</span></span>
+    <span id="precisionContainer"></span>
+  </div>
+</div>
+
+<div class="panels">
+  <div class="panel panel-left" id="sourcePanel">
+    <div class="panel-header">Source (spans)</div>
+    <div id="sourceContent"></div>
+  </div>
+  <div class="panel panel-right" id="wmPanel">
+    <div class="panel-header">Working Memory</div>
+    <div id="wmContent"></div>
+  </div>
+</div>
+
+<div class="bottombar">
+  <span>Source words: <span class="val" id="sourceWords">-</span></span>
+  <span>Propositions this turn: <span class="val" id="turnProps">-</span></span>
+  <span>Compression: <span class="val" id="compression">-</span></span>
+  <span>Filter: <span class="val" id="filterStats">-</span></span>
+</div>
+
+<script>
+let DATA = null;
+let currentSourceId = null;
+let currentTextIndex = 0;
+let highlightedSpanId = null;
+
+async function loadData() {
+  const resp = await fetch('inspector_data.json');
+  DATA = await resp.json();
+  populateSourceSelect();
+}
+
+function populateSourceSelect() {
+  const select = document.getElementById('sourceSelect');
+  select.innerHTML = '';
+  for (const [sid, src] of Object.entries(DATA.sources)) {
+    const prefix = sid.substring(0, 8);
+    const prec = src.evaluation ? `${(src.evaluation.precision * 100).toFixed(1)}%` : '?';
+    const opt = document.createElement('option');
+    opt.value = sid;
+    opt.textContent = `${prefix} (${src.textCount} texts, ${src.wordCount} words, ${prec})`;
+    select.appendChild(opt);
+  }
+  select.addEventListener('change', () => selectSource(select.value));
+  if (select.options.length > 0) selectSource(select.options[0].value);
+}
+
+function selectSource(sourceId) {
+  currentSourceId = sourceId;
+  currentTextIndex = 0;
+  renderCurrentText();
+}
+
+function renderCurrentText() {
+  const src = DATA.sources[currentSourceId];
+  if (!src || !src.texts[currentTextIndex]) return;
+
+  const textData = src.texts[currentTextIndex];
+  highlightedSpanId = null;
+
+  updateNavigation(src);
+  renderSourcePanel(textData);
+  renderWmPanel(textData, src);
+  updateBottomBar(textData, src);
+}
+
+function updateNavigation(src) {
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const label = document.getElementById('turnLabel');
+
+  prevBtn.disabled = currentTextIndex === 0;
+  nextBtn.disabled = currentTextIndex >= src.texts.length - 1;
+  label.textContent = `Text ${currentTextIndex} of ${src.texts.length - 1}`;
+
+  const precContainer = document.getElementById('precisionContainer');
+  if (src.evaluation) {
+    const prec = src.evaluation.precision;
+    const cls = prec >= 0.85 ? 'healthy' : prec >= 0.70 ? 'warning' : 'red';
+    precContainer.innerHTML = `<span class="precision-badge ${cls}">${(prec * 100).toFixed(1)}% precision</span>`;
+  } else {
+    precContainer.innerHTML = '';
+  }
+}
+
+function renderSourcePanel(textData) {
+  const container = document.getElementById('sourceContent');
+  container.innerHTML = '';
+
+  const sentenceMap = {};
+  for (const s of textData.sentences) sentenceMap[s.id] = s.text;
+
+  const spannedSentenceIds = new Set();
+  for (const span of textData.spans) {
+    for (const sid of span.sentenceIds) spannedSentenceIds.add(sid);
+  }
+
+  const allSentenceIds = textData.sentences.map(s => s.id);
+  let sentenceIdx = 0;
+
+  while (sentenceIdx < allSentenceIds.length) {
+    const sid = allSentenceIds[sentenceIdx];
+    const matchingSpan = textData.spans.find(sp => sp.sentenceIds[0] === sid);
+
+    if (matchingSpan) {
+      const block = createSpanBlock(matchingSpan, sentenceMap);
+      container.appendChild(block);
+      sentenceIdx += matchingSpan.sentenceIds.length;
+    } else if (!spannedSentenceIds.has(sid)) {
+      let unspannedText = '';
+      while (sentenceIdx < allSentenceIds.length && !spannedSentenceIds.has(allSentenceIds[sentenceIdx])) {
+        unspannedText += sentenceMap[allSentenceIds[sentenceIdx]] + ' ';
+        sentenceIdx++;
+      }
+      const div = document.createElement('div');
+      div.className = 'unspanned-text';
+      div.textContent = unspannedText.trim();
+      container.appendChild(div);
+    } else {
+      sentenceIdx++;
+    }
+  }
+}
+
+function createSpanBlock(span, sentenceMap) {
+  const block = document.createElement('div');
+  block.className = `span-block ${span.filterLabel}`;
+  block.dataset.spanId = span.spanId;
+
+  const label = document.createElement('div');
+  label.className = 'span-label';
+  label.innerHTML = `
+    <span>${span.spanId} (${span.sentenceIds.length} sentences)</span>
+    <span class="filter-tag ${span.filterLabel}">${span.filterLabel} ${(span.extractScore * 100).toFixed(0)}%</span>
+  `;
+  block.appendChild(label);
+
+  const textDiv = document.createElement('div');
+  textDiv.className = 'span-text';
+  for (const sid of span.sentenceIds) {
+    const sentSpan = document.createElement('span');
+    sentSpan.className = 'sentence';
+    sentSpan.innerHTML = `<span class="sentence-id">${sid}</span>${sentenceMap[sid] || ''} `;
+    textDiv.appendChild(sentSpan);
+  }
+  block.appendChild(textDiv);
+
+  block.addEventListener('click', () => toggleSpanHighlight(span.spanId));
+  return block;
+}
+
+function toggleSpanHighlight(spanId) {
+  if (highlightedSpanId === spanId) {
+    highlightedSpanId = null;
+  } else {
+    highlightedSpanId = spanId;
+  }
+  applyHighlights();
+}
+
+function highlightFromProp(spanId) {
+  highlightedSpanId = spanId;
+  applyHighlights();
+
+  if (spanId) {
+    const spanEl = document.querySelector(`.span-block[data-span-id="${spanId}"]`);
+    if (spanEl) spanEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+function applyHighlights() {
+  document.querySelectorAll('.span-block').forEach(el => {
+    el.classList.toggle('highlighted', el.dataset.spanId === highlightedSpanId);
+  });
+  document.querySelectorAll('.prop-item').forEach(el => {
+    el.classList.toggle('highlighted', el.dataset.linkedSpan === highlightedSpanId && highlightedSpanId !== null);
+  });
+}
+
+function renderWmPanel(textData, src) {
+  const container = document.getElementById('wmContent');
+  container.innerHTML = '';
+
+  const diff = textData.wmDiff;
+
+  if (diff.added.length > 0) {
+    const label = document.createElement('div');
+    label.className = 'wm-section-label';
+    label.textContent = `Added (${diff.added.length})`;
+    container.appendChild(label);
+
+    for (const prop of diff.added) {
+      container.appendChild(createPropItem(prop, 'added'));
+    }
+  }
+
+  if (diff.superseded.length > 0) {
+    const label = document.createElement('div');
+    label.className = 'wm-section-label';
+    label.textContent = `Superseded (${diff.superseded.length})`;
+    container.appendChild(label);
+
+    for (const s of diff.superseded) {
+      const item = document.createElement('div');
+      item.className = 'prop-item';
+      item.innerHTML = `
+        <span class="prop-badge superseded">&#x2192;</span>
+        <div>
+          <div class="prop-content struck">${escapeHtml(s.content)}</div>
+          <div class="supersede-arrow">&#x2192; ${escapeHtml(s.supersededBy)}</div>
+        </div>
+      `;
+      container.appendChild(item);
+    }
+  }
+
+  if (diff.merged.length > 0) {
+    const label = document.createElement('div');
+    label.className = 'wm-section-label';
+    label.textContent = `Merged/Removed (${diff.merged.length})`;
+    container.appendChild(label);
+
+    for (const m of diff.merged) {
+      const item = document.createElement('div');
+      item.className = 'prop-item';
+      item.innerHTML = `
+        <span class="prop-badge merged">&times;</span>
+        <div>
+          <div class="prop-content struck">${escapeHtml(m.removed)}</div>
+          <div class="supersede-arrow">= ${escapeHtml(m.keptEquivalent)}</div>
+        </div>
+      `;
+      container.appendChild(item);
+    }
+  }
+
+  const cumWm = src.cumulativeWM[currentTextIndex];
+  if (cumWm) {
+    const priorProps = cumWm.filter(p => p.fromTextIndex < currentTextIndex);
+    if (priorProps.length > 0) {
+      const label = document.createElement('div');
+      label.className = 'wm-section-label';
+      label.textContent = `Prior WM (${priorProps.length} from earlier texts)`;
+      container.appendChild(label);
+
+      for (const prop of priorProps) {
+        const item = document.createElement('div');
+        item.className = 'prop-item';
+        item.innerHTML = `
+          <span class="prop-badge prior">&#x2022;</span>
+          <div class="prop-content dim">${escapeHtml(prop.content)}</div>
+        `;
+        container.appendChild(item);
+      }
+    }
+  }
+
+  const wmSizeEl = document.getElementById('wmSize');
+  const addedEl = document.getElementById('addedCount');
+  const removedEl = document.getElementById('removedCount');
+  wmSizeEl.textContent = cumWm ? cumWm.length : '-';
+  addedEl.textContent = diff.added.length;
+  removedEl.textContent = diff.superseded.length + diff.merged.length;
+}
+
+function createPropItem(prop, badgeType) {
+  const item = document.createElement('div');
+  item.className = 'prop-item';
+  if (prop.linkedSpanId) item.dataset.linkedSpan = prop.linkedSpanId;
+  if (prop.evalVerdict === 'fail') item.classList.add('fail');
+
+  const badge = document.createElement('span');
+  badge.className = `prop-badge ${badgeType}`;
+  badge.textContent = badgeType === 'added' ? '+' : badgeType === 'superseded' ? '\u2192' : '\u00d7';
+  item.appendChild(badge);
+
+  const contentDiv = document.createElement('div');
+  contentDiv.style.flex = '1';
+
+  const text = document.createElement('div');
+  text.className = 'prop-content';
+  text.textContent = prop.content;
+  contentDiv.appendChild(text);
+
+  const tags = document.createElement('div');
+  tags.className = 'prop-tags';
+  tags.innerHTML = `<span class="prop-tag scope">${prop.scope}</span><span class="prop-tag">${prop.type}</span>`;
+
+  if (prop.evalScores) {
+    const failDims = Object.entries(prop.evalScores).filter(([, v]) => !v).map(([k]) => k);
+    if (failDims.length > 0) {
+      tags.innerHTML += failDims.map(d => `<span class="prop-tag" style="color:var(--red);background:var(--red-dim)">${d}</span>`).join('');
+    }
+  }
+  contentDiv.appendChild(tags);
+  item.appendChild(contentDiv);
+
+  item.addEventListener('click', () => highlightFromProp(prop.linkedSpanId));
+  return item;
+}
+
+function updateBottomBar(textData, src) {
+  document.getElementById('sourceWords').textContent = textData.metrics.source_words || '-';
+  document.getElementById('turnProps').textContent = textData.metrics.total_propositions || '-';
+  document.getElementById('compression').textContent =
+    textData.metrics.compression_ratio ? `${textData.metrics.compression_ratio.toFixed(1)} words/prop` : '-';
+
+  const extractCount = textData.spans.filter(s => s.filterLabel === 'extract').length;
+  const skipCount = textData.spans.filter(s => s.filterLabel === 'skip').length;
+  document.getElementById('filterStats').textContent = `${extractCount} extract, ${skipCount} skip`;
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+document.getElementById('prevBtn').addEventListener('click', () => {
+  if (currentTextIndex > 0) { currentTextIndex--; renderCurrentText(); }
+});
+document.getElementById('nextBtn').addEventListener('click', () => {
+  const src = DATA.sources[currentSourceId];
+  if (currentTextIndex < src.texts.length - 1) { currentTextIndex++; renderCurrentText(); }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft') document.getElementById('prevBtn').click();
+  if (e.key === 'ArrowRight') document.getElementById('nextBtn').click();
+});
+
+loadData();
+</script>
+</body>
+</html>

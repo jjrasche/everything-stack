@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Filter Golden Review</title>
+<style>
+  :root {
+    --bg: #0d0d14;
+    --surface: #161622;
+    --text: #e2e8f0;
+    --muted: #555570;
+    --green: #4ade80;
+    --red: #f87171;
+    --yellow: #fbbf24;
+    --blue: #60a5fa;
+    --border: #222238;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .topbar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px 20px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .progress-track {
+    flex: 1; height: 4px; background: var(--border); border-radius: 2px;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 2px;
+    transition: width 0.2s;
+  }
+  .progress-fill.normal { background: var(--green); }
+  .progress-fill.skip-only { background: var(--red); }
+  .progress-fill.borderline { background: var(--yellow); }
+  .counter {
+    font-size: 12px; color: var(--muted); white-space: nowrap;
+  }
+  .filter-btns {
+    display: flex; gap: 4px;
+  }
+  .filter-btn {
+    padding: 3px 10px; border-radius: 4px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--muted); font-size: 11px; cursor: pointer;
+  }
+  .filter-btn.active { color: var(--text); border-color: var(--green); }
+  .stats-bar {
+    font-size: 11px; color: var(--muted); white-space: nowrap;
+  }
+  .stats-bar .extract-stat { color: var(--green); }
+  .stats-bar .skip-stat { color: var(--red); }
+  .stats-bar .override-stat { color: var(--yellow); }
+  .export-btn {
+    padding: 4px 14px; border-radius: 4px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--muted); font-size: 12px; cursor: pointer;
+  }
+  .export-btn:hover { color: var(--text); border-color: var(--green); }
+
+  .main {
+    flex: 1;
+    display: flex; flex-direction: column;
+    padding: 24px 48px;
+    gap: 14px;
+    overflow-y: auto;
+  }
+
+  .context {
+    font-size: 11px; color: var(--muted);
+    text-align: center;
+  }
+  .score-badge {
+    display: inline-block;
+    padding: 1px 6px; border-radius: 3px;
+    font-size: 10px; font-weight: 700;
+    font-family: monospace;
+  }
+  .score-badge.high { background: #1a2e1a; color: var(--green); }
+  .score-badge.mid { background: #2e2a1a; color: var(--yellow); }
+  .score-badge.low { background: #2e1a1a; color: var(--red); }
+
+  .span-text {
+    max-width: 800px; width: 100%;
+    margin: 0 auto;
+    padding: 24px 28px;
+    font-size: 15px; line-height: 1.7;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    white-space: pre-wrap;
+    user-select: text;
+  }
+
+  .label-bar {
+    max-width: 800px; width: 100%;
+    margin: 0 auto;
+    display: flex; align-items: center; justify-content: center;
+    gap: 24px;
+    height: 44px;
+  }
+  .label-option {
+    padding: 6px 24px; border-radius: 6px;
+    font-size: 14px; font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .label-option.extract { color: var(--green); border-color: var(--border); }
+  .label-option.extract.active { border-color: var(--green); background: #1a2e1a; }
+  .label-option.skip { color: var(--red); border-color: var(--border); }
+  .label-option.skip.active { border-color: var(--red); background: #2e1a1a; }
+
+  .features {
+    max-width: 800px; width: 100%;
+    margin: 0 auto;
+    display: flex; gap: 8px; flex-wrap: wrap;
+    justify-content: center;
+  }
+  .feature-chip {
+    padding: 2px 8px; border-radius: 3px;
+    font-size: 11px; font-family: monospace;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  .override-badge {
+    font-size: 10px; color: var(--yellow);
+    font-weight: 700; text-transform: uppercase;
+  }
+
+  .bottombar {
+    padding: 12px 20px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: center; gap: 40px;
+    flex-shrink: 0;
+  }
+  .hint {
+    font-size: 13px; color: var(--muted);
+    display: flex; align-items: center; gap: 6px;
+  }
+  kbd {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 28px; height: 26px; padding: 0 6px;
+    border-radius: 4px; font-family: monospace; font-size: 13px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: inherit;
+  }
+
+  .loading {
+    flex: 1; display: flex;
+    justify-content: center; align-items: center;
+    color: var(--muted); font-size: 16px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="counter" id="counter"></span>
+  <div class="progress-track"><div class="progress-fill normal" id="progressFill"></div></div>
+  <span class="stats-bar" id="statsBar"></span>
+  <div class="filter-btns">
+    <button class="filter-btn active" id="btnAll" onclick="setFilter('all')">All</button>
+    <button class="filter-btn" id="btnSkip" onclick="setFilter('skip')">Skip</button>
+    <button class="filter-btn" id="btnOverridden" onclick="setFilter('overridden')">Overridden</button>
+    <button class="filter-btn" id="btnLowConf" onclick="setFilter('lowconf')">Low Conf</button>
+  </div>
+  <button class="export-btn" onclick="exportResults()">Export</button>
+</div>
+
+<div class="main" id="main"><div class="loading">Loading filter output...</div></div>
+
+<div class="bottombar">
+  <div class="hint"><kbd>&larr;</kbd> prev</div>
+  <div class="hint"><kbd>Tab</kbd> flip</div>
+  <div class="hint"><kbd>&rarr;</kbd> next</div>
+  <div class="hint"><kbd>S</kbd> skip + next</div>
+  <div class="hint"><kbd>E</kbd> extract + next</div>
+</div>
+
+<script>
+const STORAGE_KEY = 'filter_golden_review_v1';
+const FILTER_DIR = '../lib/training/extraction/golden/filter_output/';
+const SEGMENT_DIR = '../lib/training/extraction/golden/segment_output/';
+const COHERE_DIR = '../lib/training/extraction/golden/cohere_output/';
+
+let allItems = [];
+let filteredIndices = [];
+let cursor = 0;
+let filterMode = 'all';
+
+async function init() {
+  // Try restoring from localStorage first
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed.version === 1 && Array.isArray(parsed.items) && parsed.items.length > 0) {
+        allItems = parsed.items;
+        cursor = parsed.cursor || 0;
+        filterMode = parsed.filterMode || 'all';
+        applyFilter();
+        updateStats();
+        render();
+        return;
+      }
+    } catch(e) {}
+  }
+
+  // Load fresh from filter_output files
+  try {
+    const indexResp = await fetch(FILTER_DIR + 'index.json');
+    const uuids = await indexResp.json();
+    await loadFromUuids(uuids);
+  } catch(e) {
+    // No index file yet — try loading from segment_output index
+    document.getElementById('main').innerHTML =
+      '<div class="loading">No filter_output/index.json found.<br>Run the filter golden script first, then reload.</div>';
+    return;
+  }
+}
+
+async function loadFromUuids(uuids) {
+  const items = [];
+
+  for (const uuid of uuids) {
+    try {
+      const [filterResp, segmentResp, cohereResp] = await Promise.all([
+        fetch(FILTER_DIR + uuid + '.json'),
+        fetch(SEGMENT_DIR + uuid + '.json'),
+        fetch(COHERE_DIR + uuid + '.json'),
+      ]);
+
+      const filterData = await filterResp.json();
+      const segmentData = await segmentResp.json();
+      const cohereData = await cohereResp.json();
+
+      // Build sentence lookup: turnIndex+speaker -> sentences
+      const sentenceMap = {};
+      for (const turn of segmentData.turns) {
+        const key = `${turn.turnIndex}_${turn.speaker}`;
+        sentenceMap[key] = turn.sentences;
+      }
+
+      for (const turn of filterData.turns) {
+        const key = `${turn.turnIndex}_${turn.speaker}`;
+        const sentences = sentenceMap[key] || [];
+        const sentenceById = {};
+        for (const s of sentences) sentenceById[s.id] = s.text;
+
+        // Find spans from cohere output
+        const cohereTurn = cohereData.turns.find(
+          t => t.turnIndex === turn.turnIndex && t.speaker === turn.speaker
+        );
+        const cohereSpans = cohereTurn ? cohereTurn.spans : [];
+        const spanMap = {};
+        for (const s of cohereSpans) spanMap[s.spanId] = s.sentenceIds;
+
+        for (const decision of turn.decisions) {
+          const sentenceIds = spanMap[decision.spanId] || [];
+          const text = sentenceIds
+            .map(id => sentenceById[id] || '')
+            .filter(t => t.length > 0)
+            .join(' ');
+
+          items.push({
+            convUuid: uuid,
+            convName: filterData.conversationName,
+            turnIndex: turn.turnIndex,
+            speaker: turn.speaker,
+            spanId: decision.spanId,
+            text: text,
+            wordCount: text.split(/\s+/).filter(w => w.length > 0).length,
+            sentenceCount: sentenceIds.length,
+            llmLabel: decision.label,
+            extractScore: decision.extractScore,
+            skipScore: decision.skipScore,
+            humanLabel: decision.label,
+            reviewed: false,
+          });
+        }
+      }
+    } catch(e) {
+      console.warn(`Failed to load ${uuid}:`, e);
+    }
+  }
+
+  allItems = items;
+  applyFilter();
+  save();
+  updateStats();
+  render();
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({
+    version: 1,
+    cursor,
+    filterMode,
+    items: allItems,
+  }));
+}
+
+function applyFilter() {
+  if (filterMode === 'all') {
+    filteredIndices = allItems.map((_, i) => i);
+  } else if (filterMode === 'skip') {
+    filteredIndices = allItems
+      .map((item, i) => item.humanLabel === 'skip' ? i : -1)
+      .filter(i => i >= 0);
+  } else if (filterMode === 'overridden') {
+    filteredIndices = allItems
+      .map((item, i) => item.humanLabel !== item.llmLabel ? i : -1)
+      .filter(i => i >= 0);
+  } else if (filterMode === 'lowconf') {
+    filteredIndices = allItems
+      .map((item, i) => Math.max(item.extractScore, item.skipScore) < 0.75 ? i : -1)
+      .filter(i => i >= 0);
+  }
+
+  for (const id of ['btnAll', 'btnSkip', 'btnOverridden', 'btnLowConf']) {
+    document.getElementById(id).className = 'filter-btn';
+  }
+  const btnId = { all: 'btnAll', skip: 'btnSkip', overridden: 'btnOverridden', lowconf: 'btnLowConf' }[filterMode];
+  document.getElementById(btnId).className = 'filter-btn active';
+
+  if (cursor >= filteredIndices.length) cursor = Math.max(0, filteredIndices.length - 1);
+}
+
+function setFilter(mode) {
+  filterMode = mode;
+  cursor = 0;
+  applyFilter();
+  save();
+  render();
+}
+
+function flip() {
+  if (filteredIndices.length === 0) return;
+  const realIdx = filteredIndices[cursor];
+  const item = allItems[realIdx];
+  item.humanLabel = item.humanLabel === 'extract' ? 'skip' : 'extract';
+  item.reviewed = true;
+  save();
+  updateStats();
+  render();
+}
+
+function setLabelAndAdvance(label) {
+  if (filteredIndices.length === 0) return;
+  const realIdx = filteredIndices[cursor];
+  allItems[realIdx].humanLabel = label;
+  allItems[realIdx].reviewed = true;
+  if (cursor < filteredIndices.length - 1) cursor++;
+  save();
+  updateStats();
+  render();
+}
+
+function navigate(dir) {
+  const next = cursor + dir;
+  if (next < 0 || next >= filteredIndices.length) return;
+  cursor = next;
+  save();
+  render();
+}
+
+function updateStats() {
+  const extract = allItems.filter(i => i.humanLabel === 'extract').length;
+  const skip = allItems.filter(i => i.humanLabel === 'skip').length;
+  const overridden = allItems.filter(i => i.humanLabel !== i.llmLabel).length;
+  const reviewed = allItems.filter(i => i.reviewed).length;
+  const bar = document.getElementById('statsBar');
+  bar.innerHTML =
+    `<span class="extract-stat">${extract} extract</span> ` +
+    `<span class="skip-stat">${skip} skip</span> ` +
+    `<span class="override-stat">${overridden} overridden</span> ` +
+    `(${reviewed} reviewed)`;
+}
+
+function scoreBadgeClass(score) {
+  if (score >= 0.8) return 'high';
+  if (score >= 0.6) return 'mid';
+  return 'low';
+}
+
+function render() {
+  if (filteredIndices.length === 0) {
+    document.getElementById('main').innerHTML =
+      '<div style="text-align:center;color:var(--muted);margin-top:40vh">No items in this filter.</div>';
+    document.getElementById('counter').textContent = '0 / 0';
+    document.getElementById('progressFill').style.width = '0%';
+    return;
+  }
+
+  const total = filteredIndices.length;
+  document.getElementById('counter').textContent = `${cursor + 1} / ${total}`;
+  document.getElementById('progressFill').style.width = `${((cursor + 1) / total) * 100}%`;
+
+  const progressFill = document.getElementById('progressFill');
+  const cls = { all: 'normal', skip: 'skip-only', overridden: 'borderline', lowconf: 'borderline' }[filterMode];
+  progressFill.className = `progress-fill ${cls}`;
+
+  const realIdx = filteredIndices[cursor];
+  const item = allItems[realIdx];
+  const overridden = item.humanLabel !== item.llmLabel;
+  const confScore = Math.max(item.extractScore, item.skipScore);
+
+  const featureChips = [
+    `${item.wordCount}w`,
+    `${item.sentenceCount} sent`,
+    `ext: ${item.extractScore.toFixed(2)}`,
+    `skip: ${item.skipScore.toFixed(2)}`,
+  ];
+
+  document.getElementById('main').innerHTML = `
+    <div class="context">
+      ${escapeHtml(item.convName)} &middot; turn ${item.turnIndex} &middot; ${item.speaker} &middot; ${item.spanId}
+      &nbsp;<span class="score-badge ${scoreBadgeClass(confScore)}">${(confScore * 100).toFixed(0)}%</span>
+      ${overridden ? '&nbsp;<span class="override-badge">overridden</span>' : ''}
+    </div>
+    <div class="span-text">${escapeHtml(item.text)}</div>
+    <div class="label-bar">
+      <div class="label-option extract ${item.humanLabel === 'extract' ? 'active' : ''}" onclick="setLabelAndAdvance('extract')">extract</div>
+      <div class="label-option skip ${item.humanLabel === 'skip' ? 'active' : ''}" onclick="setLabelAndAdvance('skip')">skip</div>
+    </div>
+    <div class="features">${featureChips.map(c => `<span class="feature-chip">${c}</span>`).join('')}</div>
+  `;
+}
+
+function escapeHtml(text) {
+  const el = document.createElement('div');
+  el.textContent = text || '';
+  return el.innerHTML.replace(/\n/g, '<br>');
+}
+
+function exportResults() {
+  const extract = allItems.filter(i => i.humanLabel === 'extract').length;
+  const skip = allItems.filter(i => i.humanLabel === 'skip').length;
+  const overridden = allItems.filter(i => i.humanLabel !== i.llmLabel).length;
+  const reviewed = allItems.filter(i => i.reviewed).length;
+
+  const output = {
+    exportedAt: new Date().toISOString(),
+    version: 1,
+    metrics: {
+      total: allItems.length,
+      extract, skip, overridden, reviewed,
+      skipRate: allItems.length > 0 ? skip / allItems.length : 0,
+      overrideRate: allItems.length > 0 ? overridden / allItems.length : 0,
+    },
+    items: allItems.map(item => ({
+      convUuid: item.convUuid,
+      turnIndex: item.turnIndex,
+      speaker: item.speaker,
+      spanId: item.spanId,
+      text: item.text,
+      wordCount: item.wordCount,
+      llmLabel: item.llmLabel,
+      humanLabel: item.humanLabel,
+      extractScore: item.extractScore,
+      skipScore: item.skipScore,
+      reviewed: item.reviewed,
+    })),
+  };
+
+  const blob = new Blob([JSON.stringify(output, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'filter_golden_review.json';
+  a.click();
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Tab') { e.preventDefault(); flip(); }
+  else if (e.key === 'ArrowLeft') navigate(-1);
+  else if (e.key === 'ArrowRight') navigate(1);
+  else if (e.key === 'e' || e.key === 'E') setLabelAndAdvance('extract');
+  else if (e.key === 's' || e.key === 'S') setLabelAndAdvance('skip');
+});
+
+init();
+</script>
+</body>
+</html>
