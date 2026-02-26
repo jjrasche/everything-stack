@@ -1,11 +1,10 @@
 import 'package:get_it/get_it.dart';
-import '../../semantic_search/semantic_search_service.dart';
-import '../../chunking_service.dart';
-import '../../../core/invocation_repository.dart';
-import '../../../core/invocation.dart';
-import '../debug_server.dart';
+import 'semantic_search_service.dart';
+import '../../core/invocation_repository.dart';
+import '../../core/invocation.dart';
+import '../debug/debug_server.dart';
 
-void registerSearchActions(DebugServer server, GetIt getIt) {
+void registerSearchDebugActions(DebugServer server, GetIt getIt) {
   server.registerAction('search', (params) async {
     final query = params['q'] ?? params['query'];
     if (query == null || query.isEmpty) {

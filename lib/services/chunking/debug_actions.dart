@@ -1,15 +1,15 @@
 import 'package:get_it/get_it.dart';
-import '../../chunking_service.dart';
-import '../../../core/invocation_repository.dart';
-import '../../../core/invocation.dart';
-import '../debug_server.dart';
+import '../chunking_service.dart';
+import '../../core/invocation_repository.dart';
+import '../../core/invocation.dart';
+import '../debug/debug_server.dart';
 
 String _truncate(String text, int maxLength) {
   if (text.length <= maxLength) return text;
   return '${text.substring(0, maxLength)}...';
 }
 
-void registerChunkActions(DebugServer server, GetIt getIt) {
+void registerChunkDebugActions(DebugServer server, GetIt getIt) {
   server.registerAction('getChunks', (params) async {
     final entityId = params['entityId'];
 

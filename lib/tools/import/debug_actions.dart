@@ -1,16 +1,16 @@
 import 'package:get_it/get_it.dart';
-import '../../../core/entity_repository.dart';
-import '../../../core/invocation_repository.dart';
-import '../../../core/invocation.dart';
-import '../../../tools/import/claude_import_tool.dart';
-import '../debug_server.dart';
+import '../../core/entity_repository.dart';
+import '../../core/invocation_repository.dart';
+import '../../core/invocation.dart';
+import '../../services/debug/debug_server.dart';
+import 'claude_import_tool.dart';
 
 String _truncate(String text, int maxLength) {
   if (text.length <= maxLength) return text;
   return '${text.substring(0, maxLength)}...';
 }
 
-void registerConversationActions(DebugServer server, GetIt getIt) {
+void registerConversationDebugActions(DebugServer server, GetIt getIt) {
   server.registerAction('queryImportedInvocations', (params) async {
     try {
       final repo = getIt<InvocationRepository<Invocation>>();

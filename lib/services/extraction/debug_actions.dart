@@ -1,10 +1,10 @@
 import 'package:get_it/get_it.dart';
-import '../../../core/invocation_repository.dart';
-import '../../../core/invocation.dart';
-import '../../extraction/atomic_insight_extractor.dart';
-import '../debug_server.dart';
+import '../../core/invocation_repository.dart';
+import '../../core/invocation.dart';
+import '../debug/debug_server.dart';
+import 'atomic_insight_extractor.dart';
 
-void registerExtractionActions(DebugServer server, GetIt getIt) {
+void registerExtractionDebugActions(DebugServer server, GetIt getIt) {
   server.registerAction('extractInsights', (params) async {
     final convUuid = params['uuid'];
     if (convUuid == null || convUuid.isEmpty) {

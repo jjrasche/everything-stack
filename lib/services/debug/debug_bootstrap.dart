@@ -11,13 +11,13 @@ import '../../training/extraction/extraction_improvement_loop.dart';
 import '../prompt/prompt_registry.dart';
 import '../../core/debug/debug.dart';
 import 'actions/registry_actions.dart';
-import 'actions/search_actions.dart';
-import 'actions/chunk_actions.dart';
 import 'actions/screenshot_actions.dart';
-import 'actions/conversation_actions.dart';
-import 'actions/extraction_actions.dart';
 import 'actions/event_injection_actions.dart';
 import 'actions/ui_automation_actions.dart';
+import '../semantic_search/debug_actions.dart';
+import '../chunking/debug_actions.dart';
+import '../extraction/debug_actions.dart';
+import '../../tools/import/debug_actions.dart';
 
 Future<void> initializeDebugInfrastructure() async {
   print('🔧 [Debug] Initializing debug infrastructure...');
@@ -31,13 +31,13 @@ Future<void> initializeDebugInfrastructure() async {
   _registerStateProviders(server, getIt, registry);
 
   registerRegistryActions(server, registry);
-  registerSearchActions(server, getIt);
-  registerChunkActions(server, getIt);
   registerScreenshotActions(server, getIt);
-  registerConversationActions(server, getIt);
-  registerExtractionActions(server, getIt);
   registerEventInjectionActions(server, getIt);
   registerUiAutomationActions(server);
+  registerSearchDebugActions(server, getIt);
+  registerChunkDebugActions(server, getIt);
+  registerExtractionDebugActions(server, getIt);
+  registerConversationDebugActions(server, getIt);
 
   server.setScreenshotCallback(() async {
     return await ScreenshotService.instance.capture(context: 'debug-request');
