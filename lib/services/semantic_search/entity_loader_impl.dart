@@ -1,8 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:everything_stack_template/core/base_entity.dart';
 import 'package:everything_stack_template/core/invocation.dart';
 import 'package:everything_stack_template/core/invocation_repository.dart';
-import 'package:everything_stack_template/services/debug_service.dart';
 import 'semantic_search_service.dart';
 
 /// Type signature for repository lookup functions.
@@ -37,12 +37,11 @@ class EntityLoaderImpl extends EntityLoader {
         final result = await repo.findById(uuid);
         return result;
       } catch (e) {
-        DebugService.instance.captureError('EntityLoader.Invocation', e);
+        debugPrint('⚠️ [EntityLoader] Invocation lookup failed: $e');
         return null;
       }
     });
     print('🔍 [EntityLoader] Registered types: ${registeredTypes}');
-    DebugService.instance.captureEntityLoaderState(registeredTypes);
 
     // Add more default types as they become SemanticIndexable:
     // registerEntityType('Task', ...);
@@ -59,11 +58,7 @@ class EntityLoaderImpl extends EntityLoader {
         final entity = await lookup(uuid);
         if (entity != null) return entity;
       }
-      // entityType specified but not found - capture for debugging
-      DebugService.instance.captureError(
-        'EntityLoader.getById',
-        'entityType "$entityType" not in registry. Keys: ${_registry.keys.toList()}',
-      );
+      debugPrint('⚠️ [EntityLoader] entityType "$entityType" not in registry. Keys: ${_registry.keys.toList()}');
       return null;
     }
 

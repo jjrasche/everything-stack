@@ -9,7 +9,6 @@ import 'package:everything_stack_template/services/embedding_service.dart';
 import 'package:everything_stack_template/services/hnsw_index.dart';
 import 'package:everything_stack_template/services/tokenizer_service.dart';
 import 'package:everything_stack_template/services/semantic_search/chunk.dart';
-import 'package:everything_stack_template/services/debug_service.dart';
 import 'package:everything_stack_template/core/trainable.dart';
 import 'package:everything_stack_template/core/debug/debug.dart';
 import 'package:everything_stack_template/core/invocation.dart';
@@ -478,15 +477,6 @@ class ChunkingService with Trainable<ChunkingAdaptationData>, DebugIntrospectabl
           withoutEmbeddings++;
         }
       }
-
-      DebugService.instance.captureChunkStats(
-        totalChunks: chunks.length,
-        uniqueChunkIds: uniqueIds.length,
-        chunksWithEmbeddings: withEmbeddings,
-        chunksWithoutEmbeddings: withoutEmbeddings,
-        chunksByEntityType: chunksByType,
-        chunksBySourceEntity: chunksByEntity,
-      );
 
       return loaded;
     } catch (e) {

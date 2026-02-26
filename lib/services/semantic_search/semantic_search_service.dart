@@ -2,7 +2,6 @@ import 'chunk.dart';
 import 'search_result.dart';
 import '../embedding_service.dart';
 import '../hnsw_index.dart';
-import '../debug_service.dart';
 import '../../core/base_entity.dart';
 
 /// ## Design decisions
@@ -110,24 +109,6 @@ class SemanticSearchService {
 
     results.sort((a, b) => b.similarity.compareTo(a.similarity));
     final finalResults = results.take(limit).toList();
-
-    final searchDuration = DateTime.now().difference(DateTime.now()); // TODO: track actual duration
-    DebugService.instance.captureSearchResult(
-      query: query,
-      results: finalResults.map((r) => {
-        'chunkId': r.chunk.id,
-        'sourceEntityId': r.chunk.sourceEntityId,
-        'sourceEntityType': r.chunk.sourceEntityType,
-        'similarity': r.similarity,
-        'entityLoaded': r.sourceEntity != null,
-        'entityUuid': r.sourceEntity?.uuid,
-        'chunkText': r.chunk.text.length > 100
-            ? '${r.chunk.text.substring(0, 100)}...'
-            : r.chunk.text,
-      }).toList(),
-      totalChunksInIndex: index.size,
-      searchDuration: searchDuration,
-    );
 
     return finalResults;
   }
