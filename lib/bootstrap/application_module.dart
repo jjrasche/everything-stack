@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'bootstrap_module.dart';
 import '../bootstrap.dart';
@@ -63,8 +62,6 @@ class ApplicationModule extends BootstrapModule {
       commitmentRepo,
       commitmentLogRepo,
     );
-
-    debugPrint('✅ Tools: task, timer, regulation');
   }
 
   Future<void> _registerEventBus(GetIt getIt) async {
@@ -74,35 +71,28 @@ class ApplicationModule extends BootstrapModule {
     final eventBus = EventBusImpl(repository: eventRepository);
     getIt.registerSingleton<EventBus>(eventBus);
 
-    getIt.registerSingleton<ToolExecutor>(
-      ToolExecutor(
-        toolRegistry: getIt<ToolRegistry>(),
-        eventBus: eventBus,
-      ),
-    );
-
-    debugPrint('✅ EventBus + ToolExecutor');
+    getIt.registerSingleton<ToolExecutor>(ToolExecutor(
+      toolRegistry: getIt<ToolRegistry>(),
+      eventBus: eventBus,
+    ));
   }
 
   void _registerContextSelector(GetIt getIt) {
     if (!getIt.isRegistered<EntityRepository<Invocation>>() ||
         !getIt.isRegistered<SemanticSearchService>()) {
-      debugPrint('⏭️  ContextSelector skipped (missing dependencies)');
       return;
     }
 
-    final contextSelector = ContextSelector(
+    getIt.registerSingleton<ContextSelector>(ContextSelector(
       invocationRepo: getIt<EntityRepository<Invocation>>(),
       embeddingService: EmbeddingService.instance,
       semanticSearchService: getIt<SemanticSearchService>(),
-    );
-    getIt.registerSingleton<ContextSelector>(contextSelector);
+    ));
   }
 
   void _registerExecutionLoop(GetIt getIt) {
     if (!getIt.isRegistered<InferenceService>() ||
         !getIt.isRegistered<TTSService>()) {
-      debugPrint('⏭️  ExecutionLoop skipped (missing dependencies)');
       return;
     }
 
@@ -114,7 +104,6 @@ class ApplicationModule extends BootstrapModule {
     );
     getIt.registerSingleton<ExecutionLoop>(executionLoop);
     executionLoop.initialize();
-    debugPrint('✅ ExecutionLoop initialized');
   }
 
   @override

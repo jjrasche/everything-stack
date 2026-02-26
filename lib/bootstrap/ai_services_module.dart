@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'bootstrap_module.dart';
 import 'implementer_selector.dart';
@@ -51,24 +50,19 @@ class AiServicesModule extends BootstrapModule {
       );
     }
 
-    if (implementers.isEmpty) {
-      debugPrint('⏭️  STT skipped (no API key)');
-      return;
-    }
+    if (implementers.isEmpty) return;
 
     final defaultImpl = implementers.containsKey('deepgram_flux')
         ? 'deepgram_flux'
         : selectCompatibleImplementer(implementers, 'STT');
 
-    final sttService = STTService(
+    getIt.registerSingleton<STTService>(STTService(
       implementers: implementers,
       defaultImplementer: defaultImpl,
       invocationRepo: invocationRepo,
       adaptationStateRepo: getIt<AdaptationStateRepository>(),
       feedbackRepo: getIt<FeedbackRepository>(),
-    );
-    getIt.registerSingleton<STTService>(sttService);
-    debugPrint('✅ STT: $defaultImpl (${implementers.length} implementers)');
+    ));
   }
 
   void _registerTts(
@@ -88,15 +82,13 @@ class AiServicesModule extends BootstrapModule {
 
     final defaultImpl = selectCompatibleImplementer(implementers, 'TTS');
 
-    final ttsService = TTSService(
+    getIt.registerSingleton<TTSService>(TTSService(
       implementers: implementers,
       defaultImplementer: defaultImpl,
       invocationRepo: invocationRepo,
       adaptationStateRepo: getIt<AdaptationStateRepository>(),
       feedbackRepo: getIt<FeedbackRepository>(),
-    );
-    getIt.registerSingleton<TTSService>(ttsService);
-    debugPrint('✅ TTS: $defaultImpl (${implementers.length} implementers)');
+    ));
   }
 
   void _registerLlm(
@@ -109,21 +101,16 @@ class AiServicesModule extends BootstrapModule {
       implementers['groq'] = GroqImplementer(apiKey: config.groqApiKey!);
     }
 
-    if (implementers.isEmpty) {
-      debugPrint('⏭️  LLM skipped (no API key)');
-      return;
-    }
+    if (implementers.isEmpty) return;
 
     final defaultImpl = selectCompatibleImplementer(implementers, 'LLM');
 
-    final llmService = InferenceService(
+    getIt.registerSingleton<InferenceService>(InferenceService(
       implementers: implementers,
       defaultImplementer: defaultImpl,
       invocationRepo: invocationRepo,
       adaptationStateRepo: getIt<AdaptationStateRepository>(),
       feedbackRepo: getIt<FeedbackRepository>(),
-    );
-    getIt.registerSingleton<InferenceService>(llmService);
-    debugPrint('✅ LLM: $defaultImpl (${implementers.length} implementers)');
+    ));
   }
 }

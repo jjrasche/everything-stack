@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import '../../bootstrap/bootstrap_module.dart';
 import '../../bootstrap.dart';
@@ -19,38 +18,27 @@ import '../../training/extraction/extraction_improvement_loop.dart';
 class ExtractionModule extends BootstrapModule {
   @override
   Future<void> register(GetIt getIt, EverythingStackConfig config) async {
-    try {
-      _registerRepositories(getIt);
+    _registerRepositories(getIt);
+    if (getIt.isRegistered<InferenceService>()) {
       _registerPipeline(getIt);
-    } catch (e) {
-      debugPrint('⚠️ Extraction initialization failed: $e');
     }
   }
 
   void _registerRepositories(GetIt getIt) {
-    final atomicInsightAdapter = getIt<PersistenceAdapter<AtomicInsight>>();
     final atomicInsightRepo = AtomicInsightRepository(
-      adapter: atomicInsightAdapter,
+      adapter: getIt<PersistenceAdapter<AtomicInsight>>(),
       embeddingService: EmbeddingService.instance,
       embeddingQueueService: embeddingQueueService,
     );
     getIt.registerSingleton<AtomicInsightRepository>(atomicInsightRepo);
 
-    final promptVersionAdapter = getIt<PersistenceAdapter<PromptVersion>>();
     final promptVersionRepo = PromptVersionRepository(
-      adapter: promptVersionAdapter,
+      adapter: getIt<PersistenceAdapter<PromptVersion>>(),
     );
     getIt.registerSingleton<PromptVersionRepository>(promptVersionRepo);
-
-    debugPrint('✅ Extraction: repositories registered');
   }
 
   void _registerPipeline(GetIt getIt) {
-    if (!getIt.isRegistered<InferenceService>()) {
-      debugPrint('⏭️  Extraction pipeline skipped (no InferenceService)');
-      return;
-    }
-
     final inferenceService = getIt<InferenceService>();
     final promptVersionRepo = getIt<PromptVersionRepository>();
     final atomicInsightRepo = getIt<AtomicInsightRepository>();
@@ -74,15 +62,14 @@ class ExtractionModule extends BootstrapModule {
     );
     getIt.registerSingleton<ExtractionEvaluator>(evaluator);
 
-    final improvementLoop = ExtractionImprovementLoop(
-      extractor: extractor,
-      evaluator: evaluator,
-      promptRegistry: promptRegistry,
-      mutator: PromptMutator(inferenceService: inferenceService),
-      validator: PromptValidator(),
+    getIt.registerSingleton<ExtractionImprovementLoop>(
+      ExtractionImprovementLoop(
+        extractor: extractor,
+        evaluator: evaluator,
+        promptRegistry: promptRegistry,
+        mutator: PromptMutator(inferenceService: inferenceService),
+        validator: PromptValidator(),
+      ),
     );
-    getIt.registerSingleton<ExtractionImprovementLoop>(improvementLoop);
-
-    debugPrint('✅ Extraction: pipeline registered');
   }
 }

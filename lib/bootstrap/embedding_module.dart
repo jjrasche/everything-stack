@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'bootstrap_module.dart';
 import '../bootstrap.dart';
@@ -17,24 +16,11 @@ class EmbeddingModule extends BootstrapModule {
         if (config.geminiApiKey != null) 'apiKey': config.geminiApiKey!,
       },
     );
-
-    try {
-      final service =
-          createService<EmbeddingService>('embedding', embeddingConfig);
-      EmbeddingService.instance = service;
-
-      if (service is! NullEmbeddingService) {
-        await service.initialize();
-        debugPrint('✅ Embedding: ${service.runtimeType}');
-      } else {
-        debugPrint('ℹ️ Embedding: disabled');
-      }
-
-      ServiceRegistry.register<EmbeddingService>('embedding', service);
-    } catch (e) {
-      debugPrint('⚠️ Embedding init failed: $e');
-    }
-
+    final service =
+        createService<EmbeddingService>('embedding', embeddingConfig);
+    EmbeddingService.instance = service;
+    await service.initialize();
+    ServiceRegistry.register<EmbeddingService>('embedding', service);
     getIt.registerSingleton<EmbeddingService>(EmbeddingService.instance);
     getIt.registerSingleton<TokenizerService>(TokenizerService.instance);
   }

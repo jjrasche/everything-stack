@@ -39,11 +39,17 @@ Future<void> initializeEverythingStack({
   final cfg = config ?? EverythingStackConfig.fromEnvironment();
 
   for (final module in _modules) {
-    await module.register(getIt, cfg);
+    final moduleName = module.runtimeType.toString();
+    try {
+      await module.register(getIt, cfg);
+      debugPrint('✅ $moduleName');
+    } catch (e, st) {
+      debugPrint('❌ $moduleName: $e\n$st');
+      rethrow;
+    }
   }
 
   await initializeDebugInfrastructure();
-  debugPrint('✅ Bootstrap complete');
 }
 
 Future<void> disposeEverythingStack() async {

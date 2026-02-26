@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import '../../bootstrap/bootstrap_module.dart';
 import '../../bootstrap.dart';
@@ -20,36 +19,25 @@ import 'stages/dedup_stage.dart';
 class MemoryModule extends BootstrapModule {
   @override
   Future<void> register(GetIt getIt, EverythingStackConfig config) async {
-    try {
-      _registerRepository(getIt);
+    _registerRepository(getIt);
+    if (getIt.isRegistered<InferenceService>()) {
       _registerEncoder(getIt);
-    } catch (e) {
-      debugPrint('⚠️ Memory system initialization failed: $e');
     }
   }
 
   void _registerRepository(GetIt getIt) {
-    final propositionAdapter = getIt<PersistenceAdapter<Proposition>>();
-    final propositionRepo = PropositionRepository(
-      adapter: propositionAdapter,
-    );
-    getIt.registerSingleton<PropositionRepository>(propositionRepo);
-
-    final wmService = WorkingMemoryService();
-    getIt.registerSingleton<WorkingMemoryService>(wmService);
+    getIt.registerSingleton<PropositionRepository>(PropositionRepository(
+      adapter: getIt<PersistenceAdapter<Proposition>>(),
+    ));
+    getIt.registerSingleton<WorkingMemoryService>(WorkingMemoryService());
   }
 
   void _registerEncoder(GetIt getIt) {
-    if (!getIt.isRegistered<InferenceService>()) {
-      debugPrint('⏭️  Encoder skipped (no InferenceService)');
-      return;
-    }
-
     final inferenceService = getIt<InferenceService>();
     final decontextStage = DecontextualizeStage(
       chatClient: inferenceService,
     );
-    final encoder = Encoder(
+    getIt.registerSingleton<Encoder>(Encoder(
       normalizeStage: NormalizeStage(),
       segmentStage: SegmentStage(),
       cohereStage: CohereStage(chatClient: inferenceService),
@@ -60,9 +48,7 @@ class MemoryModule extends BootstrapModule {
         chatClient: inferenceService,
         decontextualizeStage: decontextStage,
       ),
-    );
-    getIt.registerSingleton<Encoder>(encoder);
-    debugPrint('✅ Memory: Encoder + WorkingMemory registered');
+    ));
   }
 }
 

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'bootstrap_module.dart';
 import '../bootstrap.dart';
@@ -12,27 +11,15 @@ import '../services/embedding_service.dart';
 class AudioModule extends BootstrapModule {
   @override
   Future<void> register(GetIt getIt, EverythingStackConfig config) async {
-    try {
-      await AudioRecordingService.instance.initialize();
-      debugPrint('✅ Audio: recording service');
-    } catch (e) {
-      debugPrint('⚠️ Audio recording init failed: $e');
-    }
+    await AudioRecordingService.instance.initialize();
 
-    try {
-      final audioFileAdapter = getIt<PersistenceAdapter<AudioFile>>();
-      final audioFileRepo = EntityRepository<AudioFile>(
-        adapter: audioFileAdapter,
-        embeddingService: EmbeddingService.instance,
-      );
-      getIt.registerSingleton<EntityRepository<AudioFile>>(audioFileRepo);
-
-      final audioStorage = AudioStorage(audioFileRepo);
-      getIt.registerSingleton<AudioStorage>(audioStorage);
-      debugPrint('✅ Audio: storage');
-    } catch (e) {
-      debugPrint('⚠️ Audio storage init failed: $e');
-    }
+    final audioFileAdapter = getIt<PersistenceAdapter<AudioFile>>();
+    final audioFileRepo = EntityRepository<AudioFile>(
+      adapter: audioFileAdapter,
+      embeddingService: EmbeddingService.instance,
+    );
+    getIt.registerSingleton<EntityRepository<AudioFile>>(audioFileRepo);
+    getIt.registerSingleton<AudioStorage>(AudioStorage(audioFileRepo));
   }
 
   @override

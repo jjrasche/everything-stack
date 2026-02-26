@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'bootstrap_module.dart';
 import '../bootstrap.dart';
@@ -31,8 +30,6 @@ class PersistenceModule extends BootstrapModule {
       await syncService.initialize();
       SyncService.instance = syncService;
     }
-
-    debugPrint('✅ Persistence, BlobStore, Connectivity initialized');
   }
 
   @override
