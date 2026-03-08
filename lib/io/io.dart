@@ -14,6 +14,9 @@ export 'transport/transport_factory.dart';
 export 'protocol/protocol.dart';
 export 'protocol/websocket_protocol.dart';
 
-// Channel layer
+// Communication patterns
 export 'channel/channel.dart';
 export 'channel/retry_policy.dart';
+export 'patterns/subscription.dart';
+export 'patterns/request_response.dart';
+export 'request_response/http_request_response.dart';

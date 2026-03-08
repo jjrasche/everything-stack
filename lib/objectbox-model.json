@@ -1505,10 +1505,111 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "44:9147002147654586271",
+      "lastPropertyId": "18:1961416379433145350",
+      "name": "CommEventOB",
+      "properties": [
+        {
+          "id": "1:4209132258219797213",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:3193308282039225899",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "71:7235055859433967010"
+        },
+        {
+          "id": "3:4482641847049298419",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "4:150854399513481039",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "5:4601824718540552229",
+          "name": "syncId",
+          "type": 9
+        },
+        {
+          "id": "6:5362976906855471275",
+          "name": "sourceType",
+          "type": 9
+        },
+        {
+          "id": "7:6871960747745034426",
+          "name": "sourceId",
+          "type": 9
+        },
+        {
+          "id": "8:8523166121889210530",
+          "name": "channelId",
+          "type": 9
+        },
+        {
+          "id": "9:1200670917626309158",
+          "name": "channelName",
+          "type": 9
+        },
+        {
+          "id": "10:5261916409076667847",
+          "name": "senderId",
+          "type": 9
+        },
+        {
+          "id": "11:5363890217771033505",
+          "name": "senderName",
+          "type": 9
+        },
+        {
+          "id": "12:5629193825683709406",
+          "name": "contentText",
+          "type": 9
+        },
+        {
+          "id": "13:6038248058274175605",
+          "name": "contentType",
+          "type": 9
+        },
+        {
+          "id": "14:5587953266576663585",
+          "name": "rawPayload",
+          "type": 9
+        },
+        {
+          "id": "15:6511344587933086707",
+          "name": "processedAt",
+          "type": 10
+        },
+        {
+          "id": "16:6117169770881740849",
+          "name": "triageLevel",
+          "type": 9
+        },
+        {
+          "id": "17:6831385234384293990",
+          "name": "encoderTraceId",
+          "type": 9
+        },
+        {
+          "id": "18:1961416379433145350",
+          "name": "dismissed",
+          "type": 1
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "43:8101629924730712396",
-  "lastIndexId": "70:6085265623732814248",
+  "lastEntityId": "44:9147002147654586271",
+  "lastIndexId": "71:7235055859433967010",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

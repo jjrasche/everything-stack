@@ -160,3 +160,4 @@ checkpoints/
 
 # ObjectBox runtime database
 objectbox/
+test_db_*/

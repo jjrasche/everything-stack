@@ -2,69 +2,59 @@
 
 **Definition:** The IO layer handles ALL digital communication with the outside world, regardless of protocol or transport mechanism.
 
-## What IO Is
+## Architecture
 
-IO (Input/Output) is the **communication substrate** for Everything Stack. Any service or tool that sends/receives data to/from external systems goes through the IO layer.
+Two universal layers, three communication patterns.
 
-**Current implementations:**
-- WebSocket communication (Rust FFI for performance)
-- Message framing and protocols
-- Channel management
+### Universal Layers
 
-**Future implementations:**
-- HTTP/REST APIs
-- gRPC
-- MQTT
-- Bluetooth
-- Serial communication
-- Any other digital communication protocol
+- **Transport**: how bytes move. WebSocket, HTTP, SSE, Bluetooth, serial. Platform-specific (Rust FFI fixes Windows WebSocket TLS bug).
+- **Protocol**: how bytes become messages. JSON framing, Phoenix channels, protobuf, custom wire formats. Pure Dart.
 
-## Architectural Position
+### Communication Patterns
 
-**IO is NOT a leaf dependency.** It is a **foundational layer** that sits between:
-- Core/Services/Tools (consumers)
-- External world (network, devices, APIs)
+Built on Transport + Protocol, each with its own interaction shape:
 
-```
-[Core/Services/Tools]
-         ↓
-     [IO Layer] ← ALL digital communication passes through here
-         ↓
-  [External World]
-```
+| Pattern | Example | Shape |
+|---|---|---|
+| DuplexStream | Deepgram WebSocket | send + receive simultaneously |
+| RequestResponse | Groq HTTP, Jina API | request in, response out |
+| Subscription | Supabase Realtime | connect, receive stream |
 
-Every service that communicates externally depends on IO:
-- STT service → IO → Deepgram WebSocket
-- LLM service → IO → Groq HTTP API
-- Tool executor → IO → External APIs
-- Future services → IO → Any protocol
+All three share Transport + Protocol underneath. Logging, metrics, retry attach at those layers and apply to all patterns.
 
-## Design Principles
+### Why Rust?
 
-1. **Protocol agnostic** - IO provides abstractions, not protocol-specific APIs
-2. **Performance critical** - Uses Rust FFI where needed for efficiency
-3. **Cross-platform** - Works on all 6 platforms (Android, iOS, macOS, Windows, Linux, Web)
-4. **Trainable** - Communication patterns can be learned and optimized
+`dart:io` WebSocket on Windows converts `wss://` to `https://` during HTTP upgrade, breaking TLS. Rust tungstenite handles this correctly. Rust is a platform bug workaround for one transport, not an architectural choice.
 
 ## Current Structure
 
 ```
 lib/io/
-├── channel/               # Communication channel abstraction
-├── protocol/              # Message protocols
-├── transport/             # Transport layer (WebSocket, future HTTP/gRPC)
-├── io.dart                # Main exports
-├── io_exception.dart      # Exception types
-└── README.md              # This file
+├── transport/              # How bytes move (WebSocket via Rust/dart:io/web)
+├── protocol/               # How bytes become messages
+├── channel/                # DuplexStream pattern (legacy name, used by Deepgram)
+├── patterns/               # Communication pattern interfaces
+│   ├── subscription.dart   # Subscription pattern (Supabase Realtime)
+│   └── request_response.dart  # RequestResponse pattern (HTTP APIs)
+├── subscriptions/          # Subscription implementations
+│   └── supabase_comm_subscription.dart
+├── request_response/       # RequestResponse implementations
+│   └── http_request_response.dart
+├── io.dart                 # Main exports
+├── io_exception.dart       # Exception types
+└── README.md
 ```
 
-## Adding New Protocols
+## Current Status
 
-When adding HTTP, gRPC, or other protocols:
+- **DuplexStream**: Implemented as `Channel` (Deepgram STT).
+- **Subscription**: Implemented for Supabase Realtime (comms ingestion).
+- **RequestResponse**: Implemented as `HttpRequestResponse`. Supports base URI, auth token injection via `TokenProvider`, timeouts. Groq/Jina still use `dart:http` directly: migrate next.
 
-1. Create protocol-specific files in `transport/` (e.g., `http_transport.dart`)
-2. Implement common `Transport` interface
-3. Add platform-specific adapters if needed
-4. Register with transport factory for runtime selection
+## Design Principles
 
-The IO layer provides the **pattern** for all digital communication, not just one protocol.
+1. **Protocol agnostic** : abstractions, not protocol-specific APIs
+2. **Performance where needed** : Rust FFI for transports with platform bugs
+3. **Cross-platform** : all 6 platforms (iOS, Android, macOS, Windows, Linux, Web)
+4. **Trainable** : communication patterns can be learned and optimized
